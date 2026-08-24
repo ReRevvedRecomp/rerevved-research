@@ -22,6 +22,7 @@ This index covers every Java script in this directory.
 - `FindFieldRefs.java` finds PowerPC register-plus-displacement operands for selected offsets.
 - `FindPointerValues.java` finds exact aligned 32-bit pointer values in initialized guest memory.
 - `FindStrings.java` finds capped, case-insensitive substrings in defined guest strings.
+- `ObserveCanonicalImageEvidence.java` records the bounded manual canonical-image replay as private scratch JSON.
 - `FixXenonThunks.java` repairs undecodable Xenon VMX128 thunk slots.
 - `RebuildTruncatedFunctions.java` rebuilds functions whose last instruction is a call.
 - `RecoverSplitConstRefs.java` reruns the PowerPC constant-reference analyzer.

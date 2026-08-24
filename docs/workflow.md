@@ -142,3 +142,25 @@ Promote only compact findings into `manifests/`. Keep query output and
 headless logs in a dedicated ignored scratch directory outside the shared
 operating-system temp directory. For a behavioral claim, compare a narrow
 generated C++ window and confirm it with a default-off runtime probe.
+
+## Manual canonical-image evidence replay
+
+**Canonical-image evidence validation, not retail derivation validation.** The
+manual `.github/workflows/canonical-image-evidence.yml` workflow validates settled
+public evidence against the already-generated canonical private image. It does
+not construct the image from `default.xex` and `default.xexp`, and a passing run
+does not validate that derivation.
+
+The workflow accepts only `workflow_dispatch` from reviewed `main` and uses the
+protected `retail-evidence` environment. It fetches one Git LFS image from an
+immutable private-assets commit, verifies its size and SHA-256 against
+`manifests/image.json`, imports it into a fresh disposable project at
+`0x82000000` as `PowerPC:BE:32:default`, and runs the existing repair chain.
+The bounded replay covers `RVA-SYM-0223`, field relation `RVA-REL-0290`, and
+vtable ownership relation `RVA-REL-0293`.
+
+Private input, project data, observations, and logs remain under the runner's
+restricted scratch root and are deleted on every outcome. The only retained
+file is the schema-validated sanitized attestation. It contains public image
+identity, entity IDs and addresses, check names, and pass/fail summaries. The
+ordinary `.github/workflows/checks.yml` workflow remains asset-free.

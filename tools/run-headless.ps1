@@ -25,6 +25,7 @@ param(
     [switch]$ReadOnly,
     [switch]$Analyze,
     [string]$GhidraHome = $env:REREVVED_GHIDRA_HOME,
+    [string]$HeadlessExecutable,
     [string]$ProjectDir = $env:REREVVED_GHIDRA_PROJECTS,
     [string]$ProjectName = $env:REREVVED_GHIDRA_PROJECT,
     [string]$Program = $env:REREVVED_GHIDRA_PROGRAM,
@@ -55,13 +56,29 @@ function Assert-OutsideSharedTemp {
     return $fullPath
 }
 
-$GhidraHome = Require-Value $GhidraHome 'REREVVED_GHIDRA_HOME' 'Ghidra install root'
 $ProjectDir = Require-Value $ProjectDir 'REREVVED_GHIDRA_PROJECTS' 'Ghidra project directory'
 $ProjectName = Require-Value $ProjectName 'REREVVED_GHIDRA_PROJECT' 'Ghidra project name'
 if ([string]::IsNullOrWhiteSpace($Program)) { $Program = 'rerevved_image.bin' }
 
-$headless = Join-Path $GhidraHome 'support\analyzeHeadless.bat'
-if (-not (Test-Path $headless)) { throw "analyzeHeadless.bat not found under $GhidraHome" }
+if ([string]::IsNullOrWhiteSpace($HeadlessExecutable)) {
+    $GhidraHome = Require-Value $GhidraHome 'REREVVED_GHIDRA_HOME' 'Ghidra install root'
+    $headlessCandidates = @(
+        (Join-Path $GhidraHome 'support\analyzeHeadless.bat'),
+        (Join-Path $GhidraHome 'support/analyzeHeadless')
+    )
+    $headless = @($headlessCandidates | Where-Object {
+        Test-Path -LiteralPath $_ -PathType Leaf
+    } | Select-Object -First 1)
+    if ($headless.Count -ne 1) {
+        throw "analyzeHeadless not found under $GhidraHome"
+    }
+    $headless = $headless[0]
+} else {
+    $headless = [System.IO.Path]::GetFullPath($HeadlessExecutable)
+    if (-not (Test-Path -LiteralPath $headless -PathType Leaf)) {
+        throw "analyzeHeadless not found: $headless"
+    }
+}
 if (-not (Test-Path $ProjectDir)) { throw "Project directory not found: $ProjectDir" }
 if ($JavaHome -and -not (Test-Path $JavaHome)) { throw "JDK not found: $JavaHome" }
 
@@ -98,14 +115,18 @@ $applied = @{
 }
 if ($JavaHome) {
     $applied['JAVA_HOME'] = $JavaHome
-    $applied['PATH'] = (Join-Path $JavaHome 'bin') + ';' + $env:PATH
+    $applied['PATH'] = (Join-Path $JavaHome 'bin') +
+        [System.IO.Path]::PathSeparator + $env:PATH
 }
 foreach ($key in $ScriptEnv.Keys) { $applied[$key] = [string]$ScriptEnv[$key] }
 
 $headlessArgs = @($ProjectDir, $ProjectName, '-process', $Program)
 if (-not $Analyze) { $headlessArgs += '-noanalysis' }
 if ($ReadOnly) { $headlessArgs += '-readOnly' }
-$headlessArgs += @('-scriptPath', ($ScriptPath -join ';'), '-postScript', $Script)
+$headlessArgs += @(
+    '-scriptPath', ($ScriptPath -join [System.IO.Path]::PathSeparator),
+    '-postScript', $Script
+)
 if ($ScriptArgs) { $headlessArgs += $ScriptArgs }
 
 try {

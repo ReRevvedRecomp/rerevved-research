@@ -1,0 +1,335 @@
+name: Canonical Image Evidence - Not Retail Derivation
+
+# This workflow validates settled evidence against the already-generated
+# canonical private image. It does not derive that image from retail inputs.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: canonical-image-evidence
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  ASSETS_REPO: ${{ vars.ASSETS_REPO }}
+  ASSETS_COMMIT: 78fae407ebecdadcabab2a0a2e173e198723b5c6
+  ASSET_PATH: research/rerevved_image.bin
+
+jobs:
+  canonical-image-preflight:
+    name: Asset-Free Canonical-Image Preflight
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out reviewed revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Reject untrusted dispatch refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF}" = "refs/heads/main"
+
+      - name: Verify the public replay contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check -r requirements.txt
+          python tools/verify_canonical_image_evidence.py --preflight
+          python -m unittest \
+            tests.test_canonical_image_evidence \
+            tests.test_ghidra_bootstrap
+
+  canonical-image-replay:
+    name: Canonical-Image Evidence Replay
+    needs: canonical-image-preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    environment:
+      name: retail-evidence
+    steps:
+      - name: Check out approved public commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install public verifier requirements
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check -r requirements.txt
+
+      - name: Fetch and verify the immutable canonical image
+        id: fetch
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.ASSETS_TOKEN }}
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: credential.helper
+          GIT_CONFIG_VALUE_0: "!gh auth git-credential"
+          GIT_LFS_SKIP_SMUDGE: "1"
+        run: |
+          set -euo pipefail
+          umask 077
+          test -n "${GH_TOKEN}"
+          [[ "${ASSETS_REPO}" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]
+          git lfs version
+
+          private_root="${RUNNER_TEMP}/canonical-image-evidence-private"
+          assets_root="${private_root}/assets"
+          input_root="${private_root}/input"
+          PRIVATE_ROOT="${private_root}" python - <<'PY'
+          import os
+          from pathlib import Path
+
+          runner = Path(os.environ["RUNNER_TEMP"]).resolve(strict=True)
+          private_root = Path(os.environ["PRIVATE_ROOT"])
+          if private_root.resolve(strict=False).parent != runner:
+              raise SystemExit("private replay root must be a child of RUNNER_TEMP")
+          if private_root.is_symlink():
+              raise SystemExit("private replay root must not be a symlink")
+          PY
+          mkdir -p "${input_root}"
+
+          git clone --quiet --branch main --single-branch --no-checkout \
+            "https://github.com/${ASSETS_REPO}" "${assets_root}"
+          git -C "${assets_root}" checkout --quiet --detach "${ASSETS_COMMIT}"
+          test "$(git -C "${assets_root}" rev-parse HEAD)" = "${ASSETS_COMMIT}"
+          git -C "${assets_root}" lfs pull \
+            --include="${ASSET_PATH}" --exclude=""
+          source_image="${assets_root}/${ASSET_PATH}"
+          test -f "${source_image}"
+          test ! -L "${source_image}"
+          cp -- "${source_image}" "${input_root}/rerevved_image.bin"
+
+          INPUT="${input_root}/rerevved_image.bin" python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          image = json.loads(Path("manifests/image.json").read_text(encoding="ascii"))[
+              "analysisProgram"
+          ]
+          path = Path(os.environ["INPUT"])
+          if path.stat().st_size != image["imageSize"]:
+              raise SystemExit("canonical image size mismatch")
+          digest = hashlib.sha256(path.read_bytes()).hexdigest().upper()
+          if digest != image["flatImageSha256"]:
+              raise SystemExit("canonical image SHA-256 mismatch")
+          PY
+
+      - name: Clean up private asset checkout
+        id: asset-cleanup
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import shutil
+          from pathlib import Path
+
+          runner = Path(os.environ["RUNNER_TEMP"]).resolve(strict=True)
+          private_root = runner / "canonical-image-evidence-private"
+          assets = private_root / "assets"
+          if private_root.resolve(strict=False).parent != runner:
+              raise SystemExit("refusing unsafe private replay root")
+          if assets.resolve(strict=False).parent != private_root:
+              raise SystemExit("refusing unsafe asset checkout cleanup")
+          if assets.is_symlink():
+              raise SystemExit("refusing linked asset checkout cleanup")
+          if assets.exists():
+              shutil.rmtree(assets)
+          PY
+
+      - name: Install the pinned analysis toolchain
+        id: toolchain
+        if: steps.fetch.outcome == 'success' && steps.asset-cleanup.outcome == 'success'
+        continue-on-error: true
+        uses: XIVLegacy/xivl-tools/.github/actions/setup-retail-toolchain@4920dece45e88fcb14424de1f5c4fdee94ae6d02
+        with:
+          scratch-root: ${{ runner.temp }}/canonical-image-evidence-private
+
+      - name: Import, repair, and replay canonical-image evidence
+        id: analysis
+        if: steps.fetch.outcome == 'success' && steps.asset-cleanup.outcome == 'success' && steps.toolchain.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          private_root="${RUNNER_TEMP}/canonical-image-evidence-private"
+          project_root="${private_root}/project"
+          observations="${private_root}/observations.json"
+          mutated="${private_root}/observations-mutated.json"
+          staging_root="${GITHUB_WORKSPACE}/_canonical-image-staging"
+          input="${private_root}/input/rerevved_image.bin"
+          headless="${{ steps.toolchain.outputs.analyze-headless }}"
+          mkdir -p "${project_root}" "${staging_root}"
+          export GHIDRA_HEADLESS_MAXMEM="8G"
+          export GHIDRA_JAVA_OPTIONS="-Dlog4j.skipJansi=true"
+
+          timeout 35m "${headless}" "${project_root}" canonical_image_evidence \
+            -import "${input}" \
+            -loader BinaryLoader \
+            -loader-baseAddr 0x82000000 \
+            -processor PowerPC:BE:32:default \
+            -analysisTimeoutPerFile 1800 \
+            -max-cpu 2 \
+            > "${private_root}/import.log" 2>&1
+
+          pwsh -NoProfile -NonInteractive -File tools/bootstrap-ghidra.ps1 \
+            -DisposableProjectDir "${project_root}" \
+            -DisposableProjectName canonical_image_evidence \
+            -Program rerevved_image.bin \
+            -HeadlessExecutable "${headless}" \
+            -ThunkRangeStart 0x827F7C50 \
+            -ThunkRangeEnd 0x827F7CF0 \
+            -Out "${private_root}/repair-result.json" \
+            -LogPath "${private_root}/repair.log"
+
+          export REREVVED_CANONICAL_OBSERVATIONS_OUT="${observations}"
+          pwsh -NoProfile -NonInteractive -File tools/run-headless.ps1 \
+            -Script ObserveCanonicalImageEvidence.java \
+            -ProjectDir "${project_root}" \
+            -ProjectName canonical_image_evidence \
+            -Program rerevved_image.bin \
+            -HeadlessExecutable "${headless}" \
+            -ReadOnly \
+            -Out "${observations}" \
+            -LogPath "${private_root}/observe.log"
+
+          python tools/verify_canonical_image_evidence.py --input "${observations}" \
+            > "${staging_root}/canonical-image-evidence-attestation.json" \
+            2> "${private_root}/verifier.log"
+
+          OBSERVATIONS="${observations}" MUTATED="${mutated}" python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          document = json.loads(
+              Path(os.environ["OBSERVATIONS"]).read_text(encoding="ascii")
+          )
+          document["fieldAccess"]["value"] += 1
+          Path(os.environ["MUTATED"]).write_text(
+              json.dumps(document, indent=2) + "\n", encoding="ascii"
+          )
+          PY
+
+          set +e
+          python tools/verify_canonical_image_evidence.py --input "${mutated}" \
+            > "${private_root}/negative-attestation.json" \
+            2> "${private_root}/negative-verifier.log"
+          negative_status=$?
+          set -e
+          test "${negative_status}" -ne 0
+          NEGATIVE="${private_root}/negative-attestation.json" python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          from tools.verify_canonical_image_evidence import validate_attestation
+
+          document = json.loads(Path(os.environ["NEGATIVE"]).read_text(encoding="ascii"))
+          validate_attestation(document)
+          assert document["result"]["status"] == "fail"
+          field = next(item for item in document["checks"] if item["name"] == "field-access")
+          assert field["status"] == "fail"
+          PY
+
+      - name: Create a sanitized failure attestation
+        id: failure-attestation
+        if: always() && steps.analysis.outcome != 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          staging_root="${GITHUB_WORKSPACE}/_canonical-image-staging"
+          mkdir -p "${staging_root}"
+          set +e
+          python tools/verify_canonical_image_evidence.py \
+            --input "${RUNNER_TEMP}/canonical-image-evidence-private/missing.json" \
+            > "${staging_root}/canonical-image-evidence-attestation.json" \
+            2> /dev/null
+          status=$?
+          set -e
+          test "${status}" -ne 0
+
+      - name: Delete all private replay scratch
+        id: cleanup
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import shutil
+          from pathlib import Path
+
+          runner = Path(os.environ["RUNNER_TEMP"]).resolve(strict=True)
+          private_root = runner / "canonical-image-evidence-private"
+          resolved = private_root.resolve(strict=False)
+          if resolved.parent != runner:
+              raise SystemExit("refusing unsafe private replay cleanup")
+          if private_root.is_symlink():
+              raise SystemExit("refusing linked private replay cleanup")
+          if private_root.exists():
+              shutil.rmtree(private_root)
+          PY
+
+      - name: Audit the only retained file
+        id: retained
+        if: always() && !cancelled() && steps.cleanup.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          from tools.verify_canonical_image_evidence import validate_attestation
+
+          staging = Path("_canonical-image-staging")
+          expected = staging / "canonical-image-evidence-attestation.json"
+          entries = list(staging.iterdir()) if staging.is_dir() else []
+          if entries != [expected] or expected.is_symlink() or not expected.is_file():
+              raise SystemExit("retained-file audit failed")
+          document = json.loads(expected.read_text(encoding="ascii"))
+          validate_attestation(document)
+          PY
+
+      - name: Upload the sanitized attestation
+        id: artifact
+        if: always() && !cancelled() && steps.cleanup.outcome == 'success' && steps.retained.outcome == 'success'
+        continue-on-error: true
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: canonical-image-evidence-attestation
+          path: _canonical-image-staging/canonical-image-evidence-attestation.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Preserve a failed canonical-image evidence result
+        if: always() && !cancelled() && (steps.fetch.outcome != 'success' || steps.asset-cleanup.outcome != 'success' || steps.toolchain.outcome != 'success' || steps.analysis.outcome != 'success' || steps.failure-attestation.outcome == 'failure' || steps.cleanup.outcome != 'success' || steps.retained.outcome != 'success' || steps.artifact.outcome != 'success')
+        shell: bash
+        run: exit 1

@@ -17,6 +17,7 @@ param(
     [Alias('OutputPath')][string]$Out,
     [Parameter(Mandatory = $false)][string]$LogPath,
     [string]$GhidraHome = $env:REREVVED_GHIDRA_HOME,
+    [string]$HeadlessExecutable,
     [string]$Program = $env:REREVVED_GHIDRA_PROGRAM,
     [string]$CanonicalProjectDir = $env:REREVVED_GHIDRA_PROJECTS,
     [string]$CanonicalProjectName = $env:REREVVED_GHIDRA_PROJECT,
@@ -143,12 +144,26 @@ if ($Plan) {
     return
 }
 
-if (-not (Test-Path -LiteralPath $GhidraHome -PathType Container)) {
-    throw "Ghidra install root not found: $GhidraHome"
-}
-$headless = Join-Path $GhidraHome 'support\analyzeHeadless.bat'
-if (-not (Test-Path -LiteralPath $headless -PathType Leaf)) {
-    throw "analyzeHeadless.bat not found under $GhidraHome"
+if ([string]::IsNullOrWhiteSpace($HeadlessExecutable)) {
+    if (-not (Test-Path -LiteralPath $GhidraHome -PathType Container)) {
+        throw "Ghidra install root not found: $GhidraHome"
+    }
+    $headlessCandidates = @(
+        (Join-Path $GhidraHome 'support\analyzeHeadless.bat'),
+        (Join-Path $GhidraHome 'support/analyzeHeadless')
+    )
+    $headless = @($headlessCandidates | Where-Object {
+        Test-Path -LiteralPath $_ -PathType Leaf
+    } | Select-Object -First 1)
+    if ($headless.Count -ne 1) {
+        throw "analyzeHeadless not found under $GhidraHome"
+    }
+    $headless = $headless[0]
+} else {
+    $headless = Full-Path $HeadlessExecutable
+    if (-not (Test-Path -LiteralPath $headless -PathType Leaf)) {
+        throw "analyzeHeadless not found: $headless"
+    }
 }
 if (-not (Test-Path -LiteralPath $DisposableProjectDir -PathType Container)) {
     throw "Disposable project directory not found: $DisposableProjectDir"
@@ -211,7 +226,8 @@ try {
     if ($JavaHome) {
         [System.Environment]::SetEnvironmentVariable('JAVA_HOME', $JavaHome, 'Process')
         [System.Environment]::SetEnvironmentVariable(
-            'PATH', (Join-Path $JavaHome 'bin') + ';' + $oldPath, 'Process')
+            'PATH', (Join-Path $JavaHome 'bin') +
+                [System.IO.Path]::PathSeparator + $oldPath, 'Process')
     }
 
     foreach ($script in $repairScripts) {

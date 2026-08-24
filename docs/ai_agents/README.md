@@ -23,4 +23,5 @@ internal milestones, raw decompiler output, or private title material.
 | Question | Page |
 |---|---|
 | Evidence and claim boundaries | [Evidence model](../evidence-model.md) |
+| Bounded catalog mining | [Catalog mining method](../catalog-mining.md) |
 | Comments and public prose | [Comments and prose](comments-and-prose.md) |

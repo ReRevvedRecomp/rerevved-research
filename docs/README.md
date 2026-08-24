@@ -6,6 +6,7 @@ contribution needs repository-level rules, see
 
 - [Evidence model](evidence-model.md) - claim boundaries and confidence.
 - [Topic manifest contract](topic-manifests.md) - bounded findings and promotion.
+- [Catalog mining method](catalog-mining.md) - bounded packets, stops, and promotion.
 - [Catalog contract](catalogs.md) - canonical inventory formats and checks.
 - [Recovered game reference](reference/README.md) - readable unit, system, and enum findings.
 - [Headless workflow](workflow.md) - read-only queries and disposable repairs.

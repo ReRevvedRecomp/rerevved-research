@@ -16,6 +16,9 @@ from other documentation.
 Preserve source and external provenance, and do not promote raw
 decompiler output as evidence.
 
+Use the [catalog mining method](docs/catalog-mining.md) when a contribution
+starts from a catalog gap or needs a bounded static investigation packet.
+
 ## Repository changes
 
 Keep game assets, decrypted images, Ghidra projects, raw query output, and

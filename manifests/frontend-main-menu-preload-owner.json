@@ -39,7 +39,7 @@
     "qualification": "The one-shot flag remains at offset 0x434; adjacent timing fields occupy 0x42C and 0x430 in version 1.3."
   },
   "staticQuery": {
-    "scripts": ["ghidra/FindStrings.java", "ghidra/DumpReferences.java", "ghidra/DumpMemoryWords.java"],
+    "scripts": ["ghidra/FindStrings.java", "ghidra/DumpReferences.java", "ghidra/DumpMemoryWords.java", "ghidra/FindFieldAccesses.java"],
     "mode": "foreground-read-only",
     "generatedCorroboration": ["generated:rerevved/sub_82DEE860", "generated:rerevved/sub_82DEE920"]
   },
@@ -62,6 +62,16 @@
     "startedFlag": "0x434",
     "result": "When owner byte 0x11 is set and byte 0x434 is clear, the slot-0x4 method calls the main-menu preload and sets byte 0x434."
   },
+  "preloadGateFieldQuery": {
+    "function": "0x82DEE860",
+    "candidateOffsets": ["0x11", "0x434"],
+    "access": ["read", "write"],
+    "callerDepth": 0,
+    "scannedInstructions": 2,
+    "matchCount": 0,
+    "result": "A bounded FindFieldAccesses query found no helper-recognized direct register-plus-displacement access to offsets 0x11 or 0x434 in LegalScreenOwnerUpdate.",
+    "boundary": "The result does not disprove the established broader one-shot preload dataflow. It only leaves the direct field accesses and partial-owner catalog fields unproved by this query."
+  },
   "rejectedFactoryKey": {
     "result": "No version 1.3 factory-map entry or constructed-state edge connects a numeric key to the preload helper.",
     "falsificationCondition": "A version 1.3 factory entry explicitly constructs a state object whose method path owns 0x82E7EA60."
@@ -71,5 +81,5 @@
     "Do not rename the legal-screen owner beyond its observed movie path and vtable identity.",
     "Do not equate background preload with active main-menu presentation."
   ],
-  "conclusion": "Version 1.3 legal-screen owner update 0x82DEE860 explicitly triggers the main-menu preload once and records completion at owner byte 0x434."
+  "conclusion": "Version 1.3 legal-screen owner update 0x82DEE860 explicitly triggers the main-menu preload once and records one-shot preload dispatch/start at owner byte 0x434."
 }

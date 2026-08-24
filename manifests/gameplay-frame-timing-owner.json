@@ -53,9 +53,9 @@
     ]
   },
   "staticQuery": {
-    "scripts": ["ghidra/DumpMemoryWords.java"],
+    "scripts": ["ghidra/DumpMemoryWords.java", "ghidra/FindFieldAccesses.java"],
     "mode": "foreground-read-only",
-    "generatedCorroboration": ["generated:rerevved/sub_82E293E8", "generated:rerevved/sub_82E60F70", "generated:rerevved/sub_82C5F680"]
+    "generatedCorroboration": ["generated:rerevved/sub_82E293E8", "generated:rerevved/sub_82E60F70", "generated:rerevved/sub_82C7EBF8", "generated:rerevved/sub_82C5F680"]
   },
   "ownerPublication": {
     "publisher": "0x82E293E8",
@@ -63,6 +63,56 @@
     "vtable": "0x82164E14",
     "globals": ["0x8314F280", "0x8314F2D4"],
     "result": "The publisher allocates and initializes one 0x48-byte timing object, installs vtable 0x82164E14, and publishes the same pointer through both globals."
+  },
+  "publisherField10": {
+    "function": "0x82E293E8",
+    "instruction": "0x82E2943C",
+    "offset": "0x10",
+    "access": "write",
+    "result": "FrameTimingOwnerPublish stores the 64-bit f0 value at offset 0x10 of the newly initialized timing owner.",
+    "boundary": "The value's semantic meaning, units, cadence, and later consumers remain unresolved."
+  },
+  "publisherRemainingFields": {
+    "function": "0x82E293E8",
+    "writes": [
+      { "instruction": "0x82E29434", "offset": "0x28", "width": 8, "source": "f13" },
+      { "instruction": "0x82E29440", "offset": "0x30", "width": 4, "source": "r9" },
+      { "instruction": "0x82E29444", "offset": "0x8", "width": 8, "source": "f0" },
+      { "instruction": "0x82E2944C", "offset": "0x20", "width": 8, "source": "f0" }
+    ],
+    "noHitOffsets": ["0x18"],
+    "result": "FrameTimingOwnerPublish writes the four recorded r3-relative fields while initializing the shared timing owner.",
+    "boundary": "The values' semantic meanings, units, cadence, and later consumers remain unresolved. The missing 0x18 hit is bounded to this publisher query and does not establish that the owner lacks that field."
+  },
+  "advanceFieldWriteQuery": {
+    "function": "0x82C7EB68",
+    "candidateOffsets": ["0x8", "0x10", "0x18", "0x20", "0x28", "0x30"],
+    "access": "write",
+    "scannedInstructions": 2,
+    "matchedAccesses": 0,
+    "result": "The bounded depth-zero field-access query recovered no WRITE-classified access at the six candidate owner offsets.",
+    "boundary": "The configured function exposed only two scanned instructions, so this result does not establish that FrameTimingAdvance performs no memory writes."
+  },
+  "resetFieldWrites": {
+    "function": "0x82C7EBF8",
+    "writes": [
+      { "instruction": "0x82C7EC00", "offset": "0x30", "width": 4, "source": "r10" },
+      { "instruction": "0x82C7EC08", "offset": "0x10", "width": 8, "source": "f0" },
+      { "instruction": "0x82C7EC0C", "offset": "0x8", "width": 8, "source": "f0" },
+      { "instruction": "0x82C7EC10", "offset": "0x20", "width": 8, "source": "f0" }
+    ],
+    "noHitOffsets": ["0x18", "0x28"],
+    "result": "FrameTimingReset writes the four recorded r3-relative fields in the shared timing owner.",
+    "boundary": "The values' semantic meanings and runtime cadence remain unresolved. The missing 0x18 and 0x28 hits are bounded to this reset query and do not establish that those owner fields are absent."
+  },
+  "attractMovieFieldReadQuery": {
+    "function": "0x82C5F680",
+    "candidateOffsets": ["0x8", "0x10", "0x18", "0x20", "0x28", "0x30"],
+    "access": "read",
+    "scannedInstructions": 2,
+    "matchedAccesses": 0,
+    "result": "The bounded depth-zero field-access query recovered no READ-classified access at the six candidate owner offsets.",
+    "boundary": "The configured function exposed only two scanned instructions, so this result does not establish that AttractMovieFrameStep performs no timing-owner field reads."
   },
   "gameStartInitialization": {
     "entry": "0x82E60F70",

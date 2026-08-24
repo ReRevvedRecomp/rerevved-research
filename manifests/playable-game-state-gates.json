@@ -55,7 +55,8 @@
       "ghidra/DumpMemoryWords.java",
       "ghidra/DumpReferences.java",
       "ghidra/FindPointerValues.java",
-      "ghidra/DumpStringsInRange.java"
+      "ghidra/DumpStringsInRange.java",
+      "ghidra/FindFieldAccesses.java"
     ],
     "mode": "foreground-read-only",
     "generatedCorroboration": [
@@ -75,6 +76,35 @@
     "ingameString": "0x82123070",
     "result": "The check requires a non-null root-plus-0x70 current-state pointer and state key 2 before producing the self-identifying ingame result. Runtime observed key 1 at the main menu and key 2 during both new-game and loaded gameplay.",
     "boundary": "Key 2 establishes frontend gameplay lifecycle only; it does not establish a human turn or an unobstructed game interface."
+  },
+  "frontendRootCurrentStateRead": {
+    "function": "0x82E17238",
+    "rootGlobal": "0x82FFD624",
+    "globalLoad": "0x82E17260",
+    "instruction": "0x82E17268",
+    "offset": "0x70",
+    "width": 4,
+    "access": "read",
+    "result": "FrontendInGameStateCheck loads the frontend-root pointer from 0x82FFD624 and reads its current-state pointer at offset 0x70.",
+    "boundary": "The concrete frontend-root class and complete layout remain unresolved. Key 2 remains a frontend lifecycle state rather than a complete gameplay-availability gate."
+  },
+  "frontendStateKeyRead": {
+    "function": "0x82E17238",
+    "instruction": "0x82E17274",
+    "offset": "0x4",
+    "width": 4,
+    "access": "read",
+    "result": "FrontendInGameStateCheck reads the state key at offset 0x4 from the current-state pointer obtained through frontend-root offset 0x70.",
+    "boundary": "The complete frontend-state layout remains unresolved. Key 2 establishes frontend lifecycle only, not human-turn or interface availability."
+  },
+  "interfaceUpdateFieldReadQuery": {
+    "function": "0x82DE9FD8",
+    "candidateOffsets": ["0x5"],
+    "access": "read",
+    "scannedInstructions": 2,
+    "matchedAccesses": 0,
+    "result": "The bounded depth-zero field-access query recovered no READ-classified access at interface-state offset 0x5.",
+    "boundary": "The configured function exposed only two scanned instructions, so this result does not establish that InterfaceUpdateDebugRead performs no interface-state field read."
   },
   "turnOwner": {
     "activePlayerGlobal": "0x8312B8E8",

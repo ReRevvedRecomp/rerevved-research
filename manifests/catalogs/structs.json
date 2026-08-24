@@ -739,14 +739,15 @@
       "id": "RVA-STR-0024",
       "name": "application_owner_82121100",
       "image": "../image.json",
-      "claim": "Application owner initialized with vtable 0x82121100 and an embedded scene-active gate at offset 0xC0.",
+      "claim": "Application owner initialized with vtable 0x82121100, callback-registration state, and an embedded scene-active gate at offset 0xC0.",
       "confidence": "strong",
       "evidence": [
         { "kind": "topic-manifest", "locator": "../scene-active-gate-publication.json#/publication" },
-        { "kind": "generated-code", "locator": "generated:rerevved/sub_82E294D0" }
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82E294D0" },
+        { "kind": "topic-manifest", "locator": "../gameplay-main-frame-boundary.json#/callbackRegistration" }
       ],
       "qualification": {
-        "alternatives": ["The original class name, allocation size, and fields outside the bounded gate path remain unresolved."]
+        "alternatives": ["The original class name, allocation size, and fields outside the bounded scene-gate and callback-registration paths remain unresolved."]
       },
       "fields": [
         {
@@ -775,9 +776,35 @@
           ],
           "qualification": {
             "falsificationCondition": "ScenePublishStore does not construct the gate at owner offset 0xC0 and publish that address."
-          }
         }
-      ]
+      },
+      {
+        "id": "RVA-FLD-0128",
+        "name": "callback_vector",
+        "offset": "0x80",
+        "claim": "Begins the callback vector to which ApplicationCallbackRegister appends registered callback pointers.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "topic-manifest", "locator": "../gameplay-main-frame-boundary.json#/callbackRegistration" }
+        ],
+        "qualification": {
+          "alternatives": ["The vector header layout, element type beyond callback pointers, and full registration fan-out remain unresolved."]
+        }
+      },
+      {
+        "id": "RVA-FLD-0129",
+        "name": "callback_critical_section",
+        "offset": "0x90",
+        "claim": "Synchronization object locked while ApplicationCallbackRegister appends a callback pointer.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "topic-manifest", "locator": "../gameplay-main-frame-boundary.json#/callbackRegistration" }
+        ],
+        "qualification": {
+          "alternatives": ["The concrete synchronization type, initialization site, and relation to thread identity remain unresolved."]
+        }
+      }
+    ]
     },
     {
       "id": "RVA-STR-0025",
@@ -1087,6 +1114,721 @@
           ],
           "qualification": {
             "alternatives": ["The filename must remain scoped by the selected user/device content namespace."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0037",
+      "name": "frame_timing_owner",
+      "image": "../image.json",
+      "claim": "Shared 0x48-byte frame-timing owner allocated and initialized by FrameTimingOwnerPublish.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/ownerPublication" }
+      ],
+      "qualification": {
+        "alternatives": ["The original concrete class name, offset 0x18, and unlisted fields remain unresolved."]
+      },
+      "size": "0x48",
+      "fields": [
+        {
+          "id": "RVA-FLD-0114",
+          "name": "value_10",
+          "offset": "0x10",
+          "claim": "64-bit owner field written during publication initialization and by FrameTimingReset.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/publisherField10" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E2943C" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E293E8" },
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/resetFieldWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82C7EC08" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82C7EBF8" }
+          ],
+          "qualification": {
+            "alternatives": ["The value's semantic meaning, units, cadence, and later consumers remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0115",
+          "name": "value_08",
+          "offset": "0x8",
+          "claim": "64-bit owner field written during publication initialization and by FrameTimingReset.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/publisherRemainingFields" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E29444" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E293E8" },
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/resetFieldWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82C7EC0C" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82C7EBF8" }
+          ],
+          "qualification": {
+            "alternatives": ["The value's semantic meaning, units, cadence, and later consumers remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0116",
+          "name": "value_20",
+          "offset": "0x20",
+          "claim": "64-bit owner field written during publication initialization and by FrameTimingReset.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/publisherRemainingFields" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E2944C" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E293E8" },
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/resetFieldWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82C7EC10" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82C7EBF8" }
+          ],
+          "qualification": {
+            "alternatives": ["The value's semantic meaning, units, cadence, and later consumers remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0117",
+          "name": "initialized_value_28",
+          "offset": "0x28",
+          "claim": "Receives the 64-bit f13 value written by FrameTimingOwnerPublish during owner initialization.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/publisherRemainingFields" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E29434" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E293E8" }
+          ],
+          "qualification": {
+            "alternatives": ["The value's semantic meaning, units, cadence, and later consumers remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0118",
+          "name": "word_30",
+          "offset": "0x30",
+          "claim": "32-bit owner field written during publication initialization and by FrameTimingReset.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/publisherRemainingFields" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E29440" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E293E8" },
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/resetFieldWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82C7EC00" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82C7EBF8" }
+          ],
+          "qualification": {
+            "alternatives": ["The value's semantic meaning and later consumers remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0038",
+      "name": "frontend_root",
+      "image": "../image.json",
+      "claim": "Partial frontend-root layout published through global 0x82FFD624.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../playable-game-state-gates.json#/frontendLifecycle" }
+      ],
+      "qualification": {
+        "alternatives": ["The concrete class, allocation size, and fields other than offset 0x70 remain unresolved."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0119",
+          "name": "current_state",
+          "offset": "0x70",
+          "claim": "Holds the current frontend-state pointer consumed by FrontendInGameStateCheck.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../playable-game-state-gates.json#/frontendRootCurrentStateRead" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E17268" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E17238" }
+          ],
+          "qualification": {
+            "alternatives": ["The pointed state's complete layout and lifetime remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0039",
+      "name": "attract_movie_frontend_state",
+      "image": "../image.json",
+      "claim": "0x10-byte concrete key-5 frontend state initialized by AttractMovieStateFactory.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateFactoryWrites" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_821B3BB8" }
+      ],
+      "qualification": {
+        "alternatives": ["The first two fields match the shared frontend-state identity prefix, but formal inheritance is not established."]
+      },
+      "size": "0x10",
+      "fields": [
+        {
+          "id": "RVA-FLD-0120",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Stores attract-movie state vtable 0x82121320.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateFactoryWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x821B3BF8" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_821B3BB8" }
+          ],
+          "qualification": { "falsificationCondition": "The factory does not store 0x82121320 at object offset 0x0." }
+        },
+        {
+          "id": "RVA-FLD-0121",
+          "name": "state_key",
+          "offset": "0x4",
+          "claim": "Stores numeric frontend state key 5.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateFactoryWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x821B3BF4" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_821B3BB8" }
+          ],
+          "qualification": { "alternatives": ["Key 5 identifies this bounded frontend state only; no global enum meaning is inferred."] }
+        },
+        {
+          "id": "RVA-FLD-0122",
+          "name": "word_08",
+          "offset": "0x8",
+          "claim": "Anonymous 32-bit field cleared during state construction.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateFactoryWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x821B3BF0" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_821B3BB8" }
+          ],
+          "qualification": { "alternatives": ["The field's semantic role and later consumers remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0123",
+          "name": "byte_0C",
+          "offset": "0xC",
+          "claim": "Anonymous byte field cleared during state construction.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateFactoryWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x821B3BFC" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_821B3BB8" }
+          ],
+          "qualification": { "alternatives": ["The field's semantic role and later consumers remain unresolved."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0040",
+      "name": "gfx_movie_clip_loader_owner",
+      "image": "../image.json",
+      "claim": "Partial MovieClipLoader owner layout containing the state-provider interface and bounded request/result fields.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/ownerStateInterface" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_821EF610" },
+        { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/attachmentBoundary" },
+        { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/downstreamBoundary" }
+      ],
+      "qualification": {
+        "alternatives": ["The complete owner layout, resolved provider, field representations, element ownership, and runtime contents remain unknown."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0124",
+          "name": "state_provider_interface_vptr",
+          "offset": "0x10",
+          "claim": "Stores owner state-provider interface table 0x8213CF34.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/ownerStateInterface" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_821EF610" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The store at 0x821EF650 does not write 0x8213CF34 to the incoming object at offset 0x10."
+        }
+      },
+      {
+        "id": "RVA-FLD-0136",
+        "name": "fallback_request_field",
+        "offset": "0x220",
+        "claim": "Receives a request when the owner state-provider lookup returns null.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/attachmentBoundary" }
+        ],
+        "qualification": {
+          "alternatives": ["The field representation, element ownership, lifetime, and runtime contents remain unresolved."]
+        }
+      },
+      {
+        "id": "RVA-FLD-0137",
+        "name": "fulfilled_result_field",
+        "offset": "0x224",
+        "claim": "Receives a non-null result constructed by MovieClipLoaderFulfilledRequestHandler.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/downstreamBoundary" }
+        ],
+        "qualification": {
+          "alternatives": ["The field representation, element type, ownership, lifetime, and runtime contents remain unresolved."]
+        }
+      }
+    ]
+    },
+    {
+      "id": "RVA-STR-0041",
+      "name": "hall_of_achievements_resource_owner",
+      "image": "../image.json",
+      "claim": "0xD0-byte Hall of Achievements resource owner constructed by HallOfAchievementsEnvironmentCtor.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../ingame-screen-hoa-resource-owner.json#/ownerConstruction" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82DCE090" }
+      ],
+      "qualification": {
+        "alternatives": ["The enclosing InGameScreenRun receiver retains this object at its own offset 0x8; that offset is not part of this structure."]
+      },
+      "size": "0xD0",
+      "fields": [
+        {
+          "id": "RVA-FLD-0125",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Stores Hall of Achievements owner vtable 0x8212FBE8.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../ingame-screen-hoa-resource-owner.json#/ownerConstruction" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82DCE090" }
+          ],
+          "qualification": {
+            "alternatives": ["The bounded Ghidra field query did not independently recover the generated-code vptr store."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0126",
+          "name": "hoa_01main_resource",
+          "offset": "0x14",
+          "claim": "Receives the first type-1 HOA_01Main.xml resource lookup output.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../ingame-screen-hoa-resource-owner.json#/firstAreaResource" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82DCE090" }
+          ],
+          "qualification": {
+            "alternatives": ["Static evidence does not prove a cache hit, successful parsing, or runtime display."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0042",
+      "name": "ingame_screen_run_receiver",
+      "image": "../image.json",
+      "claim": "Partial receiver layout used by InGameScreenRun.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../ingame-screen-hoa-resource-owner.json#/ownerConstruction" }
+      ],
+      "qualification": {
+        "alternatives": ["The receiver's concrete class, allocation size, vtable, remaining fields, and lifetime semantics remain unresolved."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0127",
+          "name": "hall_of_achievements_owner",
+          "offset": "0x8",
+          "claim": "Retains the 0xD0-byte Hall of Achievements resource-owner pointer produced by InGameScreenRun.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../ingame-screen-hoa-resource-owner.json#/ownerConstruction" }
+          ],
+          "qualification": {
+            "alternatives": ["Retention does not prove exclusive ownership, destruction order, or the receiver's complete type."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0043",
+      "name": "application_frame_callback_object_82120D2C",
+      "image": "../image.json",
+      "claim": "0x4-byte application frame callback object allocated and registered by ApplicationCallbackContainerCtor.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gameplay-main-frame-boundary.json#/callbackRegistration" }
+      ],
+      "qualification": {
+        "alternatives": ["The address-derived role name does not establish an original concrete class, lifetime, or playable-state gate."]
+      },
+      "size": "0x4",
+      "fields": [
+        {
+          "id": "RVA-FLD-0130",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Stores application frame callback vtable 0x82120D2C.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-main-frame-boundary.json#/callbackRegistration" }
+          ],
+          "qualification": {
+            "falsificationCondition": "ApplicationCallbackContainerCtor does not install 0x82120D2C at offset 0x0 before registration."
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0044",
+      "name": "movie_clip_loader_load_clip_packet",
+      "image": "../image.json",
+      "claim": "Partial incoming packet layout consumed by MovieClipLoaderLoadClipHandler.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/handlerPacket" }
+      ],
+      "qualification": {
+        "alternatives": ["The packet allocation size, omitted fields, pointer target types, and runtime ownership remain unresolved."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0131",
+          "name": "handler_state",
+          "offset": "0x4",
+          "claim": "State object initialized when the handler enters and finalized when it exits.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/handlerPacket/fields/+0x4" }
+          ],
+          "qualification": {
+            "alternatives": ["The state object's concrete type and internal semantics remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0132",
+          "name": "receiver",
+          "offset": "0x8",
+          "claim": "Receiver pointer used for the handler's first request-dependent virtual dispatch.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/handlerPacket/fields/+0x8" }
+          ],
+          "qualification": {
+            "alternatives": ["The receiver type, vtable identity, slot target, and runtime object remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0133",
+          "name": "argument_context",
+          "offset": "0x18",
+          "claim": "Argument context passed to the handler's extraction helpers for indices zero and one.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/handlerPacket/fields/+0x18" }
+          ],
+          "qualification": {
+            "alternatives": ["The argument context's complete layout and concrete type remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0134",
+          "name": "argument_count",
+          "offset": "0x1C",
+          "claim": "Argument count tested against the minimum loadClip arity of two.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/handlerPacket/fields/+0x1C" }
+          ],
+          "qualification": {
+            "falsificationCondition": "MovieClipLoaderLoadClipHandler does not gate processing on packet offset 0x1C being at least two."
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0045",
+      "name": "movie_clip_loader_request",
+      "image": "../image.json",
+      "claim": "Partial 0x38-byte request object produced by both MovieClipLoader request builders.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/requestConstruction" },
+        { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/attachmentBoundary" }
+      ],
+      "qualification": {
+        "alternatives": ["The concrete type, vptr, ownership, lifetime, representation of the request string, and all other fields remain unresolved."]
+      },
+      "size": "0x38",
+      "fields": [
+        {
+          "id": "RVA-FLD-0135",
+          "name": "request_string",
+          "offset": "0xC",
+          "claim": "Request-string field consumed by MovieClipLoaderAttachRequest.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/attachmentBoundary/requestStringField" }
+          ],
+          "qualification": {
+            "alternatives": ["The string representation, allocation ownership, and later content resolution remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0046",
+      "name": "gfx_image_movie_shape_90",
+      "image": "../image.json",
+      "claim": "Partial 0x90-byte image-file movie shape initialized from a decoded GFx image.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/currentEvidence/entries/0" },
+        { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout" }
+      ],
+      "qualification": {
+        "alternatives": ["The original class name, complete layout, bounds/path storage, fill-entry internals, ownership, and runtime display remain unresolved here."]
+      },
+      "size": "0x90",
+      "fields": [
+        {
+          "id": "RVA-FLD-0138",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Stores shape vtable 0x8213D408 installed by the existing base initializer.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/vtable" },
+            { "kind": "topic-manifest", "locator": "../gfx-vtable-ownership.json#/baseReplacement" }
+          ],
+          "qualification": {
+            "falsificationCondition": "GfxComplexFillBaseInitialize does not install 0x8213D408 at object offset 0x0."
+          }
+        },
+        {
+          "id": "RVA-FLD-0139",
+          "name": "flags",
+          "offset": "0x34",
+          "claim": "Shape flags field identified by the closed image-movie shape layout.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/flags" }
+          ],
+          "qualification": {
+            "alternatives": ["Individual flag bits and the exact initializer store responsible for each bit remain unresolved in this packet."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0140",
+          "name": "fill_style_data",
+          "offset": "0x64",
+          "claim": "Data pointer for the shape's fill-style array.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/fillStyleArray/data" }
+          ],
+          "qualification": {
+            "alternatives": ["The separate 0x28-byte fill-entry layout is outside this field record."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0141",
+          "name": "fill_style_count",
+          "offset": "0x68",
+          "claim": "Element count for the shape's fill-style array.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/fillStyleArray/count" }
+          ],
+          "qualification": {
+            "alternatives": ["Runtime count values outside the one-entry image initialization remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0142",
+          "name": "fill_style_capacity",
+          "offset": "0x6C",
+          "claim": "Capacity value for the shape's fill-style array.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/fillStyleArray/capacity" }
+          ],
+          "qualification": {
+            "alternatives": ["Growth policy and runtime capacity values outside initialization remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0047",
+      "name": "gfx_image_fill_entry_28",
+      "image": "../image.json",
+      "claim": "Partial 0x28-byte direct image-fill entry referenced by the synthetic image-movie shape.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/fillStyleArray" },
+        { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/imageFill" }
+      ],
+      "qualification": {
+        "alternatives": ["This is one direct image fill; allocation, lifetime, inline storage, other shape variants, and renderer texture/backend identities remain unresolved."]
+      },
+      "size": "0x28",
+      "fields": [
+        {
+          "id": "RVA-FLD-0143",
+          "name": "type",
+          "offset": "0x0",
+          "claim": "Fill type byte for the direct image fill.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/imageFill/type" }
+          ],
+          "qualification": {
+            "alternatives": ["The complete type enumeration and meanings for other fill variants remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0144",
+          "name": "flags",
+          "offset": "0x1",
+          "claim": "Fill flags byte for the direct image fill.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/imageFill/flags" }
+          ],
+          "qualification": {
+            "alternatives": ["Individual flag-bit meanings remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0145",
+          "name": "resource_handle_kind",
+          "offset": "0x8",
+          "claim": "Resource-handle kind field observed as zero for this direct image fill.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/imageFill/resourceHandleKind" },
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/result" }
+          ],
+          "qualification": {
+            "alternatives": ["The public meaning of kind zero and values used by other fill variants remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0146",
+          "name": "resource_pointer",
+          "offset": "0xC",
+          "claim": "Stores the decoded GFx image-resource pointer for this direct image fill.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/imageFill/resourcePointer" },
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/result" }
+          ],
+          "qualification": {
+            "alternatives": ["This pointer is not a renderer texture or backend texture; ownership and lifetime remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0048",
+      "name": "gfx_fill_texture_output",
+      "image": "../image.json",
+      "claim": "Partial output container populated by GfxImageFillTextureResolve on its bounded successful path.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/currentEvidence/entries/4" }
+      ],
+      "qualification": {
+        "alternatives": ["The provisional role name does not establish an original type, size, padding, allocation, ownership, lifetime, or failure-path contents."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0147",
+          "name": "renderer_texture",
+          "offset": "0x0",
+          "claim": "Receives the resolved renderer-texture pointer on the bounded successful resolver path.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/currentEvidence/entries/4" }
+          ],
+          "qualification": {
+            "alternatives": ["The result is a renderer texture, not the source GFx image resource or backend texture; ownership and lifetime remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0049",
+      "name": "gfx_state_snapshot_partial",
+      "image": "../image.json",
+      "claim": "Partial GFx state snapshot exposing the state-kind-10 opener and state-kind-12 creator outputs used by the external-image path.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/currentEvidence/stateSnapshotBuilder" },
+        { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState" }
+      ],
+      "qualification": {
+        "alternatives": ["The original type name, allocation size, complete layout, other state-kind fields, ownership, lifetime, and runtime values remain unresolved."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0148",
+          "name": "state_kind_10_opener",
+          "offset": "0x10",
+          "claim": "Holds the snapshotted state-kind-10 opener used by the bounded external-file decode branch.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/openerSnapshotField" },
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/fileDecodeHandoff" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete field type, ownership, lifetime, and runtime opener identity remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0149",
+          "name": "state_kind_12_creator",
+          "offset": "0x18",
+          "claim": "Holds the snapshotted state-kind-12 creator used by the bounded external-image request branch.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/creatorSnapshotField" },
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/currentEvidence/resourceCreator" },
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/fileDecodeHandoff" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete field type, ownership, lifetime, and runtime creator identity remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0050",
+      "name": "gfx_temporary_decoded_image_object",
+      "image": "../image.json",
+      "claim": "0x38-byte temporary conversion object with a decoded-image record embedded at offset 0x10.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-decoded-image-upload.json#/sourceSelection/temporaryPath" }
+      ],
+      "qualification": {
+        "alternatives": ["The original type name, fields outside the embedded record boundary, ownership, lifetime, and allocator behavior remain unresolved."]
+      },
+      "size": "0x38",
+      "fields": [
+        {
+          "id": "RVA-FLD-0150",
+          "name": "decoded_image_record",
+          "offset": "0x10",
+          "claim": "Begins the embedded seven-word GfxDecodedImageRecord used for temporary conversion storage.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-decoded-image-upload.json#/sourceSelection/temporaryPath" }
+          ],
+          "qualification": {
+            "falsificationCondition": "Offset 0x10 is not the base of the embedded seven-word decoded-image record; this field does not assign ownership or lifetime."
           }
         }
       ]

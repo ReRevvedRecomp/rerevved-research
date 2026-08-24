@@ -46,7 +46,8 @@
       "ghidra/DumpFunctions.java",
       "ghidra/DumpMemoryWords.java",
       "ghidra/DumpReferences.java",
-      "ghidra/DumpDataValues.java"
+      "ghidra/DumpDataValues.java",
+      "ghidra/FindFieldAccesses.java"
     ],
     "mode": "foreground-read-only",
     "generatedCorroboration": [
@@ -62,6 +63,21 @@
     "vtable": "0x82121320",
     "result": "The factory allocates 0x10 bytes, stores numeric key 5 at offset 0x4, installs table 0x82121320, clears word 0x8, and clears byte 0xC."
   },
+  "stateFactoryWrites": {
+    "function": "0x821B3BB8",
+    "allocationSize": "0x10",
+    "access": "write",
+    "callerDepth": 0,
+    "scannedInstructions": 27,
+    "writes": [
+      { "instruction": "0x821B3BF0", "offset": "0x8", "width": 4, "value": 0, "base": "r3" },
+      { "instruction": "0x821B3BF4", "offset": "0x4", "width": 4, "value": 5, "base": "r3" },
+      { "instruction": "0x821B3BF8", "offset": "0x0", "width": 4, "value": "0x82121320", "base": "r3" },
+      { "instruction": "0x821B3BFC", "offset": "0xC", "width": 1, "value": 0, "base": "r3" }
+    ],
+    "result": "The key-5 state factory writes the vtable pointer, state key, zero word, and zero byte to one returned r3-based 0x10-byte object.",
+    "boundary": "Offsets 0x8 and 0xC are only anonymous zero-initialized storage; formal inheritance and runtime construction success remain unresolved."
+  },
   "objectConstruction": {
     "builder": "0x82E60360",
     "stateTable": "0x82121320",
@@ -73,6 +89,15 @@
     "objectVtable": "0x82121340",
     "result": "The key-5 state entry selects an attract-movie resource, reports it with the exact AttractMovie log text, initializes the allocated object through 0x82C5F590, and installs vtable 0x82121340."
   },
+  "stateTableSlotRead": {
+    "table": "0x82121320",
+    "slotOffset": "0x1C",
+    "slotAddress": "0x8212133C",
+    "wordRadius": 0,
+    "target": "0x82E60360",
+    "result": "A bounded read-only memory-word query confirmed that key-5 attract-movie state table slot 0x1C targets the attract-movie object builder.",
+    "boundary": "The slot word proves the static target, not runtime dispatch, playback success, or an original class name."
+  },
   "frameOwnership": {
     "vtable": "0x82121340",
     "frameSlotOffset": "0x4",
@@ -82,6 +107,24 @@
     "otherBoundedSlotTarget": "0x82C5E778",
     "result": "The constructed attract-movie object's slot 0x4 targets 0x82C5F680. Its timing advance and frontend/GFx calls therefore belong to attract-movie playback, not evidence of a playable-game update loop.",
     "boundary": "The slot's runtime cadence and successful playback remain unproven."
+  },
+  "vtableSlotRead": {
+    "table": "0x82121340",
+    "slotOffset": "0x4",
+    "slotAddress": "0x82121344",
+    "wordRadius": 0,
+    "target": "0x82C5F680",
+    "result": "A bounded read-only memory-word query confirmed that attract-movie object vtable slot 0x4 targets AttractMovieFrameStep.",
+    "boundary": "The slot word proves static dispatch ownership, not runtime cadence or successful attract-movie playback."
+  },
+  "vtableSlot8Read": {
+    "table": "0x82121340",
+    "slotOffset": "0x8",
+    "slotAddress": "0x82121348",
+    "wordRadius": 0,
+    "target": "0x82C5E778",
+    "result": "A bounded read-only memory-word query confirmed that attract-movie object vtable slot 0x8 targets the function at 0x82C5E778.",
+    "boundary": "The slot word proves only the static target. The function's behavior and runtime dispatch remain unresolved."
   },
   "rejectedLeads": {
     "playableFrameBoundary": {

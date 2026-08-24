@@ -168,17 +168,32 @@
       "name": "GfxRendererVtable",
       "address": "0x82169E30",
       "image": "../image.json",
-      "claim": "Version 1.3 Scaleform renderer vtable with the interpreted texture-object factory and indexed-draw slots.",
+      "claim": "Version 1.3 Scaleform renderer vtable with interpreted capability-query, texture-object factory, and indexed-draw slots.",
       "confidence": "confirmed",
       "evidence": [
         { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/rendererTextureHandoff" },
+        { "kind": "topic-manifest", "locator": "../gfx-complex-fill.json#/producer/rendererVtable" },
         { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82169E30" },
         { "kind": "ghidra-static", "locator": "ghidra/FindPointerValues.java:0x82302DC8" }
       ],
       "qualification": {
-        "alternatives": ["Only the texture-object factory and indexed-draw slots needed by current packets are interpreted."]
+        "alternatives": ["Only the capability-query, texture-object factory, and indexed-draw slots needed by current packets are interpreted."]
       },
       "slots": [
+        {
+          "id": "RVA-SLOT-0043",
+          "offset": "0x4",
+          "target": "RVA-SYM-0249",
+          "claim": "Queries the renderer capability snapshot and active status.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-complex-fill.json#/producer/rendererVtable" },
+            { "kind": "topic-manifest", "locator": "../gfx-complex-fill.json#/staticQuery/result" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The current-image word at 0x82169E34 does not resolve to 0x82302E90, or 0x82169E30 is not the renderer vtable."
+          }
+        },
         {
           "id": "RVA-SLOT-0016",
           "offset": "0x8",
@@ -441,7 +456,7 @@
         {"id": "RVA-SLOT-0028", "offset": "0x8", "target": "RVA-SYM-0113", "claim": "Advances the frame-timing sample and accumulated fields.", "confidence": "confirmed", "evidence": [{"kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/perFrameUpdate"}], "qualification": {"falsificationCondition": "The table word at 0x82164E1C is not 0x82C7EB68."}}
       ]
     },
-    {"id":"RVA-VTBL-0013","name":"CcGameInputProcessor_vtable_82138B4C","address":"0x82138B4C","image":"../image.json","claim":"Function-pointer table whose slot 0x4 dispatches CcGameInputProcessor events.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../controller-input-glyph-selection.json#/frontendDispatch"},{"kind":"ghidra-static","locator":"ghidra/FindPointerValues.java:0x82E555A0"}],"qualification":{"alternatives":["Only the dispatch slot is cataloged."]},"slots":[{"id":"RVA-SLOT-0019","offset":"0x4","target":"RVA-SYM-0067","claim":"Dispatches the accepted input event through CcGameInputProcessor.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../controller-input-glyph-selection.json#/frontendDispatch"}],"qualification":{"falsificationCondition":"The word at 0x82138B50 is not 0x82E555A0."}}]},
+    {"id":"RVA-VTBL-0013","name":"CcGameInputProcessor_vtable_82138B4C","address":"0x82138B4C","image":"../image.json","claim":"Function-pointer table whose slot 0x4 dispatches CcGameInputProcessor events.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../controller-input-glyph-selection.json#/frontendDispatch"},{"kind":"ghidra-static","locator":"ghidra/FindPointerValues.java:0x82E555A0"}],"qualification":{"alternatives":["Only the dispatch and class-name slots are cataloged."]},"slots":[{"id":"RVA-SLOT-0019","offset":"0x4","target":"RVA-SYM-0067","claim":"Dispatches the accepted input event through CcGameInputProcessor.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../controller-input-glyph-selection.json#/frontendDispatch"}],"qualification":{"falsificationCondition":"The word at 0x82138B50 is not 0x82E555A0."}},{"id":"RVA-SLOT-0038","offset":"0x8","target":"RVA-SYM-0225","claim":"Targets the CcGameInputProcessor class-name function.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../controller-input-glyph-selection.json#/classNameSlotRead"},{"kind":"ghidra-static","locator":"ghidra/DumpMemoryWords.java:0x82138B54"}],"qualification":{"falsificationCondition":"The word at 0x82138B54 is not 0x821D8498."}}]},
     {"id":"RVA-VTBL-0014","name":"input_poller_vtable_8216A26C","address":"0x8216A26C","image":"../image.json","claim":"Function-pointer table installed by the input-poller constructor.","confidence":"strong","evidence":[{"kind":"topic-manifest","locator":"../controller-input-glyph-selection.json#/controllerEvents"},{"kind":"generated-code","locator":"generated:rerevved/sub_82C15038"}],"qualification":{"alternatives":["Only the poll slot is cataloged."]},"slots":[{"id":"RVA-SLOT-0020","offset":"0x4","target":"RVA-SYM-0064","claim":"Refreshes controller snapshots and enters delta emission.","confidence":"strong","evidence":[{"kind":"topic-manifest","locator":"../controller-input-glyph-selection.json#/controllerEvents"}],"qualification":{"falsificationCondition":"The slot does not target the poller at 0x82C14EE8."}}]},
     {"id":"RVA-VTBL-0020","name":"hall_of_achievements_environment_vtable_8212FBE8","address":"0x8212FBE8","image":"../image.json","claim":"Function-pointer table installed in the version 1.3 Hall of Achievements resource owner.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../ingame-screen-hoa-resource-owner.json#/ownerConstruction"},{"kind":"generated-code","locator":"generated:rerevved/sub_82DCE090"}],"qualification":{"alternatives":["Slot roles are outside this bounded packet."]},"slots":[]},
     {"id":"RVA-VTBL-0017","name":"localization_owner_vtable_82120FC0","address":"0x82120FC0","image":"../image.json","claim":"Function-pointer table installed in the 0x14C-byte localization owner.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../platform-timing-locale-wrappers.json#/localizationOwner"},{"kind":"ghidra-static","locator":"ghidra/DumpMemoryWords.java:0x82120FC0"}],"qualification":{"alternatives":["Only the locale-selection slot is recorded."]},"slots":[{"id":"RVA-SLOT-0025","offset":"0x14","target":"RVA-SYM-0095","claim":"Resolves, validates, and applies an internal locale ID.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../platform-timing-locale-wrappers.json#/localizationOwner/localeSlot"}],"qualification":{"falsificationCondition":"The word at 0x82120FD4 is not 0x82E6AD10."}}]},
@@ -474,6 +489,201 @@
           "qualification": {
             "falsificationCondition": "The word at 0x82120D2C is not 0x82E87D18."
           }
+        }
+      ]
+    },
+    {
+      "id": "RVA-VTBL-0024",
+      "name": "attract_movie_object_vtable_82121340",
+      "address": "0x82121340",
+      "image": "../image.json",
+      "claim": "Function-pointer table installed in the attract-movie playback object built for the key-5 frontend state.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/objectConstruction" },
+        { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/vtableSlotRead" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82121344" }
+      ],
+      "qualification": {
+        "alternatives": ["Only slots 0x4 and 0x8 are cataloged; the object's original concrete class name and successful runtime playback remain unresolved."]
+      },
+      "slots": [
+        {
+          "id": "RVA-SLOT-0034",
+          "offset": "0x4",
+          "target": "RVA-SYM-0114",
+          "claim": "Dispatches the confirmed attract-movie frame step.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/vtableSlotRead" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82121344" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The word at 0x82121344 is not 0x82C5F680."
+          }
+        },
+        {
+          "id": "RVA-SLOT-0035",
+          "offset": "0x8",
+          "target": "RVA-SYM-0221",
+          "claim": "Dispatches the function at 0x82C5E778 without assigning a semantic role.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/vtableSlot8Read" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82121348" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The word at 0x82121348 is not 0x82C5E778."
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-VTBL-0025",
+      "name": "attract_movie_state_vtable_82121320",
+      "address": "0x82121320",
+      "image": "../image.json",
+      "claim": "Function-pointer table installed in the 0x10-byte key-5 frontend state that selects attract-movie object construction.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateFactory" },
+        { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateTableSlotRead" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x8212133C" }
+      ],
+      "qualification": {
+        "alternatives": ["Only slot 0x1C is cataloged; runtime dispatch and the original concrete class remain unresolved."]
+      },
+      "slots": [
+        {
+          "id": "RVA-SLOT-0036",
+          "offset": "0x1C",
+          "target": "RVA-SYM-0222",
+          "claim": "Selects the confirmed attract-movie object builder.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateTableSlotRead" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x8212133C" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The word at 0x8212133C is not 0x82E60360."
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-VTBL-0026",
+      "name": "unit_record_gate_callback_vtable_82138768",
+      "address": "0x82138768",
+      "image": "../image.json",
+      "claim": "Function-pointer table installed in the singleton whose slot 0x1BC is selected for nonzero unit-record byte 0x04.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../presentation-speed-producers.json#/combat/nativeDivisorSelector/recordByte04Consumer" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82138924" }
+      ],
+      "qualification": {
+        "alternatives": ["Only slot 0x1BC is cataloged; this is not a movement speed or duration producer and does not establish runtime dispatch."]
+      },
+      "slots": [
+        {
+          "id": "RVA-SLOT-0037",
+          "offset": "0x1BC",
+          "target": "RVA-SYM-0224",
+          "claim": "Targets the bounded unit-record snapshot processor.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../presentation-speed-producers.json#/combat/nativeDivisorSelector/recordByte04Consumer/catalogSlotRead" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82138924" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The word at 0x82138924 is not 0x82D81BA0."
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-VTBL-0027",
+      "name": "gfx_concrete_state_bag_vtable_8213CF60",
+      "address": "0x8213CF60",
+      "image": "../image.json",
+      "claim": "Function-pointer table for one concrete GFx keyed-state provider implementation.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/concreteStateBag" },
+        { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/concreteStateBagSlotRead" }
+      ],
+      "qualification": {
+        "alternatives": ["Only slots 0x8 and 0xC are cataloged; static structure does not prove this is the unique runtime provider."]
+      },
+      "slots": [
+        {
+          "id": "RVA-SLOT-0039",
+          "offset": "0x8",
+          "target": "RVA-SYM-0226",
+          "claim": "Targets the concrete state-bag set-or-erase operation.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/concreteStateBag" },
+            { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/concreteStateBagSlotRead" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x8213CF68" }
+          ],
+          "qualification": { "falsificationCondition": "The word at 0x8213CF68 is not 0x821EE910." }
+        },
+        {
+          "id": "RVA-SLOT-0040",
+          "offset": "0xC",
+          "target": "RVA-SYM-0227",
+          "claim": "Targets the concrete state-bag keyed lookup with parent fallback.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/concreteStateBag" },
+            { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/concreteStateBagSlotRead" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x8213CF6C" }
+          ],
+          "qualification": { "falsificationCondition": "The word at 0x8213CF6C is not 0x821EEA38." }
+        }
+      ]
+    },
+    {
+      "id": "RVA-VTBL-0028",
+      "name": "gfx_owner_state_interface_vtable_8213CF34",
+      "address": "0x8213CF34",
+      "image": "../image.json",
+      "claim": "Function-pointer table installed in the MovieClipLoader owner's state-provider forwarding subobject at offset 0x10.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/ownerStateInterface" },
+        { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/ownerStateInterfaceSlotRead" }
+      ],
+      "qualification": {
+        "alternatives": ["Only slots 0x8 and 0xC are cataloged; this table is distinct from concrete state-bag vtable 0x8213CF60."]
+      },
+      "slots": [
+        {
+          "id": "RVA-SLOT-0041",
+          "offset": "0x8",
+          "target": "RVA-SYM-0228",
+          "claim": "Targets the owner-side state-set forwarder.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/ownerStateInterface" },
+            { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/ownerStateInterfaceSlotRead" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x8213CF3C" }
+          ],
+          "qualification": { "falsificationCondition": "The word at 0x8213CF3C is not 0x821E2B30." }
+        },
+        {
+          "id": "RVA-SLOT-0042",
+          "offset": "0xC",
+          "target": "RVA-SYM-0229",
+          "claim": "Targets the owner-side keyed-state lookup forwarder.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/ownerStateInterface" },
+            { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/ownerStateInterfaceSlotRead" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x8213CF40" }
+          ],
+          "qualification": { "falsificationCondition": "The word at 0x8213CF40 is not 0x821E2B98." }
         }
       ]
     }

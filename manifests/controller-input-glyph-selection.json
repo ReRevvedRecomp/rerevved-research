@@ -37,9 +37,9 @@
     ]
   },
   "staticQuery": {
-    "scripts": ["ghidra/FindStrings.java", "ghidra/DumpReferences.java", "ghidra/FindPointerValues.java"],
+    "scripts": ["ghidra/FindStrings.java", "ghidra/DumpReferences.java", "ghidra/FindPointerValues.java", "ghidra/FindFieldAccesses.java", "ghidra/DumpMemoryWords.java"],
     "mode": "foreground-read-only",
-    "generatedCorroboration": ["generated:rerevved/sub_82C14A30", "generated:rerevved/sub_82C14AD8", "generated:rerevved/sub_82C14EE8", "generated:rerevved/sub_82E555A0"]
+    "generatedCorroboration": ["generated:rerevved/sub_82C14A30", "generated:rerevved/sub_82C14AD8", "generated:rerevved/sub_82C14EE8", "generated:rerevved/sub_82E555A0", "generated:rerevved/sub_821D8498"]
   },
   "controllerEvents": {
     "poller": "0x82C14EE8",
@@ -48,6 +48,16 @@
     "eventQueueField": "0x10",
     "eventRecordSize": "0x18",
     "result": "The adjacent version 1.3 functions implement the bounded poll, delta comparison, and 0x18-byte queued-event construction chain."
+  },
+  "eventQueueFieldQuery": {
+    "function": "0x82C14A30",
+    "candidateOffsets": ["0x10"],
+    "access": ["read", "write"],
+    "callerDepth": 0,
+    "scannedInstructions": 2,
+    "matchCount": 0,
+    "result": "A bounded FindFieldAccesses query found no helper-recognized direct register-plus-displacement access to offset 0x10 in ControllerEventBuild.",
+    "boundary": "The result does not disprove the established broader poll-to-queue chain. It only leaves the direct queue-field owner and catalog relations unproved by this query."
   },
   "frontendDispatch": {
     "processor": "CcGameInputProcessor",
@@ -59,6 +69,17 @@
     "className": "CcGameInputProcessor",
     "result": "The processor table places dispatch 0x82E555A0 at slot 0x4 and the function returning CcGameInputProcessor at slot 0x8.",
     "boundary": "The complete queue fan-out and semantic names of downstream state slots remain unresolved."
+  },
+  "classNameSlotRead": {
+    "vtable": "0x82138B4C",
+    "slotOffset": "0x8",
+    "slotAddress": "0x82138B54",
+    "wordRadius": 0,
+    "target": "0x821D8498",
+    "returnStringAddress": "0x82127E24",
+    "returnString": "CcGameInputProcessor",
+    "result": "A bounded read-only memory-word query confirmed the slot target, and narrow generated code confirmed that the target returns the CcGameInputProcessor string at 0x82127E24.",
+    "boundary": "The slot word proves only the static class-name function target, not queue fan-out, downstream state slots, glyph selection, or runtime dispatch."
   },
   "glyphSelection": {
     "retainedResources": [

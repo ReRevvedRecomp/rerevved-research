@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0060",
+  "topic": "gameplay-main-frame-boundary",
+  "status": "closed",
+  "confidence": "confirmed",
+  "image": "image.json",
+  "question": "Does the version 1.3 application callback at 0x82E87D18 provide a guest-main-thread frame boundary that remains active during playable gameplay?",
+  "scope": {
+    "functions": ["0x82E2AF20", "0x82E2AFD0", "0x82E87D18", "0x82C7DF58", "0x82E43B50", "0x82D526A0", "0x82E60F70"],
+    "tables": ["0x82120D2C"],
+    "globals": ["0x8314F280", "0x8314F284", "0x8314F288", "0x8314F28C"],
+    "boundary": "Static evidence establishes callback registration and the broad update chain. The bounded runtime probe proves that the driver continues during owner-observed playable gameplay on the AudioGameStartInit thread; it does not prove that every callback slot or downstream manager shares that thread."
+  },
+  "dependencies": [
+    {
+      "topic": "gameplay-frame-timing-owner",
+      "use": "shared timing owner and timing-advance method"
+    },
+    {
+      "topic": "scene-render-tree-update",
+      "use": "bounded scene-manager update helper reached by the candidate driver"
+    },
+    {
+      "topic": "attract-movie-frame-driver",
+      "use": "confirmed rejection of the earlier 0x82C5F680 frame candidate"
+    }
+  ],
+  "currentEvidence": {
+    "method": "identified the callback object construction, callback-vector registration, slot-0 dispatch, broad update driver, and downstream scene update through foreground read-only Ghidra queries and narrow generated-code corroboration",
+    "entries": [
+      {
+        "role": "callback-vector register",
+        "address": "0x82E2AF20",
+        "confidence": "confirmed"
+      },
+      {
+        "role": "application callback",
+        "address": "0x82E87D18",
+        "confidence": "confirmed"
+      },
+      {
+        "role": "playable broad frame driver",
+        "address": "0x82C7DF58",
+        "confidence": "confirmed"
+      },
+      {
+        "role": "AudioGameStartInit probe boundary",
+        "address": "0x82E60F70",
+        "confidence": "confirmed"
+      }
+    ],
+    "qualification": "The callback begins before game start and remains active through playable gameplay. Its application-wide lifetime is broader than the playable-state availability gate that G1 must identify."
+  },
+  "staticQuery": {
+    "scripts": [
+      "ghidra/DumpFunctions.java",
+      "ghidra/DumpMemoryWords.java",
+      "ghidra/FindPointerValues.java"
+    ],
+    "mode": "foreground-read-only",
+    "generatedCorroboration": [
+      "generated:rerevved/sub_82E2AF20",
+      "generated:rerevved/sub_82E2AFD0",
+      "generated:rerevved/sub_82E87D18",
+      "generated:rerevved/sub_82C7DF58",
+      "generated:rerevved/sub_82E43B50"
+    ]
+  },
+  "callbackRegistration": {
+    "containingConstructor": "0x82E2AFD0",
+    "callbackAllocationSize": "0x4",
+    "callbackVtable": "0x82120D2C",
+    "register": "0x82E2AF20",
+    "criticalSectionOffset": "0x90",
+    "callbackVectorOffset": "0x80",
+    "result": "The containing constructor allocates a 4-byte callback object, installs table 0x82120D2C, and passes it to 0x82E2AF20. The register locks the containing object at offset 0x90 and appends the callback pointer to the vector beginning at offset 0x80."
+  },
+  "callbackDispatch": {
+    "vtable": "0x82120D2C",
+    "slotOffset": "0x0",
+    "slotTarget": "0x82E87D18",
+    "driverCallInstruction": "0x82E87D80",
+    "driver": "0x82C7DF58",
+    "result": "Callback slot 0 targets 0x82E87D18. The callback performs bounded pre-work, calls 0x82C7DF58 once, and conditionally performs bounded post-work according to the driver's return."
+  },
+  "candidateFrameWork": {
+    "driver": "0x82C7DF58",
+    "timingGlobal": "0x8314F280",
+    "timingSlotOffset": "0x8",
+    "sceneOwnerGlobal": "0x8314F284",
+    "sceneUpdateHelper": "0x82E43B50",
+    "sceneManagerUpdate": "0x82D526A0",
+    "result": "The driver advances the shared timing owner, consumes its timing values across several manager calls, services bounded global owners, and reaches the scene-manager update through 0x82E43B50 when its gates pass.",
+    "boundary": "The broad shape and runtime capture establish a playable frame boundary, but they do not assign original subsystem names or make this callback a playable-state availability gate."
+  },
+  "runtimeProbe": {
+    "status": "captured",
+    "date": "2026-08-20",
+    "default": "off",
+    "cvar": "gameplay_frame_probe",
+    "startHook": "0x82E60F70",
+    "frameHook": "0x82C7DF58",
+    "firstFrame": {
+      "frame": 1,
+      "gameStartSeen": false
+    },
+    "gameStart": {
+      "frameRange": "601-899",
+      "threadMatch": true
+    },
+    "postStartSamples": [
+      { "frame": 900, "elapsedSeconds": 34.931, "cumulativeCadenceHz": 25.74, "threadMatch": true },
+      { "frame": 3000, "elapsedSeconds": 94.661, "cumulativeCadenceHz": 31.68, "threadMatch": true },
+      { "frame": 5400, "elapsedSeconds": 166.972, "cumulativeCadenceHz": 32.33, "threadMatch": true },
+      { "frame": 7800, "elapsedSeconds": 239.183, "cumulativeCadenceHz": 32.61, "threadMatch": true }
+    ],
+    "ownerObservation": "During the same uninterrupted run, the owner reached a controllable map and moved a unit one tile successfully while the post-start samples continued.",
+    "processExitCode": 0,
+    "result": "The driver was already active before game start, AudioGameStartInit ran on the same session thread, and every sampled post-start hit through frame 7800 retained that thread. The owner-observed one-tile move proves that the callback continued during playable gameplay; the application then exited normally.",
+    "qualification": "Runtime addresses are session-local, cumulative cadence includes startup time, and the unrelated ObjectIcons VFS lookup error did not interrupt the observed playable run."
+  },
+  "rejectedLeads": {
+    "attractMovieDriver": {
+      "address": "0x82C5F680",
+      "result": "Construction and vtable evidence identify the earlier timing-consuming candidate as the attract-movie object's frame driver."
+    },
+    "staticThreadIdentity": {
+      "result": "Callback registration and update shape cannot prove host thread identity; only the runtime probe can settle that claim."
+    }
+  },
+  "guards": [
+    "Use 0x82C7DF58 as the proved guest-main-thread drain boundary, not as the playable-state availability predicate.",
+    "Do not generalize observed cadence into a platform guarantee.",
+    "Do not infer original class or manager names from vtable position or call shape.",
+    "The probe remains default-off and must not mutate guest state."
+  ],
+  "conclusion": "Version 1.3 application callback 0x82E87D18 dispatches broad update driver 0x82C7DF58 through registered callback vtable 0x82120D2C. A default-off runtime probe confirmed that 0x82C7DF58 continues during owner-observed playable gameplay on the same thread that enters AudioGameStartInit, making it the accepted guest-main-thread frame boundary for queued title work."
+}

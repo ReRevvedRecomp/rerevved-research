@@ -1,0 +1,32 @@
+# Contributing
+
+A contribution should record or improve a bounded guest-code finding, or
+maintain a reproducible headless query that establishes one.
+
+If a change uses AI assistance, also follow the portable policy in
+[`docs/ai_agents/README.md`](docs/ai_agents/README.md).
+
+## Findings
+
+Keep the claim narrow and identify the image, guest locator, evidence source,
+confidence, and remaining uncertainty. Follow the [topic manifest
+contract](docs/topic-manifests.md) when recording a bounded finding. Put the
+durable fact in one canonical manifest, catalog, or structure note. Link to it
+from other documentation.
+Preserve source and external provenance, and do not promote raw
+decompiler output as evidence.
+
+## Repository changes
+
+Keep game assets, decrypted images, Ghidra projects, raw query output, and
+generated code outside the tracked tree. Use the existing read-only query
+workflow for inspections and keep mutating repair runs disposable. Update
+`docs/README.md` when adding a tracked Markdown page under `docs/`.
+
+## Commit subjects
+
+Use `type: imperative summary` and keep the complete subject at 50 characters
+or fewer. Use `research:` for a bounded finding that spans manifests, catalogs,
+or reference prose; `catalog:` for catalog-only work; and `docs:`, `tools:`,
+`test:`, `fix:`, or `ci:` for the corresponding change. A bare summary without
+a type is not accepted.

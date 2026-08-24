@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0069",
+  "topic": "game-calendar-state",
+  "status": "closed",
+  "confidence": "confirmed",
+  "image": "image.json",
+  "question": "Which guest scalar supplies the current displayed game year, and how is it updated from the turn number?",
+  "scope": {
+    "functions": ["0x82CEFA20", "0x82D1EAB0", "0x82D217C8", "0x82E08CC8"],
+    "globals": ["0x8312B8DC", "0x8312B8E0"],
+    "runtimeProbe": "presence_probe_calendar"
+  },
+  "currentEvidence": {
+    "method": "foreground read-only Ghidra string, reference, and function queries followed by narrow generated-code corroboration",
+    "entries": [
+      {
+        "role": "turn-to-year converter",
+        "address": "0x82CEFA20",
+        "confidence": "strong"
+      },
+      {
+        "role": "current turn scalar",
+        "address": "0x8312B8DC",
+        "confidence": "confirmed"
+      },
+      {
+        "role": "current year scalar",
+        "address": "0x8312B8E0",
+        "confidence": "confirmed"
+      }
+    ],
+    "qualification": "Static evidence establishes the converter, update flow, comparisons, and debug-format arguments. The default-off runtime probe matched the visible 1025 AD date at turn 61 and the visible 1050 AD date at turn 62."
+  },
+  "calendar": {
+    "turnGlobal": "0x8312B8DC",
+    "yearGlobal": "0x8312B8E0",
+    "converter": "0x82CEFA20",
+    "initialTurn": 0,
+    "initialYear": -4000,
+    "converterResult": "Starting at -4000, each positive turn advances by 100 while the year is negative, 50 while below 1000, 25 while below 1700, 10 while below 1900, 5 while below 1950, and 2 thereafter.",
+    "updateFlow": "The turn-transition path increments 0x8312B8DC, passes the new turn to 0x82CEFA20, and stores the returned value at 0x8312B8E0. The initialization/load path derives and stores the same pair before gameplay resumes.",
+    "presentationCorroboration": "0x82E08CC8 passes 0x8312B8DC and 0x8312B8E0 as the integer arguments to the retail format string 'Mem before garbage collect:%8.2f, RSX:%8.2f, turn:%d, year:%d'. Other native consumers compare scheduled event years against 0x8312B8E0.",
+    "formatBoundary": "The retail image contains separate BC, AD, and year-zero presentation strings, but this packet does not yet claim one native UI formatter or select final host wording for year zero."
+  },
+  "runtimeProbe": {
+    "status": "complete",
+    "default": "off",
+    "branch": "develop",
+    "result": "On 2026-08-21 the owner observed Americans in the Medieval Era at 1025 AD; the probe reported civilization 7, era 1, turn 61, and year 1025. After one turn the owner observed 1050 AD; the probe reported turn 62 and year 1050."
+  },
+  "staticQuery": {
+    "scripts": [
+      "ghidra/DumpFunctions.java",
+      "ghidra/DumpMemoryWords.java",
+      "ghidra/DumpReferences.java",
+      "ghidra/FindPointerValues.java",
+      "ghidra/FindStrings.java"
+    ],
+    "mode": "foreground-read-only",
+    "generatedCorroboration": [
+      "generated:rerevved/sub_82CEFA20",
+      "generated:rerevved/sub_82D1EAB0",
+      "generated:rerevved/sub_82D217C8",
+      "generated:rerevved/sub_82E08CC8"
+    ],
+    "truncationGuard": "The maintained Ghidra program truncates the turn-transition and load owners after save-register thunks. Ghidra directly decompiles the converter and recovers bounded scalar references; generated code supplies the exact increment, converter call, and store sequence."
+  },
+  "guards": [
+    "Do not derive the displayed year independently from era; era and year are separate guest values.",
+    "Publish the calendar scalars only when the corresponding guest reads and player-state gate are valid.",
+    "Do not treat the retail debug formatter as runtime observation of a rendered UI string.",
+    "Do not assume AD wording for year zero until the owner-visible presentation is checked."
+  ],
+  "conclusion": "Version 1.3 maintains the current turn at 0x8312B8DC and the visible calendar year at 0x8312B8E0. Static initialization and transition evidence is confirmed by the owner-observed 1025 AD to 1050 AD turn transition."
+}

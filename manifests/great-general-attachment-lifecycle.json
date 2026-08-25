@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0076",
+  "topic": "great-general-attachment-lifecycle",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Where does version 1.3 establish and consume a Great General attachment, and why can culture-border displacement separate the linked records?",
+  "scope": {
+    "functions": ["0x82CDDF08", "0x82CBE528", "0x82CF2F60", "0x82D02390", "0x82D11750"],
+    "interiorEdges": ["0x82CE1520", "0x82CE1560", "0x82CBF0A0", "0x82CBF534", "0x82CBF548", "0x82CBF54C", "0x82CF30F4", "0x82CF30FC", "0x82CF3150", "0x82CF3158", "0x82CF3204", "0x82CF3208", "0x82D024E4", "0x82D024F4", "0x82D02510"],
+    "globals": ["0x830F2BF0", "0x82F700D8"],
+    "recordOffsets": ["0x0", "0x1", "0x3", "0xC", "0x1C", "0x1E", "0x26", "0x50"],
+    "boundary": "This packet closes the static attachment and culture-border displacement gate. It classifies bulk unload only at the command-consumer boundary and does not map transport ownership, authorize a runtime probe, or specify a repair."
+  },
+  "dependencies": [
+    {
+      "topic": "unit-movement-lifecycle",
+      "use": "accepted command 17 Move path, unit table, record stride, movement executor, and presentation ordering"
+    },
+    {
+      "topic": "combat-resolution-lifecycle",
+      "use": "accepted command 0 resolver boundary and post-combat movement exits"
+    }
+  ],
+  "currentEvidence": {
+    "method": "foreground read-only Ghidra queries against the pinned version 1.3 project, with exact raw words and narrow generated-code corroboration",
+    "imageVerification": {
+      "program": "rerevved_image.bin",
+      "size": 18939904,
+      "sha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680"
+    },
+    "qualification": "The configured Ghidra database truncates several functions after Xenon save-register thunks. Raw words establish the bounded instructions; generated code is used only to recover the surrounding indexed-address arithmetic and control flow. No runtime observation was made for this packet."
+  },
+  "type30Definition": {
+    "recordAddress": "0x82F71230",
+    "baseAttackOffset": "0x40",
+    "baseDefenseOffset": "0x41",
+    "statWordAddress": "0x82F71270",
+    "rawWord": "0x00000200",
+    "baseAttack": 0,
+    "baseDefense": 0,
+    "result": "The pinned image independently confirms that special type 30 has zero base attack and zero base defense. A detached live record is therefore a combatless special unit, not a Great Person record or command payload; unit-record +0x03 remains separate identity or subtype state.",
+    "qualification": "Only the already-accepted +0x40 attack and +0x41 defense field meanings are used. Adjacent definition byte +0x42 remains unnamed in current-image evidence even though external documentation describes two movement points."
+  },
+  "externalCorroboration": {
+    "source": "https://civilization.fandom.com/wiki/Great_General_(CivRev)",
+    "result": "The page describes the Great General as a zero-attack, zero-defense special unit that remains attached, and records a naval-disembark split that leaves the General independently attackable.",
+    "qualification": "The page labels the glitch as Nintendo DS-specific. That platform restriction is not accepted as a current-image fact, and the page does not establish the Xbox executable path or transaction ordering."
+  },
+  "attachment": {
+    "unitTable": "0x830F2BF0",
+    "recordSize": "0x54",
+    "recordsPerPlayer": 256,
+    "specialType": 30,
+    "identityOffset": "0x3",
+    "carrierLinkOffset": "0x50",
+    "carrierLinkWidth": 2,
+    "detachedSentinel": -1,
+    "offsetCorrection": "The movement and deletion scans keep their cursor at record +0x0C. Their lhz/sth operand 0x44 therefore addresses record +0x50, not record +0x44.",
+    "livePredicate": [
+      "the candidate comes from the carrier's same-player 256-record table",
+      "record byte +0x0 is not 0xFF",
+      "record flags at +0x0C do not have the high dead bit set",
+      "record type at +0x1 is 30",
+      "the signed halfword at +0x50 equals the live carrier unit id"
+    ],
+    "ordinaryMoveConsumer": {
+      "caseEntry": "0x82CDEDFC",
+      "ordinaryBranch": "0x82CDF3A4",
+      "carrierMoveCall": "0x82CDF3CC",
+      "linkedScan": "0x82CDF3F0..0x82CDF42C",
+      "linkRead": "0x82CDF40C",
+      "result": "After moving the addressed unit, command 17 scans live same-player records and moves every record whose signed +0x50 link names that unit. The scan is generic, so a Great General repair must retain the type-30 discriminator."
+    }
+  },
+  "attachmentEstablishment": {
+    "branchEntry": "0x82CE14D8",
+    "commandCases": [25, 44],
+    "createType": 30,
+    "createCall": "0x82CE1520",
+    "creator": "0x82D11750",
+    "firstCarrierLinkStore": "0x82CE1560",
+    "storeInstruction": "sthx r15,r29,r9",
+    "result": "The branch creates a type-30 record, recalculates its movement budget, and stores the addressed unit id from r15 into the created record's +0x50 halfword. Command 24's +0x03 store is separate identity state and is not the carrier link.",
+    "qualification": "The vendored command labels are a lead only. The current-image type, creator call, and link store are authoritative; the higher-level distinction between command cases 25 and 44 remains unnamed here."
+  },
+  "deletion": {
+    "helper": "0x82D02390",
+    "linkRead": "0x82D024E4",
+    "type30Read": "0x82D024F4",
+    "recursiveDeleteCall": "0x82D0250C",
+    "detachSentinelStore": "0x82D02510",
+    "result": "The second live-record scan compares effective record +0x50 with the deleted unit id. A matched type-30 record is recursively deleted, then the scan writes -1 through the same +0x50 field. This is a death cleanup edge, not evidence of a surviving intentional detach operation."
+  },
+  "borderDisplacement": {
+    "producer": "0x82CF2F60",
+    "cultureCaller": "0x82CBE528",
+    "cultureCallSite": "0x82CBF0A0",
+    "primaryCoordinateStores": ["0x82CF30F4", "0x82CF30FC"],
+    "fallbackCoordinateStores": ["0x82CF3204", "0x82CF3208"],
+    "producerCompletion": "0x82CF3220..0x82CF3244",
+    "otherImmediateCallSites": ["0x82D1A988", "0x82D1AA38"],
+    "result": "The producer chooses an adjacent valid destination, commits +0x1C/+0x1E directly, otherwise falls back to accepted city coordinates or deletes the record. The culture caller reaches it while sweeping eligible live records at affected tiles.",
+    "type30Treatment": "The producer never reads type 30 or +0x50. The culture caller also does not use +0x50. Type 30's definition flag word is 0x00008000 at 0x82F71280, so it is not excluded by the caller's 0x00080000 definition-flag test and can be displaced independently of its carrier.",
+    "genericChildPropagation": {
+      "gate": "moving unit-definition flags contain 0x10",
+      "childRelationOffset": "0x26",
+      "coordinateStores": ["0x82CF3150", "0x82CF3158"],
+      "result": "The producer propagates coordinates only to live children whose signed +0x26 relation names the moved unit. It does not include Great General +0x50 attachments."
+    },
+    "prePresentationEdge": "0x82CBF534",
+    "presentationCall": "0x82CBF548",
+    "safeCompletionEdge": "0x82CBF54C",
+    "completionResult": "0x82CBF534 is reached after every displacement-producer call in the culture sweep and before its one conditional presentation call. The call at 0x82CBF548 returns to 0x82CBF54C, which is the first post-presentation-call completion edge and is followed by no further displacement. A bounded guarded operation has both a pre-presentation window at 0x82CBF534 and a completion edge at 0x82CBF54C; the completed form is duplicable after the existing overrun movement-executor returns at 0x82CDFA64 and 0x82CDFCC4."
+  },
+  "bulkUnloadClassification": {
+    "classification": "separate",
+    "result": "The current command consumer exposes no distinct unload-all case and the command 17 Move branch does not call 0x82CF2F60. It moves one addressed unit through 0x82CD69B8 and then performs the +0x50 linked scan. A bulk-unload symptom therefore belongs to producer-side sequencing of ordinary Move transactions or another transport transaction, not the culture-border producer.",
+    "qualification": "The UI-side unload-all loop and transport-link rewrite order were not recovered. They require a separate packet and are not evidence for changing generic cargo behavior in this topic."
+  },
+  "acceptance": {
+    "verdict": "PASS",
+    "exactProducer": "0x82CF2F60",
+    "unambiguousLiveAttachmentPredicate": "live same-player type 30 with signed +0x50 equal to the live carrier unit id",
+    "safeDuplicableEdge": "0x82CBF54C after the presentation call; duplicate only after successful overrun executor returns",
+    "remainingUnknowns": [
+      "runtime values and final ordering for one culture-growth incident",
+      "the UI-side bulk-unload transaction and any transport-link rewrites",
+      "a surviving intentional detach producer, if one exists outside the bounded deletion neighborhood",
+      "multiplayer checksum coverage for the derived border sweep",
+      "the exact build, record values, and hostile-attack sequence from the owner's unsaved ReRevved incident"
+    ]
+  },
+  "staticQuery": {
+    "scripts": ["ghidra/DumpMemoryWords.java", "ghidra/DumpReferences.java", "ghidra/FindFieldAccesses.java", "ghidra/FindStrings.java", "ghidra/FindPointerValues.java"],
+    "mode": "foreground-read-only",
+    "generatedCorroboration": ["generated:rerevved/sub_82CDDF08", "generated:rerevved/sub_82CBE528", "generated:rerevved/sub_82CF2F60", "generated:rerevved/sub_82D02390", "generated:rerevved/sub_82D11750"],
+    "truncationGuard": "Zero instruction or reference results in thunk-truncated functions were not treated as negative evidence."
+  },
+  "guards": [
+    "Do not implement from static evidence alone; the next probe requires separate authorization and remains default-off and read-only.",
+    "Do not treat cursor-relative operand 0x44 as unit-record offset 0x44; the effective carrier link is +0x50.",
+    "Do not reconcile generic +0x50-linked records without the live same-player type-30 discriminator.",
+    "Do not restore a deleted type-30 record or overwrite the -1 death-cleanup sentinel.",
+    "Do not confuse the live type-30 special unit with a Great Person identity, award, or command payload.",
+    "Do not infer the bulk-unload transaction, transport ownership, or transport-link rewrite order from command 17 consumption.",
+    "Do not alter presentation count, command completion, ownership, movement budget, identity, or generic +0x26 child behavior."
+  ],
+  "conclusion": "Version 1.3 establishes a Great General attachment by storing the carrier unit id in type 30's +0x50 halfword. Ordinary Move follows that link, but culture-border displacement calls 0x82CF2F60 independently for eligible records and propagates only the separate +0x26 child relation. The sweep reaches a pre-presentation edge at 0x82CBF534 and the first post-call completion edge at 0x82CBF54C, giving the bounded operation a completion form duplicable after successful overrun movement. Bulk unload is separate at the command-consumer boundary."
+}

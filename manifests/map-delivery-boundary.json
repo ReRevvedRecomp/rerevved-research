@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0072",
+  "topic": "map-delivery-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Can the maintained ReXGlue host mapping expose one non-mutating loose overlay containing the named map tile, three DDS resources, and a discoverable scenario definition?",
+  "scope": {
+    "guestFunctions": [
+      "0x821B3488",
+      "0x8280F578",
+      "0x8281A020",
+      "0x82D32D38",
+      "0x82D34120",
+      "0x82D345C8",
+      "0x82D38688",
+      "0x82D387E0",
+      "0x82DAF5E0",
+      "0x82DAF700",
+      "0x82E2C770",
+      "0x82E80120",
+      "0x82E80520",
+      "0x82E84450"
+    ],
+    "hostSource": {
+      "repository": "https://github.com/ReRevvedRecomp/rerevved-rexglue-sdk",
+      "maintainedCommit": "3a97d4ac062ac22b6a6778e0b1f6e96ee20819e7",
+      "titleRevision": "606079bb64fa2ad4d15dab25547d98f28fb8b49e",
+      "qualification": "The relevant VFS, kernel file, and host-device sources are identical between the title pin and the maintained commit."
+    },
+    "boundary": "This packet closes the static host visibility and numbered scenario discovery question. It does not change ReXGlue path semantics, implement an overlay, prove XML schema completeness, prove menu or runtime acceptance, install content, write an archive, or launch the title."
+  },
+  "currentEvidence": {
+    "method": "foreground read-only Ghidra function, instruction, string, and data queries; narrow generated-code corroboration; and direct inspection of the maintained ReXGlue VFS and kernel file paths",
+    "qualification": "The configured Ghidra project truncates several Xenon functions at unrepaired thunk boundaries. Exact strings, raw instructions, import calls, and narrow generated bodies agree on the admitted guest edges. Host behavior is a repository source contract, not a runtime observation."
+  },
+  "staticQuery": {
+    "scripts": [
+      "ghidra/DumpDataValues.java",
+      "ghidra/DumpFunctions.java",
+      "ghidra/DumpInstructions.java",
+      "ghidra/DumpStringsInRange.java"
+    ],
+    "mode": "foreground-read-only",
+    "generatedCorroboration": [
+      "generated:rerevved/sub_821B3488",
+      "generated:rerevved/sub_8280F578",
+      "generated:rerevved/sub_8281A020",
+      "generated:rerevved/sub_82D32D38",
+      "generated:rerevved/sub_82D34120",
+      "generated:rerevved/sub_82D345C8",
+      "generated:rerevved/sub_82D38688",
+      "generated:rerevved/sub_82D387E0",
+      "generated:rerevved/sub_82DAF5E0",
+      "generated:rerevved/sub_82DAF700",
+      "generated:rerevved/sub_82E2C770",
+      "generated:rerevved/sub_82E80120",
+      "generated:rerevved/sub_82E80520",
+      "generated:rerevved/sub_82E84450"
+    ],
+    "truncationGuard": "Generated code corroborates only the admitted functions and the exact filename, counter, resolver, kernel-import, and caller windows used by this packet."
+  },
+  "guestHostBridge": {
+    "existenceProbe": {
+      "chain": ["0x82E80120", "0x82D38688", "0x8281A020", "NtQueryFullAttributesFile"],
+      "result": "The direct existence path sends the formatted guest name to NtQueryFullAttributesFile with root directory 0xFFFFFFFD. It does not add game: or d:."
+    },
+    "fileOpen": {
+      "chain": ["0x82E80520", "0x82D387E0", "0x8280F578", "NtCreateFile"],
+      "result": "The direct stream path sends the same guest name to NtCreateFile with root directory 0xFFFFFFFD. It does not add game: or d:."
+    }
+  },
+  "hostMapping": {
+    "mount": "Runtime::SetupVfs mounts game_data_root at \\Device\\Harddisk0\\Partition1 and registers game: and d: symbolic links to that device.",
+    "normalization": "VirtualFileSystem::ResolvePath canonicalizes separators and dot segments, expands a matching symbolic-link prefix, then selects a registered device by path prefix. It does not prepend a device or game: to a rootless path.",
+    "bareNameResult": "A rootless name has no matching registered device. ResolvePath returns null before HostPathDevice receives a relative host lookup.",
+    "hostPathResult": "game:\\<name> and d:\\<name> map to <game_data_root>/<name>, but the admitted guest authored-content paths do not carry either prefix.",
+    "sourceFiles": [
+      "src/system/runtime.cpp",
+      "src/filesystem/virtual_file_system.cpp",
+      "src/filesystem/devices/host_path_device.cpp",
+      "src/kernel/xboxkrnl/xboxkrnl_io.cpp",
+      "src/core/utf8.cpp"
+    ]
+  },
+  "scenarioDiscovery": {
+    "scanner": "0x82DAF5E0",
+    "owner": "0x82DAF700",
+    "menuStageCaller": "0x82E2C770",
+    "basename": {
+      "address": "0x8213325C",
+      "value": "DLCScenarioData"
+    },
+    "format": {
+      "address": "0x8213326C",
+      "value": "%s%d.xml"
+    },
+    "numbering": "The owner initializes the counter to 0. The scanner tests and increments one value per attempt, stops before 32, skips missing or rejected candidates, and therefore considers DLCScenarioData0.xml through DLCScenarioData31.xml.",
+    "existenceResolver": "0x82E80120 tries direct existence through 0x82D38688, then consults the common registered-source resolver when available.",
+    "parseResolver": "A candidate that exists is parsed through 0x82D32D38, whose stream open enters 0x82E80520 and therefore uses the same direct-before-registered common resource path as the map stream.",
+    "registrationGate": "The numbered scanner does not query XContent metadata or require a package record before its direct attempt. A registered-source delivery requires that source to have been registered earlier, but no registration metadata gate applies to a hypothetical guest-visible direct file.",
+    "discoveryBoundary": "Successful parsing creates a scenario record in the owner vector. The main-menu staging caller and downstream consumers remain separate from file discovery; this packet does not prove that an arbitrary parsed record is listed, selectable, localizable, startable, or accepted by gameplay."
+  },
+  "bundleNames": {
+    "scenario": "DLCScenarioData0.xml through DLCScenarioData31.xml, using one unused accepted index",
+    "mapTile": "<MAP>.map",
+    "height": "Map<MAP>_Heights.dds",
+    "blend": "Map<MAP>_MountainHill_Blends.dds",
+    "lightmap": "Map<MAP>_Lightmap.dds",
+    "qualification": "All five requests are rootless when MAP contains no separator, which is the bare named-map boundary established by the preceding packets."
+  },
+  "deliveryRuling": {
+    "exactHostOverlay": "Unavailable in the maintained runtime. A directory under game_data_root cannot satisfy these rootless direct requests because the VFS rejects them before selecting the game host device.",
+    "commonFallback": "Not an exact host overlay escape. Resource\\Common is a guest fallback source below registered sources, and its initialization also starts from a rootless guest path under the admitted host mapping.",
+    "registeredContent": "Structurally possible only through an already registered source. That is a package or source-registration route, not the requested exact loose host overlay, and custom packaging remains unproved.",
+    "archiveMutation": "Not justified. The result supplies no reason to rewrite, replace, or repack a retail archive.",
+    "narrowVerdict": "The five-file bundle is coherent at the guest resolver layer but is not jointly deliverable by an exact non-mutating host overlay in the maintained ReXGlue path contract."
+  },
+  "remainingBlockers": [
+    "A separately owned ReXGlue decision and test for rootless guest path semantics, if rootless paths should resolve relative to game:.",
+    "Complete Xbox scenario XML structural and localization requirements beyond the already mapped record fields.",
+    "Menu listing, selection, gameplay acceptance, and successful map and DDS loading for one exact bundle identity.",
+    "Xbox DDS payload authoring rules and the remaining map record semantics.",
+    "A fail-closed activation, identity, rollback, save, and multiplayer contract after one delivery route exists."
+  ],
+  "guards": [
+    "Do not treat direct-open precedence as host visibility.",
+    "Do not claim that game_data_root is a rootless current working directory for guest file APIs.",
+    "Do not treat successful XML parsing as menu or gameplay acceptance.",
+    "Do not infer that a registered source can be created without a proved package or registration route.",
+    "Do not implement a writer, repacker, installer, activation path, or runtime patch from this static result.",
+    "Do not claim successful authored-map loading without a separately authorized default-off runtime probe."
+  ],
+  "conclusion": "The numbered scenario scanner and the four bare named-map resource paths form one coherent guest resolver bundle, but all five direct attempts remain rootless. Maintained ReXGlue exposes game_data_root through game: and d: device prefixes and does not attach either prefix to rootless file queries. An exact non-mutating host overlay therefore cannot deliver the complete bundle under the current path contract. The next justified action is an SDK-owned decision and unit-tested contract for rootless guest path resolution, not a Studio writer or retail archive mutation."
+}

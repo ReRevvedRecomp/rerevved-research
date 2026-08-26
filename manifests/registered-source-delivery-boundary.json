@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0073",
+  "topic": "registered-source-delivery-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Can the version 1.3 registered-source path deliver one original scenario XML, named map, and three named DDS resources without changing a retail archive, and what packaging boundary remains?",
+  "dependencies": [
+    {
+      "topic": "map-authoring-loader-boundary",
+      "use": "exact scenario, map, DDS names, and fixed loader boundary"
+    },
+    {
+      "topic": "map-content-precedence",
+      "use": "direct, registered-source, and base fallback resolver order"
+    },
+    {
+      "topic": "map-delivery-boundary",
+      "use": "rootless direct-open rejection and numbered scenario discovery"
+    }
+  ],
+  "scope": {
+    "guestFunctions": [
+      "0x821B3488",
+      "0x8280DA78",
+      "0x8280DC48",
+      "0x8280DC50",
+      "0x8280DC58",
+      "0x8280DCF0",
+      "0x8280DDD0",
+      "0x82E29570",
+      "0x82E2C770",
+      "0x82E7FDF8",
+      "0x82E80028",
+      "0x82E80880",
+      "0x82E80958",
+      "0x82E841F8",
+      "0x82E84670"
+    ],
+    "registryGlobals": ["0x8314F0C0", "0x8314F0C4"],
+    "hostSource": {
+      "repository": "https://github.com/ReRevvedRecomp/rerevved-rexglue-sdk",
+      "revision": "d1ce8ea57f5536d356b04be14fcce1fa1bdd1f9e",
+      "files": [
+        "include/rex/system/xam/content_manager.h",
+        "src/filesystem/devices/host_path_device.cpp",
+        "src/filesystem/devices/stfs_container_device.cpp",
+        "src/filesystem/virtual_file_system.cpp",
+        "src/kernel/xam/xam_content.cpp",
+        "src/system/kernel_state.cpp",
+        "src/system/runtime.cpp",
+        "src/system/xam/content_manager.cpp"
+      ]
+    },
+    "boundary": "This packet establishes static guest registration and maintained-host content discovery. It does not author an FPK or STFS package, install content, authenticate a package, change rootless VFS semantics, or prove menu or gameplay acceptance."
+  },
+  "currentEvidence": {
+    "method": "foreground read-only Ghidra string, data, function, reference, instruction-word, and raw direct-call queries; narrow comparison with the maintained ReXGlue XContent, VFS, host-device, and STFS sources",
+    "qualification": "Several Xenon functions truncate at unsupported instructions in the configured project. Exact raw words, initialized strings, recovered calls, and maintained host source agree on the admitted edges. No generated body or runtime observation was available.",
+    "entries": [
+      {
+        "role": "registered-source append",
+        "address": "0x82E7FDF8",
+        "confidence": "strong"
+      },
+      {
+        "role": "registered-source reverse resolver",
+        "address": "0x82E80028",
+        "confidence": "strong"
+      },
+      {
+        "role": "supplied-path source registration",
+        "address": "0x82E80880",
+        "confidence": "strong"
+      },
+      {
+        "role": "base Resource\\Common collection initialization",
+        "address": "0x82E80958",
+        "confidence": "strong"
+      },
+      {
+        "role": "downloadable-content enumeration and aggregate registration owner",
+        "address": "0x82E29570",
+        "confidence": "strong"
+      },
+      {
+        "role": "mounted dlc.fpk collection insertion",
+        "address": "0x82E841F8",
+        "confidence": "strong"
+      }
+    ]
+  },
+  "guestRegistration": {
+    "append": "0x82E7FDF8 lazily creates the vector at 0x8314F0C0 and appends one source pointer.",
+    "suppliedPath": "0x82E80880 allocates a source through 0x821B3488, verifies that source through 0x82E84670, and calls 0x82E7FDF8 only after verification succeeds.",
+    "baseCollection": "0x82E80958 constructs the separate base collection from Resource\\Common through 0x821B3488 and stores it at 0x8314F0C4. It does not append that collection to 0x8314F0C0.",
+    "downloadableAggregate": "0x82E29570 creates a type-2 content enumerator, consumes 0x134-byte records, opens each accepted record with XamContentCreateEx input flags 3 for OPEN_EXISTING, supplies the mounted-root dlc.fpk path to 0x82E841F8, and appends the completed aggregate once at call site 0x82E29DD8. Mounted roots are closed through the XamContentClose wrapper at 0x8280DC48; the enumerator handle is closed at 0x8280DA78.",
+    "menuStage": "The only recovered raw direct call to 0x82E29570 is 0x82E2C944 inside main-menu staging owner 0x82E2C770. The caller admits two unresolved state values, 0 and 4, before the call; this packet does not assign that gate a sign-in semantic name."
+  },
+  "xcontentCalls": {
+    "createEnumerator": {
+      "wrapper": "0x8280DC58",
+      "contentType": 2,
+      "contentFlags": 0,
+      "itemsPerEnumeration": 100,
+      "recordSize": "0x134"
+    },
+    "enumerate": "0x8280DDD0",
+    "getCreator": "0x8280DC50 is called for the current record before open. The maintained implementation reports creator fields without a license-validation step; this packet does not establish that the guest uses those fields as authorization.",
+    "open": {
+      "wrapper": "0x8280DCF0",
+      "inputFlags": 3,
+      "meaning": "OPEN_EXISTING",
+      "successfulOutputDisposition": 2
+    },
+    "closeMountedRoot": "0x8280DC48",
+    "closeEnumeratorHandle": "0x8280DA78"
+  },
+  "mountedLayout": {
+    "archiveLiteral": {
+      "address": "0x8212109C",
+      "value": "dlc.fpk"
+    },
+    "nameLiteral": {
+      "address": "0x821210A4",
+      "value": "name.txt"
+    },
+    "rootFiles": "The guest builds mounted-root paths for dlc.fpk and name.txt. name.txt is a sibling identification file. dlc.fpk is inserted into the aggregate registered source.",
+    "authoredResources": "DLCScenarioDataN.xml, <MAP>.map, and the Map<MAP> DDS triple are requested later as bare names through the common resolver. To use this route they must be named entries in dlc.fpk; placing them beside dlc.fpk does not register that directory as the common source."
+  },
+  "precedence": {
+    "order": [
+      "rootless direct open",
+      "registered-source vector from last append to first append",
+      "base Resource\\Common collection"
+    ],
+    "baseRuling": "A successfully appended downloadable aggregate outranks the separate Resource\\Common fallback unconditionally because the resolver consults the vector before 0x8314F0C4. Its priority over that fallback does not depend on mount chronology. This does not establish DLC-FPK versus base-FPK order among registered vector entries.",
+    "registeredPeerRuling": "Chronology still controls priority among distinct vector entries because later appends are searched first. This packet does not establish collision order among multiple FPKs collected inside one downloadable aggregate."
+  },
+  "maintainedHostBoundary": {
+    "contentRoot": "ListContent scans immediate child directories below the configured ContentManager root for its caller's XUID, title ID, and content type. Normal enumeration queries the maintained profile XUID and then common XUID 0; marketplace open resolution forces XUID 0.",
+    "metadata": "ListContent emits each immediate child directory and synthesizes XCONTENT_DATA from its name when .header reading fails. OPEN_EXISTING checks generic existence at the resolved path, then mounts it through a HostPathDevice and a temporary <root>: symbolic link.",
+    "profileAndLicense": "For non-marketplace content, ResolvePackagePath honors a nonzero, non-sentinel record XUID. Marketplace content uses XUID 0. OpenContent loads an optional header mask without validating signature, profile, device, licensee, or authorization, and the guest supplies null for the license output on this path.",
+    "gameDataRoot": "ContentManager receives the runtime user-data root; maintained Runtime uses game_data_root when that root is omitted. The game: mapping alone is not registration: the directory must still occupy the exact ContentManager hierarchy and contain a guest-accepted dlc.fpk.",
+    "stfsGate": "InstallContent is the inspected ContentManager path that initializes an STFS reader, extracts its entries, computes a license mask, and writes enumeration metadata. Repository call search found no caller, the corresponding guest install and package-mount exports are stubs, and extraction has no rollback. A pre-positioned content directory bypasses STFS parsing and installation without changing VFS semantics."
+  },
+  "deliveryRuling": {
+    "narrowRoute": "A non-mutating static route exists in maintained ReXGlue: pre-position one ordinary child directory under the exact configured XUID-0 marketplace ContentManager namespace, place a wholly original valid dlc.fpk and optional name.txt at its root, let the guest enumerate and mount it, and let 0x82E29570 append the archive aggregate. OpenContent mounts the directory through HostPathDevice without invoking STFS, so this route requires neither a retail archive change nor an STFS container.",
+    "currentBlocker": "No accepted FPK writer or lossless name and variable-metadata model is established. The five authored resources must be valid named FPK entries.",
+    "installablePackage": "A standalone installable package additionally needs an STFS writer and accepted metadata, block-chain, integrity, signature, license, title, profile, and device rules. Maintained InstallContent initializes the reader, extracts entries, computes a license mask, and writes a header; its source does not establish reachable installation or transactional cleanup after partial extraction.",
+    "runtimeBoundary": "Static delivery does not prove complete scenario XML and localization, collision-free numbered discovery, menu listing, selection, map and DDS acceptance, gameplay start, save identity, or multiplayer equality."
+  },
+  "remainingPackagingBlockers": [
+    "An accepted FPK writer with preserved entry names, variable record metadata, ordering, offsets, sizes, alignment, every guest-required integrity field, and a synthetic lossless read-back contract.",
+    "Complete Xbox scenario XML, localization, map-name, map-record, and DDS payload authoring invariants for the five exact named entries.",
+    "For an installable container, an STFS writer plus authoritative content metadata, file-table and block-chain construction, hash or signature semantics, title and content identity, license, profile, and device policy.",
+    "A fail-closed installer or pre-positioning contract with traversal and absolute-path rejection, safe relative names, no overwrite, atomic publication, rollback, immutable bundle identity, and no writes outside its exact output root.",
+    "A separately authorized runtime acceptance test for one exact wholly original bundle identity."
+  ],
+  "guards": [
+    "Do not treat an arbitrary loose directory as registered; the route requires an immediate XUID-0 marketplace child under the exact configured ContentManager root, a separator-free non-parent name representable in the 42-byte XCONTENT_DATA field, and a guest-accepted dlc.fpk. The guest registers the archive rather than the directory itself.",
+    "Do not infer Xbox hardware acceptance from maintained ReXGlue's permissive installed-directory behavior.",
+    "Do not treat STFS magic-only parsing as publisher authentication or license authorization.",
+    "Do not place the scenario, map, or DDS files beside dlc.fpk and expect bare-name registered-source lookup to find them.",
+    "Do not infer collision order among multiple FPKs inside the downloadable aggregate.",
+    "Do not implement an FPK writer, STFS writer, installer, title patch, SDK path change, or activation path from this static result.",
+    "Do not claim menu or gameplay success without a separately authorized runtime probe."
+  ],
+  "conclusion": "The version 1.3 guest exposes a conditional static registered-source route for an installed downloadable archive. It enumerates type-2 content, mounts each existing content directory, attempts root-level name.txt, adds root-level dlc.fpk to one aggregate, appends that aggregate, and searches it before the separate Resource\\Common fallback. Maintained ReXGlue can enumerate a pre-positioned ordinary XUID-0 marketplace child without STFS metadata, so the narrowest non-mutating route does not require STFS or a retail archive change. It still requires a valid wholly original dlc.fpk containing the scenario XML, map, and three DDS entries; that FPK authoring contract and runtime acceptance remain blocked."
+}

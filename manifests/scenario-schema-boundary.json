@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0075",
+  "topic": "scenario-schema-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What is the smallest wholly original version-1.3 scenario XML document that appends one record and selects one named map, and which later gates remain separate?",
+  "scope": {
+    "functions": [
+      "0x82C66960",
+      "0x82C66988",
+      "0x82D39138",
+      "0x82DAE1A0",
+      "0x82DAE380",
+      "0x82DAE4C8",
+      "0x82DAE570",
+      "0x82DAECD0",
+      "0x82DAEFD8",
+      "0x82DAF5E0",
+      "0x82DAF700"
+    ],
+    "boundary": "This packet closes static XML representation, record construction, literal locale selection, ordinary and multiplayer enumeration, and named-map handoff. It does not prove a safe maximum MAP length, MAPNUMBER consumption, menu presentation, setup acceptance, DDS semantics, gameplay, save identity, multiplayer equality, archive writing, installation, or runtime loading."
+  },
+  "staticEvidence": {
+    "method": "foreground read-only Ghidra string, data, memory, reference, instruction, and function queries with narrow generated-code corroboration",
+    "mode": "foreground-read-only",
+    "qualification": "Exact Xbox strings, initialized fields, call edges, and generated bodies agree on the admitted parser path. No DLC payload was inspected and no runtime was launched."
+  },
+  "discoveryAndDocument": {
+    "filenamePrefix": "DLCScenarioData",
+    "filenameFormat": "%s%d.xml",
+    "indices": "0 through 31 inclusive, in ascending order",
+    "root": "Any valid single XML document element is accepted; its name is never compared. DLCScenarioData is a filename prefix, not a required root name.",
+    "recordElement": "EntryInfo",
+    "placement": "Only direct child elements of the document root named byte- and case-exact EntryInfo are visited, in sibling order.",
+    "failure": "A missing candidate, open failure, malformed document, or document without a root appends nothing from that file and scanning continues. A valid root with no EntryInfo also appends nothing. A present empty bMultiplayer element reaches an unchecked text-byte read, so empty scalar elements are outside the admitted subset.",
+    "limits": "At most 32 candidate files are discovered. No semantic EntryInfo count cap was recovered beyond allocation and vector arithmetic."
+  },
+  "record": {
+    "size": 152,
+    "retention": "Every visited EntryInfo is initialized, parsed, and appended unconditionally. The parser return is ignored and no XML field is required for retention.",
+    "fields": [
+      { "name": "MAP", "kind": "first direct child text", "default": "NONE", "destination": "dynamic byte string at offset 136" },
+      { "name": "bMultiplayer", "kind": "first direct child text", "default": false, "rule": "true only when the first returned text byte is 0x31, the ASCII character 1", "destination": "byte at offset 140" },
+      { "name": "ID", "kind": "first direct child decimal text", "default": -1, "destination": "signed 32-bit word at offset 144" },
+      { "name": "TITLE", "kind": "first direct child locale container", "default": "empty", "destination": "dynamic byte string at offset 128" },
+      { "name": "DESCRIPTION", "kind": "first direct child locale container", "default": "empty", "destination": "dynamic byte string at offset 132" },
+      { "name": "VARIATOR", "kind": "repeated direct child", "default": "per-slot defaults", "rule": "the first direct specs child supplies case-exact text and level attributes" }
+    ],
+    "notConsumed": [
+      "EntryType",
+      "EntryTag",
+      "MAPNUMBER as a sibling element",
+      "STARTLOCME as a sibling element",
+      "STARTLOC0 through STARTLOC4 as sibling elements"
+    ],
+    "unknowns": "Unknown child elements, attributes, VARIATOR names, and non-element children are ignored. Scalar duplicates after the first are ignored; repeated VARIATOR records are applied in order, so the last recognized duplicate wins.",
+    "unusedWord": "Offset 148 initializes to zero and is not written by this XML parser; its semantic role remains unresolved."
+  },
+  "decimalSyntax": {
+    "consumerBase": 10,
+    "rule": "The helper skips leading ASCII space, tab, LF, VT, FF, and CR bytes, accepts one optional plus or minus sign, and accumulates decimal digits until NUL or the first invalid byte. An empty or digitless value returns zero; a valid numeric prefix is accepted despite trailing invalid text.",
+    "overflow": "Multiply and add use low 32-bit arithmetic, so overflow wraps modulo 2^32. ID retains the 32-bit result. VARIATOR level retains the low 16 bits and interprets them as signed.",
+    "range": "No semantic range validation is performed for ID or level. A future authoring model should use canonical ASCII decimal and explicit model bounds instead of depending on wrap or prefix acceptance.",
+    "xmlWhitespaceBoundary": "Element-name comparisons do not trim or fold. Exact TinyXML text condensation and entity expansion outside plain synthetic ASCII remain library-level behavior and are not needed by the admitted canonical subset."
+  },
+  "variators": {
+    "storage": "64 signed 16-bit slots at offsets 0 through 127",
+    "defaults": {
+      "0": 1,
+      "1": 1,
+      "2": 1,
+      "3": 2,
+      "4": 1,
+      "5": 1,
+      "6": 1,
+      "7": 2,
+      "8": 1,
+      "9": 1,
+      "16": 2,
+      "20": 1,
+      "22": 1,
+      "30": -1,
+      "allOtherSlots": 0
+    },
+    "recognized": {
+      "BAGRESSIVE": 0,
+      "BFECUNDITY": 1,
+      "BARBVSGOODY": 2,
+      "RESOURCEDENSITY": 3,
+      "TECHNOLOGYRATE": 4,
+      "UPGRADERATE": 5,
+      "NAVALSUPPORT": 6,
+      "MAXCITYSIZE": 7,
+      "WONDERSEXPIRE": 8,
+      "WARANDPEACE": 9,
+      "MUSTWINBY": 10,
+      "QUICKWIN": 11,
+      "SPEEDMODE": 12,
+      "UFOVISIT": 13,
+      "STARTERA": 14,
+      "STARTSIZE": 15,
+      "CLIMATE": 16,
+      "CANNOTWINBY": 17,
+      "NOSPACERACE": 18,
+      "STARTGOLD": 19,
+      "CARAVANGOLD": 20,
+      "ATTACKBONUS": 21,
+      "GREATPEOPLERATE": 22,
+      "QUARTERPRICELIB": 23,
+      "MOREGOLDRESOURCE": 24,
+      "MORETRADEPERERA": 25,
+      "DISPLAYCARD": 30,
+      "STARTYEAR": 31,
+      "MAPNUMBER": 32,
+      "STARTLOCME": 33,
+      "STARTLOC0": 34,
+      "STARTLOC1": 35,
+      "STARTLOC2": 36,
+      "STARTLOC3": 37,
+      "STARTLOC4": 38
+    },
+    "collectionRule": "Only these 35 case-exact names can be written by XML. Slots 26 through 29 and 39 through 63 have no name registered by this parser. VARIATOR without a direct specs child is ignored. Missing text or level attributes inside specs are outside the admitted canonical subset because the bounded trace did not close their unchecked helper behavior."
+  },
+  "localization": {
+    "containerElements": ["TITLE", "DESCRIPTION"],
+    "literalChildren": ["ENG", "FRA", "ITA", "DEU", "ESP"],
+    "selection": "Internal locale IDs 14, 18, 24, and 37 select FRA, DEU, ITA, and ESP respectively; every other locale ID selects ENG.",
+    "behavior": "The selected child's text is copied directly into the scenario record. It is not a localization key, numeric reference, or external lookup. Wholly original literals need no additional resource.",
+    "missing": "A missing container or missing selected language child leaves the field empty. A non-ENG selection does not fall back to ENG.",
+    "portableSubset": "Supply all five children with wholly original literal text when the scenario must have non-empty text in every supported locale. TITLE and DESCRIPTION may be omitted from the byte-minimal record."
+  },
+  "mapName": {
+    "selection": "The selected record compares MAP to case-exact NONE. A different value is copied as a NUL-terminated byte string to the global named-map selector.",
+    "derivedNames": [
+      "<MAP>.map",
+      "Map<MAP>_Heights.dds",
+      "Map<MAP>_MountainHill_Blends.dds",
+      "Map<MAP>_Lightmap.dds"
+    ],
+    "normalization": "No case folding, separator conversion, trimming, or other normalization occurs before these names are formatted. Registered FPK lookup later folds ASCII case and selects a basename in its admitted route.",
+    "sentinels": "Exact uppercase NONE suppresses named-map setter invocation but does not itself clear a previously active selector; the owning reset edge remains unresolved. Lowercase none is a name. Empty text is not NONE and would derive .map plus the three Map-prefixed DDS names, so it is excluded from the named authoring subset.",
+    "registeredRouteNameSubset": "The proved registered-source name route requires a non-empty separator-free ASCII MAP whose four derived basenames are unique after ASCII folding and do not collide under the raw CRC-32 index. Because the setter capacity is unresolved, this does not admit arbitrary lengths; only a deliberately short name such as the one-character synthetic witness is closed.",
+    "lengthBoundary": "The XML string is dynamically allocated, but 0x82C66988 copies MAP into a fixed global buffer without a visible bounds check. The buffer extent and exact safe maximum are unresolved. Static evidence therefore admits a short synthetic name but cannot authorize a general maximum-length rule.",
+    "separatorBoundary": "A slash or backslash changes later resource lookup into the explicit-path branch and is outside the proved registered basename route. Embedded NUL cannot be represented as XML character data and later consumers are NUL-terminated."
+  },
+  "laterGates": {
+    "append": "Successful document traversal appends each EntryInfo without a semantic validation filter.",
+    "ordinaryEnumeration": "0x82DAE1A0 with false returns 10 plus the full appended record count.",
+    "multiplayerEnumeration": "0x82DAE1A0 with true counts only records whose bMultiplayer byte is nonzero; callers use a positive result to make the multiplayer scenario route available.",
+    "selection": "A custom ordinal at or above 10 obtains that indexed record's ID, then chooses the first appended record with the same ID. A lone default ID of -1 is selectable; duplicate IDs collide first-match, so a future authoring model should require a unique explicit ID.",
+    "apply": "Selection copies all 64 variator slots and literal title/description, then hands a non-NONE MAP to the named-map setter.",
+    "unproved": "GFx presentation and exact labels, MAPNUMBER-to-MapList consumption, setup eligibility, resource semantic acceptance, gameplay start, save identity, multiplayer equality, and runtime loading remain separate gates."
+  },
+  "syntheticDocument": {
+    "filename": "DLCScenarioData0.xml",
+    "xml": "<S><EntryInfo><MAP>A</MAP></EntryInfo></S>",
+    "provenance": "Every byte, name, and value is invented. The arbitrary root S is accepted, EntryInfo appends one defaulted record, and short non-NONE MAP A reaches A.map and the MapA DDS naming chain.",
+    "representation": "The XML can be a unique separator-free ASCII FPK entry under the version-6 grammar in RVA-F-0074. No retail payload or metadata is required.",
+    "qualification": "This is the smallest proved semantic shape for one appended named-map record, not proof that placeholder map or DDS payloads pass setup or gameplay."
+  },
+  "studioBoundary": {
+    "closed": [
+      "bounded structural parsing for the admitted elements and attributes",
+      "all 35 recognized VARIATOR names, slots, and initial defaults",
+      "literal five-language TITLE and DESCRIPTION representation",
+      "all-original XML byte representation inside a unique-name version-6 FPK"
+    ],
+    "blocked": [
+      "a safe maximum MAP byte length and setter-buffer capacity",
+      "semantic bounds and gameplay effects for variator levels",
+      "MAPNUMBER consumption and interaction with MAP",
+      "TinyXML entity, text-condensation, and malformed-node behavior outside the plain canonical subset",
+      "runtime menu, setup, resource, and gameplay acceptance",
+      "DDS production and the complete safe authoring bundle"
+    ]
+  },
+  "guards": [
+    "Do not infer that parser append proves menu presentation, setup, gameplay, save, or multiplayer acceptance.",
+    "Do not expose EntryType or EntryTag as scenario fields; this bounded parser does not consume them.",
+    "Do not assign semantic level ranges from the parser's signed 16-bit storage alone.",
+    "Do not authorize arbitrary MAP lengths, separators, non-ASCII names, duplicate IDs, or folded FPK name collisions.",
+    "Do not implement an XML writer, FPK writer, Studio UI, installer, title patch, activation path, or runtime probe from this packet."
+  ],
+  "conclusion": "The smallest complete static schema for one appended record selecting one named map is any valid root containing a direct EntryInfo child with a MAP child whose text is a short non-NONE name. No ID, multiplayer, localization, variator, EntryType, or EntryTag field is required for append or single-record selection. TITLE and DESCRIPTION can contain wholly original literal ENG, FRA, ITA, DEU, and ESP text and require no external localization resource. The XML and its named FPK entry are wholly original and statically representable; safe general MAP length, DDS semantics, setup, gameplay, and runtime acceptance remain open."
+}

@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0070",
+  "topic": "map-authoring-loader-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the version 1.3 image expose a coherent named-map tile, scenario-selection, and prebuilt-terrain texture loader boundary, and what static format limits does that boundary establish?",
+  "scope": {
+    "functions": [
+      "0x82C66960",
+      "0x82C66988",
+      "0x82C6E188",
+      "0x82C6E898",
+      "0x82D0ADE0",
+      "0x82D0F0D0",
+      "0x82DAECD0",
+      "0x82DAEFD8",
+      "0x82DAF5E0",
+      "0x82E2B8D0"
+    ],
+    "dimensionGlobals": ["0x82F77364", "0x82F77448"],
+    "boundary": "This packet establishes the static version 1.3 loader and selection chain. It does not prove runtime reachability, archive precedence, title-update provenance, downloadable-content packaging, safe archive rewriting, or support for non-32-by-32 maps."
+  },
+  "currentEvidence": {
+    "method": "foreground read-only Ghidra string, memory, reference, and function queries with narrow generated-code corroboration",
+    "entries": [
+      {
+        "role": "named-map selector getter",
+        "address": "0x82C66960",
+        "confidence": "strong"
+      },
+      {
+        "role": "named-map selector setter",
+        "address": "0x82C66988",
+        "confidence": "strong"
+      },
+      {
+        "role": "prebuilt terrain texture loader",
+        "address": "0x82C6E188",
+        "confidence": "strong"
+      },
+      {
+        "role": "terrain load owner",
+        "address": "0x82C6E898",
+        "confidence": "strong"
+      },
+      {
+        "role": "named map tile loader",
+        "address": "0x82D0ADE0",
+        "confidence": "strong"
+      },
+      {
+        "role": "map construction owner with named-map fast path",
+        "address": "0x82D0F0D0",
+        "confidence": "strong"
+      },
+      {
+        "role": "scenario record parser",
+        "address": "0x82DAECD0",
+        "confidence": "strong"
+      },
+      {
+        "role": "scenario map selector",
+        "address": "0x82DAEFD8",
+        "confidence": "strong"
+      },
+      {
+        "role": "numbered scenario definition scanner",
+        "address": "0x82DAF5E0",
+        "confidence": "strong"
+      },
+      {
+        "role": "numbered map-list selector",
+        "address": "0x82E2B8D0",
+        "confidence": "strong"
+      }
+    ],
+    "qualification": "The configured project's decompiler truncates six Xenon functions at unsupported or unrepaired thunk boundaries. Exact guest strings, initialized data, recovered references, raw instructions, and narrow generated bodies agree on the recorded addresses and control edges. No runtime observation was made."
+  },
+  "staticQuery": {
+    "scripts": [
+      "ghidra/DumpDataValues.java",
+      "ghidra/DumpFunctions.java",
+      "ghidra/DumpMemoryWords.java",
+      "ghidra/DumpReferences.java",
+      "ghidra/DumpStringsInRange.java",
+      "ghidra/FindPointerValues.java",
+      "ghidra/FindStrings.java"
+    ],
+    "mode": "foreground-read-only",
+    "generatedCorroboration": [
+      "generated:rerevved/sub_82C66960",
+      "generated:rerevved/sub_82C66988",
+      "generated:rerevved/sub_82C6E188",
+      "generated:rerevved/sub_82C6E898",
+      "generated:rerevved/sub_82D0ADE0",
+      "generated:rerevved/sub_82D0F0D0",
+      "generated:rerevved/sub_82DAECD0",
+      "generated:rerevved/sub_82DAEFD8",
+      "generated:rerevved/sub_82DAF5E0",
+      "generated:rerevved/sub_82E2B8D0"
+    ],
+    "truncationGuard": "Generated code corroborates only the ten admitted functions and the exact string-materialization or control-flow windows used by this packet."
+  },
+  "textureLoader": {
+    "numberedBaseFormat": {
+      "address": "0x821642E0",
+      "value": "Map%d"
+    },
+    "namedBaseFormat": {
+      "address": "0x821642E8",
+      "value": "Map%s"
+    },
+    "heightFormat": {
+      "address": "0x821642F0",
+      "value": "%s_Heights.dds"
+    },
+    "blendFormat": {
+      "address": "0x82164310",
+      "value": "%s_MountainHill_Blends.dds"
+    },
+    "lightmapFormat": {
+      "address": "0x8216432C",
+      "value": "%s_Lightmap.dds"
+    },
+    "selection": "The loader formats one base name as Map%d when no named-map selector is active and as Map%s when the selector is active, then requests the height, blend, and lightmap names through the same resource path.",
+    "failureBoundary": "Failure to open the height resource returns false. The terrain owner clears its prebuilt flag before continuing through the alternate construction path.",
+    "derivedScale": "The loader divides the loaded height texture dimensions by terrain-object dimensions at offsets 0x5C and 0x60 and stores the resulting per-tile values at offsets 0x7C and 0x80. This derived texture scale does not make the gameplay grid dimensions content-driven."
+  },
+  "mapTileLoader": {
+    "pathFormat": {
+      "address": "0x82149A90",
+      "value": "%s.map"
+    },
+    "function": "0x82D0ADE0",
+    "readSize": "The loader requests the product of the two dimension globals. Both initialized values are 32, so the supported-image request is 1024 bytes.",
+    "recordSize": 1,
+    "tileEncoding": {
+      "terrainType": "bits 0 through 3 are copied to the internal terrain grid",
+      "bit0x10": "sets internal bit 0x400 and conditionally internal bit 0x10; the semantic name remains unresolved",
+      "bit0x20": "records the tile coordinate in an eight-entry side table while capacity remains; the semantic name remains unresolved",
+      "bit0x40": "expands to paired internal directional bits 0x2 and 0x8",
+      "bit0x80": "expands to paired internal directional bits 0x4 and 0x1"
+    },
+    "orientation": "File bytes are consumed sequentially in dimension-sized rows. Each row is copied into a 40-byte-stride internal grid while the destination column counts downward. The equal 32-by-32 dimensions prevent this packet from assigning a player-facing row, column, or display orientation beyond that exact conversion.",
+    "trailingBytes": "The supported-image path requests exactly width times height bytes. It does not establish a required footer or safe acceptance of trailing data."
+  },
+  "dimensions": {
+    "first": {
+      "address": "0x82F77364",
+      "initializedValue": 32
+    },
+    "second": {
+      "address": "0x82F77448",
+      "initializedValue": 32
+    },
+    "referenceResult": "The read-only reference inventory recovered fourteen reads of each scalar and no writes.",
+    "internalStride": 40,
+    "conclusion": "The supported image owns a fixed 32-by-32 gameplay content grid backed by 40-stride internal work grids. Texture pixels per tile are derived; gameplay dimensions are not derived from the map file or texture headers in this loader chain."
+  },
+  "scenarioSelection": {
+    "definitionRoot": {
+      "address": "0x8213325C",
+      "value": "DLCScenarioData"
+    },
+    "definitionFormat": {
+      "address": "0x8213326C",
+      "value": "%s%d.xml"
+    },
+    "definitionLimit": 32,
+    "mapField": {
+      "address": "0x8213328C",
+      "value": "MAP"
+    },
+    "noneValue": {
+      "address": "0x821329E4",
+      "value": "NONE"
+    },
+    "variatorField": {
+      "address": "0x821332B4",
+      "value": "VARIATOR"
+    },
+    "mapNumberVariator": {
+      "address": "0x82133208",
+      "value": "MAPNUMBER"
+    },
+    "record": "The parser stores MAP text, multiplayer state, ID, localized title and description references, and up to 64 signed 16-bit variator values selected by name.",
+    "apply": "When MAP is not NONE, the selected scenario copies the MAP string through 0x82C66988. The map construction owner then attempts the named .map path, and the terrain loader selects Map%s for the texture triple.",
+    "numberedBoundary": "MAPNUMBER is recognized in the variator namespace and MapList is selected through 0x82E2B8D0, but this packet does not trace the MAPNUMBER consumer to the MapList selector."
+  },
+  "guards": [
+    "Do not treat the external comparison project, its addresses, its endianness, or its runtime observations as evidence for this image.",
+    "Do not infer that the named-map path is present in the unupdated base executable; this packet covers only the merged version 1.3 image.",
+    "Do not infer a fixed four-slot content package. The executable scans as many as 32 numbered scenario-definition files, while installed content and packaging remain separate evidence questions.",
+    "Do not infer support for dimensions other than 32 by 32 from the derived texture scale.",
+    "Do not assign player-facing orientation or PS3 flag names to the one-byte tile record without independent evidence.",
+    "Do not infer a required 64-byte map footer; the loader requests 1024 bytes on the supported image.",
+    "Do not infer archive overlay precedence, archive writing, repacking, or downloadable-content installation from file-read support.",
+    "Do not claim runtime reachability or successful authored-map loading without a separately authorized default-off runtime probe."
+  ],
+  "conclusion": "The version 1.3 image contains one coherent static authored-map chain: scenario MAP selection activates a named map, the map owner attempts %s.map, and terrain loading switches from Map%d to Map%s before requesting the height, mountain/hill blend, and lightmap DDS names. The tile read is one byte per cell over fixed 32-by-32 image-owned dimensions. Delivery, provenance, nonstandard dimensions, archive mutation, and runtime success remain unproved."
+}

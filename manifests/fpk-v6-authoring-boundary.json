@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0074",
+  "topic": "fpk-v6-authoring-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Is the version-6 FPK grammar complete enough to construct a wholly original, unique-name archive for the registered-source route without borrowing retail bytes?",
+  "scope": {
+    "guestFunctions": [
+      "0x827F19C0",
+      "0x822D6270",
+      "0x822DB838",
+      "0x82D33818",
+      "0x82D33EF8",
+      "0x82D3CFD0",
+      "0x82E47F78",
+      "0x82E489F8",
+      "0x82E48BC8",
+      "0x82E80028",
+      "0x82E806E0",
+      "0x82E840C0"
+    ],
+    "boundary": "This packet proves a static byte model for new version-6 archives with unique non-empty ASCII basenames and uncompressed payloads. It does not implement a writer, prove non-ASCII names, establish duplicate-name support, assign the two optional metadata words a semantic type, prove scenario or DDS content, or establish runtime acceptance."
+  },
+  "publicEvidence": [
+    {
+      "source": "https://github.com/anderlli0053/quickbms_scripts/blob/4b1dc12d721a98fcb284de98d91d651795c6daad/1/civilization.bms",
+      "revision": "4b1dc12d721a98fcb284de98d91d651795c6daad",
+      "claim": "The public QuickBMS script identifies versions 5 and 6 with the FPK_ signature, the two-byte header field, the 32-bit count, the aligned variable name area, and the final size and offset words."
+    },
+    {
+      "source": "https://github.com/elbereth/DragonUnPACKer/blob/ddf87f9ef5057ceea1dfd99ae814e63121309996/DragonUnPACKer/plugins/drivers/default/drv_default.dpr",
+      "revision": "ddf87f9ef5057ceea1dfd99ae814e63121309996",
+      "claim": "Dragon UnPACKer independently models the two header bytes as Scrambling plus one version-6 byte and the entry tail as FileTime, Unknown, Size, and Offset. Its extractor applies name rotation only when Scrambling equals one and exposes no compression or integrity field."
+    },
+    {
+      "source": "https://github.com/ReRevvedRecomp/rerevved-studio/tree/8bf9cdba9024c2fbc6d761a6fb87e81de3f9a7ff",
+      "paths": [
+        "src/core/fpk_index.cpp",
+        "tests/studio_tests.cpp",
+        "docs/file-formats.md"
+      ],
+      "claim": "The dependency-free bounded parser and its synthetic fixture independently implement the 14-byte little-endian version-6 header, aligned variable records, two preserved 32-bit metadata words, and absolute payload size and offset words."
+    },
+    {
+      "source": "https://github.com/mike8699/civrev/tree/e520ee08beb6760dbe9c476d63341b73f9e5a95e/civrev_ps3/fpk.py",
+      "qualification": "Cross-platform comparison only. The script independently emits the same version-6 outer shape and preserves per-entry metadata, but its PS3 observations, writer behavior, and runtime claims are not Xbox evidence."
+    }
+  ],
+  "staticEvidence": {
+    "method": "foreground read-only DumpFunctions, DumpFunctionNeighborhoodBatch, DumpMemoryWords, and DumpDataValues queries with narrow raw-word decoding where the configured Xenon project truncates at save/restore thunks",
+    "mode": "foreground-read-only",
+    "qualification": "Exact initialized words, calls, byte loops, comparisons, and public parser structure agree on the admitted grammar. No retail payload was read, no runtime was launched, and no dynamic acceptance is claimed."
+  },
+  "grammar": {
+    "byteOrder": "Every scalar serialized by this grammar is little-endian. Names, alignment bytes, metadata bytes, and payloads are byte strings.",
+    "header": [
+      { "offset": 0, "width": 4, "field": "version", "rule": "uint32 value 6" },
+      { "offset": 4, "width": 4, "field": "signature", "rule": "exact ASCII bytes FPK_" },
+      { "offset": 8, "width": 1, "field": "requiredZero", "rule": "must equal zero on the observed static guest branch" },
+      { "offset": 9, "width": 1, "field": "sourceModeByte", "rule": "zero takes the observed original-source branch; broader semantics remain unresolved" },
+      { "offset": 10, "width": 4, "field": "entryCount", "rule": "uint32 number of consecutive variable records beginning at offset 14" }
+    ],
+    "entryRecord": [
+      { "width": 4, "field": "nameLength", "rule": "positive signed-range uint32 byte count; the supported writer subset uses 1 through 0x7FFFFFFC" },
+      { "width": "nameLength", "field": "name", "rule": "exact non-terminated bytes; version 6 applies no on-disk rotation or cipher" },
+      { "width": "0 through 3", "field": "namePadding", "rule": "advance to the next four-byte boundary; bytes are not validated and new archives write zero" },
+      { "width": 8, "field": "duplicateMetadata", "rule": "two preserved 32-bit words; the guest compares the combined value only while choosing among duplicate-name candidates, and new unique-name archives write zero" },
+      { "width": 4, "field": "payloadSize", "rule": "uint32 stored byte count; no separate logical size exists" },
+      { "width": 4, "field": "payloadOffset", "rule": "uint32 absolute byte offset from archive start" }
+    ],
+    "recordSize": "20 + align4(nameLength)",
+    "tableEnd": "14 + sum(recordSize for every entry)",
+    "bounds": [
+      "Every complete record must fit before the first payload selected by a conforming writer.",
+      "payloadOffset plus payloadSize must not overflow uint32 and must be at most archive size.",
+      "A conforming writer emits non-overlapping payloads at or after tableEnd even though the guest parser does not use this as an archive-integrity check.",
+      "The format stores no table offset, table byte size, aggregate payload size, archive size, footer, or end marker."
+    ]
+  },
+  "nameLookup": {
+    "entryIndexing": "The guest copies exactly nameLength bytes into its string representation, adds an in-memory terminator, folds ASCII A through Z to a through z, and computes a reflected CRC-32 accumulator initialized to 0xFFFFFFFF with no final XOR. The derived hash is not stored in the archive.",
+    "registeredQuery": "The common registered-source path calls 0x82E80028 with case folding enabled. The archive lookup changes forward slashes to backslashes, selects the basename after the final backslash in the current mode, folds ASCII uppercase, and computes the same hash.",
+    "encoding": "The Xbox path operates on bytes and proves no Unicode encoding. The five required authoring names are ASCII and need no broader encoding claim.",
+    "termination": "No terminator is serialized or counted. A zero byte inside the counted name is outside the supported writer subset because later string operations terminate on zero.",
+    "case": "ASCII case-insensitive for registered lookup. Bytes outside ASCII A through Z are not folded by 0x827F19C0.",
+    "separators": "Queries normalize slash to backslash and, in the observed current lookup mode, index the basename. The supported writer subset therefore uses separator-free basenames; path-bearing archive entries remain outside this packet.",
+    "duplicates": "The index compares names after a hash match. A distinct-name CRC collision is diagnosed and the new candidate is rejected rather than chained under the same hash. Exact duplicate-name replacement also consults the 8-byte metadata and call flags; its complete tie rule remains unresolved, so a writer must reject duplicate names after ASCII folding.",
+    "maximum": "No smaller semantic maximum was recovered. The guest requires a positive signed 32-bit length and successful allocation/read; the writer subset caps at 0x7FFFFFFC so align4 cannot wrap."
+  },
+  "payloadRules": {
+    "compression": "No compression flag, compressed size, logical size, codec identifier, checksum, or decompression branch is present in the admitted version-6 record path. payloadSize is the stored byte count.",
+    "placement": "Offsets are absolute and independently recorded. Contiguous payloads beginning at tableEnd are representable; the format does not require payload alignment.",
+    "ordering": "Unique-name lookup is hash indexed rather than payload-order indexed. A conforming writer may choose one deterministic record order and place payloads in that order; imported order is preservation data, not a new-archive invariant.",
+    "gapsAndTrailingBytes": "Offsets can represent gaps and trailing unreferenced bytes, but a canonical new archive emits neither.",
+    "emptyEntries": "A non-empty name with payloadSize zero is structurally representable. The authored-map bundle uses non-empty placeholder bytes because each consumer's content semantics are separate and may reject an empty payload."
+  },
+  "integrity": {
+    "present": [
+      "The FPK_ signature and required zero header byte are parser gates.",
+      "The in-memory name hash indexes lookup but is not serialized."
+    ],
+    "absent": [
+      "archive checksum or hash",
+      "per-payload checksum or hash",
+      "cryptographic signature or license",
+      "aggregate byte size",
+      "compression flag or logical size",
+      "reserved footer or end marker"
+    ],
+    "qualification": "The absent values are not present in the examined header and record path. The 8-byte per-entry metadata affects duplicate selection and is not a payload-integrity value; its historical semantic type remains unresolved."
+  },
+  "syntheticFixture": {
+    "provenance": "Generated entirely from the grammar in this manifest with invented ASCII names and five one-byte placeholder payloads; contains no retail-derived bytes.",
+    "archiveSize": 235,
+    "tableEnd": 230,
+    "sha256": "3F7F8CFE45243DD6817E900C8696DF0840E9D227FF45890C9850F31CBD968CFA",
+    "hex": "0600000046504B5F00000500000014000000444C435363656E6172696F44617461302E786D6C000000000000000001000000E60000000C0000004F524947494E414C2E6D6170000000000000000001000000E7000000170000004D61704F524947494E414C5F486569676874732E64647300000000000000000001000000E8000000230000004D61704F524947494E414C5F4D6F756E7461696E48696C6C5F426C656E64732E64647300000000000000000001000000E9000000180000004D61704F524947494E414C5F4C696768746D61702E646473000000000000000001000000EA000000584D48424C",
+    "entries": [
+      { "name": "DLCScenarioData0.xml", "payloadOffset": 230, "payloadSize": 1, "rawLookupCrc32": "FFCABF5C" },
+      { "name": "ORIGINAL.map", "payloadOffset": 231, "payloadSize": 1, "rawLookupCrc32": "CA148333" },
+      { "name": "MapORIGINAL_Heights.dds", "payloadOffset": 232, "payloadSize": 1, "rawLookupCrc32": "598E67B2" },
+      { "name": "MapORIGINAL_MountainHill_Blends.dds", "payloadOffset": 233, "payloadSize": 1, "rawLookupCrc32": "1CA10527" },
+      { "name": "MapORIGINAL_Lightmap.dds", "payloadOffset": 234, "payloadSize": 1, "rawLookupCrc32": "C5133917" }
+    ],
+    "verification": "The exact 235 bytes parsed through ReRevved Studio ParseFpkIndex at public commit 8bf9cdb as five size-1 ranges at offsets 230 through 234. This proves byte representability, not guest runtime acceptance or payload semantics."
+  },
+  "writerBoundary": {
+    "deterministicNewArchiveFields": [
+      "version 6, FPK_ signature, zero header bytes, and entry count",
+      "unique separator-free ASCII names, byte lengths, and zero name padding",
+      "zero duplicate metadata",
+      "payload sizes, absolute offsets, contiguous placement, and no trailing bytes",
+      "one documented deterministic record order"
+    ],
+    "preserveForImportedLosslessRoundTrip": [
+      "sourceMode byte",
+      "exact name bytes and padding",
+      "both metadata words",
+      "record order",
+      "payload order, gaps, and trailing bytes"
+    ],
+    "unresolvedButNotBlockingUniqueOriginalArchives": [
+      "nonzero sourceMode semantics",
+      "the historical type of duplicateMetadata",
+      "the complete exact-duplicate tie rule",
+      "non-ASCII encoding and folding",
+      "a smaller practical guest allocation limit"
+    ],
+    "writerRequirements": "A Studio writer requires a new explicit archive model that exposes names and raw metadata, rejects folded duplicates and CRC collisions, bounds all arithmetic, writes only a new destination, and reads the exact result back through an upgraded parser. The current extraction API must not be extended into a writer."
+  },
+  "deliveryRuling": {
+    "fpk": "The archive layer no longer blocks static representation of the five required wholly original named entries. No donor archive or retail metadata is required for the unique-name zero-metadata subset.",
+    "prepositionedRoute": "STFS remains unnecessary for the statically admitted prepositioned XUID-0 marketplace directory route, but the exact ContentManager hierarchy, immediate child directory, and root dlc.fpk are still required.",
+    "remainingBlockers": "Scenario XML completeness, Xbox DDS production, menu and gameplay acceptance, save identity, and multiplayer equality remain separate. FPK byte representability does not make the bundle playable."
+  },
+  "guards": [
+    "Do not infer Xbox behavior from the PS3 comparison implementation.",
+    "Do not describe the synthetic one-byte payloads as semantically valid scenario, map, or DDS content.",
+    "Do not claim support for duplicate names, path-bearing entry names, non-ASCII names, compression, archive mutation, or donor-based repacking.",
+    "Do not implement a writer, STFS package, installer, title patch, SDK path change, activation action, or runtime probe from this packet.",
+    "Do not call the prepositioned route installable or playable without the remaining content and runtime gates."
+  ],
+  "conclusion": "A complete deterministic version-6 byte model exists for a wholly original archive with unique non-empty ASCII basenames and raw payloads. The header is 14 bytes; each record is 20 plus aligned name bytes; names are non-terminated; the two metadata words may be zero when names are unique; size and absolute offset are the only payload descriptors; and no serialized checksum, cryptographic signature, compression descriptor, aggregate size, or footer exists in the examined header and record path. Registered lookup folds ASCII case, normalizes query separators and, in the observed current mode, selects a basename before indexing by a derived raw CRC-32. This closes static FPK byte representation for the prepositioned route while leaving scenario, DDS, and runtime acceptance as separate blockers."
+}

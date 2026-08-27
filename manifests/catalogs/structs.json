@@ -1936,6 +1936,97 @@
           }
         }
       ]
+    },
+    {
+      "id": "RVA-STR-0051",
+      "name": "network_command_record",
+      "image": "../image.json",
+      "claim": "Exact 0x14-byte Xbox internal command record copied as five 32-bit words by submit, ring append/drain, and command-object construction.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE19CC" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE172C" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java:0x82D90A18" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The current-image submit stores, ring copies, or constructor copy do not preserve exactly five consecutive 32-bit words; this internal record is not the constructed object's complete layout or a wire record."
+      },
+      "size": "0x14",
+      "fields": [
+        {
+          "id": "RVA-FLD-0159",
+          "name": "type",
+          "offset": "0x0",
+          "claim": "Holds the unsigned command type consumed by the 0..65 dispatch-table gate.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/dispatch" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDF18" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDFF4" }
+          ],
+          "qualification": {
+            "alternatives": ["Only Xbox cases 0, 6, and 17 have accepted semantic labels in current topics."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0160",
+          "name": "arg1",
+          "offset": "0x4",
+          "claim": "Holds the first generic 32-bit command argument read by the dispatcher.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/consumerView" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDF1C" }
+          ],
+          "qualification": {
+            "alternatives": ["Its meaning varies by command type and is unnamed outside separately accepted Xbox cases."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0161",
+          "name": "arg2",
+          "offset": "0x8",
+          "claim": "Holds the second generic 32-bit command argument read by the dispatcher.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/consumerView" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDF20" }
+          ],
+          "qualification": {
+            "alternatives": ["Its meaning varies by command type and is unnamed outside separately accepted Xbox cases."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0162",
+          "name": "arg3",
+          "offset": "0xC",
+          "claim": "Holds the third generic 32-bit command argument read by the dispatcher.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/consumerView" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDF24" }
+          ],
+          "qualification": {
+            "alternatives": ["Its meaning varies by command type and is unnamed outside separately accepted Xbox cases."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0163",
+          "name": "arg4",
+          "offset": "0x10",
+          "claim": "Holds the fourth generic 32-bit command argument preserved by submit, ring, and constructed-object copies.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE19DC" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java:0x82D90A18" }
+          ],
+          "qualification": {
+            "alternatives": ["The root dispatcher does not directly load this word at entry, and its downstream consumer meaning remains unresolved."]
+          }
+        }
+      ]
     }
   ]
 }

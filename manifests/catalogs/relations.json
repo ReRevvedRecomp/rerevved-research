@@ -3780,6 +3780,203 @@
       "qualification": {
         "falsificationCondition": "The resolver does not preload and guard 0x8314F0C4 or does not use that pointer for the fallback lookup after registered-vector misses; this edge does not assert successful fallback resolution, source type, package provenance, or runtime reachability."
       }
+    },
+    {
+      "id": "RVA-REL-0388",
+      "kind": "produces",
+      "from": "RVA-SYM-0184",
+      "to": "RVA-STR-0051",
+      "image": "../image.json",
+      "claim": "NetworkCommandSubmit stages exactly one five-word internal command record at 0x82CE19CC through 0x82CE19DC.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/submit" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE19CC" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The five consecutive current-image stores do not stage the five incoming type/argument words; this relation does not include the separate target argument."
+      }
+    },
+    {
+      "id": "RVA-REL-0389",
+      "kind": "owns",
+      "from": "RVA-SYM-0279",
+      "to": "RVA-SYM-0283",
+      "image": "../image.json",
+      "claim": "NetworkCommandQueueDrain appends to and drains from the fixed ring rooted at 0x83155C28.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/ring" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE16E4" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1780" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The append and drain address arithmetic does not resolve to the same 32-slot ring base; synchronization and runtime ownership remain unresolved."
+      }
+    },
+    {
+      "id": "RVA-REL-0390",
+      "kind": "owns",
+      "from": "RVA-SYM-0279",
+      "to": "RVA-SYM-0281",
+      "image": "../image.json",
+      "claim": "NetworkCommandQueueDrain reads, increments, and conditionally resets the producer counter at 0x8314F1F4.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/ring" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE16F4" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CE16C8" }
+      ],
+      "qualification": {
+        "alternatives": ["Runtime concurrency, wrap behavior, and overflow semantics remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-REL-0391",
+      "kind": "owns",
+      "from": "RVA-SYM-0279",
+      "to": "RVA-SYM-0282",
+      "image": "../image.json",
+      "claim": "NetworkCommandQueueDrain reads, advances, rolls back, and conditionally resets the consumer counter at 0x8314F1F8.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/ring" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1738" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CE16C8" }
+      ],
+      "qualification": {
+        "alternatives": ["The complete meaning of a zero dispatcher result and runtime counter behavior remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-REL-0392",
+      "kind": "calls",
+      "from": "RVA-SYM-0279",
+      "to": "RVA-SYM-0185",
+      "image": "../image.json",
+      "claim": "NetworkCommandQueueDrain directly calls NetworkCommandConsumer at 0x82CE17B0 with one drained record.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/localDrain" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE17B0" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The current-image branch at 0x82CE17B0 does not target 0x82CDDF08; runtime ordering and call success remain unresolved."
+      }
+    },
+    {
+      "id": "RVA-REL-0393",
+      "kind": "consumes",
+      "from": "RVA-SYM-0185",
+      "to": "RVA-STR-0051",
+      "image": "../image.json",
+      "claim": "NetworkCommandConsumer consumes the record type and first three argument words at offsets 0x0 through 0xC.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/consumerView" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDF18" }
+      ],
+      "qualification": {
+        "alternatives": ["The root entry does not directly load arg4, whose case-specific consumer meaning remains unresolved."]
+      }
+    },
+    {
+      "id": "RVA-REL-0394",
+      "kind": "calls",
+      "from": "RVA-SYM-0184",
+      "to": "RVA-SYM-0280",
+      "image": "../image.json",
+      "claim": "NetworkCommandSubmit directly calls NetworkCommandObjectConstruct at 0x82CE1A30 with distinct source and destination pointers.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/constructedObject" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1A30" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The current-image branch at 0x82CE1A30 does not target 0x82D90A18 or the source and destination pointers alias."
+      }
+    },
+    {
+      "id": "RVA-REL-0395",
+      "kind": "calls",
+      "from": "RVA-SYM-0184",
+      "to": "RVA-SYM-0279",
+      "image": "../image.json",
+      "claim": "NetworkCommandSubmit directly calls NetworkCommandQueueDrain at 0x82CE1AB0 on its local staging path.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/localDrain" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1AB0" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The current-image branch at 0x82CE1AB0 does not target 0x82CE16C8; the branch conditions and runtime reachability remain separately qualified."
+      }
+    },
+    {
+      "id": "RVA-REL-0396",
+      "kind": "consumes",
+      "from": "RVA-SYM-0280",
+      "to": "RVA-STR-0051",
+      "image": "../image.json",
+      "claim": "NetworkCommandObjectConstruct copies all five internal command words to object offsets 0x34 through 0x44.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/constructedObject" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java:0x82D90A18" }
+      ],
+      "qualification": {
+        "alternatives": ["The constructed object's complete allocation size, lifetime, and serialization role remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-REL-0397",
+      "kind": "consumes",
+      "from": "RVA-SYM-0184",
+      "to": "RVA-SYM-0284",
+      "image": "../image.json",
+      "claim": "NetworkCommandSubmit loads the manager pointer at 0x8314EFE0 and its child at offset 0x10 before target-dependent virtual handoff.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/targetRouting" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1A34" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1A3C" }
+      ],
+      "qualification": {
+        "alternatives": ["The manager and child types, virtual-slot names, target meaning, and delivery behavior remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-REL-0398",
+      "kind": "consumes",
+      "from": "RVA-SYM-0279",
+      "to": "RVA-SYM-0284",
+      "image": "../image.json",
+      "claim": "NetworkCommandQueueDrain loads the manager pointer and child at offset 0x10 for bounded pre/post-dispatch virtual notifications.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/localDrain" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1784" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CE16C8" }
+      ],
+      "qualification": {
+        "alternatives": ["The virtual notification semantics, runtime ordering, manager ownership, and synchronization remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-REL-0399",
+      "kind": "consumes",
+      "from": "RVA-SYM-0279",
+      "to": "RVA-STR-0051",
+      "image": "../image.json",
+      "claim": "NetworkCommandQueueDrain copies exactly one five-word record from the ring to its dispatcher staging area.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/ring" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1780" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The drain loop is not a five-iteration 32-bit copy from the 0x14-byte ring slot; runtime ordering remains unresolved."
+      }
     }
   ]
 }

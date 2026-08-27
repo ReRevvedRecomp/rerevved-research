@@ -1735,17 +1735,20 @@
     },
     {
       "id": "RVA-SYM-0184",
-      "name": "MoveCommandSubmit",
+      "name": "NetworkCommandSubmit",
       "kind": "function",
       "address": "0x82CE1950",
       "image": "../image.json",
-      "claim": "Submits the six-word command form whose command value 0x11 identifies Move.",
+      "claim": "Stages a five-word internal command record, keeps the target argument separate, and routes either a constructed network object or the local queue/drain path. Existing Xbox evidence identifies command 0x11 as Move.",
       "confidence": "confirmed",
       "evidence": [
-        { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/commandPath" }
+        { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/commandPath" },
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/submit" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE19CC" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1A30" }
       ],
       "qualification": {
-        "alternatives": ["The complete command queue object layout remains unresolved."]
+        "alternatives": ["The original function name, runtime delivery behavior, and wire serialization remain unresolved."]
       }
     },
     {
@@ -1754,15 +1757,19 @@
       "kind": "function",
       "address": "0x82CDDF08",
       "image": "../image.json",
-      "claim": "Consumes queued command records and dispatches command 0x00 to Combat and command 0x11 to Move.",
+      "claim": "Consumes the five-word internal queue record through a four-word dispatcher view, accepts unsigned types 0 through 65, and branches through the 66-entry table at 0x82CDE014; accepted Xbox topics identify cases 0, 6, and 17 as Combat, Rush, and Move.",
       "confidence": "confirmed",
       "evidence": [
         { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/commandPath" },
         { "kind": "topic-manifest", "locator": "../combat-resolution-lifecycle.json#/commandPath" },
+        { "kind": "topic-manifest", "locator": "../rush-cost-producer.json#/commandPath" },
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/dispatch" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDFF4" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDE014" },
         { "kind": "generated-code", "locator": "generated:rerevved/sub_82CDDF08" }
       ],
       "qualification": {
-        "alternatives": ["Other command cases remain unnamed unless accepted by their own packets."]
+        "alternatives": ["Cases other than 0, 6, and 17 remain unnamed unless accepted by their own Xbox packets; runtime ordering and wire behavior remain unresolved."]
       }
     },
     {
@@ -3293,6 +3300,113 @@
       ],
       "qualification": {
         "falsificationCondition": "The high-half at 0x82E80034 and signed-offset load at 0x82E800E8 do not resolve to 0x8314F0C4 or the resolver does not use that pointer for the fallback lookup after vector misses; concrete collection type and layout, package provenance, runtime contents, and successful fallback resolution remain unresolved."
+      }
+    },
+    {
+      "id": "RVA-SYM-0279",
+      "name": "NetworkCommandQueueDrain",
+      "kind": "function",
+      "address": "0x82CE16C8",
+      "image": "../image.json",
+      "claim": "Appends and drains five-word records through the 32-slot ring at 0x83155C28 and directly calls NetworkCommandConsumer at 0x82CE17B0.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/ring" },
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/localDrain" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE16E0" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE17B0" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CE16C8" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The current-image words do not form the recorded ring addresses, modulo-32 20-byte slot arithmetic, five-word copies, and direct call to 0x82CDDF08; the original name, synchronization, overflow behavior, and runtime ordering remain unresolved."
+      }
+    },
+    {
+      "id": "RVA-SYM-0280",
+      "name": "NetworkCommandObjectConstruct",
+      "kind": "function",
+      "address": "0x82D90A18",
+      "image": "../image.json",
+      "claim": "Initializes a vtable-bearing internal object and copies one five-word command record to object offsets 0x34 through 0x44.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/constructedObject" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java:0x82D90A18" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82D90A18" }
+      ],
+      "qualification": {
+        "alternatives": ["The original type and function names, complete allocation size, metadata meanings, lifetime, serialization role, and wire representation remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-SYM-0281",
+      "name": "network_command_producer_counter_8314F1F4",
+      "kind": "global",
+      "address": "0x8314F1F4",
+      "image": "../image.json",
+      "claim": "Stores the producer-side monotonic counter used to select the next modulo-32 internal command-ring slot.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/ring" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE16F4" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CE16C8" }
+      ],
+      "qualification": {
+        "alternatives": ["Concurrency, wrap/reset behavior under load, overflow handling, and runtime values remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-SYM-0282",
+      "name": "network_command_consumer_counter_8314F1F8",
+      "kind": "global",
+      "address": "0x8314F1F8",
+      "image": "../image.json",
+      "claim": "Stores the consumer-side monotonic counter used to select the next modulo-32 internal command-ring slot for dispatch.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/ring" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1738" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CE16C8" }
+      ],
+      "qualification": {
+        "alternatives": ["Concurrency, rollback behavior after a zero dispatcher result, wrap/reset behavior, and runtime values remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-SYM-0283",
+      "name": "network_command_ring_83155C28",
+      "kind": "global",
+      "address": "0x83155C28",
+      "image": "../image.json",
+      "claim": "Begins the 32-slot internal command ring whose slots are exactly 0x14 bytes and hold five 32-bit words.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/ring" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE16E4" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1710" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CE16C8" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The current-image address formation, five-bit mask, index arithmetic, or five-word copy does not resolve to 32 records of stride 0x14 at 0x83155C28; runtime contents and synchronization remain unresolved."
+      }
+    },
+    {
+      "id": "RVA-SYM-0284",
+      "name": "network_manager_ptr_8314EFE0",
+      "kind": "global",
+      "address": "0x8314EFE0",
+      "image": "../image.json",
+      "claim": "Stores the manager pointer whose child at offset 0x10 receives command-object handoffs and queue-drain state notifications through virtual slots.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1A34" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE1784" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CE1950" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CE16C8" }
+      ],
+      "qualification": {
+        "alternatives": ["The original manager and child types, slot names, ownership lifetime, target meaning, delivery behavior, and platform transport remain unresolved."]
       }
     }
   ]

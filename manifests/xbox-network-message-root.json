@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0077",
+  "topic": "xbox-network-message-root",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What are the version 1.3 Xbox internal command record, queue owner, and exact dispatcher root before any wire or cross-platform interpretation?",
+  "scope": {
+    "functions": ["0x82CE1950", "0x82CE16C8", "0x82CDDF08", "0x82D90A18"],
+    "globals": ["0x8314EFE0", "0x8314F1F4", "0x8314F1F8", "0x83155C28"],
+    "dispatchTable": "0x82CDE014..0x82CDE118",
+    "boundary": "This packet closes the Xbox internal representation and static queue/dispatch root. It does not establish wire serialization, platform transport, delivery, runtime ordering, lockstep, or semantic names beyond independently accepted Xbox topics."
+  },
+  "dependencies": [
+    { "topic": "combat-resolution-lifecycle", "use": "accepted Xbox command 0 Combat case" },
+    { "topic": "rush-cost-producer", "use": "accepted Xbox command 6 Rush case" },
+    { "topic": "unit-movement-lifecycle", "use": "accepted Xbox command 17 Move case and existing submit/consumer identities" }
+  ],
+  "currentEvidence": {
+    "method": "foreground read-only Ghidra string, pointer, function, raw-word, and dispatch-table queries against the pinned image, with narrow generated-code corroboration only after exact function identification",
+    "qualification": "The configured project truncates 0x82CE16C8, 0x82CE1950, and 0x82CDDF08 at the known second Xenon thunk block. Exact raw words establish their decisive field, ring, call, bound, and table operations. Ghidra fully decompiles 0x82D90A18."
+  },
+  "internalRepresentation": {
+    "recordSize": "0x14",
+    "fields": [
+      { "offset": "0x0", "name": "type", "width": 4 },
+      { "offset": "0x4", "name": "arg1", "width": 4 },
+      { "offset": "0x8", "name": "arg2", "width": 4 },
+      { "offset": "0xC", "name": "arg3", "width": 4 },
+      { "offset": "0x10", "name": "arg4", "width": 4 }
+    ],
+    "submit": {
+      "function": "0x82CE1950",
+      "stagingStores": ["0x82CE19CC", "0x82CE19D0", "0x82CE19D4", "0x82CE19D8", "0x82CE19DC"],
+      "target": "The sixth incoming argument remains separate from the five-word staging record."
+    },
+    "ring": {
+      "drain": "0x82CE16C8",
+      "base": "0x83155C28",
+      "producerCounter": "0x8314F1F4",
+      "consumerCounter": "0x8314F1F8",
+      "slots": 32,
+      "stride": "0x14",
+      "result": "The append and drain loops each copy exactly five words. A five-bit index mask and 20-byte index arithmetic select one of 32 modulo slots."
+    },
+    "consumerView": {
+      "function": "0x82CDDF08",
+      "reads": ["0x82CDDF18:+0x0", "0x82CDDF1C:+0x4", "0x82CDDF20:+0x8", "0x82CDDF24:+0xC"],
+      "qualification": "The dispatcher reads type and the first three arguments directly. Arg4 is preserved by submit, ring, and constructed-object copies, but its consumer meaning is not established by this packet."
+    }
+  },
+  "queueAndDispatch": {
+    "managerPointer": "0x8314EFE0",
+    "managerChildOffset": "0x10",
+    "targetRouting": {
+      "minusOneSlot": "0x44",
+      "otherTargetSlot": "0x3C",
+      "result": "0x82CE1950 passes the constructed object through one of two child-object virtual slots based on equality with -1; the non--1 path passes the target separately.",
+      "qualification": "The original slot names and the meaning of -1 remain unresolved."
+    },
+    "constructedObject": {
+      "constructor": "0x82D90A18",
+      "vtable": "0x821368E0",
+      "copiedRecordOffset": "0x34",
+      "copiedRecordWords": 5,
+      "touchedExtent": "0x48",
+      "qualification": "0x48 is the constructor's proved touched extent, not a complete allocation-size guarantee and not a wire record."
+    },
+    "localDrain": {
+      "function": "0x82CE16C8",
+      "managerSlot": "0x10",
+      "dispatcherCall": "0x82CE17B0",
+      "dispatcher": "0x82CDDF08"
+    },
+    "dispatch": {
+      "typeMinimum": 0,
+      "typeMaximum": 65,
+      "boundCheck": "0x82CDDFF4",
+      "outOfRangeBranch": "0x82CDDFF8",
+      "table": "0x82CDE014",
+      "indirectBranch": "0x82CDE010",
+      "entries": [
+        { "type": 0, "target": "0x82CDF74C", "label": "Combat", "semanticEvidence": "combat-resolution-lifecycle" },
+        { "type": 1, "target": "0x82CDFA74" },
+        { "type": 2, "target": "0x82CDFDF8" },
+        { "type": 3, "target": "0x82CE16AC" },
+        { "type": 4, "target": "0x82CDFFA0" },
+        { "type": 5, "target": "0x82CDFFF8" },
+        { "type": 6, "target": "0x82CE0028", "label": "Rush", "semanticEvidence": "rush-cost-producer" },
+        { "type": 7, "target": "0x82CE003C" },
+        { "type": 8, "target": "0x82CE0094" },
+        { "type": 9, "target": "0x82CE16AC" },
+        { "type": 10, "target": "0x82CE026C" },
+        { "type": 11, "target": "0x82CE02A0" },
+        { "type": 12, "target": "0x82CE02D4" },
+        { "type": 13, "target": "0x82CE04E8" },
+        { "type": 14, "target": "0x82CE06B0" },
+        { "type": 15, "target": "0x82CE090C" },
+        { "type": 16, "target": "0x82CE1354" },
+        { "type": 17, "target": "0x82CDEDFC", "label": "Move", "semanticEvidence": "unit-movement-lifecycle" },
+        { "type": 18, "target": "0x82CE06E0" },
+        { "type": 19, "target": "0x82CDFD94" },
+        { "type": 20, "target": "0x82CE0190" },
+        { "type": 21, "target": "0x82CE0224" },
+        { "type": 22, "target": "0x82CE0710" },
+        { "type": 23, "target": "0x82CE0848" },
+        { "type": 24, "target": "0x82CE1368" },
+        { "type": 25, "target": "0x82CE14D8" },
+        { "type": 26, "target": "0x82CDF484" },
+        { "type": 27, "target": "0x82CDF4C0" },
+        { "type": 28, "target": "0x82CDF4D0" },
+        { "type": 29, "target": "0x82CDFF78" },
+        { "type": 30, "target": "0x82CDFF8C" },
+        { "type": 31, "target": "0x82CDF478" },
+        { "type": 32, "target": "0x82CE1568" },
+        { "type": 33, "target": "0x82CDF4E4" },
+        { "type": 34, "target": "0x82CDF684" },
+        { "type": 35, "target": "0x82CDF6DC" },
+        { "type": 36, "target": "0x82CDF724" },
+        { "type": 37, "target": "0x82CDF578" },
+        { "type": 38, "target": "0x82CE0054" },
+        { "type": 39, "target": "0x82CE0068" },
+        { "type": 40, "target": "0x82CE12C4" },
+        { "type": 41, "target": "0x82CE1338" },
+        { "type": 42, "target": "0x82CDFA74" },
+        { "type": 43, "target": "0x82CE1648" },
+        { "type": 44, "target": "0x82CE14D8" },
+        { "type": 45, "target": "0x82CE166C" },
+        { "type": 46, "target": "0x82CDE1AC" },
+        { "type": 47, "target": "0x82CDE424" },
+        { "type": 48, "target": "0x82CDE79C" },
+        { "type": 49, "target": "0x82CDE60C" },
+        { "type": 50, "target": "0x82CDE628" },
+        { "type": 51, "target": "0x82CDE768" },
+        { "type": 52, "target": "0x82CDE8F4" },
+        { "type": 53, "target": "0x82CDE910" },
+        { "type": 54, "target": "0x82CDED8C" },
+        { "type": 55, "target": "0x82CDEC48" },
+        { "type": 56, "target": "0x82CDE11C" },
+        { "type": 57, "target": "0x82CDE174" },
+        { "type": 58, "target": "0x82CDE12C" },
+        { "type": 59, "target": "0x82CDE14C" },
+        { "type": 60, "target": "0x82CDED60" },
+        { "type": 61, "target": "0x82CDEDA4" },
+        { "type": 62, "target": "0x82CDEDC0" },
+        { "type": 63, "target": "0x82CDEDDC" },
+        { "type": 64, "target": "0x82CDFD88" },
+        { "type": 65, "target": "0x82CDE188" }
+      ]
+    }
+  },
+  "wireSerialization": {
+    "status": "unresolved",
+    "result": "No Xbox wire serializer, packet framing, compact parameter packing, GameSpy/Game Center envelope, or platform transport relation is established by this root packet.",
+    "qualification": "The constructed object at 0x82D90A18 is an internal vtable-bearing object. Its five-word embedded record does not prove the Xbox wire representation."
+  },
+  "crossPlatformHypotheses": {
+    "acceptedXboxSemanticTypes": [0, 6, 17],
+    "unaccepted": "All other PS3/iOS names, the claimed 0x00..0x44 range, six-consecutive-int AMsg layout, compact packing table, framing, broadcast names, and deterministic-lockstep statements remain search hypotheses.",
+    "superseded": "The Xbox internal queue has 66 accepted type values 0..65 and stores five words per slot. The target argument is separate from that record."
+  },
+  "guards": [
+    "Do not assign semantic names to numeric cases from PS3/iOS agreement alone.",
+    "Do not conflate the five-word internal ring record, the vtable-bearing constructed object, Xbox wire serialization, or platform UDP/session transport.",
+    "Do not infer runtime queue ordering, thread safety, overflow behavior, successful delivery, deterministic lockstep, checksum coverage, or resynchronization from static structure.",
+    "Do not treat the constructed object's 0x48 touched extent as a proved allocation size or wire size."
+  ],
+  "conclusion": "Version 1.3 uses a five-word, 0x14-byte internal command record in a 32-slot modulo ring at 0x83155C28. Drain function 0x82CE16C8 copies one record and directly calls dispatcher 0x82CDDF08. The dispatcher reads type plus three arguments, accepts unsigned types 0 through 65, and branches through the exact 66-entry table at 0x82CDE014. Submit function 0x82CE1950 keeps its target argument separate, copies the five-word record into a distinct vtable-bearing object through 0x82D90A18, and routes it through a network-manager child. Wire serialization and all unsupported cross-platform semantics remain unresolved."
+}

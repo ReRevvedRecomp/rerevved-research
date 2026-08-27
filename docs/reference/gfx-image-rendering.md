@@ -29,13 +29,25 @@ and registers the deferred `0x28`-byte descriptor.
 
 `GFxImageFileResCreate` at `0x822189A8` creates the Scaleform image-file
 request and dispatches its external-image branch through the snapshotted
-state-kind-12 creator. Snapshot builder `0x82216D18` records the recovered
-state outputs at:
+state-kind-12 creator. Snapshot builder `0x82216D18` records ten retained state
+outputs at:
 
 | Snapshot offset | State role |
 | --- | --- |
 | `+0x10` | State-kind-10 opener used by the bounded external-file decode branch |
+| `+0x14` | State-kind-11 output; role unnamed |
 | `+0x18` | State-kind-12 creator used by the external-image request branch |
+| `+0x1C` | State-kind-15 output; role unnamed |
+| `+0x20` | State-kind-21 output; role unnamed |
+| `+0x24` | State-kind-16 output; role unnamed |
+| `+0x28` | State-kind-19 output; role unnamed |
+| `+0x2C` | State-kind-18 output; role unnamed |
+| `+0x30` | State-kind-20 output; role unnamed |
+| `+0x34` | State-kind-25 output; role unnamed |
+
+These numeric GFx state identities are not a gameplay enumeration. The static
+layout does not make timing, callback, availability, or input state
+interchangeable, and it does not establish runtime values for any field.
 
 `GfxCreateExternalImage` at `0x821E2F80` opens the descriptor filename,
 selects a decoder, allocates a renderer texture through `0x82302DC8`, and

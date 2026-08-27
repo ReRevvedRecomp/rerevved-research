@@ -35,8 +35,8 @@
     },
     "stateSnapshotBuilder": {
       "address": "0x82216D18",
-      "method": "matching ten-entry state-kind table, output-field sequence, and retained-state replacement structure",
-      "result": "The current snapshot builder requests state kinds 10, 11, 12, 15, 21, 16, 19, 18, 20, and 25; its state-kind-10 and state-kind-12 outputs occupy offsets 0x10 and 0x18."
+      "method": "foreground read-only target confirmation plus exact current generated-code mapping of the ten-entry state-kind table, consecutive output-field sequence, and retained-state replacement stores; the Ghidra decompiler truncates at 0x82216D20",
+      "result": "The current snapshot builder requests state kinds 10, 11, 12, 15, 21, 16, 19, 18, 20, and 25 and stores their retained outputs at offsets 0x10 through 0x34 in that order. Only the state-kind-10 opener and state-kind-12 creator have bounded downstream roles."
     },
     "resourceCreator": {
       "address": "0x822189A8",
@@ -80,6 +80,18 @@
   "imageCreatorState": {
     "snapshotBuilder": "0x82216D18",
     "stateKinds": [10, 11, 12, 15, 21, 16, 19, 18, 20, 25],
+    "snapshotFields": [
+      { "offset": "0x10", "stateKind": 10, "downstreamRole": "bounded external-file opener" },
+      { "offset": "0x14", "stateKind": 11 },
+      { "offset": "0x18", "stateKind": 12, "downstreamRole": "bounded external-image creator" },
+      { "offset": "0x1C", "stateKind": 15 },
+      { "offset": "0x20", "stateKind": 21 },
+      { "offset": "0x24", "stateKind": 16 },
+      { "offset": "0x28", "stateKind": 19 },
+      { "offset": "0x2C", "stateKind": 18 },
+      { "offset": "0x30", "stateKind": 20 },
+      { "offset": "0x34", "stateKind": 25 }
+    ],
     "openerSnapshotField": "0x10",
     "creatorSnapshotField": "0x18",
     "stateKind": 12,
@@ -88,7 +100,8 @@
     "vtable": "0x8213CF28",
     "createSlot": "0x4",
     "createTarget": "0x821E2F80",
-    "result": "The version 1.3 loader publishes a state-kind-12 object whose create slot resolves directly to the external-image callback."
+    "result": "The snapshot builder replaces and stores all ten retained outputs in the recorded order. Separately, the version 1.3 loader publishes a state-kind-12 object whose create slot resolves directly to the external-image callback.",
+    "qualification": "State kind is a numeric GFx identity, not a gameplay enumeration. The roles, concrete types, ownership, lifetime, and runtime values of kinds 11, 15, 21, 16, 19, 18, 20, and 25 remain unresolved; timing, callback, availability, and input are not interchangeable."
   },
   "fileDecodeHandoff": {
     "resourceCreator": "0x822189A8",

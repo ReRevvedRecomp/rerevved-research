@@ -3286,7 +3286,7 @@
         { "kind": "topic-manifest", "locator": "../gfx-decoded-image-upload.json#/currentEvidence/temporaryRecordConstructor" }
       ],
       "qualification": {
-        "falsificationCondition": "The upload path does not call 0x821E0720 after the 0x38-byte allocation or the target does not initialize the temporary storage; allocation, ownership, and lifetime remain unresolved."
+        "falsificationCondition": "The upload path does not call 0x821E0720 after the 0x38-byte allocation or the target does not initialize the temporary storage; ownership and lifetime remain unresolved."
       }
     },
     {
@@ -3318,6 +3318,60 @@
       ],
       "qualification": {
         "falsificationCondition": "Current-image evidence does not show 0x82304B38 as a direct upload-local call target on that path; callsite address, runtime execution, algorithm, and pixel output remain unresolved."
+      }
+    },
+    {
+      "id": "RVA-REL-0361",
+      "kind": "calls",
+      "from": "RVA-SYM-0057",
+      "to": "RVA-SYM-0265",
+      "image": "../image.json",
+      "claim": "GfxUploadRendererTexture calls GfxTemporaryDecodedImageCreate at 0x82305190 on the bounded temporary direct-copy path.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../gfx-decoded-image-upload.json#/currentEvidence/temporaryRecordAllocator"
+        }
+      ],
+      "qualification": {
+        "falsificationCondition": "Current-image evidence does not show the direct call at 0x82305190 with numeric format, width, and height inputs; runtime execution, selected asset, pixel contents, and visual output remain unresolved."
+      }
+    },
+    {
+      "id": "RVA-REL-0362",
+      "kind": "calls",
+      "from": "RVA-SYM-0265",
+      "to": "RVA-SYM-0263",
+      "image": "../image.json",
+      "claim": "GfxTemporaryDecodedImageCreate calls sub_821E0720 to initialize the allocated object with numeric format, width, and height.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../gfx-decoded-image-upload.json#/currentEvidence/temporaryRecordAllocator"
+        }
+      ],
+      "qualification": {
+        "falsificationCondition": "Current-image evidence does not show the direct constructor call after the 0x38-byte allocation; original type identity, allocator implementation, ownership, lifetime, and runtime execution remain unresolved."
+      }
+    },
+    {
+      "id": "RVA-REL-0363",
+      "kind": "produces",
+      "from": "RVA-SYM-0265",
+      "to": "RVA-STR-0050",
+      "image": "../image.json",
+      "claim": "GfxTemporaryDecodedImageCreate allocates, initializes, validates, and returns the bounded temporary decoded-image object.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../gfx-decoded-image-upload.json#/currentEvidence/temporaryRecordAllocator"
+        }
+      ],
+      "qualification": {
+        "falsificationCondition": "Current-image evidence does not show successful return of the initialized temporary object after storage and dimension validation; fields outside the embedded record, ownership, lifetime, and runtime execution remain unresolved."
       }
     }
   ]

@@ -15,8 +15,8 @@ for the entity kind: `RVA-SYM-`, `RVA-STR-`, `RVA-FLD-`, `RVA-VTBL-`,
 `RVA-SLOT-`, or `RVA-REL-`. The validation gate rejects a repeated ID anywhere
 in the four catalogs.
 
-Catalog IDs remain reserved through symbol 0264, struct 0050, field 0150,
-vtable 0028, slot 0043, and relation 0360. An established entity keeps its ID.
+Catalog IDs remain reserved through symbol 0265, struct 0050, field 0150,
+vtable 0028, slot 0043, and relation 0363. An established entity keeps its ID.
 Allocate a new entity after the applicable reserved maximum. Do not fill an
 apparent gap with a different entity.
 

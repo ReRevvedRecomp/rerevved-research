@@ -61,10 +61,12 @@ The `0x1C`-byte decoded-image record has this bounded layout:
 
 `GfxFormatLevelExtent` at `0x821E04A8` and `GfxSelectMipSource` at
 `0x821E0568` enforce the supported extent, level, and derived-pointer bounds.
-The generic upload path may allocate a `0x38`-byte temporary conversion object
-whose embedded decoded record begins at `+0x10`. Initializer `0x821E0720`
-constructs that storage, and upload-local helper `0x82304B38` handles the
-supported non-power-of-two conversion path.
+The generic upload path may call `GfxTemporaryDecodedImageCreate` at
+`0x821E08D8`. It allocates a `0x38`-byte temporary conversion object, calls
+initializer `0x821E0720`, validates embedded base storage and nonzero
+dimensions, and returns null through its bounded cleanup path on failure. The
+embedded decoded record begins at `+0x10`. Upload-local helper `0x82304B38`
+handles the supported non-power-of-two conversion path.
 
 Backend submission reaches `0x82578E00`. That address is a static guest-code
 boundary only. It does not establish host graphics API semantics. Numeric

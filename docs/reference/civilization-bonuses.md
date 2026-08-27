@@ -116,6 +116,13 @@ Gameplay consumers call
 consumers include combat, rush-cost calculation, effective unit-stat readers,
 AI-side evaluation, production and economy paths, and other gameplay systems.
 
+Cataloged direct-caller relations establish shared lookup consumption across
+combat resolution, effective attack and defense readers, AI unit evaluation,
+rush application, and calendar turn advancement. Exact callsites remain
+canonical in the relations catalog. These edges do not assign meanings to bonus
+IDs, prove which branch selects each call, establish AI behavioral parity, or
+make the lookup a calendar effect.
+
 This convergence gives a future generic era-bonus variant one shared table and
 lookup mechanism. It does not by itself prove that every possible changed era
 bonus produces correct AI behavior.
@@ -134,3 +141,11 @@ bonus produces correct AI behavior.
   lookup.
 - Do not distribute a changed table without save-slot ruleset identity,
   pre-load mismatch handling, and an explicit multiplayer policy.
+
+## Evidence sources
+
+- [Civilization bonus storage](../../manifests/civilization-bonus-storage.json)
+- [Unit-definition AI evaluation](../../manifests/unit-definitions-ai-evaluation.json)
+- [Rush-cost producer](../../manifests/rush-cost-producer.json)
+- [Game calendar state](../../manifests/game-calendar-state.json)
+- [Catalog contract](../catalogs.md)

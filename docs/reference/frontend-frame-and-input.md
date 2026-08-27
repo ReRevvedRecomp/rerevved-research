@@ -42,6 +42,12 @@ availability test across gameplay, modal, load, and menu transitions. The test
 is not a general lifecycle enum, and none of these signals substitutes for the
 application callback boundary.
 
+`LocalPlayerIdResolve` at `0x82D8A3A0` bounds one local-player selection path.
+It returns `-1` when input offset `+0x10` is null. Otherwise it dispatches the
+object's vtable slot `+0x100` and returns word `+0xC` from the dispatched
+result. The input and result types, concrete fields, indirect target, fallback
+meaning, and multiplayer or network semantics remain unresolved.
+
 ## Shared frame-timing owner
 
 `FrameTimingOwnerPublish` at `0x82E293E8` allocates and initializes one

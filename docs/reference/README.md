@@ -20,6 +20,13 @@ source of evidence.
   image fills, renderer state, indexed draws, and guest fetch emission.
 - [Audio manager and 2D script table](audio-script-table.md) - manager and
   stream ownership, table lifecycle, bounded lookup, and unresolved fields.
+- [Frontend content staging and source resolution](content-source-resolution.md) -
+  distinct staging owners, registered-source publication, reverse lookup, and
+  fallback order.
+- [Game calendar state](game-calendar.md) - turn/year scalars, native
+  conversion, transition ownership, and presentation limits.
+- [Scene render-tree lifecycle](scene-render-lifecycle.md) - tree publication,
+  render and update edges, teardown, and receiver qualifications.
 
 Keep related strings, semantic function names, enum values, fields, and guards
 together on the applicable system page. Do not create separate string,

@@ -131,10 +131,30 @@
         { "type": 47, "target": "0x82CDE424" },
         { "type": 48, "target": "0x82CDE79C" },
         { "type": 49, "target": "0x82CDE60C" },
-        { "type": 50, "target": "0x82CDE628" },
-        { "type": 51, "target": "0x82CDE768" },
-        { "type": 52, "target": "0x82CDE8F4" },
-        { "type": 53, "target": "0x82CDE910" },
+        {
+          "type": 50,
+          "target": "0x82CDE628",
+          "staticRole": "Sets one per-player mask bit and gates a one-shot internal type-48 submission when that mask equals the human-player mask.",
+          "semanticEvidence": "Exact Xbox case words at 0x82CDE6E8..0x82CDE760"
+        },
+        {
+          "type": 51,
+          "target": "0x82CDE768",
+          "staticRole": "Conditionally clears one per-player bit in 0x830EE7E0 when IsHumanPlayer returns true for the value at 0x8312B8E4.",
+          "semanticEvidence": "Exact Xbox case words at 0x82CDE768..0x82CDE794 and playable-game-state-gates"
+        },
+        {
+          "type": 52,
+          "target": "0x82CDE8F4",
+          "staticRole": "Unconditionally sets one per-player bit in 0x830EE7E0.",
+          "semanticEvidence": "Exact Xbox case words at 0x82CDE8F4..0x82CDE908"
+        },
+        {
+          "type": 53,
+          "target": "0x82CDE910",
+          "staticRole": "Stores arg2 in a player-indexed state array and sets the corresponding bit in a distinct receipt mask.",
+          "semanticEvidence": "Exact Xbox case words at 0x82CDE910..0x82CDE938"
+        },
         {
           "type": 54,
           "target": "0x82CDED8C",
@@ -175,6 +195,25 @@
       "calendarDataflow": "Within 0x82D0C3E8, 0x82D0C400 loads current turn 0x8312B8DC, 0x82D0C470 directly calls TurnToYear at 0x82CEFA20, and 0x82D0C490 stores the result at current year 0x8312B8E0."
     },
     "qualification": "These are static numeric-case roles, not recovered original opcode names. They do not identify case 54 as the vendored PS3 Checksum message, establish BeginTurn or EndTurn identity, reveal checksum coverage, or prove runtime lockstep, ordering, resynchronization, wire packing, or transport."
+  },
+  "setupStateAnchors": {
+    "sharedPlayerMask": {
+      "address": "0x830EE7E0",
+      "case50": "Sets 1 << record.arg1 before testing completion.",
+      "case51": "Clears 1 << record.arg1 only when IsHumanPlayer returns true for the value at 0x8312B8E4.",
+      "case52": "Sets 1 << record.arg1 without a predicate in the exact case body."
+    },
+    "case50CompletionGate": {
+      "humanPlayerMask": "0x8312E608",
+      "oneShotFlag": "0x83157E4C",
+      "relation": "After a nonzero return from 0x82D8AA60, equality between 0x830EE7E0 and the human-player mask gates the zero-to-one flag transition, a call to 0x82D038E8, and direct submission of numeric type 48 through 0x82CE1950."
+    },
+    "case53PlayerState": {
+      "receiptMask": "0x83157E48",
+      "array": "0x8312E5C0 + 4 * record.arg1",
+      "relation": "Case 53 stores record.arg2 in the indexed word and sets 1 << record.arg1 in the distinct receipt mask."
+    },
+    "qualification": "These neutral static roles do not recover the vendored PS3 Handicap, WorldType, or TurnTime names. They do not establish readiness, setup order, host/client direction, broadcast, authority, runtime completion or delivery, EndTurn, lockstep, wire packing, or transport."
   },
   "wireSerialization": {
     "status": "unresolved",

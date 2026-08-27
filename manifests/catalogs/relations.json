@@ -3977,6 +3977,134 @@
       "qualification": {
         "falsificationCondition": "The drain loop is not a five-iteration 32-bit copy from the 0x14-byte ring slot; runtime ordering remains unresolved."
       }
+    },
+    {
+      "id": "RVA-REL-0400",
+      "kind": "installs-vtable",
+      "from": "RVA-SYM-0280",
+      "to": "RVA-VTBL-0029",
+      "image": "../image.json",
+      "claim": "NetworkCommandObjectConstruct installs vtable 0x821368E0 in the constructed command object.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/constructedObject" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java:0x82D90A18" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The constructor does not store 0x821368E0 at object offset 0; the original class name and complete lifetime remain unresolved."
+      }
+    },
+    {
+      "id": "RVA-REL-0401",
+      "kind": "calls",
+      "from": "RVA-SYM-0285",
+      "to": "RVA-SYM-0288",
+      "image": "../image.json",
+      "claim": "NetworkCommandObjectWrite passes object +0x34 to NetworkCommandRecordWrite.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/embeddedRecord" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82D910C0" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The bounded target does not call 0x821D2F98 with object +0x34; base-state framing remains unresolved."
+      }
+    },
+    {
+      "id": "RVA-REL-0402",
+      "kind": "calls",
+      "from": "RVA-SYM-0286",
+      "to": "RVA-SYM-0289",
+      "image": "../image.json",
+      "claim": "NetworkCommandObjectRead passes object +0x34 to NetworkCommandRecordRead.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/embeddedRecord" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82D91078" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The bounded target does not call 0x821D2F28 with object +0x34; base-state framing remains unresolved."
+      }
+    },
+    {
+      "id": "RVA-REL-0403",
+      "kind": "calls",
+      "from": "RVA-SYM-0287",
+      "to": "RVA-SYM-0279",
+      "image": "../image.json",
+      "claim": "NetworkCommandObjectConsume calls NetworkCommandQueueDrain with object +0x34.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/objectVtable/consumeSlot" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82D91C58" }
+      ],
+      "qualification": {
+        "alternatives": ["Runtime delivery, source authority, ordering, and the meaning of the returned one remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-REL-0404",
+      "kind": "consumes",
+      "from": "RVA-SYM-0288",
+      "to": "RVA-STR-0051",
+      "image": "../image.json",
+      "claim": "NetworkCommandRecordWrite consumes all five fields in type-through-arg4 order as four-byte primitives.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/embeddedRecord" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821D2F98" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The wrapper does not visit offsets 0, 4, 8, 0xC, and 0x10 exactly once in order; outer framing is not asserted."
+      }
+    },
+    {
+      "id": "RVA-REL-0405",
+      "kind": "produces",
+      "from": "RVA-SYM-0289",
+      "to": "RVA-STR-0051",
+      "image": "../image.json",
+      "claim": "NetworkCommandRecordRead produces all five fields in type-through-arg4 order from four-byte primitives.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/embeddedRecord" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821D2F28" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The wrapper does not visit offsets 0, 4, 8, 0xC, and 0x10 exactly once in order; validation and source authority are not asserted."
+      }
+    },
+    {
+      "id": "RVA-REL-0406",
+      "kind": "calls",
+      "from": "RVA-SYM-0288",
+      "to": "RVA-SYM-0290",
+      "image": "../image.json",
+      "claim": "NetworkCommandRecordWrite calls BufferWriteU32 five times, once for each ordered record field.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/embeddedRecord" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821D2F98" }
+      ],
+      "qualification": {
+        "falsificationCondition": "Any of the five exact direct branches does not target 0x821D3EA0 or the field order differs."
+      }
+    },
+    {
+      "id": "RVA-REL-0407",
+      "kind": "calls",
+      "from": "RVA-SYM-0289",
+      "to": "RVA-SYM-0291",
+      "image": "../image.json",
+      "claim": "NetworkCommandRecordRead calls BufferReadU32 five times, once for each ordered record field.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/embeddedRecord" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821D2F28" }
+      ],
+      "qualification": {
+        "falsificationCondition": "Any of the five exact direct branches does not target 0x822D93E8 or the field order differs."
+      }
     }
   ]
 }

@@ -65,7 +65,7 @@
       "copiedRecordOffset": "0x34",
       "copiedRecordWords": 5,
       "touchedExtent": "0x48",
-      "qualification": "0x48 is the constructor's proved touched extent, not a complete allocation-size guarantee and not a wire record."
+      "qualification": "0x48 is the constructor's proved touched extent, not a complete allocation-size guarantee. The embedded record's object-layer serialization is recorded separately and does not make the entire object a wire record."
     },
     "localDrain": {
       "function": "0x82CE16C8",
@@ -235,20 +235,40 @@
     "qualification": "This role is Xbox-native semantic evidence, but neither numeric case is assigned the vendored AddGeneral opcode name. The reason for two cases, their higher-level distinction, award timing, runtime delivery, wire packing, transport, and checksum coverage remain unresolved."
   },
   "wireSerialization": {
-    "status": "unresolved",
-    "result": "No Xbox wire serializer, packet framing, compact parameter packing, GameSpy/Game Center envelope, or platform transport relation is established by this root packet.",
-    "qualification": "The constructed object at 0x82D90A18 is an internal vtable-bearing object. Its five-word embedded record does not prove the Xbox wire representation."
+    "status": "object-layer-closed",
+    "objectVtable": {
+      "address": "0x821368E0",
+      "extent": "0x14",
+      "writeSlot": { "offset": "0x8", "target": "0x82D910C0" },
+      "readSlot": { "offset": "0xC", "target": "0x82D91078" },
+      "consumeSlot": { "offset": "0x10", "target": "0x82D91C58" },
+      "qualification": "The next table begins at 0x821368F4. The common leading slots at 0x0 and 0x4 remain unnamed."
+    },
+    "embeddedRecord": {
+      "objectOffset": "0x34",
+      "writeHelper": "0x821D2F98",
+      "readHelper": "0x821D2F28",
+      "orderedFields": ["type", "arg1", "arg2", "arg3", "arg4"],
+      "fieldWidth": 4,
+      "payloadBytes": 20,
+      "writePrimitive": "0x821D3EA0",
+      "readPrimitive": "0x822D93E8",
+      "byteOrder": "Each primitive conditionally reverses its four bytes when buffer byte-order state +0x08 differs from state at 0x82F78854. No unconditional wire endian is asserted."
+    },
+    "result": "The Xbox network object serializes and deserializes its embedded command record as five ordered 32-bit primitives, for an exact 20-byte object-layer payload. This is not the vendored PS3/iOS opcode-dependent compact packing.",
+    "qualification": "Outer object or packet framing, headers, batching, target encoding, Xbox session/platform transport, delivery, and runtime ordering remain unresolved. The 20-byte payload is not asserted to be the complete platform packet size."
   },
   "crossPlatformHypotheses": {
-    "acceptedXboxSemanticTypes": [0, 6, 17],
-    "unaccepted": "All other PS3/iOS names, the claimed 0x00..0x44 range, six-consecutive-int AMsg layout, compact packing table, framing, broadcast names, and deterministic-lockstep statements remain search hypotheses.",
-    "superseded": "The Xbox internal queue has 66 accepted type values 0..65 and stores five words per slot. The target argument is separate from that record."
+    "acceptedXboxNamedTypes": [0, 6, 17],
+    "acceptedXboxStaticRoleTypes": [25, 44, 50, 51, 52, 53, 54, 55],
+    "unaccepted": "All other PS3/iOS names, framing, broadcast names, GameSpy/Game Center envelopes, platform transport, and deterministic-lockstep statements remain search hypotheses.",
+    "superseded": "The Xbox internal queue has 66 accepted type values 0..65 and stores five words per slot. The target argument is separate from that record. The Xbox network object's embedded payload serializes all five words as ordered 32-bit primitives rather than the vendored opcode-dependent compact packing."
   },
   "guards": [
     "Do not assign semantic names to numeric cases from PS3/iOS agreement alone.",
-    "Do not conflate the five-word internal ring record, the vtable-bearing constructed object, Xbox wire serialization, or platform UDP/session transport.",
+    "Do not conflate the five-word internal ring record, its proved 20-byte object-layer serialization, outer packet framing, or platform UDP/session transport.",
     "Do not infer runtime queue ordering, thread safety, overflow behavior, successful delivery, deterministic lockstep, checksum coverage, or resynchronization from static structure.",
     "Do not treat the constructed object's 0x48 touched extent as a proved allocation size or wire size."
   ],
-  "conclusion": "Version 1.3 uses a five-word, 0x14-byte internal command record in a 32-slot modulo ring at 0x83155C28. Drain function 0x82CE16C8 copies one record and directly calls dispatcher 0x82CDDF08. The dispatcher reads type plus three arguments, accepts unsigned types 0 through 65, and branches through the exact 66-entry table at 0x82CDE014. Submit function 0x82CE1950 keeps its target argument separate, copies the five-word record into a distinct vtable-bearing object through 0x82D90A18, and routes it through a network-manager child. Wire serialization and all unsupported cross-platform semantics remain unresolved."
+  "conclusion": "Version 1.3 uses a five-word, 0x14-byte internal command record in a 32-slot modulo ring at 0x83155C28. Drain function 0x82CE16C8 copies one record and directly calls dispatcher 0x82CDDF08. The dispatcher reads type plus three arguments, accepts unsigned types 0 through 65, and branches through the exact 66-entry table at 0x82CDE014. Submit function 0x82CE1950 keeps its target argument separate, copies the five-word record into a distinct vtable-bearing object through 0x82D90A18, and routes it through a network-manager child. That object's paired methods serialize and deserialize the embedded record as five ordered 32-bit primitives for an exact 20-byte object-layer payload with conditional byte-order conversion. Outer framing, target encoding, platform transport, runtime delivery, and unsupported cross-platform semantics remain unresolved."
 }

@@ -3335,7 +3335,7 @@
         { "kind": "generated-code", "locator": "generated:rerevved/sub_82D90A18" }
       ],
       "qualification": {
-        "alternatives": ["The original type and function names, complete allocation size, metadata meanings, lifetime, serialization role, and wire representation remain unresolved."]
+        "alternatives": ["The original type and function names, complete allocation size, metadata meanings, lifetime, outer framing, target encoding, and platform transport remain unresolved."]
       }
     },
     {
@@ -3407,6 +3407,124 @@
       ],
       "qualification": {
         "alternatives": ["The original manager and child types, slot names, ownership lifetime, target meaning, delivery behavior, and platform transport remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-SYM-0285",
+      "name": "NetworkCommandObjectWrite",
+      "kind": "function",
+      "address": "0x82D910C0",
+      "image": "../image.json",
+      "claim": "Writes the object base state, then passes the embedded command record at object offset 0x34 to the five-word record writer.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/objectVtable/writeSlot" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821368E8" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82D910C0" }
+      ],
+      "qualification": {
+        "alternatives": ["The base-state bytes, outer framing, target encoding, and platform transport remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-SYM-0286",
+      "name": "NetworkCommandObjectRead",
+      "kind": "function",
+      "address": "0x82D91078",
+      "image": "../image.json",
+      "claim": "Reads the object base state, then passes the embedded command record at object offset 0x34 to the five-word record reader.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/objectVtable/readSlot" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821368EC" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82D91078" }
+      ],
+      "qualification": {
+        "alternatives": ["The base-state bytes, outer framing, source authority, and platform transport remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-SYM-0287",
+      "name": "NetworkCommandObjectConsume",
+      "kind": "function",
+      "address": "0x82D91C58",
+      "image": "../image.json",
+      "claim": "Passes the embedded command record at object offset 0x34 to NetworkCommandQueueDrain and returns one.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/objectVtable/consumeSlot" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821368F0" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82D91C58" }
+      ],
+      "qualification": {
+        "alternatives": ["Runtime delivery, source authority, ordering, and the meaning of the return value remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-SYM-0288",
+      "name": "NetworkCommandRecordWrite",
+      "kind": "function",
+      "address": "0x821D2F98",
+      "image": "../image.json",
+      "claim": "Writes record offsets 0x0, 0x4, 0x8, 0xC, and 0x10 in order through BufferWriteU32.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/embeddedRecord" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821D2F98" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_821D2F98" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The exact wrapper words do not make five ordered direct calls using offsets 0 through 0x10; outer framing and platform transport are not asserted."
+      }
+    },
+    {
+      "id": "RVA-SYM-0289",
+      "name": "NetworkCommandRecordRead",
+      "kind": "function",
+      "address": "0x821D2F28",
+      "image": "../image.json",
+      "claim": "Reads record offsets 0x0, 0x4, 0x8, 0xC, and 0x10 in order through BufferReadU32.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/embeddedRecord" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821D2F28" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_821D2F28" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The exact wrapper words do not make five ordered direct calls using offsets 0 through 0x10; validation, source authority, and platform transport are not asserted."
+      }
+    },
+    {
+      "id": "RVA-SYM-0290",
+      "name": "BufferWriteU32",
+      "kind": "function",
+      "address": "0x821D3EA0",
+      "image": "../image.json",
+      "claim": "Conditionally reverses one 32-bit source value according to buffer byte-order state, then calls buffer virtual slot 0x8 with length four.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/embeddedRecord" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java:0x821D3EA0" }
+      ],
+      "qualification": {
+        "alternatives": ["The buffer's concrete type, destination, capacity behavior, and platform transport remain unresolved."]
+      }
+    },
+    {
+      "id": "RVA-SYM-0291",
+      "name": "BufferReadU32",
+      "kind": "function",
+      "address": "0x822D93E8",
+      "image": "../image.json",
+      "claim": "Calls buffer virtual slot 0x4 with length four and a destination pointer, then conditionally reverses the four destination bytes according to buffer byte-order state.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/embeddedRecord" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x822D93E8" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_822D93E8" }
+      ],
+      "qualification": {
+        "alternatives": ["The buffer's concrete type, source, bounds behavior, validation, and platform transport remain unresolved."]
       }
     }
   ]

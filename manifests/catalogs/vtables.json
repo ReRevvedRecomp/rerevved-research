@@ -181,7 +181,7 @@
       },
       "slots": [
         {
-          "id": "RVA-SLOT-0043",
+          "id": "RVA-SLOT-0044",
           "offset": "0x4",
           "target": "RVA-SYM-0249",
           "claim": "Queries the renderer capability snapshot and active status.",
@@ -684,6 +684,60 @@
             { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x8213CF40" }
           ],
           "qualification": { "falsificationCondition": "The word at 0x8213CF40 is not 0x821E2B98." }
+        }
+      ]
+    },
+    {
+      "id": "RVA-VTBL-0029",
+      "name": "network_command_object_vtable_821368E0",
+      "address": "0x821368E0",
+      "image": "../image.json",
+      "claim": "Five-entry table installed in the object that embeds one network command record at offset 0x34.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/objectVtable" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821368E0" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java:0x82D90A18" }
+      ],
+      "qualification": {
+        "alternatives": ["Only slots 0x8, 0xC, and 0x10 are named; common leading slots 0x0 and 0x4 and the original class name remain unresolved."]
+      },
+      "slots": [
+        {
+          "id": "RVA-SLOT-0043",
+          "offset": "0x8",
+          "target": "RVA-SYM-0285",
+          "claim": "Targets object write serialization, including the embedded five-word command record.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/objectVtable/writeSlot" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821368E8" }
+          ],
+          "qualification": { "falsificationCondition": "The word at 0x821368E8 is not 0x82D910C0 or the target does not pass object +0x34 to NetworkCommandRecordWrite." }
+        },
+        {
+          "id": "RVA-SLOT-0045",
+          "offset": "0xC",
+          "target": "RVA-SYM-0286",
+          "claim": "Targets object read deserialization, including the embedded five-word command record.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/objectVtable/readSlot" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821368EC" }
+          ],
+          "qualification": { "falsificationCondition": "The word at 0x821368EC is not 0x82D91078 or the target does not pass object +0x34 to NetworkCommandRecordRead." }
+        },
+        {
+          "id": "RVA-SLOT-0046",
+          "offset": "0x10",
+          "target": "RVA-SYM-0287",
+          "claim": "Targets local consumption of the embedded command record through NetworkCommandQueueDrain.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/wireSerialization/objectVtable/consumeSlot" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x821368F0" }
+          ],
+          "qualification": { "falsificationCondition": "The word at 0x821368F0 is not 0x82D91C58 or the target does not call NetworkCommandQueueDrain on object +0x34." }
         }
       ]
     }

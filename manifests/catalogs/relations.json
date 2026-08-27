@@ -3741,6 +3741,45 @@
       "qualification": {
         "falsificationCondition": "The current-image instruction at 0x82E7FE64 does not store the newly initialized collection pointer through 0x8314F0C0 on the null path; this edge does not claim append-helper semantics, collection layout, entry provenance, registration chronology, or runtime contents."
       }
+    },
+    {
+      "id": "RVA-REL-0386",
+      "kind": "consumes",
+      "from": "RVA-SYM-0277",
+      "to": "RVA-SYM-0276",
+      "image": "../image.json",
+      "claim": "RegisteredSourceReverseResolver consumes the registered-source vector from its final pointer index toward zero before consulting the fallback collection.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../map-content-precedence.json#/resolverOrder/bareName/1" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82E80068" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82E8006C" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82E80098" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82E800CC" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82E80028" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The resolver does not load 0x8314F0C0, derive the final zero-based pointer index, or decrement after failed candidates; this edge does not establish concrete vector layout, synchronization, source categories, or runtime contents."
+      }
+    },
+    {
+      "id": "RVA-REL-0387",
+      "kind": "consumes",
+      "from": "RVA-SYM-0277",
+      "to": "RVA-SYM-0278",
+      "image": "../image.json",
+      "claim": "RegisteredSourceReverseResolver loads and null-checks the Resource\\Common fallback pointer at 0x8314F0C4 before vector traversal, then consumes it for the fallback lookup after the registered-vector path yields no result.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../map-content-precedence.json#/resolverOrder/bareName/2" },
+        { "kind": "topic-manifest", "locator": "../registered-source-delivery-boundary.json#/guestRegistration/baseCollection" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82E80034" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82E800E8" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82E80028" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The resolver does not preload and guard 0x8314F0C4 or does not use that pointer for the fallback lookup after registered-vector misses; this edge does not assert successful fallback resolution, source type, package provenance, or runtime reachability."
+      }
     }
   ]
 }

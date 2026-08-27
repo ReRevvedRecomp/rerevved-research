@@ -135,8 +135,18 @@
         { "type": 51, "target": "0x82CDE768" },
         { "type": 52, "target": "0x82CDE8F4" },
         { "type": 53, "target": "0x82CDE910" },
-        { "type": 54, "target": "0x82CDED8C" },
-        { "type": 55, "target": "0x82CDEC48" },
+        {
+          "type": 54,
+          "target": "0x82CDED8C",
+          "staticRole": "Clears sync-mismatch bit 0x10 and enters turn/calendar advancement.",
+          "semanticEvidence": "Exact Xbox case words at 0x82CDED90..0x82CDED9C and helper words at 0x82D0C400, 0x82D0C470, and 0x82D0C490"
+        },
+        {
+          "type": 55,
+          "target": "0x82CDEC48",
+          "staticRole": "Compares record arg1 with a current data value and arg2 with a stored seed, reporting distinct sync mismatches.",
+          "semanticEvidence": "Exact Xbox case words and strings at 0x82CDEC64..0x82CDECA8"
+        },
         { "type": 56, "target": "0x82CDE11C" },
         { "type": 57, "target": "0x82CDE174" },
         { "type": 58, "target": "0x82CDE12C" },
@@ -149,6 +159,22 @@
         { "type": 65, "target": "0x82CDE188" }
       ]
     }
+  },
+  "turnAndSyncAnchors": {
+    "case55": {
+      "type": 55,
+      "target": "0x82CDEC48",
+      "dataComparison": "0x82CDEC64 calls 0x82CD4CF0 and 0x82CDEC68 compares its return with record arg1. Mismatch emits the exact Xbox string 'Synch Err: Data'.",
+      "seedComparison": "0x82CDEC90 loads the stored word rooted at 0x82F7AD00 and 0x82CDEC94 compares it with record arg2. Mismatch emits the exact Xbox string 'Synch Err: Seed'.",
+      "mismatchState": "Either mismatch sets bit 0x10 in 0x82FFE7C4."
+    },
+    "case54": {
+      "type": 54,
+      "target": "0x82CDED8C",
+      "mismatchState": "0x82CDED90..0x82CDED98 clears bit 0x10 in 0x82FFE7C4 before 0x82CDED9C directly calls 0x82D0C3E8.",
+      "calendarDataflow": "Within 0x82D0C3E8, 0x82D0C400 loads current turn 0x8312B8DC, 0x82D0C470 directly calls TurnToYear at 0x82CEFA20, and 0x82D0C490 stores the result at current year 0x8312B8E0."
+    },
+    "qualification": "These are static numeric-case roles, not recovered original opcode names. They do not identify case 54 as the vendored PS3 Checksum message, establish BeginTurn or EndTurn identity, reveal checksum coverage, or prove runtime lockstep, ordering, resynchronization, wire packing, or transport."
   },
   "wireSerialization": {
     "status": "unresolved",

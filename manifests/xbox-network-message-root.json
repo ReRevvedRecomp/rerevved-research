@@ -137,9 +137,24 @@
           "semanticEvidence": "great-general-attachment-lifecycle and exact Xbox words at 0x82CE14F0, 0x82CE14F4, 0x82CE1520, and 0x82CE1560"
         },
         { "type": 45, "target": "0x82CE166C" },
-        { "type": 46, "target": "0x82CDE1AC" },
-        { "type": 47, "target": "0x82CDE424" },
-        { "type": 48, "target": "0x82CDE79C" },
+        {
+          "type": 46,
+          "target": "0x82CDE1AC",
+          "staticRole": "Enters CalendarTurnAdvance, submits numeric type 49, and invokes the shared per-player follow-up.",
+          "semanticEvidence": "game-calendar-state and exact Xbox words at 0x82CDE254, 0x82CDE27C, 0x82CDE280, and 0x82CDE288"
+        },
+        {
+          "type": 47,
+          "target": "0x82CDE424",
+          "staticRole": "Enters CalendarTurnAdvance, submits numeric type 49, and invokes the shared per-player follow-up.",
+          "semanticEvidence": "game-calendar-state and exact Xbox words at 0x82CDE4FC, 0x82CDE524, 0x82CDE528, and 0x82CDE530"
+        },
+        {
+          "type": 48,
+          "target": "0x82CDE79C",
+          "staticRole": "Sets state bit 0x4000 and, on a guarded path, submits numeric type 53 with arg1 forwarded as the new arg2.",
+          "semanticEvidence": "Exact Xbox words at 0x82CDE7AC, 0x82CDE7B4, 0x82CDE8E4, 0x82CDE8E8, and 0x82CDE8EC"
+        },
         { "type": 49, "target": "0x82CDE60C" },
         {
           "type": 50,
@@ -191,6 +206,16 @@
     }
   },
   "turnAndSyncAnchors": {
+    "cases46And47": {
+      "types": [46, 47],
+      "sharedRole": "Each enters CalendarTurnAdvance at 0x82D1EAB0, directly submits numeric type 49, and calls shared follow-up 0x82D1D1C0.",
+      "qualification": "Entering CalendarTurnAdvance does not prove its increment branch runs on every call. The exact evidence does not distinguish BeginTurn, EndTurn, or ImDoneAI names between these cases."
+    },
+    "case48": {
+      "type": 48,
+      "state": "Sets bit 0x4000 in 0x82FFE7C4.",
+      "internalSubmit": "On a guarded path, directly submits numeric type 53 with case-48 arg1 forwarded as the new record's arg2."
+    },
     "case55": {
       "type": 55,
       "target": "0x82CDEC48",
@@ -204,7 +229,7 @@
       "mismatchState": "0x82CDED90..0x82CDED98 clears bit 0x10 in 0x82FFE7C4 before 0x82CDED9C directly calls 0x82D0C3E8.",
       "calendarDataflow": "Within 0x82D0C3E8, 0x82D0C400 loads current turn 0x8312B8DC, 0x82D0C470 directly calls TurnToYear at 0x82CEFA20, and 0x82D0C490 stores the result at current year 0x8312B8E0."
     },
-    "qualification": "These are static numeric-case roles, not recovered original opcode names. They do not identify case 54 as the vendored PS3 Checksum message, establish BeginTurn or EndTurn identity, reveal checksum coverage, or prove runtime lockstep, ordering, resynchronization, wire packing, or transport."
+    "qualification": "These are static numeric-case roles, not recovered original opcode names. They do not identify case 54 as the vendored PS3 Checksum message, distinguish BeginTurn or EndTurn among cases 46 through 48, reveal checksum coverage, or prove runtime lockstep, ordering, resynchronization, delivery, outer wire framing, or transport."
   },
   "setupStateAnchors": {
     "sharedPlayerMask": {
@@ -273,7 +298,7 @@
   },
   "crossPlatformHypotheses": {
     "acceptedXboxNamedTypes": [0, 6, 17],
-    "acceptedXboxStaticRoleTypes": [25, 44, 50, 51, 52, 53, 54, 55],
+    "acceptedXboxStaticRoleTypes": [25, 44, 46, 47, 48, 50, 51, 52, 53, 54, 55],
     "unaccepted": "All other PS3/iOS names, framing, broadcast names, GameSpy/Game Center envelopes, platform transport, and deterministic-lockstep statements remain search hypotheses.",
     "superseded": "The Xbox internal queue has 66 accepted type values 0..65 and stores five words per slot. The target argument is separate from that record. The Xbox network object's embedded payload serializes all five words as ordered 32-bit primitives rather than the vendored opcode-dependent compact packing."
   },

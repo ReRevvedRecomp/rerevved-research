@@ -68,9 +68,12 @@ dimensions, and returns null through its bounded cleanup path on failure. The
 embedded decoded record begins at `+0x10`. Upload-local helper `0x82304B38`
 handles the supported non-power-of-two conversion path.
 
-Backend submission reaches `0x82578E00`. That address is a static guest-code
-boundary only. It does not establish host graphics API semantics. Numeric
-formats, byte lanes, channel order, and alpha meaning remain unnamed.
+Backend submission reaches `GfxBackendUploadRegion` at `0x82578E00`. Direct
+and mip paths supply the selected source, numeric format, pitch, and rectangle;
+the helper validates required inputs, prepares bounded region state, and
+returns a status. This remains a static guest-code boundary and does not
+establish host graphics API semantics. Numeric formats, byte lanes, channel
+order, and alpha meaning remain unnamed.
 
 ## Image-backed shape and direct fill
 

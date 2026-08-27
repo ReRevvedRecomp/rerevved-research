@@ -143,6 +143,27 @@ headless logs in a dedicated ignored scratch directory outside the shared
 operating-system temp directory. For a behavioral claim, compare a narrow
 generated C++ window and confirm it with a default-off runtime probe.
 
+## FX object shader correlation
+
+ReXGlue's `dump_shaders` option writes guest shader microcode to files named
+with the runtime microcode hash. Correlate those dumps with candidate Xbox 360
+FX objects without copying either input into this repository:
+
+```powershell
+python tools\correlate_fxobj_shaders.py `
+  --fxobj '<candidate-one.fxobj>' `
+  --fxobj '<candidate-two.fxobj>' `
+  --shader-directory '<ReXGlue-shader-dump-directory>' `
+  --require-all
+```
+
+The tool searches for the complete dumped microcode in raw and per-dword
+byte-swapped form. Its JSON output contains only filenames, sizes, hashes,
+match offsets, and byte-order labels. Keep the report in ignored scratch and
+promote only a bounded identity whose runtime dump and source asset are both
+independently identified. A byte match does not prove draw execution, visible
+output, sampler ownership, render-target state, or defect causation.
+
 ## Manual canonical-image evidence replay
 
 **Canonical-image evidence validation, not retail derivation validation.** The

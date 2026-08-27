@@ -27,6 +27,9 @@ source of evidence.
   conversion, transition ownership, and presentation limits.
 - [Scene render-tree lifecycle](scene-render-lifecycle.md) - tree publication,
   render and update edges, teardown, and receiver qualifications.
+- [Xbox network messages](xbox-network-messages.md) - internal records, queue
+  and dispatch ownership, supported semantic anchors, serialization, and wire
+  qualifications.
 
 Keep related strings, semantic function names, enum values, fields, and guards
 together on the applicable system page. Do not create separate string,

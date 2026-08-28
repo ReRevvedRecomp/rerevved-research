@@ -31,6 +31,8 @@ source of evidence.
 - [Xbox network messages](xbox-network-messages.md) - internal records, queue
   and dispatch ownership, supported semantic anchors, serialization, and wire
   qualifications.
+- [Xbox System Link QoS boundary](xbox-system-link-qos.md) - exact lookup
+  wrapper, neutral argument forwarding, and remaining discovery qualifications.
 
 Keep related strings, semantic function names, enum values, fields, and guards
 together on the applicable system page. Do not create separate string,

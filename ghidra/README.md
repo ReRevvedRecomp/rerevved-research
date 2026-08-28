@@ -18,6 +18,7 @@ This index covers every Java script in this directory.
 - `DumpStringBoundary.java` dumps exact string references and a bounded native closure.
 - `DumpStringsInRange.java` prints defined strings inside one bounded guest address range.
 - `FindCallConstantArgs.java` finds direct calls whose nearest selected argument write is a requested immediate constant.
+- `FindCallSplitConstantArgs.java` finds capped direct calls whose selected argument uses a direct or split 32-bit constant.
 - `FindFieldAccesses.java` classifies reads and writes inside selected functions and an optional caller closure.
 - `FindFieldRefs.java` finds PowerPC register-plus-displacement operands for selected offsets.
 - `FindPointerValues.java` finds exact aligned 32-bit pointer values in initialized guest memory.

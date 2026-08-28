@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0079",
+  "topic": "xbox-system-link-qos-root",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What is the smallest version 1.3 guest-owned Xbox System Link discovery boundary after the general XGI session-search hypothesis is rejected?",
+  "scope": {
+    "functions": ["0x827F10F0"],
+    "imports": [
+      "0x82E927B4:NetDll_XNetQosListen",
+      "0x82E927C4:NetDll_XNetQosLookup",
+      "0x82E927D4:NetDll_XNetQosRelease"
+    ],
+    "boundary": "This checkpoint identifies the exact QoS lookup wrapper and its neutral argument forwarding. It does not establish the lookup result layout, payload meaning, visible Refresh ownership, advertisement or discovery behavior, host/client direction, delivery, matchmaking, transport, relay, or Internet play."
+  },
+  "currentEvidence": {
+    "method": "Eight foreground read-only Ghidra packets against the pinned image, followed by narrow generated-code corroboration only for exact function 0x827F10F0",
+    "qualification": "The visible System Link label owner is UI-only, the visible Refresh and Create Game strings have no modeled references, and the tested general XGI search message forms have no direct imported XMsg producer. Exact QoS Lookup has one modeled call reference."
+  },
+  "generalSessionSearchNegative": {
+    "messages": ["0x000B0016", "0x000B001C", "0x000B0065"],
+    "imports": [
+      "0x82E926E4:XMsgStartIORequestEx",
+      "0x82E926F4:XMsgStartIORequest",
+      "0x82E92714:XMsgInProcessCall"
+    ],
+    "result": "No direct call matched the exact message values through the three imported XMsg forms using the bounded direct or lis-plus-ori/addi constant search.",
+    "qualification": "This does not exclude wrappers, unsupported constant formation, indirect dispatch, other XGI messages, or non-XGI discovery."
+  },
+  "uiAnchors": {
+    "systemLinkString": "0x821370B0",
+    "labelOwner": "0x82E52068",
+    "labelOwnerRole": "Resolves Match Type, Player Match, Ranked Match, and System Link localization values and passes them to UI SetTitle and SetText calls.",
+    "refreshString": "0x821391A4",
+    "createGameString": "0x821391AC",
+    "qualification": "The latter two strings have zero modeled references. No action or event owner is claimed."
+  },
+  "qosLookup": {
+    "import": "0x82E927C4",
+    "importName": "NetDll_XNetQosLookup",
+    "callsite": "0x827F1144",
+    "wrapper": "0x827F10F0",
+    "referenceCount": 1,
+    "forwarding": "The wrapper inserts literal caller value 1 as import arg1, shifts incoming register args r3 through r10 to import args2 through 9, copies four incoming stack arguments to import args10 through 13, and returns the import result unchanged.",
+    "qualification": "The thirteen-argument import shape is exact. Argument meanings, pointed-to layouts, asynchronous completion, and result ownership remain unresolved in Xbox guest evidence."
+  },
+  "externalGuidance": {
+    "source": "https://github.com/AdrianCassar/xenia-canary/blob/master/src/xenia/kernel/xam/xam_net.cc",
+    "role": "Search guidance only",
+    "note": "The external implementation agrees with a caller plus twelve API arguments and an XNQOS/XNQOSINFO result family. Its networking, service, structure, and completion behavior are not accepted as ReRevved guest evidence."
+  },
+  "guards": [
+    "Do not treat the bounded XGI negative as proof that the title never uses XGI session services.",
+    "Do not interpret the retained 72-byte QoS listener payload without a separately closed guest consumer layout.",
+    "Do not implement a fabricated result layout from external source alone.",
+    "Do not claim discovery, matchmaking, delivery, host authority, transport, relay, Internet play, or Game of the Week behavior from this static checkpoint."
+  ],
+  "conclusion": "The smallest supported version 1.3 System Link lead is not a general XGI session-search producer in the tested direct forms. Exact guest wrapper 0x827F10F0 is the sole modeled caller of imported NetDll_XNetQosLookup and forwards twelve title arguments after inserting caller value 1. The lookup result layout and its first consumer remain the next guest-evidence gate before SDK implementation."
+}

@@ -258,7 +258,8 @@
         "callsites": ["0x82CDEAD0", "0x82CDEC18"],
         "arguments": "Both static sites pass current-data helper 0x82CD4CF0's return as arg1 and the stored word rooted at 0x82F7AD00 as arg2.",
         "alternatePathGate": "Halfword 0x82F77454 selects the second site when zero.",
-        "predicate": "A neutral case-local predicate starts at zero and can become one in a compound per-player scan. One required set condition is inequality between 0x8312E5C0 + 4*i and the current-data result; the immediately following selected low-byte flag must also be zero. Earlier eligibility gates remain unresolved, so these conditions are not sufficient."
+        "predicate": "A neutral case-local predicate starts at zero and can become one in a compound per-player scan. One required set condition is inequality between 0x8312E5C0 + 4*i and the current-data result; the immediately following selected low-byte flag must also be zero. The selected flag is zero exactly when at least one of two preceding player-indexed words is nonzero and neutral global byte 0x8314EF9F is zero; both indexed words zero or a nonzero global byte select one. Earlier eligibility gates remain unresolved, so these conditions are not sufficient.",
+        "selectedFlagByte": "Function 0x82D05D50 writes constant zero to 0x8314EF9F on its straight-line entry path, and 0x82D217C8 directly calls that writer at 0x82D217E0. The current reference model omits independently proven read and call references, so this is not a complete access inventory and other writers remain unresolved."
       },
       "dataComparison": "0x82CDEC64 calls 0x82CD4CF0 and 0x82CDEC68 compares its return with record arg1. Mismatch emits the exact Xbox string 'Synch Err: Data'.",
       "seedComparison": "0x82CDEC90 loads the stored word rooted at 0x82F7AD00 and 0x82CDEC94 compares it with record arg2. Mismatch emits the exact Xbox string 'Synch Err: Seed'.",

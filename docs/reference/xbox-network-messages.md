@@ -100,7 +100,15 @@ Other useful cases retain neutral static roles:
   per-player predicate gates the optional type-55 path. Indexed word
   `0x8312E5C0 + 4*i` differing from the current-data result and a following
   selected low-byte flag being zero are required but not sufficient to set
-  that predicate because earlier eligibility gates remain unresolved.
+  that predicate because earlier eligibility gates remain unresolved. The
+  selected flag is zero exactly when at least one of two preceding player-
+  indexed words is nonzero and neutral global byte `0x8314EF9F` is zero; both
+  indexed words zero or a nonzero global byte select one.
+- Function `0x82D05D50` writes constant zero to `0x8314EF9F` on its straight-
+  line entry path, and `0x82D217C8` contains a direct call to that writer at
+  `0x82D217E0`. The current reference model omits the independently proven
+  read and call references, so this is not a complete access inventory and
+  other writers remain unresolved.
 - The no-type-55 path and both type-55 paths converge before one direct numeric
   type-54 submission. This static convergence does not prove runtime ordering,
   reachability, delivery, readiness, completion, or synchronization.

@@ -143,9 +143,20 @@ Other useful cases retain neutral static roles:
   zero at `+0x34` where the stack path stores its loop index. The request does
   not prove exact usable heap extent or a general stack extent.
 - Companion leading table `0x8211EC1C` is installed by a caller-provided-object
-  initializer and by two post-command-call transitions, but its extent remains
-  unresolved. Original class and function names, ownership, lifetime, runtime
-  delivery, and transport remain unresolved.
+  initializer and by two post-command-call transitions. It contains six
+  consecutive function pointers and has structural extent
+  `[0x8211EC1C,0x8211EC34)`. Its first two targets match the common leading
+  targets above, its next two are the accepted base-envelope writer and reader,
+  its fifth is shared return-zero stub `0x822DF8A0`, and its sixth is neutral
+  wrapper `0x821B14B0`. That wrapper preserves its opaque first argument across
+  one unconditional helper call and a second call gated by arg2 bit zero, then
+  returns the first argument; no destructor or release meaning is assigned.
+  Zero word `0x8211EC34` separates the table from a distinct five-pointer
+  sequence at `0x8211EC38`, which exact initializer `0x82E2EBD8` installs at
+  caller-provided object offset zero. This closes a structural boundary, not an
+  executable-wide installation or lifetime inventory. Original class and slot
+  names, object extent, field meanings, ownership, lifetime, helper semantics,
+  runtime delivery, and transport remain unresolved.
 - Ghidra records four other reads of `0x82F700AC`: three use it as a signed-
   positive guard, while `0x821BD7F8` bounds incoming arg1 before a following
   mask path. It records no writer and omits the four independently identified

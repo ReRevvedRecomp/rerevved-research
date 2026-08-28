@@ -115,9 +115,22 @@ Other useful cases retain neutral static roles:
 - Case 53's second scan takes a fresh current-data helper snapshot, starts its
   index at zero only when the same signed bound is positive, advances the index
   and one neutral pointer by one and `4`, and repeats while the incremented
-  index is signed-less-than the reloaded bound. This static loop structure does
-  not establish a fixed runtime cardinality, runtime reachability, or helper
-  and element semantics.
+  index is signed-less-than the reloaded bound. Within one entered iteration,
+  its guarded body requires the index to differ from a neutral helper result,
+  a second helper's low byte to be nonzero, and the current iteration word to
+  differ from the fresh snapshot.
+- Passing those three guards initializes selected fields of a neutral stack
+  object at `r1+0xA0`. Its leading word is `0x82136930` before a call window
+  and `0x8211EC1C` afterward or when the call is skipped. When the network
+  manager's `+0x10` child is nonnull, the body passes that child, the stack
+  object, and literal one as arguments 1 through 3 to the child's unresolved
+  virtual slot `+0x44`. The dynamic target, table, object type, complete extent,
+  serialization layout, unqueried fields, array extent, ownership, delivery,
+  and runtime behavior remain unresolved. Neither leading constant has a
+  supported vtable, class, or semantic identity, and the child, indirect call,
+  and literal-one roles remain unnamed. This static structure does not
+  establish a fixed runtime cardinality, runtime reachability, or helper and
+  element semantics.
 - Ghidra records four other reads of `0x82F700AC`: three use it as a signed-
   positive guard, while `0x821BD7F8` bounds incoming arg1 before a following
   mask path. It records no writer and omits the four independently identified

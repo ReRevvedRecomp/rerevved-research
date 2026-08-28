@@ -261,7 +261,7 @@ def _display_label(civilization: Civilization) -> str:
 
 def _render_bonus_table(data: ReferenceData) -> str:
     lines = [
-        "| Civilization | Leader | Starting | Ancient | Medieval | Industrial | Modern |",
+        "| Civilization | Leader | UA | Ancient UEA | Medieval UEA | Industrial UEA | Modern UEA |",
         "| --- | --- | --- | --- | --- | --- | --- |",
     ]
     for civilization, manifest_row in zip(
@@ -280,7 +280,7 @@ def _render_bonus_table(data: ReferenceData) -> str:
 
 def _render_id_table(data: ReferenceData) -> str:
     lines = [
-        "| Civ ID | Internal name | Ancient | Medieval | Industrial | Modern |",
+        "| Civ ID | Internal name | Ancient UEA | Medieval UEA | Industrial UEA | Modern UEA |",
         "| ---: | --- | ---: | ---: | ---: | ---: |",
     ]
     for row in data.manifest_rows:

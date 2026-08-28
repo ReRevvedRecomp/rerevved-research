@@ -63,5 +63,5 @@ neither should be derived from the other.
 ## Evidence sources
 
 - [Game calendar state](../../manifests/game-calendar-state.json)
-- [Civilization bonus storage](../../manifests/civilization-bonus-storage.json)
+- [Civilization Unique Ability storage](../../manifests/civilization-bonus-storage.json)
 - [Catalog contract](../catalogs.md)

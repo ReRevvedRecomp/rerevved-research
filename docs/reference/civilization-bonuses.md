@@ -1,16 +1,15 @@
-# Civilization bonuses
+# Civilization Unique Abilities
 
-Each civilization has one starting bonus and four cumulative era bonuses.
-Because every game begins in the Ancient era, both the starting bonus and the
-Ancient era bonus apply immediately. Later eras add another bonus without
-removing either one.
+Each civilization has one Unique Ability (UA) and four cumulative Unique Era
+Abilities (UEAs). Because every game begins in the Ancient era, both the UA and
+Ancient UEA apply immediately. Later eras add another UEA without removing an
+earlier effect.
 
-The starting bonus is separate from the image-backed era-bonus table at
-`0x82F6F950`. Starting bonuses are heterogeneous: some grant initial state such
-as a technology, building, unit, gold, or map knowledge, while others establish
-an ongoing rule. The era table contains 16 civilization rows with four 32-bit
-bonus IDs per row, one unlock for each era. Each row is `0x10` bytes and the
-complete table is `0x100` bytes.
+The UA is separate from the image-backed UEA table at `0x82F6F950`. UAs are
+heterogeneous: some grant initial state such as a technology, building, unit,
+gold, or map knowledge, while others establish an ongoing rule. The UEA table
+contains 16 civilization rows with four 32-bit UEA IDs per row, one unlock
+for each era. Each row is `0x10` bytes and the complete table is `0x100` bytes.
 
 The names below are recovered semantic labels, not original debug symbols.
 
@@ -18,38 +17,38 @@ The names below are recovered semantic labels, not original debug symbols.
 
 | Item | Address | Accepted meaning |
 | --- | ---: | --- |
-| Civilization era-bonus table | `0x82F6F950` | 16 rows by four cumulative era-unlock IDs |
-| Civilization name pointers | `0x82F7A348` | 16 internal names aligned with the bonus rows |
+| Civilization UEA table | `0x82F6F950` | 16 rows by four cumulative era unlock IDs |
+| Civilization name pointers | `0x82F7A348` | 16 internal names aligned with the UEA rows |
 | Player era array | `0x830ECD08` | Current era index consumed for each player |
 | Player civilization array | `0x830ECD28` | Civilization index selecting one table row |
 | Excluded player global | `0x82F700B0` | Player index for which the lookup returns false |
 | `ActiveCivilizationBonusLookup` | `0x82CF0CB0` | Shared activation owner and only recovered table reader |
-| Starting-bonus text owner | `0x82CF97D0` | Presents the separate starting bonus through `@CIVBONUSTEXT` |
+| UA text owner | `0x82CF97D0` | Presents the separate UA through `@CIVBONUSTEXT` |
 
-`ActiveCivilizationBonusLookup` receives the requested bonus ID in `r3`, the
-player index in `r4`, and an exact-era flag in `r5`.
+`ActiveCivilizationBonusLookup` receives the requested UEA ID in `r3`, the
+player index in `r4`, and an exact era flag in `r5`.
 
 - In cumulative mode (`r5 == 0`), it clamps the player's era to 0 through 3
   and searches every row entry from Ancient through the current era.
-- In exact mode (`r5 != 0`), it compares only the current-era entry and does
+- In exact mode (`r5 != 0`), it compares only the current era entry and does
   not clamp the era before indexing.
-- It returns false when the requested player equals the excluded-player value.
+- It returns false when the requested player equals the excluded player value.
 
 All 95 known call sites across 30 functions use cumulative mode. No exact-mode
 caller is known. Do not call exact mode without an
-independent era-range guard.
+independent era range guard.
 
-## Leader and bonus map
+## Leader and Unique Ability map
 
-The player-facing civilization names, leaders, and gameplay descriptions below
+The player facing civilization names, leaders, and gameplay descriptions below
 are normalized in [`civilizations.csv`](../../data/civilizations.csv) and
 [`era-bonus-definitions.csv`](../../data/era-bonus-definitions.csv). The
-internal names, row order, and numeric era-bonus IDs are recovered from the game
-image. The [reference-data contract](../../data/README.md) records the external
+internal names, row order, and numeric UEA IDs are recovered from the game
+image. The [reference data contract](../../data/README.md) records the external
 interpretation sources and generation rule.
 
 <!-- civilization-bonus-map:begin -->
-| Civilization | Leader | Starting | Ancient | Medieval | Industrial | Modern |
+| Civilization | Leader | UA | Ancient UEA | Medieval UEA | Industrial UEA | Modern UEA |
 | --- | --- | --- | --- | --- | --- | --- |
 | Roman | Julius Caesar | Code of Laws and Republic | Roads cost half as much | Wonders cost half as much | Increased Great Person generation | New cities begin with +1 population |
 | Egyptian | Cleopatra | An Ancient Wonder | Desert tiles provide +1 Food and +1 Trade | Irrigation | Riflemen gain +1 movement | Caravans provide +50% Gold |
@@ -69,17 +68,17 @@ interpretation sources and generation rule.
 | English | Elizabeth I | Monarchy | Longbow Archers gain +1 defense | Naval units gain +1 combat | Hill tiles provide +1 Production | Naval support is doubled |
 <!-- civilization-bonus-map:end -->
 
-The starting column is separate from the four-value era table. Its entries are
+The UA column is separate from the four-value UEA table. Its entries are
 not all passive effects: some are one-time grants or initial game state, while
 the German, Indian, Zulu, and Mongolian entries establish ongoing rules.
 
-## Era-bonus IDs
+## Unique Era Ability IDs
 
 The four values are ordered Ancient, Medieval, Industrial, and Modern. They
 are cumulative unlocks, not four mutually exclusive replacements.
 
 <!-- civilization-era-id-map:begin -->
-| Civ ID | Internal name | Ancient | Medieval | Industrial | Modern |
+| Civ ID | Internal name | Ancient UEA | Medieval UEA | Industrial UEA | Modern UEA |
 | ---: | --- | ---: | ---: | ---: | ---: |
 | 0 | Roman | 1 | 24 | 23 | 36 |
 | 1 | Egyptian | 32 | 58 | 12 | 38 |
@@ -103,10 +102,10 @@ are cumulative unlocks, not four mutually exclusive replacements.
 at index 13. `Arab` is likewise the internal name for the Arabian civilization
 at index 11.
 
-The Japanese row illustrates the two-layer model. Japan begins with knowledge
-of Ceremonial Burial, while its Ancient entry is bonus ID 28, which adds one
-food to sea tiles. Both apply from the Ancient era onward. Medieval, Industrial,
-and Modern each add another cumulative era bonus.
+The Japanese row illustrates the two-layer model. Japan's UA grants knowledge
+of Ceremonial Burial, while its Ancient UEA is ID 28, which adds one food to sea
+tiles. Both apply from the Ancient era onward. Medieval, Industrial, and Modern
+each add another cumulative UEA.
 
 ## Shared consumers
 
@@ -114,37 +113,36 @@ The table has no known writer, initializer, copied row cache, or second reader.
 Gameplay consumers call
 `ActiveCivilizationBonusLookup` rather than reading rows directly. These
 consumers include combat, rush-cost calculation, effective unit-stat readers,
-AI-side evaluation, production and economy paths, and other gameplay systems.
+AI evaluation, production and economy paths, and other gameplay systems.
 
-Cataloged direct-caller relations establish shared lookup consumption across
+Cataloged direct caller relations establish shared lookup consumption across
 combat resolution, effective attack and defense readers, AI unit evaluation,
 rush application, and calendar turn advancement. Exact callsites remain
-canonical in the relations catalog. These edges do not assign meanings to bonus
+canonical in the relations catalog. These edges do not assign meanings to UEA
 IDs, prove which branch selects each call, establish AI behavioral parity, or
 make the lookup a calendar effect.
 
-This convergence gives a future generic era-bonus variant one shared table and
-lookup mechanism. It does not by itself prove that every possible changed era
-bonus produces correct AI behavior.
+This convergence gives a future generic UEA variant one shared table and lookup
+mechanism. It does not by itself prove that every possible changed UEA produces
+correct AI behavior.
 
 ## Modification guards
 
-- Do not treat later-era entries as replacements for earlier bonuses.
-- Do not assume the starting bonuses pass through the era-bonus lookup. The
-  shared lookup owns the four cumulative era entries, not the separate starting
-  package.
-- Do not patch individual era-bonus consumer branches for a generic variant.
-  recovered era-bonus consumers already converge on the shared lookup.
-- Do not assign gameplay meanings to numeric bonus IDs unless their effects
+- Do not treat later era entries as replacements for earlier UEAs.
+- Do not assume UAs pass through the UEA lookup. The shared lookup owns the
+  four cumulative era entries, not the separate UA.
+- Do not patch individual UEA consumer branches for a generic variant.
+  Recovered UEA consumers already converge on the shared lookup.
+- Do not assign gameplay meanings to numeric UEA IDs unless their effects
   are mapped.
 - Do not infer AI behavioral parity solely because AI functions call the same
   lookup.
-- Do not distribute a changed table without save-slot ruleset identity,
-  pre-load mismatch handling, and an explicit multiplayer policy.
+- Do not distribute a changed table without save slot ruleset identity,
+  mismatch handling before load, and an explicit multiplayer policy.
 
 ## Evidence sources
 
-- [Civilization bonus storage](../../manifests/civilization-bonus-storage.json)
+- [Civilization Unique Ability storage](../../manifests/civilization-bonus-storage.json)
 - [Unit-definition AI evaluation](../../manifests/unit-definitions-ai-evaluation.json)
 - [Rush-cost producer](../../manifests/rush-cost-producer.json)
 - [Game calendar state](../../manifests/game-calendar-state.json)

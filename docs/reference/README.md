@@ -6,9 +6,9 @@ source of evidence.
 
 - [Unit definitions](unit-definitions.md) - unit type IDs, base combat stats,
   civilization-specific identities, and shared combat and AI consumers.
-- [Civilization bonuses](civilization-bonuses.md) - leaders, player-facing
-  bonus effects, the 16 by 4 cumulative era-bonus table, and its shared
-  activation lookup.
+- [Civilization Unique Abilities](civilization-bonuses.md) - leaders, Unique
+  Abilities, the 16 by 4 cumulative Unique Era Ability table, and its
+  shared activation lookup.
 - [Save storage and slot identity](save-storage.md) - selected record layout,
   internal filenames, and pre-load/post-save sidecar edges.
 - [Frontend, frame, and input ownership](frontend-frame-and-input.md) -

@@ -3,13 +3,13 @@
 These CSV files are the canonical player-facing labels and descriptions used by
 the recovered game reference:
 
-- `civilizations.csv` owns civilization display names, leaders, and starting
-  bonus descriptions. Its starting-bonus ID column remains blank because no
-  shared starting-bonus ID storage has been recovered.
+- `civilizations.csv` owns civilization display names, leaders, and Unique
+  Ability (UA) descriptions. Its UA ID column remains blank because no shared
+  UA ID storage has been recovered.
 - `era-bonus-definitions.csv` owns one gameplay description for each recovered
-  era-bonus ID.
+  Unique Era Ability (UEA) ID.
 
-Recovered civilization IDs, internal names, row order, and four era-bonus ID
+Recovered civilization IDs, internal names, row order, and four UEA ID
 assignments remain canonical in
 [`civilization-bonus-storage.json`](../manifests/civilization-bonus-storage.json).
 Run `python tools/reference_data.py --write` after changing either CSV or the

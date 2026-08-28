@@ -119,18 +119,33 @@ Other useful cases retain neutral static roles:
   its guarded body requires the index to differ from a neutral helper result,
   a second helper's low byte to be nonzero, and the current iteration word to
   differ from the fresh snapshot.
-- Passing those three guards initializes selected fields of a neutral stack
-  object at `r1+0xA0`. Its leading word is `0x82136930` before a call window
+- Passing those three guards initializes a neutral stack object at `r1+0xA0`.
+  Its leading word is `0x82136930` before a call window
   and `0x8211EC1C` afterward or when the call is skipped. When the network
   manager's `+0x10` child is nonnull, the body passes that child, the stack
   object, and literal one as arguments 1 through 3 to the child's unresolved
-  virtual slot `+0x44`. The dynamic target, table, object type, complete extent,
-  serialization layout, unqueried fields, array extent, ownership, delivery,
-  and runtime behavior remain unresolved. Neither leading constant has a
-  supported vtable, class, or semantic identity, and the child, indirect call,
-  and literal-one roles remain unnamed. This static structure does not
+  virtual slot `+0x44`. The bounded window has a complete
+  initialization-store map over object-relative `[+0,+0x38)`, not a declared
+  allocation extent, recovered type,
+  serialization layout, or lifetime model. The child, indirect call, and
+  literal-one roles remain unnamed. This static structure does not
   establish a fixed runtime cardinality, runtime reachability, or helper and
   element semantics.
+- `0x82136930` is a neutral five-slot function table with exact extent
+  `[0x82136930,0x82136944)`. Its slots point to `0x821D3D30`, `0x821D5678`,
+  `0x82D90EC8`, `0x82D90E80`, and `0x82D91BD0`. The third and fourth targets
+  call the accepted base-envelope write/read helpers and then pass object
+  `+0x34` to the accepted 32-bit write/read primitives. The fifth passes
+  manager pointer `0x8314EFDC` and object `+0x34` to neutral helper
+  `0x82D8FCC8`; it is not the accepted command-object consume target.
+  Allocator path `0x821D3A98` requests `0x38` bytes, installs the table, and
+  initializes the same observed offsets as the guarded stack path, but stores
+  zero at `+0x34` where the stack path stores its loop index. The request does
+  not prove exact usable heap extent or a general stack extent.
+- Companion leading table `0x8211EC1C` is installed by a caller-provided-object
+  initializer and by two post-command-call transitions, but its extent remains
+  unresolved. Original class and function names, ownership, lifetime, runtime
+  delivery, and transport remain unresolved.
 - Ghidra records four other reads of `0x82F700AC`: three use it as a signed-
   positive guard, while `0x821BD7F8` bounds incoming arg1 before a following
   mask path. It records no writer and omits the four independently identified

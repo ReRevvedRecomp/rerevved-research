@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0078",
+  "topic": "named-unit-identity-selection",
+  "status": "closed",
+  "confidence": "confirmed",
+  "image": "image.json",
+  "question": "Does version 1.3 select Roman Cataphract as a live civilization-specific identity over the existing Knights unit type?",
+  "scope": {
+    "functions": ["0x82CEF160", "0x82CF0550", "0x82CEF450", "0x82CFD210"],
+    "globals": ["0x830ECD28", "0x830F2BF0", "0x8314F188"],
+    "resource": "Pregame.FPK/unitnames_enu.txt",
+    "boundary": "This packet closes the table-backed Cataphract and Keshik identity selector, the live unit-name consumer, and the English name entries. It does not add a new unit type, prove alias-specific mechanics, map localization fallback behavior, or authorize movement, cost, effect, model, animation, or asset changes."
+  },
+  "dependencies": [
+    {
+      "topic": "unit-definitions-ai-evaluation",
+      "use": "accepted UnitType values, runtime unit-record type field, and effective attack and defense readers"
+    },
+    {
+      "topic": "civilization-bonus-storage",
+      "use": "accepted player civilization array and Roman and Mongolian civilization indices"
+    }
+  ],
+  "identitySelector": {
+    "function": "0x82CEF160",
+    "semanticName": "NamedUnitIdentityIndexLookup",
+    "arguments": {
+      "r3": "base UnitType",
+      "r4": "player index"
+    },
+    "civilizationSource": "0x830ECD28[player_index]",
+    "defaultResult": "Returns the base UnitType unchanged when no civilization-specific identity matches.",
+    "cataphract": {
+      "unitType": 13,
+      "unitTypeName": "Knights",
+      "civilization": 0,
+      "civilizationName": "Roman",
+      "nameIndex": 62
+    },
+    "keshik": {
+      "unitType": 12,
+      "unitTypeName": "Horsemen",
+      "civilization": 14,
+      "civilizationName": "Mongolian",
+      "nameIndex": 63
+    }
+  },
+  "liveUnitConsumer": {
+    "function": "0x82CF0550",
+    "semanticName": "RuntimeUnitNameLookup",
+    "unitRecordTable": "0x830F2BF0",
+    "recordSize": "0x54",
+    "unitTypeOffset": "0x1",
+    "armySelectorOffset": "0x4",
+    "result": "Computes the addressed live unit record from player and unit indices, passes its unit type and player to NamedUnitIdentityIndexLookup, adds 64 when record offset 0x4 is nonzero, and indexes the 12-byte entry table at 0x8314F188.",
+    "qualification": "The nonzero offset 0x4 branch selects the second 64-entry name section containing army names. No broader meaning is assigned to the field here."
+  },
+  "nameTable": {
+    "loader": "0x82CFD210",
+    "global": "0x8314F188",
+    "entryCount": 128,
+    "entrySize": "0xC",
+    "resourcePrefix": "UnitNames_",
+    "englishEntry": {
+      "archive": "Pregame.FPK",
+      "archiveSha256": "14E50B0382542B345F29B129175CB1B1B9A4538547E8B5567CAA5A864531A2DE",
+      "name": "unitnames_enu.txt",
+      "offset": "0x12264",
+      "size": 2202,
+      "sha256": "8BD35FBE4705882F94D9250ABCA2FAB43257907966B79DCBD69BF16BEFDCD890",
+      "indices": [
+        { "index": 62, "value": "Cataphract" },
+        { "index": 63, "value": "Keshik" },
+        { "index": 126, "value": "Cataphract Army" },
+        { "index": 127, "value": "Keshik Army" }
+      ]
+    }
+  },
+  "secondaryDisplayBuilder": {
+    "function": "0x82CEEA90",
+    "result": "The separate literal-string builder contains the other recovered civilization-specific substitutions but no Roman Knights or Mongolian Horsemen branch.",
+    "qualification": "Its omission is not evidence that Cataphract or Keshik is unused because the live table-backed selector independently maps both identities."
+  },
+  "currentEvidence": {
+    "method": "foreground read-only Ghidra function, reference, and string queries; narrow generated-code corroboration; and bounded read-only FPK index and payload inspection",
+    "entries": [
+      {
+        "role": "identity selector",
+        "address": "0x82CEF160",
+        "result": "The complete function returns 62 for UnitType 13 with civilization 0 and 63 for UnitType 12 with civilization 14."
+      },
+      {
+        "role": "live unit-name consumer",
+        "address": "0x82CF0550",
+        "result": "The function obtains UnitType from the addressed 0x54-byte live unit record, calls 0x82CEF160, applies the 64-entry army section, and indexes 0x8314F188."
+      },
+      {
+        "role": "name table loader",
+        "address": "0x82CFD210",
+        "result": "The loader resolves resource prefix UnitNames_ and requests 128 entries at 0x8314F188."
+      },
+      {
+        "role": "English localization",
+        "result": "The bounded version-6 FPK entry maps indices 62 and 63 to Cataphract and Keshik and the second 64-entry section to their army names."
+      }
+    ],
+    "generatedCorroboration": [
+      "generated:rerevved/sub_82CEF160",
+      "generated:rerevved/sub_82CF0550",
+      "generated:rerevved/sub_82CFD210"
+    ]
+  },
+  "runtimeProbe": {
+    "status": "not-required-for-static-identity",
+    "result": "The packet identifies a deterministic static mapping and existing live consumer. Any later writable rule still requires the bounded runtime matrix in the title implementation lane."
+  },
+  "guards": [
+    "Treat Cataphract as a semantic identity over Knights UnitType 13 for Roman civilization 0, not as a new UnitType or definition record.",
+    "Do not derive gameplay rules from the localized name. The selector proves identity only; effective attack and defense remain owned by the accepted shared accessors.",
+    "Do not use UnitDisplayNameBuild omission as negative evidence against table-backed names.",
+    "Do not expose guest addresses, the localization table, or localization indices as public mod API identity.",
+    "Do not infer movement, production cost, effects, AI strategy, model, animation, or content-authoring parity from this name route."
+  ],
+  "conclusion": "Version 1.3 deterministically selects Roman Cataphract for the existing Knights UnitType 13. NamedUnitIdentityIndexLookup reads the addressed player's civilization and returns name index 62 for Roman Knights; RuntimeUnitNameLookup reaches that selector from a live unit record, and the loaded English UnitNames table resolves index 62 to Cataphract and index 126 to Cataphract Army. This closes the owner-selected identity gate for a semantic Roman Cataphract attack rule without creating a new guest unit type."
+}

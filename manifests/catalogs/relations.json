@@ -4168,6 +4168,54 @@
       "qualification": {
         "falsificationCondition": "The factory does not allocate 0x48 bytes and store 0x821368E0 at object offset 0; runtime registration and selection remain unresolved."
       }
+    },
+    {
+      "id": "RVA-REL-0413",
+      "kind": "consumes",
+      "from": "RVA-SYM-0295",
+      "to": "RVA-SYM-0202",
+      "image": "../image.json",
+      "claim": "NamedUnitIdentityIndexLookup consumes the addressed player's civilization index when selecting a civilization-specific unit identity.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../named-unit-identity-selection.json#/identitySelector" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CEF160" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The function does not index 0x830ECD28 by player before its UnitType and civilization comparisons."
+      }
+    },
+    {
+      "id": "RVA-REL-0414",
+      "kind": "calls",
+      "from": "RVA-SYM-0296",
+      "to": "RVA-SYM-0295",
+      "image": "../image.json",
+      "claim": "RuntimeUnitNameLookup passes the live unit's base type and player index to NamedUnitIdentityIndexLookup before selecting a name-table entry.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../named-unit-identity-selection.json#/liveUnitConsumer" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CF0550" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The live record path does not call 0x82CEF160 with its unit type and player index."
+      }
+    },
+    {
+      "id": "RVA-REL-0415",
+      "kind": "reads-field",
+      "from": "RVA-SYM-0296",
+      "to": "RVA-FLD-0109",
+      "image": "../image.json",
+      "claim": "RuntimeUnitNameLookup reads unit_record.unit_type from the addressed live record before resolving its named-unit identity.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../named-unit-identity-selection.json#/liveUnitConsumer" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CF0550" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The function does not read record offset 0x1 from the 0x54-byte per-player unit table."
+      }
     }
   ]
 }

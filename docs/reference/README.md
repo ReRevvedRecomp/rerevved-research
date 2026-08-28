@@ -5,7 +5,7 @@ readable layer over the topic manifests and reusable catalogs, not a separate
 source of evidence.
 
 - [Unit definitions](unit-definitions.md) - unit type IDs, base combat stats,
-  and shared combat and AI consumers.
+  civilization-specific identities, and shared combat and AI consumers.
 - [Civilization bonuses](civilization-bonuses.md) - leaders, player-facing
   bonus effects, the 16 by 4 cumulative era-bonus table, and its shared
   activation lookup.

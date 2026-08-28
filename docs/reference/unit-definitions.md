@@ -17,6 +17,8 @@ The names below are recovered semantic labels, not original debug symbols.
 | Base defense | definition `+0x41` | Signed byte read by `EffectiveUnitDefenseLookup` |
 | Effective attack reader | `0x82CF2230` | Applies unit and civilization modifiers to base attack |
 | Effective defense reader | `0x82CF21A0` | Applies unit and civilization modifiers to base defense |
+| Named-unit identity selector | `0x82CEF160` | Maps a base `UnitType` and player civilization to a localized name index |
+| Live unit-name reader | `0x82CF0550` | Reads the live unit type, applies the identity selector, and resolves the unit or army name |
 
 The remaining bytes in the word beginning at `+0x40` are intentionally
 unnamed. Their adjacency to attack and defense does not prove movement or any
@@ -60,6 +62,27 @@ Definitions 3 through 5 have an empty string at the record start. Their labels
 come from the record-local strings `Barbarian_Hot`, `Barbarian_Temperate`, and
 `Barbarian_Cold` at `+0x20`. The table above renders underscores as spaces.
 
+## Civilization-specific identities
+
+The identity selector at `0x82CEF160` uses the base `UnitType` and the unit
+owner's civilization. It keeps the base type when no civilization-specific
+identity exists. Two combinations select unique English names:
+
+| Civilization | Base `UnitType` | Name index | English identity |
+|---|---|---:|---|
+| Roman, index 0 | Knights, type 13 | 62 | Cataphract |
+| Mongolian, index 14 | Horsemen, type 12 | 63 | Keshik |
+
+The live name reader at `0x82CF0550` passes the `+0x1` type byte and the unit
+owner to the selector. A nonzero record byte at `+0x4` selects the second
+64-entry name section, where the corresponding English values are Cataphract
+Army and Keshik Army. The `UnitNames_` resource family supplies all 128 entries.
+
+These identities do not create new unit-definition records. Roman Cataphracts
+retain Knights type 13, and Mongolian Keshiks retain Horsemen type 12. The
+mapping establishes display identity only. It does not establish
+identity-specific movement, cost, effects, AI strategy, models, or animations.
+
 ## Simulation and AI consumers
 
 `CombatResolve` at `0x82CD9970` calls both effective stat readers. Three
@@ -73,5 +96,11 @@ For base attack and defense, a table change reaches both combat simulation and
 the AI evaluation paths through the same effective accessors.
 
 This is not general AI parity for a unique-unit modification. Costs, movement,
-abilities, flags, production weights, display names, and naval or air special
-behavior require independent producer-consumer mapping before mutation.
+abilities, flags, production weights, and naval or air special behavior require
+independent producer-consumer mapping before mutation.
+
+## Evidence sources
+
+- [Named-unit identity selection](../../manifests/named-unit-identity-selection.json)
+- [Unit-definition AI evaluation](../../manifests/unit-definitions-ai-evaluation.json)
+- [Combat resolution lifecycle](../../manifests/combat-resolution-lifecycle.json)

@@ -75,6 +75,14 @@ Other useful cases retain neutral static roles:
   receipt. PowerPC `slw` yields zero when the shift operand has bit `0x20` set.
 - The evidence does not distinguish `BeginTurn`, `EndTurn`, `ImDoneAI`,
   readiness, or completion names among types 46 through 49.
+- The stored word rooted at `0x82F7AD00` has four bounded candidate direct
+  writers. Two copy the `+0x134` word from the object referenced by neutral
+  pointer global `0x8314EFC8`; one copies its second parameter; and one copies
+  local-record field `+0x0C`. For the local-record path, a flag-guarded builder
+  seeds a temporary from the prior stored word, applies helper `0x822DE438`,
+  and writes the result to that field before the caller's later copy. This is
+  not an executable-wide writer closure, and none of the pointer, object,
+  helper, record, or word has a supported semantic name.
 - Type 48 sets state bit `0x4000` and can submit type 53 on a guarded path.
 - Type 50 updates a player mask and gates one type-48 submission when it equals
   the human-player mask. Type 51 conditionally clears a bit, type 52 sets one,

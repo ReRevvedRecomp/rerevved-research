@@ -240,7 +240,7 @@
       "boundedDirectWriters": [
         { "function": "0x82E2C010", "store": "0x82E2C2A0", "source": "The +0x134 word of the object referenced by neutral pointer global 0x8314EFC8." },
         { "function": "0x82D86400", "store": "0x82D86854", "source": "Local record field +0x0C at r1+0xAC." },
-        { "function": "0x82E2A638", "store": "0x82E2A658", "source": "ABI parameter 2." },
+        { "function": "0x82E2A638", "store": "0x82E2A658", "source": "ABI parameter 2; at the bounded direct caller, parameter 2 is the +0x134 word of the object referenced by neutral pointer global 0x8314EFC8." },
         { "function": "0x82E2E078", "store": "0x82E2E2CC", "source": "The +0x134 word of the object referenced by neutral pointer global 0x8314EFC8." }
       ],
       "localRecordTransition": "Caller 0x82D86400 passes a local record at r1+0xA0 with mode 1 to 0x82CC29B8. On a flag-guarded path, the builder seeds a temporary from 0x82F7AD00, applies helper 0x822DE438, and writes the result to record +0x0C; the caller later copies that field to 0x82F7AD00.",
@@ -254,13 +254,21 @@
     "case55": {
       "type": 55,
       "target": "0x82CDEC48",
+      "case53Producers": {
+        "callsites": ["0x82CDEAD0", "0x82CDEC18"],
+        "arguments": "Both static sites pass current-data helper 0x82CD4CF0's return as arg1 and the stored word rooted at 0x82F7AD00 as arg2.",
+        "alternatePathGate": "Halfword 0x82F77454 selects the second site when zero.",
+        "predicate": "A neutral case-local predicate starts at zero and can become one in a compound per-player scan. One required set condition is inequality between 0x8312E5C0 + 4*i and the current-data result; the immediately following selected low-byte flag must also be zero. Earlier eligibility gates remain unresolved, so these conditions are not sufficient."
+      },
       "dataComparison": "0x82CDEC64 calls 0x82CD4CF0 and 0x82CDEC68 compares its return with record arg1. Mismatch emits the exact Xbox string 'Synch Err: Data'.",
       "seedComparison": "0x82CDEC90 loads the stored word rooted at 0x82F7AD00 and 0x82CDEC94 compares it with record arg2. Mismatch emits the exact Xbox string 'Synch Err: Seed'.",
-      "mismatchState": "Either mismatch sets bit 0x10 in 0x82FFE7C4."
+      "mismatchState": "Either mismatch sets bit 0x10 in 0x82FFE7C4.",
+      "qualification": "The two producer sites and predicate are static bounded relations. They do not establish runtime reachability, multiplicity, ordering, delivery, a Checksum name, checksum coverage, readiness, completion, authority, lockstep, resynchronization, framing, or transport."
     },
     "case54": {
       "type": 54,
       "target": "0x82CDED8C",
+      "case53Submit": "Case 53's no-type-55 path and both type-55 paths converge at 0x82CDEC1C before one direct numeric type-54 submit at 0x82CDEC40.",
       "mismatchState": "0x82CDED90..0x82CDED98 clears bit 0x10 in 0x82FFE7C4 before 0x82CDED9C directly calls 0x82D0C3E8.",
       "calendarDataflow": "Within 0x82D0C3E8, 0x82D0C400 loads current turn 0x8312B8DC, 0x82D0C470 directly calls TurnToYear at 0x82CEFA20, and 0x82D0C490 stores the result at current year 0x8312B8E0."
     },

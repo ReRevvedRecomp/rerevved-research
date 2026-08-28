@@ -76,9 +76,10 @@ Other useful cases retain neutral static roles:
 - The evidence does not distinguish `BeginTurn`, `EndTurn`, `ImDoneAI`,
   readiness, or completion names among types 46 through 49.
 - The stored word rooted at `0x82F7AD00` has four bounded candidate direct
-  writers. Two copy the `+0x134` word from the object referenced by neutral
-  pointer global `0x8314EFC8`; one copies its second parameter; and one copies
-  local-record field `+0x0C`. For the local-record path, a flag-guarded builder
+  writers. Three copy the `+0x134` word from the object referenced by neutral
+  pointer global `0x8314EFC8`; one of those copies through its second
+  parameter. The fourth copies local-record field `+0x0C`. For the local-record
+  path, a flag-guarded builder
   seeds a temporary from the prior stored word, applies helper `0x822DE438`,
   and writes the result to that field before the caller's later copy. This is
   not an executable-wide writer closure, and none of the pointer, object,
@@ -93,6 +94,16 @@ Other useful cases retain neutral static roles:
   emit the exact Xbox diagnostics `Synch Err: Data` and `Synch Err: Seed`.
   Neither case is assigned the PS3 `Checksum` name, and checksum coverage is
   not established.
+- Case 53 contains two static type-55 submit sites. Both pass the current-data
+  helper result as arg1 and the stored word as arg2; halfword
+  `0x82F77454` selects the alternate site when zero. A neutral compound
+  per-player predicate gates the optional type-55 path. Indexed word
+  `0x8312E5C0 + 4*i` differing from the current-data result and a following
+  selected low-byte flag being zero are required but not sufficient to set
+  that predicate because earlier eligibility gates remain unresolved.
+- The no-type-55 path and both type-55 paths converge before one direct numeric
+  type-54 submission. This static convergence does not prove runtime ordering,
+  reachability, delivery, readiness, completion, or synchronization.
 
 The remaining numeric cases are neutral dispatcher entries. Shared targets do
 not by themselves prove shared meaning.

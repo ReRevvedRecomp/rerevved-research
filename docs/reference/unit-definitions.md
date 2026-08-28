@@ -17,7 +17,7 @@ The names below are recovered semantic labels, not original debug symbols.
 | Base defense | definition `+0x41` | Signed byte read by `EffectiveUnitDefenseLookup` |
 | Effective attack reader | `0x82CF2230` | Applies unit and civilization modifiers to base attack |
 | Effective defense reader | `0x82CF21A0` | Applies unit and civilization modifiers to base defense |
-| Named-unit identity selector | `0x82CEF160` | Maps a base `UnitType` and player civilization to a localized name index |
+| Unique-unit identity selector | `0x82CEF160` | Maps a base `UnitType` and player civilization to a localized name index |
 | Live unit-name reader | `0x82CF0550` | Reads the live unit type, applies the identity selector, and resolves the unit or army name |
 
 The remaining bytes in the word beginning at `+0x40` are intentionally
@@ -101,6 +101,6 @@ independent producer-consumer mapping before mutation.
 
 ## Evidence sources
 
-- [Named-unit identity selection](../../manifests/named-unit-identity-selection.json)
+- [Unique-unit identity selection](../../manifests/unique-unit-identity-selection.json)
 - [Unit-definition AI evaluation](../../manifests/unit-definitions-ai-evaluation.json)
 - [Combat resolution lifecycle](../../manifests/combat-resolution-lifecycle.json)

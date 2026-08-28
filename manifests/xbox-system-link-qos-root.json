@@ -10,8 +10,16 @@
     "functions": [
       "0x827F10F0",
       "0x827F1150",
+      "0x822DF8A0",
+      "0x822E3788",
+      "0x822E5360",
+      "0x822E5848",
+      "0x822E58B0",
       "0x82C99628",
       "0x82C99728",
+      "0x82C99438",
+      "0x82C9CC68",
+      "0x82C9CCF8",
       "0x82C9D338"
     ],
     "imports": [
@@ -19,11 +27,11 @@
       "0x82E927C4:NetDll_XNetQosLookup",
       "0x82E927D4:NetDll_XNetQosRelease"
     ],
-    "boundary": "This checkpoint identifies the exact QoS lookup and release wrappers, the sole lookup producer, the first result-word progress gate, and the release caller. It does not establish the per-entry result layout, payload meaning, visible Refresh ownership, advertisement or discovery behavior, host/client direction, delivery, matchmaking, transport, relay, or Internet play."
+    "boundary": "This checkpoint identifies the exact QoS lookup and release wrappers, the sole lookup producer, the first result-word progress gate, the release caller, and the separate preexisting collection that feeds downstream indexed callbacks. It does not establish the collection producer, payload meaning, visible Refresh ownership, advertisement or discovery behavior, host/client direction, delivery, matchmaking, transport, relay, or Internet play."
   },
   "currentEvidence": {
-    "method": "Two owner-bounded groups of eight foreground read-only Ghidra packets against the pinned image, with narrow generated-code corroboration only after exact function identification",
-    "qualification": "The visible System Link label owner is UI-only, the visible Refresh and Create Game strings have no modeled references, and the tested general XGI search message forms have no direct imported XMsg producer. Exact QoS lookup and release lifecycle roots are now closed through the first result-word progress gate and local cleanup call."
+    "method": "Three owner-bounded groups of eight foreground read-only Ghidra packets against the pinned image, with narrow generated-code corroboration only after exact function identification",
+    "qualification": "The visible System Link label owner is UI-only, the visible Refresh and Create Game strings have no modeled references, and the tested general XGI search message forms have no direct imported XMsg producer. Exact QoS lookup and release lifecycle roots are closed through the first result-word progress gate, while downstream indexed records come from a separate preexisting collection."
   },
   "generalSessionSearchNegative": {
     "messages": ["0x000B0016", "0x000B001C", "0x000B0065"],
@@ -75,6 +83,18 @@
     "releasePointer": "The release caller reads object slot +0x98C and tail-calls the wrapper only when the pointer is non-null. Static evidence does not establish whether lookup replaced the initial embedded pointer.",
     "qualification": "Result offset +0x04 is a neutral progress-gate word in Xbox guest evidence. External layout names, allocation mechanics, asynchronous signaling, and the meanings of enclosing states 2 and 3 are not promoted."
   },
+  "downstreamCollection": {
+    "stateFunction": "0x82C9D338",
+    "stateFunctionTableEntry": "0x8216045C",
+    "enclosingVtable": "0x82160450",
+    "vtableProof": "Exact teardown helper 0x82C9CCF8 installs leading pointer 0x82160450.",
+    "collectionField": "enclosing object +0x24",
+    "countRead": "The state function reads the collection pointer and then its leading word as the iteration count.",
+    "lookupInputLink": "Before calling producer 0x82C99628, the state function copies enclosing-object field +0x24 into lookup-object field +0x04 and zeroes lookup-object result slot +0x98C. The producer reads the same collection's leading count through field +0x04.",
+    "downstreamUse": "After the result-word progress gate, the state function enters downstream virtual callbacks only when its downstream object field is non-null. On its byte-flag-zero branch it invokes one callback per collection index and then one final callback. It reads no completed QoS per-entry field before any downstream call.",
+    "zeroCountPath": "When the linked collection count is zero, producer 0x82C99628 returns before calling NetDll_XNetQosLookup, leaving the pre-zeroed result slot null. The state function then takes its null-result bypass and can continue into the separately guarded downstream path.",
+    "qualification": "This separates the preexisting indexed collection from the QoS result in the exact local path. It does not identify the collection producer, callback semantics, visible Refresh owner, advertisement source, or discovery mechanism."
+  },
   "externalGuidance": {
     "source": "https://github.com/AdrianCassar/xenia-canary/blob/9cf5573a62c984f42471afdd2aa0d0a1e6741f5a/src/xenia/kernel/xam/xam_net.cc",
     "role": "Search guidance only",
@@ -84,7 +104,8 @@
     "Do not treat the bounded XGI negative as proof that the title never uses XGI session services.",
     "Do not interpret the retained 72-byte QoS listener payload without a separately closed guest consumer layout.",
     "Do not implement per-entry result records from external source alone.",
+    "Do not expect NetDll_XNetQosLookup alone to create a missing downstream collection entry in the exact zero-count path.",
     "Do not claim discovery, matchmaking, delivery, host authority, transport, relay, Internet play, or Game of the Week behavior from this static checkpoint."
   ],
-  "conclusion": "The smallest supported version 1.3 System Link lead is not a general XGI session-search producer in the tested direct forms. Exact producer 0x82C99628 builds three pointer arrays from 0x5C-byte records and calls QoS lookup through wrapper 0x827F10F0. Exact consumer 0x82C9D338 branches on neutral result word +0x04 when the result is non-null, and exact cleanup function 0x82C99728 releases the non-null result pointer. The next evidence gate is the first bounded consumer of completed per-entry records; without it, an SDK lookup cannot safely populate the visible game list."
+  "conclusion": "The smallest supported version 1.3 System Link lead is not a general XGI session-search producer in the tested direct forms. Exact producer 0x82C99628 builds three pointer arrays from 0x5C-byte records and calls QoS lookup through wrapper 0x827F10F0 only when the preexisting collection count is positive. Exact state function 0x82C9D338 branches on neutral result word +0x04 but obtains downstream indexed records from the separate collection at enclosing-object field +0x24. The next evidence gate is the exact producer of that collection, bounded to one producer chain; implementing QoS lookup alone cannot create a missing entry on the zero-count path."
 }

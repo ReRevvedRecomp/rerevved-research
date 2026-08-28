@@ -32,8 +32,8 @@ source of evidence.
   and dispatch ownership, supported semantic anchors, serialization, and wire
   qualifications.
 - [Xbox System Link QoS boundary](xbox-system-link-qos.md) - exact lookup
-  producer, result-word gate, release path, and remaining discovery
-  qualifications.
+  producer, result-word gate, separate downstream collection, and remaining
+  discovery qualifications.
 
 Keep related strings, semantic function names, enum values, fields, and guards
 together on the applicable system page. Do not create separate string,

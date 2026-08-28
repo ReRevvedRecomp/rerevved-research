@@ -19,6 +19,23 @@ The producer reports success only when lookup returns zero. Exact consumer
 permits the enclosing state to advance from literal 2 to literal 3; a nonzero
 word retains state 2. These remain neutral field and state roles.
 
+The indexed records used immediately after that gate do not come from completed
+QoS result entries in the exact local body. Function `0x82C9D338` reads a
+preexisting collection pointer from enclosing-object field `+0x24`, reads its
+leading count, and enters downstream virtual callbacks only when its downstream
+object field is non-null. On the local byte-flag-zero branch, it invokes one
+callback per collection index and then a final callback. It reads no other QoS
+result-body field before any of those calls.
+
+Before calling producer `0x82C99628`, the state function copies that same
+collection pointer into lookup-object field `+0x04` and zeroes lookup-object
+result slot `+0x98C`. The producer reads the collection's leading count through
+field `+0x04`. When that count is zero, it returns before issuing
+`NetDll_XNetQosLookup`, leaving the result slot zero. The state function then
+takes its null-result bypass and can continue into the separately guarded
+downstream path. Implementing lookup alone therefore cannot create a missing
+collection entry in this exact path.
+
 The title also imports `NetDll_XNetQosRelease` through wrapper `0x827F1150`.
 Exact cleanup function `0x82C99728` reads the same object-owned result slot and
 passes its pointer to release when non-null. The slot is initialized to an
@@ -37,9 +54,10 @@ Bounded direct-call searches found no producer for general XGI search messages
 does not prove that no XGI path exists: wrappers, other constant formation,
 indirect dispatch, and other messages remain possible.
 
-The next static gate is the first bounded consumer of completed per-entry
-records. Until that gate closes, their layout and payload meaning, the visible
-Refresh relation, advertisement, discovery, host/client direction, delivery,
-matchmaking, transport, relay, and Internet play remain unresolved.
+The next static gate is the exact producer of the collection at enclosing-object
+field `+0x24`, bounded to one producer chain. Until that gate closes, the
+collection payload, visible Refresh relation, advertisement, discovery,
+host/client direction, delivery, matchmaking, transport, relay, and Internet
+play remain unresolved.
 
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

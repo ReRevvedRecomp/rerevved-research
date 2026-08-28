@@ -152,7 +152,16 @@ Other useful cases retain neutral static roles:
   zero, and the original pointer to return gate `0x82811F48`. A nonzero gate
   return ends the fallback. A zero return runs a three-call secondary sequence
   and stores its final return at offset zero of a pointer returned by the first
-  call. The gate defaults to one and, for a nonnull third argument, reads and
+  call. In that secondary sequence, `0x827F6910` calls `0x827FE4E8` and returns
+  static address `0x82F2E9A8` when the source returns zero or source `+8`
+  otherwise. Source `0x827FE4E8` uses bounded indirect gates and may return an
+  initial nonzero value other than one, zero, or a pointer returned after passing one and
+  `0xC4` to `0x827F9628`, with four observed offset writes on the guarded
+  nonzero-result path. Intermediate selector `0x8280DD30` returns a
+  nested `r13`-relative word under a zero-word gate. Final lookup `0x827F68A8`
+  searches 45 stride-eight key/value entries and has exact miss mappings
+  `0x13..0x24 -> 0xD`, `0xBC..0xCA -> 8`, and all others `-> 0x16`. The gate
+  defaults to one and, for a nonnull third argument, reads and
   writes values at arg1- and arg3-relative addresses through locally selected
   paths, including bit tests, paired-pointer stores, and counter updates. One
   selected path changes its result to zero only

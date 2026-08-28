@@ -308,6 +308,28 @@
                 "dataflow": "Returns one when incoming arg3 is null. For nonnull arg3 it reads and writes values at arg1- and arg3-relative addresses through paths selected by arg1 values, arg2 bit zero, and arg3-relative values, including bit tests, paired-pointer stores, and counter updates. One selected path calls NtFreeVirtualMemory with a pointer value derived from arg3 and changes the default-one result to zero only when that import returns a negative value.",
                 "qualification": "Ghidra reaches only the known save/restore thunk and misclassifies it as nonreturning in the configured unrepaired project. Narrow exact generated corroboration supports this local body only; reported targets are not independently classified here."
               },
+              "secondarySequence": {
+                "pointerSelector": {
+                  "address": "0x827F6910",
+                  "dataflow": "Calls 0x827FE4E8, returns static address 0x82F2E9A8 when that call returns zero, and otherwise returns that call's return value plus eight."
+                },
+                "selectorSource": {
+                  "address": "0x827FE4E8",
+                  "dataflow": "Preserves the return from 0x8280DD30 for a final 0x82819F18 call, loads the word at 0x82F2EE28, obtains an indirect target from 0x827FE3F0, and calls it with the loaded word. An initial nonzero result other than one is returned unchanged; one becomes zero. Initial zero enters guarded indirect calls through the pointer at 0x82FA1644 and may pass one and 0xC4 to 0x827F9628. A returned pointer is conditionally passed through the same indirect gate. A zero result from that second indirect call passes the pointer to 0x827F5780 and returns zero; a nonzero result stores one at +0x14, address 0x82F2F080 at +0x5C, the return from 0x8280DA68 at +0, and -1 at +4, then returns the pointer. Other zero-result guarded paths return zero.",
+                  "qualification": "Ghidra truncates at bad instruction data. Narrow exact generated corroboration supports only this local control and dataflow. Initial-result, literal-one, indirect-call, argument, returned-pointer, stored-field, allocator, owner, object, structure, singleton, and lifetime meanings remain unresolved."
+                },
+                "intermediateSelector": {
+                  "address": "0x8280DD30",
+                  "dataflow": "Returns the word at *(r13+0x100)+0x160 when the word at r13+0x150 is zero; otherwise returns zero.",
+                  "qualification": "The configured caller model omits the independently proven 0x827F5780 call. Register-base, nested-pointer, offset, zero-gate, storage, lock, scheduler, owner, object, structure, singleton, and lifetime meanings remain unresolved."
+                },
+                "finalLookup": {
+                  "address": "0x827F68A8",
+                  "dataflow": "Scans 45 key/value entries with stride eight beginning at 0x82F2E840, compares incoming arg1 with each leading word, and returns the paired +4 word on a match. A miss returns 0xD for inputs 0x13 through 0x24, 8 for inputs 0xBC through 0xCA, and 0x16 otherwise.",
+                  "qualification": "Packet 71 proves that incoming arg1 is the immediately preceding return from 0x8280DD30 and that this return is stored at offset zero of the pointer from 0x827F6910. Key, value, table, range, stored-result, code, error, owner, object, structure, and runtime meanings remain unresolved."
+                },
+                "qualification": "This closes only local function, return, call-order, and final-store dataflow on the zero-return branch. It does not establish allocator, deallocator, constructor/destructor, release, ownership, lifetime, object, class, storage, runtime, or Xbox synchronization semantics."
+              },
               "qualification": "Ghidra truncates the fallback at bad instruction data and reports callers outside the one-function closure. Narrow exact generated corroboration supports only this local control and dataflow. Allocator, deallocator, constructor/destructor, release, ownership, lifetime, object, class, structure, return-value, and runtime semantics remain unresolved."
             },
             "qualification": "Ghidra truncates the helper at bad instruction data and reports callers outside the one-function closure. Narrow exact generated corroboration supports only this local routing. Allocator, deallocator, destructor, release, ownership, lifetime, class, and runtime semantics remain unresolved."

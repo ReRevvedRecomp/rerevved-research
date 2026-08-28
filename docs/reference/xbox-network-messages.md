@@ -97,8 +97,12 @@ Other useful cases retain neutral static roles:
 - Case 53 contains two static type-55 submit sites. Both pass the current-data
   helper result as arg1 and the stored word as arg2; halfword
   `0x82F77454` selects the alternate site when zero. A neutral compound
-  per-player predicate gates the optional type-55 path. Within one entered
-  scan iteration, its sequential set path requires the loop index to differ
+  per-player predicate gates the optional type-55 path. Its first scan starts
+  an index at zero only when neutral signed word `0x82F700AC` is positive. It
+  increments the index by one, advances neutral data positions by `0x80` and
+  `4`, and repeats while the incremented index is signed-less-than the reloaded
+  bound. Within one entered iteration, its sequential set path requires the
+  loop index to differ
   from a neutral helper result; a second helper's low-byte result and a third
   helper result to be nonzero; bit `0x100` in a neutral indexed word to be
   zero; a fourth helper result not to equal one; indexed word
@@ -106,8 +110,19 @@ Other useful cases retain neutral static roles:
   low-byte flag to be zero. The selected flag is zero exactly when at least
   one of two preceding player-indexed words is nonzero and neutral global byte
   `0x8314EF9F` is zero; both indexed words zero or a nonzero global byte select
-  one. Helper semantics, scan entry, bounds, repetition, and runtime
-  reachability remain unresolved.
+  one. The neutral constant bases used by these indexed gates are
+  `0x830ED0D8`, `0x830E5650`, and `0x830E5AD0`.
+- Case 53's second scan takes a fresh current-data helper snapshot, starts its
+  index at zero only when the same signed bound is positive, advances the index
+  and one neutral pointer by one and `4`, and repeats while the incremented
+  index is signed-less-than the reloaded bound. This static loop structure does
+  not establish a fixed runtime cardinality, runtime reachability, or helper
+  and element semantics.
+- Ghidra records four other reads of `0x82F700AC`: three use it as a signed-
+  positive guard, while `0x821BD7F8` bounds incoming arg1 before a following
+  mask path. It records no writer and omits the four independently identified
+  case-53 reads. This is not a complete access inventory and does not establish
+  the word's owner or fixed runtime value.
 - Function `0x82D05D50` writes constant zero to `0x8314EF9F` on its straight-
   line entry path, and `0x82D217C8` contains a direct call to that writer at
   `0x82D217E0`. A corrected scan finds that writer as the only matching

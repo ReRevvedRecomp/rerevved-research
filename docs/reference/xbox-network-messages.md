@@ -147,9 +147,18 @@ Other useful cases retain neutral static roles:
   `0x8211EC1C` at offset zero, conditionally calls `0x82D3D9F0` when
   arg2 bit zero is set, and returns the first argument. The second is a no-op
   return. Shared helper `0x82D3D9F0` performs one bounded conditional pointer-
-  routing sequence through four neutral callees. This local dataflow does not
-  establish allocator, deallocator, destructor, release, ownership, lifetime,
-  class, or runtime semantics.
+  routing sequence through four neutral callees. Its fallback `0x827F5780`
+  returns for a null pointer; otherwise it passes the return from `0x82812B20`,
+  zero, and the original pointer to return gate `0x82811F48`. A nonzero gate
+  return ends the fallback. A zero return runs a three-call secondary sequence
+  and stores its final return at offset zero of a pointer returned by the first
+  call. The gate defaults to one and, for a nonnull third argument, reads and
+  writes values at arg1- and arg3-relative addresses through locally selected
+  paths, including bit tests, paired-pointer stores, and counter updates. One
+  selected path changes its result to zero only
+  when `NtFreeVirtualMemory` returns a negative value. This local dataflow does not establish allocator,
+  deallocator, constructor/destructor, release, ownership, lifetime, object,
+  class, structure, return-value, or runtime semantics.
 - Companion leading table `0x8211EC1C` is installed by a caller-provided-object
   initializer and by two post-command-call transitions. It contains six
   consecutive function pointers and has structural extent

@@ -159,8 +159,10 @@ Other useful cases retain neutral static roles:
   when `NtFreeVirtualMemory` returns a negative value. Value source
   `0x82812B20` is a leaf that returns the word at `0x831580F8`; the canonical
   flat image stores zero at that address. Ghidra records one read and no writer,
-  but its reference model is incomplete, so this does not establish read
-  uniqueness, a writer closure, initialization code, or a runtime value. This
+  and an exact 32-bit displacement-scalar scan finds only that same load. The
+  model and scan exclude other address-materialization forms and are incomplete,
+  so this does not establish read uniqueness, a writer closure, initialization
+  code, or a runtime value. This
   local dataflow does not establish allocator,
   deallocator, constructor/destructor, release, ownership, lifetime, object,
   class, structure, return-value, or runtime semantics.

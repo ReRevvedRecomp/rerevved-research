@@ -265,8 +265,8 @@
           "address": "0x82136930",
           "extent": "[0x82136930,0x82136944)",
           "slots": [
-            { "offset": "0x0", "target": "0x821D3D30" },
-            { "offset": "0x4", "target": "0x821D5678" },
+            { "offset": "0x0", "target": "0x821D3D30", "role": "Preserves opaque arg1, installs companion table 0x8211EC1C at offset zero, conditionally calls 0x82D3D9F0 when arg2 bit zero is set, and returns arg1." },
+            { "offset": "0x4", "target": "0x821D5678", "role": "No-op return." },
             { "offset": "0x8", "target": "0x82D90EC8", "role": "Calls the accepted base-envelope writer, then passes object +0x34 to the accepted 32-bit writer." },
             { "offset": "0xC", "target": "0x82D90E80", "role": "Calls the accepted base-envelope reader, then passes object +0x34 to the accepted 32-bit reader." },
             { "offset": "0x10", "target": "0x82D91BD0", "role": "Passes manager pointer 0x8314EFDC and object +0x34 to neutral helper 0x82D8FCC8, then returns one." }
@@ -277,8 +277,8 @@
             "address": "0x8211EC1C",
             "extent": "[0x8211EC1C,0x8211EC34)",
             "slots": [
-              { "offset": "0x0", "target": "0x821D3D30" },
-              { "offset": "0x4", "target": "0x821D5678" },
+              { "offset": "0x0", "target": "0x821D3D30", "role": "Preserves opaque arg1, installs this companion table at offset zero, conditionally calls 0x82D3D9F0 when arg2 bit zero is set, and returns arg1." },
+              { "offset": "0x4", "target": "0x821D5678", "role": "No-op return." },
               { "offset": "0x8", "target": "0x82CB1F78", "role": "Accepted base-envelope writer." },
               { "offset": "0xC", "target": "0x82CB1EC8", "role": "Accepted base-envelope reader." },
               { "offset": "0x10", "target": "0x822DF8A0", "role": "Shared return-zero stub." },
@@ -286,6 +286,11 @@
             ],
             "successorBoundary": "Zero word 0x8211EC34 separates the six consecutive pointers from a distinct five-pointer sequence at 0x8211EC38. The current reference model records one data reference to 0x8211EC38, and exact initializer 0x82E2EBD8 stores that address at caller-provided object offset zero.",
             "qualification": "The successor evidence closes a structural boundary only. It is not an executable-wide installation or lifetime inventory, and the successor table is not cataloged here. The sixth target's helper, destructor, release, ownership, and lifetime semantics remain unresolved."
+          },
+          "sharedLeadingHelper": {
+            "address": "0x82D3D9F0",
+            "dataflow": "Preserves its incoming pointer, calls 0x82D3DA78, and, when that returns a nonnull base pointer, queries base-relative address +0x1080 through 0x82D2E3D0. A nonzero low byte passes the base pointer, original pointer, and returned local word through 0x82D2E960; otherwise the original pointer goes to fallback 0x827F5780.",
+            "qualification": "Ghidra truncates the helper at bad instruction data and reports callers outside the one-function closure. Narrow exact generated corroboration supports only this local routing. Allocator, deallocator, destructor, release, ownership, lifetime, class, and runtime semantics remain unresolved."
           },
           "qualification": "The 0x38 value is a request argument on one exact allocator path, not an exact usable heap extent or general stack extent. Original class and function names, field meanings, ownership, lifetime, runtime delivery, and transport remain unresolved. The 0x82136930 slot at +0x10 is not the accepted command-object consume target at 0x82D91C58."
         },

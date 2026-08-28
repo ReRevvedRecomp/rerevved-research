@@ -142,6 +142,14 @@ Other useful cases retain neutral static roles:
   initializes the same observed offsets as the guarded stack path, but stores
   zero at `+0x34` where the stack path stores its loop index. The request does
   not prove exact usable heap extent or a general stack extent.
+- Both neutral tables share leading targets `0x821D3D30` and `0x821D5678`.
+  The first preserves its opaque first argument, installs companion table
+  `0x8211EC1C` at offset zero, conditionally calls `0x82D3D9F0` when
+  arg2 bit zero is set, and returns the first argument. The second is a no-op
+  return. Shared helper `0x82D3D9F0` performs one bounded conditional pointer-
+  routing sequence through four neutral callees. This local dataflow does not
+  establish allocator, deallocator, destructor, release, ownership, lifetime,
+  class, or runtime semantics.
 - Companion leading table `0x8211EC1C` is installed by a caller-provided-object
   initializer and by two post-command-call transitions. It contains six
   consecutive function pointers and has structural extent

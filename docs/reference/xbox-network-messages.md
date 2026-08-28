@@ -160,9 +160,11 @@ Other useful cases retain neutral static roles:
   `0x82812B20` is a leaf that returns the word at `0x831580F8`; the canonical
   flat image stores zero at that address. Ghidra records one read and no writer,
   and an exact 32-bit displacement-scalar scan finds only that same load. The
-  model and scan exclude other address-materialization forms and are incomplete,
-  so this does not establish read uniqueness, a writer closure, initialization
-  code, or a runtime value. This
+  canonical image contains no aligned initialized-memory word with exact value
+  `0x831580F8`. The model and searches exclude unaligned, indirect, indexed,
+  runtime, and other address-materialization forms and are incomplete, so this
+  does not establish read uniqueness, a writer closure, initialization code, or
+  a runtime value. This
   local dataflow does not establish allocator,
   deallocator, constructor/destructor, release, ownership, lifetime, object,
   class, structure, return-value, or runtime semantics.

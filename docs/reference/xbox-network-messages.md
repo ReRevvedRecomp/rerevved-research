@@ -97,18 +97,24 @@ Other useful cases retain neutral static roles:
 - Case 53 contains two static type-55 submit sites. Both pass the current-data
   helper result as arg1 and the stored word as arg2; halfword
   `0x82F77454` selects the alternate site when zero. A neutral compound
-  per-player predicate gates the optional type-55 path. Indexed word
-  `0x8312E5C0 + 4*i` differing from the current-data result and a following
-  selected low-byte flag being zero are required but not sufficient to set
-  that predicate because earlier eligibility gates remain unresolved. The
-  selected flag is zero exactly when at least one of two preceding player-
-  indexed words is nonzero and neutral global byte `0x8314EF9F` is zero; both
-  indexed words zero or a nonzero global byte select one.
+  per-player predicate gates the optional type-55 path. Within one entered
+  scan iteration, its sequential set path requires the loop index to differ
+  from a neutral helper result; a second helper's low-byte result and a third
+  helper result to be nonzero; bit `0x100` in a neutral indexed word to be
+  zero; a fourth helper result not to equal one; indexed word
+  `0x8312E5C0 + 4*i` to differ from the current-data result; and the selected
+  low-byte flag to be zero. The selected flag is zero exactly when at least
+  one of two preceding player-indexed words is nonzero and neutral global byte
+  `0x8314EF9F` is zero; both indexed words zero or a nonzero global byte select
+  one. Helper semantics, scan entry, bounds, repetition, and runtime
+  reachability remain unresolved.
 - Function `0x82D05D50` writes constant zero to `0x8314EF9F` on its straight-
   line entry path, and `0x82D217C8` contains a direct call to that writer at
-  `0x82D217E0`. The current reference model omits the independently proven
-  read and call references, so this is not a complete access inventory and
-  other writers remain unresolved.
+  `0x82D217E0`. A corrected scan finds that writer as the only matching
+  displacement access in the defined instruction listing, and initialized
+  memory contains no aligned pointer value to the byte. The current reference
+  model omits the independently proven read and call references, so this is
+  not a complete access inventory and other writers remain unresolved.
 - The no-type-55 path and both type-55 paths converge before one direct numeric
   type-54 submission. This static convergence does not prove runtime ordering,
   reachability, delivery, readiness, completion, or synchronization.

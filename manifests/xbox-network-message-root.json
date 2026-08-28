@@ -155,7 +155,12 @@
           "staticRole": "Sets state bit 0x4000 and, on a guarded path, submits numeric type 53 with arg1 forwarded as the new arg2.",
           "semanticEvidence": "Exact Xbox words at 0x82CDE7AC, 0x82CDE7B4, 0x82CDE8E4, 0x82CDE8E8, and 0x82CDE8EC"
         },
-        { "type": 49, "target": "0x82CDE60C" },
+        {
+          "type": 49,
+          "target": "0x82CDE60C",
+          "staticRole": "Forms a PowerPC slw mask from arg1 and ORs it into state word 0x83157E44.",
+          "semanticEvidence": "Exact Xbox words at 0x82CDE60C..0x82CDE620; slw produces zero when the shift operand has bit 0x20 set"
+        },
         {
           "type": 50,
           "target": "0x82CDE628",
@@ -209,7 +214,26 @@
     "cases46And47": {
       "types": [46, 47],
       "sharedRole": "Each enters CalendarTurnAdvance at 0x82D1EAB0, directly submits numeric type 49, and calls shared follow-up 0x82D1D1C0.",
-      "qualification": "Entering CalendarTurnAdvance does not prove its increment branch runs on every call. The exact evidence does not distinguish BeginTurn, EndTurn, or ImDoneAI names between these cases."
+      "type49Submits": {
+        "case46Callsites": ["0x82CDE280", "0x82CDE36C"],
+        "case47Callsite": "0x82CDE528",
+        "arguments": "All three static sites pass the LocalPlayerIdResolve result as arg1, -1 as arg2, -1 as arg3, the stored word rooted at 0x82F7AD00 as arg4, and -1 as the separate target.",
+        "qualification": "Exact words prove all three literal-49 direct calls. Their completeness inside the dispatcher is narrow generated-code corroboration because the canonical Ghidra listing truncates before the callsites; static sites do not prove runtime call multiplicity or delivery."
+      },
+      "type49MaskState": {
+        "address": "0x83157E44",
+        "case46": "Clears the mask before its type-49 submit sites, then later compares the accumulated value with human-player mask 0x8312E608 and branches back while they differ.",
+        "case47": "When gate word 0x8314F1B0 is nonzero, clears the mask before its type-49 submit site. When the gate is zero, seeds the mask from human-player mask 0x8312E608 on the short path.",
+        "qualification": "These are static initialization, submission, comparison, and branch relations. They do not prove a readiness barrier, completion, successful receipt, authority, runtime ordering, delivery, lockstep, resynchronization, or checksum coverage."
+      },
+      "qualification": "Entering CalendarTurnAdvance does not prove its increment branch runs on every call. The exact evidence does not distinguish BeginTurn, EndTurn, ImDoneAI, readiness, or completion names between these cases."
+    },
+    "case49": {
+      "type": 49,
+      "target": "0x82CDE60C",
+      "argument": "arg1 is the accepted LocalPlayerIdResolve result at all three static producer sites.",
+      "state": "0x82CDE60C..0x82CDE620 forms a PowerPC slw mask from arg1 and ORs it into 0x83157E44.",
+      "qualification": "PowerPC slw produces zero when the shift operand has bit 0x20 set. No original semantic name, readiness, completion, authority, runtime ordering, delivery, lockstep, resynchronization, or checksum meaning is assigned."
     },
     "case48": {
       "type": 48,
@@ -229,7 +253,7 @@
       "mismatchState": "0x82CDED90..0x82CDED98 clears bit 0x10 in 0x82FFE7C4 before 0x82CDED9C directly calls 0x82D0C3E8.",
       "calendarDataflow": "Within 0x82D0C3E8, 0x82D0C400 loads current turn 0x8312B8DC, 0x82D0C470 directly calls TurnToYear at 0x82CEFA20, and 0x82D0C490 stores the result at current year 0x8312B8E0."
     },
-    "qualification": "These are static numeric-case roles, not recovered original opcode names. They do not identify case 54 as the vendored PS3 Checksum message, distinguish BeginTurn or EndTurn among cases 46 through 48, reveal checksum coverage, or prove runtime lockstep, ordering, resynchronization, delivery, outer wire framing, or transport."
+    "qualification": "These are static numeric-case roles, not recovered original opcode names. They do not identify case 54 as the vendored PS3 Checksum message, distinguish BeginTurn, EndTurn, ImDoneAI, readiness, or completion among cases 46 through 49, reveal checksum coverage, or prove runtime lockstep, ordering, resynchronization, delivery, outer wire framing, or transport."
   },
   "setupStateAnchors": {
     "sharedPlayerMask": {
@@ -327,7 +351,7 @@
   },
   "crossPlatformHypotheses": {
     "acceptedXboxNamedTypes": [0, 6, 17],
-    "acceptedXboxStaticRoleTypes": [25, 44, 46, 47, 48, 50, 51, 52, 53, 54, 55],
+    "acceptedXboxStaticRoleTypes": [25, 44, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55],
     "unaccepted": "All other PS3/iOS names, framing, broadcast names, GameSpy/Game Center envelopes, platform transport, and deterministic-lockstep statements remain search hypotheses.",
     "superseded": "The Xbox internal queue has 66 accepted type values 0..65 and stores five words per slot. The target argument is separate from that record. The Xbox network object's embedded payload serializes all five words as ordered 32-bit primitives rather than the vendored opcode-dependent compact packing."
   },
@@ -339,5 +363,5 @@
     "Do not treat the executable-wide function metadata row as a network registration record or infer descriptor semantics from its packed value.",
     "Do not add a title enum, generated header, code-generation authority, internal API, or public API until an identified maintained host consumer requires it; research remains outside the runtime build dependency graph."
   ],
-  "conclusion": "Version 1.3 uses a five-word, 0x14-byte internal command record in a 32-slot modulo ring at 0x83155C28. Drain function 0x82CE16C8 copies one record and directly calls dispatcher 0x82CDDF08. The dispatcher reads type plus three arguments, accepts unsigned types 0 through 65, and branches through the exact 66-entry table at 0x82CDE014. Submit function 0x82CE1950 keeps its target argument separate, copies the five-word record into a distinct vtable-bearing object through 0x82D90A18, and routes it through a network-manager child. That object's paired methods serialize and deserialize the embedded record as five ordered 32-bit primitives for an exact 20-byte object-layer payload with conditional byte-order conversion. The factory pointer's initialized row belongs to executable-wide function metadata, not a network registry, and no supported static consumer maps outbound leading value 77 to the factory. Outer framing, target encoding, platform transport, runtime delivery, and unsupported cross-platform semantics remain unresolved."
+  "conclusion": "Version 1.3 uses a five-word, 0x14-byte internal command record in a 32-slot modulo ring at 0x83155C28. Drain function 0x82CE16C8 copies one record and directly calls dispatcher 0x82CDDF08. The dispatcher reads type plus three arguments, accepts unsigned types 0 through 65, and branches through the exact 66-entry table at 0x82CDE014. Submit function 0x82CE1950 keeps its target argument separate, copies the five-word record into a distinct vtable-bearing object through 0x82D90A18, and routes it through a network-manager child. Numeric type 49 has the neutral static role of ORing a LocalPlayerIdResolve-derived slw mask into 0x83157E44; cases 46 and 47 initialize that mask and contain three exact type-49 submit sites, while case 46 later compares it with the human-player mask. No original turn/synchronization name or runtime barrier follows. The command object's paired methods serialize and deserialize the embedded record as five ordered 32-bit primitives for an exact 20-byte object-layer payload with conditional byte-order conversion. The factory pointer's initialized row belongs to executable-wide function metadata, not a network registry, and no supported static consumer maps outbound leading value 77 to the factory. Outer framing, target encoding, platform transport, runtime delivery, and unsupported cross-platform semantics remain unresolved."
 }

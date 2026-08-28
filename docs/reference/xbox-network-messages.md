@@ -61,8 +61,20 @@ Other useful cases retain neutral static roles:
   the second argument in its Great General carrier link. The branch has Xbox
   Great General semantics, but neither numeric case is named `AddGeneral`.
 - Types 46 and 47 each enter `CalendarTurnAdvance`, submit numeric type 49, and
-  invoke the same per-player follow-up. The evidence does not distinguish
-  `BeginTurn`, `EndTurn`, or `ImDoneAI` between them.
+  invoke the same per-player follow-up. Type 46 has two static type-49 submit
+  sites and type 47 has one. All three pass the `LocalPlayerIdResolve` result
+  as `arg1`, -1 as `arg2` and `arg3`, the stored word rooted at `0x82F7AD00`
+  as `arg4`, and -1 as the separate target. Static site count does not prove
+  runtime call multiplicity or delivery.
+- Type 49 forms a PowerPC `slw` mask from `arg1` and ORs it into
+  `0x83157E44`. Case 46 clears that mask before its submit sites and later
+  compares it with the human-player mask, branching back while they differ.
+  Case 47 either clears the mask before its submit site or, when gate word
+  `0x8314F1B0` is zero, seeds it from the human-player mask. These relations do
+  not establish a runtime barrier, readiness, completion, or successful
+  receipt. PowerPC `slw` yields zero when the shift operand has bit `0x20` set.
+- The evidence does not distinguish `BeginTurn`, `EndTurn`, `ImDoneAI`,
+  readiness, or completion names among types 46 through 49.
 - Type 48 sets state bit `0x4000` and can submit type 53 on a guarded path.
 - Type 50 updates a player mask and gates one type-48 submission when it equals
   the human-player mask. Type 51 conditionally clears a bit, type 52 sets one,

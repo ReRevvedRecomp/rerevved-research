@@ -156,7 +156,12 @@ Other useful cases retain neutral static roles:
   writes values at arg1- and arg3-relative addresses through locally selected
   paths, including bit tests, paired-pointer stores, and counter updates. One
   selected path changes its result to zero only
-  when `NtFreeVirtualMemory` returns a negative value. This local dataflow does not establish allocator,
+  when `NtFreeVirtualMemory` returns a negative value. Value source
+  `0x82812B20` is a leaf that returns the word at `0x831580F8`; the canonical
+  flat image stores zero at that address. Ghidra records one read and no writer,
+  but its reference model is incomplete, so this does not establish read
+  uniqueness, a writer closure, initialization code, or a runtime value. This
+  local dataflow does not establish allocator,
   deallocator, constructor/destructor, release, ownership, lifetime, object,
   class, structure, return-value, or runtime semantics.
 - Companion leading table `0x8211EC1C` is installed by a caller-provided-object

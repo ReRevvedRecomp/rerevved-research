@@ -142,4 +142,13 @@ placements exhaust the supported direct static reference forms for this seed.
 They do not exclude a derived value, copied pointer, relocation not represented
 by those forms, or runtime production.
 
+A separate default-off trace observed the two exact virtual calls inside target
+`0x82C7CBE0` for the first exact `OnPressY` in one process. The first virtual
+target was `0x82226AA0`; its returned-object pointer was `0x514BFB90`; and the
+second virtual target was `0x82E819E0`. The trace produced exactly one matching
+line and the process exited normally with code zero. These values identify one
+neutral paired runtime path only. They do not identify either object's class,
+either virtual method's semantics, visible action ownership, resource loading,
+a platform message, networking behavior, delivery, or ordering.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

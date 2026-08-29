@@ -163,4 +163,12 @@ temporaries populated by helper calls supplied with the command and neutral
 argument. This does not name either object, field, or method and exposes no
 platform-message or networking edge.
 
+One default-off trace observed optional dispatch for the first exact `OnPressY`
+in one process. The dispatch object was `0x511CECE0` and the slot `+0x0C`
+dynamic target was `0x82D76350`. The trace produced exactly one matching line
+and the process exited normally with code zero. This is one neutral object and
+target tuple only. It does not identify the object's class, the `+0x430` field,
+the virtual method, visible action ownership, a platform message, networking,
+delivery, or ordering.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

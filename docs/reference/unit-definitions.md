@@ -137,9 +137,39 @@ This is not general AI parity for a Unique Unit modification. Costs, movement,
 abilities, flags, production weights, and naval or air special behavior require
 independent producer-consumer mapping before mutation.
 
+## Combat stat-role boundary
+
+The accepted ordinary unit-versus-unit path contains one exact ordered stat
+pair inside `CombatResolve`:
+
+| Derived role | Callsite | Player and type input | Result |
+|---|---:|---|---|
+| Attack side | `0x82CDA214` | Accepted attacker player and unit-record type | Effective attack retained separately |
+| Defense side | `0x82CDA234` | Accepted defender player and unit-record type | Effective defense retained separately |
+
+Attack is obtained before defense. The two-value role is derived from these
+callsites; it is not a stored guest enum. The shared accessors themselves take
+only player and base `UnitType` before establishing their base scalar, so they
+do not carry an opposing unit or combat-role argument.
+
+`CombatResolve` contains six other effective-stat calls, including a separate
+literal-25 special branch immediately after the core pair. Those calls do not
+inherit the attack-side or defense-side meaning, and this result does not prove
+an opposing class predicate or city, naval, or air equivalence.
+
+Bounded windows in the three mapped AI evaluators confirm scalar consumption
+but not role parity. `AIUnitChoiceEvaluate` adds attack and defense for the same
+player and type; `AITurnUnitEvaluation` conditionally multiplies candidate stat
+results; and `AITurnUnitFilter` compares defense and attack under one player
+with separately sourced types. None of those windows exposes the accepted
+two-player combat participant carrier. A later situational rule therefore
+needs an independently proved AI evaluation context rather than inferring one
+from the shared scalar readers.
+
 ## Evidence sources
 
 - [Unique Unit identity selection](../../manifests/unique-unit-identity-selection.json)
 - [Unit-definition AI evaluation](../../manifests/unit-definitions-ai-evaluation.json)
 - [Production cost ownership](../../manifests/production-cost-ownership.json)
 - [Combat resolution lifecycle](../../manifests/combat-resolution-lifecycle.json)
+- [Unique Unit combat predicates](../../manifests/unique-unit-combat-predicates.json)

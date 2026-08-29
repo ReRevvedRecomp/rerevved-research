@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0083",
+  "topic": "unique-unit-combat-predicates",
+  "status": "closed",
+  "confidence": "confirmed",
+  "image": "image.json",
+  "question": "Does the accepted ordinary unit-versus-unit combat path expose a bounded attacker-versus-defender stat role that a later situational Unique Unit rule could distinguish without treating the role as another scalar property?",
+  "scope": {
+    "functions": ["0x82CD9970", "0x82CF2230", "0x82CF21A0", "0x82CB44E0", "0x82CB6E48", "0x82CBF570"],
+    "coreCallsites": ["0x82CDA214", "0x82CDA234"],
+    "otherCombatStatCallsites": ["0x82CD9C38", "0x82CD9C54", "0x82CDA07C", "0x82CDA138", "0x82CDA274", "0x82CDD1BC"],
+    "boundary": "This packet closes one derived attack-side versus defense-side role in the accepted ordinary unit-versus-unit resolver pair. It does not establish an opposing class predicate, a stored role enum, AI evaluation parity, city, naval or air equivalence, healing, movement, extra actions, upgrades, presentation behavior, an API, or a hook design."
+  },
+  "dependencies": [
+    {
+      "topic": "unique-unit-identity-selection",
+      "use": "accepted civilization plus base UnitType identity route"
+    },
+    {
+      "topic": "unit-definitions-ai-evaluation",
+      "use": "accepted effective stat accessors, unit type field, and mapped AI scalar consumers"
+    },
+    {
+      "topic": "combat-resolution-lifecycle",
+      "use": "accepted CombatResolve participant locals and ordinary unit-versus-unit boundary"
+    }
+  ],
+  "accessorInputs": {
+    "attack": {
+      "function": "0x82CF2230",
+      "playerArgument": "r3",
+      "unitTypeArgument": "r4",
+      "definitionStride": "0x94",
+      "baseFieldOffset": "0x40",
+      "entryWords": ["0x82CF2240", "0x82CF2248", "0x82CF2250", "0x82CF2254", "0x82CF2258"]
+    },
+    "defense": {
+      "function": "0x82CF21A0",
+      "playerArgument": "r3",
+      "unitTypeArgument": "r4",
+      "definitionStride": "0x94",
+      "baseFieldOffset": "0x41",
+      "entryWords": ["0x82CF21B0", "0x82CF21B8", "0x82CF21C0", "0x82CF21C4", "0x82CF21CC", "0x82CF21D4"]
+    },
+    "result": "Both accessors preserve an incoming player index and base UnitType while forming and sign-extending the accepted base field. Neither consumes an incoming combat-role or opposing-unit value before establishing that scalar.",
+    "qualification": "The absence of a third entry input does not establish every later modifier input or authorize an implementation surface."
+  },
+  "coreRole": {
+    "carrier": "derived-callsite-state",
+    "domain": ["attack-side", "defense-side"],
+    "producer": "0x82CD9970",
+    "attackSide": {
+      "callsite": "0x82CDA214",
+      "callee": "0x82CF2230",
+      "playerLocal": "r1+1572",
+      "unitTypeSource": "accepted attacker unit record type byte",
+      "resultRegister": "r23"
+    },
+    "defenseSide": {
+      "callsite": "0x82CDA234",
+      "callee": "0x82CF21A0",
+      "playerLocal": "r1+1596",
+      "unitTypeSource": "accepted defender unit record type byte",
+      "resultRegister": "r22"
+    },
+    "ordering": ["0x82CDA214", "0x82CDA234"],
+    "result": "CombatResolve obtains the attacker effective attack first and the defender effective defense second, retaining the two results separately in the accepted ordinary unit-versus-unit path.",
+    "qualification": "The resolver contains six other effective-stat callsites. The immediate literal-25 branch can issue a separate defense lookup at 0x82CDA274, so those calls do not inherit the core pair's two-state role meaning."
+  },
+  "aiEvaluationBoundary": {
+    "roleParity": "not-established",
+    "entries": [
+      {
+        "function": "0x82CB44E0",
+        "semanticName": "AIUnitChoiceEvaluate",
+        "window": "0x82CB4AB8",
+        "result": "Calls attack at 0x82CB4AC4 and defense at 0x82CB4AD4 with the same player and UnitType, then adds the two scalar results."
+      },
+      {
+        "function": "0x82CB6E48",
+        "semanticName": "AITurnUnitEvaluation",
+        "window": "0x82CB8CC0",
+        "result": "Conditionally calls attack at 0x82CB8CD4 and defense at 0x82CB8CF8 for one player while multiplying scalar results into its evaluation state."
+      },
+      {
+        "function": "0x82CBF570",
+        "semanticName": "AITurnUnitFilter",
+        "window": "0x82CBFE50",
+        "result": "Calls defense at 0x82CBFE60 and attack at 0x82CBFE70 for one player with separately sourced UnitTypes, then compares the scalar results."
+      }
+    ],
+    "qualification": "These exact windows confirm scalar consumption but expose no accepted two-player opposing-participant carrier. They do not establish attacker/defender predicate parity for AI planning or scoring."
+  },
+  "currentEvidence": {
+    "method": "five bounded foreground read-only Ghidra packets, including raw current-image word queries after thunk-truncated decompilation and listing, followed by narrow exact-function generated-code corroboration",
+    "entries": [
+      {
+        "role": "accessor entries",
+        "addresses": ["0x82CF2230", "0x82CF21A0"],
+        "result": "Raw words close the player, UnitType, stride, base-field, and sign-extension inputs."
+      },
+      {
+        "role": "complete CombatResolve stat-call inventory",
+        "addresses": ["0x82CD9C38", "0x82CD9C54", "0x82CDA07C", "0x82CDA138", "0x82CDA214", "0x82CDA234", "0x82CDA274", "0x82CDD1BC"],
+        "result": "All eight exact words are direct calls to the accepted accessors; only 0x82CDA214 and 0x82CDA234 form the accepted participant core pair."
+      },
+      {
+        "role": "mapped AI scalar windows",
+        "addresses": ["0x82CB4AB8", "0x82CB8CC0", "0x82CBFE50"],
+        "result": "The windows consume attack and defense values without proving the core combat pair's two-player role carrier."
+      }
+    ],
+    "generatedCorroboration": [
+      "generated:rerevved/sub_82CD9970",
+      "generated:rerevved/sub_82CB44E0",
+      "generated:rerevved/sub_82CB6E48",
+      "generated:rerevved/sub_82CBF570"
+    ],
+    "qualification": "The canonical Ghidra project truncates the affected Xenon functions after save thunks. Raw current-image words are authoritative for the promoted instruction claims; generated code only corroborates the already-identified bounded functions and callsites."
+  },
+  "runtimeBoundary": {
+    "status": "existing-corroboration-only",
+    "result": "The accepted unit-stats probe observed attack for an attacker and defense for a human defender during AI combat. That corroborates resolver consumption, not AI planning or scoring parity. No game was launched for this packet."
+  },
+  "guards": [
+    "Treat attack-side and defense-side as derived states of the exact core callsites, not as a stored guest enum or another scalar ABI property.",
+    "Do not assign the core role to every call of either effective stat accessor inside CombatResolve.",
+    "Do not infer an opposing unit class from UnitType dataflow or literal 25; the nearby special branch is outside this packet.",
+    "Do not claim AI evaluation parity from shared scalar accessors. The mapped AI windows do not expose an accepted two-player role carrier.",
+    "Do not widen this finding into healing, March, Veteran status, movement, extra actions, post-combat advance, upgrades, promotion persistence, animation, presentation, networking, API, hook, or production behavior."
+  ],
+  "conclusion": "The accepted ordinary unit-versus-unit resolver contains one exact two-state combat-stat role: it obtains attacker effective attack at 0x82CDA214, then defender effective defense at 0x82CDA234, and retains the results separately. The role is derived from those callsites; neither shared accessor accepts a role or opponent input. This is the smallest supported pure predicate slice for later situational Unique Unit research. The three mapped AI evaluators consume the same scalars but do not yet carry an accepted opposing-participant role, so AI evaluation parity remains the next evidence gate rather than an inferred capability."
+}

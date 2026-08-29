@@ -100,6 +100,28 @@ class TopicManifestTests(unittest.TestCase):
             any("runtime" in guard.lower() for guard in document["guards"])
         )
 
+    def test_unique_unit_combat_predicate_contract(self) -> None:
+        path = MANIFESTS / "unique-unit-combat-predicates.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["status"], "closed")
+        self.assertEqual(
+            document["coreRole"]["domain"], ["attack-side", "defense-side"]
+        )
+        self.assertEqual(document["coreRole"]["carrier"], "derived-callsite-state")
+        self.assertEqual(
+            document["coreRole"]["ordering"], ["0x82CDA214", "0x82CDA234"]
+        )
+        self.assertEqual(document["coreRole"]["attackSide"]["playerLocal"], "r1+1572")
+        self.assertEqual(document["coreRole"]["defenseSide"]["playerLocal"], "r1+1596")
+        self.assertEqual(
+            document["aiEvaluationBoundary"]["roleParity"], "not-established"
+        )
+        self.assertEqual(
+            {entry["function"] for entry in document["aiEvaluationBoundary"]["entries"]},
+            {"0x82CB44E0", "0x82CB6E48", "0x82CBF570"},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -107,4 +107,14 @@ producer and a neutral native callback boundary. Static evidence does not
 identify the concrete receiver, dynamic target, visible game-list owner,
 resource-loading path, or networking behavior.
 
+One default-off runtime trace at those two exact callback sites captured the
+first exact NUL-terminated `OnPressY` once. The observed path was callsite
+`0x8220B4C0`, receiver `0x509201FC`, readable receiver leading word
+`0x82162F34` (`receiver_mapped=true`), and dynamic target `0x82C7CBE0`; the
+process then exited normally with code zero.
+This establishes one neutral runtime receiver and target tuple for the
+controlled action. It does not identify the receiver class, visible action
+owner, resource-loading path, platform message, or networking behavior, and it
+does not exclude the other callback site in another context.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

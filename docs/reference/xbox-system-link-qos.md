@@ -236,4 +236,16 @@ establishes one neutral runtime target tuple only. It does not identify the
 target's method semantics, object ownership, visible action, session creation,
 advertisement, discovery, networking, delivery, or ordering.
 
+Bounded static identification resolves observed target `0x82D704F0` as an
+exact modeled function entry. Its complete local body writes byte one to
+incoming-object field `+0x0C`, loads a global-owned state pointer from word
+`0x8314F2E4`, and conditionally stores the second argument to state field
+`+0x10` while clearing byte fields `+0x40` and `+0x41`. It then returns when
+state field `+0x08` is null or tail-dispatches through that object's vtable
+slot `+0x0C` at `0x82D7054C`. The local body contains no direct XGI import,
+Xbox message submission, socket import, buffer serialization, checksum, or
+network-ordering edge. These relations do not identify either object's class,
+any field or slot semantic, the dynamic tail target, visible action ownership,
+session behavior, advertisement, discovery, delivery, or ordering.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

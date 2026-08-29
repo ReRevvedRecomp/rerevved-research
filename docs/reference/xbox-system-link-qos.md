@@ -128,4 +128,11 @@ on the returned object with the post-prefix command and neutral fourth
 argument. This does not identify either object's class, either virtual method's
 semantics, or the visible action owner.
 
+The observed vtable base itself has zero modeled direct references. A separate
+bounded read-only search found zero modeled functions that construct exact
+value `0x82162F34` through a same-basic-block `lis` plus `addi` or `ori` pair
+within an eight-instruction lookahead; the result was not truncated. This
+closes only that constant-construction form and does not prove that the vtable
+has no constructor, indirect producer, or runtime store.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

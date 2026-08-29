@@ -316,6 +316,21 @@ and helper calls remain neutral. Neither caller reaches a mapped menu action or
 the documented multiplayer state, and the `0x82C99xxx` address neighborhood is
 not accepted as ownership evidence. This bounded negative does not exclude
 indirect invocation, table placement, unmodeled ownership, asynchronous
-linkage, or another Xbox networking API. No Ghidra packet was opened.
+linkage, or another Xbox networking API.
+
+The remaining direct XNet inventory accounts for eight generated title calls:
+one `XNetStartup`, one `XNetCleanup`, two `XNetDnsLookup`, two
+`XNetDnsRelease`, and two `XNetRandom` calls. The wrapper that reaches the sole
+startup import edge has four direct call sites across three callers, while the
+cleanup-containing function has four direct callers. One DNS lookup/release
+pair has four direct callers while the other has none, and the two
+random-buffer functions have one and two direct callers respectively. Their
+supported local behavior is limited to neutral version and record gates,
+wrapper argument setup, cleanup calls, lookup-result inspection and release,
+and two eight-byte buffer fills. None has a supported backward relationship to a
+mapped menu action or documented multiplayer state. This bounded negative
+exhausts the enumerated direct XNet imports as static seeds; it does not exclude
+indirect invocation, unmodeled ownership, asynchronous linkage, or another
+networking surface.
 
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

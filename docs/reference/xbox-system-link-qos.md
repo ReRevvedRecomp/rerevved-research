@@ -117,4 +117,15 @@ controlled action. It does not identify the receiver class, visible action
 owner, resource-loading path, platform message, or networking behavior, and it
 does not exclude the other callback site in another context.
 
+Read-only static analysis confirms that observed target `0x82C7CBE0` is an
+exact modeled function entry and has one data reference, from `0x82162F38`.
+That address is exactly slot `+0x04` of the observed receiver vtable base
+`0x82162F34`. The configured Ghidra body truncates after its entry save thunk;
+narrow generated-code corroboration for the exact target shows a neutral
+two-stage virtual forwarder. It ignores the original callback receiver, calls
+slot `+0x98` on the callback's second-argument object, then calls slot `+0x10`
+on the returned object with the post-prefix command and neutral fourth
+argument. This does not identify either object's class, either virtual method's
+semantics, or the visible action owner.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

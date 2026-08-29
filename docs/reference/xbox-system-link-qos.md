@@ -304,7 +304,18 @@ pointers remain neutral. None has a supported backward relationship to the
 mapped menu actions, the documented multiplayer state, or the supported
 message-types-46-through-55 object graph. This is a bounded negative for the
 enumerated direct generated calls only; it does not exclude indirect calls,
-unmodeled ownership, asynchronous linkage, or another networking surface. No
-Ghidra packet was opened from this inventory.
+unmodeled ownership, asynchronous linkage, or another networking surface.
+
+The XNet address/registration inventory accounts for six direct title
+calls through generated wrappers for `XNetGetTitleXnAddr`,
+`XNetXnAddrToInAddr`, `XNetInAddrToXnAddr`, and
+`XNetUnregisterInAddr`. The two local-XNADDR functions each have one direct
+caller; the three conversion functions and the unregister function have none
+in generated direct-call form. Local result gates, output words, object fields,
+and helper calls remain neutral. Neither caller reaches a mapped menu action or
+the documented multiplayer state, and the `0x82C99xxx` address neighborhood is
+not accepted as ownership evidence. This bounded negative does not exclude
+indirect invocation, table placement, unmodeled ownership, asynchronous
+linkage, or another Xbox networking API. No Ghidra packet was opened.
 
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

@@ -20,12 +20,12 @@ permits the enclosing state to advance from literal 2 to literal 3; a nonzero
 word retains state 2. These remain neutral field and state roles.
 
 The indexed records used immediately after that gate do not come from completed
-QoS result entries in the exact local body. Function `0x82C9D338` reads a
-preexisting collection pointer from enclosing-object field `+0x24`, reads its
-leading count, and enters downstream virtual callbacks only when its downstream
-object field is non-null. On the local byte-flag-zero branch, it invokes one
-callback per collection index and then a final callback. It reads no other QoS
-result-body field before any of those calls.
+QoS result entries in the exact local body. Function `0x82C9D338` reads a result
+buffer pointer from enclosing-object field `+0x24`, reads its leading count, and
+enters downstream virtual callbacks only when its downstream object field is
+non-null. On the local byte-flag-zero branch, it invokes one callback per buffer
+index and then a final callback. It reads no other QoS result-body field before
+any of those calls.
 
 Before calling producer `0x82C99628`, the state function copies that same
 collection pointer into lookup-object field `+0x04` and zeroes lookup-object
@@ -35,6 +35,24 @@ field `+0x04`. When that count is zero, it returns before issuing
 takes its null-result bypass and can continue into the separately guarded
 downstream path. Implementing lookup alone therefore cannot create a missing
 collection entry in this exact path.
+
+Exact producer `0x82C9CF70` prepares that buffer through a fixed two-call
+request pattern. Its first call to `0x82A1F3F0` supplies no buffer. The helper
+writes required size 1334 and returns 122 without issuing a message. The
+producer requests exactly that byte count from size-based allocator
+`0x82D3DBA0`; on a non-null return it stores the pointer at field `+0x24` and
+calls the helper again with the allocated buffer and field `+0x28` as a
+completion pointer. The producer accepts return zero or 997 and then sets field
+`+0x1C` to one.
+
+Exact helper `0x82A1F3F0` zeroes the first two buffer words and calls imported
+`XMsgStartIORequest` with literal caller value 251, message `0x000B001B`, the
+completion pointer, and a 20-byte request record. That record contains the
+32-bit second argument at `+0x00`, a 64-bit word at `+0x04`, the buffer size at
+`+0x0C`, and the buffer pointer at `+0x10`. Exact prerequisite helper
+`0x82A1E8D0` issues imported `XMsgInProcessCall` with caller value 252 and
+message `0x00058023` as a prerequisite. Xbox static evidence does not supply
+semantic names for either message, the 64-bit word, or the buffer record type.
 
 The title also imports `NetDll_XNetQosRelease` through wrapper `0x827F1150`.
 Exact cleanup function `0x82C99728` reads the same object-owned result slot and
@@ -51,13 +69,16 @@ defined `Refresh` and `Create Game` strings have no modeled references.
 Bounded direct-call searches found no producer for general XGI search messages
 `0x000B0016`, `0x000B001C`, or `0x000B0065` through the title's imported
 `XMsgStartIORequestEx`, `XMsgStartIORequest`, or `XMsgInProcessCall` forms. This
-does not prove that no XGI path exists: wrappers, other constant formation,
-indirect dispatch, and other messages remain possible.
+does not prove that no XGI path exists: exact generated corroboration now closes
+the separate `0x000B001B` request above even though its Ghidra body is truncated
+and the same modeled-reference search form misses that call.
 
-The next static gate is the exact producer of the collection at enclosing-object
-field `+0x24`, bounded to one producer chain. Until that gate closes, the
-collection payload, visible Refresh relation, advertisement, discovery,
-host/client direction, delivery, matchmaking, transport, relay, and Internet
-play remain unresolved.
+The next evidence gate is a default-off runtime trace at exact request
+`0x000B001B`, limited to return and completion state, the 20-byte request
+record, and the 1334-byte request-buffer write extent for one controlled request
+submission.
+Until that gate closes, the buffer record layout, visible Refresh relation,
+advertisement, discovery source, host/client direction, delivery, matchmaking,
+transport, relay, and Internet play remain unresolved.
 
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

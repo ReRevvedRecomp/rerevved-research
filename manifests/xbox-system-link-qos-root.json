@@ -20,18 +20,24 @@
       "0x82C99438",
       "0x82C9CC68",
       "0x82C9CCF8",
-      "0x82C9D338"
+      "0x82C9D338",
+      "0x82C9CF70",
+      "0x82D3DBA0",
+      "0x82A1F3F0",
+      "0x82A1E8D0"
     ],
     "imports": [
+      "0x82E926F4:XMsgStartIORequest",
+      "0x82E92714:XMsgInProcessCall",
       "0x82E927B4:NetDll_XNetQosListen",
       "0x82E927C4:NetDll_XNetQosLookup",
       "0x82E927D4:NetDll_XNetQosRelease"
     ],
-    "boundary": "This checkpoint identifies the exact QoS lookup and release wrappers, the sole lookup producer, the first result-word progress gate, the release caller, and the separate preexisting collection that feeds downstream indexed callbacks. It does not establish the collection producer, payload meaning, visible Refresh ownership, advertisement or discovery behavior, host/client direction, delivery, matchmaking, transport, relay, or Internet play."
+    "boundary": "This checkpoint identifies the exact QoS lookup and release wrappers, the sole lookup producer, the first result-word progress gate, the release caller, and the exact fixed-size request-buffer producer that feeds downstream indexed callbacks. It does not establish message or buffer-record semantics, visible Refresh ownership, advertisement or discovery behavior, host/client direction, delivery, matchmaking, transport, relay, or Internet play."
   },
   "currentEvidence": {
-    "method": "Three owner-bounded groups of eight foreground read-only Ghidra packets against the pinned image, with narrow generated-code corroboration only after exact function identification",
-    "qualification": "The visible System Link label owner is UI-only, the visible Refresh and Create Game strings have no modeled references, and the tested general XGI search message forms have no direct imported XMsg producer. Exact QoS lookup and release lifecycle roots are closed through the first result-word progress gate, while downstream indexed records come from a separate preexisting collection."
+    "method": "Four owner-bounded groups of eight foreground read-only Ghidra packets against the pinned image, with narrow generated-code corroboration only after exact function identification",
+    "qualification": "The visible System Link label owner is UI-only and the visible Refresh and Create Game strings have no modeled references. Exact message 0x000B001B is submitted with the fixed-size buffer later consumed as the input record collection for the QoS lookup path, but Xbox static evidence does not prove that the message populates the buffer or name either one."
   },
   "generalSessionSearchNegative": {
     "messages": ["0x000B0016", "0x000B001C", "0x000B0065"],
@@ -41,7 +47,7 @@
       "0x82E92714:XMsgInProcessCall"
     ],
     "result": "No direct call matched the exact message values through the three imported XMsg forms using the bounded direct or lis-plus-ori/addi constant search.",
-    "qualification": "This does not exclude wrappers, unsupported constant formation, indirect dispatch, other XGI messages, or non-XGI discovery."
+    "qualification": "This does not exclude wrappers, unsupported constant formation, indirect dispatch, other XGI messages, or non-XGI discovery. Exact generated corroboration closes a separate 0x000B001B request that the same modeled-reference search form misses because its Ghidra body is truncated."
   },
   "uiAnchors": {
     "systemLinkString": "0x821370B0",
@@ -88,12 +94,30 @@
     "stateFunctionTableEntry": "0x8216045C",
     "enclosingVtable": "0x82160450",
     "vtableProof": "Exact teardown helper 0x82C9CCF8 installs leading pointer 0x82160450.",
-    "collectionField": "enclosing object +0x24",
-    "countRead": "The state function reads the collection pointer and then its leading word as the iteration count.",
+    "collectionField": "enclosing object +0x24, a non-null 1334-byte request buffer on the producer's successful allocation path",
+    "countRead": "The state function reads the buffer pointer and then its leading word as the iteration count.",
     "lookupInputLink": "Before calling producer 0x82C99628, the state function copies enclosing-object field +0x24 into lookup-object field +0x04 and zeroes lookup-object result slot +0x98C. The producer reads the same collection's leading count through field +0x04.",
     "downstreamUse": "After the result-word progress gate, the state function enters downstream virtual callbacks only when its downstream object field is non-null. On its byte-flag-zero branch it invokes one callback per collection index and then one final callback. It reads no completed QoS per-entry field before any downstream call.",
     "zeroCountPath": "When the linked collection count is zero, producer 0x82C99628 returns before calling NetDll_XNetQosLookup, leaving the pre-zeroed result slot null. The state function then takes its null-result bypass and can continue into the separately guarded downstream path.",
-    "qualification": "This separates the preexisting indexed collection from the QoS result in the exact local path. It does not identify the collection producer, callback semantics, visible Refresh owner, advertisement source, or discovery mechanism."
+    "qualification": "This separates the indexed request buffer from the QoS result in the exact local path. It does not identify callback semantics, buffer-record meaning, visible Refresh ownership, advertisement source, or discovery mechanism."
+  },
+  "requestBufferProducer": {
+    "producer": "0x82C9CF70",
+    "allocator": "0x82D3DBA0",
+    "requestHelper": "0x82A1F3F0",
+    "prerequisiteHelper": "0x82A1E8D0",
+    "sizeProbe": "With a size below 1334 or a null buffer, 0x82A1F3F0 writes required size 1334 and returns 122 without issuing its message.",
+    "bufferField": "The producer allocates the required byte count and stores the returned pointer at enclosing-object field +0x24.",
+    "submission": "The second helper call supplies the allocated buffer and enclosing-object field +0x28 as a completion pointer. The producer accepts return zero or 997 and then sets field +0x1C to one.",
+    "requestImport": "0x82E926F4:XMsgStartIORequest",
+    "requestCaller": 251,
+    "requestMessage": "0x000B001B",
+    "requestSize": 20,
+    "requestRecord": "The 20-byte record contains the function's 32-bit second argument at +0x00, a neutral 64-bit word at +0x04, the buffer size at +0x0C, and the buffer pointer at +0x10.",
+    "prerequisiteImport": "0x82E92714:XMsgInProcessCall",
+    "prerequisiteCaller": 252,
+    "prerequisiteMessage": "0x00058023",
+    "qualification": "Both exact message edges require narrow generated-code corroboration after Ghidra truncation. Xbox static evidence supplies no semantic message name, result record layout, visible Refresh ownership, completion behavior, discovery source, or runtime delivery."
   },
   "externalGuidance": {
     "source": "https://github.com/AdrianCassar/xenia-canary/blob/9cf5573a62c984f42471afdd2aa0d0a1e6741f5a/src/xenia/kernel/xam/xam_net.cc",
@@ -103,9 +127,11 @@
   "guards": [
     "Do not treat the bounded XGI negative as proof that the title never uses XGI session services.",
     "Do not interpret the retained 72-byte QoS listener payload without a separately closed guest consumer layout.",
+    "Do not assign semantic names to messages 0x000B001B or 0x00058023 from this static evidence.",
+    "Do not implement the 1334-byte buffer record layout before a bounded runtime write-extent and completion trace.",
     "Do not implement per-entry result records from external source alone.",
     "Do not expect NetDll_XNetQosLookup alone to create a missing downstream collection entry in the exact zero-count path.",
     "Do not claim discovery, matchmaking, delivery, host authority, transport, relay, Internet play, or Game of the Week behavior from this static checkpoint."
   ],
-  "conclusion": "The smallest supported version 1.3 System Link lead is not a general XGI session-search producer in the tested direct forms. Exact producer 0x82C99628 builds three pointer arrays from 0x5C-byte records and calls QoS lookup through wrapper 0x827F10F0 only when the preexisting collection count is positive. Exact state function 0x82C9D338 branches on neutral result word +0x04 but obtains downstream indexed records from the separate collection at enclosing-object field +0x24. The next evidence gate is the exact producer of that collection, bounded to one producer chain; implementing QoS lookup alone cannot create a missing entry on the zero-count path."
+  "conclusion": "The smallest supported version 1.3 System Link lead is exact request producer 0x82C9CF70. It runs prerequisite message 0x00058023, probes for a fixed 1334-byte buffer, stores a non-null allocation at field +0x24, and submits message 0x000B001B with a 20-byte request record and a completion pointer. Exact state function 0x82C9D338 later uses that buffer's leading count to feed QoS lookup producer 0x82C99628, then gates progress on neutral QoS result word +0x04. The next evidence gate is a default-off runtime trace of request return/completion state, the 20-byte request record, and the 1334-byte buffer write extent for one controlled request submission; message and record semantics remain unresolved."
 }

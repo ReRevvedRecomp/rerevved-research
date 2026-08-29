@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0084",
+  "topic": "starting-technology-grants",
+  "status": "closed",
+  "confidence": "confirmed",
+  "image": "image.json",
+  "question": "Do the civilization bonuses that grant named technologies share one parameterized starting-technology producer whose technology ID can be replaced safely?",
+  "scope": {
+    "functions": ["0x82CC4040", "0x82CEF4E8", "0x82CEF6A8", "0x82CF0CB0", "0x82D09208", "0x82D1D1C0", "0x82D1EAB0"],
+    "globals": ["0x830EDB88", "0x830EDC48"],
+    "tables": ["0x82F6F950", "0x82F77460"],
+    "boundary": "This packet maps the recovered technology-grant UEA branches, the generic technology acquisition owner, ordinary ownership persistence, one direct initial-UA grant, and downstream-consumer boundaries. It does not define a runtime API, define replacement presentation, prove AI behavioral parity, map every initial UA or scenario grant, or change the accepted UEA contract."
+  },
+  "dependencies": [
+    {
+      "topic": "civilization-bonus-storage",
+      "use": "Provides the accepted 16 by 4 cumulative UEA table and activation lookup semantics."
+    },
+    {
+      "topic": "game-calendar-state",
+      "use": "Provides the accepted CalendarTurnAdvance identity and current/start turn globals."
+    },
+    {
+      "topic": "save-slot-ruleset-identity",
+      "use": "Separates saved guest technology state from optional host-only ruleset provenance."
+    }
+  ],
+  "currentEvidence": {
+    "method": "foreground read-only Ghidra queries in a repaired disposable project, narrow generated-code comparison, and current public-contract review",
+    "entries": [
+      { "role": "generic technology acquisition owner", "address": "0x82D09208", "confidence": "confirmed" },
+      { "role": "ordinary technology ownership query", "address": "0x82CEF6A8", "confidence": "confirmed" },
+      { "role": "calendar and UEA technology-grant owner", "address": "0x82D1EAB0", "confidence": "confirmed" },
+      { "role": "ordinary technology ownership bitsets", "address": "0x830EDC48", "confidence": "confirmed" },
+      { "role": "broad game-state serializer", "address": "0x82CC4040", "confidence": "strong" }
+    ],
+    "qualification": "Static and generated bodies agree on the hard-coded grant pairs, ordinary ownership mutation, save/load transfer, and branch timing. The hypothesis does not establish a runtime replacement API contract."
+  },
+  "technologyDefinitions": {
+    "table": "0x82F77460",
+    "recordSize": "0x6A",
+    "idRange": "0 through 47",
+    "relevantIds": [
+      { "id": 4, "name": "Horseback Riding" },
+      { "id": 5, "name": "Pottery" },
+      { "id": 11, "name": "Irrigation" },
+      { "id": 12, "name": "Literacy" },
+      { "id": 13, "name": "Mathematics" },
+      { "id": 15, "name": "Democracy" },
+      { "id": 18, "name": "Monarchy" },
+      { "id": 19, "name": "Religion" },
+      { "id": 32, "name": "Communism" }
+    ],
+    "qualification": "Names and indices come from the ordered definition strings in the pinned image. They are not inferred from the UEA IDs."
+  },
+  "technologyGrantUeas": {
+    "owner": "0x82D1EAB0",
+    "shape": "Eight repeated hard-coded branches, not one UEA-to-technology parameter table",
+    "pairs": [
+      { "ueaId": 9, "technologyId": 13, "technology": "Mathematics", "returnSite": "0x82D21128", "retailPlacement": "Arab Medieval" },
+      { "ueaId": 10, "technologyId": 12, "technology": "Literacy", "returnSite": "0x82D21190", "retailPlacement": "Chinese Medieval" },
+      { "ueaId": 43, "technologyId": 19, "technology": "Religion", "returnSite": "0x82D211F8", "retailPlacement": "Indian Medieval" },
+      { "ueaId": 48, "technologyId": 32, "technology": "Communism", "returnSite": "0x82D21260", "retailPlacement": "Mongolian Modern" },
+      { "ueaId": 57, "technologyId": 18, "technology": "Monarchy", "returnSite": "0x82D212C8", "retailPlacement": "absent from the retail 16 by 4 table" },
+      { "ueaId": 58, "technologyId": 11, "technology": "Irrigation", "returnSite": "0x82D21330", "retailPlacement": "Egyptian Medieval" },
+      { "ueaId": 59, "technologyId": 5, "technology": "Pottery", "returnSite": "0x82D21398", "retailPlacement": "French Ancient" },
+      { "ueaId": 60, "technologyId": 15, "technology": "Democracy", "returnSite": "0x82D21418", "retailPlacement": "Greek Ancient" }
+    ],
+    "validation": {
+      "eligibilityGate": "Each branch first calls 0x82CEF4E8 with selector 17, player index, and -1 and proceeds only on zero. The selector's player-facing meaning remains unresolved.",
+      "ownershipGate": "Each branch tests the addressed player's bit in technologyId-indexed word 0x830EDC48[technologyId] and skips an already-owned technology.",
+      "bonusGate": "Each branch calls ActiveCivilizationBonusLookup with its hard-coded UEA ID, player index, and exact flag zero.",
+      "grant": "A passing branch calls 0x82D09208 with player, hard-coded technology ID, player context, source/reason 6, and phase flag 1."
+    }
+  },
+  "activationTiming": {
+    "grantOpportunity": "The eight UEA branches run when the player's era advanced or current turn equals the configured start turn.",
+    "cumulativeEffect": "Because every branch uses exact flag zero, a later-era scenario start can qualify all technology UEAs unlocked through the current era.",
+    "missedOpportunity": "The branches are not a continuously evaluated ownership rule. Changing a mapping after the start/era-transition opportunity does not itself schedule an immediate grant.",
+    "downstreamPresentation": "The turn lifecycle later calls 0x82D1D1C0, which contains separate phase-two handling for technology presentation and other turn effects."
+  },
+  "abilityBoundaries": {
+    "initialUniqueAbility": "Initial UAs are separate from the UEA table. At current-turn minus start-turn equal to one, CalendarTurnAdvance directly grants Religion technology 19 only when the player's civilization is Arab index 11, without calling ActiveCivilizationBonusLookup; the return site is 0x82D20FE4.",
+    "uniqueEraAbility": "The eight recovered pairs are selected by cumulative UEA IDs. Greek Democracy also has a turn-one phase before the general UEA branch, but its selection still calls UEA ID 60 in cumulative mode.",
+    "ordinaryTechnology": "Both UA and UEA routes call the same generic acquisition owner and leave an ordinary ownership bit. Downstream state does not retain an initial-UA or UEA provenance tag.",
+    "scenarioAndStartState": "Other research, trade, network, and setup paths also call the generic acquisition owner with their own parameter values. This packet does not collapse those producers into the civilization-bonus branches."
+  },
+  "ordinaryOwnership": {
+    "storage": "0x830EDC48",
+    "shape": "48 consecutive 32-bit technology words; each player is one bit in the selected technology word",
+    "query": "0x82CEF6A8 returns owned state from the selected word and player bit after its own sentinel and selector-17 gates.",
+    "acquisition": "0x82D09208 sets the ownership bit and fans out discovery, city, building, unit, government, sharing, and notification consequences according to its context, source/reason, and phase parameters.",
+    "producerConclusion": "0x82D09208 is a generic technology acquisition owner, not a starting-technology-only producer."
+  },
+  "persistence": {
+    "serializer": "0x82CC4040",
+    "ownershipEdges": ["0x82CC4718", "0x82CC473C"],
+    "discoveryEdges": ["0x82CC4760", "0x82CC4784"],
+    "result": "The serializer transfers 0x30 words beginning at 0x830EDC48 in both directions and separately transfers 0x30 words at 0x830EDB88. A granted technology therefore round-trips as ordinary guest save state.",
+    "provenanceBoundary": "The save records the resulting technology state, not the UEA mapping or provider that caused it. Removing or changing a host rule after save load does not revoke Horseback Riding, restore the old UEA, or identify why the technology is owned."
+  },
+  "consumerBoundary": {
+    "ui": "TechnologyAcquire performs the normal discovery and notification fan-out, and phase-two turn processing handles presentation. The resulting technology is therefore presented as an ordinary discovery; no recovered branch gives a replacement a distinct UA/UEA label.",
+    "ai": "AI and gameplay availability paths consume ordinary ownership and technology prerequisite/cost logic after the bit is set. The bounded static evidence does not prove that replacing a Mongolian village-conversion UEA with Horseback Riding gives the AI a corresponding strategic valuation or changes the civilization-bonus presentation.",
+    "conclusion": "State propagation is shared; semantic and behavioral parity is not. UI and AI closure is an explicit blocker, not evidence for a simple substitution."
+  },
+  "exactMode": {
+    "grantBranches": "All recovered technology UEA branches pass exact flag zero.",
+    "nativeBoundary": "No exact-mode caller is recovered anywhere in the accepted 95-site UEA inventory, and exact mode does not clamp the era before indexing.",
+    "rule": "A future replacement must leave exact mode native unless a separately range-guarded caller contract is proved."
+  },
+  "multiplayerIdentity": {
+    "guestState": "The acquired technology becomes synchronized gameplay state through existing technology-acquisition and save paths, but the host replacement rule has no guest provenance identity.",
+    "mismatch": "Peers that evaluate different replacement mappings at a start or era-transition opportunity can select different technology mutations and diverge in downstream state.",
+    "policyBoundary": "The accepted modding policy does not add a framework-wide negotiation or mismatch gate. A future domain contract would need an explicit same-ruleset requirement or a separately accepted identity mechanism; neither can be inferred from this producer."
+  },
+  "hypothesisTest": {
+    "hypothesis": "Replace only one technology ID in a shared parameterized starting-technology producer so Mongolians begin with Horseback Riding instead of UEA 40, Captured Barbarian villages become cities.",
+    "verdict": "rejected",
+    "contradictions": [
+      "The named UEA grants are eight hard-coded UEA-ID and technology-ID branches, not entries in one parameter source.",
+      "UEA 40 has no recovered technology-grant branch. Changing an existing technology literal does not deactivate village conversion.",
+      "Changing the technology literal for an active grant UEA such as 59 would also change its native French placement unless selection were keyed by effective civilization and era cell.",
+      "The only unused grant branch is UEA 57 to Monarchy, but ID 57 is absent from the retail table and has no accepted placement, presentation, or AI meaning. Reusing it would exceed the accepted UEA-ID contract.",
+      "A technology grant is an irreversible ordinary save-state mutation, unlike a stateless lookup replacement. Rule removal cannot restore pre-grant state.",
+      "The recovered trigger is start/era-transition processing, not an always-on starting-technology rule, so registration timing is observable.",
+      "No recovered UI, AI, save provenance, or multiplayer identity path supplies the semantics needed to treat Horseback Riding as a drop-in replacement for UEA 40."
+    ]
+  },
+  "staticQuery": {
+    "scripts": ["ghidra/BootstrapGhidra.java", "ghidra/DumpFunctions.java", "ghidra/DumpReferences.java", "ghidra/DumpStringsInRange.java", "ghidra/FindStrings.java"],
+    "mode": "foreground-read-only-disposable-repair",
+    "generatedCorroboration": [
+      "generated:rerevved/sub_82CC4040",
+      "generated:rerevved/sub_82CEF6A8",
+      "generated:rerevved/sub_82CF0CB0",
+      "generated:rerevved/sub_82D09208",
+      "generated:rerevved/sub_82D1D1C0",
+      "generated:rerevved/sub_82D1EAB0"
+    ],
+    "truncationGuard": "The canonical Ghidra project truncates Xenon functions after save-register thunks. A disposable copy was repaired with the repository bootstrap and compared with generated code only for the bounded functions and edges above."
+  },
+  "guards": [
+    "Do not describe 0x82D09208 as a starting-technology producer; it is the shared ordinary acquisition owner.",
+    "Do not treat initial UAs, cumulative UEAs, owned technology state, and scenario/setup grants as one rule domain merely because they share TechnologyAcquire.",
+    "Do not substitute a technology literal globally when the intended target is one civilization-era cell.",
+    "Do not reuse dormant UEA 57 as an extension point from address adjacency or branch shape.",
+    "Do not promise mod-removal rollback for an already-granted technology.",
+    "Do not infer AI strategy, UI bonus wording, multiplayer equality, or exact-mode safety from ordinary ownership propagation."
+  ],
+  "conclusion": "The simple-ID-substitution hypothesis is rejected. CalendarTurnAdvance contains eight hard-coded UEA-to-technology branches that call the generic TechnologyAcquire owner; UEA 40 is not one of them. The grants mutate and persist ordinary technology ownership, while UEA activation, initial UA selection, scenario/setup producers, presentation, AI strategy, and host ruleset identity remain distinct. No bounded public ABI supports replacing Mongolian Ancient UEA 40 with Horseback Riding; implementation is outside this manifest."
+}

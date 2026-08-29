@@ -107,6 +107,58 @@ of Ceremonial Burial, while its Ancient UEA is ID 28, which adds one food to sea
 tiles. Both apply from the Ancient era onward. Medieval, Industrial, and Modern
 each add another cumulative UEA.
 
+## Technology-grant UEAs
+
+The named technology UEAs do not come from one parameter table.
+`CalendarTurnAdvance` at `0x82D1EAB0` contains eight repeated hard-coded
+UEA-ID and technology-ID branches:
+
+| UEA ID | Technology ID | Technology | Retail placement |
+| ---: | ---: | --- | --- |
+| 9 | 13 | Mathematics | Arabian Medieval |
+| 10 | 12 | Literacy | Chinese Medieval |
+| 43 | 19 | Religion | Indian Medieval |
+| 48 | 32 | Communism | Mongolian Modern |
+| 57 | 18 | Monarchy | No retail UEA-table placement |
+| 58 | 11 | Irrigation | Egyptian Medieval |
+| 59 | 5 | Pottery | French Ancient |
+| 60 | 15 | Democracy | Greek Ancient |
+
+Every branch applies the same shape of checks: the unresolved selector-17
+eligibility predicate at `0x82CEF4E8` must return zero, the player must not
+already own the technology, and `ActiveCivilizationBonusLookup` must find the
+UEA in cumulative mode. A passing branch calls `TechnologyAcquire` at
+`0x82D09208` with the player, technology ID, player context, source/reason 6,
+and phase flag 1.
+
+`TechnologyAcquire` is the generic ordinary acquisition owner, not a
+starting-technology-only function. Research, trade, setup, network, UA, and UEA
+routes can converge there with different arguments. It sets the player bit in
+the 48-word technology ownership array at `0x830EDC48` and fans the ordinary
+discovery through gameplay and presentation consumers.
+
+The UEA grant opportunity occurs at the configured start turn or an era
+transition. It is not an always-on rule. All eight branches use cumulative mode;
+none uses the uncalled and unclamped exact mode. A later-era scenario start can
+therefore qualify earlier technology UEAs as well as the current-era entry.
+
+Initial UAs remain separate. For example, the Arabian Religion UA directly
+grants technology 19 when current turn minus start turn equals one and the
+player's civilization is Arabian index 11. That branch does not query a UEA
+ID. After either route grants a technology, the saved state records ordinary
+ownership rather than UA or UEA provenance. The broad serializer at
+`0x82CC4040` transfers all 48 ownership words in both directions, so removing a
+host rule does not revoke an already-granted technology.
+
+This layout rejects a simple Mongolian substitution. UEA 40, Captured
+Barbarian villages become cities, has no technology-grant branch. Replacing an
+existing technology literal would change another retail placement, while the
+dormant ID 57 branch has no accepted retail placement, presentation, or AI
+meaning. A rule that suppresses Mongolian Ancient UEA 40 and grants Horseback
+Riding technology 4 would require a new civilization-and-era-scoped composite
+producer with explicit irreversible save, timing, UI, AI, and multiplayer
+semantics. No public ABI is supported for that producer.
+
 ## Shared consumers
 
 The table has no known writer, initializer, copied row cache, or second reader.
@@ -137,8 +189,11 @@ correct AI behavior.
   are mapped.
 - Do not infer AI behavioral parity solely because AI functions call the same
   lookup.
-- Do not distribute a changed table without save slot ruleset identity,
-  mismatch handling before load, and an explicit multiplayer policy.
+- Do not assume host replacement identity is saved with ordinary technology
+  ownership or negotiated between multiplayer peers. The current modding policy
+  adds no framework-wide mismatch gate.
+- Do not reuse UEA ID 57 as an extension point. Its hard-coded Monarchy branch
+  has no retail UEA-table placement or accepted effect contract.
 
 ## Evidence sources
 
@@ -146,4 +201,5 @@ correct AI behavior.
 - [Unit-definition AI evaluation](../../manifests/unit-definitions-ai-evaluation.json)
 - [Rush-cost producer](../../manifests/rush-cost-producer.json)
 - [Game calendar state](../../manifests/game-calendar-state.json)
+- [Starting technology grants](../../manifests/starting-technology-grants.json)
 - [Catalog contract](../catalogs.md)

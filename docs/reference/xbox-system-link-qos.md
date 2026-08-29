@@ -80,10 +80,12 @@ No request or completion state and no request-buffer write extent was captured.
 The exact `GFX_GameSelector.gfx` resource and guest image contain matching
 `OnPressY` and `OnPressX` strings. Each guest string has one parameter reference
 in `0x82DECB20`; that function and its three bounded callees handle generic UI
-and unit-stack commands without dispatching either command. The resource match
-is search guidance, not proof of action ownership. The next evidence gate is the
-exact guest-image `GFX_GameSelector` resource-name anchor and its bounded
-reference set. The buffer record layout, visible Refresh relation,
+and unit-stack commands without dispatching either command. Exact guest string
+`GFX_GameSelector.gfx` is defined at `0x8211FFB0`, but it has no modeled
+reference, bounded split-address code use, or aligned initialized-memory pointer
+placement. The resource agreement remains search guidance, not proof of action
+ownership or loading. Establishing its runtime owner requires a separately
+bounded evidence source. The buffer record layout, visible Refresh relation,
 advertisement, discovery source, host/client direction, delivery, matchmaking,
 transport, relay, and Internet play remain unresolved.
 

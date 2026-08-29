@@ -73,11 +73,17 @@ does not prove that no XGI path exists: exact generated corroboration now closes
 the separate `0x000B001B` request above even though its Ghidra body is truncated
 and the same modeled-reference search form misses that call.
 
-The next evidence gate is a default-off runtime trace at exact request
-`0x000B001B`, limited to return and completion state, the 20-byte request
-record, and the 1334-byte request-buffer write extent for one controlled request
-submission.
-Until that gate closes, the buffer record layout, visible Refresh relation,
+A default-off probe for exact caller 251, request `0x000B001B`, and length 20
+produced no matching trace during a controlled System Link game-list Refresh.
+No request or completion state and no request-buffer write extent was captured.
+
+The exact `GFX_GameSelector.gfx` resource and guest image contain matching
+`OnPressY` and `OnPressX` strings. Each guest string has one parameter reference
+in `0x82DECB20`; that function and its three bounded callees handle generic UI
+and unit-stack commands without dispatching either command. The resource match
+is search guidance, not proof of action ownership. The next evidence gate is the
+exact guest-image `GFX_GameSelector` resource-name anchor and its bounded
+reference set. The buffer record layout, visible Refresh relation,
 advertisement, discovery source, host/client direction, delivery, matchmaking,
 transport, relay, and Internet play remain unresolved.
 

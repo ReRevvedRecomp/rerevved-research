@@ -24,7 +24,11 @@
       "0x82C9CF70",
       "0x82D3DBA0",
       "0x82A1F3F0",
-      "0x82A1E8D0"
+      "0x82A1E8D0",
+      "0x82DECB20",
+      "0x82E40680",
+      "0x82DEA4C8",
+      "0x82C7B710"
     ],
     "imports": [
       "0x82E926F4:XMsgStartIORequest",
@@ -33,11 +37,11 @@
       "0x82E927C4:NetDll_XNetQosLookup",
       "0x82E927D4:NetDll_XNetQosRelease"
     ],
-    "boundary": "This checkpoint identifies the exact QoS lookup and release wrappers, the sole lookup producer, the first result-word progress gate, the release caller, and the exact fixed-size request-buffer producer that feeds downstream indexed callbacks. It does not establish message or buffer-record semantics, visible Refresh ownership, advertisement or discovery behavior, host/client direction, delivery, matchmaking, transport, relay, or Internet play."
+    "boundary": "This checkpoint identifies the exact QoS lookup and release wrappers, the sole lookup producer, the first result-word progress gate, the release caller, the exact fixed-size request-buffer producer that feeds downstream indexed callbacks, and a bounded OnPressY/OnPressX command-reference chain. It does not identify either visible action's guest owner or establish message or buffer-record semantics, advertisement or discovery behavior, host/client direction, delivery, matchmaking, transport, relay, or Internet play."
   },
   "currentEvidence": {
-    "method": "Four owner-bounded groups of eight foreground read-only Ghidra packets against the pinned image, with narrow generated-code corroboration only after exact function identification",
-    "qualification": "The visible System Link label owner is UI-only and the visible Refresh and Create Game strings have no modeled references. Exact message 0x000B001B is submitted with the fixed-size buffer later consumed as the input record collection for the QoS lookup path, but Xbox static evidence does not prove that the message populates the buffer or name either one."
+    "method": "Five owner-bounded groups of eight foreground read-only Ghidra packets against the pinned image, with narrow generated-code corroboration only after exact function identification",
+    "qualification": "The visible System Link label owner is UI-only and the visible Refresh and Create Game strings have no modeled references. Matching OnPressY and OnPressX resource and guest-image strings provide search guidance into exact function 0x82DECB20, but its bounded command chain does not implement or dispatch either command. Exact message 0x000B001B is submitted with the fixed-size buffer later consumed as the input record collection for the QoS lookup path, but one controlled default-off runtime probe produced no matching request and Xbox static evidence does not prove that the message populates the buffer or name either one."
   },
   "generalSessionSearchNegative": {
     "messages": ["0x000B0016", "0x000B001C", "0x000B0065"],
@@ -55,7 +59,45 @@
     "labelOwnerRole": "Resolves Match Type, Player Match, Ranked Match, and System Link localization values and passes them to UI SetTitle and SetText calls.",
     "refreshString": "0x821391A4",
     "createGameString": "0x821391AC",
-    "qualification": "The latter two strings have zero modeled references. No action or event owner is claimed."
+    "onPressYString": "0x821242A0",
+    "onPressYStringValue": "OnPressY",
+    "onPressYStringReferences": 1,
+    "onPressXString": "0x8212648C",
+    "onPressXStringValue": "OnPressX",
+    "onPressXStringReferences": 1,
+    "commandReferenceFunction": "0x82DECB20",
+    "commandReferenceDataPointer": "0x82128750",
+    "commandReferencePointerNeighborhood": [
+      { "address": "0x82128744", "target": "0x82DEE4F0" },
+      { "address": "0x82128748", "target": "0x82C7BCC0" },
+      { "address": "0x8212874C", "target": "0x82C7BD50" },
+      { "address": "0x82128750", "target": "0x82DECB20" },
+      { "address": "0x82128754", "target": "0x82DE9F30" },
+      { "address": "0x82128758", "target": "0x821BC970" },
+      { "address": "0x8212875C", "target": "0x82C7C850" }
+    ],
+    "onPressYParameterReference": "0x82DECBB4",
+    "onPressXParameterReference": "0x82DECB94",
+    "firstCommandCallee": "0x82E40680",
+    "firstCommandCallsite": "0x82DECB38",
+    "nestedCommandCallee": "0x82C7B710",
+    "nestedCommandCallsite": "0x82E40698",
+    "nestedCommandCalleeRole": "Recognizes OnInit, OnExit, PlaySound, and StopSound and dispatches object vtable slots +0x14, +0x18, +0x1C, and +0x20 respectively.",
+    "firstCommandCalleeRole": "Calls 0x82C7B710 with the original three arguments, then recognizes only OnAccept, OnCancel, and OnOption and dispatches object vtable slots +0x30, +0x34, and +0x38 respectively.",
+    "unitStackCommandGate": "0x82DEA4C8",
+    "unitStackCommandGateCallsite": "0x82DECB48",
+    "commandReferenceFunctionRole": "Passes the original three arguments to 0x82E40680, then passes them to a local OnLoadUnitStack and OnClearUnitStack state gate before comparing OnAccept, OnCancel, OnPressX, and OnPressY only to bypass the remaining local option and unit-stack handling.",
+    "resourceGuidance": {
+      "path": "Resource/Common/GFX_GameSelector.gfx",
+      "size": 35763,
+      "sha256": "E432454C3F6931ADC9A4D3D50FFFB2F4B5988FE2E7DF8B3A3A26193FC308448D",
+      "onPressYScriptOffset": "0x10CB",
+      "onPressYCommandOffset": "0x10E5",
+      "onPressXScriptOffset": "0x10F8",
+      "onPressXCommandOffset": "0x1112",
+      "role": "Search guidance linking the resource command names to exact guest-image strings; it does not establish visible action ownership or guest dispatch."
+    },
+    "qualification": "The visible Refresh and Create Game label strings have zero modeled references. Exact OnPressY and OnPressX each have one defined guest-image string and one modeled parameter reference in exact function 0x82DECB20. That function does not implement either action. Its exact callees recognize only OnLoadUnitStack, OnClearUnitStack, OnAccept, OnCancel, OnOption, OnInit, OnExit, PlaySound, and StopSound. Exact 0x82DECB20 has one modeled data-pointer placement at 0x82128750 and no modeled direct caller. The seven-word pointer neighborhood is recorded without table, slot, class-boundary, or ownership claims. No downstream X/Y action handler or networking behavior is established."
   },
   "qosLookup": {
     "import": "0x82E927C4",
@@ -128,10 +170,10 @@
     "Do not treat the bounded XGI negative as proof that the title never uses XGI session services.",
     "Do not interpret the retained 72-byte QoS listener payload without a separately closed guest consumer layout.",
     "Do not assign semantic names to messages 0x000B001B or 0x00058023 from this static evidence.",
-    "Do not implement the 1334-byte buffer record layout before a bounded runtime write-extent and completion trace.",
+    "Do not implement the 1334-byte buffer record layout; the controlled action did not reach the exact request and produced no write-extent or completion evidence.",
     "Do not implement per-entry result records from external source alone.",
     "Do not expect NetDll_XNetQosLookup alone to create a missing downstream collection entry in the exact zero-count path.",
     "Do not claim discovery, matchmaking, delivery, host authority, transport, relay, Internet play, or Game of the Week behavior from this static checkpoint."
   ],
-  "conclusion": "The smallest supported version 1.3 System Link lead is exact request producer 0x82C9CF70. It runs prerequisite message 0x00058023, probes for a fixed 1334-byte buffer, stores a non-null allocation at field +0x24, and submits message 0x000B001B with a 20-byte request record and a completion pointer. Exact state function 0x82C9D338 later uses that buffer's leading count to feed QoS lookup producer 0x82C99628, then gates progress on neutral QoS result word +0x04. The next evidence gate is a default-off runtime trace of request return/completion state, the 20-byte request record, and the 1334-byte buffer write extent for one controlled request submission; message and record semantics remain unresolved."
+  "conclusion": "Exact request producer 0x82C9CF70 remains a supported version 1.3 System Link lead: it runs prerequisite message 0x00058023, probes for a fixed 1334-byte buffer, stores a non-null allocation at field +0x24, and submits message 0x000B001B with a 20-byte request record and a completion pointer. Exact state function 0x82C9D338 later uses that buffer's leading count to feed QoS lookup producer 0x82C99628, then gates progress on neutral QoS result word +0x04. One controlled default-off runtime probe did not reach the exact request. Matching OnPressY and OnPressX resource and guest-image strings lead to exact command-reference function 0x82DECB20, but that function and its three bounded callees handle only generic UI and unit-stack commands; no X/Y action dispatcher is identified. The next evidence gate is the exact guest-image GFX_GameSelector resource-name anchor and its bounded modeled reference set. Message, record, visible action, advertisement, discovery, and ordering semantics remain unresolved."
 }

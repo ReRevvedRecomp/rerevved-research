@@ -275,6 +275,24 @@ the low 16 bits for a negative value whose masked high bits equal
 two callers, `0x82344438` and `0x82344510`; neither was expanded. This proves a
 neutral platform-message request and local result mapping only. It supplies no
 supported relationship to a mapped menu action or the documented multiplayer
-state, so it is rejected as the next System Link networking seed.
+state, so it is not a supported System Link networking seed.
+
+The inventory also identifies exact QoS-listen wrapper `0x827F10D0`
+and its two title-local producers. Function `0x82C99018` passes object fields
+`+0x0C` and `+0x08`, object word `+0x04` multiplied by 12, zero, and neutral
+operation value 5 to the wrapper at `0x82C99048`; it returns true exactly when
+the wrapper returns zero. Function `0x82C99060` passes object field `+0x0C`,
+three zero values, and neutral operation value 16 at `0x82C99094`, then walks
+the collection referenced by object field `+0x08`, conditionally routes
+element-derived pointers and the collection base through neutral helper
+`0x82D3D9F0`, writes a neutral sentinel to each visited element's first word,
+and clears field `+0x08`.
+The wrapper inserts caller value one before forwarding its five title
+arguments to `NetDll_XNetQosListen`. The maintained model reports no callers
+for either producer. This is a model-bounded neutral producer and cleanup pair,
+not evidence that the functions are unused. It does not establish operation
+semantics, payload meaning, advertisement, discovery, host/client direction,
+transport, or a relationship to the mapped menu actions or documented
+multiplayer state.
 
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

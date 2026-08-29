@@ -151,4 +151,16 @@ neutral paired runtime path only. They do not identify either object's class,
 either virtual method's semantics, visible action ownership, resource loading,
 a platform message, networking behavior, delivery, or ordering.
 
+Bounded static identification resolves both runtime targets as exact modeled
+function entries. Target `0x82226AA0` is a one-word accessor that returns the
+word at argument-object offset `+0xFC`; the runtime returned-object pointer is
+the observed value of that accessor. Ghidra truncates target `0x82E819E0` at
+the known save thunk. Its exact generated body preserves the incoming object,
+command, and neutral third argument, calls the already bounded generic
+FSCommand chain, then conditionally dispatches through slot `+0x0C` of the
+object held at incoming-object field `+0x430`, using pointers to two stack
+temporaries populated by helper calls supplied with the command and neutral
+argument. This does not name either object, field, or method and exposes no
+platform-message or networking edge.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

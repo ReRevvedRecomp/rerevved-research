@@ -339,4 +339,20 @@ route without identifying the error producer or tying the dialog to session
 create outputs, QoS, sockets, discovery, transport, or the SDK's current
 success-only session handlers.
 
+A host-flow trace covering X, game type, and timer selection reached a lobby.
+About 3.7 seconds after the exact
+OnPressX call returned, one thread recorded selected-address port-1000 bind and
+readback, title XNADDR acquisition, `XGISessionCreateImpl` with neutral flags
+`0x21`, two public slots and zero private slots, QoS-listen flags `0x05` with 84
+opaque bytes, and one local-join dispatch. It then recorded unimplemented XLIVEBASE
+message `0x0005800E`, followed about 50 ms later by a selected-address
+port-26900 bind attempt and another XNADDR acquisition. The unimplemented
+message was observed in a run that later reached the lobby. Normal leave was
+followed by session-delete, QoS-flags-`0x10`, and cleanup records; cleanup
+reported zero counted direct-LAN packets and no retained QoS bytes. No successful
+`sendto` or `recvfrom` diagnostic was observed, without excluding unlogged or
+other I/O forms. A bounded direct-call search found no call to the three
+imported XMsg forms with nearby message argument `0x0005800E`; wrappers,
+unsupported constant formation, and other dispatch surfaces remain unresolved.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

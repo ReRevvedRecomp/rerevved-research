@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0082",
+  "topic": "production-cost-ownership",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which Xbox-native unit-definition field owns normal production base cost, how is its effective value composed, and which bounded completion, display, and AI paths consume it?",
+  "scope": {
+    "functions": ["0x82CB44E0", "0x82CB6E48", "0x82CE27F0", "0x82CE2B98", "0x82CF1148", "0x82CF8308", "0x82D13978", "0x82DFFE38"],
+    "table": "0x82F700D8",
+    "recordSize": "0x94",
+    "fieldOffset": "0x44",
+    "boundary": "This packet closes the normal unit production factor, its exact effective scalar, two cost wrappers, one completion threshold, the accepted rush-area display consumer, and two accepted AI input consumers. It does not establish building-cost sharing, general UI parity, complete AI valuation, downstream completion effects, runtime execution, or an implementation contract."
+  },
+  "dependencies": [
+    {
+      "topic": "unit-definitions-ai-evaluation",
+      "use": "Accepted unit-definition table, stride, record identities, and AI function identities"
+    },
+    {
+      "topic": "rush-cost-producer",
+      "use": "Accepted unit rush producer, display owner, command path, and apply boundary"
+    },
+    {
+      "topic": "civilization-bonus-storage",
+      "use": "Accepted active Unique Era Ability lookup and bonus ID meanings where available"
+    }
+  ],
+  "baseCostField": {
+    "table": "0x82F700D8",
+    "recordSize": "0x94",
+    "offset": "0x44",
+    "width": "signed byte",
+    "role": "normal unit production base-cost factor",
+    "representativeValues": [
+      { "unitType": 6, "name": "Warrior", "factor": 2, "address": "0x82F70494" },
+      { "unitType": 9, "name": "Archer", "factor": 2, "address": "0x82F70650" },
+      { "unitType": 10, "name": "Riflemen", "factor": 4, "address": "0x82F706E4" },
+      { "unitType": 12, "name": "Horsemen", "factor": 4, "address": "0x82F7080C" },
+      { "unitType": 13, "name": "Knights", "factor": 5, "address": "0x82F708A0" },
+      { "unitType": 14, "name": "Tank", "factor": 10, "address": "0x82F70934" },
+      { "unitType": 18, "name": "Artillery", "factor": 10, "address": "0x82F70B84" },
+      { "unitType": 28, "name": "Spy", "factor": 5, "address": "0x82F7114C" }
+    ],
+    "qualification": "The byte is a factor, not the final production cost. Adjacent bytes at +0x45 through +0x47 remain unnamed, and this packet does not catalogue the other 21 factor values."
+  },
+  "effectiveScalar": {
+    "function": "0x82CF1148",
+    "semanticName": "EffectiveUnitProductionCostScalar",
+    "inputs": {
+      "cityTable": "0x8315FE28 with stride 0xBC",
+      "player": "signed city byte +0x00",
+      "playerIndexedValue": "signed halfword at 0x830E9050 + player*2; semantic owner unresolved",
+      "item": "signed city halfword +0x38 unless argument two supplies an override"
+    },
+    "composition": [
+      "Start at ten; if the player-indexed value is positive, subtract it from ten.",
+      "If neutral condition 0x82CEF4E8(14) is nonzero, subtract one quarter of the current scalar with signed round-toward-zero arithmetic.",
+      "If unit-definition +0x50 bit zero is set and bonus 5 is active, subtract one half of the current scalar.",
+      "For unit types 10, 6, and 28, active bonus IDs 17, 33, and 34 respectively subtract one half of the current scalar. Bonus 33 remains semantically unresolved."
+    ],
+    "normalUnitCost": "signed definition factor at +0x44 multiplied by the returned scalar, then divided by two with signed round-toward-zero arithmetic",
+    "qualification": "Condition 14, the player-indexed halfword owner, and bonus 33 remain neutral. The helper handles only item IDs 0 through 99; this is static composition, not runtime proof."
+  },
+  "costWrappers": [
+    {
+      "function": "0x82CE2B98",
+      "semanticName": "ProductionItemCostLookup",
+      "result": "Returns -1 for item -1, uses the unit factor and scalar for IDs 0 through 99, and routes IDs 100 through 299 through separate helper 0x82CF1278."
+    },
+    {
+      "function": "0x82CF8308",
+      "semanticName": "CurrentProductionItemCostLookup",
+      "result": "Reads current city item +0x38, returns zero outside IDs 0 through 299, and otherwise uses the unit formula or separate helper 0x82CF1278."
+    }
+  ],
+  "consumers": {
+    "rushProducer": {
+      "function": "0x82CE27F0",
+      "result": "The unit branch composes full normal unit cost, subtracts signed invested production at city +0x36, and then applies the separately accepted rush-gold arithmetic.",
+      "qualification": "This establishes the normal-cost input to rush calculation, not complete rush-modifier composition or RushApply parity."
+    },
+    "display": {
+      "function": "0x82DFFE38",
+      "callsite": "0x82E00454",
+      "result": "The accepted rush-area display owner calls CurrentProductionItemCostLookup, then uses signed city fields +0x36 and +0x42 with the positive returned cost in separate percentage calculations.",
+      "qualification": "This is one exact rush-area display consumer, not general normal production UI parity."
+    },
+    "completion": {
+      "function": "0x82D13978",
+      "comparison": "0x82D159F8",
+      "branch": "0x82D159FC",
+      "result": "The unit branch compares signed invested production at city +0x36 with the composed full unit cost and branches away while invested production is less.",
+      "qualification": "The fallthrough enters a larger item-processing body. Unit creation, overflow, queue changes, and other completion paths remain unresolved."
+    },
+    "ai": [
+      {
+        "function": "0x82CB44E0",
+        "semanticName": "AIUnitChoiceEvaluate",
+        "result": "Directly consumes helper 0x82CF1148 and signed definition +0x44, then combines those inputs with invested production and the local bonus-25 and bonus-35 rush arithmetic.",
+        "qualification": "The local ordering differs from the standalone normal-cost wrappers; no AI decision parity or corrected rush parity is claimed."
+      },
+      {
+        "function": "0x82CB6E48",
+        "semanticName": "AITurnUnitEvaluation",
+        "result": "Directly consumes helper 0x82CF1148 and signed definition +0x44 and applies signed half scaling.",
+        "qualification": "The enclosing score and decision effect remain unresolved."
+      }
+    ]
+  },
+  "currentEvidence": {
+    "method": "eight bounded foreground read-only Ghidra packets with exact-function generated corroboration after identification",
+    "entries": [
+      { "role": "unit cost arithmetic", "address": "0x82CE28D8", "method": "raw current-image words", "confidence": "strong" },
+      { "role": "effective scalar", "address": "0x82CF1148", "method": "raw current-image words and exact generated body", "confidence": "strong" },
+      { "role": "representative field cells", "address": "0x82F70494", "method": "eight exact current-image data words", "confidence": "strong" },
+      { "role": "completion comparison", "address": "0x82D159F8", "method": "raw current-image words and exact generated body", "confidence": "strong" },
+      { "role": "display call", "address": "0x82E00454", "method": "raw current-image words and accepted owner identity", "confidence": "strong" },
+      { "role": "AI unit-choice input", "address": "0x82CB6804", "method": "raw current-image words and accepted function identity", "confidence": "strong" },
+      { "role": "AI turn input", "address": "0x82CBA1F8", "method": "raw current-image words and accepted function identity", "confidence": "strong" }
+    ],
+    "qualification": "Packet 1 and Packet 2 preserved the configured Ghidra truncation and undecoded-listing negatives. Raw words, not truncated decompilation, support the interior arithmetic. No runtime probe was authorized or performed."
+  },
+  "guards": [
+    "Treat +0x44 as a signed normal unit production factor, not a direct final-cost byte.",
+    "Keep building and wonder production costs separate: IDs 100 through 299 route through helper 0x82CF1278, whose storage and composition were not investigated.",
+    "Do not name adjacent definition bytes +0x45 through +0x47 or the player-indexed scalar owner from proximity.",
+    "Do not infer general AI parity from two direct input consumers; strategy, scoring, choice, corrected rush behavior, and every other AI path remain unresolved.",
+    "Do not infer general UI parity from the accepted rush-area display consumer.",
+    "Do not infer complete production completion behavior from the one invested-versus-cost threshold.",
+    "Do not infer runtime execution, production behavior, API suitability, or implementation safety from static evidence."
+  ],
+  "conclusion": "Version 1.3 stores a signed normal unit production base-cost factor at unit-definition offset +0x44. Exact helper 0x82CF1148 composes a player- and unit-sensitive scalar, and the normal unit cost is factor times scalar divided by two. Two wrappers expose that value, while the bounded rush producer, rush-area display owner, one unit completion threshold, AIUnitChoiceEvaluate, and AITurnUnitEvaluation consume the same field or composed value. Building and wonder IDs use a separate helper, and runtime, full UI, complete completion, rush-apply, and general AI parity remain unresolved."
+}

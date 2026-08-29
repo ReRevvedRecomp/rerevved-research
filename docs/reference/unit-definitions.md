@@ -15,14 +15,51 @@ The names below are recovered semantic labels, not original debug symbols.
 | Internal name | definition `+0x0` | NUL-terminated record name when present |
 | Base attack | definition `+0x40` | Signed byte read by `EffectiveUnitAttackLookup` |
 | Base defense | definition `+0x41` | Signed byte read by `EffectiveUnitDefenseLookup` |
+| Production-cost factor | definition `+0x44` | Signed byte composed by `EffectiveUnitProductionCostScalar` |
 | Effective attack reader | `0x82CF2230` | Applies unit and civilization modifiers to base attack |
 | Effective defense reader | `0x82CF21A0` | Applies unit and civilization modifiers to base defense |
 | Unique Unit identity selector | `0x82CEF160` | Maps a base `UnitType` and player civilization to a localized name index |
 | Live unit-name reader | `0x82CF0550` | Reads the live unit type, applies the identity selector, and resolves the unit or army name |
 
-The remaining bytes in the word beginning at `+0x40` are intentionally
-unnamed. Their adjacency to attack and defense does not prove movement or any
+Bytes `+0x42`, `+0x43`, and `+0x45` through `+0x47` remain intentionally
+unnamed. Their adjacency to accepted fields does not prove movement or any
 other gameplay meaning.
+
+## Normal unit production cost
+
+`EffectiveUnitProductionCostScalar` at `0x82CF1148` starts from scalar 10 and
+applies bounded player, condition, definition-flag, and civilization-bonus
+reductions. The normal unit production cost is the signed factor at `+0x44`
+multiplied by that scalar and divided by two with signed round-toward-zero
+arithmetic.
+
+The scalar's player-indexed input at `0x830E9050`, condition
+`0x82CEF4E8(14)`, and bonus ID 33 retain neutral meanings. Accepted bonus IDs 5,
+17, and 34 provide half-cost routes for Settlers, Riflemen, and Spies. The
+eight bounded factor samples were Warrior 2, Archer 2, Riflemen 4, Horsemen 4,
+Knights 5, Tank 10, Artillery 10, and Spy 5. These are factors, not direct
+final-cost bytes.
+
+`ProductionItemCostLookup` at `0x82CE2B98` applies this unit formula to item
+IDs 0 through 99. `CurrentProductionItemCostLookup` at `0x82CF8308` selects the
+current city item at `+0x38` and returns the same unit result. Both route item
+IDs 100 through 299 through separate helper `0x82CF1278`; that shared dispatch
+does not establish shared unit and building cost storage or modifiers.
+
+Bounded static consumers are:
+
+- `RushCostCompute` at `0x82CE27F0`, which subtracts invested production at
+  city `+0x36` before its separate rush-gold arithmetic.
+- The accepted rush-area display owner at `0x82DFFE38`, which calls the current
+  cost lookup and uses city `+0x36` and `+0x42` in percentage calculations.
+- The unit branch in `0x82D13978`, which branches away while signed invested
+  production at city `+0x36` is less than the composed cost.
+- `AIUnitChoiceEvaluate` and `AITurnUnitEvaluation`, which both read `+0x44`
+  and call the same scalar helper.
+
+The display evidence is rush-area-specific, and the completion evidence closes
+only one threshold. The two AI paths prove shared inputs, not scoring, decision,
+or corrected-rush parity. No runtime production behavior was tested.
 
 ## UnitType values
 
@@ -104,4 +141,5 @@ independent producer-consumer mapping before mutation.
 
 - [Unique Unit identity selection](../../manifests/unique-unit-identity-selection.json)
 - [Unit-definition AI evaluation](../../manifests/unit-definitions-ai-evaluation.json)
+- [Production cost ownership](../../manifests/production-cost-ownership.json)
 - [Combat resolution lifecycle](../../manifests/combat-resolution-lifecycle.json)

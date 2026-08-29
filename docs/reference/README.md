@@ -5,7 +5,8 @@ readable layer over the topic manifests and reusable catalogs, not a separate
 source of evidence.
 
 - [Unit definitions](unit-definitions.md) - unit type IDs, base combat stats,
-  civilization-specific identities, and shared combat and AI consumers.
+  normal production-cost ownership, civilization-specific identities, and
+  bounded combat and AI consumers.
 - [Civilization Unique Abilities](civilization-bonuses.md) - leaders, Unique
   Abilities, the 16 by 4 cumulative Unique Era Ability table, and its
   shared activation lookup.

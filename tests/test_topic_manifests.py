@@ -82,6 +82,24 @@ class TopicManifestTests(unittest.TestCase):
             for key in current_evidence:
                 self.assertNotIn(key, FORBIDDEN_CURRENT_EVIDENCE_KEYS, path.name)
 
+    def test_production_cost_ownership_preserves_boundaries(self) -> None:
+        path = MANIFESTS / "production-cost-ownership.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["baseCostField"]["offset"], "0x44")
+        self.assertEqual(document["effectiveScalar"]["function"], "0x82CF1148")
+        self.assertIn(
+            "separate helper 0x82CF1278",
+            document["costWrappers"][0]["result"],
+        )
+        self.assertEqual(
+            [entry["function"] for entry in document["consumers"]["ai"]],
+            ["0x82CB44E0", "0x82CB6E48"],
+        )
+        self.assertTrue(
+            any("runtime" in guard.lower() for guard in document["guards"])
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -333,4 +333,10 @@ exhausts the enumerated direct XNet imports as static seeds; it does not exclude
 indirect invocation, unmodeled ownership, asynchronous linkage, or another
 networking surface.
 
+Each of the seven exact strings in the Host Error dialog has zero modeled
+references in the version 1.3 image. This excludes the direct string-reference
+route without identifying the error producer or tying the dialog to session
+create outputs, QoS, sockets, discovery, transport, or the SDK's current
+success-only session handlers.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

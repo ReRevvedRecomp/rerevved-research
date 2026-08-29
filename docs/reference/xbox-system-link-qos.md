@@ -135,4 +135,11 @@ within an eight-instruction lookahead; the result was not truncated. This
 closes only that constant-construction form and does not prove that the vtable
 has no constructor, indirect producer, or runtime store.
 
+A final bounded read-only search found zero aligned initialized-memory words
+equal to exact vtable base `0x82162F34`. Together, zero modeled references,
+zero tested split-constant constructions, and zero initialized pointer
+placements exhaust the supported direct static reference forms for this seed.
+They do not exclude a derived value, copied pointer, relocation not represented
+by those forms, or runtime production.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

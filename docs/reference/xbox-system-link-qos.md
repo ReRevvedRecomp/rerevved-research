@@ -84,8 +84,12 @@ and unit-stack commands without dispatching either command. Exact guest string
 `GFX_GameSelector.gfx` is defined at `0x8211FFB0`, but it has no modeled
 reference, bounded split-address code use, or aligned initialized-memory pointer
 placement. The resource agreement remains search guidance, not proof of action
-ownership or loading. Establishing its runtime owner requires a separately
-bounded evidence source. The buffer record layout, visible Refresh relation,
+ownership or loading. A default-off title probe at exact function entry
+`0x82DECB20` produced no matching line during a controlled System Link game-list
+Y press with the canonical Boolean presence flag enabled. The process exited
+normally, but the run captured no command or receiver identity and does not
+identify the visible action's producer or prove that another runtime path cannot
+reach the function. The buffer record layout, visible Refresh relation,
 advertisement, discovery source, host/client direction, delivery, matchmaking,
 transport, relay, and Internet play remain unresolved.
 

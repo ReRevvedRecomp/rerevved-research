@@ -185,4 +185,17 @@ not establish time units, debounce semantics, either object's class, field
 meaning, a semantic method name, visible action ownership, platform behavior,
 networking, delivery, or synchronization.
 
+One default-off single-instance trace bracketed that
+exact optional dispatch immediately before and after its original indirect
+call while the existing SDK XGI and Stage 0 LAN debug schemas were enabled.
+One System Link game-list Y press produced exactly one ordered marker pair on
+the same thread, with no intervening log line, and the process exited normally
+with code zero. Strictly between the markers there were zero matching existing
+schema lines for XGI or XSession messages, direct-LAN bind or getname,
+successful `sendto` or `recvfrom` counters, or QoS listener lifecycle events.
+This is a bounded zero-edge result for those existing schemas only. It does not
+exclude an unlogged API attempt, failed socket operation, helper, asynchronous
+path outside the marker interval, platform behavior, networking, delivery, or
+ordering.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

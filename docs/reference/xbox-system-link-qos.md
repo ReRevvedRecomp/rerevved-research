@@ -356,7 +356,14 @@ message `0x0005800E`. An independent exact seed then identified function
 `0x82A1F860`, which constructs that message and calls imported
 `XMsgInProcessCall` at `0x82A1F890`. It supplies a sparse 20-byte local record
 and returns the record word at `+0x10` rather than the imported return directly.
-No runtime caller address yet links this exact static producer to the observed
-event, and the message and record fields remain neutral.
+
+A controlled one-process trace used a debug-only exact filter for caller
+252 and message `0x0005800E`. During the corrected host-setup flow, it recorded
+exactly one matching call from guest callsite `0x82A1F890`; the title then
+reached the lobby and completed normal leave, cleanup, and process exit. This
+links one runtime event to the exact static callsite only. The message, record,
+result, success requirements, session behavior, host authority, advertisement,
+discovery, delivery, framing, transport, relay, Internet play, payload meaning,
+and relationship to lobby progress remain unproved.
 
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

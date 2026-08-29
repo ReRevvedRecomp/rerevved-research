@@ -227,4 +227,13 @@ does not identify the object class, slot or literal semantics, dynamic target,
 visible action owner, session behavior, advertisement, discovery, delivery, or
 ordering.
 
+One default-off single-instance trace then armed only from
+the exact outer OnPressX call and observed the tail-dispatch site once. The
+accepted line recorded neutral dynamic target
+`0x82D704F0`; the process exited normally with code zero. No object, vtable,
+argument, literal, field, buffer, payload, or platform event was recorded. This
+establishes one neutral runtime target tuple only. It does not identify the
+target's method semantics, object ownership, visible action, session creation,
+advertisement, discovery, networking, delivery, or ordering.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

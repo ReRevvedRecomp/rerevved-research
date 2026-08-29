@@ -200,4 +200,20 @@ exclude an unlogged API attempt, failed socket operation, helper, asynchronous
 path outside the marker interval, platform behavior, networking, delivery, or
 ordering.
 
+Exact game-selector AVM1 separately maps key-code value 42 to
+`FSCommand:OnPressX`. In the same exact native command body, that branch reaches
+an indirect call at `0x82D765B8` after a local byte-zero gate. One
+default-off single-instance trace bracketed only that call
+and its return site. One System Link game-list X press produced exactly one
+ordered same-thread marker pair; no log line intervened. The neutral
+dynamic target was `0x82D6C340`, and the process exited normally with code
+zero. Strictly between the markers there were zero matching existing-schema
+lines for XGI or XSession messages, direct-LAN bind or getname, successful
+`sendto` or `recvfrom` counters, or QoS listener lifecycle events. This
+establishes one neutral observed OnPressX call target and another bounded
+zero-edge result for the enumerated schemas only. It does not map the event to
+the visible Create Game label or establish session creation, advertisement,
+discovery, platform behavior, networking, delivery, or ordering. It also does
+not exclude an unlogged or asynchronous path.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

@@ -351,8 +351,12 @@ message was observed in a run that later reached the lobby. Normal leave was
 followed by session-delete, QoS-flags-`0x10`, and cleanup records; cleanup
 reported zero counted direct-LAN packets and no retained QoS bytes. No successful
 `sendto` or `recvfrom` diagnostic was observed, without excluding unlogged or
-other I/O forms. A bounded direct-call search found no call to the three
-imported XMsg forms with nearby message argument `0x0005800E`; wrappers,
-unsupported constant formation, and other dispatch surfaces remain unresolved.
+other I/O forms. A bounded direct-call search found no nearby construction of
+message `0x0005800E`. An independent exact seed then identified function
+`0x82A1F860`, which constructs that message and calls imported
+`XMsgInProcessCall` at `0x82A1F890`. It supplies a sparse 20-byte local record
+and returns the record word at `+0x10` rather than the imported return directly.
+No runtime caller address yet links this exact static producer to the observed
+event, and the message and record fields remain neutral.
 
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

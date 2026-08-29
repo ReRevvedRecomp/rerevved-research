@@ -93,4 +93,18 @@ reach the function. The buffer record layout, visible Refresh relation,
 advertisement, discovery source, host/client direction, delivery, matchmaking,
 transport, relay, and Internet play remain unresolved.
 
+Exact game-selector AVM1 supplies a narrower producer. It compares
+`Key.getCode()` with integer 45 and, on equality, executes `GetURL2` with URL
+`FSCommand:OnPressY` and numeric argument zero. The guest image defines exact
+scheme string `FSCommand:` at `0x8213E624`. Guest code associated with generated
+entry `0x82206350` materializes that address, applies an exact 10-byte comparison
+through `0x827F43F0`, and advances the matched input by 10. Its first path
+reaches directly decoded receiver-vtable slot `+0x04` callback site
+`0x8220A634`; exact raw words and narrow generated corroboration give the second
+path a matching candidate at `0x8220B4C0`. Ghidra models only the entry fragment
+of the larger generated function. This establishes the movie-side command
+producer and a neutral native callback boundary. Static evidence does not
+identify the concrete receiver, dynamic target, visible game-list owner,
+resource-loading path, or networking behavior.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

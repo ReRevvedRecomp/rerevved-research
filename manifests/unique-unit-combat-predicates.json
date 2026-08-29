@@ -6,11 +6,12 @@
   "confidence": "confirmed",
   "image": "image.json",
   "question": "Does the accepted ordinary unit-versus-unit combat path expose a bounded attacker-versus-defender stat role that a later situational Unique Unit rule could distinguish without treating the role as another scalar property?",
+  "continuationQuestion": "Does one exact AI prediction or scoring consumer carry two opposing participant identities through the accepted ordered attack/defense evaluation?",
   "scope": {
-    "functions": ["0x82CD9970", "0x82CF2230", "0x82CF21A0", "0x82CB44E0", "0x82CB6E48", "0x82CBF570"],
+    "functions": ["0x82CD9970", "0x82CF2230", "0x82CF21A0", "0x82CB44E0", "0x82CB6E48", "0x82CBF570", "0x82CFE450", "0x82D08948"],
     "coreCallsites": ["0x82CDA214", "0x82CDA234"],
     "otherCombatStatCallsites": ["0x82CD9C38", "0x82CD9C54", "0x82CDA07C", "0x82CDA138", "0x82CDA274", "0x82CDD1BC"],
-    "boundary": "This packet closes one derived attack-side versus defense-side role in the accepted ordinary unit-versus-unit resolver pair. It does not establish an opposing class predicate, a stored role enum, AI evaluation parity, city, naval or air equivalence, healing, movement, extra actions, upgrades, presentation behavior, an API, or a hook design."
+    "boundary": "This packet closes one derived attack-side versus defense-side role in the accepted ordinary unit-versus-unit resolver pair and one resolver-backed AI prediction consumer. It does not establish an opposing class predicate, a stored role enum, general AI evaluation parity, city, naval or air equivalence, healing, movement, extra actions, upgrades, presentation behavior, an API, or a hook design."
   },
   "dependencies": [
     {
@@ -69,7 +70,7 @@
     "qualification": "The resolver contains six other effective-stat callsites. The immediate literal-25 branch can issue a separate defense lookup at 0x82CDA274, so those calls do not inherit the core pair's two-state role meaning."
   },
   "aiEvaluationBoundary": {
-    "roleParity": "not-established",
+    "roleParity": "one-resolver-backed-consumer",
     "entries": [
       {
         "function": "0x82CB44E0",
@@ -90,10 +91,33 @@
         "result": "Calls defense at 0x82CBFE60 and attack at 0x82CBFE70 for one player with separately sourced UnitTypes, then compares the scalar results."
       }
     ],
-    "qualification": "These exact windows confirm scalar consumption but expose no accepted two-player opposing-participant carrier. They do not establish attacker/defender predicate parity for AI planning or scoring."
+    "qualification": "These three exact scalar windows expose no accepted two-player opposing-participant carrier. A separate later AITurnUnitFilter callsite establishes one resolver-backed prediction consumer; it does not establish general attacker/defender predicate parity across the three AI functions."
+  },
+  "aiRoleConsumer": {
+    "function": "0x82CBF570",
+    "semanticName": "AITurnUnitFilter",
+    "callsite": "0x82CC03FC",
+    "callee": "0x82CD9970",
+    "mode": 1,
+    "callerInputs": {
+      "attackerPlayer": "incoming r3 retained in r14 and restored to r3 at 0x82CC03F0",
+      "attackerUnit": "incoming r4 retained at r1+540 and restored to r4 at 0x82CC03E8",
+      "provisionalDefenderPlayer": "r6=-1 at 0x82CC03E0",
+      "provisionalDefenderUnit": "r7=-1 at 0x82CC03D8"
+    },
+    "resolverCarrier": {
+      "attackerPlayer": "r1+1572 from r3 at 0x82CD9980 and 0x82CD9994",
+      "attackerUnit": "r1+1580 from r4 at 0x82CD9984",
+      "defenderPlayer": "r1+1596 is passed by address at 0x82CD9AC4 to the direct producer call at 0x82CD9AD0 and reloaded at 0x82CD9AD8",
+      "defenderUnit": "the direct selector return at 0x82CD9B04 is retained and stored to r1+1604 at 0x82CD9B24 and 0x82CD9B28"
+    },
+    "orderedEvaluation": ["0x82CDA214", "0x82CDA234"],
+    "scoreUse": "The resolver return moves to r28 at 0x82CC0404, is compared with 20 at 0x82CC0408 and 60 at 0x82CC041C, and controls the caller's later evaluation path.",
+    "result": "AITurnUnitFilter contains one exact prediction/scoring call that starts from its incoming attacker player/unit. On the continuing opponent-present resolver path, CombatResolve derives a defender player/unit and carries those accepted identities to the existing ordered attack-side then defense-side core pair.",
+    "qualification": "This relation is limited to the resolver-backed call at 0x82CC03FC and the opponent-present path that reaches the core pair. It does not assign the role to the function's separate scalar-comparison window, prove early-return paths, establish the prediction result's original semantic name, or establish parity for the other mapped AI evaluators."
   },
   "currentEvidence": {
-    "method": "five bounded foreground read-only Ghidra packets, including raw current-image word queries after thunk-truncated decompilation and listing, followed by narrow exact-function generated-code corroboration",
+    "method": "seven bounded foreground read-only Ghidra packets, including raw current-image word queries after thunk-truncated decompilation and listing, followed by narrow exact-function generated-code corroboration",
     "entries": [
       {
         "role": "accessor entries",
@@ -109,6 +133,16 @@
         "role": "mapped AI scalar windows",
         "addresses": ["0x82CB4AB8", "0x82CB8CC0", "0x82CBFE50"],
         "result": "The windows consume attack and defense values without proving the core combat pair's two-player role carrier."
+      },
+      {
+        "role": "resolver-backed AI prediction call",
+        "addresses": ["0x82CC03FC", "0x82CC0404", "0x82CC0408", "0x82CC041C"],
+        "result": "AITurnUnitFilter directly calls CombatResolve in mode 1 for its incoming player/unit with provisional defender inputs -1/-1, then consumes the returned value through exact evaluation thresholds."
+      },
+      {
+        "role": "opposing participant derivation",
+        "addresses": ["0x82CD9980", "0x82CD9984", "0x82CD9994", "0x82CD9A08", "0x82CD9A14", "0x82CD9AC4", "0x82CD9AD0", "0x82CD9AD8", "0x82CD9B04", "0x82CD9B24", "0x82CD9B28"],
+        "result": "CombatResolve retains the incoming attacker identity and, on the continuing opponent-present path, fills the accepted defender player/unit locals through two bounded direct producer calls before the ordered core stat pair."
       }
     ],
     "generatedCorroboration": [
@@ -121,14 +155,14 @@
   },
   "runtimeBoundary": {
     "status": "existing-corroboration-only",
-    "result": "The accepted unit-stats probe observed attack for an attacker and defense for a human defender during AI combat. That corroborates resolver consumption, not AI planning or scoring parity. No game was launched for this packet."
+    "result": "The accepted unit-stats probe observed attack for an attacker and defense for a human defender during AI combat. That corroborates resolver consumption, not execution of the statically mapped AITurnUnitFilter prediction call. No game was launched for this continuation."
   },
   "guards": [
     "Treat attack-side and defense-side as derived states of the exact core callsites, not as a stored guest enum or another scalar ABI property.",
     "Do not assign the core role to every call of either effective stat accessor inside CombatResolve.",
     "Do not infer an opposing unit class from UnitType dataflow or literal 25; the nearby special branch is outside this packet.",
-    "Do not claim AI evaluation parity from shared scalar accessors. The mapped AI windows do not expose an accepted two-player role carrier.",
+    "Do not claim general AI evaluation parity from shared scalar accessors or from the one resolver-backed AITurnUnitFilter prediction call. The three scalar windows still do not expose a two-player role carrier.",
     "Do not widen this finding into healing, March, Veteran status, movement, extra actions, post-combat advance, upgrades, promotion persistence, animation, presentation, networking, API, hook, or production behavior."
   ],
-  "conclusion": "The accepted ordinary unit-versus-unit resolver contains one exact two-state combat-stat role: it obtains attacker effective attack at 0x82CDA214, then defender effective defense at 0x82CDA234, and retains the results separately. The role is derived from those callsites; neither shared accessor accepts a role or opponent input. This is the smallest supported pure predicate slice for later situational Unique Unit research. The three mapped AI evaluators consume the same scalars but do not yet carry an accepted opposing-participant role, so AI evaluation parity remains the next evidence gate rather than an inferred capability."
+  "conclusion": "The accepted ordinary unit-versus-unit resolver contains one exact two-state combat-stat role: it obtains attacker effective attack at 0x82CDA214, then defender effective defense at 0x82CDA234, and retains the results separately. The role is derived from those callsites; neither shared accessor accepts a role or opponent input. AITurnUnitFilter contains one exact resolver-backed prediction call at 0x82CC03FC that starts from its incoming attacker player/unit. On the continuing opponent-present path, the resolver derives the accepted defender player/unit, reaches the ordered core pair, and returns an evaluation value consumed by the caller. This closes one bounded AI-role relation, not general parity for the other AI evaluators or every resolver path."
 }

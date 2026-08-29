@@ -115,11 +115,27 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["coreRole"]["attackSide"]["playerLocal"], "r1+1572")
         self.assertEqual(document["coreRole"]["defenseSide"]["playerLocal"], "r1+1596")
         self.assertEqual(
-            document["aiEvaluationBoundary"]["roleParity"], "not-established"
+            document["aiEvaluationBoundary"]["roleParity"],
+            "one-resolver-backed-consumer",
         )
         self.assertEqual(
             {entry["function"] for entry in document["aiEvaluationBoundary"]["entries"]},
             {"0x82CB44E0", "0x82CB6E48", "0x82CBF570"},
+        )
+        self.assertEqual(document["aiRoleConsumer"]["function"], "0x82CBF570")
+        self.assertEqual(document["aiRoleConsumer"]["callsite"], "0x82CC03FC")
+        self.assertEqual(document["aiRoleConsumer"]["mode"], 1)
+        self.assertEqual(
+            document["aiRoleConsumer"]["orderedEvaluation"],
+            ["0x82CDA214", "0x82CDA234"],
+        )
+        self.assertIn(
+            "r1+1596",
+            document["aiRoleConsumer"]["resolverCarrier"]["defenderPlayer"],
+        )
+        self.assertIn(
+            "r1+1604",
+            document["aiRoleConsumer"]["resolverCarrier"]["defenderUnit"],
         )
 
 

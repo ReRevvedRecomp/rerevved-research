@@ -161,10 +161,18 @@ Bounded windows in the three mapped AI evaluators confirm scalar consumption
 but not role parity. `AIUnitChoiceEvaluate` adds attack and defense for the same
 player and type; `AITurnUnitEvaluation` conditionally multiplies candidate stat
 results; and `AITurnUnitFilter` compares defense and attack under one player
-with separately sourced types. None of those windows exposes the accepted
-two-player combat participant carrier. A later situational rule therefore
-needs an independently proved AI evaluation context rather than inferring one
-from the shared scalar readers.
+with separately sourced types. None of those scalar windows exposes the
+accepted two-player combat participant carrier.
+
+A separate later call in `AITurnUnitFilter` closes one bounded AI context. At
+`0x82CC03FC` it passes its incoming player and unit to `CombatResolve` in mode
+1 with provisional defender inputs of -1. The resolver retains that attacker
+identity and, on the continuing opponent-present path, derives the accepted
+defender player and unit before reaching the ordered attack-side then
+defense-side core pair. The AI caller tests the returned value against
+evaluation thresholds. This is one resolver-backed prediction path, not
+general role parity for the other AI evaluators, early returns, or every
+resolver outcome.
 
 ## Evidence sources
 

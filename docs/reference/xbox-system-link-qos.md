@@ -259,8 +259,22 @@ and dispatcher, but no exact platform-session, discovery, socket, QoS, or
 transport callsite. The only address shared by the two topic manifests was
 `0x822DF8A0`, already identified as a generic return-zero stub. No new seed met
 the requirement of both an exact networking callsite and a supported
-action-or-state relationship, so no follow-up Ghidra packet was opened. This
-bounded negative does not prove that the title lacks an indirect, asynchronous,
+action-or-state relationship. This bounded negative does not prove that the title
+lacks an indirect, asynchronous,
 or currently unmodeled networking bridge.
+
+The bounded inventory also identified an unscoped
+`XMsgStartIORequestEx` lead. Exact function `0x823442D0` calls the import at
+`0x82344330` with neutral caller value 250, message `0x0007001A`, a pointer to
+three incoming words, and length 12. When the first incoming word is zero, it
+also supplies a local three-word record beginning with `0x00080002`; otherwise
+that argument is null. On nonnegative import return it calls exact helper
+`0x82812CA0` with zero. It returns zero when both calls are nonnegative, returns
+the low 16 bits for a negative value whose masked high bits equal
+`0x00070000`, and otherwise returns 1627. The maintained model reports exactly
+two callers, `0x82344438` and `0x82344510`; neither was expanded. This proves a
+neutral platform-message request and local result mapping only. It supplies no
+supported relationship to a mapped menu action or the documented multiplayer
+state, so it is rejected as the next System Link networking seed.
 
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

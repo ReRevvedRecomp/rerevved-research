@@ -248,4 +248,19 @@ network-ordering edge. These relations do not identify either object's class,
 any field or slot semantic, the dynamic tail target, visible action ownership,
 session behavior, advertisement, discovery, delivery, or ordering.
 
+A bounded networking-seed inventory compared three independent evidence
+surfaces against the established networking record. The XMsg and QoS
+lookup candidates were the already documented state-owned request and result
+paths. The enumerated socket, bind, send, receive, and QoS-listen roots were
+generic import wrappers with no supported backward relationship to the mapped
+menu actions or the documented multiplayer state. The message types 46 through
+55 reached their existing common object serializer, local routing, queue drain,
+and dispatcher, but no exact platform-session, discovery, socket, QoS, or
+transport callsite. The only address shared by the two topic manifests was
+`0x822DF8A0`, already identified as a generic return-zero stub. No new seed met
+the requirement of both an exact networking callsite and a supported
+action-or-state relationship, so no follow-up Ghidra packet was opened. This
+bounded negative does not prove that the title lacks an indirect, asynchronous,
+or currently unmodeled networking bridge.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

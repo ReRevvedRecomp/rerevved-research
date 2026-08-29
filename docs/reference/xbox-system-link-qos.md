@@ -216,4 +216,15 @@ the visible Create Game label or establish session creation, advertisement,
 discovery, platform behavior, networking, delivery, or ordering. It also does
 not exclude an unlogged or asynchronous path.
 
+Bounded static identification resolves observed target `0x82D6C340` as an
+exact modeled function entry. Its complete five-instruction body loads the
+incoming object's leading vtable pointer, places literal 11 in the second
+argument register, loads vtable slot `+0x1C`, and tail-dispatches through that
+target at `0x82D6C350`. The local body contains no direct XGI import, Xbox
+message submission, socket import, buffer serialization, checksum, or
+network-ordering edge. This establishes only a neutral tail-dispatch shape. It
+does not identify the object class, slot or literal semantics, dynamic target,
+visible action owner, session behavior, advertisement, discovery, delivery, or
+ordering.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

@@ -171,4 +171,18 @@ target tuple only. It does not identify the object's class, the `+0x430` field,
 the virtual method, visible action ownership, a platform message, networking,
 delivery, or ordering.
 
+Bounded static identification resolves dynamic target `0x82D76350` as an exact
+modeled function entry. Ghidra truncates its body at bad instruction data;
+narrow exact-target generated corroboration shows five local command-string
+comparisons, including the already established `OnPressY` and `OnPressX`
+anchors. The `OnPressY` branch compares an unsigned scalar delta involving
+incoming-object field `+0x11C` with literal 500. When the delta is greater, it
+updates that field, writes one to a second object's byte field `+0x11`, and
+calls exact helper `0x82D6F5D8`. The helper remains unexpanded. The exact local
+body contains no direct XGI import, Xbox message submission, socket import,
+buffer serialization, checksum, or network-ordering edge. These relations do
+not establish time units, debounce semantics, either object's class, field
+meaning, a semantic method name, visible action ownership, platform behavior,
+networking, delivery, or synchronization.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

@@ -295,4 +295,16 @@ semantics, payload meaning, advertisement, discovery, host/client direction,
 transport, or a relationship to the mapped menu actions or documented
 multiplayer state.
 
+A bounded direct-socket inventory accounts for 29 generated title calls
+through exact wrappers for `socket`, `bind`, `getsockname`, `sendto`,
+`recvfrom`, and `select`: 13 address-setup calls, 10 send calls, and 6
+receive/select calls. The calls span 20 distinct title functions. Their local
+socket arguments, handle storage, return tests, buffer pointers, and address
+pointers remain neutral. None has a supported backward relationship to the
+mapped menu actions, the documented multiplayer state, or the supported
+message-types-46-through-55 object graph. This is a bounded negative for the
+enumerated direct generated calls only; it does not exclude indirect calls,
+unmodeled ownership, asynchronous linkage, or another networking surface. No
+Ghidra packet was opened from this inventory.
+
 See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.

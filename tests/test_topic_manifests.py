@@ -111,6 +111,32 @@ class TopicManifestTests(unittest.TestCase):
             any("runtime" in guard.lower() for guard in document["guards"])
         )
 
+    def test_unique_era_ability_effect_ownership_counts(self) -> None:
+        path = MANIFESTS / "unique-era-ability-effect-ownership.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        shared = document["retailOwnerClasses"]["sharedCumulativeLookup"]
+        self.assertIn(23, {entry["ueaId"] for entry in shared})
+        self.assertNotIn(23, document["retailOwnerClasses"]["unknown"])
+        self.assertEqual(
+            document["retailCellProjection"]["counts"],
+            {
+                "total": 64,
+                "sharedCumulativeLookup": 15,
+                "directCivilizationEffectPath": 1,
+                "mixedCompanionPath": 0,
+                "unknown": 48,
+            },
+        )
+        owner = document["greatPersonGenerationOwner"]
+        self.assertEqual(owner["lookup"]["callsite"], "0x82D15618")
+        self.assertEqual(owner["lookup"]["target"], "0x82CF0CB0")
+        self.assertEqual(owner["effectDataflow"]["tableBase"], "0x830ED484")
+        self.assertEqual(
+            owner["effectDataflow"]["halfDivide"],
+            ["0x82D15624", "0x82D1562C"],
+        )
+
     def test_unique_unit_combat_predicate_contract(self) -> None:
         path = MANIFESTS / "unique-unit-combat-predicates.json"
         document = json.loads(path.read_text(encoding="utf-8"))

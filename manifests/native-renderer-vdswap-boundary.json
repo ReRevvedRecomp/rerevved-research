@@ -39,7 +39,14 @@
       "systemCommandBuffer": "generated/default/rerevved_recomp.65.cpp:12869",
       "swapCall": "generated/default/rerevved_recomp.65.cpp:12905"
     },
-    "sdkAuthority": "rerevved-rexglue-sdk e89618a src/kernel/xboxkrnl/xboxkrnl_video.cpp:440-521"
+    "sdkAuthority": "rerevved-rexglue-sdk e89618a src/kernel/xboxkrnl/xboxkrnl_video.cpp:440-521",
+    "sourceCompletionBoundary": {
+      "ordinaryCaller": "The generated 0x826ABEA8 worker holds the device critical section, calls 0x826A4630 at 0x826ABF80, then calls the VdSwap owner at 0x826ABF90. The alternate 0x82517E38 caller has the same 0x826A4630-before-0x826A4638 order at 0x82517E58 and 0x82517E88.",
+      "flushEntry": "0x826A4630 is only a tail wrapper that passes literal zero as r4 to 0x826A4150.",
+      "flushBody": "One read-only DumpFunctions.java query identifies 0x826A4150 and its direct callees. Narrow generated corroboration shows that it emits command words through 0x8269CD20 and 0x8269BF40, passes 0x826A3FB8 as a packet callback target, advances the primary ring pointer, and sets device byte +0x2ABD bit 0x10. The exact body contains no frontbuffer read and no source-specific CPU completion wait.",
+      "packetCallback": "A second read-only DumpFunctions.java query identifies 0x8269BF40, 0x826A3FB8, and 0x826A9C30. Ghidra truncates the first two at save thunks and the third at bad instruction data. Narrow generated corroboration shows 0x8269BF40 writing command words and 0x826A3FB8 updating pacing, writeback, and MMIO-related device state when invoked; it does not establish CPU-side frontbuffer freshness at the later VdSwap call.",
+      "result": "The pre-swap chain establishes command-stream order, not a CPU-readable producer-completion gate for the frontbuffer virtual address. A native hook at 0x826A4884 therefore cannot treat page readability as proof that the source contains the completed frame."
+    }
   },
   "abi": {
     "r3": "primary ring-buffer reservation + 0x4, produced by helper 0x8269C7A8 with requested size 64 dwords",
@@ -55,16 +62,16 @@
     "sdkUse": "The SDK byte-swaps the six descriptor dwords, requires every named pointer, requires the supplied virtual address to equal descriptor base_address << 12, translates it to physical memory, accepts only k_8_8_8_8 or k_2_10_10_10_AS_16_16_16_16, requires RGB color space zero and descriptor-matching width and height, then emits the swap packet."
   },
   "nextDiscriminator": {
-    "site": "0x826A4884",
-    "question": "Can a native-only implementation validate this complete ABI, prove one supported ReRevved frontbuffer layout and readable extent, untile and endian-convert it without mutating guest memory, upload it to the title-owned D3D12 backbuffer with explicit synchronization, and present it without consulting ReXGlue graphics state?",
-    "limits": "Do not persist raw guest pointers beyond the call, accept an unproved format or dimension, reuse ReXGlue texture-cache or presenter state, skip guest-memory range validation, or claim parity from one frame."
+    "site": "upstream of 0x826A4150 and 0x826A4884",
+    "question": "Which proved title operation produces or resolves the frontbuffer named by the VdSwap descriptor, and what title-owned completion signal can serialize that production with a single native renderer-thread presentation owner?",
+    "limits": "Do not add a native VdSwap upload hook until source production, completion, layout, lifetime, failure suppression, and renderer-thread ownership are all explicit. Do not persist raw guest pointers, reuse ReXGlue texture-cache or presenter state, or claim parity from page readability."
   },
   "guards": [
     "Do not infer runtime execution or visible output from the static call and maintained SDK ABI.",
     "Do not treat the primary ring-buffer reservation, system writeback, or system-command-buffer values as the frontbuffer source.",
     "Do not copy ReBlue surface fields, formats, offsets, or present policy.",
-    "Do not bypass guest-memory lifetime and synchronization requirements merely because the ABI exposes a virtual address.",
+    "Do not bypass guest-memory lifetime and synchronization requirements merely because the ABI exposes a virtual address or a pre-swap command-stream flush.",
     "Do not make the research manifest a title runtime dependency."
   ],
-  "conclusion": "ReRevved function 0x826A4638 directly calls VdSwap at 0x826A4884 with an exact frontbuffer fetch descriptor and separately derived virtual address, numeric format, RGB color space, width, and height pointers. Maintained SDK e89618a defines how those values identify the guest frontbuffer. Native upload, synchronization, runtime execution, and visible output remain open."
+  "conclusion": "ReRevved function 0x826A4638 directly calls VdSwap at 0x826A4884 with an exact frontbuffer fetch descriptor and separately derived virtual address, numeric format, RGB color space, width, and height pointers. Maintained SDK e89618a defines how those values identify the guest frontbuffer. The ordinary worker calls 0x826A4150 first, but that path emits ordered command-stream work and does not prove CPU-readable frontbuffer completion. Native source production, synchronization, renderer-thread ownership, runtime execution, and visible output remain open, so a native VdSwap upload hook is not yet admissible."
 }

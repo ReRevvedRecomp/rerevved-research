@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0091",
+  "topic": "new-warrior-veteran",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which current-image unit-creation path implements UEA 50 New Warriors are Veterans, and what exact runtime-unit field update does it perform?",
+  "scope": {
+    "functions": ["0x82CF0CB0", "0x82D13978"],
+    "fields": ["runtime unit record +0x05"],
+    "boundary": "This packet identifies one new-unit Warrior predicate, UEA 50 lookup, veteran-level increment, and saturation. It does not recover every rank writer or consumer, non-Warrior veteran grants, combat promotion, presentation, AI, save, scenario, multiplayer, or runtime behavior."
+  },
+  "dependencies": [
+    { "topic": "unit-definitions-ai-evaluation", "use": "Provides the accepted Warrior UnitType 6 identity." },
+    { "topic": "civilization-bonus-storage", "use": "Provides the accepted cumulative lookup and German Ancient placement of UEA 50." }
+  ],
+  "activation": {
+    "ueaId": 50,
+    "effect": "New Warriors are Veterans",
+    "retailPlacement": { "civilization": "German", "era": "Ancient" }
+  },
+  "owner": {
+    "function": "0x82D13978",
+    "recordSize": "0x54",
+    "rankField": { "offset": "0x05", "width": "byte", "initialStore": "0x82D15B48" },
+    "unitTypePredicate": { "address": "0x82D15B5C", "value": 6, "acceptedInternalName": "Warrior" },
+    "lookupArguments": {
+      "mode": { "address": "0x82D15B6C", "value": 0 },
+      "player": { "address": "0x82D15B70", "source": "retained r26" },
+      "ueaId": { "address": "0x82D15B74", "value": 50 }
+    },
+    "lookupCallsite": "0x82D15B78",
+    "resultTest": "0x82D15B7C",
+    "activeTarget": "0x82D15B9C",
+    "increment": { "load": "0x82D15B9C", "add": "0x82D15BA0", "store": "0x82D15BA4" },
+    "saturation": { "load": "0x82D15BE8", "compareMaximum": "0x82D15BF4", "maximum": 2, "clampStore": "0x82D15C00" },
+    "result": "For a newly initialized Warrior record, active cumulative UEA 50 increments byte +0x05. The same routine later clamps values above two back to two, so the UEA path raises a lower initial level to the accepted veteran level without exceeding it.",
+    "qualification": "A separate local flag can reach the same increment block when UEA 50 is inactive. This packet proves UEA 50's direct route and saturation, not exclusive ownership of every veteran grant."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only 69-word current-image query centered at 0x82D15B78, exact verification of 20 selected words and branch targets, and narrow generated-code corroboration of the retained player and unit-record addressing in 0x82D13978.",
+    "entries": [
+      { "role": "Warrior predicate", "address": "0x82D15B5C", "confidence": "strong" },
+      { "role": "UEA 50 lookup", "address": "0x82D15B78", "confidence": "strong" },
+      { "role": "veteran-level increment", "address": "0x82D15B9C", "confidence": "strong" },
+      { "role": "level-two saturation", "address": "0x82D15BF4", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82D15AF0..0x82D15C00", "generated:rerevved/sub_82D13978", "unit-definitions-ai-evaluation#/unitDefinitions/records/6"],
+    "qualification": "No runtime action was performed. The current-image window contains the initialization, UEA gate, increment, alternate route, and final saturation."
+  },
+  "guards": [
+    "Do not treat runtime unit byte +0x05 as an unbounded experience counter; this creation path saturates it at two.",
+    "Do not claim UEA 50 is the only route to veteran level; a separate local flag reaches the same increment block.",
+    "Do not generalize this new-Warrior path to combat promotion, every unit type, presentation, AI, save, scenario, multiplayer, or runtime behavior."
+  ],
+  "conclusion": "The bounded new-unit path in 0x82D13978 implements UEA 50 for Warrior UnitType 6 by incrementing runtime unit byte +0x05 after the cumulative lookup succeeds and saturating the result at veteran level two."
+}

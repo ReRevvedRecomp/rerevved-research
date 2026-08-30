@@ -121,6 +121,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn(42, {entry["ueaId"] for entry in shared})
         self.assertIn(47, {entry["ueaId"] for entry in shared})
         self.assertIn(1, {entry["ueaId"] for entry in shared})
+        self.assertIn(50, {entry["ueaId"] for entry in shared})
         self.assertTrue({3, 12, 55}.issubset(
             {entry["ueaId"] for entry in shared}
         ))
@@ -129,6 +130,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertNotIn(42, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(47, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(1, document["retailOwnerClasses"]["unknown"])
+        self.assertNotIn(50, document["retailOwnerClasses"]["unknown"])
         self.assertTrue({3, 12, 55}.isdisjoint(
             document["retailOwnerClasses"]["unknown"]
         ))
@@ -136,10 +138,10 @@ class TopicManifestTests(unittest.TestCase):
             document["retailCellProjection"]["counts"],
             {
                 "total": 64,
-                "sharedCumulativeLookup": 29,
+                "sharedCumulativeLookup": 30,
                 "directCivilizationEffectPath": 1,
                 "mixedCompanionPath": 0,
-                "unknown": 34,
+                "unknown": 33,
             },
         )
         owner = document["greatPersonGenerationOwner"]
@@ -215,6 +217,17 @@ class TopicManifestTests(unittest.TestCase):
         consumer = document["cityUpdateConsumer"]
         self.assertEqual(consumer["lookupCallsite"], "0x82D16848")
         self.assertEqual(consumer["commandSubmit"]["command"], 7)
+
+    def test_new_warrior_veteran_contract(self) -> None:
+        path = MANIFESTS / "new-warrior-veteran.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["activation"]["ueaId"], 50)
+        owner = document["owner"]
+        self.assertEqual(owner["unitTypePredicate"]["value"], 6)
+        self.assertEqual(owner["lookupCallsite"], "0x82D15B78")
+        self.assertEqual(owner["rankField"]["offset"], "0x05")
+        self.assertEqual(owner["saturation"]["maximum"], 2)
 
     def test_unique_unit_combat_predicate_contract(self) -> None:
         path = MANIFESTS / "unique-unit-combat-predicates.json"

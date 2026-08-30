@@ -186,10 +186,10 @@ each distinct UEA ID's accepted owner class to the row table above:
 
 | Owner class | Distinct retail IDs | Retail cells | Boundary |
 | --- | --- | ---: | --- |
-| Shared cumulative lookup | 1, 3, 5, 8, 9, 10, 12, 13, 17, 23, 34, 35, 42, 43, 47, 48, 55, 58, 59, 60 | 29 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
+| Shared cumulative lookup | 1, 3, 5, 8, 9, 10, 12, 13, 17, 23, 34, 35, 42, 43, 47, 48, 50, 55, 58, 59, 60 | 30 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
 | Direct civilization/effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
 | Mixed companion path | None | 0 | No native retail cell is accepted in this class. |
-| Unknown | 2, 4, 6, 7, 14, 16, 18, 19, 20, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 46, 50, 51, 56, 61 | 34 | No accepted effect-specific producer-consumer packet establishes the native owner. |
+| Unknown | 2, 4, 6, 7, 14, 16, 18, 19, 20, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 46, 51, 56, 61 | 33 | No accepted effect-specific producer-consumer packet establishes the native owner. |
 
 The 95-site generated inventory contains literal shared-lookup requests for 42
 of the 45 retail IDs. That is useful search guidance only. A literal request
@@ -205,6 +205,13 @@ signed result with truncation toward zero when active. The city-update value
 feeds its affordability check before command 7 is submitted. The unresolved
 factor helper and complete command semantics remain outside
 [`road-build-cost.json`](../../manifests/road-build-cost.json).
+
+UEA 50 has a bounded new-unit owner in `0x82D13978`. For Warrior UnitType 6,
+an active cumulative lookup at `0x82D15B78` increments runtime unit byte
+`+0x05`; the same creation routine later clamps values above two back to two.
+A separate local flag can reach the increment block, so UEA 50 is not claimed
+as the only veteran grant. See
+[`new-warrior-veteran.json`](../../manifests/new-warrior-veteran.json).
 
 UEA 3, UEA 12, and UEA 55 have one bounded shared owner in
 `EffectiveUnitMovementLookup` at `0x82CF1F70`. The accessor reads signed unit

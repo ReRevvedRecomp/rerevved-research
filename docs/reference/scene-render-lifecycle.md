@@ -66,6 +66,14 @@ without an accepted first direct consumer. Its concrete type, indirect use,
 other consumers, and lifetime remain unresolved. Exact limits are in
 [`scene-root-ref-consumer-boundary.json`](../../manifests/scene-root-ref-consumer-boundary.json).
 
+A fresh vtable-bounded scan tested slots `+0x04`, `+0x08`, `+0x0C`, `+0x10`,
+`+0x18`, `+0x1C`, `+0x20`, and `+0x24`. Ghidra found no decoded `+0x44`
+operand across 318 instructions, but all eight exact target bodies truncated on
+bad instruction data. This is a decode-coverage negative only: none of those
+slots is classified as a consumer or non-consumer. The exact targets and stops
+are recorded in
+[`scene-root-ref-vtable-consumer-boundary.json`](../../manifests/scene-root-ref-vtable-consumer-boundary.json).
+
 ## Evidence boundaries
 
 - Publication, render calls, update calls, and teardown do not establish
@@ -82,6 +90,7 @@ other consumers, and lifetime remain unresolved. Exact limits are in
 - [Scene render-tree publication](../../manifests/scene-render-tree-publication.json)
 - [Scene render-tree update](../../manifests/scene-render-tree-update.json)
 - [Scene-root reference consumer boundary](../../manifests/scene-root-ref-consumer-boundary.json)
+- [Scene-root vtable reference-consumer boundary](../../manifests/scene-root-ref-vtable-consumer-boundary.json)
 - [Gameplay main-frame boundary](../../manifests/gameplay-main-frame-boundary.json)
 - [Audio initialization and stream ownership](../../manifests/audio-initialization-stream-ownership.json)
 - [Catalog contract](../catalogs.md)

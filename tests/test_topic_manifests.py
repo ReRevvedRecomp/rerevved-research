@@ -233,6 +233,23 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("do not directly consume", document["boundedNegative"]["result"])
         self.assertIn("decode-coverage observation", document["currentEvidence"]["qualification"])
 
+    def test_scene_root_ref_vtable_consumer_boundary(self) -> None:
+        path = MANIFESTS / "scene-root-ref-vtable-consumer-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0104")
+        self.assertEqual(document["currentEvidence"]["entries"][0]["address"], "0x82147EF8")
+        self.assertIn("eight exact targets", document["currentEvidence"]["entries"][0]["result"])
+        self.assertEqual(
+            [entry["slot"] for entry in document["slotReadSet"]],
+            ["+0x04", "+0x08", "+0x0C", "+0x10", "+0x18", "+0x1C", "+0x20", "+0x24"],
+        )
+        self.assertEqual(len(document["scope"]["candidateTargets"]), 8)
+        self.assertIn("318 decoded instructions", document["currentEvidence"]["entries"][1]["result"])
+        self.assertIn("every decompilation reported", document["currentEvidence"]["entries"][2]["result"])
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+        self.assertIn("decoded-listing observation only", document["currentEvidence"]["qualification"])
+
     def test_player_production_scalar_lifecycle(self) -> None:
         path = MANIFESTS / "player-production-scalar-lifecycle.json"
         document = json.loads(path.read_text(encoding="utf-8"))

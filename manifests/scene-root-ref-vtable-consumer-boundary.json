@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0104",
+  "topic": "scene-root-ref-vtable-consumer-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Do the first eight unrecorded executable targets in scene-root content vtable 0x82147EF8 directly consume receiver field +0x44?",
+  "scope": {
+    "vtable": "0x82147EF8",
+    "field": "+0x44",
+    "candidateSlots": ["+0x04", "+0x08", "+0x0C", "+0x10", "+0x18", "+0x1C", "+0x20", "+0x24"],
+    "candidateTargets": ["0x82E49CE8", "0x82E49C80", "0x82D55118", "0x82E49EA0", "0x82D55630", "0x82E49E10", "0x82E49FD8", "0x82E49D28"],
+    "boundary": "This packet tests one exact receiver-field discriminator in the first eight ascending unrecorded executable slots before accepted slot +0x40, excluding already recorded slots +0x00 and +0x14. It does not inspect further slots, follow thunk targets or callees, rebuild functions, search other objects, identify the retained pointer type, or assert runtime rendering."
+  },
+  "dependencies": [
+    { "topic": "scene-root-content-construction", "use": "Provides the concrete scene-root content vtable at 0x82147EF8." },
+    { "topic": "scene-root-prepared-record-dispatch", "use": "Provides the accepted refcounted assignment to scene-root content +0x44." },
+    { "topic": "scene-root-ref-consumer-boundary", "use": "Provides the closed direct-access negative for SceneNodeRenderWrap and SceneNodeRenderVisit without entering indirect targets." }
+  ],
+  "slotReadSet": [
+    { "slot": "+0x04", "tableAddress": "0x82147EFC", "target": "0x82E49CE8" },
+    { "slot": "+0x08", "tableAddress": "0x82147F00", "target": "0x82E49C80" },
+    { "slot": "+0x0C", "tableAddress": "0x82147F04", "target": "0x82D55118" },
+    { "slot": "+0x10", "tableAddress": "0x82147F08", "target": "0x82E49EA0" },
+    { "slot": "+0x18", "tableAddress": "0x82147F10", "target": "0x82D55630" },
+    { "slot": "+0x1C", "tableAddress": "0x82147F14", "target": "0x82E49E10" },
+    { "slot": "+0x20", "tableAddress": "0x82147F18", "target": "0x82E49FD8" },
+    { "slot": "+0x24", "tableAddress": "0x82147F1C", "target": "0x82E49D28" }
+  ],
+  "boundedNegative": {
+    "result": "The configured listing scan found no decoded +0x44 operand across the eight exact selected targets, but every requested decompilation encountered bad instruction data and truncated control flow.",
+    "effect": "No direct prepared_record_ref consumer is promoted from these slots. The result closes only this decoded-listing read set and leaves all eight bodies semantically unresolved.",
+    "falsificationCondition": "A corrected complete body, exact thunk resolution, or current-image instruction path for any selected target proves a receiver-derived +0x44 load or store."
+  },
+  "currentEvidence": {
+    "method": "Three sequential foreground read-only Ghidra queries: exact vtable words, a bounded +0x44 field-reference scan, and decompilation of exactly eight selected targets.",
+    "entries": [
+      { "role": "slot inventory", "address": "0x82147EF8", "result": "The selected table words map slots +0x04,+0x08,+0x0C,+0x10,+0x18,+0x1C,+0x20,+0x24 to the eight exact targets in the read set.", "confidence": "strong" },
+      { "role": "decoded field scan", "address": "0x00000044", "result": "FindFieldRefs scanned 318 decoded instructions across the eight targets and found zero +0x44 hits.", "confidence": "strong" },
+      { "role": "body completeness", "address": "0x82E49CE8", "result": "DumpFunctions emitted all eight requested entries; every decompilation reported bad instruction data and truncated control flow.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82147F18 radius=8",
+      "ghidra/FindFieldRefs.java:0x44@0x82E49CE8,0x82E49C80,0x82D55118,0x82E49EA0,0x82D55630,0x82E49E10,0x82E49FD8,0x82E49D28",
+      "ghidra/DumpFunctions.java:0x82E49CE8,0x82E49C80,0x82D55118,0x82E49EA0,0x82D55630,0x82E49E10,0x82E49FD8,0x82E49D28"
+    ],
+    "qualification": "The zero-hit result is a decoded-listing observation only. Truncation prevents a complete-body negative, and no generated code was used to bypass that stop."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": ["RVA-FLD-0070"],
+    "result": "No target symbol or vtable-slot role is cataloged because no selected body was complete and no retained-reference consumer was proved. The existing field qualification records the new bounded decode gap."
+  },
+  "guards": [
+    "Do not treat absence of a decoded +0x44 operand as absence from a truncated body.",
+    "Do not classify any selected target as a prepared_record_ref consumer or non-consumer.",
+    "Do not assign semantic roles to the selected slots or targets from table position.",
+    "Do not claim executable-wide consumer absence, a concrete pointer type, ownership, lifetime, save behavior, dispatch behavior, or runtime rendering."
+  ],
+  "conclusion": "The first eight selected unrecorded scene-root content vtable targets yielded zero decoded +0x44 operands across 318 scanned instructions, but all eight exact decompilations truncated on bad instruction data. No prepared_record_ref consumer or slot role is proved. This durable negative is limited to the decoded listing and preserves all eight bodies, their thunk or callee behavior, further slots, other consumers, concrete type, ownership, lifetime, and runtime behavior as unresolved."
+}

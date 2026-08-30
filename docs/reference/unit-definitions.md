@@ -110,6 +110,15 @@ instruction data. This is a bounded negative, not a claim that no Great
 Library consumer exists. Exact limits are in
 [`great-library-technology-transfer.json`](../../manifests/great-library-technology-transfer.json).
 
+An effect-specific East India Company packet also found no exact item-207 edge
+to sea-tile trade, city economy, completion, display, or AI. The record,
+description, and cost cell had no direct or split-address matches. The complete
+filtered item scan emitted only `0x82500288`, whose complete body proves the
+`0xCF` comparison is part of packed D3D format decoding rather than wonder
+identity. The generic terrain-yield evidence remains unresolved. Exact limits
+are in
+[`east-india-sea-trade.json`](../../manifests/east-india-sea-trade.json).
+
 Bounded static consumers are:
 
 - `RushCostCompute` at `0x82CE27F0`, which subtracts invested production at

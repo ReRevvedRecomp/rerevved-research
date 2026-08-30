@@ -282,6 +282,23 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("does not establish", document["boundedNegative"]["result"])
         self.assertIn("not an executable-wide absence", document["conclusion"])
 
+    def test_east_india_sea_trade_boundary(self) -> None:
+        path = MANIFESTS / "east-india-sea-trade.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0100")
+        self.assertEqual(document["acceptedAnchors"]["wonder"]["itemId"], 207)
+        self.assertFalse(document["itemIdScan"]["truncated"])
+        self.assertEqual(document["itemIdScan"]["emittedFunctions"], ["0x82500288"])
+        self.assertEqual(document["candidateResults"][0]["body"], "complete")
+        self.assertIn("D3D format-name decoder", document["candidateResults"][0]["result"])
+        self.assertEqual(
+            document["terrainYieldBoundary"]["functions"],
+            ["0x82CF17C8", "0x82CF1AF0", "0x82CF1CE8"],
+        )
+        self.assertIn("does not establish", document["boundedNegative"]["result"])
+        self.assertIn("not an executable-wide absence", document["conclusion"])
+
     def test_gold_reserve_interest_contract(self) -> None:
         path = MANIFESTS / "gold-reserve-interest.json"
         document = json.loads(path.read_text(encoding="utf-8"))

@@ -299,6 +299,18 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("does not establish", document["boundedNegative"]["result"])
         self.assertIn("not an executable-wide absence", document["conclusion"])
 
+    def test_shakespeare_city_culture_boundary(self) -> None:
+        path = MANIFESTS / "shakespeare-city-culture.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0101")
+        self.assertEqual(document["acceptedAnchors"]["wonder"]["itemId"], 209)
+        self.assertFalse(document["itemIdScan"]["truncated"])
+        self.assertEqual(document["itemIdScan"]["emittedFunctions"], ["0x826CFDC8"])
+        self.assertIn("bad instruction data", document["candidateResults"][0]["stop"])
+        self.assertIn("does not establish", document["boundedNegative"]["result"])
+        self.assertIn("not an executable-wide absence", document["conclusion"])
+
     def test_gold_reserve_interest_contract(self) -> None:
         path = MANIFESTS / "gold-reserve-interest.json"
         document = json.loads(path.read_text(encoding="utf-8"))

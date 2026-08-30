@@ -119,6 +119,13 @@ identity. The generic terrain-yield evidence remains unresolved. Exact limits
 are in
 [`east-india-sea-trade.json`](../../manifests/east-india-sea-trade.json).
 
+A bounded Shakespeare packet found no exact item-209 edge to city culture,
+completion, display, or AI. The record, description, and cost cell had no
+direct or split-address matches. The complete filtered item scan emitted only
+`0x826CFDC8`; its recovered prefix has no Shakespeare or culture carrier and
+the exact body truncates on bad instruction data. Exact limits are in
+[`shakespeare-city-culture.json`](../../manifests/shakespeare-city-culture.json).
+
 Bounded static consumers are:
 
 - `RushCostCompute` at `0x82CE27F0`, which subtracts invested production at

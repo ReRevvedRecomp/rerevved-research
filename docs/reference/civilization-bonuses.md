@@ -178,6 +178,41 @@ This convergence gives a future generic UEA variant one shared table and lookup
 mechanism. It does not by itself prove that every possible changed UEA produces
 correct AI behavior.
 
+## Effect ownership catalog
+
+The table ID is an activation label, not proof of the native effect owner. The
+effect-specific ownership catalog classifies all 64 retail cells by applying
+each distinct UEA ID's accepted owner class to the row table above:
+
+| Owner class | Distinct retail IDs | Retail cells | Boundary |
+| --- | --- | ---: | --- |
+| Shared cumulative lookup | 5, 9, 10, 17, 34, 35, 43, 48, 58, 59, 60 | 12 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
+| Direct civilization/effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
+| Mixed companion path | None | 0 | No native retail cell is accepted in this class. |
+| Unknown | 1, 2, 3, 4, 6, 7, 8, 12, 13, 14, 16, 18, 19, 20, 23, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 42, 46, 47, 50, 51, 55, 56, 61 | 51 | No accepted effect-specific producer-consumer packet establishes the native owner. |
+
+The 95-site generated inventory contains literal shared-lookup requests for 41
+of the 45 retail IDs. That is useful search guidance only. A literal request
+does not prove the named effect, complete ownership, or absence of a direct
+companion. Retail IDs 12, 16, 28, and 40 do not appear as literal requests;
+only UEA 40 has a separately mapped direct owner.
+
+UEA 40 is the regression case. The Barbarian-capture path in `0x82D1B400`
+loads the new owner's civilization at `0x82D1B74C`, compares it with Mongolian
+civilization 14 at `0x82D1B758`, calls the city-record creator at
+`0x82D1B784` on equality, and reaches the ordinary reward path at
+`0x82D1B8BC` otherwise. Replacing the Mongolian Ancient table cell changed the
+shared lookup but did not suppress this direct path. The accepted Horseback
+Riding extension therefore became a non-retail mixed companion: a shared
+synthetic technology grant plus a separate gate at `0x82D1B758`.
+
+The complete evidence, qualifications, and cell projection are in
+[`unique-era-ability-effect-ownership.json`](../../manifests/unique-era-ability-effect-ownership.json).
+IDs 30, 32, 41, and 56 have exact shared-lookup seeds, while IDs 16 and 28 are
+absent from the accepted lookup inventory. The bounded query did not provide
+all three complete exact bodies, so IDs 16, 28, 30, 32, 41, and 56 remain
+unknown.
+
 ## Modification guards
 
 - Do not treat later era entries as replacements for earlier UEAs.
@@ -202,4 +237,5 @@ correct AI behavior.
 - [Rush-cost producer](../../manifests/rush-cost-producer.json)
 - [Game calendar state](../../manifests/game-calendar-state.json)
 - [Starting technology grants](../../manifests/starting-technology-grants.json)
+- [Unique Era Ability effect ownership](../../manifests/unique-era-ability-effect-ownership.json)
 - [Catalog contract](../catalogs.md)

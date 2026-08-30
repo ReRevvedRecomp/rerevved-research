@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0115",
+  "topic": "frame-timing-field10-reader-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What is the first exact reader of the 64-bit value stored at frame-timing owner +0x10?",
+  "scope": {
+    "ownerGlobals": ["0x8314F280", "0x8314F2D4"],
+    "field": "+0x10",
+    "publisherWriter": "0x82E293E8",
+    "resetWriter": "0x82C7EBF8",
+    "vtable": "0x82164E14",
+    "candidateCap": 6,
+    "functionCap": 8,
+    "boundary": "Both accepted writers count toward the eight-function total. The primary global exposes 28 distinct reader functions before field classification, so no read candidate body is selected or inspected."
+  },
+  "dependencies": [{ "topic": "gameplay-frame-timing-owner", "use": "Provides the accepted dual publication, +0x10 field, two writers, and timing-owner vtable." }],
+  "writerReconfirmation": {
+    "functions": ["0x82E293E8", "0x82C7EBF8"],
+    "fieldAccesses": [
+      { "function": "0x82E293E8", "instruction": "0x82E2943C", "access": "WRITE", "base": "r3", "offset": "+0x10", "instructionText": "stfd f0,0x10(r3)" },
+      { "function": "0x82C7EBF8", "instruction": "0x82C7EC08", "access": "WRITE", "base": "r3", "offset": "+0x10", "instructionText": "stfd f0,0x10(r3)" }
+    ],
+    "scannedInstructions": 62
+  },
+  "ownerReferenceResult": {
+    "primaryGlobal": { "target": "0x8314F280", "references": 33, "readRows": 32, "writeRows": 1, "distinctReaderFunctions": 28 },
+    "secondaryGlobal": { "target": "0x8314F2D4", "references": 1, "readRows": 0, "writeRows": 1, "distinctReaderFunctions": 0 },
+    "candidateReadersInspected": [],
+    "result": "The 28-function primary-owner reader set exceeds the six-candidate cap before any +0x10 reader body can be selected."
+  },
+  "boundedNegative": {
+    "result": "No first +0x10 reader is promoted because the accepted owner carriers expose 28 distinct reader functions, exceeding the six-candidate cap. Choosing a subset would not establish first-reader ownership.",
+    "effect": "The two exact +0x10 writers remain confirmed, while read ownership and immediate use remain unresolved.",
+    "falsificationCondition": "An independently anchored owner consumer or a bounded discriminator reduces the direct reader set to at most six functions and proves an exact +0x10 read."
+  },
+  "catalogPromotion": { "newEntities": [], "updatedEntities": ["RVA-FLD-0114"], "result": "The existing +0x10 field gains the over-cap reader qualification; no consumer relation is added." },
+  "currentEvidence": {
+    "method": "Three sequential foreground read-only Ghidra queries: exact writer bodies, exact references to both owner globals, and depth-zero WRITE classification for +0x10 in the two writers.",
+    "locators": ["ghidra/DumpFunctions.java:0x82E293E8,0x82C7EBF8", "ghidra/DumpReferences.java:0x8314F280,0x8314F2D4", "ghidra/FindFieldAccesses.java:0x82E293E8,0x82C7EBF8:+0x10:WRITE"],
+    "qualification": "No reader candidate was decompiled or field-scanned after the over-cap stop. Split-address consumers and dynamic uses remain outside the direct-reference set."
+  },
+  "guards": ["Do not choose an arbitrary six-reader subset and call it first.", "Do not infer that every owner-global reader accesses +0x10.", "Do not assign time units, cadence, delta or absolute meaning, frame-rate semantics, or runtime behavior."],
+  "conclusion": "Both accepted +0x10 stores are reconfirmed, but the primary owner global has 28 distinct reader functions. That exceeds the six-candidate cap, so no first reader or immediate arithmetic/comparison use is promoted."
+}

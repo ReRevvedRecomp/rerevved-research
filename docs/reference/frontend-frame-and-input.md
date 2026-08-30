@@ -78,6 +78,12 @@ Initialization and reset both write the 64-bit fields at `+0x8`, `+0x10`, and
 `+0x20`, plus the word at `+0x30`. Initialization also writes the 64-bit field
 at `+0x28`.
 
+A bounded first-reader search reconfirmed the `+0x10` stores at `0x82E2943C`
+and `0x82C7EC08`. Exact references to primary owner global `0x8314F280`
+produce 28 distinct reader functions, exceeding the six-candidate cap before
+field classification. No first `+0x10` reader or value meaning is therefore
+assigned.
+
 `AttractMovieFrameStep` at `0x82C5F680` advances this shared owner, but its
 vtable and construction path place it on the key-5 attract-movie object. It is
 not the playable-game frame boundary. Static timing dispatch also proves no

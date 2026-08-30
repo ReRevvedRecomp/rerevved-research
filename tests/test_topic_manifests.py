@@ -520,6 +520,17 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("No direct key-2 registration owner", document["boundedNegative"]["result"])
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
+    def test_frame_timing_field10_reader_boundary(self) -> None:
+        path = MANIFESTS / "frame-timing-field10-reader-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0115")
+        self.assertEqual(len(document["writerReconfirmation"]["fieldAccesses"]), 2)
+        self.assertEqual(document["ownerReferenceResult"]["primaryGlobal"]["distinctReaderFunctions"], 28)
+        self.assertEqual(document["ownerReferenceResult"]["candidateReadersInspected"], [])
+        self.assertIn("exceeding the six-candidate cap", document["boundedNegative"]["result"])
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

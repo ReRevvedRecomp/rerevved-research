@@ -51,6 +51,21 @@ Address `0x82D55834` is a fall-through continuation inside
 target. No teardown-to-wrapper relation follows from address proximity or the
 bounded generated shape.
 
+## Retained scene-root content reference
+
+The `0xA8`-byte scene-root content object retains a refcounted pointer at
+`+0x44`. `SceneRootContentSlot0Body` assigns it from prepared-record `+0x28`
+through helper `0x821B2440`, which releases the replaced pointer when needed
+and acquires the incoming pointer.
+
+The first accepted wrapper, `SceneNodeRenderWrap` at `0x82D55808`, and the
+accepted visit consumer, `SceneNodeRenderVisit` at `0x82D55C68`, contain no
+direct receiver-relative `+0x44` access. Their indirect vtable targets remain
+outside that negative, so the field is still an assignment-owned reference
+without an accepted first direct consumer. Its concrete type, indirect use,
+other consumers, and lifetime remain unresolved. Exact limits are in
+[`scene-root-ref-consumer-boundary.json`](../../manifests/scene-root-ref-consumer-boundary.json).
+
 ## Evidence boundaries
 
 - Publication, render calls, update calls, and teardown do not establish
@@ -66,6 +81,7 @@ bounded generated shape.
 
 - [Scene render-tree publication](../../manifests/scene-render-tree-publication.json)
 - [Scene render-tree update](../../manifests/scene-render-tree-update.json)
+- [Scene-root reference consumer boundary](../../manifests/scene-root-ref-consumer-boundary.json)
 - [Gameplay main-frame boundary](../../manifests/gameplay-main-frame-boundary.json)
 - [Audio initialization and stream ownership](../../manifests/audio-initialization-stream-ownership.json)
 - [Catalog contract](../catalogs.md)

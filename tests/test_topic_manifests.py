@@ -187,6 +187,18 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["mapNumberNegative"]["activeSlot"], "0x830E9010")
         self.assertIn("no direct MAPNUMBER-to-argument edge", document["conclusion"])
 
+    def test_scene_root_ref_consumer_boundary(self) -> None:
+        path = MANIFESTS / "scene-root-ref-consumer-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["acceptedSeed"]["field"], "RVA-FLD-0070")
+        self.assertEqual(
+            [entry["function"] for entry in document["candidateResults"]],
+            ["0x82D55808", "0x82D55C68"],
+        )
+        self.assertIn("do not directly consume", document["boundedNegative"]["result"])
+        self.assertIn("decode-coverage observation", document["currentEvidence"]["qualification"])
+
     def test_gold_reserve_interest_contract(self) -> None:
         path = MANIFESTS / "gold-reserve-interest.json"
         document = json.loads(path.read_text(encoding="utf-8"))

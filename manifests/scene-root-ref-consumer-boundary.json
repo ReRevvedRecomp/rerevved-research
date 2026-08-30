@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0094",
+  "topic": "scene-root-ref-consumer-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does SceneNodeRenderWrap or SceneNodeRenderVisit directly consume the scene-root content refcounted pointer at +0x44?",
+  "scope": {
+    "assignment": "0x821B2440",
+    "producer": "0x82D548B8",
+    "candidateConsumers": ["0x82D55808", "0x82D55C68"],
+    "field": "+0x44",
+    "boundary": "This packet tests direct +0x44 accesses in two exact candidate consumers. It does not enter their indirect vtable targets, inspect 0x82D50820, identify the pointed-to type, inventory executable-wide consumers, map destruction, or assert runtime rendering."
+  },
+  "dependencies": [
+    { "topic": "scene-root-prepared-record-dispatch", "use": "Provides the accepted +0x44 refcounted assignment and first downstream wrapper." },
+    { "topic": "scene-root-content-field-roles", "use": "Provides the accepted SceneNodeRenderVisit identity and bounded direct-field roles." }
+  ],
+  "acceptedSeed": {
+    "structure": "RVA-STR-0027",
+    "field": "RVA-FLD-0070",
+    "assignment": "SceneRootContentSlot0Body passes content +0x44 and prepared-record +0x28 to refcount helper 0x821B2440."
+  },
+  "candidateResults": [
+    {
+      "function": "0x82D55808",
+      "semanticName": "SceneNodeRenderWrap",
+      "result": "No direct load or store uses receiver displacement +0x44 in the complete bounded generated body.",
+      "observedBoundary": "The wrapper loads the receiver vptr and dispatches slots +0x14, +0x0C, and +0x08; those targets remain outside this packet.",
+      "qualification": "Passing the receiver to an indirect slot does not prove that the slot target consumes +0x44."
+    },
+    {
+      "function": "0x82D55C68",
+      "semanticName": "SceneNodeRenderVisit",
+      "result": "No direct load or store uses receiver displacement +0x44 in the complete bounded generated body.",
+      "observedBoundary": "The function directly uses other accepted content fields and several vtable slots, but its literal 44-byte access is a vtable-slot displacement rather than receiver field +0x44.",
+      "qualification": "This excludes only a direct receiver-field access; callees and indirect targets remain separate."
+    }
+  ],
+  "boundedNegative": {
+    "result": "The first accepted scene wrapper and visit consumer do not directly consume prepared_record_ref +0x44.",
+    "effect": "RVA-FLD-0070 remains an assignment-owned refcounted pointer with no accepted first direct consumer.",
+    "falsificationCondition": "An exact current-image or complete generated body for either candidate contains a receiver-relative +0x44 load/store, or a separately bounded indirect target proves a field edge."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only bounded field-reference query and exact generated-body inspection.",
+    "entries": [
+      { "role": "bounded field query", "address": "0x821B2440", "result": "The configured project scanned six decoded instructions across the four requested functions and found zero +0x44 hits.", "confidence": "strong" },
+      { "role": "candidate wrapper body", "address": "0x82D55808", "result": "Complete generated body has no receiver-relative +0x44 load or store.", "confidence": "strong" },
+      { "role": "candidate visit body", "address": "0x82D55C68", "result": "Complete generated body has no receiver-relative +0x44 load or store.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/FindFieldRefs.java:0x44@0x821B2440,0x82D548B8,0x82D55808,0x82D55C68",
+      "generated:rerevved/sub_821B2440",
+      "generated:rerevved/sub_82D548B8",
+      "generated:rerevved/sub_82D55808",
+      "generated:rerevved/sub_82D55C68"
+    ],
+    "qualification": "The zero-hit Ghidra result is a decode-coverage observation, not negative semantic evidence. The direct-access negative is bounded to the two complete generated candidate bodies."
+  },
+  "guards": [
+    "Do not treat a vtable-slot displacement of 0x44 as receiver field +0x44.",
+    "Do not infer indirect target behavior from receiver dispatch alone.",
+    "Do not classify the retained pointer as a child collection or identify its concrete type.",
+    "Do not infer complete lifetime, destruction, executable-wide consumer absence, or runtime rendering."
+  ],
+  "conclusion": "SceneNodeRenderWrap at 0x82D55808 and SceneNodeRenderVisit at 0x82D55C68 contain no direct receiver-relative access to scene-root content +0x44. The field remains an accepted refcounted assignment target with no accepted first direct consumer; indirect slot targets, other functions, concrete type, and lifetime remain unresolved."
+}

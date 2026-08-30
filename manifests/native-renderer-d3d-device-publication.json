@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "RVA-F-0110",
   "topic": "native-renderer-d3d-device-publication",
-  "status": "open",
-  "confidence": "candidate",
+  "status": "closed",
+  "confidence": "strong",
   "image": "image.json",
   "question": "Where does the supported title publish its guest D3D device object after engine initialization succeeds?",
   "scope": {
@@ -13,7 +13,7 @@
     "publicationStore": "0x826A645C",
     "postPublicationSite": "0x826A6460",
     "ringLifecycleHelper": "0x8269C8E0",
-    "boundary": "This packet identifies one indirect pointer publication and a non-mutating post-publication observation site. It does not identify the indirect destination as VdGlobalDevice, assign a device layout, or admit a renderer operation."
+    "boundary": "This packet identifies the exact VdGlobalDevice pointer publication and closes it with one non-mutating native runtime observation. It does not assign a device layout, lifetime, dispatch table, reset contract, or renderer operation."
   },
   "dependencies": [
     {
@@ -22,7 +22,7 @@
     }
   ],
   "currentEvidence": {
-    "method": "one foreground read-only DumpFunctions.java query for 0x826A63E8, one foreground read-only DumpMemoryWords.java query centered on 0x826A645C with word radius 9, and narrow generated-code corroboration",
+    "method": "one foreground read-only DumpFunctions.java query for 0x826A63E8, one foreground read-only DumpMemoryWords.java query centered on 0x826A645C with word radius 9, narrow generated-code corroboration, and one bounded native runtime observation at the exact post-store site",
     "entries": [
       {
         "role": "publication function candidate",
@@ -66,7 +66,16 @@
       "publicationSequence": "generated/default/rerevved_recomp.193.cpp:13271"
     },
     "decompilerQualification": "The canonical-project decompile truncated at bad instruction data near 0x826A63F0 and supplied no caller or callee result. No semantic claim relies on that decompilation.",
-    "reproduction": "Run DumpMemoryWords.java read-only for target 0x826A645C with REREVVED_WORD_RADIUS=9 against the image pinned by image.json, then compare words 0x826A6438 through 0x826A6464 with the entries above. Corroborate only function 0x826A63E8 in generated ReXGlue output."
+    "reproduction": "Run DumpMemoryWords.java read-only for target 0x826A645C with REREVVED_WORD_RADIUS=9 against the image pinned by image.json, then compare words 0x826A6438 through 0x826A6464 with the entries above. Corroborate only function 0x826A63E8 in generated ReXGlue output.",
+    "runtimeIdentity": {
+      "runId": "NATIVE-ID-20260830-0001",
+      "titleCommit": "61e96e719199851658347fed5dbedeba187d877f",
+      "sdkCommit": "e89618afbe9c6b5e178797b1ee5e7d03ec3d77e6",
+      "executableSha256": "63a3a044edc124f5c6b8c88b9ecfd82fd3dc63af3c6b72399b0b5f2d9d8064a7",
+      "logSha256": "11a48b1d23234463ab6bc078274a373ffaeff372f955fa88c777175a49cfe64c",
+      "observation": "The native-only post-store observer read cell 0xFFCAE000, verified its big-endian word equaled retained device 0x50235580, and published that exact pair. SDK e89618a maps the title's VdGlobalDevice variable import to 0xFFCAE000.",
+      "classification": "Promoted as exact VdGlobalDevice publication identity. This proves the imported cell and stored guest object for this execution only; it does not prove object layout, validity duration, dispatch semantics, or native output."
+    }
   },
   "postPublicationHelper": {
     "address": "0x8269C8E0",
@@ -126,22 +135,18 @@
     "nextBoundary": "0x82692448 is the next linear initialization helper, but this packet stops the chain because the first three post-publication helpers are ring lifecycle, anonymous template storage, and worker-pool setup rather than render-target or presentation producers."
   },
   "nextDiscriminator": {
-    "site": "0x826A6460",
-    "registers": [
-      "r11",
-      "r31"
-    ],
-    "question": "In native mode, does r11 equal the kernel-export address mapped for VdGlobalDevice and does the big-endian word at r11 equal r31 immediately after the store?",
-    "limits": "Observe once without changing guest registers or memory. Do not dereference the device object or infer a field, lifetime, dispatch table, reset contract, or host resource."
+    "site": "the title-used guest D3D operation surface after exact device publication",
+    "question": "Which proved high-level device, resource, state, draw, Resolve, and present operations must native mode replace before the original PM4 path can remain a bounded no-op?",
+    "limits": "Do not dereference the published device or infer layout from this identity result. Do not treat ignored ring calls as sufficient replacement for the title-used D3D surface, and do not copy ReBlue device fields or addresses."
   },
   "guards": [
-    "Do not identify 0x820009F0 or the runtime value in r11 as VdGlobalDevice from the static sequence alone.",
+    "Do not generalize the observed VdGlobalDevice object address across executions or infer fields from it.",
     "Do not infer a guest device size, layout, dispatch table, field meaning, reset path, resource owner, or PM4 replacement.",
     "Do not relabel the ring-buffer lifecycle helper as a render-target, resolve, swap, present, or complete device-reset boundary.",
     "Do not decode or assign the anonymous fixed template without a separate bounded packet or register contract.",
     "Do not treat worker-pool initialization as guest graphics output or continue the linear startup chain under this packet.",
     "Do not transfer ReBlue or Blue Dragon addresses, offsets, constants, formats, or device structures.",
-    "Do not infer runtime execution or visible guest output from this static publication candidate."
+    "Do not infer native draw, Resolve, VdSwap, or visible guest output from exact device publication."
   ],
-  "conclusion": "The supported image strongly proves that function 0x826A63E8 conditionally stores its retained object pointer r31 through an indirect destination loaded from 0x820009F0 at 0x826A645C. The destination identity and device semantics remain candidate pending the bounded native-only runtime discriminator before the original call at 0x826A6460."
+  "conclusion": "The supported image proves that function 0x826A63E8 conditionally stores its retained object pointer r31 through an indirect destination loaded from 0x820009F0 at 0x826A645C. Native run NATIVE-ID-20260830-0001 then observed exact cell 0xFFCAE000, the SDK e89618a VdGlobalDevice import mapping, verified that the cell contained retained device 0x50235580, and recorded the pair without mutation. This closes publication identity only. Device layout, lifetime, dispatch semantics, reset ownership, the title-used high-level D3D replacement surface, and native output remain separate gates."
 }

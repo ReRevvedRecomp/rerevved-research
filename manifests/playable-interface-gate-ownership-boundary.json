@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0107",
+  "topic": "playable-interface-gate-ownership-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which accepted writer publishes, clears, or toggles the object at 0x8314F28C and its gate byte +0x5, and can one exact lifecycle relation be proved?",
+  "scope": {
+    "global": "0x8314F28C",
+    "field": "+0x5",
+    "reader": "0x82DE9FD8",
+    "writers": ["0x82DA52A0", "0x82DD8FB8", "0x82DDAE98", "0x82DED098", "0x82E07290", "0x82E40738"],
+    "boundary": "This packet reads one direct-reference inventory and exactly seven accepted function bodies. It does not expand the 29 reference functions, use generated code to bypass a truncation stop, infer scene-active or playable state, assign registry ownership, or claim runtime or Xbox behavior."
+  },
+  "dependencies": [
+    { "topic": "playable-game-state-gates", "use": "Provides the accepted global, +0x5 interface-update role, reader, and six writer candidates." }
+  ],
+  "referenceInventory": {
+    "target": "0x8314F28C",
+    "count": 29,
+    "functions": ["0x82E87D18", "0x82E53A18", "0x82E53EC0", "0x82C51EF8", "0x82C51EB8", "0x82D96020", "0x82E559C0", "0x82E5BBB8", "0x82C5B900", "0x82C5BCC0", "0x82E5AF60", "0x82D9A4E8", "0x82C79CC0", "0x82E5FB80", "0x82C7FD90", "0x82E1F200", "0x82C7ECF8", "0x82C7DF58", "0x82DBD248", "0x82E3D610", "0x82E1CB90", "0x82E3C2E0", "0x82D83B38", "0x82E42A68", "0x82E60440", "0x82DE6D58", "0x82E287C8"],
+    "qualification": "The inventory contains 29 READ references across 27 distinct modeled functions because 0x82C7DF58 contributes three sites. None is an accepted packet body, and the inventory was not expanded or treated as an executable-wide ownership closure."
+  },
+  "bodyResults": [
+    { "function": "0x82DE9FD8", "role": "reader", "result": "Ghidra models only a non-returning thunk-helper call; the accepted global and +0x5 read carrier are not decoded in this body." },
+    { "function": "0x82DA52A0", "role": "writer candidate", "result": "Ghidra models only a non-returning thunk-helper call." },
+    { "function": "0x82DD8FB8", "role": "writer candidate", "result": "The decompiler encounters bad instruction data and truncates control flow." },
+    { "function": "0x82DDAE98", "role": "writer candidate", "result": "Ghidra models only a non-returning thunk-helper call." },
+    { "function": "0x82DED098", "role": "writer candidate", "result": "Ghidra models only a non-returning thunk-helper call." },
+    { "function": "0x82E07290", "role": "writer candidate", "result": "Ghidra models only a non-returning thunk-helper call." },
+    { "function": "0x82E40738", "role": "writer candidate", "result": "Ghidra models only a non-returning thunk-helper call." }
+  ],
+  "boundedNegative": {
+    "result": "The configured project does not expose a complete exact body or decoded global-to-store carrier for the reader or any of the six writer candidates, so no publisher, clearer, toggler, or lifecycle relation is promoted.",
+    "effect": "The global and gate retain their accepted read/runtime roles while static writer ownership remains unresolved.",
+    "falsificationCondition": "A corrected complete current-image body proves a 0x8314F28C-derived pointer publication, clear, or receiver-relative +0x5 store in one accepted candidate."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": ["RVA-SYM-0182"],
+    "result": "The existing global gains the bounded writer-ownership qualification. No writer symbol or lifecycle relation is added."
+  },
+  "currentEvidence": {
+    "method": "Two sequential foreground read-only Ghidra queries: direct references to the accepted global and one seven-function decompilation batch.",
+    "entries": [
+      { "role": "global reference inventory", "address": "0x8314F28C", "result": "Twenty-nine modeled READ references were emitted across 27 distinct functions; no accepted packet body appears in that inventory.", "confidence": "strong" },
+      { "role": "exact body set", "address": "0x82DE9FD8", "result": "Six bodies reduce to non-returning thunk calls and one truncates on bad instruction data; no exact global-derived field carrier is decoded.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpReferences.java:0x8314F28C",
+      "ghidra/DumpFunctions.java:0x82DE9FD8,0x82DA52A0,0x82DD8FB8,0x82DDAE98,0x82DED098,0x82E07290,0x82E40738"
+    ],
+    "qualification": "Generated code was not used to bypass the explicit truncation stop. No runtime probe was performed."
+  },
+  "guards": [
+    "Do not classify any accepted writer as publisher, clearer, or toggler.",
+    "Do not infer ownership from the 29-reference inventory or address proximity.",
+    "Do not infer scene-active state, playable-state semantics, registry ownership, runtime behavior, or Xbox behavior."
+  ],
+  "conclusion": "The bounded current-image read set cannot assign writer ownership for interface-gate pointer 0x8314F28C or byte +0x5. Six exact bodies reduce to non-returning thunk calls, 0x82DD8FB8 truncates, and the 29-reference inventory supplies no accepted writer carrier. No publisher, clear, toggle, or lifecycle relation is proved; the accepted reader/runtime role remains unchanged."
+}

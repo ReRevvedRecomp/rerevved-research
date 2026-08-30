@@ -286,6 +286,18 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["catalogPromotion"]["newRelations"], ["RVA-REL-0472"])
         self.assertIn("Raw words", document["currentEvidence"]["qualification"])
 
+    def test_playable_interface_gate_ownership_boundary(self) -> None:
+        path = MANIFESTS / "playable-interface-gate-ownership-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0107")
+        self.assertEqual(document["scope"]["global"], "0x8314F28C")
+        self.assertEqual(len(document["scope"]["writers"]), 6)
+        self.assertEqual(document["referenceInventory"]["count"], 29)
+        self.assertEqual(len(document["bodyResults"]), 7)
+        self.assertIn("no publisher", document["boundedNegative"]["result"])
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+
     def test_player_production_scalar_lifecycle(self) -> None:
         path = MANIFESTS / "player-production-scalar-lifecycle.json"
         document = json.loads(path.read_text(encoding="utf-8"))

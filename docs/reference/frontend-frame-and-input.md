@@ -42,6 +42,15 @@ availability test across gameplay, modal, load, and menu transitions. The test
 is not a general lifecycle enum, and none of these signals substitutes for the
 application callback boundary.
 
+A bounded static ownership packet tested the accepted interface reader and six
+writer candidates. Six exact bodies reduce to non-returning thunk calls in the
+configured project and `0x82DD8FB8` truncates on bad instruction data. A direct
+reference inventory contains 29 reads across 27 other modeled functions but
+was not expanded. No static publisher, clearer, toggler, or lifecycle relation
+is therefore accepted. This does not change the separately captured runtime
+gate role. Exact limits are in
+[`playable-interface-gate-ownership-boundary.json`](../../manifests/playable-interface-gate-ownership-boundary.json).
+
 `LocalPlayerIdResolve` at `0x82D8A3A0` bounds one local-player selection path.
 It returns `-1` when input offset `+0x10` is null. Otherwise it dispatches the
 object's vtable slot `+0x100` and returns word `+0xC` from the dispatched
@@ -112,6 +121,7 @@ controller-glyph-family selector.
 
 - [Frontend gameplay transition](../../manifests/frontend-gameplay-transition.json)
 - [Playable game state gates](../../manifests/playable-game-state-gates.json)
+- [Playable interface-gate ownership boundary](../../manifests/playable-interface-gate-ownership-boundary.json)
 - [Attract-movie frame driver](../../manifests/attract-movie-frame-driver.json)
 - [Gameplay frame-timing owner](../../manifests/gameplay-frame-timing-owner.json)
 - [Gameplay main-frame boundary](../../manifests/gameplay-main-frame-boundary.json)

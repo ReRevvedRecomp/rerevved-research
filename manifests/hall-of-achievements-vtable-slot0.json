@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0119",
+  "topic": "hall-of-achievements-vtable-slot0",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact target occupies Hall of Achievements owner vtable slot +0x0, and does its one bounded body expose a reusable owner operation?",
+  "scope": {
+    "ownerSize": "0xD0",
+    "constructor": "0x82DCE090",
+    "vtable": "0x8212FBE8",
+    "slot": "+0x0",
+    "acceptedFirstResourceField": "+0x14",
+    "maximumFunctionsOrReferences": 2,
+    "boundary": "The packet reads one table word, the resulting target's exact references, and only that target body. Neighboring slots, resource success, screen behavior, destruction, presentation, and runtime execution remain outside scope."
+  },
+  "dependencies": [{ "topic": "ingame-screen-hoa-resource-owner", "use": "Provides the accepted 0xD0-byte owner, constructor, vtable, and first resource field." }],
+  "slotResult": {
+    "address": "0x8212FBE8",
+    "word": "0x821C6AB8",
+    "target": "0x821C6AB8",
+    "referenceCount": 1,
+    "references": [{ "type": "DATA", "source": "0x8212FBE8", "function": null }]
+  },
+  "targetOperation": {
+    "function": "0x821C6AB8",
+    "body": "complete",
+    "result": "Returns the address of global 0x8314F5D0 and performs no other modeled operation.",
+    "returnedGlobal": "0x8314F5D0",
+    "qualification": "The global's storage type, writer, contents, ownership, lifetime, and runtime use remain unresolved."
+  },
+  "catalogPromotion": {
+    "newEntities": ["RVA-SYM-0338", "RVA-SYM-0339", "RVA-SLOT-0058", "RVA-REL-0474"],
+    "updatedEntities": ["RVA-VTBL-0020"],
+    "result": "Adds the exact slot target, a neutral returned-global symbol, and the exact return-address relation."
+  },
+  "currentEvidence": {
+    "method": "Three sequential foreground read-only Ghidra queries: one-word table read, exact target references, and the single target body.",
+    "locators": ["ghidra/DumpMemoryWords.java:0x8212FBE8", "ghidra/DumpReferences.java:0x821C6AB8", "ghidra/DumpFunctions.java:0x821C6AB8"],
+    "qualification": "The packet does not read constructor 0x82DCE090 again, inspect neighboring slots, or use generated code because the target body is complete and classifiable."
+  },
+  "guards": ["Do not call slot zero a destructor or release operation.", "Do not assign semantic contents or ownership to 0x8314F5D0.", "Do not infer screen behavior, resource success, presentation, or runtime execution."],
+  "conclusion": "Hall of Achievements vtable slot +0x0 targets complete function 0x821C6AB8. Its only modeled operation returns address 0x8314F5D0; all semantic meaning and runtime use of that global remain unresolved."
+}

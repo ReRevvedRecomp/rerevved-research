@@ -543,6 +543,17 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("No exact first consumer", document["boundedNegative"]["result"])
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
+    def test_hall_of_achievements_vtable_slot0(self) -> None:
+        path = MANIFESTS / "hall-of-achievements-vtable-slot0.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0119")
+        self.assertEqual(document["slotResult"]["word"], "0x821C6AB8")
+        self.assertEqual(document["slotResult"]["referenceCount"], 1)
+        self.assertEqual(document["targetOperation"]["body"], "complete")
+        self.assertEqual(document["targetOperation"]["returnedGlobal"], "0x8314F5D0")
+        self.assertEqual(document["catalogPromotion"]["newEntities"], ["RVA-SYM-0338", "RVA-SYM-0339", "RVA-SLOT-0058", "RVA-REL-0474"])
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

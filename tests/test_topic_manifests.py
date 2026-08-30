@@ -215,6 +215,23 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("policy name", document["conclusion"])
         self.assertIn("remain unresolved", document["conclusion"])
 
+    def test_wonder_record_identities(self) -> None:
+        path = MANIFESTS / "wonder-record-identities.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            [(record["itemId"], record["name"], record["baseCostFactor"])
+             for record in document["records"]],
+            [(200, "Pyramids of Egypt", 30), (201, "The Great Wall", 30),
+             (202, "Hanging Gardens of Babylon", 20), (203, "Stonehenge", 10),
+             (204, "Colossus of Rhodes", 20)],
+        )
+        self.assertEqual(
+            [entry["offset"] for entry in document["textOffsets"]],
+            ["0x00", "0x4A", "0x8A", "0xCA"],
+        )
+        self.assertIn("no display consumer", document["conclusion"])
+
     def test_gold_reserve_interest_contract(self) -> None:
         path = MANIFESTS / "gold-reserve-interest.json"
         document = json.loads(path.read_text(encoding="utf-8"))

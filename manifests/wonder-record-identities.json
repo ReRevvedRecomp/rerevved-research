@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0096",
+  "topic": "wonder-record-identities",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Can the first five accepted wonder records bind exact item identity, production factor, and initialized text roles without inferring gameplay effect execution?",
+  "scope": {
+    "table": "0x82F73238",
+    "recordSize": "0x14C",
+    "itemIds": [200, 201, 202, 203, 204],
+    "boundary": "This packet closes five exact record identities, their signed +0x40 factors, and four repeated initialized text offsets. It does not establish the remaining record identities, table count, complete layout, adjacent fields, final production costs, effect implementation, text consumers, completion, AI, save behavior, or runtime execution."
+  },
+  "dependencies": [
+    { "topic": "production-cost-ownership", "use": "Provides the accepted item-ID normalization, 0x14C record stride, and signed halfword base-cost factor at +0x40." },
+    { "topic": "building-wonder-cost-identities", "use": "Provides the accepted WonderDefinitionTable base and common wonder cost composition." }
+  ],
+  "textOffsets": [
+    { "offset": "0x00", "role": "name text", "evidence": "Five consecutive record bases contain the full wonder names." },
+    { "offset": "0x4A", "role": "short token", "evidence": "The five records contain Pyramid, Walls, HangingGardens, Stonehenge, and Colossus." },
+    { "offset": "0x8A", "role": "art token", "evidence": "All five bounded records contain Pyramid_anc at this offset." },
+    { "offset": "0xCA", "role": "effect-description text", "evidence": "Each record contains one English effect sentence at this repeated offset." }
+  ],
+  "records": [
+    {
+      "itemId": 200,
+      "record": "0x82F73238",
+      "name": "Pyramids of Egypt",
+      "shortToken": "Pyramid",
+      "artToken": "Pyramid_anc",
+      "effectDescription": "all forms of government are available.",
+      "baseCostAddress": "0x82F73278",
+      "baseCostFactor": 30
+    },
+    {
+      "itemId": 201,
+      "record": "0x82F73384",
+      "name": "The Great Wall",
+      "shortToken": "Walls",
+      "artToken": "Pyramid_anc",
+      "effectDescription": "all nations will offer us peace.",
+      "baseCostAddress": "0x82F733C4",
+      "baseCostFactor": 30
+    },
+    {
+      "itemId": 202,
+      "record": "0x82F734D0",
+      "name": "Hanging Gardens of Babylon",
+      "shortToken": "HangingGardens",
+      "artToken": "Pyramid_anc",
+      "effectDescription": "double growth in this city.",
+      "baseCostAddress": "0x82F73510",
+      "baseCostFactor": 20
+    },
+    {
+      "itemId": 203,
+      "record": "0x82F7361C",
+      "name": "Stonehenge",
+      "shortToken": "Stonehenge",
+      "artToken": "Pyramid_anc",
+      "effectDescription": "our Temples will be 50% more effective.",
+      "baseCostAddress": "0x82F7365C",
+      "baseCostFactor": 10
+    },
+    {
+      "itemId": 204,
+      "record": "0x82F73768",
+      "name": "Colossus of Rhodes",
+      "shortToken": "Colossus",
+      "artToken": "Pyramid_anc",
+      "effectDescription": "trade will be doubled in this city.",
+      "baseCostAddress": "0x82F737A8",
+      "baseCostFactor": 20
+    }
+  ],
+  "costRelationship": {
+    "consumer": "0x82CF1278",
+    "fieldOffset": "0x40",
+    "fieldWidth": "signed halfword",
+    "result": "For item IDs 200 through 204, the accepted lookup selects these records by item ID minus 200 and consumes factors 30, 30, 20, 10, and 20 before the common wonder half-scale and later modifiers.",
+    "qualification": "These are signed native factors, not final player-facing production costs."
+  },
+  "displayAndEffectBoundary": {
+    "positive": "The records themselves carry full name text and effect-description text at repeated exact offsets.",
+    "negative": "The bounded read set contains no text consumer or gameplay effect owner, so neither UI presentation nor execution of the English descriptions is claimed.",
+    "qualification": "The short and art tokens are neutral initialized strings; their subsystem consumers and original field names remain unresolved."
+  },
+  "currentEvidence": {
+    "method": "Two sequential foreground read-only Ghidra queries over exactly five records, joined to the previously accepted cost lookup.",
+    "entries": [
+      { "role": "record strings", "address": "0x82F73238", "result": "Twenty defined strings repeat at +0x00, +0x4A, +0x8A, and +0xCA across five consecutive 0x14C-byte records.", "confidence": "strong" },
+      { "role": "base-cost factors", "address": "0x82F73278", "result": "Big-endian words expose leading signed halfwords 30, 30, 20, 10, and 20 at the accepted +0x40 cells.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpStringsInRange.java:0x82F73238..0x82F738B3",
+      "ghidra/DumpMemoryWords.java:0x82F73278,0x82F733C4,0x82F73510,0x82F7365C,0x82F737A8",
+      "generated:rerevved/sub_82CF1278"
+    ],
+    "qualification": "Record stride and item normalization are accepted dependencies. Identity is bound by strings at the exact computed record bases, not by string order alone. No runtime probe was performed."
+  },
+  "guards": [
+    "Do not treat the effect-description sentences as proof that their gameplay effects execute.",
+    "Do not treat the initialized name text as proof of a particular UI consumer or localization path.",
+    "Do not assign the adjacent halfword at +0x42 or any unlisted record field.",
+    "Do not infer remaining identities, table extent, final costs, completion, AI, save behavior, or runtime execution."
+  ],
+  "conclusion": "Wonder items 200 through 204 are Pyramids of Egypt, The Great Wall, Hanging Gardens of Babylon, Stonehenge, and Colossus of Rhodes. Their accepted signed +0x40 production factors are 30, 30, 20, 10, and 20. Each record carries exact name, short-token, art-token, and effect-description strings at repeated offsets, but the bounded packet proves no display consumer or gameplay implementation of the descriptions."
+}

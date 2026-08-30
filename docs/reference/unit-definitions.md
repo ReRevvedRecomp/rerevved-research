@@ -73,10 +73,17 @@ IDs 200 through 299 use a signed halfword at `+0x40` of `0x14C`-byte wonder
 records rooted at `0x82F73238`. The helper applies a common signed half-scale
 to every item in that range, then applies another signed half reduction when
 cumulative UEA 24, Wonders cost half as much, is active. The common scale is
-part of the native wonder formula, not UEA 24 itself. The remaining building
-identities, individual wonder identities, complete layouts, adjacent fields,
-and other modifiers remain unresolved. Exact locators are in
+part of the native wonder formula, not UEA 24 itself. Exact records identify
+items 200 through 204 as Pyramids of Egypt factor 30, The Great Wall factor 30,
+Hanging Gardens of Babylon factor 20, Stonehenge factor 10, and Colossus of
+Rhodes factor 20. Each carries initialized name, short-token, art-token, and
+effect-description strings at repeated offsets, but no display consumer or
+effect implementation is proved. The remaining building and wonder identities,
+complete layouts, adjacent fields, and other modifiers remain unresolved. Cost
+locators are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).
+The five wonder records are in
+[`wonder-record-identities.json`](../../manifests/wonder-record-identities.json).
 
 Bounded static consumers are:
 

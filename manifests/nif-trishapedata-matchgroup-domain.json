@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0121",
+  "topic": "nif-trishapedata-matchgroup-domain",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact record domain is stored at object +0x24 with count +0x0C, and what supported role can be assigned to the retained nested 16-bit values used by 0x823F5430 as 12-byte strides into that buffer?",
+  "dependencies": [
+    {
+      "topic": "nif-trishapedata-consumer-boundary",
+      "use": "Accepts RVA-F-0120's proved +0x50 outer count, +0x4C retained-record array, nested-u16 storage, and 0x823F5430 consumer edge without repeating that packet's full evidence."
+    }
+  ],
+  "scope": {
+    "typeDescriptor": "0x82F8E634",
+    "candidateMethodTable": "0x8200F538",
+    "derivedReadMethod": "0x823A3010",
+    "derivedWriteMethod": "0x823A3308",
+    "retainedRecordConsumer": "0x823F5430",
+    "baseReadComparison": "0x823F6B80",
+    "baseWriteComparison": "0x823F6BF8",
+    "basePresentationComparison": "0x823F6C68",
+    "baseSlot50Comparison": "0x827F16E0",
+    "fields": {
+      "baseRecordCount": "+0x0C",
+      "baseRecordBuffer": "+0x24",
+      "retainedRecordArray": "+0x4C",
+      "retainedOuterCount": "+0x50"
+    },
+    "boundary": "This packet follows only the direct base calls from the accepted derived read and write methods, the exact base presentation and slot +0x50 comparisons, the accepted retained-record consumer, and four directly called helpers. It does not search callers, neighboring table slots, other field users, or runtime behavior."
+  },
+  "baseSerialization": {
+    "derivedCalls": "Derived read method 0x823A3010 directly calls base read comparison 0x823F6B80 before its NiTriShapeData-specific fields. Derived write method 0x823A3308 directly calls base write comparison 0x823F6BF8 before writing its type-specific fields.",
+    "readWrapper": "Base read comparison 0x823F6B80 calls inherited read helper 0x82365DC8, then reads the halfword at object +0x40 and mirrors it to +0x42. The +0x0C and +0x24 operations occur in the direct inherited helper.",
+    "writeWrapper": "Base write comparison 0x823F6BF8 calls inherited write helper 0x823663B0, then writes the halfword at object +0x40. The +0x0C and +0x24 operations occur in the direct inherited helper.",
+    "countRule": "Helper 0x82365DC8 reads two bytes into object +0x0C. Both 0x82365DC8 and 0x823663B0 derive a working record count from +0x0C: it is +0x0C when (object +0x32 & 0xF000) is zero and three times +0x0C otherwise.",
+    "readRule": "After a one-byte presence value, 0x82365DC8 allocates working-record-count times 12 bytes, stores the resulting pointer at object +0x24, and reads that many raw bytes into the buffer when the presence value is nonzero.",
+    "writeRule": "Helper 0x823663B0 writes object +0x0C, emits a one-byte presence value for object +0x24, and, when present, writes working-record-count times 12 raw bytes from +0x24.",
+    "allocationRule": "Direct helper 0x82364680 independently applies the same one-or-three multiplier to +0x0C, allocates count times 12 bytes only when +0x24 is null, stores the pointer at +0x24, and, when its second argument is nonzero, passes +0x24, zero, and the same byte extent to an out-of-scope helper.",
+    "result": "Object +0x0C governs the allocation and serialized extent of object +0x24, but the exact number of 12-byte records is conditionally +0x0C or three times +0x0C rather than unconditionally +0x0C."
+  },
+  "presentationBoundary": {
+    "method": "Base presentation method 0x823F6C68 directly calls presentation helper 0x82366840.",
+    "literalAssociations": [
+      {
+        "field": "+0x0C",
+        "string": "m_usVertices",
+        "access": "16-bit value"
+      },
+      {
+        "field": "+0x24",
+        "string": "m_pkNormal",
+        "access": "pointer value"
+      }
+    ],
+    "qualification": "These are exact current-image presentation strings connected to the fields. This packet records the literals but, under its semantic boundary, does not use them alone to assign vertex or normal meaning to the retained nested values or the selected records."
+  },
+  "selectorDomain": {
+    "outerGuard": "Derived consumer 0x823F5430 enters the retained-record path only when object +0x4C is non-null and the 16-bit outer count at +0x50 equals the 16-bit value at +0x0C.",
+    "recordCarrier": "RVA-F-0120 proves that each triangle-list value selects one eight-byte retained record at +0x4C and that the record supplies a nested count and nested-u16 buffer.",
+    "selectorTransform": "For each nested value, 0x823F5430 zero-extends the u16 and performs only address scaling: value times three times four, or value times 12. No remap or other domain carrier is visible in the bounded method.",
+    "selectedRecord": "The scaled value is added directly to object buffer +0x24. The consumer accesses three consecutive single-precision values at record offsets 0, 4, and 8 while accumulating a computed three-float result.",
+    "rangeCheck": "The bounded consumer contains no comparison of an individual nested u16 with +0x0C or with the conditional working record count before the +0x24 access. The +0x50-equals-+0x0C comparison constrains the retained outer-record count, not each nested selector.",
+    "supportedRole": "The retained nested u16 values are direct three-float-record selectors into +0x24. Their serialized or title semantic name remains unsupported.",
+    "qualification": "The three consecutive float accesses prove how each selected 12-byte record is consumed. They do not establish coordinate space, vector meaning, vertex identity, normal identity, or validity of malformed selector values."
+  },
+  "derivedComparison": {
+    "baseMethod": "Base slot +0x50 comparison 0x827F16E0 performs no object-relative field access in its exact body; it conditionally invokes a global callback and calls three fixed helpers.",
+    "derivedAddition": "Relative to that base target, 0x823F5430 adds the +0x24 initialization helper call, packed-triangle and retained-record traversal, +0x50-equals-+0x0C guard, nested-u16 times-12 selection, and three-float accumulation path.",
+    "qualification": "This comparison records only the exact additional object behavior. It does not infer why the computed result is needed or whether the path executes at runtime."
+  },
+  "examinedHelpers": [
+    {
+      "address": "0x82365DC8",
+      "caller": "0x823F6B80",
+      "result": "Reads +0x0C and conditionally allocates and fills +0x24 using a 12-byte record extent."
+    },
+    {
+      "address": "0x823663B0",
+      "caller": "0x823F6BF8",
+      "result": "Writes +0x0C, +0x24 presence, and the conditionally sized 12-byte record extent."
+    },
+    {
+      "address": "0x82366840",
+      "caller": "0x823F6C68",
+      "result": "Associates exact presentation literals m_usVertices and m_pkNormal with +0x0C and +0x24."
+    },
+    {
+      "address": "0x82364680",
+      "caller": "0x823F5430",
+      "result": "Allocates +0x24 using +0x0C, the conditional one-or-three multiplier, and a 12-byte record extent, then conditionally passes that extent to an out-of-scope helper."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only canonical-image function, instruction, and bounded memory-word queries, with narrow exact-function generated-code corroboration for save-thunk-truncated bodies.",
+    "entries": [
+      {
+        "role": "base read chain",
+        "address": "0x823F6B80 -> 0x82365DC8",
+        "result": "Serializes +0x0C and allocates and reads the conditional 12-byte-record extent at +0x24.",
+        "confidence": "strong"
+      },
+      {
+        "role": "base write chain",
+        "address": "0x823F6BF8 -> 0x823663B0",
+        "result": "Writes +0x0C, +0x24 presence, and the mirror conditional record extent.",
+        "confidence": "strong"
+      },
+      {
+        "role": "base presentation",
+        "address": "0x823F6C68 -> 0x82366840",
+        "result": "Presents +0x0C under m_usVertices and +0x24 under m_pkNormal.",
+        "confidence": "strong"
+      },
+      {
+        "role": "base record initializer",
+        "address": "0x82364680",
+        "result": "Uses +0x0C and a conditional one-or-three multiplier to allocate 12-byte records at +0x24 and conditionally pass that extent to an out-of-scope helper.",
+        "confidence": "strong"
+      },
+      {
+        "role": "derived retained-record consumer",
+        "address": "0x823F5430",
+        "result": "Uses each retained nested u16 directly as a 12-byte selector into +0x24 and accesses three floats without a visible per-selector bounds check.",
+        "confidence": "strong"
+      },
+      {
+        "role": "base slot +0x50 comparison",
+        "address": "0x827F16E0",
+        "result": "Contains no object-relative field access or retained-record traversal in its exact body.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpFunctions.java:0x823F6B80,0x823F6BF8,0x823F6C68,0x827F16E0,0x823F5430,0x82365DC8,0x823663B0,0x82366840,0x82364680",
+      "ghidra/DumpInstructions.java:0x823F6B80,0x823F6BF8,0x823F6C68,0x827F16E0,0x823F5430,0x82365DC8,0x823663B0,0x82366840,0x82364680",
+      "ghidra/DumpMemoryWords.java:0x82365E40,0x82366020,0x823660F0,0x82366580,0x82366600,0x823646B0,0x823F5668;radius=24",
+      "generated:rerevved/sub_82365DC8",
+      "generated:rerevved/sub_823663B0",
+      "generated:rerevved/sub_82366840",
+      "generated:rerevved/sub_82364680",
+      "generated:rerevved/sub_823F6B80",
+      "generated:rerevved/sub_823F6BF8",
+      "generated:rerevved/sub_823F6C68",
+      "generated:rerevved/sub_823F5430",
+      "generated:rerevved/sub_827F16E0"
+    ],
+    "qualification": "The configured canonical Ghidra project was confirmed idle before every foreground read-only invocation. Its current function model truncates several selected bodies after save-register thunks, so bounded current-image words and narrow generated-code bodies corroborate only these exact functions. No runtime probe was used."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "result": "Catalog promotion remains deferred. The structural record-selector relation is represented completely in this manifest, while the selected records and nested values lack a semantic name supported within the packet boundary."
+  },
+  "guards": [
+    "Do not infer that +0x24 has exactly +0x0C records in every flag state; the bounded methods prove a conditional one-or-three multiplier.",
+    "Do not infer that each nested selector is range-checked or valid for malformed input.",
+    "Do not infer vertex, normal, coordinate-space, winding, skinning, material, texture, scene, visibility, or renderer behavior.",
+    "Do not infer runtime execution or implementation safety from static current-image evidence.",
+    "Do not use this packet alone to activate Studio Model Viewer work."
+  ],
+  "conclusion": "Object +0x0C governs object +0x24 as an array of 12-byte records: the serialized and allocated extent is +0x0C records when (object +0x32 & 0xF000) is zero and three times +0x0C otherwise. Consumer 0x823F5430 uses each retained nested u16 directly, after zero-extension and multiplication by 12, to select one +0x24 record and access three consecutive floats. It does not visibly range-check each selector against +0x0C. This closes the structural retained nested-value domain with the neutral names three-float record array and record selector; semantic vertex or normal meaning, runtime execution, and the remaining Studio Model Viewer gates stay open."
+}

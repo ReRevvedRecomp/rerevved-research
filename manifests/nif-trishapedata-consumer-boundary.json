@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0120",
+  "topic": "nif-trishapedata-consumer-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does a NiTriShapeData-specific stream or construction method consume, skip, or retain the serialized match-group outer count and nested 16-bit values?",
+  "scope": {
+    "typeString": "0x8200F504",
+    "typeDescriptor": "0x82F8E634",
+    "candidateMethodTable": "[0x8200F538,0x8200F5A0)",
+    "baseComparisonTable": "[0x8201FF88,0x8201FFF0)",
+    "inspectedDifferingSlots": ["+0x00", "+0x10", "+0x1C", "+0x20", "+0x24", "+0x50", "+0x5C", "+0x60"],
+    "triangleMethods": ["0x823A2C78", "0x823A2A70"],
+    "boundedConsumer": "0x8250B668",
+    "boundary": "This packet identifies one exact type, descriptor, self-identifying candidate method table, its 26-slot base comparison, eight differing candidate methods, two triangle-list methods, one descriptor-referencing consumer, and one retained match-group record boundary. It does not prove a construction edge for the candidate table, name the nested 16-bit values, or prove runtime execution."
+  },
+  "typeBoundary": {
+    "string": "The exact defined string NiTriShapeData is stored at 0x8200F504 and has two modeled references.",
+    "initializer": "Function 0x82E8DBD0 stores the string pointer at descriptor 0x82F8E634 and stores 0x82F8EA34 in the following word.",
+    "candidateMethodTable": "Initialized range [0x8200F538,0x8200F5A0) contains 26 function pointers before the next defined string data. Its +0x08 entry 0x823A35C8 returns descriptor 0x82F8E634, but the current model records no reference to table base 0x8200F538.",
+    "tableComparison": "The candidate table and base comparison range [0x8201FF88,0x8201FFF0) each contain 26 entries. Eleven slots differ by address: +0x00, +0x08, +0x10, +0x14, +0x18, +0x1C, +0x20, +0x24, +0x50, +0x5C, and +0x60. The +0x14 and +0x18 pairs are distinct adjustment thunks to the same underlying targets, while +0x08 is the already-proved descriptor accessor.",
+    "constructionResult": "None of the eight inspected NiTriShapeData-specific methods materializes and stores table base 0x8200F538. The bounded set therefore does not promote the table to a proved object vtable.",
+    "qualification": "The self-identifying table shape is strong type evidence. Without a modeled construction or object-field write, this packet keeps its object-vtable role candidate rather than confirmed."
+  },
+  "triangleStorage": {
+    "fieldPresentation": "Function 0x823A34E0 first invokes the corresponding NiTriBasedGeomData function, then reads object +0x44 under exact string m_uiTriListLength and object +0x48 under exact string m_pusTriList.",
+    "indexedAccessor": "Candidate-table slot +0x5C is 0x823A2C78. It masks the requested index to 16 bits, multiplies by six, and returns three consecutive 16-bit values from the pointer at object +0x48.",
+    "bulkAccessor": "Candidate-table slot +0x60 is 0x823A2A70. It returns the 16-bit value at object +0x40, a zero word, the pointer at object +0x48, and three times the +0x40 value.",
+    "result": "The current image exposes a triangle count and packed three-unsigned-16-bit triangle-list pointer in this exact type boundary.",
+    "qualification": "The method behaviors establish index width and storage shape, not winding, coordinate space, render submission, or successful file loading."
+  },
+  "firstConsumer": {
+    "function": "0x8250B668",
+    "descriptorEdge": "The function calls neutral helper 0x821CAA40 with the object and descriptor 0x82F8E634, then branches on the returned byte before its descriptor-selected triangle path.",
+    "objectRelativeReads": ["+0x0C", "+0x20", "+0x24", "+0x28", "+0x2C", "+0x32", "+0x34", "+0x36", "+0x40", "+0x44", "+0x48"],
+    "trianglePath": "The descriptor-selected path passes the +0x40 halfword to 0x823A29B8 and later passes +0x44 and +0x48 to 0x823EE998 on a different conditional branch.",
+    "qualification": "The exact listing from entry through tail branch 0x8250B7C4 exposes no additional r31-relative field. Callee behavior, field meanings other than the proved triangle accessors, and this first consumer's match-group handling remain unresolved; separate selected methods close the retained-record boundary."
+  },
+  "matchGroupBoundary": {
+    "stringSearch": "A case-insensitive canonical-image literal-string search for matchgroup, match group, and match returned 63 general matches and no match-group field-name or type-name literal.",
+    "readMethod": "Candidate-table slot +0x10 is 0x823A3010, compared with base-table function 0x823F6B80. After the base call it reads the four-byte list length into object +0x44 and a one-byte presence value. When the presence value and +0x44 are nonzero, it allocates +0x44 times two bytes, stores that pointer at +0x48, and reads the packed list. It then reads a 16-bit outer count into +0x50, allocates +0x50 eight-byte records at +0x4C, and for each record reads a 16-bit nested count followed by count times two bytes into a buffer retained by that record's +0x4 pointer.",
+    "writeMethod": "Candidate-table slot +0x1C is 0x823A3308, compared with base-table function 0x823F6BF8. After the base call it writes +0x44, a one-byte +0x48-presence value, and +0x44 times two bytes from +0x48 when present. It then writes +0x50 and, for each +0x4C record, its 16-bit count followed by count times two bytes from the record's +0x4 pointer.",
+    "recordShape": "Object +0x50 is the retained outer count. Object +0x4C points to an array of eight-byte records; each record exposes a 16-bit nested count at +0x0 and a nested-value pointer at +0x4. The two bytes between them remain uninterpreted.",
+    "consumerMethod": "Candidate-table slot +0x50 is 0x823F5430, compared with base-table function 0x827F16E0. It reads the packed triangle list at +0x48 and, only when +0x4C is non-null and +0x50 equals object +0x0C, uses each selected packed-list value to choose one eight-byte record. It iterates that record's nested 16-bit values as 12-byte strides into the buffer at object +0x24 while accumulating a computed three-float vector.",
+    "retentionResult": "The read and write methods mirror the serialized outer-count, nested-count, and nested-u16 sequence immediately following the packed triangle list. The title retains that sequence in +0x50 and +0x4C records and one differing method consumes the retained nested values; the values are not discarded during this load path.",
+    "semanticLimit": "The bounded methods prove storage shape and arithmetic use. They do not establish a semantic name for the nested values, prove that they are vertex or triangle indices, establish winding or visibility, or prove runtime execution.",
+    "examinedDifferingMethods": [
+      { "slot": "+0x00", "candidate": "0x823A3688", "base": "0x823F6D60", "result": "Cleanup and conditional deallocation shape; no match-group field operation or candidate-table-base store in the visible exact body." },
+      { "slot": "+0x10", "candidate": "0x823A3010", "base": "0x823F6B80", "result": "Reads and retains the packed list plus outer-count and nested-u16 record sequence." },
+      { "slot": "+0x1C", "candidate": "0x823A3308", "base": "0x823F6BF8", "result": "Writes the exact mirror of the retained packed-list and nested-record sequence." },
+      { "slot": "+0x20", "candidate": "0x823A2B30", "base": "0x823F6B10", "result": "Extends base equality with +0x44 equality and a byte comparison over +0x44 times two bytes at +0x48; it does not inspect +0x4C or +0x50." },
+      { "slot": "+0x24", "candidate": "0x823A34E0", "base": "0x823F6C68", "result": "Presents the exact type descriptor plus +0x44 and +0x48 fields; it does not inspect +0x4C or +0x50." },
+      { "slot": "+0x50", "candidate": "0x823F5430", "base": "0x827F16E0", "result": "Consumes +0x4C records and +0x50 count under an exact +0x50-equals-+0x0C guard." },
+      { "slot": "+0x5C", "candidate": "0x823A2C78", "base": "0x823F6AF0", "result": "Returns three packed 16-bit triangle-list values; it does not inspect +0x4C or +0x50." },
+      { "slot": "+0x60", "candidate": "0x823A2A70", "base": "0x823F6AF8", "result": "Returns triangle count, packed-list pointer, and count times three; it does not inspect +0x4C or +0x50." }
+    ]
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only canonical-image string, reference, function, initialized-pointer, slot-by-slot table, memory-word, and bounded instruction queries, with narrow exact-function generated-code corroboration for thunk-truncated bodies.",
+    "entries": [
+      { "role": "type-string inventory", "address": "0x8200F504", "result": "Exact NiTriShapeData string with two modeled references.", "confidence": "strong" },
+      { "role": "type descriptor", "address": "0x82F8E634", "result": "Initialized by 0x82E8DBD0 and returned by candidate-table function 0x823A35C8.", "confidence": "strong" },
+      { "role": "candidate method table", "address": "0x8200F538", "result": "Twenty-six initialized function pointers ending before string data at 0x8200F5A0; no modeled reference to the table base.", "confidence": "strong" },
+      { "role": "base table comparison", "address": "0x8201FF88", "result": "Twenty-six entries compared slot by slot; eleven differ by address, including two same-target adjustment-thunk pairs and the descriptor accessor.", "confidence": "strong" },
+      { "role": "match-group read method", "address": "0x823A3010", "result": "Reads outer count to +0x50 and retains eight-byte nested-count and nested-u16-pointer records at +0x4C after the packed triangle list.", "confidence": "strong" },
+      { "role": "match-group write method", "address": "0x823A3308", "result": "Writes the mirror outer-count, per-record nested-count, and nested-u16 sequence from +0x50 and +0x4C.", "confidence": "strong" },
+      { "role": "match-group record consumer", "address": "0x823F5430", "result": "Consumes +0x4C records when +0x50 equals +0x0C and uses retained nested values as 12-byte strides into object buffer +0x24.", "confidence": "strong" },
+      { "role": "indexed triangle accessor", "address": "0x823A2C78", "result": "Returns three 16-bit values from object +0x48 at masked-index times six.", "confidence": "strong" },
+      { "role": "bulk triangle accessor", "address": "0x823A2A70", "result": "Returns object +0x40, object +0x48, and three times the +0x40 value.", "confidence": "strong" },
+      { "role": "first bounded consumer", "address": "0x8250B668", "result": "Reads raw object fields plus proved triangle fields +0x40, +0x44, and +0x48, with no operation this packet can connect to serialized match-group values.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/FindStrings.java:NiTriShapeData",
+      "ghidra/DumpReferences.java:0x8200F504,0x82F8E634,0x8200F538",
+      "ghidra/DumpFunctions.java:0x82E8DBD0,0x823A35C8,0x823A34E0,0x823A2C78,0x823A2A70,0x8250B668",
+      "ghidra/FindPointerValues.java:0x823A35C8,0x823A34E0,0x8250B668",
+      "ghidra/FindPointerValues.java:0x823F6D50,0x823F6C68",
+      "ghidra/DumpMemoryWords.java:0x8200F538,0x8201FF88",
+      "ghidra/DumpInstructions.java:0x823A34E0,0x8250B668",
+      "ghidra/DumpMemoryWords.java:0x8200F56C,0x8201FFBC;radius=13",
+      "ghidra/DumpFunctions.java:0x823A3688,0x823F6D60,0x823A3010,0x823F6B80,0x823A3308,0x823F6BF8,0x823A2B30,0x823F6B10,0x823A34E0,0x823F6C68,0x823F5430,0x827F16E0,0x823A2C78,0x823F6AF0,0x823A2A70,0x823F6AF8",
+      "ghidra/DumpInstructions.java:0x823A3688,0x823F6D60,0x823A3010,0x823F6B80,0x823A3308,0x823F6BF8,0x823A2B30,0x823F6B10,0x823F5430",
+      "ghidra/DumpMemoryWords.java:0x823A3688,0x823F6D60,0x823A3010,0x823F6B80,0x823A3308,0x823F6BF8,0x823A2B30,0x823F6B10,0x823A30D0,0x823A31D0,0x823A3270,0x823A33F0,0x823A3460,0x823F5430,0x823F56F0",
+      "generated:rerevved/sub_823A3010",
+      "generated:rerevved/sub_823A3308",
+      "generated:rerevved/sub_823A2B30",
+      "generated:rerevved/sub_823F5430"
+    ],
+    "qualification": "The configured Ghidra project was idle before each foreground read-only invocation. Its function model truncates several selected bodies after save-register thunks, so bounded current-image words and narrow generated-code bodies corroborate those exact functions. No runtime probe was used."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "result": "Catalog promotion remains deferred. The retained record relation is represented completely in this manifest, while the candidate table still lacks a construction edge and the nested values lack a supported semantic name."
+  },
+  "guards": [
+    "Do not infer complete reference coverage from the configured Ghidra model.",
+    "Do not treat the candidate method table as a confirmed object vtable without a construction edge.",
+    "Do not infer that the retained nested values are vertex indices, triangle indices, match-group labels, or render-relevant.",
+    "Do not infer winding, visible geometry, material binding, texture binding, scene placement, runtime execution, or implementation safety.",
+    "Do not use this packet alone to activate Studio Model Viewer work."
+  ],
+  "conclusion": "The current image contains an exact NiTriShapeData descriptor and a self-identifying 26-entry candidate method table. Slot +0x10 retains the serialized match-group outer count at object +0x50 and eight-byte nested-count and nested-u16-pointer records at +0x4C; slot +0x1C writes the mirror sequence, and slot +0x50 consumes those records. This closes the bounded retained-versus-discarded match-group contract. The candidate table still lacks a construction edge, the nested values retain no supported semantic name, runtime execution is unproved, and the broader Studio retained-array, material, texture, scene, and synthetic-fixture gates remain open; Model Viewer is not activated."
+}

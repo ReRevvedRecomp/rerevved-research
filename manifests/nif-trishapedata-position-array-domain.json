@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0123",
+  "topic": "nif-trishapedata-position-array-domain",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does object +0x20 store vertex-position records selected by the packed triangle list, and what exact serialized count, allocation, and presentation contract governs that array?",
+  "dependencies": [
+    {
+      "topic": "nif-trishapedata-consumer-boundary",
+      "use": "Accepts RVA-F-0120's +0x40 triangle count, +0x44 packed-list length, and +0x48 packed three-u16 triangle-list storage contract."
+    },
+    {
+      "topic": "nif-trishapedata-matchgroup-domain",
+      "use": "Accepts RVA-F-0121's exact m_usVertices association for +0x0C and counted three-float-record structure for the related +0x24 array."
+    },
+    {
+      "topic": "nif-trishapedata-normal-group-consumer",
+      "use": "Accepts RVA-F-0122's +0x42 packed three-selector work-item count, direct packed-selector addressing of three +0x20 records, component-wise differences, cross-product construction, +0x24 normal-vector role, and normal-sharing-group relation."
+    }
+  ],
+  "scope": {
+    "readHelper": "0x82365DC8",
+    "writeHelper": "0x823663B0",
+    "presentationHelper": "0x82366840",
+    "acceptedConsumer": "0x823F5430",
+    "fields": {
+      "vertexCount": "+0x0C",
+      "positionArray": "+0x20",
+      "normalArray": "+0x24",
+      "triangleCount": "+0x40",
+      "workItemCount": "+0x42",
+      "packedListLength": "+0x44",
+      "packedTriangleList": "+0x48"
+    },
+    "boundary": "This packet inspects only the +0x20 operations in the accepted base read, write, and presentation helpers. It accepts the closed RVA-F-0122 consumer result without re-investigating that algorithm and inspects no additional helper, caller, neighboring slot, or runtime path."
+  },
+  "serializationContract": {
+    "countRead": "Read helper 0x82365DC8 passes object +0x0C to the stream for an exact two-byte transfer before processing the +0x20 presence value. The field is therefore serialized as a u16 count.",
+    "presenceRead": "The helper reads one serialized byte for +0x20 presence. A zero value skips the +0x20 allocation and payload read; any nonzero value enters them.",
+    "allocation": "On the nonzero path, the helper loads the u16 at +0x0C, computes count plus twice count and then multiplies by four, yielding exactly count times 12 bytes. Both visible allocation paths use that extent, and the resulting buffer pointer is stored at +0x20.",
+    "payloadRead": "The helper passes the +0x20 pointer and the exact +0x0C times 12 byte extent to the stream read operation as one contiguous payload.",
+    "countWrite": "Write helper 0x823663B0 passes object +0x0C to the stream for the exact mirror two-byte transfer.",
+    "presenceWrite": "The helper writes one byte equal to one when +0x20 is non-null and zero when it is null.",
+    "payloadWrite": "When the emitted presence value is nonzero, the helper loads +0x0C, computes exactly count times 12, and passes the +0x20 pointer and that extent to the stream write operation. A null +0x20 pointer emits zero presence and no payload.",
+    "arrayExtent": "The serialized +0x20 payload is exactly +0x0C records of 12 bytes each when present. Unlike the related +0x24 normal allocation described by RVA-F-0121, this extent has no conditional one-or-three multiplier.",
+    "recordShape": "The stream helpers transfer the payload as bytes rather than issuing per-component float operations. Accepted RVA-F-0122 loads three consecutive floating components at offsets zero, four, and eight from every selector-addressed +0x20 unit, independently establishing a three-float, 12-byte record shape."
+  },
+  "presentationContract": {
+    "count": "Presentation helper 0x82366840 associates object +0x0C with exact string m_usVertices.",
+    "array": "The same helper loads object +0x20 and passes it with exact string m_pkVertex at 0x8200B8C4 to the presentation path.",
+    "adjacentDiscriminator": "The next presented pointer, object +0x24, is separately associated with exact string m_pkNormal. This preserves the distinction between the source +0x20 records and the proved normal-vector array.",
+    "qualification": "The literal m_pkVertex identifies the title's field name. Position semantics additionally rely on the accepted triangle-selector and cross-product use rather than on the literal alone."
+  },
+  "semanticPromotion": {
+    "independentConsumer": "RVA-F-0122 proves that each packed triangle work item supplies three u16 values used directly as value times 12 selectors into +0x20. The consumer loads three floats from each selected record, forms two component-wise differences, and computes their cross product for normal construction.",
+    "arrayRole": "The exact m_pkVertex association, the +0x0C m_usVertices count, the exact count-times-12 serialization contract, and the independent triangle/cross-product consumer together promote +0x20 as the vertex-position array.",
+    "selectorRole": "The packed triangle list's three u16 values directly select vertex-position records in +0x20. The bounded evidence does not show a transform applied to a selector before the value-times-12 address calculation.",
+    "qualification": "The promotion identifies record role and selector relationship only. It does not establish coordinate conventions, valid-index enforcement, triangle winding, or any renderer-facing interpretation."
+  },
+  "geometryContract": {
+    "status": "closed for static untextured triangle-geometry decoding",
+    "vertices": "Object +0x0C is the serialized vertex count and governs the optional +0x20 array of exactly that many 12-byte three-float vertex-position records.",
+    "triangles": "Accepted RVA-F-0120 identifies +0x40 triangle count, +0x44 packed-list length, and +0x48 packed three-u16 triangle-list storage. RVA-F-0122 identifies +0x42 as the packed three-selector work-item count and connects each work item's selectors directly to +0x20 records.",
+    "normals": "Accepted RVA-F-0122 identifies +0x24 as the normal-vector array and proves cross-product contribution construction from selected +0x20 positions, contribution write-back, and final counted normalization.",
+    "sharingGroups": "Accepted RVA-F-0120 through RVA-F-0122 establish retained +0x4C/+0x50 normal-sharing groups whose nested selectors receive a shared normalized contribution.",
+    "limit": "This is a static untextured triangle-geometry decoding contract, not a complete Model Viewer contract and not proof of runtime rendering."
+  },
+  "boundsAndMalformedInput": {
+    "countExtent": "Because +0x0C is a u16, the visible count-times-12 computation is within 786420 bytes and does not overflow a 32-bit unsigned extent for any serialized count value.",
+    "presence": "The read path treats any nonzero presence byte as present, while the write path emits only zero or one. The bounded path does not prove that a zero presence value clears a previously non-null +0x20 field; ordinary construction state remains outside this packet.",
+    "allocationFailure": "The bounded helper body shows the computed extent and pointer store but does not establish a complete failure contract for either allocation path or prove that a nonzero-count read cannot receive a null result.",
+    "streamExtent": "The helper supplies the expected byte count to the stream operation. This packet does not independently prove how the stream reports a truncated payload or whether every malformed input is rejected before object use.",
+    "selectorChecks": "Accepted RVA-F-0122 shows no local comparison of the packed u16 selectors against +0x0C before +0x20 plus value times 12 is dereferenced. No selector-safety claim is supported.",
+    "pointerChecks": "The accepted consumer dereferences +0x20 without a local null or serialized-extent check. The semantic contract describes valid retained objects, not arbitrary malformed object state."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only canonical-image function and bounded memory-word queries, with narrow generated-code corroboration for the save-register-thunk-truncated read and write helpers and accepted closed-packet evidence for the consumer algorithm.",
+    "entries": [
+      {
+        "role": "position-array read contract",
+        "address": "0x82365DC8",
+        "result": "Reads +0x0C as a two-byte count, reads one +0x20 presence byte, and on nonzero presence allocates, stores, and reads exactly count times 12 bytes at +0x20.",
+        "confidence": "strong"
+      },
+      {
+        "role": "position-array write contract",
+        "address": "0x823663B0",
+        "result": "Writes +0x0C as a two-byte count, emits +0x20 non-nullness as one byte, and when present writes exactly count times 12 bytes from +0x20.",
+        "confidence": "strong"
+      },
+      {
+        "role": "position-array presentation identity",
+        "address": "0x82366840",
+        "result": "Associates +0x0C with m_usVertices and +0x20 with exact string m_pkVertex, separately from +0x24 m_pkNormal.",
+        "confidence": "strong"
+      },
+      {
+        "role": "accepted triangle and normal consumer",
+        "address": "0x823F5430",
+        "result": "RVA-F-0122 proves direct packed-u16 selection of three +0x20 records and their use in difference and cross-product normal construction.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpFunctions.java:0x82365DC8,0x823663B0,0x82366840",
+      "ghidra/DumpMemoryWords.java:0x82365F0C,0x82365F40,0x82365F70,0x82365F9C,0x82365FC0,0x823664C0,0x823664E8,0x82366500,0x82366530,0x82366920;radius=5",
+      "generated:rerevved/sub_82365DC8",
+      "generated:rerevved/sub_823663B0",
+      "generated:rerevved/sub_82366840",
+      "manifest:RVA-F-0122"
+    ],
+    "qualification": "The canonical project was confirmed idle before every foreground read-only query. Ghidra exposes 0x82365DC8 and 0x823663B0 only through save-register thunks, so bounded current-image words and exact generated bodies corroborate their field and extent operations. The complete 0x82366840 decompilation supplies the exact presentation associations. No string inventory, additional helper inspection, runtime probe, or previous-packet re-investigation was used."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "result": "Catalog promotion remains deferred because the enclosing object type and candidate table still lack a proved construction edge. The vertex-position and untextured triangle-geometry decoding contracts are represented completely in this bounded manifest."
+  },
+  "guards": [
+    "Do not infer coordinate space, handedness, units, winding, tangent, skinning, transform, scene, visibility, material, or texture relationships.",
+    "Do not infer selector bounds checks, allocation-failure handling, or complete malformed-stream rejection.",
+    "Do not infer runtime execution or render submission from this static contract.",
+    "Do not use this packet alone to activate Studio Model Viewer work."
+  ],
+  "conclusion": "Object +0x20 is the vertex-position array. Read helper 0x82365DC8 serializes +0x0C as a u16, consumes one presence byte, and when present allocates and reads exactly +0x0C times 12 bytes into +0x20; write helper 0x823663B0 mirrors that count, presence, and payload contract. Presentation helper 0x82366840 associates +0x0C with m_usVertices and +0x20 with exact string m_pkVertex. Together with RVA-F-0122's direct packed-triangle selection of three +0x20 records and their cross-product normal construction, the accepted static evidence now closes an untextured triangle-geometry decoding contract connecting vertex positions, triangle storage, normals, and normal-sharing groups. Selector safety, coordinate and winding conventions, runtime behavior, and the remaining Model Viewer gates remain unresolved."
+}

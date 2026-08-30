@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0122",
+  "topic": "nif-trishapedata-normal-group-consumer",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does 0x823F5430 combine, normalize, or redistribute the selected three-float records in a way that independently supports the exact m_pkNormal presentation identity and establishes a normal-sharing group relationship?",
+  "dependencies": [
+    {
+      "topic": "nif-trishapedata-consumer-boundary",
+      "use": "Accepts RVA-F-0120's retained +0x4C eight-byte records, +0x50 outer count, and nested-u16 storage contract."
+    },
+    {
+      "topic": "nif-trishapedata-matchgroup-domain",
+      "use": "Accepts RVA-F-0121's +0x0C count, +0x24 12-byte three-float-record array, direct nested-u16 selector arithmetic, and exact m_pkNormal presentation association."
+    }
+  ],
+  "scope": {
+    "consumer": "0x823F5430",
+    "baseComparisonTarget": "0x827F16E0",
+    "presentationHelper": "0x82366840",
+    "initializer": "0x82364680",
+    "qualifyingDirectCallees": ["0x823DCE88"],
+    "fields": {
+      "presentedCount": "+0x0C",
+      "sourceThreeFloatRecords": "+0x20",
+      "presentedThreeFloatRecords": "+0x24",
+      "finalNormalizationCount": "+0x30",
+      "resultFlags": "+0x34",
+      "workItemCount": "+0x42",
+      "packedThreeSelectorList": "+0x48",
+      "retainedRecords": "+0x4C",
+      "retainedOuterCount": "+0x50"
+    },
+    "boundary": "This packet recovers the exact 0x823F5430 body, including its accumulator, selected-record writes, retained-list loops, and final direct callee 0x823DCE88. It does not inspect callers, indirect targets, neighboring slots, the callee of accepted initializer 0x82364680, or any other helper."
+  },
+  "completeAlgorithm": {
+    "initialization": "The consumer calls accepted initializer 0x82364680 with second argument one. RVA-F-0121 proves that helper allocates +0x24 if needed and passes the buffer, zero, and its computed extent to an out-of-scope helper; this packet does not assign the callee's effect.",
+    "iteration": "The body reads a 16-bit work-item count from +0x42 and walks the packed list at +0x48. Each item supplies three consecutive u16 selectors. A zero work-item count skips directly to final array normalization.",
+    "sourceSelection": "Each of the three packed selectors is multiplied by 12 and used to select one three-float record from object +0x20. The packet records this source only structurally and does not assign vertex-position semantics.",
+    "vectorConstruction": "The body forms two component-wise differences from the three selected +0x20 records. Three multiply-subtract expressions produce the exact cross-product arithmetic for a three-float accumulator.",
+    "firstNormalization": "The accumulator is dotted with itself through a three-component multiply-sum. The body applies reciprocal-square-root estimation and one refinement sequence, scales all three components, and stores the normalized result on the stack.",
+    "zeroLengthFallback": "The body compares the squared length with zero before selecting the normalized result. When equal, it selects the saved zero squared-length vector, so the stored three-float contribution is zero rather than the reciprocal-square-root result.",
+    "directWriteBack": "The same stored normalized contribution is added component-wise and written back to each of the three +0x24 records selected directly by the packed list.",
+    "retainedWriteBack": "When +0x4C is non-null and +0x50 equals +0x0C, the body selects one retained eight-byte record for each of the three packed selectors. For every nested u16 in each selected record, it adds the same normalized contribution component-wise to +0x24 plus nested value times 12 and writes all three floats back.",
+    "nestedCountRole": "Each retained record's nested count is only a loop bound. The body performs no scalar division by that count, no averaging, and no count-derived scaling of the contribution.",
+    "finalNormalization": "After all work items, the consumer calls 0x823DCE88 with +0x24 as the base, the halfword at +0x30 as the record count, and 12 as the stride. It then sets bit 1 in the halfword at +0x34.",
+    "destinationSet": "The per-item contribution affects all three direct packed-list destinations and every destination selected by the three applicable retained nested lists. The final callee affects the first +0x30 strided records, which is a separately supplied destination count."
+  },
+  "normalizationCallee": {
+    "address": "0x823DCE88",
+    "arguments": {
+      "base": "object +0x24 pointer",
+      "count": "16-bit object +0x30",
+      "stride": "12 bytes"
+    },
+    "algorithm": "For each counted record, the complete body loads three floats, computes their squared-length sum, applies reciprocal-square-root estimation with two scalar refinement steps, multiplies each component by the refined reciprocal length, writes all three values back in place, and advances by the supplied stride.",
+    "zeroCount": "A zero count returns before reading the buffer.",
+    "zeroLength": "The callee contains no comparison or fallback for a zero squared length before reciprocal square root. It still writes all three computed components for a nonzero record count, but the bounded body supplies no finite-result guarantee for that case.",
+    "otherOperations": "The callee contains no scalar division by a group count, no averaging, no copying between records, and no additional fixed callee."
+  },
+  "semanticPromotion": {
+    "presentationDiscriminator": "Accepted presentation helper 0x82366840 associates object +0x24 with exact string m_pkNormal.",
+    "independentArithmetic": "The consumer independently constructs a cross-product-form vector, normalizes it with a zero-length fallback, distributes that shared normalized contribution to direct and retained-list-selected +0x24 records, and invokes an in-place three-float normalizer over a counted +0x24 prefix.",
+    "arrayRole": "Together, the exact m_pkNormal identity and the independent arithmetic promote object +0x24 from a neutral three-float-record array to the normal-vector array.",
+    "groupRole": "Each retained nested list identifies normal-vector records that receive the same normalized per-item contribution. The supported neutral semantic name is normal-sharing group.",
+    "qualification": "The relation shares a contribution rather than copying one final accumulated vector among members. Records may receive different prior or later contributions, and the body neither averages by group size nor proves that group members finish equal."
+  },
+  "boundsAndMalformedInput": {
+    "outerGuard": "The retained-list path requires +0x4C to be non-null and +0x50 to equal +0x0C.",
+    "selectorChecks": "The exact body does not bound packed-list selectors against the conditional +0x24 capacity of +0x0C or three times +0x0C, does not bound packed selectors used to choose +0x4C records against +0x50, and does not bound retained nested selectors against the conditional +0x24 capacity or +0x30 before using them as 12-byte record indices.",
+    "pointerChecks": "The body dereferences the +0x48 packed-list pointer, +0x20 source-record pointer, +0x24 destination pointer, and each nonempty retained record's nested pointer without a local null or extent check. Only the outer +0x4C pointer has the explicit guard described above.",
+    "finalPrefix": "The final normalizer processes exactly the first +0x30 records. The consumer does not check +0x30 against the allocated conditional +0x24 record extent, and the bounded method does not prove that every malformed retained selector lies in that prefix.",
+    "duplicateSelectors": "The body performs no deduplication. If the same destination is selected more than once, the same contribution is added once per visit.",
+    "qualification": "These missing checks constrain malformed-input and equality claims; they do not change the exact normal-array and shared-contribution relation shown by the bounded valid-object algorithm."
+  },
+  "baseComparison": {
+    "target": "0x827F16E0",
+    "acceptedDifference": "RVA-F-0121 establishes that the base target contains no object-relative field access or retained-record traversal. The normal construction, direct and retained write-back, final normalization call, and +0x34 flag update are additional behavior in 0x823F5430.",
+    "qualification": "This packet does not inspect the base target again or infer runtime dispatch from the candidate table."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only canonical-image function, instruction, and bounded memory-word queries, with narrow complete generated-code corroboration for the thunk-truncated consumer and its one qualifying direct fixed callee.",
+    "entries": [
+      {
+        "role": "normal-group consumer",
+        "address": "0x823F5430",
+        "result": "Constructs and normalizes one cross-product-form contribution, adds it to direct and retained-list-selected +0x24 records, calls the final array normalizer, and sets +0x34 bit 1.",
+        "confidence": "strong"
+      },
+      {
+        "role": "array normalizer",
+        "address": "0x823DCE88",
+        "result": "Normalizes three-float records in place for the supplied count and stride, without a visible zero-length fallback.",
+        "confidence": "strong"
+      },
+      {
+        "role": "presentation identity",
+        "address": "0x82366840",
+        "result": "Accepted exact m_pkNormal association for object +0x24.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpFunctions.java:0x823F5430,0x823DCE88",
+      "ghidra/DumpInstructions.java:0x823F5430,0x823DCE88;count=256",
+      "ghidra/DumpMemoryWords.java:0x823F5430,0x823F5488,0x823F54E0,0x823F5520,0x823F5570,0x823F55D0,0x823F5640,0x823F56B8,0x823F5724,0x823F57A0;radius=16",
+      "generated:rerevved/sub_823F5430",
+      "generated:rerevved/sub_823DCE88"
+    ],
+    "qualification": "The canonical project was confirmed idle before every foreground read-only query. Ghidra truncates 0x823F5430 after its save-register thunk, so bounded current-image words and the exact complete generated body corroborate that function. No runtime probe was used."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "result": "Catalog promotion remains deferred because the enclosing object type and candidate table still lack a proved construction edge. The normal-array and normal-sharing-group relation is represented completely in this bounded manifest."
+  },
+  "guards": [
+    "Do not infer that the +0x20 source records are vertex positions or assign a coordinate space.",
+    "Do not infer winding, tangent, skinning, material, texture, scene, visibility, render submission, or runtime execution.",
+    "Do not infer that normal-sharing group members finish with identical values or that the algorithm averages their records.",
+    "Do not infer selector safety or final-normalization coverage for malformed values.",
+    "Do not use this packet alone to activate Studio Model Viewer work."
+  ],
+  "conclusion": "Consumer 0x823F5430 constructs a cross-product-form three-float contribution, normalizes it with an explicit zero-length fallback, adds the same normalized contribution to all three direct +0x24 destinations and every destination selected by their retained nested lists, then calls 0x823DCE88 to normalize the first +0x30 records in place. With the exact m_pkNormal presentation association, this independently promotes +0x24 as the normal-vector array and each retained nested list as a normal-sharing group whose selectors receive a shared normalized contribution. The method does not average by group size, make group members equal, bounds-check selectors, or provide a zero-length fallback in the final array normalizer; runtime execution and all remaining Model Viewer gates stay open."
+}

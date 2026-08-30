@@ -120,18 +120,24 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn(8, {entry["ueaId"] for entry in shared})
         self.assertIn(42, {entry["ueaId"] for entry in shared})
         self.assertIn(47, {entry["ueaId"] for entry in shared})
+        self.assertTrue({3, 12, 55}.issubset(
+            {entry["ueaId"] for entry in shared}
+        ))
         self.assertNotIn(23, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(8, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(42, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(47, document["retailOwnerClasses"]["unknown"])
+        self.assertTrue({3, 12, 55}.isdisjoint(
+            document["retailOwnerClasses"]["unknown"]
+        ))
         self.assertEqual(
             document["retailCellProjection"]["counts"],
             {
                 "total": 64,
-                "sharedCumulativeLookup": 22,
+                "sharedCumulativeLookup": 26,
                 "directCivilizationEffectPath": 1,
                 "mixedCompanionPath": 0,
-                "unknown": 41,
+                "unknown": 37,
             },
         )
         owner = document["greatPersonGenerationOwner"]
@@ -181,6 +187,19 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(consumer["thresholdCalls"],
                          ["0x82D163BC", "0x82D163D4"])
         self.assertEqual(consumer["storedProgressField"]["offset"], "0x34")
+
+    def test_unit_movement_stat_contract(self) -> None:
+        path = MANIFESTS / "unit-movement-stat.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["baseMovement"]["fieldOffset"], "0x42")
+        self.assertEqual(document["accessor"]["function"], "0x82CF1F70")
+        owners = {entry["ueaId"]: entry for entry in document["retailUeaOwners"]}
+        self.assertEqual(set(owners), {3, 12, 55})
+        self.assertEqual(owners[12]["predicate"]["unitType"], 10)
+        self.assertEqual(owners[55]["predicate"]["unitType"], 6)
+        self.assertEqual(owners[3]["predicate"]["mask"], "0x200")
+        self.assertEqual(document["inventoryCorrection"]["ueaId"], 12)
 
     def test_unique_unit_combat_predicate_contract(self) -> None:
         path = MANIFESTS / "unique-unit-combat-predicates.json"

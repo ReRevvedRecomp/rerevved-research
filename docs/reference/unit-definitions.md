@@ -15,15 +15,24 @@ The names below are recovered semantic labels, not original debug symbols.
 | Internal name | definition `+0x0` | NUL-terminated record name when present |
 | Base attack | definition `+0x40` | Signed byte read by `EffectiveUnitAttackLookup` |
 | Base defense | definition `+0x41` | Signed byte read by `EffectiveUnitDefenseLookup` |
+| Base movement | definition `+0x42` | Signed byte read by `EffectiveUnitMovementLookup` |
 | Production-cost factor | definition `+0x44` | Signed byte composed by `EffectiveUnitProductionCostScalar` |
 | Effective attack reader | `0x82CF2230` | Applies unit and civilization modifiers to base attack |
 | Effective defense reader | `0x82CF21A0` | Applies unit and civilization modifiers to base defense |
+| Effective movement reader | `0x82CF1F70` | Applies local and civilization modifiers on its ordinary composed return |
 | Unique Unit identity selector | `0x82CEF160` | Maps a base `UnitType` and player civilization to a localized name index |
 | Live unit-name reader | `0x82CF0550` | Reads the live unit type, applies the identity selector, and resolves the unit or army name |
 
-Bytes `+0x42`, `+0x43`, and `+0x45` through `+0x47` remain intentionally
-unnamed. Their adjacency to accepted fields does not prove movement or any
-other gameplay meaning.
+Bytes `+0x43` and `+0x45` through `+0x47` remain intentionally unnamed. Their
+adjacency to accepted fields does not prove another gameplay meaning.
+
+`EffectiveUnitMovementLookup` owns three retail movement UEAs on its ordinary
+composed return. Definition flag `+0x50 & 0x200` selects UEA 3, Riflemen
+UnitType 10 selects UEA 12, and Warrior UnitType 6 selects UEA 55. Each active
+cumulative lookup adds one to retained movement. One special return path uses
+an unresolved constant instead of the composed value, so the packet does not
+claim every movement return, consumer, or AI path. The exact branches are in
+[`unit-movement-stat.json`](../../manifests/unit-movement-stat.json).
 
 ## Normal unit production cost
 

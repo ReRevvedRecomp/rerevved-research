@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0089",
+  "topic": "unit-movement-stat",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which current-image accessor composes base unit movement, and which exact predicates and cumulative lookups implement the retail movement UEAs 3, 12, and 55?",
+  "scope": {
+    "functions": ["0x82CD5A70", "0x82CF0CB0", "0x82CF1F70"],
+    "tables": ["0x82F700D8"],
+    "fields": ["unit definition +0x42", "unit definition +0x50"],
+    "boundary": "This packet identifies the base movement byte and three retail UEA increments inside the effective movement accessor. It does not name every pre-UEA modifier, UEA 29, the auxiliary signed halfword, the special return predicate, every caller, movement-budget scaling, AI, presentation, save, scenario, multiplayer, or runtime behavior."
+  },
+  "dependencies": [
+    { "topic": "unit-definitions-ai-evaluation", "use": "Provides the accepted 0x82F700D8 unit-definition table, 0x94-byte records, and internal UnitType names." },
+    { "topic": "civilization-bonus-storage", "use": "Provides the accepted cumulative ActiveCivilizationBonusLookup contract and retail UEA placements." },
+    { "topic": "unit-movement-lifecycle", "use": "Provides the separate ordinary movement-budget and command lifecycle boundary." }
+  ],
+  "baseMovement": {
+    "definitionTable": "0x82F700D8",
+    "recordSize": "0x94",
+    "fieldOffset": "0x42",
+    "width": "signed byte",
+    "accessor": "0x82CF1F70",
+    "retainedRegister": "r26",
+    "result": "The accessor initializes retained movement composition from signed definition byte +0x42 before applying local modifiers and UEA increments."
+  },
+  "accessor": {
+    "function": "0x82CF1F70",
+    "semanticName": "EffectiveUnitMovementLookup",
+    "inputs": { "player": "r3 retained in r30", "unitType": "r4 retained in r28" },
+    "ordinaryReturn": {
+      "auxiliaryLoad": "0x82CF218C",
+      "signExtend": "0x82CF2190",
+      "addComposedMovement": "0x82CF2194",
+      "result": "The ordinary return adds retained composed movement r26 to an unresolved signed auxiliary halfword."
+    },
+    "specialReturn": {
+      "predicate": "0x82CF2154..0x82CF2174",
+      "returnCalculation": "0x82CF2180",
+      "result": "One bounded special path adds constant r25 instead of composed movement r26.",
+      "qualification": "The predicate and gameplay meaning of this override remain unresolved; the three UEA increments are therefore claimed for the ordinary composed return path, not every return."
+    }
+  },
+  "retailUeaOwners": [
+    {
+      "ueaId": 3,
+      "effect": "Cavalry gains +1 movement",
+      "predicate": { "field": "unit definition +0x50", "mask": "0x200", "load": "0x82CF20C8", "test": "0x82CF20CC..0x82CF20D4" },
+      "lookupArguments": {
+        "mode": { "address": "0x82CF20D8", "value": 0 },
+        "player": { "address": "0x82CF20DC", "source": "r30" },
+        "ueaId": { "address": "0x82CF20E0", "value": 3 }
+      },
+      "callsite": "0x82CF20E4",
+      "resultTest": "0x82CF20E8",
+      "increment": "0x82CF20F0",
+      "result": "When definition flag 0x200 is set and cumulative UEA 3 is active, the accessor adds one to retained composed movement."
+    },
+    {
+      "ueaId": 12,
+      "effect": "Riflemen gain +1 movement",
+      "predicate": { "address": "0x82CF20F4", "unitType": 10, "acceptedInternalName": "Riflemen" },
+      "ueaIdArgument": { "address": "0x82CF20FC", "value": 12, "flow": "branches through 0x82CF2100 to the common lookup setup at 0x82CF2110" },
+      "commonLookup": { "mode": { "address": "0x82CF2110", "value": 0 }, "player": { "address": "0x82CF2114", "source": "r30" }, "callsite": "0x82CF2118", "resultTest": "0x82CF211C" },
+      "increment": "0x82CF2124",
+      "result": "When UnitType is 10 and cumulative UEA 12 is active, the accessor adds one to retained composed movement."
+    },
+    {
+      "ueaId": 55,
+      "effect": "Warriors gain +1 movement",
+      "predicate": { "address": "0x82CF2104", "unitType": 6, "acceptedInternalName": "Warrior" },
+      "ueaIdArgument": { "address": "0x82CF210C", "value": 55, "flow": "falls through to the common lookup setup at 0x82CF2110" },
+      "commonLookup": { "mode": { "address": "0x82CF2110", "value": 0 }, "player": { "address": "0x82CF2114", "source": "r30" }, "callsite": "0x82CF2118", "resultTest": "0x82CF211C" },
+      "increment": "0x82CF2124",
+      "result": "When UnitType is 6 and cumulative UEA 55 is active, the accessor adds one to retained composed movement."
+    }
+  ],
+  "inventoryCorrection": {
+    "ueaId": 12,
+    "priorClassification": "absent as a literal request",
+    "correctedClassification": "literal request with merged common-call dataflow",
+    "reason": "The literal 12 at 0x82CF20FC branches to the shared setup and direct lookup call at 0x82CF2118 rather than appearing immediately beside the call instruction."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only 65-word current-image query centered at 0x82CF2118, exact verification of 28 selected words and branch targets, and narrow generated-code corroboration of 0x82CF1F70 for base-field and input provenance.",
+    "entries": [
+      { "role": "effective movement accessor", "address": "0x82CF1F70", "confidence": "strong" },
+      { "role": "UEA 3 lookup", "address": "0x82CF20E4", "confidence": "strong" },
+      { "role": "UEA 12 and 55 common lookup", "address": "0x82CF2118", "confidence": "strong" },
+      { "role": "ordinary composed return", "address": "0x82CF2194", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82CF2098..0x82CF2198", "generated:rerevved/sub_82CF1F70", "unit-definitions-ai-evaluation#/unitDefinitions/records/6", "unit-definitions-ai-evaluation#/unitDefinitions/records/10"],
+    "qualification": "No runtime action was performed. Static evidence establishes the base byte, exact predicates, lookup dataflow, increments, and ordinary return composition; all other movement modifiers and consumers remain outside the packet."
+  },
+  "guards": [
+    "Do not infer that UEA 3 selects a single UnitType; the accepted predicate is definition flag 0x200.",
+    "Do not classify UEA 29 from the adjacent unresolved branch without an accepted effect contract.",
+    "Do not apply the three UEA increments to the unresolved special return path that bypasses r26.",
+    "Do not equate the effective movement stat directly with unit-record movement budget +0x02 or command path cost.",
+    "Do not claim complete AI, presentation, save, scenario, multiplayer, or runtime parity."
+  ],
+  "conclusion": "EffectiveUnitMovementLookup at 0x82CF1F70 reads signed definition byte +0x42 and owns three retail movement UEAs on its ordinary composed return: UEA 3 adds one under definition flag 0x200, UEA 12 adds one for Riflemen UnitType 10, and UEA 55 adds one for Warrior UnitType 6. UEA 12 reaches a merged common callsite and is no longer classified as absent from literal lookup requests."
+}

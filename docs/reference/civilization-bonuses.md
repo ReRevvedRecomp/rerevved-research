@@ -186,16 +186,26 @@ each distinct UEA ID's accepted owner class to the row table above:
 
 | Owner class | Distinct retail IDs | Retail cells | Boundary |
 | --- | --- | ---: | --- |
-| Shared cumulative lookup | 5, 8, 9, 10, 13, 17, 23, 34, 35, 42, 43, 47, 48, 58, 59, 60 | 22 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
+| Shared cumulative lookup | 3, 5, 8, 9, 10, 12, 13, 17, 23, 34, 35, 42, 43, 47, 48, 55, 58, 59, 60 | 26 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
 | Direct civilization/effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
 | Mixed companion path | None | 0 | No native retail cell is accepted in this class. |
-| Unknown | 1, 2, 3, 4, 6, 7, 12, 14, 16, 18, 19, 20, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 46, 50, 51, 55, 56, 61 | 41 | No accepted effect-specific producer-consumer packet establishes the native owner. |
+| Unknown | 1, 2, 4, 6, 7, 14, 16, 18, 19, 20, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 46, 50, 51, 56, 61 | 37 | No accepted effect-specific producer-consumer packet establishes the native owner. |
 
-The 95-site generated inventory contains literal shared-lookup requests for 41
+The 95-site generated inventory contains literal shared-lookup requests for 42
 of the 45 retail IDs. That is useful search guidance only. A literal request
 does not prove the named effect, complete ownership, or absence of a direct
-companion. Retail IDs 12, 16, 28, and 40 do not appear as literal requests;
-only UEA 40 has a separately mapped direct owner.
+companion. UEA 12 reaches a merged common callsite and was missed by the prior
+immediate-literal inventory. Retail IDs 16, 28, and 40 remain absent as literal
+requests; only UEA 40 has a separately mapped direct owner.
+
+UEA 3, UEA 12, and UEA 55 have one bounded shared owner in
+`EffectiveUnitMovementLookup` at `0x82CF1F70`. The accessor reads signed unit
+definition byte `+0x42`. Definition flag `+0x50 & 0x200` selects UEA 3;
+Riflemen UnitType 10 selects UEA 12; and Warrior UnitType 6 selects UEA 55.
+Each successful cumulative lookup adds one to retained composed movement on
+the ordinary return path. A separate special return bypasses that composition
+and remains unresolved. See
+[`unit-movement-stat.json`](../../manifests/unit-movement-stat.json).
 
 UEA 8 has a bounded shared owner in `CityGrowthThresholdLookup` at
 `0x82CF1060`. The helper requests cumulative UEA 8 at `0x82CF10F8`; when

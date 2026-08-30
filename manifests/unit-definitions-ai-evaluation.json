@@ -7,9 +7,9 @@
   "image": "image.json",
   "question": "Do combat simulation and AI unit evaluation consume the same base attack and defense fields, or require separate stat adjustments?",
   "scope": {
-    "functions": ["0x82CF2230", "0x82CF21A0", "0x82CB44E0", "0x82CB6E48", "0x82CBF570", "0x82CD9970", "0x82CEEA90"],
+    "functions": ["0x82CF2230", "0x82CF21A0", "0x82CF1F70", "0x82CB44E0", "0x82CB6E48", "0x82CBF570", "0x82CD9970", "0x82CEEA90"],
     "globals": ["0x82F700D8", "0x830F2BF0"],
-    "boundary": "This packet maps the unit-definition index, names, base attack and defense fields, their effective accessors, and bounded combat and AI consumers. It does not name adjacent definition bytes or map costs, movement, abilities, production weights, Unique Unit substitutions, or naval and air special behavior."
+    "boundary": "This packet maps the unit-definition index, names, base attack, base defense, base movement, and production-cost-factor fields plus the accepted effective accessors and bounded consumers supplied by their dedicated topics. It does not name other adjacent definition bytes or map abilities, production weights, every movement modifier, Unique Unit substitutions, or naval and air special behavior."
   },
   "dependencies": [
     {
@@ -34,6 +34,7 @@
     "internalNameOffset": "0x0",
     "baseAttackOffset": "0x40",
     "baseDefenseOffset": "0x41",
+    "baseMovementOffset": "0x42",
     "referencePage": "../docs/reference/unit-definitions.md",
     "records": [
       { "id": 0, "name": "Settlers", "attack": 0, "defense": 0 },
@@ -80,6 +81,13 @@
       "semanticName": "EffectiveUnitDefenseLookup",
       "baseField": "unit_definition+0x41",
       "result": "Reads signed base defense and applies recovered unit and civilization modifiers."
+    },
+    "movement": {
+      "function": "0x82CF1F70",
+      "semanticName": "EffectiveUnitMovementLookup",
+      "baseField": "unit_definition+0x42",
+      "result": "Reads signed base movement and applies recovered local and civilization modifiers on its ordinary composed return path.",
+      "evidence": "unit-movement-stat#/accessor"
     }
   },
   "simulationConsumer": {
@@ -127,10 +135,10 @@
   },
   "guards": [
     "Treat the recovered names as semantic analysis labels, not original C++ symbols or enum identifiers.",
-    "Do not assign meanings to definition bytes other than the accepted name, attack, and defense fields from adjacency alone.",
+    "Do not assign meanings to definition bytes other than the accepted name, attack, defense, movement, and production-cost-factor fields from adjacency alone.",
     "A base attack or defense mutation reaches combat and the recovered AI paths through the shared accessors; do not add a duplicate AI adjustment for these two fields.",
     "Do not infer general Unique Unit AI parity from attack and defense parity. Costs, movement, abilities, flags, production weights, and special-domain behavior require separate mapping.",
     "Keep the runtime probe debug-only and default-off; it performs no guest writes or register mutation."
   ],
-  "conclusion": "Version 1.3 stores 29 unit definitions in one 0x94-byte table. Base attack at +0x40 and base defense at +0x41 flow through one effective accessor each. CombatResolve and three independently recovered AI unit evaluation paths call the same accessors, and runtime confirms those readers execute for AI turns and AI combat. A change to these two base fields therefore reaches both combat simulation and the mapped AI consumers without a separate AI stat table, while every other Unique Unit property remains independent analysis work."
+  "conclusion": "Version 1.3 stores 29 unit definitions in one 0x94-byte table. Base attack at +0x40 and base defense at +0x41 flow through one effective accessor each, while base movement at +0x42 flows through the separately bounded EffectiveUnitMovementLookup ordinary return path. CombatResolve and three independently recovered AI unit evaluation paths call the attack and defense accessors, and runtime confirms those readers execute for AI turns and AI combat. Movement AI parity and every other Unique Unit property remain independent analysis work."
 }

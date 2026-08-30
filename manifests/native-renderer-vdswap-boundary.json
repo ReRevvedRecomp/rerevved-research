@@ -24,7 +24,7 @@
     }
   ],
   "currentEvidence": {
-    "method": "foreground read-only DumpFunctions.java queries for the VdSwap owner, its pre-swap command path, the display-descriptor cache producer, the nearby diagnostic capture cluster, and the exact D3D resolve entry; narrow generated-code corroboration; maintained SDK e89618a VdSwap and Xenos register inspection; and one bounded read-only Xenos resolve-to-swap correlation run",
+    "method": "foreground read-only DumpFunctions.java and FindFieldRefs.java queries for the VdSwap owner, its pre-swap command path and wait field, the display-descriptor cache producer, the nearby diagnostic capture cluster, and the exact D3D resolve entry; narrow generated-code corroboration; maintained SDK e89618a VdSwap, packet, and Xenos register inspection; and one bounded read-only Xenos resolve-to-swap correlation run",
     "ghidraResult": "The canonical project identified the exact function entry but truncated at save thunk 0x827F7C78. It supplied no usable body or complete caller result.",
     "generatedCall": {
       "owner": "0x826A4638",
@@ -73,6 +73,14 @@
       "laterNegative": "Swap sequence 492 had no resolve after the preceding observed swap. This is retained as evidence that an older descriptor must not be reused as a same-epoch producer match.",
       "session": "The interactive session ran from 2026-08-30 16:58:18 through title termination at 17:17:33, exited zero, left no process, and had no owner-visible problem. The isolated evidence root contained no reparse point.",
       "classification": "Promoted as exact Xenos producer correlation only. It proves descriptor identity and the producing callsite and subresource for that swap epoch; it does not prove resolve completion, CPU-readable freshness, lifetime, layout conversion, or native presentation."
+    },
+    "waitPayloadDiscriminator": {
+      "query": "A foreground read-only FindFieldRefs.java query bounded to device field +0x2A94 and functions 0x8269C8E0, 0x8269E520, 0x826A3EB8, 0x826A3FB8, and 0x826A4150 found the two exact 0x826A4150 loads at 0x826A41CC and 0x826A42D8. The configured project truncates the save-thunk functions, so absence elsewhere is not used as closure; generated code supplies the complete bounded corroboration.",
+      "preSwapPackets": "With r4 zero, 0x826A4150 emits two PM4_WAIT_REG_MEM packets with wait_info 0x13, the GPU encoding of device[+0x2A94] + 4 with endian bits 2, a full 0xFFFFFFFF mask, and wait interval 0x100. The first compares equal to 1; after callback-packet construction through 0x8269BF40, the second compares equal to 0.",
+      "fieldLifecycle": "Ring initialization at 0x8269C8E0 allocates the independent 32-byte device[+0x2A94] block, embeds its base in the PM4_ME_INIT payload, and initializes related system-command-buffer state. Queue and interrupt handlers 0x826A3EB8 and 0x826A3FB8 clear block offset +4 to zero while maintaining pacing and callback state. This is general command-processor/system-buffer handshake state.",
+      "resolvePacket": "The exact Resolve entry 0x8269E520 has no device +0x2A94 access. Its late PM4_WAIT_REG_MEM is a different register wait: wait_info 3, register 2609 (0xA31), reference r28, mask 0x80000000, and interval 8. The function separately reads device +0x2A9C and publishes that value to destination fields +8 and +12.",
+      "sdkSemantics": "Maintained SDK e89618a decodes PM4_WAIT_REG_MEM as wait_info, poll address or register, reference, mask, and wait interval. Bit 0x10 selects memory and condition 3 selects equality. PM4_ME_INIT is separate micro-engine initialization, not a source-specific Resolve fence.",
+      "result": "The 0x826A4150 wait address and compare payload do not alias state produced by the exact 0x8250AFEC Resolve path. They order a general system-command-buffer handshake inside the GPU command stream and do not create a CPU-side completion point before the later title-owned VdSwap hook. This closes the proposed pre-swap wait as a native CPU-upload freshness gate."
     }
   },
   "abi": {
@@ -89,9 +97,9 @@
     "sdkUse": "The SDK byte-swaps the six descriptor dwords, requires every named pointer, requires the supplied virtual address to equal descriptor base_address << 12, translates it to physical memory, accepts only k_8_8_8_8 or k_2_10_10_10_AS_16_16_16_16, requires RGB color space zero and descriptor-matching width and height, then emits the swap packet."
   },
   "nextDiscriminator": {
-    "site": "Resolve callsite 0x8250AFEC and the pre-VdSwap 0x826A4150 command payload",
-    "question": "Does the address and compare payload emitted by 0x826A4150's apparent WAIT_REG_MEM packet alias a completion or writeback value produced by the exact 0x8250AFEC resolve path?",
-    "limits": "Do not add a native VdSwap upload hook until source production, completion, layout, lifetime, failure suppression, and renderer-thread ownership are all explicit. Do not persist raw guest pointers, reuse ReXGlue texture-cache or presenter state, or claim parity from page readability."
+    "site": "Resolve callsite 0x8250AFEC and its destination texture descriptor and lifetime",
+    "question": "What exact surface layout, allocation lifetime, overwrite order, and host-mirror ownership apply to the destination selected by the exact Resolve-to-VdSwap correlation?",
+    "limits": "Do not add a native VdSwap CPU-upload hook: the proposed title wait is now disproved as a Resolve-specific CPU completion gate. Follow the ReBlue architecture at the semantic Resolve boundary, where native queue submission and retirement can own completion explicitly. Do not persist raw guest pointers, reuse ReXGlue texture-cache or presenter state, or claim parity from page readability."
   },
   "guards": [
     "Do not infer native-mode runtime execution or native visible output from the exact Xenos correlation.",
@@ -100,5 +108,5 @@
     "Do not bypass guest-memory lifetime and synchronization requirements merely because the ABI exposes a virtual address or a pre-swap command-stream flush.",
     "Do not make the research manifest a title runtime dependency."
   ],
-  "conclusion": "ReRevved function 0x826A4638 directly calls VdSwap at 0x826A4884 with an exact frontbuffer fetch descriptor and separately derived virtual address, numeric format, RGB color space, width, and height pointers. Maintained SDK e89618a defines how those values identify the guest frontbuffer. Run NATIVE-CORR-20260830-0001 proves that the first VdSwap source exactly matches the six fetch dwords produced by D3DDevice_Resolve callsite 0x8250AFEC with flags zero, mip zero, and slice zero. The ordinary pre-swap 0x826A4150 path still proves only command ordering; its apparent wait payload has not been tied to this resolve's completion. A native VdSwap upload hook is therefore not yet admissible."
+  "conclusion": "ReRevved function 0x826A4638 directly calls VdSwap at 0x826A4884 with an exact frontbuffer fetch descriptor and separately derived virtual address, numeric format, RGB color space, width, and height pointers. Maintained SDK e89618a defines how those values identify the guest frontbuffer. Run NATIVE-CORR-20260830-0001 proves that the first VdSwap source exactly matches the six fetch dwords produced by D3DDevice_Resolve callsite 0x8250AFEC with flags zero, mip zero, and slice zero. The ordinary pre-swap 0x826A4150 memory waits instead use independent device +0x2A94 system-command-buffer state; the exact Resolve uses a separate register wait and never accesses that field. The proposed wait-to-Resolve alias is disproved, so a native VdSwap CPU-upload hook is not admissible. The next native slice must own the exact Resolve semantically and define its layout, lifetime, submission, and retirement contract."
 }

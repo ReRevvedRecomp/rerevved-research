@@ -11,7 +11,7 @@
     "callsite": "0x826A4884",
     "import": "0x82E92454",
     "sdkCommit": "e89618afbe9c6b5e178797b1ee5e7d03ec3d77e6",
-    "boundary": "This packet establishes the exact static ReRevved VdSwap call and the maintained SDK ABI. It does not prove native-mode runtime execution, guest-memory lifetime, CPU or GPU synchronization, a host upload path, color correctness, or visible output."
+    "boundary": "This packet establishes the exact static ReRevved VdSwap call, the maintained SDK ABI, and one exact Xenos runtime correlation from a title Resolve destination to the first VdSwap source. It does not prove native-mode runtime execution, guest-memory lifetime, CPU or GPU completion, a host upload path, color correctness, or native visible output."
   },
   "dependencies": [
     {
@@ -24,7 +24,7 @@
     }
   ],
   "currentEvidence": {
-    "method": "foreground read-only DumpFunctions.java queries for the VdSwap owner, its pre-swap command path, the display-descriptor cache producer, the nearby diagnostic capture cluster, and the exact D3D resolve entry; narrow generated-code corroboration; and maintained SDK e89618a VdSwap and Xenos register inspection",
+    "method": "foreground read-only DumpFunctions.java queries for the VdSwap owner, its pre-swap command path, the display-descriptor cache producer, the nearby diagnostic capture cluster, and the exact D3D resolve entry; narrow generated-code corroboration; maintained SDK e89618a VdSwap and Xenos register inspection; and one bounded read-only Xenos resolve-to-swap correlation run",
     "ghidraResult": "The canonical project identified the exact function entry but truncated at save thunk 0x827F7C78. It supplied no usable body or complete caller result.",
     "generatedCall": {
       "owner": "0x826A4638",
@@ -59,7 +59,20 @@
       "abi": "The function retains r3 as the device, r4 as flags, r5 as a source rectangle, r6 as the destination texture, r7 as a destination point, r8 and r9 as destination subresource selectors, r10 as clear-color data, and f1 plus stack arguments as clear values or parameters. It reads the destination texture fetch descriptor from r6 + 0x1C through +0x30.",
       "registerProof": "The function emits Xenos resolve state and explicitly writes register indices 0x2318 and 0x231B, decimal 8984 and 8987, before returning. Maintained SDK e89618a names these RB_COPY_CONTROL and RB_COPY_DEST_INFO. Generated corroboration is at generated/default/rerevved_recomp.163.cpp:12758-14889.",
       "negativeCluster": "The nearby 0x826B1978, 0x826B1DA0, 0x826B26A8, and 0x826B2A48 cluster is conditional diagnostic frame-capture and reporting work immediately before swap. It is not D3DDevice_Resolve and supplies no production or completion gate.",
-      "result": "0x8269E520 is the exact ReRevved D3DDevice_Resolve semantic boundary. Static evidence does not yet select which of its destination textures becomes the later VdSwap frontbuffer or prove when that resolve is complete for a title-owned renderer."
+      "result": "0x8269E520 is the exact ReRevved D3DDevice_Resolve semantic boundary. Runtime evidence now selects one exact destination produced at callsite 0x8250AFEC, while completion for a title-owned renderer remains unproved."
+    },
+    "runtimeCorrelation": {
+      "runId": "NATIVE-CORR-20260830-0001",
+      "titleCommit": "1ad60ba98b9a43a1684c2bd27b2824ff36265378",
+      "sdkCommit": "e89618afbe9c6b5e178797b1ee5e7d03ec3d77e6",
+      "sdkVersion": "0.10.0.16-dev.ge89618a",
+      "renderer": "xenos/rov",
+      "executableSha256": "d7359c02154186eebf10c90db985db5f3b7e64e9c0119cd3a72b90e379217865",
+      "logSha256": "75d0670eca18b53129230ca05e41d8f8a07a5f2fc9ec87a7c5437a0df47c9b50",
+      "exactMatch": "The first VdSwap epoch exactly matched all six fetch-descriptor dwords from Resolve callsite 0x8250AFEC, return 0x8250AFF0, with flags 0, mip 0, slice 0, resolve sequence 3, swap sequence 1, and source base 0xFF6F7000.",
+      "laterNegative": "Swap sequence 492 had no resolve after the preceding observed swap. This is retained as evidence that an older descriptor must not be reused as a same-epoch producer match.",
+      "session": "The interactive session ran from 2026-08-30 16:58:18 through title termination at 17:17:33, exited zero, left no process, and had no owner-visible problem. The isolated evidence root contained no reparse point.",
+      "classification": "Promoted as exact Xenos producer correlation only. It proves descriptor identity and the producing callsite and subresource for that swap epoch; it does not prove resolve completion, CPU-readable freshness, lifetime, layout conversion, or native presentation."
     }
   },
   "abi": {
@@ -76,16 +89,16 @@
     "sdkUse": "The SDK byte-swaps the six descriptor dwords, requires every named pointer, requires the supplied virtual address to equal descriptor base_address << 12, translates it to physical memory, accepts only k_8_8_8_8 or k_2_10_10_10_AS_16_16_16_16, requires RGB color space zero and descriptor-matching width and height, then emits the swap packet."
   },
   "nextDiscriminator": {
-    "site": "the nine direct 0x8269E520 callsites and the later 0x826A4884 VdSwap descriptor",
-    "question": "Which exact ReRevved D3DDevice_Resolve destination matches the later VdSwap frontbuffer descriptor, and what title-owned completion signal can serialize that resolve with a single native renderer-thread presentation owner?",
+    "site": "Resolve callsite 0x8250AFEC and the pre-VdSwap 0x826A4150 command payload",
+    "question": "Does the address and compare payload emitted by 0x826A4150's apparent WAIT_REG_MEM packet alias a completion or writeback value produced by the exact 0x8250AFEC resolve path?",
     "limits": "Do not add a native VdSwap upload hook until source production, completion, layout, lifetime, failure suppression, and renderer-thread ownership are all explicit. Do not persist raw guest pointers, reuse ReXGlue texture-cache or presenter state, or claim parity from page readability."
   },
   "guards": [
-    "Do not infer runtime execution or visible output from the static call and maintained SDK ABI.",
+    "Do not infer native-mode runtime execution or native visible output from the exact Xenos correlation.",
     "Do not treat the primary ring-buffer reservation, system writeback, or system-command-buffer values as the frontbuffer source.",
     "Do not copy ReBlue surface fields, formats, offsets, or present policy.",
     "Do not bypass guest-memory lifetime and synchronization requirements merely because the ABI exposes a virtual address or a pre-swap command-stream flush.",
     "Do not make the research manifest a title runtime dependency."
   ],
-  "conclusion": "ReRevved function 0x826A4638 directly calls VdSwap at 0x826A4884 with an exact frontbuffer fetch descriptor and separately derived virtual address, numeric format, RGB color space, width, and height pointers. Maintained SDK e89618a defines how those values identify the guest frontbuffer. ReRevved function 0x8269E520 is now proved as the exact D3DDevice_Resolve boundary, while the ordinary pre-swap 0x826A4150 path proves only command ordering. Which resolve destination feeds VdSwap and how a title-owned renderer observes its completion remain open, so a native VdSwap upload hook is not yet admissible."
+  "conclusion": "ReRevved function 0x826A4638 directly calls VdSwap at 0x826A4884 with an exact frontbuffer fetch descriptor and separately derived virtual address, numeric format, RGB color space, width, and height pointers. Maintained SDK e89618a defines how those values identify the guest frontbuffer. Run NATIVE-CORR-20260830-0001 proves that the first VdSwap source exactly matches the six fetch dwords produced by D3DDevice_Resolve callsite 0x8250AFEC with flags zero, mip zero, and slice zero. The ordinary pre-swap 0x826A4150 path still proves only command ordering; its apparent wait payload has not been tied to this resolve's completion. A native VdSwap upload hook is therefore not yet admissible."
 }

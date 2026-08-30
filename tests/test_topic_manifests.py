@@ -215,6 +215,21 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("policy name", document["conclusion"])
         self.assertIn("remain unresolved", document["conclusion"])
 
+    def test_player_production_scalar_virtual_source_boundary(self) -> None:
+        path = MANIFESTS / "player-production-scalar-virtual-source.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0102")
+        self.assertEqual(document["acceptedAnchors"]["commandType"], 57)
+        self.assertEqual(document["ghidraCoverage"]["entry"]["bodyBytes"], "0x8")
+        self.assertIsNone(document["ghidraCoverage"]["submitSite"]["containingFunction"])
+        self.assertEqual(document["ghidraCoverage"]["submitSite"]["decodedInstructions"], 0)
+        self.assertEqual(document["generatedCorroboration"]["receiverCandidate"]["register"], "r14")
+        self.assertEqual(document["generatedCorroboration"]["wrapperFlow"]["submitCall"],
+                         "0x82D224F0 calls 0x82CE1830")
+        self.assertIn("does not prove", document["boundedNegative"]["result"])
+        self.assertIn("not a claim", document["conclusion"])
+
     def test_wonder_record_identities(self) -> None:
         path = MANIFESTS / "wonder-record-identities.json"
         document = json.loads(path.read_text(encoding="utf-8"))

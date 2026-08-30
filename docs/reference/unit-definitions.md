@@ -58,6 +58,17 @@ final-cost bytes.
 The bounded lifecycle and persistence locators are in
 [`player-production-scalar-lifecycle.json`](../../manifests/player-production-scalar-lifecycle.json).
 
+A follow-up bounded source packet could not promote the virtual target behind
+command-type-57 arg2. Ghidra models only eight bytes at setup entry
+`0x82D217C8` and has no containing function or decoded instructions at submit
+site `0x82D224F0`. Narrow generated corroboration shows the intended `r14`
+receiver, vtable byte slot `+0xA0`, return flow through `r3`, `r31`, and wrapper
+arg2 register `r5`, and a separately loaded receiver for the nearby `+0x100`
+route. Because the exact receiver path is undecoded in Ghidra, no concrete
+object, vtable, slot target, thunk, scalar source, or policy identity is
+promoted. Exact limits are in
+[`player-production-scalar-virtual-source.json`](../../manifests/player-production-scalar-virtual-source.json).
+
 `ProductionItemCostLookup` at `0x82CE2B98` applies this unit formula to item
 IDs 0 through 99. `CurrentProductionItemCostLookup` at `0x82CF8308` selects the
 current city item at `+0x38` and returns the same unit result. Both route item

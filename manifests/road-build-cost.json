@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0090",
+  "topic": "road-build-cost",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which current-image paths implement UEA 1 Roads cost half as much, and do the reusable cost result and city-update command path apply the same arithmetic?",
+  "scope": {
+    "functions": ["0x82CE1950", "0x82CF0CB0", "0x82CF83C0", "0x82D019F0", "0x82D13978"],
+    "boundary": "This packet identifies the shared UEA 1 halving arithmetic in one reusable cost-return helper and the city-update command path. It does not name the path-factor helper, recover every base-cost input, prove every road action or caller, identify command 7 beyond this bounded use, or establish AI, presentation, save, scenario, multiplayer, or runtime behavior."
+  },
+  "dependencies": [
+    { "topic": "civilization-bonus-storage", "use": "Provides the accepted cumulative ActiveCivilizationBonusLookup contract and three retail placements of UEA 1." }
+  ],
+  "activation": {
+    "ueaId": 1,
+    "effect": "Roads cost half as much",
+    "lookup": "0x82CF0CB0",
+    "mode": "cumulative",
+    "retailPlacements": [
+      { "civilization": "Roman", "era": "Ancient" },
+      { "civilization": "French", "era": "Medieval" },
+      { "civilization": "Aztec", "era": "Industrial" }
+    ]
+  },
+  "baseCostShape": {
+    "factorHelper": "0x82D019F0",
+    "formula": "factorHelperResult * (bounded scalar + 2) * 5",
+    "qualification": "Both accepted paths use this exact integer shape before UEA 1. The factor-helper meaning, all inputs, and the bounded scalar's complete provenance remain unresolved."
+  },
+  "costOwner": {
+    "function": "0x82CF83C0",
+    "semanticName": "RoadBuildCostLookup",
+    "factorCall": "0x82CF8430",
+    "baseComposition": "0x82CF8434..0x82CF844C",
+    "lookupArguments": {
+      "mode": { "address": "0x82CF8454", "value": 0 },
+      "player": { "address": "0x82CF8458", "source": "retained r31" },
+      "ueaId": { "address": "0x82CF845C", "value": 1 }
+    },
+    "lookupCallsite": "0x82CF8460",
+    "resultTest": "0x82CF8464",
+    "inactiveTarget": "0x82CF847C",
+    "activeDivide": ["0x82CF846C", "0x82CF8470"],
+    "activeResult": "signed base cost divided by two with truncation toward zero",
+    "inactiveResult": "base cost",
+    "result": "The reusable helper returns half of the composed signed road cost when cumulative UEA 1 is active and the full cost otherwise."
+  },
+  "cityUpdateConsumer": {
+    "function": "0x82D13978",
+    "factorCall": "0x82D16828",
+    "baseComposition": "0x82D1682C..0x82D16844",
+    "lookupArguments": {
+      "mode": { "address": "0x82D16830", "value": 0 },
+      "player": { "address": "0x82D1683C", "source": "retained r21" },
+      "ueaId": { "address": "0x82D16840", "value": 1 }
+    },
+    "lookupCallsite": "0x82D16848",
+    "resultTest": "0x82D1684C",
+    "inactiveTarget": "0x82D1685C",
+    "activeDivide": ["0x82D16854", "0x82D16858"],
+    "affordabilityPath": "0x82D1685C..0x82D1686C",
+    "commandSubmit": { "address": "0x82D16894", "function": "0x82CE1950", "command": 7 },
+    "result": "The city-update path applies the identical signed half-cost arithmetic, then uses the resulting value in its positive and affordability checks before the bounded command-7 submission."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only current-image query with two 25-word windows, exact verification of 29 selected words and branch targets, and narrow generated-code corroboration of 0x82CF83C0 and the road-cost slice in 0x82D13978.",
+    "entries": [
+      { "role": "reusable road-cost owner", "address": "0x82CF83C0", "confidence": "strong" },
+      { "role": "reusable UEA 1 lookup", "address": "0x82CF8460", "confidence": "strong" },
+      { "role": "city-update UEA 1 lookup", "address": "0x82D16848", "confidence": "strong" },
+      { "role": "bounded command submission", "address": "0x82D16894", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82CF8430..0x82CF8490",
+      "ghidra/DumpMemoryWords.java:0x82D16818..0x82D16878",
+      "generated:rerevved/sub_82CF83C0",
+      "generated:rerevved/sub_82D13978"
+    ],
+    "qualification": "No runtime action was performed. The current-image windows establish both lookup gates and half-cost arithmetic; generated code supplies bounded base composition and downstream command-use context."
+  },
+  "guards": [
+    "Do not replace signed division toward zero with an unsigned shift or floating-point half.",
+    "Do not name 0x82D019F0 or its complete input meaning from this cost packet.",
+    "Do not generalize command 7 beyond the bounded city-update road-cost path.",
+    "Do not claim complete callers, AI, presentation, save, scenario, multiplayer, or runtime parity."
+  ],
+  "conclusion": "RoadBuildCostLookup at 0x82CF83C0 and the bounded city-update path in 0x82D13978 independently compose the same road base-cost shape, request cumulative UEA 1, and divide the signed cost by two with truncation toward zero when active. The city-update result feeds its affordability check before command 7 is submitted."
+}

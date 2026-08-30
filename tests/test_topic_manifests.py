@@ -120,6 +120,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn(8, {entry["ueaId"] for entry in shared})
         self.assertIn(42, {entry["ueaId"] for entry in shared})
         self.assertIn(47, {entry["ueaId"] for entry in shared})
+        self.assertIn(1, {entry["ueaId"] for entry in shared})
         self.assertTrue({3, 12, 55}.issubset(
             {entry["ueaId"] for entry in shared}
         ))
@@ -127,6 +128,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertNotIn(8, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(42, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(47, document["retailOwnerClasses"]["unknown"])
+        self.assertNotIn(1, document["retailOwnerClasses"]["unknown"])
         self.assertTrue({3, 12, 55}.isdisjoint(
             document["retailOwnerClasses"]["unknown"]
         ))
@@ -134,10 +136,10 @@ class TopicManifestTests(unittest.TestCase):
             document["retailCellProjection"]["counts"],
             {
                 "total": 64,
-                "sharedCumulativeLookup": 26,
+                "sharedCumulativeLookup": 29,
                 "directCivilizationEffectPath": 1,
                 "mixedCompanionPath": 0,
-                "unknown": 37,
+                "unknown": 34,
             },
         )
         owner = document["greatPersonGenerationOwner"]
@@ -200,6 +202,19 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(owners[55]["predicate"]["unitType"], 6)
         self.assertEqual(owners[3]["predicate"]["mask"], "0x200")
         self.assertEqual(document["inventoryCorrection"]["ueaId"], 12)
+
+    def test_road_build_cost_contract(self) -> None:
+        path = MANIFESTS / "road-build-cost.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["activation"]["ueaId"], 1)
+        owner = document["costOwner"]
+        self.assertEqual(owner["function"], "0x82CF83C0")
+        self.assertEqual(owner["lookupCallsite"], "0x82CF8460")
+        self.assertEqual(owner["activeDivide"], ["0x82CF846C", "0x82CF8470"])
+        consumer = document["cityUpdateConsumer"]
+        self.assertEqual(consumer["lookupCallsite"], "0x82D16848")
+        self.assertEqual(consumer["commandSubmit"]["command"], 7)
 
     def test_unique_unit_combat_predicate_contract(self) -> None:
         path = MANIFESTS / "unique-unit-combat-predicates.json"

@@ -152,6 +152,25 @@ The display evidence is rush-area-specific, and the completion evidence closes
 only one threshold. The two AI paths prove shared inputs, not scoring, decision,
 or corrected-rush parity. No runtime production behavior was tested.
 
+The same `0x82D13978` function has a separately bounded non-unit threshold.
+Within the accepted current-item domain, signed city `+0x38` values at least
+100 route to `BuildingWonderProductionCostLookup`. Item IDs 100 through 199
+compare signed invested production at `+0x36` with the returned cost and branch
+away when invested is less; the sufficient path first stores invested minus
+cost back to `+0x36`. IDs 200 through 299 repeat the cost call, preserve its
+result, and perform the same signed comparison. After two additional neutral
+gates, their first promoted stores write invested minus cost to `+0x36`, copy
+current item to `+0x3A`, and replace the word at `+0x24` with that word masked
+by `0xFFFFFBFF`.
+
+The function does not expose an independent item-less-than-300 guard in the
+bounded evidence, so the range wording depends on the accepted current-item
+domain and does not validate arbitrary IDs. The stores are neutral first-write
+facts, not building or wonder completion, effect execution, queue advancement,
+overflow handling, creation, notification, runtime behavior, or implementation
+safety. Exact addresses and stops are in
+[`non-unit-production-threshold-boundary.json`](../../manifests/non-unit-production-threshold-boundary.json).
+
 ## UnitType values
 
 | ID | Internal name | Attack | Defense |
@@ -270,5 +289,6 @@ resolver outcome.
 - [Unique Unit identity selection](../../manifests/unique-unit-identity-selection.json)
 - [Unit-definition AI evaluation](../../manifests/unit-definitions-ai-evaluation.json)
 - [Production cost ownership](../../manifests/production-cost-ownership.json)
+- [Non-unit production threshold boundary](../../manifests/non-unit-production-threshold-boundary.json)
 - [Combat resolution lifecycle](../../manifests/combat-resolution-lifecycle.json)
 - [Unique Unit combat predicates](../../manifests/unique-unit-combat-predicates.json)

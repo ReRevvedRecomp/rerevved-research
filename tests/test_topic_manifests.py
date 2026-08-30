@@ -266,6 +266,26 @@ class TopicManifestTests(unittest.TestCase):
         )
         self.assertIn("corrected exact-function query", document["currentEvidence"]["qualification"])
 
+    def test_non_unit_production_threshold_boundary(self) -> None:
+        path = MANIFESTS / "non-unit-production-threshold-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0106")
+        self.assertEqual(document["scope"]["function"], "0x82D13978")
+        self.assertEqual(document["scope"]["costHelper"], "0x82CF1278")
+        self.assertIn("independent item-less-than-300 guard", document["itemSelection"]["rangeQualification"])
+        self.assertEqual(document["buildingPath"]["firstWrite"]["address"], "0x82D16150")
+        self.assertEqual(
+            [entry["address"] for entry in document["wonderPath"]["firstWrites"]],
+            ["0x82D16310", "0x82D16318", "0x82D16320"],
+        )
+        self.assertEqual(
+            1 + len(document["wonderPath"]["firstWrites"]),
+            4,
+        )
+        self.assertEqual(document["catalogPromotion"]["newRelations"], ["RVA-REL-0472"])
+        self.assertIn("Raw words", document["currentEvidence"]["qualification"])
+
     def test_player_production_scalar_lifecycle(self) -> None:
         path = MANIFESTS / "player-production-scalar-lifecycle.json"
         document = json.loads(path.read_text(encoding="utf-8"))

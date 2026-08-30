@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0106",
+  "topic": "non-unit-production-threshold-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Within accepted function 0x82D13978, does the guarded item-ID 100-through-299 path route BuildingWonderProductionCostLookup result 0x82CF1278 into a signed comparison against invested production at city +0x36, and what are the first exact control-dependent writes reached when production is sufficient?",
+  "scope": {
+    "function": "0x82D13978",
+    "costHelper": "0x82CF1278",
+    "rawWordWindows": ["0x82D159A0..0x82D15A00", "0x82D16120..0x82D16158", "0x82D162A0..0x82D16330"],
+    "fields": { "currentItem": "+0x38 signed halfword", "investedProduction": "+0x36 signed halfword" },
+    "boundary": "This packet follows only the accepted current-item guard, two direct non-unit cost calls, their exact return carriers, signed invested-production comparisons, insufficient branches, and four first direct stores across the two sufficient paths. It does not name complete production behavior, enter downstream helpers, classify the stored state, or inspect the wider function."
+  },
+  "dependencies": [
+    { "topic": "production-cost-ownership", "use": "Provides 0x82D13978, city +0x36 and +0x38 roles, BuildingWonderProductionCostLookup, and the accepted 100-through-199 and 200-through-299 cost ranges." }
+  ],
+  "itemSelection": {
+    "load": "0x82D159A8 loads city +0x38 and 0x82D159AC sign-extends it into r25.",
+    "emptyGate": "0x82D159B0 compares signed r25 with -1 and 0x82D159B4 branches away on equality.",
+    "nonUnitGate": "0x82D159B8 compares signed r25 with 100 and 0x82D159C4 branches to 0x82D16124 when r25 is at least 100.",
+    "rangeQualification": "Within the dependency's accepted current-item domain 0 through 299, the lower-bound branch selects IDs 100 through 299. Neither the raw read set nor the exact generated function contains an independent item-less-than-300 guard, so this packet does not claim arbitrary IDs 300 or greater are valid or safely handled.",
+    "helperInputs": "0x82D159BC sets r4 to -1 and 0x82D159C0 preserves the accepted city/player input in r3. The building-side call at 0x82D16128 uses those live inputs. The wonder-side sequence reloads r4=-1 and r3 at 0x82D162A4 and 0x82D162A8 before its call at 0x82D162B0."
+  },
+  "buildingPath": {
+    "range": "After the first cost call, 0x82D16124 forms item minus 100 in r30. The signed comparison with 100 at 0x82D1612C and branch at 0x82D16130 keep normalized values below 100 on this path, corresponding to accepted item IDs 100 through 199.",
+    "costCall": "0x82D16128 calls 0x82CF1278; its return remains in r3.",
+    "comparison": "0x82D16138 loads invested production from city +0x36, 0x82D1613C sign-extends it into r9, and 0x82D16140 compares signed r9 against the same cost result in r3.",
+    "insufficientBranch": "0x82D16144 branches to 0x82D16388 while signed invested production is less than cost.",
+    "firstWrite": {
+      "ordinal": 1,
+      "address": "0x82D16150",
+      "base": "city",
+      "offset": "+0x36",
+      "width": "16 bits",
+      "source": "0x82D16148 subtracts cost r3 from the loaded invested-production halfword r11 and the store writes the low halfword of that difference."
+    },
+    "stop": "The direct call at 0x82D16158 and all later effects are outside this packet."
+  },
+  "wonderPath": {
+    "range": "The branch at 0x82D16130 reaches 0x82D162A4 when item-minus-100 is at least 100, corresponding within the accepted domain to item IDs 200 through 299. 0x82D162AC forms item minus 200 in r27.",
+    "costCall": "0x82D162B0 calls 0x82CF1278 and 0x82D162B8 preserves its exact return from r3 in r28.",
+    "comparison": "0x82D162BC loads city +0x36, 0x82D162C0 sign-extends it into r10, and 0x82D162C4 compares signed r10 against preserved cost r28.",
+    "insufficientBranch": "0x82D162C8 branches to 0x82D16388 while signed invested production is less than cost.",
+    "additionalGates": "Before any promoted write, 0x82D162E0..0x82D162E4 require one neutral indexed word to equal -1, and the direct call at 0x82D162EC must return nonzero under 0x82D162F0..0x82D162F4. Their meanings and callees remain outside this packet.",
+    "firstWrites": [
+      {
+        "ordinal": 2,
+        "address": "0x82D16310",
+        "base": "city",
+        "offset": "+0x36",
+        "width": "16 bits",
+        "source": "0x82D16308 subtracts preserved cost r28 from the loaded invested-production halfword r8; the store writes the low halfword of r7."
+      },
+      {
+        "ordinal": 3,
+        "address": "0x82D16318",
+        "base": "city",
+        "offset": "+0x3A",
+        "width": "16 bits",
+        "source": "r10 loaded from current-item city +0x38 at 0x82D16300."
+      },
+      {
+        "ordinal": 4,
+        "address": "0x82D16320",
+        "base": "city",
+        "offset": "+0x24",
+        "width": "32 bits",
+        "source": "The old word loaded at 0x82D16314 after mask 0xFFFFFBFF is formed at 0x82D1631C, clearing bit 0x00000400."
+      }
+    ],
+    "stop": "The packet stops after the fourth promoted direct write across both sufficient paths. The conditional store at 0x82D1632C and all later calls, writes, and effects remain outside the promotion."
+  },
+  "catalogPromotion": {
+    "updatedSymbols": ["RVA-SYM-0322"],
+    "newRelations": ["RVA-REL-0472"],
+    "result": "The existing neutral function gains the bounded non-unit threshold and first-write qualification, and one reusable relation records its two direct calls to BuildingWonderProductionCostLookup. No city structure or semantic field entity is added."
+  },
+  "currentEvidence": {
+    "method": "The exact generated body supplied candidate localization only. One foreground read-only instruction query confirmed that Ghidra skips the truncated interior; three sequential foreground read-only raw-word queries then covered only the guard, building threshold, and wonder threshold/first-write windows.",
+    "entries": [
+      { "role": "item guard and accepted unit-boundary overlap", "address": "0x82D159A0", "result": "Twenty-five exact big-endian words cover signed city +0x38 loading, the -1 and 100 comparisons, helper inputs, and the accepted unit comparison through 0x82D159FC.", "confidence": "strong" },
+      { "role": "building threshold and first write", "address": "0x82D16120", "result": "Fifteen exact words cover the helper call, normalized range split, signed +0x36 comparison, insufficient branch, difference, and first halfword store.", "confidence": "strong" },
+      { "role": "wonder threshold and first writes", "address": "0x82D162A0", "result": "Thirty-seven exact words cover the second helper call, r3-to-r28 preservation, signed +0x36 comparison, insufficient branch, two additional neutral gates, and the first three promoted wonder-path stores.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82D159D0 radius=12",
+      "ghidra/DumpMemoryWords.java:0x82D1613C radius=7",
+      "ghidra/DumpMemoryWords.java:0x82D162E8 radius=18",
+      "generated:rerevved/sub_82D13978"
+    ],
+    "qualification": "DumpInstructions at 0x82D159A4 skipped directly to the next modeled function and is not evidence for this packet. Raw words, not truncated decompilation or the skipped listing, support every promoted address and dependency. No runtime probe was performed."
+  },
+  "guards": [
+    "Apply the 100-through-299 wording only within the dependency's accepted current-item domain; no local upper-bound guard was proved.",
+    "Keep the helper's -1 second argument and r23 first argument neutral beyond their accepted current-city/player use.",
+    "Do not assign meanings to city +0x3A, city +0x24, the neutral indexed gate, or the direct gate call at 0x82D162EC.",
+    "Do not call the stores completion, effect, queue, overflow, creation, notification, or AI behavior.",
+    "Do not infer runtime execution, implementation safety, or behavior outside the exact raw-word windows."
+  ],
+  "conclusion": "Within the accepted current-item domain, signed city +0x38 values at least 100 enter the non-unit path. Item-minus-100 below 100 uses the 0x82D16128 cost call; signed city +0x36 is compared with returned r3 and branches away when invested production is less, while the sufficient path first stores invested minus cost to city +0x36. The accepted wonder range repeats the cost call at 0x82D162B0, preserves returned r3 in r28, performs the same signed threshold, and after two additional neutral gates first stores invested minus cost to +0x36, current item to +0x3A, and a bit-cleared word to +0x24. These are threshold and first-write facts only. There is no proved local item-less-than-300 guard, and complete production behavior, field meanings, downstream helpers, later writes, runtime execution, and implementation safety remain unresolved."
+}

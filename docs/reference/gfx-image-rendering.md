@@ -166,6 +166,11 @@ index format, and positive count. It applies fill state, composes the supplied
 affine transform with renderer matrix state through `0x823038D8`, and reaches
 `GraphicsFlushAndIssue` at `0x826A3568` after the draw gates pass.
 
+A bounded direct-reference inventory for `GfxIndexedDraw` contains one data
+reference at `0x82169E6C`, exactly renderer vtable `0x82169E30 + 0x3C`, and no
+direct code caller. This confirms the accepted slot edge but does not identify
+the dynamic callsites or their owning renderer families.
+
 Other bounded setup functions include color transform `0x823029B8`, viewport
 setup `0x82302F60`, and blend setup `0x823036D0`. The last two names describe
 only their recovered roles. Their wider state ownership remains unresolved.

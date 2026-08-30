@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0109",
+  "topic": "native-renderer-indexed-draw-caller-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which direct caller families issue indexed draws through GfxIndexedDraw 0x82303C38 in the bounded version-1.3 reference graph?",
+  "scope": {
+    "indexedDraw": "0x82303C38",
+    "rendererVtable": "0x82169E30",
+    "rendererSlot": "+0x3C",
+    "issueSites": ["0x82303E3C", "0x82303E8C"],
+    "boundary": "This packet reads one exact direct-reference inventory for GfxIndexedDraw. The result contains one data reference and no code caller, so the dynamic-dispatch stop applies before any caller decompilation or callee traversal."
+  },
+  "dependencies": [
+    { "topic": "gfx-draw-producer", "use": "Provides the accepted GfxIndexedDraw identity, renderer vtable slot, and two downstream issue sites." },
+    { "topic": "native-renderer-d3d-inventory", "use": "Provides the accepted partial renderer inventory without claiming a backend owner." }
+  ],
+  "referenceResult": {
+    "target": "0x82303C38",
+    "references": 1,
+    "rows": [
+      {
+        "type": "DATA",
+        "source": "0x82169E6C",
+        "owner": "<data>",
+        "interpretation": "The source is exactly GfxRendererVtable 0x82169E30 + 0x3C."
+      }
+    ],
+    "directCodeCallers": [],
+    "decompiledCallerFunctions": [],
+    "result": "The configured reference graph contains the accepted vtable-slot data edge and no direct code caller edge."
+  },
+  "boundedNegative": {
+    "result": "No direct caller-family ownership is promoted because GfxIndexedDraw has no modeled direct code references and its only exact reference is the accepted vtable slot at 0x82169E6C.",
+    "effect": "The existing Gfx renderer slot and indexed-draw implementation remain accepted, while the concrete dynamic callsites and their owning renderer families remain unresolved.",
+    "falsificationCondition": "A current-image code reference, resolved indirect target, or independently anchored dynamic callsite proves an exact caller into 0x82303C38."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": ["RVA-SYM-0172", "RVA-SLOT-0032"],
+    "result": "The existing function and vtable slot gain the bounded caller-frontier qualification; no direct caller relation is added."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only DumpReferences.java query against the canonical version-1.3 Ghidra project.",
+    "entries": [
+      { "role": "indexed-draw reference inventory", "address": "0x82303C38", "result": "One DATA reference at 0x82169E6C in no function and zero direct code references.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpReferences.java:0x82303C38"
+    ],
+    "qualification": "No caller function was decompiled because the only exact reference is data and the packet explicitly stops when dynamic dispatch prevents ownership. The issue-site facts are accepted dependencies, not new caller evidence."
+  },
+  "guards": [
+    "Do not infer a concrete caller from vtable placement alone.",
+    "Do not treat zero direct code references as absence of indirect calls.",
+    "Do not traverse callees or assign renderer, backend, runtime, SDK, or Studio implementation ownership."
+  ],
+  "conclusion": "The bounded current-image reference graph exposes only the accepted GfxRendererVtable slot +0x3C data edge into GfxIndexedDraw. It exposes no direct code caller, so dynamic dispatch prevents exact caller-family ownership and no new caller relation is promoted."
+}

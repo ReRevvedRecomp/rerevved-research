@@ -454,6 +454,19 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("No additional exact reserve source", document["boundedNegative"]["result"])
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
+    def test_native_renderer_indexed_draw_caller_frontier(self) -> None:
+        path = MANIFESTS / "native-renderer-indexed-draw-caller-frontier.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0109")
+        self.assertEqual(document["scope"]["indexedDraw"], "0x82303C38")
+        self.assertEqual(document["referenceResult"]["references"], 1)
+        self.assertEqual(document["referenceResult"]["rows"][0]["source"], "0x82169E6C")
+        self.assertEqual(document["referenceResult"]["directCodeCallers"], [])
+        self.assertEqual(document["referenceResult"]["decompiledCallerFunctions"], [])
+        self.assertIn("No direct caller-family ownership", document["boundedNegative"]["result"])
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

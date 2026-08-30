@@ -76,7 +76,10 @@ cumulative UEA 24, Wonders cost half as much, is active. The common scale is
 part of the native wonder formula, not UEA 24 itself. Exact records identify
 items 200 through 204 as Pyramids of Egypt factor 30, The Great Wall factor 30,
 Hanging Gardens of Babylon factor 20, Stonehenge factor 10, and Colossus of
-Rhodes factor 20. Each carries initialized name, short-token, art-token, and
+Rhodes factor 20. Items 205 through 209 are Oracle of Delphi factor 25, Great
+Library of Alexandria factor 30, The East India Company factor 40, Oxford
+University factor 30, and Shakespeare's Theatre factor 30. Each carries
+initialized name, short-token, art-token, and
 effect-description strings at repeated offsets, but no display consumer or
 effect implementation is proved. The remaining building and wonder identities,
 complete layouts, adjacent fields, and other modifiers remain unresolved. Cost
@@ -84,6 +87,8 @@ locators are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).
 The five wonder records are in
 [`wonder-record-identities.json`](../../manifests/wonder-record-identities.json).
+The next five and their +0x49 token-boundary guard are in
+[`wonder-record-identities-205-209.json`](../../manifests/wonder-record-identities-205-209.json).
 
 Bounded static consumers are:
 

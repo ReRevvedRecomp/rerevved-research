@@ -232,6 +232,23 @@ class TopicManifestTests(unittest.TestCase):
         )
         self.assertIn("no display consumer", document["conclusion"])
 
+    def test_wonder_record_identities_205_209(self) -> None:
+        path = MANIFESTS / "wonder-record-identities-205-209.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            [(record["itemId"], record["name"], record["baseCostFactor"])
+             for record in document["records"]],
+            [(205, "Oracle of Delphi", 25),
+             (206, "Great Library of Alexandria", 30),
+             (207, "The East India Company", 40),
+             (208, "Oxford University", 30),
+             (209, "Shakespeare's Theatre", 30)],
+        )
+        self.assertIn("0x21", document["records"][2]["shortTokenBoundary"])
+        self.assertIn("0x27", document["records"][4]["shortTokenBoundary"])
+        self.assertIn("No display consumer", document["conclusion"])
+
     def test_gold_reserve_interest_contract(self) -> None:
         path = MANIFESTS / "gold-reserve-interest.json"
         document = json.loads(path.read_text(encoding="utf-8"))

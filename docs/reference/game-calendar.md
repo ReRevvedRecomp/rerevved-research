@@ -40,9 +40,12 @@ bonus caused the transition.
 ## Presentation
 
 The retail debug formatter consumes both scalars as separate integer
-arguments, and other native readers compare scheduled event years with
-`0x8312B8E0`. Bounded runtime observation maps turn 61 to 1025 AD and turn 62
-to 1050 AD.
+arguments. Separately, complete function `0x82DF9FD0` compares scheduled
+event-year field `+0x444` directly with `0x8312B8E0`. Inequality immediately
+branches to `0x82DFA038`, returns `1`, and stops that match path. The concrete
+event class, scheduling cadence, and complete eligibility meaning remain
+unresolved. Bounded runtime observation maps turn 61 to 1025 AD and turn 62 to
+1050 AD.
 
 These values do not identify one native UI formatter for every calendar
 value. The image contains separate BC, AD, and year-zero strings, but final

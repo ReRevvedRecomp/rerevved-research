@@ -186,10 +186,10 @@ each distinct UEA ID's accepted owner class to the row table above:
 
 | Owner class | Distinct retail IDs | Retail cells | Boundary |
 | --- | --- | ---: | --- |
-| Shared cumulative lookup | 5, 9, 10, 13, 17, 23, 34, 35, 43, 48, 58, 59, 60 | 15 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
+| Shared cumulative lookup | 5, 9, 10, 13, 17, 23, 34, 35, 42, 43, 48, 58, 59, 60 | 18 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
 | Direct civilization/effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
 | Mixed companion path | None | 0 | No native retail cell is accepted in this class. |
-| Unknown | 1, 2, 3, 4, 6, 7, 8, 12, 14, 16, 18, 19, 20, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 42, 46, 47, 50, 51, 55, 56, 61 | 48 | No accepted effect-specific producer-consumer packet establishes the native owner. |
+| Unknown | 1, 2, 3, 4, 6, 7, 8, 12, 14, 16, 18, 19, 20, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 46, 47, 50, 51, 55, 56, 61 | 45 | No accepted effect-specific producer-consumer packet establishes the native owner. |
 
 The 95-site generated inventory contains literal shared-lookup requests for 41
 of the 45 retail IDs. That is useful search guidance only. A literal request
@@ -213,6 +213,15 @@ the Increased Great Person generation effect and its exact local arithmetic;
 it does not name the enclosing function or table layout, recover every Great
 Person producer or consumer, or establish runtime, presentation, AI, save,
 scenario, or multiplayer behavior.
+
+UEA 42 has a separate bounded shared owner in `0x82D13978`. When a local `0x8`
+flag is clear and a second indexed state word is zero, the path requests
+cumulative UEA 42 at `0x82D15344`. An active result branches around
+`0x82D15350..0x82D1536C`, which would otherwise write retained zero `r22` to
+four indexed halfword fields and their associated locals. This maps one exact
+Cities are unaffected by Anarchy preservation gate. It does not name the
+dynamic fields or predicates, prove every Anarchy path, or establish runtime,
+presentation, AI, save, scenario, or multiplayer behavior.
 
 UEA 40 is the regression case. The Barbarian-capture path in `0x82D1B400`
 loads the new owner's civilization at `0x82D1B74C`, compares it with Mongolian

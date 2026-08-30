@@ -117,15 +117,17 @@ class TopicManifestTests(unittest.TestCase):
 
         shared = document["retailOwnerClasses"]["sharedCumulativeLookup"]
         self.assertIn(23, {entry["ueaId"] for entry in shared})
+        self.assertIn(42, {entry["ueaId"] for entry in shared})
         self.assertNotIn(23, document["retailOwnerClasses"]["unknown"])
+        self.assertNotIn(42, document["retailOwnerClasses"]["unknown"])
         self.assertEqual(
             document["retailCellProjection"]["counts"],
             {
                 "total": 64,
-                "sharedCumulativeLookup": 15,
+                "sharedCumulativeLookup": 18,
                 "directCivilizationEffectPath": 1,
                 "mixedCompanionPath": 0,
-                "unknown": 48,
+                "unknown": 45,
             },
         )
         owner = document["greatPersonGenerationOwner"]
@@ -135,6 +137,13 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(
             owner["effectDataflow"]["halfDivide"],
             ["0x82D15624", "0x82D1562C"],
+        )
+        anarchy = document["anarchyImmunityOwner"]
+        self.assertEqual(anarchy["lookup"]["callsite"], "0x82D15344")
+        self.assertEqual(anarchy["lookup"]["activeBypass"], "0x82D15374")
+        self.assertEqual(
+            anarchy["effectDataflow"]["halfwordStores"],
+            ["0x82D15350", "0x82D15358", "0x82D15360", "0x82D15368"],
         )
 
     def test_unique_unit_combat_predicate_contract(self) -> None:

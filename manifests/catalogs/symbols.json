@@ -1757,13 +1757,14 @@
       "kind": "function",
       "address": "0x82CDDF08",
       "image": "../image.json",
-      "claim": "Consumes the five-word internal queue record through a four-word dispatcher view, accepts unsigned types 0 through 65, and branches through the 66-entry table at 0x82CDE014; accepted Xbox topics identify cases 0, 6, and 17 as Combat, Rush, and Move.",
+      "claim": "Consumes the five-word internal queue record through a four-word dispatcher view, accepts unsigned types 0 through 65, and branches through the 66-entry table at 0x82CDE014; accepted Xbox topics identify cases 0, 6, and 17 as Combat, Rush, and Move, while case 57 has a neutral player-indexed halfword-write role.",
       "confidence": "confirmed",
       "evidence": [
         { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/commandPath" },
         { "kind": "topic-manifest", "locator": "../combat-resolution-lifecycle.json#/commandPath" },
         { "kind": "topic-manifest", "locator": "../rush-cost-producer.json#/commandPath" },
         { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/dispatch" },
+        { "kind": "topic-manifest", "locator": "../player-production-scalar-lifecycle.json#/commandWriter" },
         { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDFF4" },
         { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDE014" },
         { "kind": "generated-code", "locator": "generated:rerevved/sub_82CDDF08" }
@@ -3937,7 +3938,7 @@
       "kind": "function",
       "address": "0x82CF1148",
       "image": "../image.json",
-      "claim": "Returns the bounded player- and unit-sensitive scalar multiplied by unit-definition production factor +0x44 before signed half scaling.",
+      "claim": "Returns the bounded player- and unit-sensitive scalar multiplied by unit-definition production factor +0x44 before signed half scaling; the player input comes from the persisted halfword array at 0x830E9050.",
       "confidence": "strong",
       "evidence": [
         { "kind": "topic-manifest", "locator": "../production-cost-ownership.json#/effectiveScalar" },
@@ -4142,6 +4143,37 @@
         { "kind": "generated-code", "locator": "generated:rerevved/sub_82E2B8D0" }
       ],
       "qualification": { "alternatives": ["Player-facing numbering, exact map identity, producer ownership, setup eligibility, and runtime selection remain unresolved."] }
+    },
+    {
+      "id": "RVA-SYM-0332",
+      "name": "PlayerProductionScalarAdjustments",
+      "kind": "global",
+      "address": "0x830E9050",
+      "image": "../image.json",
+      "claim": "Stores eight signed halfwords indexed by player; initialization sets every element to -1, command type 57 writes a selected element, and broad game-state serialization transfers all eight in both directions.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../player-production-scalar-lifecycle.json#/storage" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpReferences.java:0x830E9050" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CDDF08" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CC4040" }
+      ],
+      "qualification": { "alternatives": ["The policy name, complete access inventory, valid player range, external save layout, and runtime behavior remain unresolved."] }
+    },
+    {
+      "id": "RVA-SYM-0333",
+      "name": "BroadGameStateSerializer",
+      "kind": "function",
+      "address": "0x82CC4040",
+      "image": "../image.json",
+      "claim": "Transfers many game-state blocks according to its mode; the accepted production-scalar edge transfers eight halfwords at 0x830E9050 in both directions.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../player-production-scalar-lifecycle.json#/persistence" },
+        { "kind": "topic-manifest", "locator": "../starting-technology-grants.json#/persistence" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CC4040" }
+      ],
+      "qualification": { "alternatives": ["Complete serializer coverage, external save-file offsets, versioning, and runtime round-trip behavior remain unresolved."] }
     }
   ]
 }

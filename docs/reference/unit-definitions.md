@@ -42,12 +42,21 @@ reductions. The normal unit production cost is the signed factor at `+0x44`
 multiplied by that scalar and divided by two with signed round-toward-zero
 arithmetic.
 
-The scalar's player-indexed input at `0x830E9050`, condition
-`0x82CEF4E8(14)`, and bonus ID 33 retain neutral meanings. Accepted bonus IDs 5,
+The scalar's player-indexed input is one of eight signed halfwords at
+`0x830E9050`. Initialization sets all eight to `-1`; broad game-state
+serialization transfers all eight in both directions. Setup function
+`0x82D217C8` submits numeric command type 57 with a player index and an
+unresolved virtual result, and dispatcher case 57 stores that result into the
+selected halfword. The array's policy meaning and the original command name
+remain unresolved. Condition `0x82CEF4E8(14)` and bonus ID 33 also retain
+neutral meanings. Accepted bonus IDs 5,
 17, and 34 provide half-cost routes for Settlers, Riflemen, and Spies. The
 eight bounded factor samples were Warrior 2, Archer 2, Riflemen 4, Horsemen 4,
 Knights 5, Tank 10, Artillery 10, and Spy 5. These are factors, not direct
 final-cost bytes.
+
+The bounded lifecycle and persistence locators are in
+[`player-production-scalar-lifecycle.json`](../../manifests/player-production-scalar-lifecycle.json).
 
 `ProductionItemCostLookup` at `0x82CE2B98` applies this unit formula to item
 IDs 0 through 99. `CurrentProductionItemCostLookup` at `0x82CF8308` selects the

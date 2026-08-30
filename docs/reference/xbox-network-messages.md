@@ -75,6 +75,11 @@ Other useful cases retain neutral static roles:
   receipt. PowerPC `slw` yields zero when the shift operand has bit `0x20` set.
 - The evidence does not distinguish `BeginTurn`, `EndTurn`, `ImDoneAI`,
   readiness, or completion names among types 46 through 49.
+- Type 57 stores the low halfword of `arg2` at `0x830E9050 + arg1*2`. One
+  bounded setup producer supplies a player index as `arg1` and an unresolved
+  virtual result as `arg2`; the eight-element array is reset to `-1`, persisted
+  in both directions, and consumed by production-cost logic. This closes a
+  neutral state-update role, not an original command or policy name.
 - The stored word rooted at `0x82F7AD00` has four bounded candidate direct
   writers. Three copy the `+0x134` word from the object referenced by neutral
   pointer global `0x8314EFC8`; one of those copies through its second

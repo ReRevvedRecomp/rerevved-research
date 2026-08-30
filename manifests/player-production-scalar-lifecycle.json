@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0095",
+  "topic": "player-production-scalar-lifecycle",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which bounded writers and serializer own the player-indexed production scalar input at 0x830E9050, and does a direct non-initialization gameplay writer exist?",
+  "scope": {
+    "functions": ["0x82CC4040", "0x82CDDF08", "0x82CE1830", "0x82CF1148", "0x82CF1278", "0x82D06990", "0x82D217C8", "0x82DBE918"],
+    "global": "0x830E9050",
+    "boundary": "This packet closes the eight-halfword storage shape, reset value, one setup producer, command-type-57 write, bidirectional serialization, and three bounded consumers. It does not name the policy represented by the values, identify the setup receiver or virtual getter, prove all writers or consumers, establish valid player bounds, or demonstrate runtime execution."
+  },
+  "dependencies": [
+    { "topic": "production-cost-ownership", "use": "Provides the accepted signed player-indexed input and two production-cost consumers." },
+    { "topic": "xbox-network-message-root", "use": "Provides the accepted five-word command record, dispatcher argument mapping, and rule that an Xbox case remains neutral without an independent semantic anchor." },
+    { "topic": "starting-technology-grants", "use": "Provides the accepted broad game-state serializer identity at 0x82CC4040." }
+  ],
+  "storage": {
+    "base": "0x830E9050",
+    "shape": "eight consecutive signed halfwords indexed as base + player*2",
+    "reset": {
+      "function": "0x82D06990",
+      "stores": ["0x82D069F8", "0x82D06A10", "0x82D06A20", "0x82D06A2C"],
+      "result": "Four 32-bit stores of -1 cover all eight halfwords at 0x830E9050 through 0x830E905F."
+    },
+    "qualification": "The eight-element shape is established by reset and serializer counts. No player-count or bounds contract is inferred from that capacity."
+  },
+  "setupProducer": {
+    "function": "0x82D217C8",
+    "submitWrapper": "0x82CE1830",
+    "callsite": "0x82D224F0",
+    "commandType": 57,
+    "arguments": {
+      "arg1": "a player index obtained from object field +0x0C after virtual slot +0x100, with a retained fallback",
+      "arg2": "the return from virtual slot +0xA0 on an unresolved setup object",
+      "arg3": "-1 forced by wrapper 0x82CE1830",
+      "arg4": "the word loaded through the retained pointer in r21",
+      "target": "-1 forced by wrapper 0x82CE1830"
+    },
+    "result": "The bounded setup path provides one direct non-initialization producer for the command that owns the array write.",
+    "qualification": "The receiver classes, virtual method names, source policy, legal value range, and lifecycle phase remain unresolved."
+  },
+  "commandWriter": {
+    "dispatcher": "0x82CDDF08",
+    "case": 57,
+    "branch": "0x82CDE174",
+    "operation": "store low 16 bits of arg2 at 0x830E9050 + arg1*2",
+    "argumentMapping": "The dispatcher loads type, arg1, arg2, and arg3 into r30, r31, r15, and r29. Case 57 shifts r31 left by one and stores r15 with sthx.",
+    "semanticBoundary": "Numeric type 57 is not assigned a cross-platform or original command name. Its accepted role is only updating this player-indexed halfword."
+  },
+  "persistence": {
+    "serializer": "0x82CC4040",
+    "writeModeCallsite": "0x82CC5A34",
+    "readModeCallsite": "0x82CC5A58",
+    "count": 8,
+    "elementWidth": "16 bits",
+    "result": "Mode one calls 0x822DE720 and mode zero calls 0x822DE7A0 with count eight and base 0x830E9050; those helpers advance the direct-memory path by two bytes per element.",
+    "qualification": "This proves bidirectional game-state transfer, not an external save-file offset, versioning rule, host format, or rollback behavior."
+  },
+  "consumers": [
+    {
+      "function": "0x82CF1148",
+      "role": "unit production scalar",
+      "result": "Reads the signed selected halfword; when positive, subtracts it from the starting scalar ten."
+    },
+    {
+      "function": "0x82CF1278",
+      "role": "building and wonder production scalar",
+      "result": "Reads the same signed selected halfword before the accepted non-unit base-cost and modifier paths."
+    },
+    {
+      "function": "0x82DBE918",
+      "role": "bounded derived-state builder",
+      "result": "Reads the signed selected halfword, multiplies it by 100, adds an object-derived value, and stores the sum at a generated entry +0x0C."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Two sequential foreground read-only Ghidra queries followed by exact-address generated-code corroboration for the bounded direct-reference functions.",
+    "entries": [
+      { "role": "formed-address reference", "address": "0x82CF1180", "result": "The canonical reference index records one DATA reference to 0x830E9050 inside 0x82CF1148.", "confidence": "strong" },
+      { "role": "function boundaries", "address": "0x82CE1830", "result": "Ghidra recovers the wrapper signature and forced record values; larger Xenon functions truncate at save-register thunks or bad instruction data.", "confidence": "strong" },
+      { "role": "exact writer", "address": "0x82CDE174", "result": "Generated code supplies the exact indexed sthx hidden beyond dispatcher truncation.", "confidence": "strong" },
+      { "role": "serializer edges", "address": "0x82CC5A34", "result": "Generated code and the exact helper bodies establish eight two-byte transfers in both modes.", "confidence": "strong" },
+      { "role": "reset", "address": "0x82D069F8", "result": "Generated code establishes four -1 word stores spanning the array.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpReferences.java:0x830E9050",
+      "ghidra/DumpFunctions.java:0x82CDDF08,0x82CC4040,0x82CE1830,0x82D217C8,0x82D06990,0x82DBE918",
+      "generated:rerevved/sub_82CC4040",
+      "generated:rerevved/sub_82CDDF08",
+      "generated:rerevved/sub_82CE1830",
+      "generated:rerevved/sub_82CF1148",
+      "generated:rerevved/sub_82CF1278",
+      "generated:rerevved/sub_82D06990",
+      "generated:rerevved/sub_82D217C8",
+      "generated:rerevved/sub_82DBE918",
+      "generated:rerevved/sub_822DE720",
+      "generated:rerevved/sub_822DE7A0"
+    ],
+    "qualification": "The canonical reference index is not a complete access inventory because most exact addresses are formed from split immediates or retained bases. The generated read set was limited to functions containing exact 0x830E9050 formation plus the two transfer helpers. No runtime probe was performed."
+  },
+  "guards": [
+    "Keep the array's policy meaning neutral; setup adjacency and production consumption do not prove a government, difficulty, handicap, or civilization label.",
+    "Keep command type 57 unnamed without an independent Xbox semantic anchor.",
+    "Do not infer an eight-player runtime contract merely from storage and serializer capacity.",
+    "Do not infer all writers or consumers from the incomplete canonical reference model.",
+    "Do not infer runtime execution, external save layout, networking success, or implementation safety from static evidence."
+  ],
+  "conclusion": "Version 1.3 owns an eight-element signed-halfword player production scalar adjustment array at 0x830E9050. Setup function 0x82D217C8 submits numeric command type 57 with a player index and an unresolved virtual result; dispatcher case 57 stores that value into the selected element. Initialization sets all elements to -1, broad serializer 0x82CC4040 transfers all eight halfwords in both directions, and three bounded functions consume the values. The policy name, complete access inventory, valid player range, runtime execution, and original command name remain unresolved."
+}

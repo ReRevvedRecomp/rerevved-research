@@ -199,6 +199,22 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("do not directly consume", document["boundedNegative"]["result"])
         self.assertIn("decode-coverage observation", document["currentEvidence"]["qualification"])
 
+    def test_player_production_scalar_lifecycle(self) -> None:
+        path = MANIFESTS / "player-production-scalar-lifecycle.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["storage"]["base"], "0x830E9050")
+        self.assertEqual(
+            document["storage"]["reset"]["stores"],
+            ["0x82D069F8", "0x82D06A10", "0x82D06A20", "0x82D06A2C"],
+        )
+        self.assertEqual(document["persistence"]["count"], 8)
+        self.assertEqual(document["persistence"]["elementWidth"], "16 bits")
+        self.assertEqual(document["setupProducer"]["commandType"], 57)
+        self.assertEqual(document["commandWriter"]["branch"], "0x82CDE174")
+        self.assertIn("policy name", document["conclusion"])
+        self.assertIn("remain unresolved", document["conclusion"])
+
     def test_gold_reserve_interest_contract(self) -> None:
         path = MANIFESTS / "gold-reserve-interest.json"
         document = json.loads(path.read_text(encoding="utf-8"))

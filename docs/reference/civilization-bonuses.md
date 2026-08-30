@@ -186,16 +186,23 @@ each distinct UEA ID's accepted owner class to the row table above:
 
 | Owner class | Distinct retail IDs | Retail cells | Boundary |
 | --- | --- | ---: | --- |
-| Shared cumulative lookup | 5, 9, 10, 17, 34, 35, 43, 48, 58, 59, 60 | 12 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
+| Shared cumulative lookup | 5, 9, 10, 13, 17, 34, 35, 43, 48, 58, 59, 60 | 13 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
 | Direct civilization/effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
 | Mixed companion path | None | 0 | No native retail cell is accepted in this class. |
-| Unknown | 1, 2, 3, 4, 6, 7, 8, 12, 13, 14, 16, 18, 19, 20, 23, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 42, 46, 47, 50, 51, 55, 56, 61 | 51 | No accepted effect-specific producer-consumer packet establishes the native owner. |
+| Unknown | 1, 2, 3, 4, 6, 7, 8, 12, 14, 16, 18, 19, 20, 23, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 42, 46, 47, 50, 51, 55, 56, 61 | 50 | No accepted effect-specific producer-consumer packet establishes the native owner. |
 
 The 95-site generated inventory contains literal shared-lookup requests for 41
 of the 45 retail IDs. That is useful search guidance only. A literal request
 does not prove the named effect, complete ownership, or absence of a direct
 companion. Retail IDs 12, 16, 28, and 40 do not appear as literal requests;
 only UEA 40 has a separately mapped direct owner.
+
+UEA 13 has a bounded shared owner in `EffectiveUnitAttackLookup` at
+`0x82CF2230`. The accessor compares the base `UnitType` with Cannon type 17 at
+`0x82CF236C`, requests cumulative UEA 13 at `0x82CF2380`, and adds two to the
+effective attack value at `0x82CF2390` only after the lookup succeeds. This is
+static composition evidence; it does not establish runtime execution,
+presentation, or complete AI strategy.
 
 UEA 40 is the regression case. The Barbarian-capture path in `0x82D1B400`
 loads the new owner's civilization at `0x82D1B74C`, compares it with Mongolian

@@ -162,10 +162,10 @@ public class DumpStringBoundary extends GhidraScript {
         int maxFunctions
     ) {
         for (Function function : additions) {
-            destination.put(function.getEntryPoint(), function);
-            if (destination.size() > maxFunctions) {
+            if (destination.size() >= maxFunctions) {
                 return;
             }
+            destination.put(function.getEntryPoint(), function);
         }
     }
 

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0118",
+  "topic": "native-renderer-vdswap-boundary",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact ReRevved guest values reach VdSwap, and which of them identify the frontbuffer presented by the supported SDK?",
+  "scope": {
+    "owner": "0x826A4638",
+    "callsite": "0x826A4884",
+    "import": "0x82E92454",
+    "sdkCommit": "e89618afbe9c6b5e178797b1ee5e7d03ec3d77e6",
+    "boundary": "This packet establishes the exact static ReRevved VdSwap call and the maintained SDK ABI. It does not prove native-mode runtime execution, guest-memory lifetime, CPU or GPU synchronization, a host upload path, color correctness, or visible output."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-d3d-inventory",
+      "use": "open resolve, swap, and presentation frontiers"
+    },
+    {
+      "topic": "native-renderer-d3d-device-publication",
+      "use": "bounded device-publication and post-publication setup limits"
+    }
+  ],
+  "currentEvidence": {
+    "method": "one foreground read-only DumpFunctions.java query for 0x826A4638, narrow generated-code corroboration of only that function, and maintained SDK e89618a VdSwap source inspection",
+    "ghidraResult": "The canonical project identified the exact function entry but truncated at save thunk 0x827F7C78. It supplied no usable body or complete caller result.",
+    "generatedCall": {
+      "owner": "0x826A4638",
+      "site": "0x826A4884",
+      "target": "0x82E92454",
+      "continuation": "0x826A4888",
+      "result": "The generated owner prepares all VdSwap register and stack arguments, calls the exact import, then retains the returned primary-ring position in device field +0x30."
+    },
+    "generatedCorroboration": {
+      "definition": "generated/default/rerevved_recomp.65.cpp:12613",
+      "descriptorAndScalarProducers": "generated/default/rerevved_recomp.65.cpp:12691",
+      "systemCommandBuffer": "generated/default/rerevved_recomp.65.cpp:12869",
+      "swapCall": "generated/default/rerevved_recomp.65.cpp:12905"
+    },
+    "sdkAuthority": "rerevved-rexglue-sdk e89618a src/kernel/xboxkrnl/xboxkrnl_video.cpp:440-521"
+  },
+  "abi": {
+    "r3": "primary ring-buffer reservation + 0x4, produced by helper 0x8269C7A8 with requested size 64 dwords",
+    "r4": "pointer to the six-dword frontbuffer texture-fetch descriptor copied from incoming argument r28 + 0x1C and adjusted by the owner",
+    "r5": "system writeback pointer derived from device field +0x2A90 + 0x8",
+    "r6": "buffer returned through VdGetSystemCommandBuffer",
+    "r7": "second VdGetSystemCommandBuffer result",
+    "r8": "pointer to the frontbuffer virtual address derived from descriptor dword 1 base-address bits",
+    "r9": "pointer to the numeric texture format derived from descriptor dword 1 low six bits",
+    "r10": "pointer to the color-space value loaded from device field +0x352C",
+    "stackArgument9": "pointer to width derived from descriptor dword 2 and the device scaling value",
+    "stackArgument10": "pointer to height derived from descriptor dword 2 and the device scaling value",
+    "sdkUse": "The SDK byte-swaps the six descriptor dwords, requires every named pointer, requires the supplied virtual address to equal descriptor base_address << 12, translates it to physical memory, accepts only k_8_8_8_8 or k_2_10_10_10_AS_16_16_16_16, requires RGB color space zero and descriptor-matching width and height, then emits the swap packet."
+  },
+  "nextDiscriminator": {
+    "site": "0x826A4884",
+    "question": "Can a native-only implementation validate this complete ABI, prove one supported ReRevved frontbuffer layout and readable extent, untile and endian-convert it without mutating guest memory, upload it to the title-owned D3D12 backbuffer with explicit synchronization, and present it without consulting ReXGlue graphics state?",
+    "limits": "Do not persist raw guest pointers beyond the call, accept an unproved format or dimension, reuse ReXGlue texture-cache or presenter state, skip guest-memory range validation, or claim parity from one frame."
+  },
+  "guards": [
+    "Do not infer runtime execution or visible output from the static call and maintained SDK ABI.",
+    "Do not treat the primary ring-buffer reservation, system writeback, or system-command-buffer values as the frontbuffer source.",
+    "Do not copy ReBlue surface fields, formats, offsets, or present policy.",
+    "Do not bypass guest-memory lifetime and synchronization requirements merely because the ABI exposes a virtual address.",
+    "Do not make the research manifest a title runtime dependency."
+  ],
+  "conclusion": "ReRevved function 0x826A4638 directly calls VdSwap at 0x826A4884 with an exact frontbuffer fetch descriptor and separately derived virtual address, numeric format, RGB color space, width, and height pointers. Maintained SDK e89618a defines how those values identify the guest frontbuffer. Native upload, synchronization, runtime execution, and visible output remain open."
+}

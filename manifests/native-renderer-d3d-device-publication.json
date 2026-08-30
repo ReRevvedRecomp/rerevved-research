@@ -11,7 +11,7 @@
     "engineInitializationWrapper": "0x826A62F8",
     "indirectCell": "0x820009F0",
     "publicationStore": "0x826A645C",
-    "postPublicationSite": "0x826A6464",
+    "postPublicationSite": "0x826A6460",
     "boundary": "This packet identifies one indirect pointer publication and a non-mutating post-publication observation site. It does not identify the indirect destination as VdGlobalDevice, assign a device layout, or admit a renderer operation."
   },
   "dependencies": [
@@ -52,10 +52,10 @@
       },
       {
         "role": "post-publication observation site",
-        "address": "0x826A6464",
-        "word": "0x2C030000",
-        "instruction": "cmpwi r3,0",
-        "result": "This instruction follows the publication store and retains r31 and r11 for a read-only observation inserted before the original instruction.",
+        "address": "0x826A6460",
+        "word": "0x487EC065",
+        "instruction": "bl 0x82E924C4",
+        "result": "This call follows the publication store. A read-only observation inserted before the original call retains r31 and the indirect destination in r11, and then preserves the call itself.",
         "confidence": "strong"
       }
     ],
@@ -68,7 +68,7 @@
     "reproduction": "Run DumpMemoryWords.java read-only for target 0x826A645C with REREVVED_WORD_RADIUS=9 against the image pinned by image.json, then compare words 0x826A6438 through 0x826A6464 with the entries above. Corroborate only function 0x826A63E8 in generated ReXGlue output."
   },
   "nextDiscriminator": {
-    "site": "0x826A6464",
+    "site": "0x826A6460",
     "registers": [
       "r11",
       "r31"
@@ -82,5 +82,5 @@
     "Do not transfer ReBlue or Blue Dragon addresses, offsets, constants, formats, or device structures.",
     "Do not infer runtime execution or visible guest output from this static publication candidate."
   ],
-  "conclusion": "The supported image strongly proves that function 0x826A63E8 conditionally stores its retained object pointer r31 through an indirect destination loaded from 0x820009F0 at 0x826A645C. The destination identity and device semantics remain candidate pending the bounded native-only runtime discriminator at 0x826A6464."
+  "conclusion": "The supported image strongly proves that function 0x826A63E8 conditionally stores its retained object pointer r31 through an indirect destination loaded from 0x820009F0 at 0x826A645C. The destination identity and device semantics remain candidate pending the bounded native-only runtime discriminator before the original call at 0x826A6460."
 }

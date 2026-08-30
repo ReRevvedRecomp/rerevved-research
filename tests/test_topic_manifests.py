@@ -118,16 +118,18 @@ class TopicManifestTests(unittest.TestCase):
         shared = document["retailOwnerClasses"]["sharedCumulativeLookup"]
         self.assertIn(23, {entry["ueaId"] for entry in shared})
         self.assertIn(42, {entry["ueaId"] for entry in shared})
+        self.assertIn(47, {entry["ueaId"] for entry in shared})
         self.assertNotIn(23, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(42, document["retailOwnerClasses"]["unknown"])
+        self.assertNotIn(47, document["retailOwnerClasses"]["unknown"])
         self.assertEqual(
             document["retailCellProjection"]["counts"],
             {
                 "total": 64,
-                "sharedCumulativeLookup": 18,
+                "sharedCumulativeLookup": 21,
                 "directCivilizationEffectPath": 1,
                 "mixedCompanionPath": 0,
-                "unknown": 45,
+                "unknown": 42,
             },
         )
         owner = document["greatPersonGenerationOwner"]
@@ -145,6 +147,23 @@ class TopicManifestTests(unittest.TestCase):
             anarchy["effectDataflow"]["halfwordStores"],
             ["0x82D15350", "0x82D15358", "0x82D15360", "0x82D15368"],
         )
+
+    def test_gold_reserve_interest_contract(self) -> None:
+        path = MANIFESTS / "gold-reserve-interest.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["activation"]["ueaId"], 47)
+        self.assertEqual(document["reserveStorage"]["base"], "0x830ED544")
+        mutation = document["mutationOwner"]
+        self.assertEqual(mutation["function"], "0x82D1EAB0")
+        self.assertEqual(mutation["lookupCallsite"], "0x82D1F484")
+        self.assertEqual(mutation["store"], "0x82D1F4A4")
+        consumer = document["readSideConsumer"]
+        self.assertEqual(consumer["function"], "0x82CF9F38")
+        self.assertEqual(consumer["lookupCallsite"], "0x82CF9FE8")
+        self.assertEqual(consumer["reserveBase"]["value"], "0x830ED544")
+        self.assertEqual(document["arithmetic"]["term"],
+                         "signed divide toward zero of (reserve + 25) by 50")
 
     def test_unique_unit_combat_predicate_contract(self) -> None:
         path = MANIFESTS / "unique-unit-combat-predicates.json"

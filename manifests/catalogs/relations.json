@@ -3718,16 +3718,17 @@
       "from": "RVA-SYM-0274",
       "to": "RVA-SYM-0197",
       "image": "../image.json",
-      "claim": "CalendarTurnAdvance directly calls ActiveCivilizationBonusLookup at 0x82D1F484.",
-      "confidence": "confirmed",
+      "claim": "CalendarTurnAdvance calls ActiveCivilizationBonusLookup for cumulative UEA 47 at 0x82D1F484 and, when active, adds signed (reserve + 25) / 50 to the player-indexed reserve word.",
+      "confidence": "strong",
       "evidence": [
         { "kind": "topic-manifest", "locator": "../civilization-bonus-storage.json#/consumers" },
         { "kind": "topic-manifest", "locator": "../game-calendar-state.json#/currentEvidence/entries/3" },
-        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82D1F484" },
+        { "kind": "topic-manifest", "locator": "../gold-reserve-interest.json#/mutationOwner" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82D1F454..0x82D1F4B4" },
         { "kind": "generated-code", "locator": "generated:rerevved/sub_82D1EAB0" }
       ],
       "qualification": {
-        "falsificationCondition": "The current-image word at 0x82D1F484 is not 0x4BFD182D or does not decode as a direct branch-and-link to 0x82CF0CB0; this relation asserts only this representative site, while bonus-ID meaning, calendar effect, branch condition, completeness, cadence, runtime behavior, API/mod/SDK, and movement semantics remain unresolved."
+        "falsificationCondition": "The current-image word at 0x82D1F484 is not a direct call to 0x82CF0CB0 with UEA 47, or the active path does not load, add the exact signed divide term, and store the same reserve word; complete reserve access coverage, special-mode cadence, and runtime behavior remain unresolved."
       }
     },
     {
@@ -4703,6 +4704,21 @@
         { "kind": "generated-code", "locator": "generated:rerevved/sub_82D13978" }
       ],
       "qualification": { "alternatives": ["The enclosing function, dynamic field offsets, local predicate meanings, complete Anarchy path set, and runtime behavior remain unresolved."] }
+    },
+    {
+      "id": "RVA-REL-0449",
+      "kind": "calls",
+      "from": "RVA-SYM-0324",
+      "to": "RVA-SYM-0197",
+      "image": "../image.json",
+      "claim": "GoldReserveInterestAggregate calls ActiveCivilizationBonusLookup for cumulative UEA 47 at 0x82CF9FE8 and adds the same rounded 2-percent reserve term to its retained aggregate when active.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gold-reserve-interest.json#/readSideConsumer" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CF9FBC..0x82CFA01C" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CF9F38" }
+      ],
+      "qualification": { "alternatives": ["The broader aggregate identity, complete caller set, presentation role, and runtime behavior remain unresolved."] }
     }
   ]
 }

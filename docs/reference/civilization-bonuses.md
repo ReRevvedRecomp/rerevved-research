@@ -186,10 +186,10 @@ each distinct UEA ID's accepted owner class to the row table above:
 
 | Owner class | Distinct retail IDs | Retail cells | Boundary |
 | --- | --- | ---: | --- |
-| Shared cumulative lookup | 5, 9, 10, 13, 17, 23, 34, 35, 42, 43, 48, 58, 59, 60 | 18 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
+| Shared cumulative lookup | 5, 9, 10, 13, 17, 23, 34, 35, 42, 43, 47, 48, 58, 59, 60 | 21 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
 | Direct civilization/effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
 | Mixed companion path | None | 0 | No native retail cell is accepted in this class. |
-| Unknown | 1, 2, 3, 4, 6, 7, 8, 12, 14, 16, 18, 19, 20, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 46, 47, 50, 51, 55, 56, 61 | 45 | No accepted effect-specific producer-consumer packet establishes the native owner. |
+| Unknown | 1, 2, 3, 4, 6, 7, 8, 12, 14, 16, 18, 19, 20, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 46, 50, 51, 55, 56, 61 | 42 | No accepted effect-specific producer-consumer packet establishes the native owner. |
 
 The 95-site generated inventory contains literal shared-lookup requests for 41
 of the 45 retail IDs. That is useful search guidance only. A literal request
@@ -222,6 +222,16 @@ four indexed halfword fields and their associated locals. This maps one exact
 Cities are unaffected by Anarchy preservation gate. It does not name the
 dynamic fields or predicates, prove every Anarchy path, or establish runtime,
 presentation, AI, save, scenario, or multiplayer behavior.
+
+UEA 47 has a closed economy owner. `CalendarTurnAdvance` requests cumulative
+UEA 47 at `0x82D1F484`, reads the player-indexed reserve word at
+`0x830ED544 + player * 4`, and stores `reserve + (reserve + 25) / 50` using
+signed division toward zero. For an ordinary nonnegative reserve, the added
+term is 2 percent rounded to the nearest integer with a half-unit rounded up.
+`0x82CF9F38` requests the same UEA at `0x82CF9FE8` and adds the identical term
+to its retained aggregate without storing the reserve. The complete evidence
+and negative-value boundary are in
+[`gold-reserve-interest.json`](../../manifests/gold-reserve-interest.json).
 
 UEA 40 is the regression case. The Barbarian-capture path in `0x82D1B400`
 loads the new owner's civilization at `0x82D1B74C`, compares it with Mongolian
@@ -262,6 +272,7 @@ unknown.
 - [Unit-definition AI evaluation](../../manifests/unit-definitions-ai-evaluation.json)
 - [Rush-cost producer](../../manifests/rush-cost-producer.json)
 - [Game calendar state](../../manifests/game-calendar-state.json)
+- [Gold-reserve interest](../../manifests/gold-reserve-interest.json)
 - [Starting technology grants](../../manifests/starting-technology-grants.json)
 - [Unique Era Ability effect ownership](../../manifests/unique-era-ability-effect-ownership.json)
 - [Catalog contract](../catalogs.md)

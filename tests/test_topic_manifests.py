@@ -250,6 +250,22 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
         self.assertIn("decoded-listing observation only", document["currentEvidence"]["qualification"])
 
+    def test_gfx_child_slot_consumer_boundary(self) -> None:
+        path = MANIFESTS / "gfx-child-slot-consumer-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0105")
+        self.assertEqual(document["scope"]["dispatchTarget"], "0x821FBC38")
+        self.assertEqual(document["scope"]["fieldOffsets"], ["+0x90", "+0x94"])
+        self.assertEqual(document["receiverProvenance"]["preservedRegister"], "r29")
+        self.assertIn("stack base r1", document["receiverProvenance"]["result"])
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+        self.assertEqual(
+            document["catalogPromotion"]["updatedEntities"],
+            ["RVA-FLD-0002", "RVA-FLD-0003"],
+        )
+        self.assertIn("corrected exact-function query", document["currentEvidence"]["qualification"])
+
     def test_player_production_scalar_lifecycle(self) -> None:
         path = MANIFESTS / "player-production-scalar-lifecycle.json"
         document = json.loads(path.read_text(encoding="utf-8"))

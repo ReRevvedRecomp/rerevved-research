@@ -86,6 +86,15 @@ fields therefore remain neutral: they are not named `MAPNUMBER`, and menu
 numbering, exact map identity, setup, and runtime selection remain unresolved.
 See [the exact selector packet](../../manifests/map-list-selection-owner.json).
 
+Two configured direct callers now close neutral update-argument production.
+Five-instruction wrapper `0x82D06380` forwards its incoming word as `r4`,
+forces `r5` to zero, loads updater receiver `r3` from pointer global
+`0x8314EFC8`, and tail-jumps at `0x82D06390`. Complete caller `0x82D91A78`
+loads `r4` from its incoming object's `+0x34`, forces `r5` to zero, loads the
+same receiver global, calls at `0x82D91A94`, and returns one. The `+0x34`
+writer and meaning remain unresolved, and no MAPNUMBER relationship follows.
+See [the producer packet](../../manifests/map-list-update-argument-producers.json).
+
 ## Evidence boundaries
 
 - Static source registration does not prove runtime enumeration, successful

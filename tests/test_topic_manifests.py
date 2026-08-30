@@ -187,6 +187,40 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["mapNumberNegative"]["activeSlot"], "0x830E9010")
         self.assertIn("no direct MAPNUMBER-to-argument edge", document["conclusion"])
 
+    def test_map_list_update_argument_producers(self) -> None:
+        path = MANIFESTS / "map-list-update-argument-producers.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0103")
+        self.assertEqual(document["referenceInventory"]["count"], 2)
+        self.assertEqual(
+            [entry["function"] for entry in document["producers"]],
+            ["0x82D06380", "0x82D91A78"],
+        )
+        self.assertEqual(document["receiverSource"]["global"], "0x8314EFC8")
+        self.assertIn("incoming object's +0x34", document["conclusion"])
+
+        symbols = json.loads(
+            (MANIFESTS / "catalogs" / "symbols.json").read_text(encoding="utf-8")
+        )["records"]
+        relations = json.loads(
+            (MANIFESTS / "catalogs" / "relations.json").read_text(encoding="utf-8")
+        )["records"]
+        self.assertEqual(
+            {record["id"]: record["address"] for record in symbols
+             if record["id"] in document["catalogPromotion"]["symbols"]},
+            {
+                "RVA-SYM-0334": "0x82D06380",
+                "RVA-SYM-0335": "0x82D91A78",
+                "RVA-SYM-0336": "0x8314EFC8",
+            },
+        )
+        self.assertEqual(
+            {record["id"] for record in relations
+             if record["id"] in document["catalogPromotion"]["relations"]},
+            set(document["catalogPromotion"]["relations"]),
+        )
+
     def test_scene_root_ref_consumer_boundary(self) -> None:
         path = MANIFESTS / "scene-root-ref-consumer-boundary.json"
         document = json.loads(path.read_text(encoding="utf-8"))

@@ -41,6 +41,12 @@ Type 2 and type 3 are recovered numeric dispatch values only. The arrays are
 not named 2D and 3D, and static ownership does not prove a successful stream
 open or playback.
 
+A bounded lifecycle search found the dispatcher as the sole modeled caller of
+the stream-open writer and found no code caller for the dispatcher. Direct
+classification across those two functions scanned 36 instructions and found
+no stream-slot `+0x4` read. The handle's first use, validity check, close, and
+release path therefore remain unresolved.
+
 ## 2D script table lifecycle
 
 `Audio2DScriptPointerTablePopulate` at `0x82D47128` rebuilds the manager-owned

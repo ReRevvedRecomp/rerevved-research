@@ -531,6 +531,18 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("exceeding the six-candidate cap", document["boundedNegative"]["result"])
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
+    def test_audio_stream_handle_lifecycle_boundary(self) -> None:
+        path = MANIFESTS / "audio-stream-handle-lifecycle-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0117")
+        self.assertEqual(document["scope"]["slotSize"], "0x38")
+        self.assertEqual(document["referenceResults"]["writer"]["references"], 1)
+        self.assertEqual(document["referenceResults"]["dispatcher"]["references"], 1)
+        self.assertEqual(document["fieldReadResult"]["matches"], 0)
+        self.assertIn("No exact first consumer", document["boundedNegative"]["result"])
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

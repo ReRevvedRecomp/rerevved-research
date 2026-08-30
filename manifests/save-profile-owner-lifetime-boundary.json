@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0111",
+  "topic": "save-profile-owner-lifetime-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Is teardown, republication, or profile-service lifetime for the 0x78-byte owner at 0x8314EFE0 statically explicit in the bounded accepted read set?",
+  "scope": {
+    "ownerGlobal": "0x8314EFE0",
+    "ownerSize": "0x78",
+    "publisher": "0x82E2E3B8",
+    "constructor": "0x82D8D548",
+    "resolver": "0x82E633C0",
+    "fields": ["+0x0", "+0x18", "+0x5C"],
+    "boundary": "This packet reads the three accepted exact function bodies and one exact global-reference inventory. The 107 reference rows are counted but their 65 owning functions and three data rows are not expanded."
+  },
+  "dependencies": [
+    { "topic": "save-profile-storage", "use": "Provides the accepted allocation, construction, publication, resolver, size, and three owner fields." }
+  ],
+  "globalReferenceResult": {
+    "target": "0x8314EFE0",
+    "references": 107,
+    "types": {"READ": 107, "WRITE": 0},
+    "modeledFunctions": 65,
+    "dataSources": ["0x82D70D8C", "0x82D70DA0", "0x82D8F95C"],
+    "result": "The configured exact reference inventory contains only READ rows. It exposes no direct publication, clear, or replacement store.",
+    "qualification": "The 65 owning functions and three data rows were not expanded. Split-address or unrecovered writes remain outside this direct-reference result."
+  },
+  "bodyResults": [
+    {
+      "function": "0x82E2E3B8",
+      "role": "accepted application resource builder and publisher",
+      "result": "Ghidra models only a non-returning call to thunk helper 0x827F7C7C; no publication or lifetime edge is decoded."
+    },
+    {
+      "function": "0x82D8D548",
+      "role": "accepted 0x78-byte owner constructor",
+      "result": "Ghidra models only a non-returning call to thunk helper 0x827F7C8C; no field lifetime edge is decoded."
+    },
+    {
+      "function": "0x82E633C0",
+      "role": "accepted selected-user resolver",
+      "modeledCallers": ["0x82DDDEA0"],
+      "result": "The exact body truncates immediately on bad instruction data. The modeled caller was not decompiled."
+    }
+  ],
+  "boundedNegative": {
+    "result": "No teardown, republication, or profile-service lifetime relation is promoted: the exact global inventory contains no modeled write, two accepted bodies reduce to non-returning thunk calls, and the resolver body truncates.",
+    "effect": "The accepted construction and initial publication facts remain unchanged, while later owner and +0x18 profile-service lifetime remain unresolved.",
+    "falsificationCondition": "A corrected complete accepted body or exact global-derived write proves a clear, replacement, teardown, or +0x18 service-lifetime edge."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": ["RVA-STR-0014", "RVA-SYM-0076"],
+    "result": "The existing owner structure and pointer global gain the bounded lifetime qualification; no teardown or republication relation is added."
+  },
+  "currentEvidence": {
+    "method": "Two successful sequential foreground read-only Ghidra queries: exact references to the owner global and exact decompilation of the three accepted functions.",
+    "entries": [
+      { "role": "owner global reference inventory", "address": "0x8314EFE0", "result": "107 READ rows, zero WRITE rows, 65 modeled owning functions, and three data sources.", "confidence": "strong" },
+      { "role": "accepted body set", "address": "0x82E2E3B8", "result": "Two bodies reduce to non-returning thunk calls and the resolver truncates on bad instruction data.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpReferences.java:0x8314EFE0",
+      "ghidra/DumpFunctions.java:0x82E2E3B8,0x82D8D548,0x82E633C0"
+    ],
+    "qualification": "No global-reference owner or resolver caller was decompiled, and generated code was not used to bypass a truncation stop. No runtime probe was performed."
+  },
+  "guards": [
+    "Do not claim that the owner is never cleared, replaced, or destroyed.",
+    "Do not infer profile-service ownership or lifetime from field +0x18 alone.",
+    "Do not infer platform API semantics, runtime cadence, or runtime behavior."
+  ],
+  "conclusion": "The bounded current-image read set does not make teardown, republication, or profile-service lifetime explicit for owner global 0x8314EFE0. The exact reference inventory has only READ rows, the builder and constructor reduce to thunk calls, and the resolver truncates; accepted initial construction and publication remain unchanged."
+}

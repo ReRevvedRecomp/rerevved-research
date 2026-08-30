@@ -24,6 +24,16 @@ the internal namespace, but the normalized filename read from record offset
 `0x108` is the accepted sidecar component. Do not substitute the localized
 `Save @NUM`, `Autosave %d`, or other display labels.
 
+## Selected-user owner lifetime boundary
+
+The accepted `0x78`-byte selected-user owner is initially published through
+global `0x8314EFE0`. A bounded exact reference inventory contains 107 READ rows
+across 65 modeled functions plus three data sources, but no modeled WRITE row.
+The accepted builder and constructor bodies reduce to non-returning thunk calls,
+and resolver `0x82E633C0` truncates on bad instruction data. This read set does
+not prove teardown, republication, or the lifetime of profile-service field
+`+0x18`; it does not claim that no such edge exists elsewhere.
+
 ## Recovered functions
 
 Names below describe recovered semantics, not original debug symbols.

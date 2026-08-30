@@ -467,6 +467,19 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("No direct caller-family ownership", document["boundedNegative"]["result"])
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
+    def test_save_profile_owner_lifetime_boundary(self) -> None:
+        path = MANIFESTS / "save-profile-owner-lifetime-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0111")
+        self.assertEqual(document["scope"]["ownerGlobal"], "0x8314EFE0")
+        self.assertEqual(document["globalReferenceResult"]["references"], 107)
+        self.assertEqual(document["globalReferenceResult"]["types"], {"READ": 107, "WRITE": 0})
+        self.assertEqual(document["globalReferenceResult"]["modeledFunctions"], 65)
+        self.assertEqual(len(document["bodyResults"]), 3)
+        self.assertIn("No teardown, republication", document["boundedNegative"]["result"])
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

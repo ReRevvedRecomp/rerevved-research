@@ -21,6 +21,12 @@ Key 2 identifies the recovered game-start receiving state. Its factory at
 attract-movie state. Its factory at `0x821B3BB8` creates a `0x10`-byte state
 whose slot `+0x1C` builds the attract-movie playback object.
 
+A bounded registration search found no direct reference to the key-2 factory.
+Vtable `0x8211EBD0` is installed by the factory and by in-place initializer
+`0x82E60D50`; neither complete body registers or dispatches the state. The
+entry target is referenced only by table word `0x8211EBD4`, so the frontend
+state-owner insertion edge and resolved dynamic callsite remain unknown.
+
 These values identify two concrete states in the recovered paths. They do not
 define a universal frontend enumeration or assign original class names to
 other numeric keys.

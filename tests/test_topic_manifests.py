@@ -508,6 +508,18 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("return value 1", document["eventYearConsumer"]["immediateBranch"])
         self.assertEqual(document["catalogPromotion"]["newEntities"], ["RVA-SYM-0337", "RVA-REL-0473"])
 
+    def test_key2_game_start_registration_boundary(self) -> None:
+        path = MANIFESTS / "key2-game-start-registration-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0114")
+        self.assertEqual(document["referenceResults"]["combinedFunctionCount"], 2)
+        self.assertEqual(document["referenceResults"]["factory"]["references"], 0)
+        self.assertEqual(document["referenceResults"]["vtablePointerPlacements"], 0)
+        self.assertEqual([entry["function"] for entry in document["bodyResults"]], ["0x821B0AF0", "0x82E60D50"])
+        self.assertIn("No direct key-2 registration owner", document["boundedNegative"]["result"])
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

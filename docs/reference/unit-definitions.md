@@ -90,6 +90,16 @@ The five wonder records are in
 The next five and their +0x49 token-boundary guard are in
 [`wonder-record-identities-205-209.json`](../../manifests/wonder-record-identities-205-209.json).
 
+A bounded Pyramids consumer packet did not establish an exact item-200 edge to
+government availability or state, completion, display, or AI. Exact references
+and split-address recovery found one Pyramids record-base materializer, one
+technology-table materializer, and one shared technology-helper candidate; all
+three exact candidate bodies truncated on bad instruction data. A filtered
+item-200 literal/comparison scan then reached its eight-function cap, so those
+functions remain unclassified. This is a bounded negative, not a claim that no
+Pyramids consumer exists. Exact limits are in
+[`pyramids-government-availability.json`](../../manifests/pyramids-government-availability.json).
+
 Bounded static consumers are:
 
 - `RushCostCompute` at `0x82CE27F0`, which subtracts invested production at

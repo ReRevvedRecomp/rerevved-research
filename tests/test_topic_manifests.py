@@ -249,6 +249,21 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("0x27", document["records"][4]["shortTokenBoundary"])
         self.assertIn("No display consumer", document["conclusion"])
 
+    def test_pyramids_government_availability_boundary(self) -> None:
+        path = MANIFESTS / "pyramids-government-availability.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0098")
+        self.assertEqual(document["acceptedAnchors"]["wonder"]["itemId"], 200)
+        self.assertEqual(
+            [entry["function"] for entry in document["candidateResults"]],
+            ["0x82CF0268", "0x82CEF7A0", "0x82CF81C8"],
+        )
+        self.assertTrue(document["itemIdScan"]["truncated"])
+        self.assertEqual(len(document["itemIdScan"]["emittedFunctions"]), 8)
+        self.assertIn("does not establish", document["boundedNegative"]["result"])
+        self.assertIn("not an executable-wide absence", document["conclusion"])
+
     def test_gold_reserve_interest_contract(self) -> None:
         path = MANIFESTS / "gold-reserve-interest.json"
         document = json.loads(path.read_text(encoding="utf-8"))

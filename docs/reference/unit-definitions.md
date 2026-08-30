@@ -43,8 +43,13 @@ final-cost bytes.
 `ProductionItemCostLookup` at `0x82CE2B98` applies this unit formula to item
 IDs 0 through 99. `CurrentProductionItemCostLookup` at `0x82CF8308` selects the
 current city item at `+0x38` and returns the same unit result. Both route item
-IDs 100 through 299 through separate helper `0x82CF1278`; that shared dispatch
-does not establish shared unit and building cost storage or modifiers.
+IDs 100 through 299 through separate `BuildingWonderProductionCostLookup` at
+`0x82CF1278`. IDs 100 through 199 use a signed byte at `+0x41` of `0xCC`-byte
+records rooted at `0x82F71FD8`. IDs 200 through 299 use a signed halfword at
+`+0x40` of `0x14C`-byte records rooted at `0x82F73238`. Both fields multiply
+the helper's current scalar before later modifiers. The ranges retain their
+accepted building and wonder terminology, but their complete record layouts,
+names, counts, field values, and modifier ownership remain unresolved.
 
 Bounded static consumers are:
 

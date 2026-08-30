@@ -89,8 +89,19 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["baseCostField"]["offset"], "0x44")
         self.assertEqual(document["effectiveScalar"]["function"], "0x82CF1148")
         self.assertIn(
-            "separate helper 0x82CF1278",
+            "BuildingWonderProductionCostLookup at 0x82CF1278",
             document["costWrappers"][0]["result"],
+        )
+        non_unit = document["nonUnitBaseCostFields"]["inputRanges"]
+        self.assertEqual(
+            (non_unit["first"]["table"], non_unit["first"]["recordSize"],
+             non_unit["first"]["fieldOffset"], non_unit["first"]["width"]),
+            ("0x82F71FD8", "0xCC", "0x41", "signed byte"),
+        )
+        self.assertEqual(
+            (non_unit["second"]["table"], non_unit["second"]["recordSize"],
+             non_unit["second"]["fieldOffset"], non_unit["second"]["width"]),
+            ("0x82F73238", "0x14C", "0x40", "signed halfword"),
         )
         self.assertEqual(
             [entry["function"] for entry in document["consumers"]["ai"]],

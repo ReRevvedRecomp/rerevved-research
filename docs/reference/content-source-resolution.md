@@ -45,6 +45,14 @@ optional identification data. Bare scenario, map, and DDS names must be entries
 inside `dlc.fpk`; placing them beside the archive does not register that
 directory as a common resource source.
 
+The three accepted named-map DDS suffixes identify height,
+mountain-hill-blend, and lightmap roles. A bounded consumer packet found zero
+exact references to their three string addresses, a thunk-only named-map
+consumer body, and a truncated terrain-loader body. The static source route
+therefore supplies no role-specific dimensions, pixel format, mip behavior,
+byte order, row layout, or payload rule. Generic dimension-derived texture
+scale is not an authoring byte contract.
+
 ## Bare-name lookup order
 
 For the bounded named-map resource path, lookup order is:
@@ -103,6 +111,8 @@ See [the producer packet](../../manifests/map-list-update-argument-producers.jso
   layouts, synchronization guarantees, or runtime contents.
 - No package signature, license, authentication, STFS, installation, archive
   writer, or host-path policy follows from the guest resolver order.
+- No Xbox DDS writer contract follows from resource naming, lookup order, or
+  the common loader's generic texture scale.
 - The flow defines no title patch, runtime hook, API, mod, SDK, or archive
   mutation.
 

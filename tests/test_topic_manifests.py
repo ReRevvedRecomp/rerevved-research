@@ -480,6 +480,22 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("No teardown, republication", document["boundedNegative"]["result"])
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
+    def test_xbox_dds_map_authoring_consumer_boundary(self) -> None:
+        path = MANIFESTS / "xbox-dds-map-authoring-consumer-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0112")
+        self.assertEqual(document["scope"]["terrainLoader"], "0x82C6E188")
+        self.assertEqual(
+            [entry["references"] for entry in document["stringReferenceResults"]],
+            [0, 0, 0],
+        )
+        self.assertEqual(len(document["bodyResults"]), 2)
+        self.assertEqual(document["provedProperties"]["newRoleSpecificProperties"], [])
+        self.assertEqual(len(document["remainingBlockers"]), 6)
+        self.assertIn("No new role-specific DDS consumer contract", document["boundedNegative"]["result"])
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

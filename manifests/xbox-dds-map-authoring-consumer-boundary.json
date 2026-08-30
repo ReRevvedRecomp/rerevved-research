@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0112",
+  "topic": "xbox-dds-map-authoring-consumer-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Do the bounded named-map and terrain-loader consumers prove role-specific dimensions, pixel format, mip behavior, byte order, or payload rules for the three authored DDS resources?",
+  "scope": {
+    "namedMapConsumer": "0x82D0ADE0",
+    "terrainLoader": "0x82C6E188",
+    "strings": ["0x821642F0", "0x82164310", "0x8216432C"],
+    "roles": ["heights", "mountain-hill blends", "lightmap"],
+    "boundary": "This packet reads exact references to the three accepted DDS format strings and the exact bodies of the two accepted consumers. It does not inspect retail DDS bytes, execute private artifacts, run the title, design a writer, or traverse decoder and upload callees."
+  },
+  "dependencies": [
+    { "topic": "map-authoring-loader-boundary", "use": "Provides the accepted three DDS role names, the named-map handoff, the common terrain loader, and generic dimension-derived texture scale." }
+  ],
+  "stringReferenceResults": [
+    { "address": "0x821642F0", "value": "%s_Heights.dds", "role": "heights", "references": 0 },
+    { "address": "0x82164310", "value": "%s_MountainHill_Blends.dds", "role": "mountain-hill blends", "references": 0 },
+    { "address": "0x8216432C", "value": "%s_Lightmap.dds", "role": "lightmap", "references": 0 }
+  ],
+  "bodyResults": [
+    { "function": "0x82D0ADE0", "role": "accepted named-map tile consumer", "result": "Ghidra models only a non-returning call to thunk helper 0x827F7C50; no DDS property carrier is decoded." },
+    { "function": "0x82C6E188", "role": "accepted prebuilt terrain texture loader", "result": "The exact body truncates immediately on bad instruction data; no role-specific DDS property is decoded." }
+  ],
+  "provedProperties": {
+    "newRoleSpecificProperties": [],
+    "retainedAcceptedProperties": [
+      "The three filename suffixes distinguish heights, mountain-hill blends, and lightmap resources.",
+      "The common loader derives generic texture-per-tile scale from loaded texture dimensions and fixed terrain-object dimensions."
+    ],
+    "qualification": "The retained properties come from the accepted dependency. They do not identify per-role dimensions, texture format, channels, mip levels, byte order, row pitch, alignment, padding, or payload semantics."
+  },
+  "boundedNegative": {
+    "result": "No new role-specific DDS consumer contract is promoted: all three exact string-reference inventories are empty, the named-map consumer reduces to a non-returning thunk call, and the terrain loader body truncates.",
+    "effect": "The three accepted resource-role names and generic dimension-derived scale remain valid, while authoring bytes remain unspecified.",
+    "falsificationCondition": "A complete current-image consumer body or independently anchored decoder/upload edge carries one exact resource role into a dimension, format, mip, byte-order, or payload rule."
+  },
+  "remainingBlockers": [
+    "Per-role width and height requirements or a proved statement that they share one dimension contract.",
+    "DDS header variant, pixel or block-compression format, and channel interpretation for each role.",
+    "Mip count, mip ordering, and whether a complete chain is required or ignored.",
+    "Header and payload byte order, row pitch, block alignment, padding, and face or volume rules.",
+    "Per-role value normalization, scaling, channel packing, and gameplay meaning.",
+    "An independently anchored complete decoder or upload consumer that remains within a bounded static packet."
+  ],
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "result": "No reusable symbol, field, structure, vtable, or relation is added because the bounded read set proves no new property edge."
+  },
+  "currentEvidence": {
+    "method": "Two sequential foreground read-only Ghidra queries: exact references to the three DDS format strings and exact decompilation of the two accepted consumer functions.",
+    "entries": [
+      { "role": "DDS format-string references", "address": "0x821642F0", "result": "Zero modeled references for each of the three exact string addresses.", "confidence": "strong" },
+      { "role": "consumer body set", "address": "0x82D0ADE0", "result": "One body reduces to a non-returning thunk call and one truncates on bad instruction data.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpReferences.java:0x821642F0,0x82164310,0x8216432C",
+      "ghidra/DumpFunctions.java:0x82D0ADE0,0x82C6E188"
+    ],
+    "qualification": "Zero exact references can miss split-address materialization. Generated code was not used to bypass the exact-body stop. No retail-byte inspection, private-artifact execution, runtime probe, or writer design was performed."
+  },
+  "guards": [
+    "Do not infer a shared or role-specific DDS format from the filename suffixes.",
+    "Do not infer dimensions or payload layout from generic dimension-derived scale.",
+    "Do not use retail DDS bytes, private-artifact behavior, or another platform's format as evidence for this image.",
+    "Do not implement or specify a DDS writer from this bounded negative."
+  ],
+  "conclusion": "The bounded current-image consumers prove no new Xbox DDS authoring property for the height, mountain-hill blend, or lightmap resources. The accepted role names and generic dimension-derived scale remain, but dimensions, format, mip behavior, byte order, and payload rules remain unresolved pending a distinct complete consumer-side anchor."
+}

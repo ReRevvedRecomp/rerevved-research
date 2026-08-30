@@ -264,6 +264,24 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("does not establish", document["boundedNegative"]["result"])
         self.assertIn("not an executable-wide absence", document["conclusion"])
 
+    def test_great_library_technology_transfer_boundary(self) -> None:
+        path = MANIFESTS / "great-library-technology-transfer.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0099")
+        self.assertEqual(document["acceptedAnchors"]["wonder"]["itemId"], 206)
+        self.assertFalse(document["itemIdScan"]["truncated"])
+        self.assertEqual(
+            document["itemIdScan"]["emittedFunctions"],
+            ["0x8286FD70", "0x82951B58", "0x829C1298"],
+        )
+        self.assertTrue(all(
+            "bad instruction data" in entry["stop"]
+            for entry in document["candidateResults"]
+        ))
+        self.assertIn("does not establish", document["boundedNegative"]["result"])
+        self.assertIn("not an executable-wide absence", document["conclusion"])
+
     def test_gold_reserve_interest_contract(self) -> None:
         path = MANIFESTS / "gold-reserve-interest.json"
         document = json.loads(path.read_text(encoding="utf-8"))

@@ -100,6 +100,16 @@ functions remain unclassified. This is a bounded negative, not a claim that no
 Pyramids consumer exists. Exact limits are in
 [`pyramids-government-availability.json`](../../manifests/pyramids-government-availability.json).
 
+A separate bounded Great Library packet did not establish an exact item-206
+edge to technology ownership or acquisition, completion, display, or AI. Exact
+references and split-address recovery exposed only generic technology helpers
+and the accepted technology-table materializer. A complete filtered literal
+scan emitted three functions; their recovered prefixes were unrelated or had
+no Great Library carrier, and all three exact bodies truncated on bad
+instruction data. This is a bounded negative, not a claim that no Great
+Library consumer exists. Exact limits are in
+[`great-library-technology-transfer.json`](../../manifests/great-library-technology-transfer.json).
+
 Bounded static consumers are:
 
 - `RushCostCompute` at `0x82CE27F0`, which subtracts invested production at

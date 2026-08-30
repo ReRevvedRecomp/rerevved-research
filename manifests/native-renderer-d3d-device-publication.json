@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0110",
+  "topic": "native-renderer-d3d-device-publication",
+  "status": "open",
+  "confidence": "candidate",
+  "image": "image.json",
+  "question": "Where does the supported title publish its guest D3D device object after engine initialization succeeds?",
+  "scope": {
+    "function": "0x826A63E8",
+    "engineInitializationWrapper": "0x826A62F8",
+    "indirectCell": "0x820009F0",
+    "publicationStore": "0x826A645C",
+    "postPublicationSite": "0x826A6464",
+    "boundary": "This packet identifies one indirect pointer publication and a non-mutating post-publication observation site. It does not identify the indirect destination as VdGlobalDevice, assign a device layout, or admit a renderer operation."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-d3d-inventory",
+      "use": "open device-publication discovery frontier and aggregate evidence boundary"
+    }
+  ],
+  "currentEvidence": {
+    "method": "one foreground read-only DumpFunctions.java query for 0x826A63E8, one foreground read-only DumpMemoryWords.java query centered on 0x826A645C with word radius 9, and narrow generated-code corroboration",
+    "entries": [
+      {
+        "role": "publication function candidate",
+        "address": "0x826A63E8",
+        "evidence": "The generated function calls 0x826A62F8, rejects its zero result, then reaches the bounded indirect store sequence only on success.",
+        "confidence": "candidate"
+      },
+      {
+        "role": "indirect destination load",
+        "address": "0x826A6450",
+        "word": "0x816B09F0",
+        "instruction": "lwz r11,0x09F0(r11)",
+        "baseProducer": {
+          "address": "0x826A6438",
+          "word": "0x3D608200",
+          "instruction": "lis r11,0x8200"
+        },
+        "result": "The sequence loads the big-endian word at 0x820009F0 into r11.",
+        "confidence": "strong"
+      },
+      {
+        "role": "guest object publication",
+        "address": "0x826A645C",
+        "word": "0x93EB0000",
+        "instruction": "stw r31,0(r11)",
+        "result": "The title stores its retained object pointer in r31 through the indirect destination loaded at 0x826A6450.",
+        "confidence": "strong"
+      },
+      {
+        "role": "post-publication observation site",
+        "address": "0x826A6464",
+        "word": "0x2C030000",
+        "instruction": "cmpwi r3,0",
+        "result": "This instruction follows the publication store and retains r31 and r11 for a read-only observation inserted before the original instruction.",
+        "confidence": "strong"
+      }
+    ],
+    "generatedCorroboration": {
+      "definition": "generated/default/rerevved_recomp.193.cpp:13221",
+      "wrapperCall": "generated/default/rerevved_recomp.193.cpp:13261",
+      "publicationSequence": "generated/default/rerevved_recomp.193.cpp:13271"
+    },
+    "decompilerQualification": "The canonical-project decompile truncated at bad instruction data near 0x826A63F0 and supplied no caller or callee result. No semantic claim relies on that decompilation.",
+    "reproduction": "Run DumpMemoryWords.java read-only for target 0x826A645C with REREVVED_WORD_RADIUS=9 against the image pinned by image.json, then compare words 0x826A6438 through 0x826A6464 with the entries above. Corroborate only function 0x826A63E8 in generated ReXGlue output."
+  },
+  "nextDiscriminator": {
+    "site": "0x826A6464",
+    "registers": [
+      "r11",
+      "r31"
+    ],
+    "question": "In native mode, does r11 equal the kernel-export address mapped for VdGlobalDevice and does the big-endian word at r11 equal r31 immediately after the store?",
+    "limits": "Observe once without changing guest registers or memory. Do not dereference the device object or infer a field, lifetime, dispatch table, reset contract, or host resource."
+  },
+  "guards": [
+    "Do not identify 0x820009F0 or the runtime value in r11 as VdGlobalDevice from the static sequence alone.",
+    "Do not infer a guest device size, layout, dispatch table, field meaning, reset path, resource owner, or PM4 replacement.",
+    "Do not transfer ReBlue or Blue Dragon addresses, offsets, constants, formats, or device structures.",
+    "Do not infer runtime execution or visible guest output from this static publication candidate."
+  ],
+  "conclusion": "The supported image strongly proves that function 0x826A63E8 conditionally stores its retained object pointer r31 through an indirect destination loaded from 0x820009F0 at 0x826A645C. The destination identity and device semantics remain candidate pending the bounded native-only runtime discriminator at 0x826A6464."
+}

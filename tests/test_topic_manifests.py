@@ -442,6 +442,18 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["arithmetic"]["term"],
                          "signed divide toward zero of (reserve + 25) by 50")
 
+    def test_gold_reserve_aggregate_lifecycle_boundary(self) -> None:
+        path = MANIFESTS / "gold-reserve-aggregate-lifecycle-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0108")
+        self.assertEqual(document["scope"]["aggregate"], "0x830ED544 + player*4")
+        self.assertEqual(document["aggregateReferenceResult"]["references"], 0)
+        self.assertEqual(len(document["ownerResults"]), 2)
+        self.assertTrue(all(entry["modeledCallers"] == 0 for entry in document["ownerResults"]))
+        self.assertIn("No additional exact reserve source", document["boundedNegative"]["result"])
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

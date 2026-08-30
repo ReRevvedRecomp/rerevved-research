@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0108",
+  "topic": "gold-reserve-aggregate-lifecycle-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does another exact reserve source contribute to the aggregate returned by 0x82CF9F38, and how does one proved direct caller consume it?",
+  "scope": {
+    "consumer": "0x82CF9F38",
+    "turnProducer": "0x82D1EAB0",
+    "aggregate": "0x830ED544 + player*4",
+    "boundary": "This packet reads only exact references to the aggregate and two accepted functions, their two exact bodies, and their modeled direct callers. It does not reopen broad UEA searches, runtime cadence, 0x82D13978, presentation, AI, save, scenario, or multiplayer behavior."
+  },
+  "dependencies": [
+    { "topic": "gold-reserve-interest", "use": "Provides the accepted reserve word, UEA 47 mutation owner, read-side aggregate owner, and exact interest arithmetic." }
+  ],
+  "acceptedSeed": "GoldReserveInterestAggregate at 0x82CF9F38, CalendarTurnAdvance at 0x82D1EAB0, and reserve word 0x830ED544 + player*4.",
+  "aggregateReferenceResult": {
+    "target": "0x830ED544",
+    "references": 0,
+    "result": "The configured direct-reference query emits no exact reference to the aggregate base. This is expected to miss split-address materialization and does not contradict the accepted raw-word paths.",
+    "qualification": "Zero modeled references do not prove sole-source or sole-consumer status."
+  },
+  "ownerResults": [
+    {
+      "function": "0x82CF9F38",
+      "role": "accepted read-side aggregate owner",
+      "body": "Ghidra models only a non-returning call to thunk helper 0x827F7C80.",
+      "modeledCallers": 0,
+      "directReferences": 0
+    },
+    {
+      "function": "0x82D1EAB0",
+      "role": "accepted turn mutation owner",
+      "body": "Ghidra models only a non-returning call to thunk helper 0x827F7C50.",
+      "modeledCallers": 0,
+      "directReferences": 0
+    }
+  ],
+  "boundedNegative": {
+    "result": "No additional exact reserve source or direct caller consumption edge is promoted: the aggregate and both function entries have zero modeled references, and both exact bodies reduce to non-returning thunk calls.",
+    "effect": "The existing UEA 47 mutation and read-side aggregate facts remain accepted, while broader aggregate sources and callers remain unresolved.",
+    "falsificationCondition": "A corrected complete body, exact split-address reference, or modeled direct caller proves another reserve contribution or a concrete use of the returned aggregate."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": ["RVA-SYM-0324"],
+    "result": "The existing aggregate function gains the bounded source/caller qualification; no ownership or consumer relation is added."
+  },
+  "currentEvidence": {
+    "method": "Three sequential foreground read-only Ghidra queries: aggregate references, the two exact owner bodies, and direct references to both owner entries.",
+    "entries": [
+      { "role": "aggregate reference inventory", "address": "0x830ED544", "result": "Zero modeled references.", "confidence": "strong" },
+      { "role": "owner bodies", "address": "0x82CF9F38", "result": "Both bodies reduce to non-returning thunk calls and expose zero modeled callers.", "confidence": "strong" },
+      { "role": "owner entry references", "address": "0x82D1EAB0", "result": "Both function entries have zero modeled direct references.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpReferences.java:0x830ED544",
+      "ghidra/DumpFunctions.java:0x82CF9F38,0x82D1EAB0",
+      "ghidra/DumpReferences.java:0x82CF9F38,0x82D1EAB0"
+    ],
+    "qualification": "Generated code was not used to manufacture a caller or source edge. The accepted raw-word arithmetic in gold-reserve-interest remains unchanged. No runtime probe was performed."
+  },
+  "guards": [
+    "Do not infer sole-source or sole-consumer status from zero modeled references.",
+    "Do not widen into UEA searches, 0x82D13978, runtime cadence, presentation, AI, save, scenario, or multiplayer behavior.",
+    "Do not change the accepted reserve arithmetic or UEA 47 classification."
+  ],
+  "conclusion": "The bounded configured-project read set cannot extend the gold-reserve aggregate lifecycle. Exact references to 0x830ED544, 0x82CF9F38, and 0x82D1EAB0 are absent, both owner bodies reduce to non-returning thunk calls, and no direct caller body is available. No additional reserve source or caller consumption relation is proved; the accepted UEA 47 paths remain unchanged."
+}

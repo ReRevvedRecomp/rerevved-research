@@ -267,6 +267,13 @@ to its retained aggregate without storing the reserve. The complete evidence
 and negative-value boundary are in
 [`gold-reserve-interest.json`](../../manifests/gold-reserve-interest.json).
 
+A follow-on aggregate-lifecycle packet found no additional source or caller
+edge in the configured project. Exact references to the reserve base and both
+accepted owner entries are absent, while both owner bodies reduce to
+non-returning thunk calls. This does not prove sole-source or sole-consumer
+status and does not change the accepted UEA 47 arithmetic. Exact limits are in
+[`gold-reserve-aggregate-lifecycle-boundary.json`](../../manifests/gold-reserve-aggregate-lifecycle-boundary.json).
+
 UEA 40 is the regression case. The Barbarian-capture path in `0x82D1B400`
 loads the new owner's civilization at `0x82D1B74C`, compares it with Mongolian
 civilization 14 at `0x82D1B758`, calls the city-record creator at
@@ -308,6 +315,7 @@ unknown.
 - [Rush-cost producer](../../manifests/rush-cost-producer.json)
 - [Game calendar state](../../manifests/game-calendar-state.json)
 - [Gold-reserve interest](../../manifests/gold-reserve-interest.json)
+- [Gold-reserve aggregate lifecycle boundary](../../manifests/gold-reserve-aggregate-lifecycle-boundary.json)
 - [Starting technology grants](../../manifests/starting-technology-grants.json)
 - [Unique Era Ability effect ownership](../../manifests/unique-era-ability-effect-ownership.json)
 - [Catalog contract](../catalogs.md)

@@ -69,6 +69,23 @@ The bare-name ordering does not generalize to that branch. Reverse traversal
 also does not establish a complete base-FPK versus DLC-FPK chronology or the
 collision order of entries inside one aggregate.
 
+## Numbered MapList selection state
+
+`MapListSelectionStateUpdate` at `0x82DADC88` stores its retained input at
+receiver `+0x134`. A zero override calls `NumberedMapListSelect` at
+`0x82E2B8D0` and stores the returned entry at `+0x138`; a nonzero override
+bypasses the selector and is stored directly at `+0x138`. The selector reduces
+its unsigned input modulo the current MapList count, adds one, and requests
+that entry.
+
+The scenario parser maps `MAPNUMBER` to signed variator slot 32, and scenario
+application copies that slot into the active variator block at `0x830E9010`.
+The bounded parser, application, scanner, state-update, and selector functions
+contain no direct edge from that slot to either update argument. The two state
+fields therefore remain neutral: they are not named `MAPNUMBER`, and menu
+numbering, exact map identity, setup, and runtime selection remain unresolved.
+See [the exact selector packet](../../manifests/map-list-selection-owner.json).
+
 ## Evidence boundaries
 
 - Static source registration does not prove runtime enumeration, successful
@@ -85,5 +102,6 @@ collision order of entries inside one aggregate.
 - [Main-menu File Data handoff](../../manifests/gfx-main-menu-filedata-handoff.json)
 - [Map content precedence](../../manifests/map-content-precedence.json)
 - [Map delivery boundary](../../manifests/map-delivery-boundary.json)
+- [MapList selection owner](../../manifests/map-list-selection-owner.json)
 - [Registered-source delivery boundary](../../manifests/registered-source-delivery-boundary.json)
 - [Catalog contract](../catalogs.md)

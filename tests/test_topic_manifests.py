@@ -175,6 +175,18 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["wonderRange"]["ueaId"], 24)
         self.assertIn("common wonder half-scaling", document["guards"][1])
 
+    def test_map_list_selection_owner_contract(self) -> None:
+        path = MANIFESTS / "map-list-selection-owner.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        update = document["stateUpdate"]
+        self.assertEqual(update["function"], "0x82DADC88")
+        self.assertEqual(update["inputStore"]["offset"], "0x134")
+        self.assertEqual(update["zeroOverride"]["selector"], "0x82E2B8D0")
+        self.assertEqual(update["resultOffset"], "0x138")
+        self.assertEqual(document["mapNumberNegative"]["activeSlot"], "0x830E9010")
+        self.assertIn("no direct MAPNUMBER-to-argument edge", document["conclusion"])
+
     def test_gold_reserve_interest_contract(self) -> None:
         path = MANIFESTS / "gold-reserve-interest.json"
         document = json.loads(path.read_text(encoding="utf-8"))

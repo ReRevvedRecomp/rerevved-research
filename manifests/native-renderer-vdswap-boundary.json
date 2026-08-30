@@ -24,7 +24,7 @@
     }
   ],
   "currentEvidence": {
-    "method": "one foreground read-only DumpFunctions.java query for 0x826A4638, narrow generated-code corroboration of only that function, and maintained SDK e89618a VdSwap source inspection",
+    "method": "foreground read-only DumpFunctions.java queries for the VdSwap owner, its pre-swap command path, the display-descriptor cache producer, the nearby diagnostic capture cluster, and the exact D3D resolve entry; narrow generated-code corroboration; and maintained SDK e89618a VdSwap and Xenos register inspection",
     "ghidraResult": "The canonical project identified the exact function entry but truncated at save thunk 0x827F7C78. It supplied no usable body or complete caller result.",
     "generatedCall": {
       "owner": "0x826A4638",
@@ -46,6 +46,20 @@
       "flushBody": "One read-only DumpFunctions.java query identifies 0x826A4150 and its direct callees. Narrow generated corroboration shows that it emits command words through 0x8269CD20 and 0x8269BF40, passes 0x826A3FB8 as a packet callback target, advances the primary ring pointer, and sets device byte +0x2ABD bit 0x10. The exact body contains no frontbuffer read and no source-specific CPU completion wait.",
       "packetCallback": "A second read-only DumpFunctions.java query identifies 0x8269BF40, 0x826A3FB8, and 0x826A9C30. Ghidra truncates the first two at save thunks and the third at bad instruction data. Narrow generated corroboration shows 0x8269BF40 writing command words and 0x826A3FB8 updating pacing, writeback, and MMIO-related device state when invoked; it does not establish CPU-side frontbuffer freshness at the later VdSwap call.",
       "result": "The pre-swap chain establishes command-stream order, not a CPU-readable producer-completion gate for the frontbuffer virtual address. A native hook at 0x826A4884 therefore cannot treat page readability as proof that the source contains the completed frame."
+    },
+    "displayDescriptorCache": {
+      "producer": "0x82ABE328 copies the six VdSwap fetch dwords to device offsets +0x3A18 through +0x3A2C from device offsets +0xBC, +0xC8, +0x9C, +0xA0, +0xB8, and +0xC4. Generated corroboration is at generated/default/rerevved_recomp.79.cpp:23651-23678.",
+      "caller": "0x82AB9538 calls 0x82ABE328 at 0x82AB9728; 0x82ABBCA0 calls 0x82AB9538 at 0x82ABBDCC after updating device configuration fields, and reset or recreation paths call 0x82ABBCA0.",
+      "result": "This is configuration-time display-descriptor cache population, not a per-frame resolve or a completion signal. It explains the descriptor consumed by 0x826A4638 but does not identify the operation that makes its base address current."
+    },
+    "resolveIdentity": {
+      "entry": "0x8269E520",
+      "extent": "The generated function occupies 0xE50 bytes through the next entry at 0x8269F370.",
+      "ghidra": "A foreground read-only query identified the exact entry and one recognized screenshot caller at 0x8250B350, then truncated at save thunk 0x827F7C50. The generated call graph independently contains nine direct callsites across seven callers, so the incomplete Ghidra caller list is not used as reachability closure.",
+      "abi": "The function retains r3 as the device, r4 as flags, r5 as a source rectangle, r6 as the destination texture, r7 as a destination point, r8 and r9 as destination subresource selectors, r10 as clear-color data, and f1 plus stack arguments as clear values or parameters. It reads the destination texture fetch descriptor from r6 + 0x1C through +0x30.",
+      "registerProof": "The function emits Xenos resolve state and explicitly writes register indices 0x2318 and 0x231B, decimal 8984 and 8987, before returning. Maintained SDK e89618a names these RB_COPY_CONTROL and RB_COPY_DEST_INFO. Generated corroboration is at generated/default/rerevved_recomp.163.cpp:12758-14889.",
+      "negativeCluster": "The nearby 0x826B1978, 0x826B1DA0, 0x826B26A8, and 0x826B2A48 cluster is conditional diagnostic frame-capture and reporting work immediately before swap. It is not D3DDevice_Resolve and supplies no production or completion gate.",
+      "result": "0x8269E520 is the exact ReRevved D3DDevice_Resolve semantic boundary. Static evidence does not yet select which of its destination textures becomes the later VdSwap frontbuffer or prove when that resolve is complete for a title-owned renderer."
     }
   },
   "abi": {
@@ -62,8 +76,8 @@
     "sdkUse": "The SDK byte-swaps the six descriptor dwords, requires every named pointer, requires the supplied virtual address to equal descriptor base_address << 12, translates it to physical memory, accepts only k_8_8_8_8 or k_2_10_10_10_AS_16_16_16_16, requires RGB color space zero and descriptor-matching width and height, then emits the swap packet."
   },
   "nextDiscriminator": {
-    "site": "upstream of 0x826A4150 and 0x826A4884",
-    "question": "Which proved title operation produces or resolves the frontbuffer named by the VdSwap descriptor, and what title-owned completion signal can serialize that production with a single native renderer-thread presentation owner?",
+    "site": "the nine direct 0x8269E520 callsites and the later 0x826A4884 VdSwap descriptor",
+    "question": "Which exact ReRevved D3DDevice_Resolve destination matches the later VdSwap frontbuffer descriptor, and what title-owned completion signal can serialize that resolve with a single native renderer-thread presentation owner?",
     "limits": "Do not add a native VdSwap upload hook until source production, completion, layout, lifetime, failure suppression, and renderer-thread ownership are all explicit. Do not persist raw guest pointers, reuse ReXGlue texture-cache or presenter state, or claim parity from page readability."
   },
   "guards": [
@@ -73,5 +87,5 @@
     "Do not bypass guest-memory lifetime and synchronization requirements merely because the ABI exposes a virtual address or a pre-swap command-stream flush.",
     "Do not make the research manifest a title runtime dependency."
   ],
-  "conclusion": "ReRevved function 0x826A4638 directly calls VdSwap at 0x826A4884 with an exact frontbuffer fetch descriptor and separately derived virtual address, numeric format, RGB color space, width, and height pointers. Maintained SDK e89618a defines how those values identify the guest frontbuffer. The ordinary worker calls 0x826A4150 first, but that path emits ordered command-stream work and does not prove CPU-readable frontbuffer completion. Native source production, synchronization, renderer-thread ownership, runtime execution, and visible output remain open, so a native VdSwap upload hook is not yet admissible."
+  "conclusion": "ReRevved function 0x826A4638 directly calls VdSwap at 0x826A4884 with an exact frontbuffer fetch descriptor and separately derived virtual address, numeric format, RGB color space, width, and height pointers. Maintained SDK e89618a defines how those values identify the guest frontbuffer. ReRevved function 0x8269E520 is now proved as the exact D3DDevice_Resolve boundary, while the ordinary pre-swap 0x826A4150 path proves only command ordering. Which resolve destination feeds VdSwap and how a title-owned renderer observes its completion remain open, so a native VdSwap upload hook is not yet admissible."
 }

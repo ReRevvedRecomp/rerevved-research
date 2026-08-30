@@ -2056,6 +2056,71 @@
           }
         }
       ]
+    },
+    {
+      "id": "RVA-STR-0052",
+      "name": "building_definition_record_partial",
+      "image": "../image.json",
+      "claim": "Partial 0xCC-byte building-definition record selected by item ID minus 100.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../building-wonder-cost-identities.json#/buildingRecords" }
+      ],
+      "qualification": { "alternatives": ["Only the exact name start for three records and the signed base-cost factor are assigned; the complete layout and remaining identities are unresolved."] },
+      "size": "0xCC",
+      "fields": [
+        {
+          "id": "RVA-FLD-0166",
+          "name": "identity_name",
+          "offset": "0x0",
+          "claim": "Begins the defined identity string in the exact Barracks, Library, and Courthouse records.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../building-wonder-cost-identities.json#/buildingRecords" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpStringsInRange.java:0x82F71FD8..0x82F72C90" }
+          ],
+          "qualification": { "alternatives": ["This field is proved only for the three exact records and does not establish a fixed string capacity or every record's contents."] }
+        },
+        {
+          "id": "RVA-FLD-0167",
+          "name": "normal_production_base_cost_factor",
+          "offset": "0x41",
+          "claim": "Signed byte multiplied by the current scalar before later building-cost modifiers.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../building-wonder-cost-identities.json#/buildingRecords" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82F720E5,0x82F72415,0x82F72B41" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CF1278" }
+          ],
+          "qualification": { "alternatives": ["The byte is a factor, not the final production cost; adjacent fields and later modifiers remain separate."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0053",
+      "name": "wonder_definition_record_partial",
+      "image": "../image.json",
+      "claim": "Partial 0x14C-byte wonder-definition record selected by item ID minus 200.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../building-wonder-cost-identities.json#/wonderRange" }
+      ],
+      "qualification": { "alternatives": ["Only the signed base-cost field is assigned; individual identities and the complete layout remain unresolved."] },
+      "size": "0x14C",
+      "fields": [
+        {
+          "id": "RVA-FLD-0168",
+          "name": "normal_production_base_cost_factor",
+          "offset": "0x40",
+          "claim": "Signed halfword multiplied by the current scalar before the common wonder scale and later modifiers.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../building-wonder-cost-identities.json#/wonderRange" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CF1278" }
+          ],
+          "qualification": { "alternatives": ["The halfword is a factor, not the final production cost; adjacent fields, identities, and later modifiers remain unresolved."] }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0092",
+  "topic": "building-wonder-cost-identities",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which exact building identities and wonder-range relationship can be joined to the accepted non-unit production-cost fields and effect-specific half-cost branches?",
+  "scope": {
+    "function": "0x82CF1278",
+    "buildingTable": "0x82F71FD8",
+    "wonderTable": "0x82F73238",
+    "buildingRecords": [101, 105, 114],
+    "boundary": "This packet joins three exact building record identities and the complete wonder item range to their accepted production-cost fields and UEA half-cost branches. It does not recover the remaining record identities, complete either record layout, assign adjacent fields, close all cost modifiers, map completion, display, or AI consumers, or establish runtime behavior."
+  },
+  "dependencies": [
+    { "topic": "production-cost-ownership", "use": "Provides the accepted ID ranges, table bases, strides, signed base-cost fields, and BuildingWonderProductionCostLookup identity." },
+    { "topic": "civilization-bonus-storage", "use": "Provides the accepted cumulative ActiveCivilizationBonusLookup contract and retail UEA placements." }
+  ],
+  "buildingRecords": [
+    {
+      "itemId": 101,
+      "name": "Barracks",
+      "record": "0x82F720A4",
+      "recordSize": "0xCC",
+      "nameOffset": "0x0",
+      "baseCostOffset": "0x41",
+      "baseCostAddress": "0x82F720E5",
+      "baseCostFactor": 4,
+      "ueaId": 19,
+      "effect": "Barracks cost half as much",
+      "itemMask": "0x00000002",
+      "maskCompare": "0x82CF1360",
+      "lookupCallsite": "0x82CF1378",
+      "activeResult": "Subtract signed cost divided by two with truncation toward zero."
+    },
+    {
+      "itemId": 105,
+      "name": "Library",
+      "record": "0x82F723D4",
+      "recordSize": "0xCC",
+      "nameOffset": "0x0",
+      "baseCostOffset": "0x41",
+      "baseCostAddress": "0x82F72415",
+      "baseCostFactor": 4,
+      "ueaId": 20,
+      "effect": "Libraries cost half as much",
+      "itemMask": "0x00000020",
+      "maskCompare": "0x82CF1390",
+      "lookupCallsite": "0x82CF13A8",
+      "activeResult": "Subtract signed cost divided by two with truncation toward zero."
+    },
+    {
+      "itemId": 114,
+      "name": "Courthouse",
+      "record": "0x82F72B00",
+      "recordSize": "0xCC",
+      "nameOffset": "0x0",
+      "baseCostOffset": "0x41",
+      "baseCostAddress": "0x82F72B41",
+      "baseCostFactor": 8,
+      "ueaId": 18,
+      "effect": "Courthouses cost half as much",
+      "itemMask": "0x00004000",
+      "maskCompare": "0x82CF1338",
+      "lookupCallsite": "0x82CF1348",
+      "activeResult": "Subtract signed cost divided by two with truncation toward zero."
+    }
+  ],
+  "wonderRange": {
+    "itemIds": "200 through 299",
+    "normalizedRange": "100 through 199 after subtracting 100",
+    "table": "0x82F73238",
+    "recordSize": "0x14C",
+    "baseCostOffset": "0x40",
+    "baseCostWidth": "signed halfword",
+    "rangeChecks": ["0x82CF14BC", "0x82CF14C4"],
+    "commonScale": "Every in-range wonder cost is first divided by two with signed truncation toward zero.",
+    "ueaId": 24,
+    "effect": "Wonders cost half as much",
+    "lookupCallsite": "0x82CF14E8",
+    "activeResult": "After common wonder scaling, an active cumulative UEA 24 result subtracts a further signed half with truncation toward zero.",
+    "qualification": "The common scale is part of the native wonder cost formula, not a player-facing bonus by itself. Individual wonder record names and values remain unresolved in this packet."
+  },
+  "currentEvidence": {
+    "method": "Four sequential foreground read-only Ghidra queries plus narrow exact-function generated corroboration.",
+    "entries": [
+      { "role": "helper decompiler boundary", "address": "0x82CF1278", "result": "The configured project still truncates after the save-register thunk.", "confidence": "strong" },
+      { "role": "bounded building strings", "address": "0x82F720A4", "result": "Defined strings identify Barracks, Library, and Courthouse at the computed record bases.", "confidence": "strong" },
+      { "role": "building base-cost cells", "address": "0x82F720E5", "result": "Exact unaligned words expose signed leading bytes 4, 4, and 8 at the three accepted +0x41 cells.", "confidence": "strong" },
+      { "role": "effect-specific branches", "address": "0x82CF1338", "result": "Exact words establish masks, lookup IDs 18, 19, 20, and 24, calls, result tests, and bounded half arithmetic.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpFunctions.java:0x82CF1278",
+      "ghidra/DumpStringsInRange.java:0x82F71FD8..0x82F72C90",
+      "ghidra/DumpMemoryWords.java:0x82F720E5,0x82F72415,0x82F72B41",
+      "ghidra/DumpMemoryWords.java:0x82CF1338,0x82CF1368,0x82CF1398,0x82CF14BC",
+      "generated:rerevved/sub_82CF1278"
+    ],
+    "qualification": "The generated body corroborates the exact current-image words hidden by the configured decompiler truncation. No runtime probe was performed."
+  },
+  "guards": [
+    "Keep the signed byte and signed halfword fields distinct and preserve signed truncation toward zero.",
+    "Do not treat the common wonder half-scaling as UEA 24; the optional UEA branch applies after it.",
+    "Do not infer remaining building or individual wonder identities from stride alone.",
+    "Do not name adjacent record fields or claim complete layouts, modifiers, completion, display, AI, or runtime behavior."
+  ],
+  "conclusion": "BuildingWonderProductionCostLookup joins item 101 Barracks, item 105 Library, and item 114 Courthouse to signed +0x41 factors 4, 4, and 8 and to cumulative UEA 19, 20, and 18 half-cost branches. IDs 200 through 299 use the wonder table's signed +0x40 field, receive the native common wonder half-scaling, and then receive a further signed half reduction when cumulative UEA 24 is active."
+}

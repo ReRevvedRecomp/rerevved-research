@@ -54,11 +54,20 @@ IDs 0 through 99. `CurrentProductionItemCostLookup` at `0x82CF8308` selects the
 current city item at `+0x38` and returns the same unit result. Both route item
 IDs 100 through 299 through separate `BuildingWonderProductionCostLookup` at
 `0x82CF1278`. IDs 100 through 199 use a signed byte at `+0x41` of `0xCC`-byte
-records rooted at `0x82F71FD8`. IDs 200 through 299 use a signed halfword at
-`+0x40` of `0x14C`-byte records rooted at `0x82F73238`. Both fields multiply
-the helper's current scalar before later modifiers. The ranges retain their
-accepted building and wonder terminology, but their complete record layouts,
-names, counts, field values, and modifier ownership remain unresolved.
+building records rooted at `0x82F71FD8`. Exact records now identify item 101
+Barracks with factor 4, item 105 Library with factor 4, and item 114 Courthouse
+with factor 8. The helper selects those item IDs with masks `0x2`, `0x20`, and
+`0x4000`; cumulative UEA 19, 20, and 18 respectively reduce the composed
+signed cost by half with truncation toward zero.
+
+IDs 200 through 299 use a signed halfword at `+0x40` of `0x14C`-byte wonder
+records rooted at `0x82F73238`. The helper applies a common signed half-scale
+to every item in that range, then applies another signed half reduction when
+cumulative UEA 24, Wonders cost half as much, is active. The common scale is
+part of the native wonder formula, not UEA 24 itself. The remaining building
+identities, individual wonder identities, complete layouts, adjacent fields,
+and other modifiers remain unresolved. Exact locators are in
+[`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).
 
 Bounded static consumers are:
 

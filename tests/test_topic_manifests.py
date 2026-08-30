@@ -122,7 +122,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn(47, {entry["ueaId"] for entry in shared})
         self.assertIn(1, {entry["ueaId"] for entry in shared})
         self.assertIn(50, {entry["ueaId"] for entry in shared})
-        self.assertTrue({3, 12, 55}.issubset(
+        self.assertTrue({3, 12, 18, 19, 20, 24, 55}.issubset(
             {entry["ueaId"] for entry in shared}
         ))
         self.assertNotIn(23, document["retailOwnerClasses"]["unknown"])
@@ -131,19 +131,20 @@ class TopicManifestTests(unittest.TestCase):
         self.assertNotIn(47, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(1, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(50, document["retailOwnerClasses"]["unknown"])
-        self.assertTrue({3, 12, 55}.isdisjoint(
+        self.assertTrue({3, 12, 18, 19, 20, 24, 55}.isdisjoint(
             document["retailOwnerClasses"]["unknown"]
         ))
         self.assertEqual(
             document["retailCellProjection"]["counts"],
             {
                 "total": 64,
-                "sharedCumulativeLookup": 30,
+                "sharedCumulativeLookup": 35,
                 "directCivilizationEffectPath": 1,
                 "mixedCompanionPath": 0,
-                "unknown": 33,
+                "unknown": 28,
             },
         )
+
         owner = document["greatPersonGenerationOwner"]
         self.assertEqual(owner["lookup"]["callsite"], "0x82D15618")
         self.assertEqual(owner["lookup"]["target"], "0x82CF0CB0")
@@ -159,6 +160,20 @@ class TopicManifestTests(unittest.TestCase):
             anarchy["effectDataflow"]["halfwordStores"],
             ["0x82D15350", "0x82D15358", "0x82D15360", "0x82D15368"],
         )
+
+    def test_building_wonder_cost_identity_contract(self) -> None:
+        path = MANIFESTS / "building-wonder-cost-identities.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            [(record["itemId"], record["name"], record["baseCostFactor"], record["ueaId"])
+             for record in document["buildingRecords"]],
+            [(101, "Barracks", 4, 19), (105, "Library", 4, 20),
+             (114, "Courthouse", 8, 18)],
+        )
+        self.assertEqual(document["wonderRange"]["itemIds"], "200 through 299")
+        self.assertEqual(document["wonderRange"]["ueaId"], 24)
+        self.assertIn("common wonder half-scaling", document["guards"][1])
 
     def test_gold_reserve_interest_contract(self) -> None:
         path = MANIFESTS / "gold-reserve-interest.json"

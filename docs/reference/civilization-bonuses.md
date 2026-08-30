@@ -186,10 +186,10 @@ each distinct UEA ID's accepted owner class to the row table above:
 
 | Owner class | Distinct retail IDs | Retail cells | Boundary |
 | --- | --- | ---: | --- |
-| Shared cumulative lookup | 1, 3, 5, 8, 9, 10, 12, 13, 17, 23, 34, 35, 42, 43, 47, 48, 50, 55, 58, 59, 60 | 30 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
+| Shared cumulative lookup | 1, 3, 5, 8, 9, 10, 12, 13, 17, 18, 19, 20, 23, 24, 34, 35, 42, 43, 47, 48, 50, 55, 58, 59, 60 | 35 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
 | Direct civilization/effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
 | Mixed companion path | None | 0 | No native retail cell is accepted in this class. |
-| Unknown | 2, 4, 6, 7, 14, 16, 18, 19, 20, 24, 25, 26, 27, 28, 30, 32, 36, 38, 41, 46, 51, 56, 61 | 33 | No accepted effect-specific producer-consumer packet establishes the native owner. |
+| Unknown | 2, 4, 6, 7, 14, 16, 25, 26, 27, 28, 30, 32, 36, 38, 41, 46, 51, 56, 61 | 28 | No accepted effect-specific producer-consumer packet establishes the native owner. |
 
 The 95-site generated inventory contains literal shared-lookup requests for 42
 of the 45 retail IDs. That is useful search guidance only. A literal request

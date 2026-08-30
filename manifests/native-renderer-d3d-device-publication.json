@@ -12,6 +12,7 @@
     "indirectCell": "0x820009F0",
     "publicationStore": "0x826A645C",
     "postPublicationSite": "0x826A6460",
+    "ringLifecycleHelper": "0x8269C8E0",
     "boundary": "This packet identifies one indirect pointer publication and a non-mutating post-publication observation site. It does not identify the indirect destination as VdGlobalDevice, assign a device layout, or admit a renderer operation."
   },
   "dependencies": [
@@ -67,6 +68,25 @@
     "decompilerQualification": "The canonical-project decompile truncated at bad instruction data near 0x826A63F0 and supplied no caller or callee result. No semantic claim relies on that decompilation.",
     "reproduction": "Run DumpMemoryWords.java read-only for target 0x826A645C with REREVVED_WORD_RADIUS=9 against the image pinned by image.json, then compare words 0x826A6438 through 0x826A6464 with the entries above. Corroborate only function 0x826A63E8 in generated ReXGlue output."
   },
+  "postPublicationHelper": {
+    "address": "0x8269C8E0",
+    "callsite": "0x826A6474",
+    "continuation": "0x826A6478",
+    "method": "one foreground read-only DumpFunctions.java query for 0x8269C8E0 and narrow generated-code corroboration of only 0x826A63E8 and 0x8269C8E0",
+    "ghidraResult": "The canonical project identified the exact function entry but truncated at save thunk 0x827F7C78. Its decompilation and caller/callee model supplied no usable body or complete reference result.",
+    "generatedCallChain": "After ExGetXConfigSetting returns nonnegative, 0x826A63E8 passes the retained published object in r3 and r30 + 0x48 in r4 to 0x8269C8E0. A zero helper return continues to 0x8268CC88.",
+    "generatedBody": "The helper conditionally tears down prior anonymous buffers, clears object fields +0x3A24, +0x3A28, +0x30, and +0x34, allocates 96 and 32 bytes into +0x2A90 and +0x2A94, zeroes both blocks, calls VdInitializeRingBuffer, calls VdEnableRingBufferRPtrWriteBack, and publishes additional ring bookkeeping fields.",
+    "classification": "strong static ring-buffer lifecycle boundary",
+    "qualification": "This does not identify a render target, texture, EDRAM surface, resolve, swap, present path, device reset API, complete field layout, caller inventory, ownership, destruction contract, or runtime execution.",
+    "generatedCorroboration": {
+      "callerWindow": "generated/default/rerevved_recomp.193.cpp:13292",
+      "definition": "generated/default/rerevved_recomp.186.cpp:13125",
+      "clearAndAllocationWindow": "generated/default/rerevved_recomp.186.cpp:13235",
+      "ringInitializationWindow": "generated/default/rerevved_recomp.186.cpp:13413",
+      "writeBackWindow": "generated/default/rerevved_recomp.186.cpp:13451"
+    },
+    "nextBoundary": "0x8268CC88 remains unclassified and is reached only after the ring helper returns zero."
+  },
   "nextDiscriminator": {
     "site": "0x826A6460",
     "registers": [
@@ -79,6 +99,7 @@
   "guards": [
     "Do not identify 0x820009F0 or the runtime value in r11 as VdGlobalDevice from the static sequence alone.",
     "Do not infer a guest device size, layout, dispatch table, field meaning, reset path, resource owner, or PM4 replacement.",
+    "Do not relabel the ring-buffer lifecycle helper as a render-target, resolve, swap, present, or complete device-reset boundary.",
     "Do not transfer ReBlue or Blue Dragon addresses, offsets, constants, formats, or device structures.",
     "Do not infer runtime execution or visible guest output from this static publication candidate."
   ],

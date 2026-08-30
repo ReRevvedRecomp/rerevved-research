@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0088",
+  "topic": "city-growth-threshold",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which current-image helper owns the UEA 8 Faster city growth effect, what exact threshold adjustment does it return, and how does a city-update consumer use that result?",
+  "scope": {
+    "functions": ["0x82CF0CB0", "0x82CF1060", "0x82D13978"],
+    "fields": ["city record +0x03", "city record +0x34"],
+    "boundary": "This packet identifies the UEA 8 threshold adjustment and one city-update threshold consumer. It does not recover the complete city table, baseline threshold formula, every modifier, every caller, presentation, AI, save, scenario, multiplayer, or runtime behavior."
+  },
+  "dependencies": [
+    {
+      "topic": "civilization-bonus-storage",
+      "use": "Provides the accepted cumulative ActiveCivilizationBonusLookup contract and the Zulu/African Medieval placement of UEA 8."
+    }
+  ],
+  "activation": {
+    "ueaId": 8,
+    "effect": "Faster city growth",
+    "lookup": "0x82CF0CB0",
+    "mode": "cumulative",
+    "retailPlacement": { "civilization": "African", "playerFacingCivilization": "Zulu", "era": "Medieval" }
+  },
+  "thresholdOwner": {
+    "function": "0x82CF1060",
+    "semanticName": "CityGrowthThresholdLookup",
+    "input": "city index in r3",
+    "playerField": {
+      "offset": "0x03",
+      "width": "signed byte",
+      "load": "0x82CF10E8",
+      "argumentMove": "0x82CF10F4"
+    },
+    "lookupArguments": {
+      "mode": { "address": "0x82CF10EC", "value": 0 },
+      "player": { "address": "0x82CF10F4", "source": "signed city-record byte +0x03" },
+      "ueaId": { "address": "0x82CF10F0", "value": 8 }
+    },
+    "lookupCallsite": "0x82CF10F8",
+    "resultTest": "0x82CF10FC",
+    "inactiveTarget": "0x82CF1130",
+    "adjustment": {
+      "baselineRegister": "r31",
+      "floorCandidate": { "address": "0x82CF1104", "expression": "baseline - 20" },
+      "ordinaryReduction": { "address": "0x82CF1108", "value": 10 },
+      "floorCompare": "0x82CF110C",
+      "selection": ["0x82CF1110", "0x82CF1114"],
+      "returnCalculation": "0x82CF1118",
+      "activeResult": "max(20, baseline - 10)",
+      "inactiveResult": "baseline"
+    },
+    "result": "When cumulative UEA 8 is active, the helper reduces the retained signed baseline threshold by 10 but never returns less than 20."
+  },
+  "cityUpdateConsumer": {
+    "function": "0x82D13978",
+    "thresholdCalls": ["0x82D163BC", "0x82D163D4"],
+    "storedProgressField": { "offset": "0x34", "width": "signed halfword" },
+    "comparison": "0x82D163C8",
+    "insufficientTarget": "0x82D168AC",
+    "result": "The first call result is compared with signed city halfword +0x34. When progress reaches the threshold, the second result is subtracted from that halfword and the adjacent retained population byte is incremented.",
+    "qualification": "This exact consumer establishes threshold semantics and carry-over subtraction. It does not name the progress field beyond the growth contract, prove every population-change path, or identify all surrounding city fields."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only 31-word current-image query centered at 0x82CF10F8, exact verification of 14 selected words and branch targets, and narrow generated-code corroboration of 0x82CF1060 plus the two direct city-update callsites in 0x82D13978.",
+    "entries": [
+      { "role": "growth-threshold owner", "address": "0x82CF1060", "confidence": "strong" },
+      { "role": "UEA 8 lookup", "address": "0x82CF10F8", "confidence": "strong" },
+      { "role": "city-update threshold consumer", "address": "0x82D163BC", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82CF10BC..0x82CF1134",
+      "generated:rerevved/sub_82CF1060",
+      "generated:rerevved/sub_82D13978"
+    ],
+    "qualification": "No runtime action was performed. The current-image window establishes the complete UEA-specific adjustment; generated code supplies bounded baseline retention, player-field provenance, and city-update consumer use."
+  },
+  "guards": [
+    "Do not model Faster city growth as a percentage; the accepted UEA path subtracts 10 from the threshold with a hard floor of 20.",
+    "Do not infer the complete baseline threshold formula or all of its pre-UEA modifiers from this packet.",
+    "Do not treat city record +0x34 as a complete population or food-state layout.",
+    "Do not claim presentation, AI, save, scenario, multiplayer, or runtime parity from the static owner and one consumer."
+  ],
+  "conclusion": "CityGrowthThresholdLookup at 0x82CF1060 owns UEA 8 through the cumulative lookup. Its active result is max(20, baseline - 10), and the bounded city-update path in 0x82D13978 compares stored signed halfword progress against that result, subtracts the threshold on growth, and increments population."
+}

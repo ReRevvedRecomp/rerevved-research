@@ -117,19 +117,21 @@ class TopicManifestTests(unittest.TestCase):
 
         shared = document["retailOwnerClasses"]["sharedCumulativeLookup"]
         self.assertIn(23, {entry["ueaId"] for entry in shared})
+        self.assertIn(8, {entry["ueaId"] for entry in shared})
         self.assertIn(42, {entry["ueaId"] for entry in shared})
         self.assertIn(47, {entry["ueaId"] for entry in shared})
         self.assertNotIn(23, document["retailOwnerClasses"]["unknown"])
+        self.assertNotIn(8, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(42, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(47, document["retailOwnerClasses"]["unknown"])
         self.assertEqual(
             document["retailCellProjection"]["counts"],
             {
                 "total": 64,
-                "sharedCumulativeLookup": 21,
+                "sharedCumulativeLookup": 22,
                 "directCivilizationEffectPath": 1,
                 "mixedCompanionPath": 0,
-                "unknown": 42,
+                "unknown": 41,
             },
         )
         owner = document["greatPersonGenerationOwner"]
@@ -164,6 +166,21 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(consumer["reserveBase"]["value"], "0x830ED544")
         self.assertEqual(document["arithmetic"]["term"],
                          "signed divide toward zero of (reserve + 25) by 50")
+
+    def test_city_growth_threshold_contract(self) -> None:
+        path = MANIFESTS / "city-growth-threshold.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["activation"]["ueaId"], 8)
+        owner = document["thresholdOwner"]
+        self.assertEqual(owner["function"], "0x82CF1060")
+        self.assertEqual(owner["lookupCallsite"], "0x82CF10F8")
+        self.assertEqual(owner["adjustment"]["activeResult"],
+                         "max(20, baseline - 10)")
+        consumer = document["cityUpdateConsumer"]
+        self.assertEqual(consumer["thresholdCalls"],
+                         ["0x82D163BC", "0x82D163D4"])
+        self.assertEqual(consumer["storedProgressField"]["offset"], "0x34")
 
     def test_unique_unit_combat_predicate_contract(self) -> None:
         path = MANIFESTS / "unique-unit-combat-predicates.json"

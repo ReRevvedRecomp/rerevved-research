@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0127",
+  "topic": "native-renderer-resource-lifetime-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the bounded explicit-buffer creation and allocator frontier expose an exact generation, replacement, invalidation, or recycling discriminator?",
+  "scope": {
+    "creator": "0x82533DB8",
+    "allocator": "0x82E29168",
+    "factory": "0x825184D0",
+    "cleanup": "0x82518678",
+    "destructor": "0x82518E88",
+    "retainedSlots": ["+0x90", "+0x94"],
+    "selector": "+0x98",
+    "boundary": "This packet inventories exact references to the accepted backing allocator and applies the declared fan-out stop. It carries forward already proved container ownership facts but does not inspect arbitrary allocator callers or infer lower allocator policy."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-vdswap-boundary",
+      "use": "Provides the accepted factory, alternating retained slots, selector, cleanup, destructor, and unresolved allocation-generation boundary."
+    },
+    {
+      "topic": "native-renderer-resolve-resource-contract",
+      "use": "Provides the exact creator and backing-allocation path while keeping typed resource and lifetime gates unresolved."
+    }
+  ],
+  "referenceResult": {
+    "target": "0x82E29168",
+    "references": 96,
+    "cap": 6,
+    "functionOwnedReferenceRows": 42,
+    "unassignedOrDataReferenceRows": 54,
+    "inspectedCallerBodies": [],
+    "result": "The exact reference count exceeds the cap by a factor of sixteen. The packet stops before selecting or decompiling any allocator caller."
+  },
+  "acceptedLifecycle": {
+    "creation": "0x825184D0 creates two distinct retained buffer objects through creator 0x82533DB8 and stores them at +0x90 and +0x94.",
+    "reuse": "The container selector at +0x98 chooses one retained slot and flips between zero and one after the present path. This is alternating-buffer frame state, not allocation generation.",
+    "release": "0x82518678 releases both retained objects through their reference counts and clears both slots; 0x82518E88 invokes that cleanup and frees the container.",
+    "qualification": "These are accepted dependency facts. The stopped allocator-reference query adds no lower allocation, replacement, invalidation, or recycling relation."
+  },
+  "boundedNegative": {
+    "result": "No exact allocation generation, epoch, replacement marker, invalidation marker, or recycling discriminator is promoted from the bounded allocator frontier because 0x82E29168 has 96 direct references and the six-body fan-out stop fired before caller inspection.",
+    "limits": "This does not claim that the allocator or another owner lacks such state. It establishes only that the accepted creator-to-allocator edge and capped direct-reference inventory do not identify it.",
+    "falsificationCondition": "An independent exact field, return value, allocator-family address, or replacement consumer provides a bounded discriminator without reopening the 96-reference fan-out."
+  },
+  "currentEvidence": {
+    "method": "One synchronously executed foreground, read-only headless DumpReferences.java query against the canonical version-1.3 Ghidra project.",
+    "entries": [
+      {
+        "role": "backing allocator reference inventory",
+        "address": "0x82E29168",
+        "result": "96 exact references: 42 in recognized function owners and 54 reported in unassigned or data-owned regions.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": ["ghidra/DumpReferences.java:0x82E29168"],
+    "qualification": "No function body was decompiled after the reference count exceeded the cap."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "result": "No new reusable entity or relation is proved."
+  },
+  "missingContracts": {
+    "generationAndLifetime": "unresolved",
+    "persistentResourceIdentity": "unresolved",
+    "replacementAndInvalidation": "unresolved",
+    "reason": "Container ownership and alternating reuse are exact, but lower allocation generation, recycling, replacement, and invalidation remain unresolved."
+  },
+  "guards": [
+    "Do not reopen the 96-reference allocator fan-out without a new exact discriminator.",
+    "Do not treat selector +0x98 as an allocation generation or epoch.",
+    "Do not key a persistent native resource by guest pointer or six-dword descriptor alone."
+  ],
+  "conclusion": "The title exactly owns two retained explicit buffers, alternates them by selector, and releases and clears them during container cleanup. The accepted backing allocator has 96 exact references, so the declared six-body cap stops this packet before caller inspection. Generation, replacement, invalidation, recycling, and persistent native resource identity remain unresolved."
+}

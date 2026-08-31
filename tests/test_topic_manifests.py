@@ -621,6 +621,24 @@ class TopicManifestTests(unittest.TestCase):
         )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
+    def test_native_renderer_resource_lifetime_boundary(self) -> None:
+        path = MANIFESTS / "native-renderer-resource-lifetime-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0127")
+        self.assertEqual(document["status"], "closed")
+        self.assertEqual(document["referenceResult"]["references"], 96)
+        self.assertEqual(document["referenceResult"]["cap"], 6)
+        self.assertEqual(document["referenceResult"]["inspectedCallerBodies"], [])
+        self.assertIn("No exact allocation generation", document["boundedNegative"]["result"])
+        self.assertEqual(
+            document["missingContracts"]["generationAndLifetime"], "unresolved"
+        )
+        self.assertEqual(
+            document["missingContracts"]["persistentResourceIdentity"], "unresolved"
+        )
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

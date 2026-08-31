@@ -621,6 +621,61 @@ class TopicManifestTests(unittest.TestCase):
         )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
+    def test_nif_material_property_field_contract(self) -> None:
+        path = MANIFESTS / "nif-material-property-field-contract.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0129")
+        self.assertEqual(document["idAssignment"]["status"], "canonical")
+        self.assertEqual(document["streamContract"]["reader"]["method"], "0x8235D228")
+        self.assertEqual(document["streamContract"]["writer"]["method"], "0x8235D2E8")
+        self.assertEqual(
+            document["streamContract"]["reader"]["baseCall"],
+            "0x82354338 -> 0x82358928",
+        )
+        self.assertEqual(
+            document["streamContract"]["writer"]["baseCall"],
+            "0x82354350 -> 0x82358E00",
+        )
+        self.assertEqual(document["derivedLayout"]["serializedWidth"], 56)
+        fields = document["derivedLayout"]["fields"]
+        self.assertEqual([field["order"] for field in fields], list(range(6)))
+        self.assertEqual(
+            [field["inspectionLabel"] for field in fields],
+            [
+                "Ambient color",
+                "Diffuse color",
+                "Specular color",
+                "Emissive color",
+                "Glossiness",
+                "Alpha",
+            ],
+        )
+        self.assertEqual(
+            [field["serializedOffset"] for field in fields],
+            ["+0x00", "+0x0C", "+0x18", "+0x24", "+0x30", "+0x34"],
+        )
+        self.assertEqual(
+            [field["runtimeOffset"] for field in fields],
+            ["+0x1C", "+0x28", "+0x34", "+0x40", "+0x4C", "+0x50"],
+        )
+        self.assertEqual([field["width"] for field in fields], [12, 12, 12, 12, 4, 4])
+        self.assertEqual(
+            [field["serializedType"] for field in fields],
+            ["Color3: three consecutive f32 values"] * 4 + ["f32", "f32"],
+        )
+        self.assertEqual(
+            [field["titleLabel"] for field in fields],
+            ["m_amb", "m_diff", "m_spec", "m_emit", "m_fShine", "m_fAlpha"],
+        )
+        self.assertIn("unconditionally", document["profileConditions"]["titleBehavior"])
+        self.assertIn("no arithmetic", document["rawValueBehavior"]["readPath"])
+        self.assertEqual(document["implementationContract"]["status"], "retention-supported")
+        unresolved = " ".join(document["boundedNegatives"]).lower()
+        self.assertIn("finite", unresolved)
+        self.assertIn("color-space", unresolved)
+        self.assertIn("renderer", unresolved)
+
     def test_native_renderer_resource_lifetime_boundary(self) -> None:
         path = MANIFESTS / "native-renderer-resource-lifetime-boundary.json"
         document = json.loads(path.read_text(encoding="utf-8"))

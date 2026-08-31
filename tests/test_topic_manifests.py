@@ -554,6 +554,39 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["targetOperation"]["returnedGlobal"], "0x8314F5D0")
         self.assertEqual(document["catalogPromotion"]["newEntities"], ["RVA-SYM-0338", "RVA-SYM-0339", "RVA-SLOT-0058", "RVA-REL-0474"])
 
+    def test_nif_scene_transform_contract(self) -> None:
+        path = MANIFESTS / "nif-scene-transform-contract.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0125")
+        self.assertEqual(document["idAssignment"]["status"], "canonical")
+        self.assertEqual(document["serializedLayout"]["uniformity"].count("one f32"), 1)
+        self.assertEqual(document["inheritanceAndDispatch"]["composer"], "0x82D7A8A8")
+        self.assertEqual(
+            {entry["type"] for entry in document["inheritanceAndDispatch"]["tables"]},
+            {"NiAVObject", "NiNode", "NiGeometry", "NiTriBasedGeom", "NiTriShape"},
+        )
+        self.assertEqual(
+            document["composition"]["parented"],
+            {
+                "scale": "s_world = s_parent * s_local",
+                "rotation": "R_world = R_parent * R_local",
+                "translation": "t_world = t_parent + s_parent * (R_parent * t_local)",
+            },
+        )
+        self.assertIn(
+            "for node in reverse(mesh.node_path):",
+            document["composition"]["orderedPseudocode"],
+        )
+        self.assertEqual(
+            document["implementationContract"]["status"],
+            "transformed-static-assembly-supported",
+        )
+        unresolved = " ".join(document["boundedNegatives"]).lower()
+        self.assertIn("handedness", unresolved)
+        self.assertIn("winding", unresolved)
+        self.assertIn("renderer", unresolved)
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

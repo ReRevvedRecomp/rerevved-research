@@ -587,6 +587,104 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("winding", unresolved)
         self.assertIn("renderer", unresolved)
 
+    def test_nif_texturing_property_field_contract(self) -> None:
+        path = MANIFESTS / "nif-texturing-property-field-contract.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0130")
+        self.assertEqual(document["idAssignment"]["status"], "canonical")
+        self.assertEqual(document["streamContract"]["reader"]["method"], "0x82355CC0")
+        self.assertEqual(document["streamContract"]["writer"]["method"], "0x823563B0")
+        self.assertEqual(document["slotContract"]["observedTextureCount"], 9)
+        slots = document["slotContract"]["orderedStandardSlots"]
+        self.assertEqual([slot["index"] for slot in slots], list(range(9)))
+        self.assertEqual(
+            [slot["name"] for slot in slots],
+            [
+                "Base",
+                "Dark",
+                "Detail",
+                "Gloss",
+                "Glow",
+                "Bump",
+                "Normal",
+                "Parallax",
+                "Decal 0",
+            ],
+        )
+        observed = document["slotContract"]["observedPresentDescriptors"]
+        self.assertEqual(
+            {name: observed[name] for name in ("Base", "Glow", "Shader")},
+            {"Base": 275, "Glow": 24, "Shader": 84},
+        )
+        tex_desc = document["descriptorContracts"]["TexDesc"]
+        self.assertEqual(tex_desc["reader"], "0x823568B0")
+        self.assertEqual(tex_desc["writer"], "0x82356B00")
+        self.assertEqual(
+            [field["width"] for field in tex_desc["fields"]],
+            [4, 2, 1, 32],
+        )
+        self.assertEqual(document["descriptorContracts"]["BumpTexDesc"]["extraWidth"], 24)
+        self.assertEqual(document["descriptorContracts"]["ParallaxTexDesc"]["extraWidth"], 4)
+        shader = document["descriptorContracts"]["ShaderTexDesc"]
+        self.assertEqual([field["field"] for field in shader["fields"]], ["Has Map", "Map", "Map ID"])
+        self.assertIn("does not store", shader["titleRetention"])
+        self.assertIn("0xF00F", document["derivedProfileLayout"]["flagsReadPolicy"])
+        self.assertEqual(document["implementationContract"]["status"], "retention-supported")
+        unresolved = " ".join(document["boundedNegatives"]).lower()
+        self.assertIn("uv-set", unresolved)
+        self.assertIn("filter", unresolved)
+        self.assertIn("renderer", unresolved)
+
+    def test_nif_source_texture_field_contract(self) -> None:
+        path = MANIFESTS / "nif-source-texture-field-contract.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0131")
+        self.assertEqual(document["idAssignment"]["status"], "canonical")
+        self.assertEqual(document["typeIdentity"]["descriptor"], "0x82F8E570")
+        self.assertEqual(document["typeIdentity"]["parentDescriptor"], "0x82F8E66C")
+        self.assertEqual(document["typeIdentity"]["readerSlot"], "+0x10 -> 0x82391BA8")
+        self.assertEqual(document["typeIdentity"]["writerSlot"], "+0x1C -> 0x82391FF0")
+        self.assertEqual(document["derivedLayout"]["serializedWidth"], 24)
+        fields = document["derivedLayout"]["fields"]
+        self.assertEqual([field["order"] for field in fields], list(range(9)))
+        self.assertEqual(
+            [field["field"] for field in fields],
+            [
+                "Use External",
+                "File Name",
+                "Pixel Data",
+                "Pixel Layout",
+                "Use Mipmaps",
+                "Alpha Format",
+                "Is Static",
+                "Direct Render",
+                "Persist Render Data",
+            ],
+        )
+        self.assertEqual(
+            [field["serializedOffset"] for field in fields],
+            ["+0x00", "+0x01", "+0x05", "+0x09", "+0x0D", "+0x11", "+0x15", "+0x16", "+0x17"],
+        )
+        self.assertEqual([field["width"] for field in fields], [1, 4, 4, 4, 4, 4, 1, 1, 1])
+        observed = document["sourceSelectionContract"]["observedCombination"]
+        self.assertEqual(observed["Use External"], 1)
+        self.assertEqual(observed["count"], 383)
+        self.assertIn("null", observed["Pixel Data"])
+        self.assertIn(
+            "standard null reference",
+            document["sourceSelectionContract"]["supportedExternalRequirement"],
+        )
+        self.assertIn("both Use External values", fields[1]["profileCondition"])
+        self.assertIn("both Use External values", fields[2]["profileCondition"])
+        self.assertIn("not a lossless carrier", document["titleReadWriteBehavior"]["rawPreservation"])
+        self.assertEqual(document["implementationContract"]["status"], "retention-supported")
+        unresolved = " ".join(document["boundedNegatives"]).lower()
+        self.assertIn("embedded", unresolved)
+        self.assertIn("path", unresolved)
+        self.assertIn("renderer", unresolved)
+
     def test_native_renderer_resolve_resource_contract(self) -> None:
         path = MANIFESTS / "native-renderer-resolve-resource-contract.json"
         document = json.loads(path.read_text(encoding="utf-8"))

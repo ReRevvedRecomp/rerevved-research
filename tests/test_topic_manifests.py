@@ -639,6 +639,40 @@ class TopicManifestTests(unittest.TestCase):
         )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
+    def test_native_renderer_ring_span_boundary(self) -> None:
+        path = MANIFESTS / "native-renderer-ring-span-boundary.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0128")
+        self.assertEqual(document["status"], "closed")
+        self.assertEqual(document["functionReadResult"]["requestedBodies"], 8)
+        self.assertEqual(document["functionReadResult"]["completeBodies"], 0)
+        self.assertEqual(document["ringContract"]["startIndex"], "unresolved")
+        self.assertEqual(document["ringContract"]["endIndex"], "unresolved")
+        self.assertEqual(document["ringContract"]["wrapBehavior"], "unresolved")
+        self.assertIn("unresolved", document["ringContract"]["publicationOrDoorbell"])
+        self.assertIn("unresolved", document["ringContract"]["completionFence"])
+        self.assertEqual(
+            document["ringContract"]["consumerAcknowledgement"], "unresolved"
+        )
+        self.assertEqual(document["ringContract"]["completedSpanAdvance"], "prohibited")
+        self.assertIn("pre-swap", document["vdswapOrdering"]["provedTitleOrder"])
+        contracts = document["missingContracts"]
+        gate_names = {
+            "typedExactResource",
+            "generationAndLifetime",
+            "exactOwnedSpanAndWrap",
+            "vdswapSemanticOrdering",
+            "realNativeSubmission",
+            "realCompletionFence",
+            "completedSpanAcknowledgement",
+        }
+        self.assertEqual(set(contracts), gate_names)
+        self.assertTrue(
+            all(contracts[name] == "unresolved" for name in gate_names)
+        )
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0128",
+  "topic": "native-renderer-ring-span-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the bounded Resolve and VdSwap producer path prove one exact owned ring span, wrap rule, publication action, completion fence, and completed-span acknowledgement?",
+  "scope": {
+    "ringInitializer": "0x8269C8E0",
+    "reservationHelper": "0x8269C7A8",
+    "vdswapOwner": "0x826A4638",
+    "preSwap": "0x826A4150",
+    "callback": "0x826A3FB8",
+    "emitters": ["0x8269CD20", "0x8269BF40"],
+    "ordinaryCaller": "0x826ABEA8",
+    "vdswapCallsite": "0x826A4884",
+    "boundary": "This packet reads exactly eight accepted ring and VdSwap functions. It carries forward exact ordering and reservation facts, but the configured function bodies do not expose a complete same-operation ring ownership and retirement chain. It does not infer ownership from adjacency, correlation, diagnostic presentation, or generic PM4 behavior."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-vdswap-boundary",
+      "use": "Provides the accepted VdSwap ABI, ordinary caller order, system-buffer handshake negative, and Resolve-to-first-swap correlation."
+    },
+    {
+      "topic": "native-renderer-resolve-resource-contract",
+      "use": "Provides the exact semantic Resolve boundary without a completion or lifetime claim."
+    },
+    {
+      "topic": "native-renderer-resource-lifetime-boundary",
+      "use": "Keeps persistent resource identity and allocation lifetime unresolved."
+    }
+  ],
+  "functionReadResult": {
+    "requestedBodies": 8,
+    "completeBodies": 0,
+    "saveThunkTruncations": ["0x8269C8E0", "0x8269C7A8", "0x826A4638", "0x826A3FB8", "0x8269BF40", "0x826ABEA8"],
+    "badInstructionTruncations": ["0x826A4150", "0x8269CD20"],
+    "result": "All eight exact bodies are incomplete in the configured canonical project, so the packet stops without callee expansion or generated-code discovery."
+  },
+  "acceptedRingFacts": {
+    "reservation": "The VdSwap owner requests 64 dwords through 0x8269C7A8 and passes reservation + 0x4 as VdSwap r3.",
+    "pointerUpdate": "VdSwap returns a primary-ring position that the owner retains at device +0x30.",
+    "preSwapOrder": "Ordinary caller 0x826ABEA8 invokes the pre-swap wrapper before the VdSwap owner; alternate caller 0x82517E38 has the same pre-swap-before-VdSwap order.",
+    "handshakeNegative": "The pre-swap waits use independent device +0x2A94 system-command-buffer state. Resolve 0x8269E520 does not access that field, so these waits are not a Resolve-specific completion fence.",
+    "correlationLimit": "The first observed VdSwap descriptor matched Resolve callsite 0x8250AFEC, while a later swap had no new Resolve after the preceding observed swap. Descriptor correlation does not delimit a same-operation ring span."
+  },
+  "ringContract": {
+    "pointerUnits": "The VdSwap reservation request is expressed as 64 dwords; no complete general ring-pointer unit contract is proved.",
+    "startIndex": "unresolved",
+    "endIndex": "unresolved",
+    "wrapBehavior": "unresolved",
+    "publicationOrDoorbell": "unresolved for the exact Resolve/VdSwap span",
+    "completionFence": "unresolved; the accepted +0x2A94 waits are disproved as Resolve-specific completion",
+    "consumerAcknowledgement": "unresolved",
+    "completedSpanAdvance": "prohibited",
+    "unrelatedWork": "The bounded evidence does not exclude unrelated or unsupported PM4 between or around the correlated Resolve and VdSwap operations."
+  },
+  "vdswapOrdering": {
+    "provedTitleOrder": "The title's ordinary present path emits its pre-swap command work before calling VdSwap.",
+    "nativeSubmissionOrder": "No real native Resolve submission or fence exists in the evidence, so before, after, or independent native-submission ordering is not statically proved.",
+    "requiredBoundary": "Do not suppress or replace VdSwap, acknowledge ring work, or advance a guest pointer until a future exact contract proves equivalent native submission, completion, and presentation ordering for the same owned span."
+  },
+  "boundedNegative": {
+    "result": "The exact bounded read does not prove an owned Resolve/VdSwap ring start, end, wrap rule, publication action, completion fence, consumer acknowledgement, or retireable dword span.",
+    "limits": "This does not claim that the full title or SDK lacks those mechanisms. It establishes only that the eight accepted functions and their existing exact dependencies do not join them to one same-operation span.",
+    "falsificationCondition": "An independent exact ring structure or producer field joins reservation start, post-emission end, wrap state, hardware or service publication, completion value, and acknowledgement for the same operation without traversing unrelated PM4."
+  },
+  "currentEvidence": {
+    "method": "One synchronously executed foreground, read-only headless DumpFunctions.java query for exactly eight accepted functions in the canonical version-1.3 project, plus accepted dependency facts.",
+    "locators": [
+      "ghidra/DumpFunctions.java:0x8269C8E0,0x8269C7A8,0x826A4638,0x826A4150,0x826A3FB8,0x8269CD20,0x8269BF40,0x826ABEA8"
+    ],
+    "qualification": "No incomplete function is used to prove an absent mechanism, and no generated-code or callee expansion is used to evade the declared stop."
+  },
+  "missingContracts": {
+    "typedExactResource": "unresolved",
+    "generationAndLifetime": "unresolved",
+    "exactOwnedSpanAndWrap": "unresolved",
+    "vdswapSemanticOrdering": "unresolved",
+    "realNativeSubmission": "unresolved",
+    "realCompletionFence": "unresolved",
+    "completedSpanAcknowledgement": "unresolved"
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "result": "No new reusable entity or relation is proved."
+  },
+  "guards": [
+    "Do not retire, acknowledge, or advance any guest ring span from this evidence.",
+    "Do not suppress VdSwap or claim native presentation equivalence.",
+    "Do not reuse the diagnostic clear or present path as ring-ownership evidence.",
+    "Do not infer a fence from the system-command-buffer handshake."
+  ],
+  "conclusion": "The proved ordinary and alternate title paths order pre-swap command emission before VdSwap, and the owner requests a 64-dword reservation whose returned position is retained at device +0x30. The bounded bodies do not prove the operation's start, end, wrap, publication, completion, acknowledgement, or exclusion of unrelated PM4. No exact ring span can be retired, and every listed missing contract remains unresolved."
+}

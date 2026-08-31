@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0126",
+  "topic": "native-renderer-resolve-resource-contract",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which exact meanings are title-proved for the six resource-header dwords consumed by Resolve 0x8269E520?",
+  "scope": {
+    "resolve": "0x8269E520",
+    "exactDestinationCallsite": "0x8250AFEC",
+    "resourceCreator": "0x82533DB8",
+    "descriptorRange": "+0x1C through +0x30",
+    "boundary": "This packet joins the exact 0x34-byte resource-header builder and base patcher to the six-dword descriptor interface decoded by Resolve. It assigns only roles proved by matching writes and reads. It does not prove the exact runtime creator arguments for the destination at 0x8250AFEC, a public API resource type, host layout, allocation generation, lifetime, or completion."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-vdswap-boundary",
+      "use": "Provides the accepted exact Resolve callsite, creator path, six-dword VdSwap ABI, and operation-provenance boundary."
+    }
+  ],
+  "creationPath": {
+    "creator": "0x82533DB8",
+    "headerBytes": "0x34",
+    "builderChain": ["0x826B6FE8", "0x826B6D68", "0x8269A378"],
+    "basePatcher": "0x826B7140",
+    "result": "The creator allocates the 0x34-byte header, obtains primary and optional secondary backing sizes from the builder chain, allocates the backing regions through 0x82E29168, and patches their page bases into descriptor words 1 and 5 while preserving each word's low 12 bits. The caller values that select the exact runtime destination at 0x8250AFEC remain unresolved."
+  },
+  "resolveConsumer": {
+    "pointer": "r6 retained as r18",
+    "reads": [
+      "0x8269E5CC: +0x28",
+      "0x8269E5D0: +0x30",
+      "0x8269E5D4: +0x24",
+      "0x8269E620: +0x20",
+      "0x8269E628: +0x1C"
+    ],
+    "unusedWord": "+0x2C has no direct read in the exact Resolve body",
+    "result": "Resolve directly decodes five of the six descriptor dwords. It extracts the numeric format from word 1 low six bits, the page base from word 1 high bits, two encoded extents from word 2, and layout or control fields from words 0, 3, and 5."
+  },
+  "descriptorWords": [
+    {
+      "index": 0,
+      "offset": "+0x1C",
+      "producer": "0x8269A378 packs control fields; 0x82533DB8 separately sets bit 0x00200000 when optional secondary backing is present.",
+      "consumer": "Resolve extracts a different packed bit range that affects its layout calculation; it does not consume producer bit 0x00200000.",
+      "provedRole": "producer-packed resource control word",
+      "unresolved": "The optional-secondary producer flag is not joined to a Resolve consumer, and no complete public field naming is proved."
+    },
+    {
+      "index": 1,
+      "offset": "+0x20",
+      "producer": "0x8269A378 places the input's low-six-bit format selector in bits 0..5; 0x826B7140 adds the primary allocation page base while preserving bits 0..11.",
+      "consumer": "Resolve reads bits 0..5 as the numeric format and bits 12..31 as the primary address base; the accepted VdSwap ABI independently consumes the same roles.",
+      "provedRole": "primary page base plus numeric format and low control bits",
+      "unresolved": "The exact runtime numeric format at 0x8250AFEC is not statically selected."
+    },
+    {
+      "index": 2,
+      "offset": "+0x24",
+      "producer": "0x8269A378 initializes the word before direct helper 0x82699208 participates in its construction.",
+      "consumer": "Resolve decodes two packed extent-minus-one fields and adds a sample-dependent increment; the accepted VdSwap ABI derives width and height from this word.",
+      "provedRole": "packed width and height extents",
+      "unresolved": "The helper body was outside the exhausted eight-body cap, so the complete producer formula and exact runtime dimensions remain unresolved."
+    },
+    {
+      "index": 3,
+      "offset": "+0x28",
+      "producer": "0x8269A378 packs multiple input and derived control fields.",
+      "consumer": "Resolve extracts addressing, sample, and layout-control bits used in destination offset and copy-state calculation.",
+      "provedRole": "packed layout and sample-control word",
+      "unresolved": "Pitch, slice, level, region, tiling, and sample-count subfields are not individually named by the bounded title evidence."
+    },
+    {
+      "index": 4,
+      "offset": "+0x2C",
+      "producer": "0x8269A378 packs derived control fields.",
+      "consumer": "The exact Resolve body contains no direct read from this word.",
+      "provedRole": "producer-packed descriptor word",
+      "unresolved": "No Resolve-side semantic field is proved."
+    },
+    {
+      "index": 5,
+      "offset": "+0x30",
+      "producer": "0x8269A378 packs low control bits; when secondary backing exists, 0x826B7140 adds its page base while preserving bits 0..11.",
+      "consumer": "Resolve tests only control bits 9..10 while deriving layout behavior; it does not consume the page-base bits.",
+      "provedRole": "producer-side optional secondary page base and Resolve-consumed low control bits",
+      "unresolved": "The secondary page base has no matching Resolve consumer. Its payload role and any slice, level, or region meaning are not proved."
+    }
+  ],
+  "boundedNegatives": [
+    "The bounded producer and Resolve consumer do not prove a public resource class or exact runtime width, height, pitch, sample count, slice, level, or region for callsite 0x8250AFEC.",
+    "Descriptor word 4 has no direct Resolve read, and its producer packing alone does not authorize a semantic name.",
+    "The descriptor snapshot remains operation provenance, not an allocation-generation or lifetime key."
+  ],
+  "currentEvidence": {
+    "method": "One foreground read-only FindFieldRefs.java query over the six descriptor offsets and six accepted functions, followed by narrow generated-code corroboration for the eight exact bodies allowed by the packet.",
+    "ghidraResult": "The configured bodies exposed no field-reference rows because the functions truncate at their save thunks; that zero is not treated as semantic closure.",
+    "exactBodies": ["0x8269E520", "0x8250AC90", "0x82533DB8", "0x826B6FE8", "0x826B6D68", "0x826B7140", "0x8269A378", "0x82698FC8"],
+    "locators": [
+      "ghidra/FindFieldRefs.java:0x8269E520,0x8250AC90,0x82533DB8,0x826B6FE8,0x826B6D68,0x826B7140",
+      "generated/default/rerevved_recomp.163.cpp:12758",
+      "generated/default/rerevved_recomp.60.cpp:8610",
+      "generated/default/rerevved_recomp.19.cpp:9191",
+      "generated/default/rerevved_recomp.100.cpp:13081",
+      "generated/default/rerevved_recomp.75.cpp:12940",
+      "generated/default/rerevved_recomp.35.cpp:13376",
+      "generated/default/rerevved_recomp.16.cpp:13133",
+      "generated/default/rerevved_recomp.220.cpp:12385"
+    ],
+    "qualification": "Generated code corroborates exact functions selected from accepted anchors and the foreground query; it is not used as executable-wide discovery authority."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "result": "The proved roles qualify the existing Resolve/resource frontier without creating a new reusable identity."
+  },
+  "missingContracts": {
+    "typedExactResource": "unresolved",
+    "generationAndLifetime": "unresolved",
+    "completion": "unresolved",
+    "nativeImplementation": "unresolved",
+    "reason": "Primary address, numeric format, packed extents, and coarse control roles are proved, but the exact runtime resource type, remaining field-level contract, generation, lifetime, completion, and native submission contract are not."
+  },
+  "guards": [
+    "Do not name packed subfields from Xenos format familiarity without matching title producer and consumer dataflow.",
+    "Do not use the six dwords or a guest pointer as a persistent host-resource identity.",
+    "Do not treat readable backing memory or descriptor equality as GPU completion."
+  ],
+  "conclusion": "The exact title path proves a 0x34-byte resource header whose descriptor word 1 carries the primary page base and numeric format, word 2 carries packed width and height extents, and word 5 can receive an optional secondary page base on the producer side. Resolve consumes separate control bits from words 0, 3, and 5 but does not consume the optional-secondary flag in word 0 or the secondary page base in word 5. Word 4 is producer-packed but not directly read by Resolve. Exact runtime type, dimensions, pitch, sample count, slice, level, region, generation, lifetime, completion, and native implementation remain unresolved."
+}

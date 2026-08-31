@@ -587,6 +587,40 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("winding", unresolved)
         self.assertIn("renderer", unresolved)
 
+    def test_native_renderer_resolve_resource_contract(self) -> None:
+        path = MANIFESTS / "native-renderer-resolve-resource-contract.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0126")
+        self.assertEqual(document["status"], "closed")
+        self.assertEqual(document["creationPath"]["headerBytes"], "0x34")
+        self.assertEqual(len(document["descriptorWords"]), 6)
+        words = {entry["index"]: entry for entry in document["descriptorWords"]}
+        self.assertIn("does not consume producer bit", words[0]["consumer"])
+        self.assertIn("primary page base", words[1]["provedRole"])
+        self.assertIn("width and height", words[2]["provedRole"])
+        self.assertIn("secondary page base", words[5]["provedRole"])
+        self.assertIn("does not consume the page-base", words[5]["consumer"])
+        self.assertIn("no direct read", words[4]["consumer"])
+        self.assertEqual(
+            {
+                key: document["missingContracts"][key]
+                for key in (
+                    "typedExactResource",
+                    "generationAndLifetime",
+                    "completion",
+                    "nativeImplementation",
+                )
+            },
+            {
+                "typedExactResource": "unresolved",
+                "generationAndLifetime": "unresolved",
+                "completion": "unresolved",
+                "nativeImplementation": "unresolved",
+            },
+        )
+        self.assertEqual(document["catalogPromotion"]["newEntities"], [])
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

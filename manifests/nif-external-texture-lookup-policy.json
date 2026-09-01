@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0132",
+  "topic": "nif-external-texture-lookup-policy",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact title-side policy carries an external NiSourceTexture filename to a loaded texture resource, and is that policy reproducible for standalone or archive-contained NIF documents?",
+  "idAssignment": {
+    "status": "canonical",
+    "result": "RVA-F-0132 is the canonical identifier for this manifest."
+  },
+  "dependencies": [
+    {
+      "topic": "nif-scene-material-texture-relationships",
+      "use": "Accepts RVA-F-0124's 383 exact external NiSourceTexture edges, valid non-null filename indices, null Pixel Data references, and privacy boundary without reopening retail NIF payloads."
+    },
+    {
+      "topic": "nif-source-texture-field-contract",
+      "use": "Accepts RVA-F-0131's exact NiSourceTexture reader, external filename carrier, runtime field positions, and read-only retention boundary."
+    },
+    {
+      "topic": "map-delivery-boundary",
+      "use": "Accepts RVA-F-0072's identification of 0x8280F578 as the NtCreateFile wrapper and the maintained ReXGlue result that a rootless guest name is not made relative to game: or d:."
+    }
+  ],
+  "scope": {
+    "guestMethods": [
+      "0x82391BA8",
+      "0x82391A20",
+      "0x823914A0",
+      "0x823941D8",
+      "0x82393B10",
+      "0x82393B20",
+      "0x82393D40",
+      "0x82393E48",
+      "0x8235E108",
+      "0x8235E120",
+      "0x82466738",
+      "0x82466748",
+      "0x82467538",
+      "0x82468D48",
+      "0x82469970",
+      "0x824699C0",
+      "0x8280F578"
+    ],
+    "boundary": "The packet follows the exact external filename from the accepted NiSourceTexture reader through its title-owned runtime name, lazy resource request, file-object creation, and NtCreateFile boundary. It inspects only direct helpers required to characterize that path. It does not inventory filenames, decode texture payloads, inspect the renderer, or perform an executable-wide file-open search."
+  },
+  "acceptedPopulation": {
+    "externalReferences": 383,
+    "contract": "Every accepted source has Use External equal to one, a valid non-null File Name string index, and the standard null Pixel Data reference.",
+    "reuseOnly": "No retail string was decoded for this packet. The population is reused only as an aggregate accepted source class."
+  },
+  "lookupChain": {
+    "serializedCarrier": {
+      "reader": "0x82391BA8",
+      "fixedStringField": "object +0x30",
+      "runtimeFilenameField": "object +0x34",
+      "result": "The external File Name fixed string is read into object +0x30 and materialized by 0x823941D8 into the runtime filename at object +0x34."
+    },
+    "streamResolution": {
+      "candidateCollection": "stream +0x124",
+      "provider": "stream +0x1C0",
+      "providerLookup": "0x8235E120 -> provider vtable +0x08",
+      "providerRegistration": "0x8235E108 -> provider vtable +0x0C",
+      "result": "The reader can consult a title-populated candidate collection and an injected provider before retaining the runtime filename. The bounded methods expose the interface and candidate substitution, but not the provider's concrete type, search roots, population owner, duplicate policy, or owning-NIF/archive relationship."
+    },
+    "lazyResourceRequest": {
+      "method": "0x82391A20",
+      "input": "object +0x34",
+      "resourceField": "object +0x3C",
+      "result": "When no resource is retained, 0x82391A20 passes the runtime filename through the singleton returned by 0x82393B10 and its vtable +0x0C method 0x82393D40. A successful result is retained at object +0x3C."
+    },
+    "fileAndDecodeBoundary": {
+      "chain": [
+        "0x82393D40",
+        "0x82466738",
+        "0x82466748",
+        "0x82467538",
+        "0x8280F578",
+        "NtCreateFile"
+      ],
+      "result": "0x82393D40 creates a file object from the supplied runtime filename, requires the file object's success check, and only then invokes its owned converter through vtable +0x08. The converter's non-null return is the first proved loaded-resource carrier."
+    },
+    "release": "0x823914A0 releases only the retained object +0x3C resource through its existing ownership path. No filename search policy is inferred from release behavior."
+  },
+  "filenamePolicy": {
+    "byteInterpretation": {
+      "proved": "The runtime path is a NUL-terminated byte string. 0x8280F578 passes it to RtlInitAnsiString before NtCreateFile.",
+      "terminator": "The first zero byte terminates the runtime filename; bytes after an embedded NUL do not participate in the file request.",
+      "encoding": "RtlInitAnsiString establishes an ANSI_STRING byte carrier, not a proved text encoding. ASCII, UTF-8, an Xbox code page, and Unicode interpretation are not promoted."
+    },
+    "directName": "With the optional prefix global null, 0x823941D8 copies the fixed-string bytes to object +0x34 without normalization. The image's initial word at 0x82F8E594 is zero.",
+    "separatorHandling": "The optional rebuild helper recognizes both backslash and forward slash as existing separators when joining components. Prefix normalizer 0x82468D48 converts forward slashes to backslashes and collapses repeated backslashes after the leading bytes while preserving leading duplicates; it operates on the prefix only. No proved step normalizes separators in the direct unprefixed source name.",
+    "absoluteAndRelative": "The optional split/rebuild path preserves an existing drive and directory component and inserts its prefix before the filename stem. The direct path neither requires nor rejects absolute or relative spelling. No policy selects one class as valid.",
+    "dotComponents": "No admitted title helper resolves, rejects, or otherwise assigns policy to dot or dot-dot components before NtCreateFile. Host behavior must not be substituted for an unproved title rule.",
+    "case": "The source spelling is preserved through the proved title chain. 0x8280F578 supplies object-attribute flag 0x40 to NtCreateFile, providing a case-insensitive object-name request at that boundary; final mounted-source or host duplicate behavior is not thereby proved.",
+    "prefixDirectoryExtensionRoot": "The direct file-open chain adds no prefix, directory, extension, game:, d:, or device root. An optional global directory prefix can be inserted by 0x823941D8, but the image initializes its carrier to null and no direct caller of setter 0x82393E48 was found in the bounded reference query. Indirect setup and runtime value remain unresolved.",
+    "bufferBoundary": "The optional split/rebuild uses a 260-byte destination. This establishes a bounded internal carrier, but the bounded path does not prove a complete malformed-name classification for every failed rebuild."
+  },
+  "searchPolicy": {
+    "provedOrder": [
+      "NiSourceTexture reader may replace the serialized name through its stream-owned provider/candidate mechanism.",
+      "Lazy resource creation later opens the one runtime filename retained at object +0x34.",
+      "A valid file object is passed to the resource converter."
+    ],
+    "unresolved": [
+      "Concrete candidate roots and their deterministic order",
+      "Concrete provider type and registered-source population",
+      "Whether any candidate is relative to the owning NIF",
+      "Whether any candidate is relative to the containing archive",
+      "Whether the provider represents an archive, global namespace, mounted device, or another owner",
+      "Duplicate-name precedence within or across provider candidates",
+      "Runtime value and owner of the optional global prefix"
+    ],
+    "directOpenQualification": "The proved final open is filesystem-style NtCreateFile through the title file abstraction. A preceding injected provider can choose or substitute the name, so this does not prove that the complete title lookup policy is filesystem-only."
+  },
+  "failureBehavior": {
+    "missingOrOpenFailure": "If file-object creation fails or its success check is false, 0x82393D40 returns no resource. 0x82391A20 leaves object +0x3C null and returns normally; the already loaded NIF object is not rejected by this lazy failure path.",
+    "unsupportedOrDecodeFailure": "If the file opens but converter vtable +0x08 returns null, the same null-resource outcome is retained. The bounded path proves no fallback texture installation.",
+    "retry": "The lazy 0x82391A20 -> 0x82393D40 boundary tries the retained runtime filename once and contains no second-root retry. Earlier candidate/provider behavior in the stream reader exists, but its concrete candidates and failure ordering are unresolved.",
+    "malformedName": "NUL termination and the optional 260-byte rebuild boundary are proved. Rejection behavior for absolute names, dot components, invalid byte sequences, and rebuild overflow is not completely classified.",
+    "ownership": "Temporary file objects are released on both success and failure paths. A successful converted resource is retained at object +0x3C until the existing release path clears it."
+  },
+  "implementationReadiness": {
+    "lookupVerdict": "CLOSED NEGATIVE",
+    "standaloneNifLookup": "REMAIN BLOCKED",
+    "standaloneReason": "A standalone NIF provides the serialized filename but not the title stream's candidate collection, injected provider, concrete roots, deterministic order, duplicate policy, or optional prefix value. Guessing an installation layout would violate the gate.",
+    "archiveContainedNifLookup": "REMAIN BLOCKED",
+    "archiveReason": "The accepted chain does not bind stream provider +0x1C0 or candidate collection +0x124 to the containing FPK, the NIF entry location, or any archive-relative namespace. Archive membership therefore supplies no proved lookup owner or precedence rule.",
+    "authorized": "No Studio external texture lookup is authorized by this manifest. Existing lossless source metadata retention remains valid.",
+    "targetAuditGate": "NOT OPEN",
+    "targetAuditReason": "The accepted evidence supplies no independently reproducible bounded root or matching rule. The privacy-preserving target audit must not run."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only method-table, function, instruction, memory-word, string, and reference queries were combined with narrow generated-code corroboration for the admitted methods. No retail NIF, filename, or texture payload was opened.",
+    "entries": [
+      {
+        "role": "serialized filename to runtime filename",
+        "address": "0x82391BA8, 0x823941D8",
+        "result": "The exact source reader materializes the external fixed string into object +0x34 and exposes the stream-owned candidate/provider boundary.",
+        "confidence": "strong"
+      },
+      {
+        "role": "lazy loaded-resource boundary",
+        "address": "0x82391A20, 0x82393B10, 0x82393D40",
+        "result": "The retained runtime filename is opened once; a valid file object is converted, and only a non-null converted resource is retained.",
+        "confidence": "strong"
+      },
+      {
+        "role": "file request",
+        "address": "0x82466738, 0x82466748, 0x82467538, 0x8280F578",
+        "result": "The runtime filename reaches NtCreateFile as a NUL-terminated ANSI_STRING with root directory 0xFFFFFFFD and object-attribute flag 0x40; the chain adds no title prefix or extension.",
+        "confidence": "strong"
+      },
+      {
+        "role": "optional prefix boundary",
+        "address": "0x82F8E594, 0x82393E48, 0x82468D48, 0x82469970, 0x824699C0",
+        "result": "The image initializes the prefix carrier to null. A setter and bounded split/rebuild mechanics exist, but no direct setter caller or runtime owner was found in the admitted reference query.",
+        "confidence": "strong"
+      },
+      {
+        "role": "accepted external population",
+        "address": "RVA-F-0124",
+        "result": "The packet reuses only the accepted aggregate of 383 external filename references and does not decode their text.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x8200E878,0x82F8E594,0x82F8E598",
+      "ghidra/DumpFunctions.java:0x82391BA8,0x82391A20,0x823914A0,0x82393B10,0x82393B20,0x82393D40,0x82393E48,0x823941D8,0x8235E108,0x8235E120,0x82466738,0x82466748,0x82467538,0x82468D48,0x82469970,0x824699C0,0x8280F578",
+      "ghidra/DumpInstructions.java:0x82391BA8,0x82391A20,0x82393D40,0x82393E48,0x823941D8,0x82467538,0x82468D48,0x82469970,0x824699C0,0x8280F578",
+      "ghidra/DumpReferences.java:0x82F8E594,0x82393E48",
+      "ghidra/DumpFunctionNeighborhood.java:0x8235E108",
+      "generated:rerevved/sub_82391BA8,sub_82391A20,sub_82393D40,sub_82393E48,sub_823941D8,sub_82467538,sub_82468D48,sub_82469970,sub_824699C0,sub_8280F578",
+      "manifest:RVA-F-0072",
+      "manifest:RVA-F-0124",
+      "manifest:RVA-F-0131"
+    ],
+    "privacy": "No retail filename, directory name, texture value, payload, header, byte sample, hash, per-file identifier, or filename-to-target mapping was read, retained, or written. No asset checkout was queried or modified."
+  },
+  "boundedNegatives": [
+    "The ANSI_STRING carrier does not prove ASCII, UTF-8, a code page, or Unicode semantics.",
+    "No exact title rule is promoted for dot components, absolute-name acceptance, malformed byte sequences, or all overlength outcomes.",
+    "No concrete stream provider, candidate root, search order, owning-NIF relationship, archive relationship, global namespace, mounted-device owner, or duplicate precedence is proved.",
+    "The null initial prefix carrier and absence of a direct setter reference do not prove that an indirect runtime setup can never install a prefix.",
+    "Object-attribute flag 0x40 describes the direct object-name request; it does not prove duplicate precedence or every mounted source's host comparison behavior.",
+    "A null loaded resource proves neither visible rendering behavior nor a user-facing fallback; renderer consumption remains outside scope.",
+    "No target container or encoding is promoted because no independently reproducible root and matching rule are proved.",
+    "No Studio implementation, UI, texture decoder, preview, GPU upload, sampling, rendering, embedded pixel-data support, or writer is authorized."
+  ],
+  "catalogPromotion": {
+    "newEntities": [],
+    "result": "No catalog change is needed. The bounded negative lookup contract is fully represented in this manifest."
+  },
+  "guards": [
+    "Do not inspect the asset inventory until separate evidence proves an independently reproducible bounded root and matching rule.",
+    "Do not infer owning-directory, containing-archive, installation-root, case, separator, or duplicate policy from retail filename spelling or Gamebryo convention.",
+    "Do not treat the direct NtCreateFile request as proof that the unresolved stream provider is filesystem-only.",
+    "Do not expose, retain, hash, extract, or map retail filename or texture payload data.",
+    "Do not implement Studio lookup, texture decoding, GPU work, rendering, editing, conversion, export, or writing from this packet."
+  ],
+  "conclusion": "The exact title chain materializes NiSourceTexture's external fixed string into object +0x34, optionally substitutes a stream-provider candidate during read, and later passes the retained NUL-terminated byte name through a lazy file-object and converter path to NtCreateFile. The direct request preserves source spelling, adds no root or extension, and leaves a null resource rather than rejecting the NIF when open or conversion fails. However, the stream's candidate collection, provider type, roots, ordering, owner, archive relationship, duplicate precedence, and optional runtime prefix remain unresolved. Neither standalone-NIF nor archive-contained-NIF lookup is safely reproducible, so Studio lookup remains blocked and the privacy target audit is not run."
+}

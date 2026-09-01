@@ -826,6 +826,67 @@ class TopicManifestTests(unittest.TestCase):
         )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
+    def test_nif_external_texture_lookup_policy(self) -> None:
+        path = MANIFESTS / "nif-external-texture-lookup-policy.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(document["id"], "RVA-F-0132")
+        self.assertEqual(document["idAssignment"]["status"], "canonical")
+        self.assertEqual(document["acceptedPopulation"]["externalReferences"], 383)
+        chain = document["lookupChain"]
+        self.assertEqual(chain["serializedCarrier"]["reader"], "0x82391BA8")
+        self.assertEqual(chain["serializedCarrier"]["runtimeFilenameField"], "object +0x34")
+        self.assertEqual(chain["streamResolution"]["provider"], "stream +0x1C0")
+        self.assertEqual(chain["lazyResourceRequest"]["resourceField"], "object +0x3C")
+        self.assertEqual(
+            chain["fileAndDecodeBoundary"]["chain"],
+            [
+                "0x82393D40",
+                "0x82466738",
+                "0x82466748",
+                "0x82467538",
+                "0x8280F578",
+                "NtCreateFile",
+            ],
+        )
+        policy = document["filenamePolicy"]
+        self.assertIn("NUL-terminated", policy["byteInterpretation"]["proved"])
+        self.assertIn("not a proved text encoding", policy["byteInterpretation"]["encoding"])
+        self.assertIn("both backslash and forward slash", policy["separatorHandling"])
+        self.assertIn("collapses repeated backslashes", policy["separatorHandling"])
+        self.assertIn("after the leading bytes", policy["separatorHandling"])
+        self.assertIn("preserving leading duplicates", policy["separatorHandling"])
+        self.assertIn("0x40", policy["case"])
+        self.assertIn("0x823914A0", chain["release"])
+        self.assertTrue(
+            any(
+                "0x823914A0" in locator
+                for locator in document["currentEvidence"]["locators"]
+            )
+        )
+        readiness = document["implementationReadiness"]
+        self.assertEqual(readiness["lookupVerdict"], "CLOSED NEGATIVE")
+        self.assertEqual(readiness["standaloneNifLookup"], "REMAIN BLOCKED")
+        self.assertEqual(readiness["archiveContainedNifLookup"], "REMAIN BLOCKED")
+        self.assertEqual(readiness["targetAuditGate"], "NOT OPEN")
+        self.assertEqual(
+            readiness["authorized"],
+            "No Studio external texture lookup is authorized by this manifest. "
+            "Existing lossless source metadata retention remains valid.",
+        )
+        self.assertIn(
+            "Do not inspect the asset inventory",
+            document["guards"][0],
+        )
+        unresolved = " ".join(document["searchPolicy"]["unresolved"]).lower()
+        self.assertIn("candidate roots", unresolved)
+        self.assertIn("owning nif", unresolved)
+        self.assertIn("containing archive", unresolved)
+        self.assertIn("duplicate", unresolved)
+        privacy = document["currentEvidence"]["privacy"].lower()
+        self.assertIn("no retail filename", privacy)
+        self.assertIn("no asset checkout", privacy)
+
     def test_city_growth_threshold_contract(self) -> None:
         path = MANIFESTS / "city-growth-threshold.json"
         document = json.loads(path.read_text(encoding="utf-8"))

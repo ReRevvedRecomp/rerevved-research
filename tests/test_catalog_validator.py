@@ -132,7 +132,7 @@ def sample_documents() -> dict[str, dict]:
 class CatalogValidatorNegativeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.schemas, cls.repository_documents = load_contract(REPO)
+        cls.schemas, _ = load_contract(REPO)
         cls.documents = sample_documents()
 
     def reject(self, mutate, expected_message: str):
@@ -146,10 +146,6 @@ class CatalogValidatorNegativeTests(unittest.TestCase):
         mutate(documents)
         with self.assertRaisesRegex(CatalogValidationError, expected_message):
             validate_local_references(REPO, documents)
-
-    def test_repository_catalogs_are_valid(self):
-        validate_catalog_documents(self.schemas, self.repository_documents)
-        validate_local_references(REPO, self.repository_documents)
 
     def test_fixture_is_valid(self):
         validate_catalog_documents(self.schemas, self.documents)

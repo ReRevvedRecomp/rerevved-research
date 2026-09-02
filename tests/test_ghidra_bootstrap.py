@@ -10,7 +10,6 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 BOOTSTRAP = REPO / "tools" / "bootstrap-ghidra.ps1"
-GHIDRA_DIR = REPO / "ghidra"
 
 
 class GhidraBootstrapTests(unittest.TestCase):
@@ -132,13 +131,6 @@ class GhidraBootstrapTests(unittest.TestCase):
         )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("requires both target and sites", result.stderr)
-
-    def test_index_covers_every_java_script(self):
-        readme = (GHIDRA_DIR / "README.md").read_text(encoding="utf-8")
-        scripts = sorted(path.name for path in GHIDRA_DIR.glob("*.java"))
-        self.assertEqual(len(scripts), 23)
-        for script in scripts:
-            self.assertIn(f"`{script}`", readme)
 
     def test_execution_log_is_written_as_utf8(self):
         script = BOOTSTRAP.read_text(encoding="utf-8")

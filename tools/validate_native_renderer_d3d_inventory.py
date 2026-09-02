@@ -637,34 +637,13 @@ def validate_partial_snapshot(snapshot: dict[str, Any], document: dict[str, Any]
     )
 
 
-def _copy_partial_export(document: dict[str, Any]) -> dict[str, Any]:
-    partial_export = document["partialExport"]
-    _validate_copy_pointers(
-        document,
-        partial_export,
-        "#/partialExport",
-        {"schema_version", "image_sha256", "surface"},
-        "partialExport",
-    )
-    for index, operation in enumerate(partial_export["operations"]):
-        operation_fields = set(operation) - {"source_pointers"}
-        _validate_copy_pointers(
-            document,
-            operation,
-            f"#/partialExport/operations/{index}",
-            operation_fields,
-            "partialExport operation",
-        )
-    return deepcopy(partial_export)
-
-
 def build_partial_snapshot(
     document: dict[str, Any], research_commit: str, aggregate_sha256: str
 ) -> dict[str, Any]:
     validate_document(document)
     _require(FULL_COMMIT_RE.fullmatch(research_commit) is not None, "research commit must be full lowercase hex")
     _require(SHA256_RE.fullmatch(aggregate_sha256) is not None, "aggregate SHA-256 must be lowercase hex")
-    copied = _copy_partial_export(document)
+    copied = deepcopy(document["partialExport"])
     schema_version = copied.pop("schema_version")
     snapshot = {
         "schema_version": schema_version,

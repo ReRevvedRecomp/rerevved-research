@@ -31,5 +31,5 @@ workflow for inspections and keep mutating repair runs disposable. Update
 Use `type: imperative summary` and keep the complete subject at 50 characters
 or fewer. Use `research:` for a bounded finding that spans manifests, catalogs,
 or reference prose; `catalog:` for catalog-only work; and `docs:`, `tools:`,
-`test:`, `fix:`, or `ci:` for the corresponding change. A bare summary without
-a type is not accepted.
+`test:`, `fix:`, or `ci:` for the corresponding change.
+A bare summary without a type is not accepted.

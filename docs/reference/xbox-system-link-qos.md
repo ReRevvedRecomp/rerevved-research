@@ -202,8 +202,8 @@ ordering.
 
 Exact game-selector AVM1 separately maps key-code value 42 to
 `FSCommand:OnPressX`. In the same exact native command body, that branch reaches
-an indirect call at `0x82D765B8` after a local byte-zero gate. One
-default-off single-instance trace bracketed only that call
+an indirect call at `0x82D765B8` after a local byte-zero gate.
+One default-off single-instance trace bracketed only that call
 and its return site. One System Link game-list X press produced exactly one
 ordered same-thread marker pair; no log line intervened. The neutral
 dynamic target was `0x82D6C340`, and the process exited normally with code
@@ -340,9 +340,9 @@ create outputs, QoS, sockets, discovery, transport, or the SDK's current
 success-only session handlers.
 
 A host-flow trace covering X, game type, and timer selection reached a lobby.
-About 3.7 seconds after the exact
-OnPressX call returned, one thread recorded selected-address port-1000 bind and
-readback, title XNADDR acquisition, `XGISessionCreateImpl` with neutral flags
+About 3.7 seconds after the exact OnPressX call returned,
+one thread recorded selected-address port-1000 bind and readback,
+title XNADDR acquisition, `XGISessionCreateImpl` with neutral flags
 `0x21`, two public slots and zero private slots, QoS-listen flags `0x05` with 84
 opaque bytes, and one local-join dispatch. It then recorded unimplemented XLIVEBASE
 message `0x0005800E`, followed about 50 ms later by a selected-address

@@ -67,8 +67,9 @@ ID times four. An out-of-range ID reports the self-identifying illegal-2D-script
 diagnostic and returns null.
 
 The recovered caller preserves a non-null lookup result and passes it to the
-prepared-record population function at `0x82D4F678`. That consumer
-sign-extends the entry halfword at `+0x6` into prepared-record word `+0x0`.
+prepared-record population function at `0x82D4F678`.
+That consumer sign-extends the entry halfword at `+0x6` into prepared-record
+word `+0x0`.
 The halfword's original meaning and the prepared record's higher-level audio
 semantics remain unresolved.
 

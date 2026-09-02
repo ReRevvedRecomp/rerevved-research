@@ -17,5 +17,5 @@ Raw decompilation is scratch output. Preserve names, addresses, signatures,
 field layouts, call relationships, and short behavioral summaries instead of
 copying function bodies.
 
-Consumers promote facts explicitly and then own their copy. This repository
-must never become a sibling-path build dependency.
+Consumers promote facts explicitly and then own their copy.
+This repository must never become a sibling-path build dependency.

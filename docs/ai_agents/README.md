@@ -1,9 +1,7 @@
 # Automated and AI-assisted contributions
 
-If automated or AI assistance is used, the work follows the same contribution
-and evidence contract as any other work. The contributor owns every submitted
-claim and must be able to explain its source, scope, confidence, and
-supporting evidence.
+If automated or AI assistance is used, the work follows the same contribution and evidence contract as any other work.
+The contributor owns every submitted claim and must be able to explain its source, scope, confidence, and supporting evidence.
 
 Automated output is not guest-code evidence. A durable finding starts from the
 retail guest data and carries the locators required by the

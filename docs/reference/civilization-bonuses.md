@@ -74,8 +74,8 @@ the German, Indian, Zulu, and Mongolian entries establish ongoing rules.
 
 ## Unique Era Ability IDs
 
-The four values are ordered Ancient, Medieval, Industrial, and Modern. They
-are cumulative unlocks, not four mutually exclusive replacements.
+The four values are ordered Ancient, Medieval, Industrial, and Modern.
+They are cumulative unlocks, not four mutually exclusive replacements.
 
 <!-- civilization-era-id-map:begin -->
 | Civ ID | Internal name | Ancient UEA | Medieval UEA | Industrial UEA | Modern UEA |
@@ -144,17 +144,18 @@ therefore qualify earlier technology UEAs as well as the current-era entry.
 
 Initial UAs remain separate. For example, the Arabian Religion UA directly
 grants technology 19 when current turn minus start turn equals one and the
-player's civilization is Arabian index 11. That branch does not query a UEA
-ID. After either route grants a technology, the saved state records ordinary
+player's civilization is Arabian index 11. That branch does not query a UEA ID.
+After either route grants a technology, the saved state records ordinary
 ownership rather than UA or UEA provenance. The broad serializer at
 `0x82CC4040` transfers all 48 ownership words in both directions, so removing a
 host rule does not revoke an already-granted technology.
 
-This layout rejects a simple Mongolian substitution. UEA 40, Captured
-Barbarian villages become cities, has no technology-grant branch. Replacing an
-existing technology literal would change another retail placement, while the
-dormant ID 57 branch has no accepted retail placement, presentation, or AI
-meaning. A rule that suppresses Mongolian Ancient UEA 40 and grants Horseback
+This layout rejects a simple Mongolian substitution.
+UEA 40, Captured Barbarian villages become cities, has no technology-grant branch.
+Replacing an existing technology literal would change another retail placement,
+while the dormant ID 57 branch has no accepted retail placement,
+presentation, or AI meaning.
+A rule that suppresses Mongolian Ancient UEA 40 and grants Horseback
 Riding technology 4 would require a new civilization-and-era-scoped composite
 producer with explicit irreversible save, timing, UI, AI, and multiplayer
 semantics. No public ABI is supported for that producer.
@@ -162,8 +163,8 @@ semantics. No public ABI is supported for that producer.
 ## Shared consumers
 
 The table has no known writer, initializer, copied row cache, or second reader.
-Gameplay consumers call
-`ActiveCivilizationBonusLookup` rather than reading rows directly. These
+Gameplay consumers call `ActiveCivilizationBonusLookup` rather than reading
+rows directly. These
 consumers include combat, rush-cost calculation, effective unit-stat readers,
 AI evaluation, production and economy paths, and other gameplay systems.
 

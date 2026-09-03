@@ -34,9 +34,8 @@ player index in `r4`, and an exact era flag in `r5`.
   not clamp the era before indexing.
 - It returns false when the requested player equals the excluded player value.
 
-All 95 known call sites across 30 functions use cumulative mode. No exact-mode
-caller is known. Do not call exact mode without an
-independent era range guard.
+All 95 known call sites across 30 functions use cumulative mode.
+No exact-mode caller is known. Do not call exact mode without an independent era range guard.
 
 ## Leader and Unique Ability map
 

@@ -38,10 +38,10 @@ collection entry in this exact path.
 
 Exact producer `0x82C9CF70` prepares that buffer through a fixed two-call
 request pattern. Its first call to `0x82A1F3F0` supplies no buffer. The helper
-writes required size 1334 and returns 122 without issuing a message. The
-producer requests exactly that byte count from size-based allocator
-`0x82D3DBA0`; on a non-null return it stores the pointer at field `+0x24` and
-calls the helper again with the allocated buffer and field `+0x28` as a
+writes required size 1334 and returns 122 without issuing a message.
+The producer requests exactly that byte count from size-based allocator `0x82D3DBA0`.
+On a non-null return, it stores the pointer at field `+0x24` and calls the helper
+again with the allocated buffer and field `+0x28` as a
 completion pointer. The producer accepts return zero or 997 and then sets field
 `+0x1C` to one.
 
@@ -63,8 +63,8 @@ identify an allocator or the completed per-entry layout.
 
 The visible English `System Link` label belongs to UI setup function
 `0x82E52068`, which also resolves the Player Match and Ranked Match labels. It
-does not call a session, message, socket, or search function locally. The
-defined `Refresh` and `Create Game` strings have no modeled references.
+does not call a session, message, socket, or search function locally.
+The defined `Refresh` and `Create Game` strings have no modeled references.
 
 Bounded direct-call searches found no producer for general XGI search messages
 `0x000B0016`, `0x000B001C`, or `0x000B0065` through the title's imported
@@ -227,10 +227,10 @@ does not identify the object class, slot or literal semantics, dynamic target,
 visible action owner, session behavior, advertisement, discovery, delivery, or
 ordering.
 
-One default-off single-instance trace then armed only from
-the exact outer OnPressX call and observed the tail-dispatch site once. The
-accepted line recorded neutral dynamic target
-`0x82D704F0`; the process exited normally with code zero. No object, vtable,
+One default-off single-instance trace armed only from the exact outer
+OnPressX call and observed the tail-dispatch site once.
+The accepted line recorded neutral dynamic target `0x82D704F0`.
+The process exited normally with code zero. No object, vtable,
 argument, literal, field, buffer, payload, or platform event was recorded. This
 establishes one neutral runtime target tuple only. It does not identify the
 target's method semantics, object ownership, visible action, session creation,
@@ -366,4 +366,4 @@ result, success requirements, session behavior, host authority, advertisement,
 discovery, delivery, framing, transport, relay, Internet play, payload meaning,
 and relationship to lobby progress remain unproved.
 
-See `manifests/xbox-system-link-qos-root.json` for evidence locators and guards.
+Evidence: [topic manifest](../../manifests/xbox-system-link-qos-root.json).

@@ -125,6 +125,17 @@ class TopicManifestTests(unittest.TestCase):
         self.assertTrue({3, 12, 18, 19, 20, 24, 55}.issubset(
             {entry["ueaId"] for entry in shared}
         ))
+        terrain_ids = {16, 28, 30, 32, 41, 56}
+        self.assertTrue(terrain_ids.issubset(
+            {entry["ueaId"] for entry in shared}
+        ))
+        self.assertTrue({16, 28}.issubset(
+            document["lookupInventorySeed"]["retailIdsObservedAsLiteralRequests"]
+        ))
+        self.assertEqual(
+            document["lookupInventorySeed"]["retailIdsAbsentAsLiteralRequests"],
+            [40],
+        )
         self.assertNotIn(23, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(8, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(42, document["retailOwnerClasses"]["unknown"])
@@ -134,15 +145,51 @@ class TopicManifestTests(unittest.TestCase):
         self.assertTrue({3, 12, 18, 19, 20, 24, 55}.isdisjoint(
             document["retailOwnerClasses"]["unknown"]
         ))
+        self.assertTrue(terrain_ids.isdisjoint(
+            document["retailOwnerClasses"]["unknown"]
+        ))
         self.assertEqual(
             document["retailCellProjection"]["counts"],
             {
                 "total": 64,
-                "sharedCumulativeLookup": 35,
+                "sharedCumulativeLookup": 44,
                 "directCivilizationEffectPath": 1,
                 "mixedCompanionPath": 0,
-                "unknown": 28,
+                "unknown": 19,
             },
+        )
+
+        terrain = document["terrainYieldBoundary"]
+        self.assertEqual(
+            terrain["functions"],
+            ["0x82CF17C8", "0x82CF1AF0", "0x82CF1CE8"],
+        )
+        self.assertEqual(terrain["query"]["script"], "ghidra/DumpFunctions.java")
+        self.assertEqual(terrain["query"]["invocations"], 1)
+        self.assertEqual(
+            [
+                (
+                    entry["function"],
+                    entry["component"],
+                    entry["baseTable"],
+                    entry["body"],
+                    [(branch["terrain"], branch["ueaId"], branch["callsite"],
+                      branch["increment"]) for branch in entry["branches"]],
+                )
+                for entry in terrain["ownerResults"]
+            ],
+            [
+                ("0x82CF17C8", "trade", "0x82F771E2", "complete",
+                 [("desert", 32, "0x82CF1A28", 1)]),
+                ("0x82CF1AF0", "production", "0x82F771E1", "complete",
+                 [("forest", 30, "0x82CF1C18", 1),
+                  ("hill", 41, "0x82CF1C40", 1),
+                  ("mountain", 56, "0x82CF1C68", 2)]),
+                ("0x82CF1CE8", "food", "0x82F771E0", "complete",
+                 [("plains", 16, "0x82CF1E28", 1),
+                  ("sea", 28, "0x82CF1E28", 1),
+                  ("desert", 32, "0x82CF1E28", 1)]),
+            ],
         )
 
         owner = document["greatPersonGenerationOwner"]

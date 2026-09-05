@@ -186,17 +186,17 @@ each distinct UEA ID's accepted owner class to the row table above:
 
 | Owner class | Distinct retail IDs | Retail cells | Boundary |
 | --- | --- | ---: | --- |
-| Shared cumulative lookup | 1, 3, 5, 8, 9, 10, 12, 13, 17, 18, 19, 20, 23, 24, 34, 35, 42, 43, 47, 48, 50, 55, 58, 59, 60 | 35 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
+| Shared cumulative lookup | 1, 3, 5, 8, 9, 10, 12, 13, 16, 17, 18, 19, 20, 23, 24, 28, 30, 32, 34, 35, 41, 42, 43, 47, 48, 50, 55, 56, 58, 59, 60 | 44 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
 | Direct civilization/effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
 | Mixed companion path | None | 0 | No native retail cell is accepted in this class. |
-| Unknown | 2, 4, 6, 7, 14, 16, 25, 26, 27, 28, 30, 32, 36, 38, 41, 46, 51, 56, 61 | 28 | No accepted effect-specific producer-consumer packet establishes the native owner. |
+| Unknown | 2, 4, 6, 7, 14, 25, 26, 27, 36, 38, 46, 51, 61 | 19 | No accepted effect-specific producer-consumer packet establishes the native owner. |
 
-The 95-site generated inventory contains literal shared-lookup requests for 42
+The 95-site generated inventory contains literal shared-lookup requests for 44
 of the 45 retail IDs. That is useful search guidance only. A literal request
 does not prove the named effect, complete ownership, or absence of a direct
-companion. UEA 12 reaches a merged common callsite and was missed by the prior
-immediate-literal inventory. Retail IDs 16, 28, and 40 remain absent as literal
-requests; only UEA 40 has a separately mapped direct owner.
+companion. UEA 12, 16, and 28 reach merged common callsites and were missed by
+the prior immediate-literal inventory. Only retail ID 40 remains absent as a
+literal request, and it has a separately mapped direct owner.
 
 UEA 1 has a bounded infrastructure-cost owner in `RoadBuildCostLookup` at
 `0x82CF83C0`. It and the city-update path in `0x82D13978` independently
@@ -285,10 +285,13 @@ synthetic technology grant plus a separate gate at `0x82D1B758`.
 
 The complete evidence, qualifications, and cell projection are in
 [`unique-era-ability-effect-ownership.json`](../../manifests/unique-era-ability-effect-ownership.json).
-IDs 30, 32, 41, and 56 have exact shared-lookup seeds, while IDs 16 and 28 are
-absent from the accepted lookup inventory. The bounded query did not provide
-all three complete exact bodies, so IDs 16, 28, 30, 32, 41, and 56 remain
-unknown.
+The repaired-project query recovered complete food, production, and trade
+accessors. Their terrain branches use the accepted cumulative lookup and apply
+the retail effects directly: Plains gain 1 Food (UEA 16), Sea gains 1 Food
+(UEA 28), Forest gains 1 Production (UEA 30), Desert gains 1 Food and 1 Trade
+(UEA 32), Hills gain 1 Production (UEA 41), and Mountains gain 2 Production
+(UEA 56). This static result does not establish display, AI, save, scenario,
+multiplayer, or runtime parity, or provide a generic tile API.
 
 ## Modification guards
 

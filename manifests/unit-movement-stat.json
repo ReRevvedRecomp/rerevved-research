@@ -10,7 +10,7 @@
     "functions": ["0x82CD5A70", "0x82CF0CB0", "0x82CF1F70"],
     "tables": ["0x82F700D8"],
     "fields": ["unit definition +0x42", "unit definition +0x50"],
-    "boundary": "This packet identifies the base movement byte and three retail UEA increments inside the effective movement accessor. It does not name every pre-UEA modifier, UEA 29, the auxiliary signed halfword, the special return predicate, every caller, movement-budget scaling, AI, presentation, save, scenario, multiplayer, or runtime behavior."
+    "boundary": "This packet identifies the base movement byte, three retail UEA increments, and bounded Jaguar/Impi hook facts inside the effective movement accessor. It does not establish the gameplay meaning of the special return beyond Jaguar exclusion, name every pre-UEA modifier, UEA 29, the auxiliary signed halfword, every caller, movement-budget scaling, AI, presentation, save, scenario, multiplayer, or runtime behavior."
   },
   "dependencies": [
     { "topic": "unit-definitions-ai-evaluation", "use": "Provides the accepted 0x82F700D8 unit-definition table, 0x94-byte records, and internal UnitType names." },
@@ -69,12 +69,12 @@
     },
     {
       "ueaId": 55,
-      "effect": "Warriors gain +1 movement",
+      "effect": "The UnitType 6 branch adds +1 movement when cumulative UEA 55 is active",
       "predicate": { "address": "0x82CF2104", "unitType": 6, "acceptedInternalName": "Warrior" },
       "ueaIdArgument": { "address": "0x82CF210C", "value": 55, "flow": "falls through to the common lookup setup at 0x82CF2110" },
       "commonLookup": { "mode": { "address": "0x82CF2110", "value": 0 }, "player": { "address": "0x82CF2114", "source": "r30" }, "callsite": "0x82CF2118", "resultTest": "0x82CF211C" },
       "increment": "0x82CF2124",
-      "result": "When UnitType is 6 and cumulative UEA 55 is active, the accessor adds one to retained composed movement."
+      "result": "When UnitType is 6 and cumulative UEA 55 is active, the accessor adds one to retained composed movement; this branch is not a claim that every Warrior-definition identity receives the effect."
     }
   ],
   "inventoryCorrection": {
@@ -94,6 +94,32 @@
     "locators": ["ghidra/DumpMemoryWords.java:0x82CF2098..0x82CF2198", "generated:rerevved/sub_82CF1F70", "unit-definitions-ai-evaluation#/unitDefinitions/records/6", "unit-definitions-ai-evaluation#/unitDefinitions/records/10"],
     "qualification": "No runtime action was performed. Static evidence establishes the base byte, exact predicates, lookup dataflow, increments, and ordinary return composition; all other movement modifiers and consumers remain outside the packet."
   },
+  "currentImageFacts": {
+    "warriorDefinition": {
+      "record": "unit definition record 6 (Warrior)",
+      "field": "definition +0x50",
+      "address": "0x82F704A0",
+      "bit": "0x1",
+      "state": "clear",
+      "result": "The current-image Warrior definition has +0x50 bit 0 clear."
+    },
+    "jaguarMovementHook": {
+      "identity": "Jaguar uses the Warrior definition / UnitType 6 movement contract",
+      "specialReturnPredicate": "0x82CF2154..0x82CF2174",
+      "specialReturn": "The accepted current-image hook evidence excludes Jaguar from the special return.",
+      "ordinaryComposition": "Jaguar remains on the ordinary composed path: signed definition +0x42, local modifiers, cumulative UEA lookup, and ordinary return composition at 0x82CF2194.",
+      "hookContract": "The accepted current-image hook contract observes the ordinary EffectiveUnitMovementLookup result at 0x82CF1F70; it does not replace the accessor or establish a broader movement rule."
+    },
+    "nativeImpiControl": {
+      "ueaId": 55,
+      "result": "Native Impi UEA 55 is the control for the UnitType 6 cumulative lookup and +1 increment path; it does not establish the same result for every Warrior-definition identity."
+    },
+    "limits": {
+      "runtime": "No runtime action was performed; current-image hook evidence does not establish complete runtime coverage or cadence.",
+      "ai": "No AI movement-parity claim is established.",
+      "presentation": "No presentation or displayed-movement claim is established."
+    }
+  },
   "guards": [
     "Do not infer that UEA 3 selects a single UnitType; the accepted predicate is definition flag 0x200.",
     "Do not classify UEA 29 from the adjacent unresolved branch without an accepted effect contract.",
@@ -101,5 +127,5 @@
     "Do not equate the effective movement stat directly with unit-record movement budget +0x02 or command path cost.",
     "Do not claim complete AI, presentation, save, scenario, multiplayer, or runtime parity."
   ],
-  "conclusion": "EffectiveUnitMovementLookup at 0x82CF1F70 reads signed definition byte +0x42 and owns three retail movement UEAs on its ordinary composed return: UEA 3 adds one under definition flag 0x200, UEA 12 adds one for Riflemen UnitType 10, and UEA 55 adds one for Warrior UnitType 6. UEA 12 reaches a merged common callsite and is no longer classified as absent from literal lookup requests."
+  "conclusion": "EffectiveUnitMovementLookup at 0x82CF1F70 reads signed definition byte +0x42 and owns three retail movement UEAs on its ordinary composed return: UEA 3 adds one under definition flag 0x200, UEA 12 adds one for Riflemen UnitType 10, and UEA 55 adds one on the UnitType 6 branch when active. The current-image Warrior definition has +0x50 bit 0 clear, and accepted Jaguar hook evidence excludes Jaguar from the special return while native Impi UEA 55 supplies the control case. UEA 12 reaches a merged common callsite; no broad Warrior-definition, AI, presentation, or complete runtime movement claim is made."
 }

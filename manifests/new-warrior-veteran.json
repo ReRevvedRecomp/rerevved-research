@@ -8,12 +8,13 @@
   "question": "Which current-image unit-creation path implements UEA 50 New Warriors are Veterans, and what exact runtime-unit field update does it perform?",
   "scope": {
     "functions": ["0x82CF0CB0", "0x82D13978"],
-    "fields": ["runtime unit record +0x05"],
-    "boundary": "This packet identifies one new-unit Warrior predicate, UEA 50 lookup, veteran-level increment, and saturation. It does not recover every rank writer or consumer, non-Warrior veteran grants, combat promotion, presentation, AI, save, scenario, multiplayer, or runtime behavior."
+    "fields": ["runtime unit record +0x01", "runtime unit record +0x05", "creation record +0x3C bit 0x20"],
+    "boundary": "This packet retains the new-unit Warrior UEA 50 route and promotes a creation-time grant hook that can gate on an accepted civilization, base UnitType, and resolved Unique Unit identity. It does not recover every rank writer or consumer, combat promotion, presentation, AI, save, scenario, multiplayer, runtime, or persistence behavior."
   },
   "dependencies": [
-    { "topic": "unit-definitions-ai-evaluation", "use": "Provides the accepted Warrior UnitType 6 identity." },
-    { "topic": "civilization-bonus-storage", "use": "Provides the accepted cumulative lookup and German Ancient placement of UEA 50." }
+    { "topic": "unit-definitions-ai-evaluation", "use": "Provides the accepted Warrior UnitType 6, Legion UnitType 8, and runtime unit-type byte +0x01 identities." },
+    { "topic": "civilization-bonus-storage", "use": "Provides the accepted cumulative lookup and German Ancient placement of UEA 50." },
+    { "topic": "unique-unit-identity-selection", "use": "Provides accepted civilization plus base-type resolution for Unique Unit identities, including the Aztec Jaguar Warrior." }
   ],
   "activation": {
     "ueaId": 50,
@@ -32,27 +33,64 @@
     },
     "lookupCallsite": "0x82D15B78",
     "resultTest": "0x82D15B7C",
+    "alternateGate": {
+      "address": "0x82D15B84",
+      "source": "creation record +0x3C",
+      "mask": "0x20",
+      "setTarget": "0x82D15B9C",
+      "clearTarget": "0x82D15BA8",
+      "result": "The non-UEA route increments the same runtime rank byte only when the creation record halfword has bit 0x20 set."
+    },
     "activeTarget": "0x82D15B9C",
     "increment": { "load": "0x82D15B9C", "add": "0x82D15BA0", "store": "0x82D15BA4" },
     "saturation": { "load": "0x82D15BE8", "compareMaximum": "0x82D15BF4", "maximum": 2, "clampStore": "0x82D15C00" },
     "result": "For a newly initialized Warrior record, active cumulative UEA 50 increments byte +0x05. The same routine later clamps values above two back to two, so the UEA path raises a lower initial level to the accepted veteran level without exceeding it.",
     "qualification": "A separate local flag can reach the same increment block when UEA 50 is inactive. This packet proves UEA 50's direct route and saturation, not exclusive ownership of every veteran grant."
   },
+  "uniqueUnitCreationGrant": {
+    "hook": "0x82D15B84",
+    "player": "Resolve civilization from 0x830ECD28[player_index].",
+    "baseType": "Read the new 0x54-byte runtime unit record +0x01.",
+    "identity": "Resolve the accepted Unique Unit identity from civilization plus base UnitType before matching a rule.",
+    "firstTarget": "Aztec civilization plus Warrior UnitType plus Jaguar Warrior identity.",
+    "grant": "For a newly created unit satisfying all three identity gates, raise runtime unit byte +0x05 to veteran level two while the native creation flow continues.",
+    "nativeWarriorBypass": "When the native German UEA 50 lookup succeeds, the branch bypasses 0x82D15B84 and performs the native increment. Rank was initialized to one or two, so that route already satisfies the same minimum-level-two Veteran grant.",
+    "unsupportedSuppression": "Leave the rank unchanged when the unit is not on this creation path or its accepted civilization, base type, and Unique Unit identity do not match a registered rule."
+  },
+  "nativePreservation": {
+    "warriorUea50": "Retain the UnitType 6 predicate, cumulative UEA 50 lookup, and existing route into 0x82D15B9C.",
+    "alternateGate": "Retain the native 0x82D15B84 +0x3C bit-0x20 gate and its clear path to 0x82D15BA8.",
+    "saturation": "Retain the existing maximum-two comparison at 0x82D15BF4 and clamp store at 0x82D15C00."
+  },
+  "rankBoundary": {
+    "targetLevel": 2,
+    "behavior": "The accepted creation-time grant raises a lower rank to level two through the existing +1 step at 0x82D15BA0; values above two are saturated back to two."
+  },
   "currentEvidence": {
-    "method": "One foreground read-only 69-word current-image query centered at 0x82D15B78, exact verification of 20 selected words and branch targets, and narrow generated-code corroboration of the retained player and unit-record addressing in 0x82D13978.",
+    "method": "One foreground read-only 69-word current-image query centered at 0x82D15B78, exact verification of 20 selected words and branch targets including the alternate gate at 0x82D15B84, and narrow generated-code corroboration of the retained player and unit-record addressing in 0x82D13978.",
     "entries": [
       { "role": "Warrior predicate", "address": "0x82D15B5C", "confidence": "strong" },
       { "role": "UEA 50 lookup", "address": "0x82D15B78", "confidence": "strong" },
+      { "role": "alternate +0x3C bit-0x20 gate", "address": "0x82D15B84", "confidence": "strong" },
       { "role": "veteran-level increment", "address": "0x82D15B9C", "confidence": "strong" },
       { "role": "level-two saturation", "address": "0x82D15BF4", "confidence": "strong" }
     ],
-    "locators": ["ghidra/DumpMemoryWords.java:0x82D15AF0..0x82D15C00", "generated:rerevved/sub_82D13978", "unit-definitions-ai-evaluation#/unitDefinitions/records/6"],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82D15AF0..0x82D15C00", "generated:rerevved/sub_82D13978", "civilization-bonus-storage#/storage/rows/0", "civilization-bonus-storage#/lookup/playerCivilizationArray", "unit-definitions-ai-evaluation#/unitDefinitions/records/6", "unit-definitions-ai-evaluation#/unitDefinitions/records/8"],
     "qualification": "No runtime action was performed. The current-image window contains the initialization, UEA gate, increment, alternate route, and final saturation."
+  },
+  "runtimeBoundary": {
+    "status": "not-observed",
+    "result": "Static evidence does not prove execution of the identity-targeted extension, visible veteran state, or behavior outside the bounded creation hook."
+  },
+  "persistence": {
+    "status": "unresolved",
+    "result": "No serializer or save/load evidence was inspected for runtime unit byte +0x05 or the identity-targeted grant source; this manifest records creation-time guest state only."
   },
   "guards": [
     "Do not treat runtime unit byte +0x05 as an unbounded experience counter; this creation path saturates it at two.",
     "Do not claim UEA 50 is the only route to veteran level; a separate local flag reaches the same increment block.",
-    "Do not generalize this new-Warrior path to combat promotion, every unit type, presentation, AI, save, scenario, multiplayer, or runtime behavior."
+    "Do not generalize this creation-time Unique Unit grant to combat promotion, base identities, presentation, AI, save, scenario, multiplayer, or runtime behavior.",
+    "Do not treat the native +0x3C bit-0x20 gate as proof of any unit identity; require explicit civilization, runtime base-type, and accepted Unique Unit identity checks."
   ],
-  "conclusion": "The bounded new-unit path in 0x82D13978 implements UEA 50 for Warrior UnitType 6 by incrementing runtime unit byte +0x05 after the cumulative lookup succeeds and saturating the result at veteran level two."
+  "conclusion": "The bounded creation path in 0x82D13978 retains the native UEA 50 Warrior route and the alternate +0x3C bit-0x20 gate at 0x82D15B84, both feeding the +0x05 increment and maximum-two saturation. A safe extension at 0x82D15B84 can grant Veteran only after matching the owner civilization, runtime base UnitType, and accepted Unique Unit identity; the first production target is the Aztec Jaguar Warrior. Runtime execution and persistence remain unproved."
 }

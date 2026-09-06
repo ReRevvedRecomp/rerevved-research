@@ -30,12 +30,12 @@
       "stringLayout": "The builder derives the civilization-indexed string address from r20, resolves the token value, scans the returned null-terminated string, and appends it through the existing string path."
     },
     {
-      "field": "Era Bonuses heading and four values",
-      "kind": "mixed fixed labels and dynamic values",
+      "field": "four era labels and four values",
+      "kind": "visible fixed labels and dynamic values after one hidden prefix",
       "producer": "0x82D7807C",
       "hookBoundary": "0x82D7807C",
       "selectorRegister": "r20",
-      "stringLayout": "The heading plus four label/value pairs form a nine-line block. The hook receives the built block, preserves the heading and labels, replaces the four value lines, and uses the string length stored at buffer address minus 4."
+      "stringLayout": "An internal prefix plus four label/value pairs form a nine-line block. Runtime testing on 2026-09-06 confirmed that the panel renders only the eight label/value lines. The hook preserves the hidden prefix, can replace the four visible labels and values, and uses the string length stored at buffer address minus 4."
     },
     {
       "field": "normal trait text",
@@ -63,15 +63,16 @@
   ],
   "fixedStrings": [
     {
-      "field": "Era Bonuses heading",
+      "field": "internal Era Bonuses prefix",
       "address": "0x8212301C",
-      "value": "Era Bonuses\\n"
+      "value": "Era Bonuses\\n",
+      "visibility": "A 2026-09-06 runtime replacement changed this stored line but produced no visible panel text."
     },
     {
       "field": "Era Bonuses label/value template",
       "address": "0x82138EA0",
       "value": "Ancient:\\n???\\nMedieval:\\n???\\nIndustrial:\\n???\\nModern:\\n???",
-      "layout": "Together with the heading at 0x8212301C, this supplies the nine-line block consumed at 0x82D7807C."
+      "layout": "Together with the hidden prefix at 0x8212301C, this supplies the nine-line block consumed at 0x82D7807C."
     },
     {
       "field": "Special Units heading",
@@ -96,12 +97,13 @@
       "ghidra/DumpStringsInRange.java:0x82138E80..0x82138F20",
       "generated/default/rerevved_recomp.5.cpp:0x82D77F0C,0x82D77FD0,0x82D7807C,0x82D781A8,0x82D78228,0x82D783B4"
     ],
-    "qualification": "The Ghidra function view identifies the builder but decompiles it as a save/restore thunk; the narrow generated window supplies the producer sequence, hook boundaries, register dataflow, and buffer layout. These are static evidence only and are not runtime proof."
+    "qualification": "The Ghidra function view identifies the builder but decompiles it as a save/restore thunk; the narrow generated window supplies the producer sequence, hook boundaries, register dataflow, and buffer layout. A 2026-09-06 bundled runtime test visibly replaced the leader, civilization, trait, four era labels, four era values, Special Units heading, and Keshik value. Replacing the internal Era Bonuses prefix produced no visible text."
   },
   "guards": [
     "Do not generalize these producer or hook boundaries to localization-global behavior beyond builder 0x82D77670.",
     "Do not infer runtime reachability, final displayed values, language parity, or multiplayer behavior from this static mapping.",
-    "Preserve the nine-line era block layout and its length header at buffer address minus 4 when adapting the bounded hook."
+    "Preserve the hidden prefix, the eight visible era lines, and the length header at buffer address minus 4 when adapting the bounded hook.",
+    "Do not expose the internal Era Bonuses prefix as a visible presentation surface."
   ],
-  "conclusion": "The supported image's civilization information panel builder at 0x82D77670 has exact bounded text classifications: @RULER at 0x82D77F0C and @CIVNAME at 0x82D77FD0 both use civilization selector r20; the Era Bonuses nine-line block is hooked at 0x82D7807C; normal trait text is produced after 0x82D781A8 with a safe post-return hook at 0x82D781AC using r30/r20 and the minus-4 length header; the Special Units heading is produced at 0x82D78228; and each unit value reaches the hook at 0x82D783B4 with r3/r27/r20. The fixed sources are Era Bonuses at 0x8212301C, the era label/value template at 0x82138EA0, and Special Units at 0x82138F04."
+  "conclusion": "The supported image's civilization information panel builder at 0x82D77670 has exact bounded text classifications: @RULER at 0x82D77F0C and @CIVNAME at 0x82D77FD0 both use civilization selector r20; the nine-line era block is hooked at 0x82D7807C, but runtime testing confirms its first Era Bonuses line is an internal non-rendered prefix and only the following four label/value pairs are visible; normal trait text is produced after 0x82D781A8 with a safe post-return hook at 0x82D781AC using r30/r20 and the minus-4 length header; the Special Units heading is produced at 0x82D78228; and each unit value reaches the hook at 0x82D783B4 with r3/r27/r20."
 }

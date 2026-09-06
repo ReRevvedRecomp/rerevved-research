@@ -34,7 +34,17 @@
       "result": "After an action, the consumer requires bit zero, requires unit lifecycle bit 0x400 to be clear, then sets lifecycle bit 0x400 and adds three internal units to movement byte +0x02."
     },
     { "index": 1, "mask": "0x00000002", "name": "Infiltration", "group": "Offensive", "description": "+50% attack when attacking a city", "consumerStatus": "unresolved" },
-    { "index": 2, "mask": "0x00000004", "name": "Guerilla", "group": "Offensive", "description": "+50% attack in home territory", "consumerStatus": "unresolved" },
+    {
+      "index": 2,
+      "mask": "0x00000004",
+      "name": "Guerilla",
+      "group": "Offensive",
+      "description": "+50% attack under the native territory predicate",
+      "consumerStatus": "proved-static",
+      "consumer": "0x82CFC0A8",
+      "result": "For bit two, helper 0x82CFC0A8 looks up defender coordinates in territory table 0x830E8790 and compares the result against attacker record +0x00. The proved effect is attack-only (+50%).",
+      "qualification": "The comparison is static evidence only. The semantic meaning of attacker record +0x00 and the territory-table ownership relation remain unresolved, so this does not establish a home or enemy-territory interpretation or runtime behavior."
+    },
     { "index": 3, "mask": "0x00000008", "name": "Loyalty", "group": "Defensive", "description": "+50% defense in home territory", "consumerStatus": "unresolved" },
     { "index": 4, "mask": "0x00000010", "name": "Engineer", "group": "Defensive", "description": "+100% defense in a city", "consumerStatus": "unresolved" },
     { "index": 5, "mask": "0x00000020", "name": "Leadership", "group": "Defensive", "description": "+100% defense when the unit shares a square with other troops", "consumerStatus": "unresolved" },
@@ -96,8 +106,33 @@
   },
   "combatConsumerSearch": {
     "functions": ["0x82CD7A60", "0x82CD9970", "0x82CF2230", "0x82CF21A0", "0x82CEFF98", "0x82CF4990"],
-    "result": "No bit-specific consumer for masks 0x2 through 0x20 was found in the dispatcher, combat resolver, effective attack or defense accessors, eligibility helper, or upgrade counter. 0x82CD7A60 tests +0x10 only as a whole-word nonzero gate and is a separate dispatcher path from combat resolver 0x82CD9970.",
-    "qualification": "This bounded negative result rules out the inspected direct paths. It does not prove that the five combat effects are absent; their derived-state producer remains unresolved."
+    "result": "No bit-specific consumer for masks 0x2, 0x8, 0x10, or 0x20 was found in the dispatcher, combat resolver, effective attack or defense accessors, eligibility helper, or upgrade counter. Guerilla mask 0x4 has the separate static consumer at 0x82CFC0A8. 0x82CD7A60 tests +0x10 only as a whole-word nonzero gate and is a separate dispatcher path from combat resolver 0x82CD9970.",
+    "qualification": "This bounded negative result rules out the inspected direct paths for the four remaining combat bits. It does not prove those effects are absent; their derived-state producers remain unresolved."
+  },
+  "terrainCombatHookBoundary": {
+    "status": "proposed-rule-boundary",
+    "scope": "Separate ordinary-combat Forest terrain hook evidence; it is not the native Guerilla consumer.",
+    "participants": {
+      "table": "0x830F2BF0",
+      "coordinateFields": ["+0x1C", "+0x1E"],
+      "result": "The ordinary combat participant records expose the coordinates used by the terrain lookup."
+    },
+    "forest": {
+      "table": "0x8312B288",
+      "byte": 3,
+      "result": "Forest is represented by byte value 3 in the terrain table."
+    },
+    "attack": {
+      "scalarHook": "0x82CDB4E0",
+      "register": "r26",
+      "result": "The proposed attack hook carries the scalar in r26 and includes a displaced compare and resume sequence."
+    },
+    "defense": {
+      "scalarHook": "0x82CDB538",
+      "register": "r23",
+      "result": "The proposed defense hook carries the scalar in r23 and includes a displaced compare and resume sequence."
+    },
+    "qualification": "This bounds a possible ordinary Forest combat rule insertion point. It does not prove that the native Guerilla bit feeds the hook, that byte 3 denotes home or enemy territory, or that either static path has been runtime confirmed."
   },
   "presentation": {
     "strings": [
@@ -122,12 +157,15 @@
       { "role": "AI promotion chooser", "address": "0x82CF45D8", "confidence": "strong" },
       { "role": "Blitz post-action consumer", "address": "0x82D2CB28", "confidence": "strong" },
       { "role": "Scout mode selector", "address": "0x82CD6D84", "confidence": "strong" },
+      { "role": "Guerilla territory-gated attack consumer", "address": "0x82CFC0A8", "confidence": "strong" },
+      { "role": "ordinary-combat Forest terrain hook boundary", "addresses": ["0x830F2BF0", "0x8312B288", "0x82CDB4E0", "0x82CDB538"], "confidence": "strong" },
       { "role": "unit presentation record copy", "address": "0x82D81BA0", "confidence": "strong" }
     ],
     "locators": [
       "ghidra/FindStrings.java:0x82125DA8..0x821282E0",
       "ghidra/FindFieldAccesses.java:unit_record+0x10",
       "ghidra/DumpFunctions.java:0x82CEFF98",
+      "ghidra/DumpFunctions.java:0x82CFC0A8,0x82CDB4E0,0x82CDB538",
       "generated:rerevved/sub_82CDDF08",
       "generated:rerevved/sub_82CF45D8",
       "generated:rerevved/sub_82D11AD8"
@@ -136,10 +174,12 @@
   },
   "guards": [
     "Do not model Veteran or Elite as special-upgrade bits; they use rank byte +0x05.",
-    "Do not expose a public grant ABI until each bit's consumer and persistence behavior are bounded.",
+    "Keep unresolved native effect consumers and persistence boundaries explicit when exposing creation-time grants.",
     "Do not claim that setting the March bit alone updates movement; the native grant command also changes +0x02.",
     "Do not claim that setting Scout alone refreshes its UI; the native grant command explicitly invokes 0x82D11AD8.",
+    "Do not translate the Guerilla comparison into home or enemy territory ownership; attacker record +0x00 and the territory-table relation remain semantically unresolved.",
+    "Treat the Forest terrain hook as a proposed ordinary-combat rule boundary separate from the native Guerilla consumer, and preserve its displaced compares and resumes.",
     "Do not call situational combat, healing, city-defense-stat display, +1 view, presentation, save/load, armies, or AI runtime-confirmed without a default-off probe."
   ],
-  "conclusion": "The supported image defines exactly nine special upgrades stored as bits zero through eight in runtime unit word +0x10. Command type 22 spends one Elite rank step and sets the selected bit. Blitz has an exact post-action movement consumer, March has an immediate movement side effect, and Scout selects an exact downstream mode and triggers an immediate rebuild. Direct gameplay consumers for the five combat modifiers and Medic, plus exact presentation and persistence readers, remain the active boundary."
+  "conclusion": "The supported image defines exactly nine special upgrades stored as bits zero through eight in runtime unit word +0x10. Command type 22 spends one Elite rank step and sets the selected bit. Blitz has an exact post-action movement consumer, March has an immediate movement side effect, Scout selects an exact downstream mode and triggers an immediate rebuild, and Guerilla has a statically proved attack-only territory comparison at 0x82CFC0A8. The ordinary-combat Forest evidence at 0x82CDB4E0 and 0x82CDB538 is a separate proposed hook boundary using participant coordinates and terrain byte 3; it does not establish Guerilla coupling or runtime behavior. Direct gameplay consumers for the other four combat modifiers and Medic, plus exact presentation and persistence readers, remain the active boundary."
 }

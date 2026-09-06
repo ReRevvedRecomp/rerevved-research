@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0135",
+  "topic": "civilization-info-panel-text-producers",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Where does the civilization information panel builder obtain and append each visible dynamic or fixed text field?",
+  "scope": {
+    "builder": "0x82D77670",
+    "boundary": "This packet classifies the leader, civilization name, era-bonus block, normal trait text, Special Units heading, and Special Units values assembled by the supported civilization-selection builder. It does not classify other localization consumers or claim behavior outside this builder."
+  },
+  "fields": [
+    {
+      "field": "leader",
+      "kind": "dynamic token value",
+      "token": "@RULER",
+      "producer": "0x82D77F0C",
+      "hookBoundary": "0x82D77F0C",
+      "selectorRegister": "r20",
+      "stringLayout": "The builder resolves the token value, scans the returned null-terminated string, and appends it through the existing string path."
+    },
+    {
+      "field": "civilization name",
+      "kind": "dynamic token value",
+      "token": "@CIVNAME",
+      "producer": "0x82D77FD0",
+      "hookBoundary": "0x82D77FD0",
+      "selectorRegister": "r20",
+      "stringLayout": "The builder derives the civilization-indexed string address from r20, resolves the token value, scans the returned null-terminated string, and appends it through the existing string path."
+    },
+    {
+      "field": "Era Bonuses heading and four values",
+      "kind": "mixed fixed labels and dynamic values",
+      "producer": "0x82D7807C",
+      "hookBoundary": "0x82D7807C",
+      "selectorRegister": "r20",
+      "stringLayout": "The heading plus four label/value pairs form a nine-line block. The hook receives the built block, preserves the heading and labels, replaces the four value lines, and uses the string length stored at buffer address minus 4."
+    },
+    {
+      "field": "normal trait text",
+      "kind": "dynamic trait value",
+      "producerBoundary": "0x82D781A8",
+      "hookBoundary": "0x82D781AC",
+      "selectorRegisters": ["r30", "r20"],
+      "stringLayout": "The producer call returns the localized trait buffer; the safe post-return hook boundary uses r30 for that string and r20 for the civilization selector. Its downstream layout carries the string length at buffer address minus 4."
+    },
+    {
+      "field": "Special Units heading",
+      "kind": "fixed heading",
+      "producer": "0x82D78228",
+      "hookBoundary": "0x82D78228",
+      "stringLayout": "The builder resolves the heading string and scans the returned null-terminated text before entering the unit loop."
+    },
+    {
+      "field": "Special Units values",
+      "kind": "dynamic unit value",
+      "producer": "0x82D783B4",
+      "hookBoundary": "0x82D783B4",
+      "selectorRegisters": ["r3", "r27", "r20"],
+      "stringLayout": "At the unit value hook, r3 carries the localized value string, r27 carries the base unit type, and r20 carries the civilization selector before the builder appends the value and continues the loop."
+    }
+  ],
+  "fixedStrings": [
+    {
+      "field": "Era Bonuses heading",
+      "address": "0x8212301C",
+      "value": "Era Bonuses\\n"
+    },
+    {
+      "field": "Era Bonuses label/value template",
+      "address": "0x82138EA0",
+      "value": "Ancient:\\n???\\nMedieval:\\n???\\nIndustrial:\\n???\\nModern:\\n???",
+      "layout": "Together with the heading at 0x8212301C, this supplies the nine-line block consumed at 0x82D7807C."
+    },
+    {
+      "field": "Special Units heading",
+      "address": "0x82138F04",
+      "value": "Special Units"
+    }
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra DumpFunctions and string-range queries against the supported image, with a narrow generated/default/rerevved_recomp.5.cpp comparison.",
+    "entries": [
+      { "role": "civilization information panel builder", "address": "0x82D77670", "confidence": "strong" },
+      { "role": "leader producer and hook boundary", "address": "0x82D77F0C", "confidence": "strong" },
+      { "role": "civilization-name producer and hook boundary", "address": "0x82D77FD0", "confidence": "strong" },
+      { "role": "era block hook boundary", "address": "0x82D7807C", "confidence": "strong" },
+      { "role": "normal trait producer and safe post-return hook", "addresses": ["0x82D781A8", "0x82D781AC"], "confidence": "strong" },
+      { "role": "Special Units heading producer and hook boundary", "address": "0x82D78228", "confidence": "strong" },
+      { "role": "Special Units value hook", "address": "0x82D783B4", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpFunctions.java:0x82D77670",
+      "ghidra/DumpStringsInRange.java:0x82123000..0x82123040",
+      "ghidra/DumpStringsInRange.java:0x82138E80..0x82138F20",
+      "generated/default/rerevved_recomp.5.cpp:0x82D77F0C,0x82D77FD0,0x82D7807C,0x82D781A8,0x82D78228,0x82D783B4"
+    ],
+    "qualification": "The Ghidra function view identifies the builder but decompiles it as a save/restore thunk; the narrow generated window supplies the producer sequence, hook boundaries, register dataflow, and buffer layout. These are static evidence only and are not runtime proof."
+  },
+  "guards": [
+    "Do not generalize these producer or hook boundaries to localization-global behavior beyond builder 0x82D77670.",
+    "Do not infer runtime reachability, final displayed values, language parity, or multiplayer behavior from this static mapping.",
+    "Preserve the nine-line era block layout and its length header at buffer address minus 4 when adapting the bounded hook."
+  ],
+  "conclusion": "The supported image's civilization information panel builder at 0x82D77670 has exact bounded text classifications: @RULER at 0x82D77F0C and @CIVNAME at 0x82D77FD0 both use civilization selector r20; the Era Bonuses nine-line block is hooked at 0x82D7807C; normal trait text is produced after 0x82D781A8 with a safe post-return hook at 0x82D781AC using r30/r20 and the minus-4 length header; the Special Units heading is produced at 0x82D78228; and each unit value reaches the hook at 0x82D783B4 with r3/r27/r20. The fixed sources are Era Bonuses at 0x8212301C, the era label/value template at 0x82138EA0, and Special Units at 0x82138F04."
+}

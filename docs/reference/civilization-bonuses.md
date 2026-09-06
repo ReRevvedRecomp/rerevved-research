@@ -321,4 +321,5 @@ multiplayer, or runtime parity, or provide a generic tile API.
 - [Gold-reserve aggregate lifecycle boundary](../../manifests/gold-reserve-aggregate-lifecycle-boundary.json)
 - [Starting technology grants](../../manifests/starting-technology-grants.json)
 - [Unique Era Ability effect ownership](../../manifests/unique-era-ability-effect-ownership.json)
+- [Civilization information panel text producers](../../manifests/civilization-info-panel-text-producers.json)
 - [Catalog contract](../catalogs.md)

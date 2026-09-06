@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0134",
+  "topic": "unit-special-upgrades",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What are the supported unit special upgrades, how are they stored and granted, and where does each effect enter gameplay or presentation?",
+  "scope": {
+    "unitTable": "0x830F2BF0",
+    "recordSize": "0x54",
+    "specialUpgradeField": "+0x10",
+    "normalGrantEntry": "0x82CE0710",
+    "eligibility": "0x82CEFF98",
+    "aiChooser": "0x82CF45D8",
+    "boundary": "This packet maps the complete nine-item identity and storage set, the normal grant route, and currently proved direct effects. It remains open until direct consumers for every situational effect and the presentation and persistence boundaries are exact."
+  },
+  "dependencies": [
+    { "topic": "unit-movement-lifecycle", "use": "Provides the accepted unit-table shape, movement units, and presentation boundary." },
+    { "topic": "unit-movement-stat", "use": "Provides the accepted displayed-to-internal movement conversion used by March." },
+    { "topic": "xbox-network-message-root", "use": "Provides command type 22 dispatch into the normal promotion writer." },
+    { "topic": "unique-unit-combat-predicates", "use": "Provides the accepted combat owner and situational predicate boundary." },
+    { "topic": "new-warrior-veteran", "use": "Separates the rank byte and creation-time Veteran grant from special upgrades." }
+  ],
+  "identities": [
+    {
+      "index": 0,
+      "mask": "0x00000001",
+      "name": "Blitz",
+      "group": "Offensive",
+      "description": "Extra move after attack",
+      "consumerStatus": "proved",
+      "consumer": "0x82D259E8 at branch 0x82D2CB28",
+      "result": "After an action, the consumer requires bit zero, requires unit lifecycle bit 0x400 to be clear, then sets lifecycle bit 0x400 and adds three internal units to movement byte +0x02."
+    },
+    { "index": 1, "mask": "0x00000002", "name": "Infiltration", "group": "Offensive", "description": "+50% attack when attacking a city", "consumerStatus": "unresolved" },
+    { "index": 2, "mask": "0x00000004", "name": "Guerilla", "group": "Offensive", "description": "+50% attack in home territory", "consumerStatus": "unresolved" },
+    { "index": 3, "mask": "0x00000008", "name": "Loyalty", "group": "Defensive", "description": "+50% defense in home territory", "consumerStatus": "unresolved" },
+    { "index": 4, "mask": "0x00000010", "name": "Engineer", "group": "Defensive", "description": "+100% defense in a city", "consumerStatus": "unresolved" },
+    { "index": 5, "mask": "0x00000020", "name": "Leadership", "group": "Defensive", "description": "+100% defense when the unit shares a square with other troops", "consumerStatus": "unresolved" },
+    {
+      "index": 6,
+      "mask": "0x00000040",
+      "name": "March",
+      "group": "Universal",
+      "description": "+1 movement",
+      "consumerStatus": "proved-at-grant",
+      "result": "The normal writer adds three internal movement units to runtime unit byte +0x02 when it grants index six."
+    },
+    {
+      "index": 7,
+      "mask": "0x00000080",
+      "name": "Medic",
+      "group": "Universal",
+      "description": "Can heal outside friendly territory",
+      "consumerStatus": "unresolved",
+      "qualification": "The bounded unit-record scan found no consumer that both loads +0x10 and masks 0x80. A nearby 0x80 test belongs to unit-definition flags and is not Medic."
+    },
+    {
+      "index": 8,
+      "mask": "0x00000100",
+      "name": "Scout",
+      "group": "Universal",
+      "description": "Shows city defense stats and grants +1 view",
+      "consumerStatus": "proved-mode-selection",
+      "consumer": "0x82CD69B8 at 0x82CD6D84 through 0x82CD6D98",
+      "result": "The consumer masks unit +0x10 with 0x100 and selects mode 2 for 0x82D076D8 when Scout is present. The normal writer also calls 0x82D11AD8(1, 1) after granting Scout.",
+      "qualification": "The exact mode selection and immediate rebuild are proved. The downstream city-defense-stat rendering and +1 view effect remain unresolved."
+    }
+  ],
+  "storage": {
+    "address": "0x830F2C00 + (player * 256 + unit) * 0x54",
+    "recordOffset": "0x10",
+    "width": 4,
+    "encoding": "Bits zero through eight follow the supported-image string order.",
+    "rankSeparation": "Runtime unit signed byte +0x05 stores rank. Veteran and Elite are rank states and are not bits in this word.",
+    "movementSeparation": "Runtime unit byte +0x02 stores current movement budget. March updates both its special-upgrade bit and this separate budget at grant time."
+  },
+  "normalGrant": {
+    "commandType": 22,
+    "entry": "0x82CE0710",
+    "result": "The command consumer ORs 1 shifted by the selected index into unit +0x10 and subtracts one from rank byte +0x05.",
+    "specialCases": [
+      { "index": 6, "result": "Adds three to current movement byte +0x02." },
+      { "index": 8, "result": "Calls 0x82D11AD8(1, 1)." }
+    ]
+  },
+  "eligibility": {
+    "function": "0x82CEFF98",
+    "result": "Requires rank greater than two, rejects six or more set bits in the 32-bit +0x10 word, and rejects unit definitions whose flag word intersects mask 0x6."
+  },
+  "aiSelection": {
+    "function": "0x82CF45D8",
+    "submit": "0x82CE1950",
+    "result": "Checks eligibility, enumerates indices zero through eight, skips existing bits, scores candidates, and submits command type 22."
+  },
+  "combatConsumerSearch": {
+    "functions": ["0x82CD7A60", "0x82CD9970", "0x82CF2230", "0x82CF21A0", "0x82CEFF98", "0x82CF4990"],
+    "result": "No bit-specific consumer for masks 0x2 through 0x20 was found in the dispatcher, combat resolver, effective attack or defense accessors, eligibility helper, or upgrade counter. 0x82CD7A60 tests +0x10 only as a whole-word nonzero gate and is a separate dispatcher path from combat resolver 0x82CD9970.",
+    "qualification": "This bounded negative result rules out the inspected direct paths. It does not prove that the five combat effects are absent; their derived-state producer remains unresolved."
+  },
+  "presentation": {
+    "strings": [
+      { "address": "0x82127E3C", "value": "GFX_UnitStack.gfx" },
+      { "address": "0x82127EB8", "value": "UpdateUnitStatus" },
+      { "address": "0x82128124", "value": "theUnitUpgradesArray" },
+      { "address": "0x821281A8", "value": "unit%dUpgrades" },
+      { "address": "0x821282E0", "value": "UpdateInfoDisplay" }
+    ],
+    "status": "unresolved",
+    "qualification": "The current Ghidra project does not connect the embedded GFx string family to a native read of unit +0x10. A full 0x54-byte unit copy at 0x82D81BA0 includes the field and feeds the presentation object path, but the exact upgrade-array reader is not yet proved."
+  },
+  "persistence": {
+    "status": "unresolved",
+    "qualification": "The unit table has broad initialization and record-copy paths, but no exact save/load transfer of +0x10 has yet been isolated."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra string, function, instruction, pointer, split-address, and field-access queries with narrow generated-code corroboration.",
+    "entries": [
+      { "role": "normal promotion writer", "address": "0x82CE0710", "confidence": "strong" },
+      { "role": "special-upgrade eligibility", "address": "0x82CEFF98", "confidence": "strong" },
+      { "role": "AI promotion chooser", "address": "0x82CF45D8", "confidence": "strong" },
+      { "role": "Blitz post-action consumer", "address": "0x82D2CB28", "confidence": "strong" },
+      { "role": "Scout mode selector", "address": "0x82CD6D84", "confidence": "strong" },
+      { "role": "unit presentation record copy", "address": "0x82D81BA0", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/FindStrings.java:0x82125DA8..0x821282E0",
+      "ghidra/FindFieldAccesses.java:unit_record+0x10",
+      "ghidra/DumpFunctions.java:0x82CEFF98",
+      "generated:rerevved/sub_82CDDF08",
+      "generated:rerevved/sub_82CF45D8",
+      "generated:rerevved/sub_82D11AD8"
+    ],
+    "qualification": "Identity, storage, the normal grant behavior, Blitz's direct consumer, and Scout's downstream mode selection are statically strong. Other direct consumers and runtime behavior remain unproved."
+  },
+  "guards": [
+    "Do not model Veteran or Elite as special-upgrade bits; they use rank byte +0x05.",
+    "Do not expose a public grant ABI until each bit's consumer and persistence behavior are bounded.",
+    "Do not claim that setting the March bit alone updates movement; the native grant command also changes +0x02.",
+    "Do not claim that setting Scout alone refreshes its UI; the native grant command explicitly invokes 0x82D11AD8.",
+    "Do not call situational combat, healing, city-defense-stat display, +1 view, presentation, save/load, armies, or AI runtime-confirmed without a default-off probe."
+  ],
+  "conclusion": "The supported image defines exactly nine special upgrades stored as bits zero through eight in runtime unit word +0x10. Command type 22 spends one Elite rank step and sets the selected bit. Blitz has an exact post-action movement consumer, March has an immediate movement side effect, and Scout selects an exact downstream mode and triggers an immediate rebuild. Direct gameplay consumers for the five combat modifiers and Medic, plus exact presentation and persistence readers, remain the active boundary."
+}

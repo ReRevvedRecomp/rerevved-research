@@ -9,6 +9,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +48,8 @@ public class FindCallSplitConstantArgs extends GhidraScript {
         int matches = 0;
         boolean truncated = false;
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.println("Targets: " + formatValues(targets));
             out.println("Argument: " + registerName);
@@ -83,6 +85,9 @@ public class FindCallSplitConstantArgs extends GhidraScript {
             }
             out.println("Matches: " + matches);
             out.println("Truncated: " + truncated);
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

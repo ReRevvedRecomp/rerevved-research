@@ -7,6 +7,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 
@@ -50,7 +51,8 @@ public class DumpFunctionNeighborhood extends GhidraScript {
         Listing listing = currentProgram.getListing();
         ReferenceManager references = currentProgram.getReferenceManager();
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.println("Targets: " + normalizedTarget);
             out.printf("Radius: 0x%X bytes per side%n", radius);
@@ -145,6 +147,9 @@ public class DumpFunctionNeighborhood extends GhidraScript {
             if (limitReached) {
                 out.println("Instruction limit reached; output is truncated.");
             }
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

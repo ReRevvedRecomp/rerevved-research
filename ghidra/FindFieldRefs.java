@@ -7,6 +7,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +32,8 @@ public class FindFieldRefs extends GhidraScript {
         long scanned = 0;
         long hits = 0;
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Offsets: " + System.getenv("REREVVED_FIELD_OFFSETS"));
             out.println("Functions: " + System.getenv("REREVVED_FUNCTION_VAS"));
 
@@ -69,6 +71,9 @@ public class FindFieldRefs extends GhidraScript {
                 }
             }
             out.printf("Scanned %d instructions; found %d hits.%n", scanned, hits);
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

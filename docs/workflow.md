@@ -184,4 +184,7 @@ Private input, project data, observations, and logs remain under the runner's
 restricted scratch root and are deleted on every outcome. The only retained
 file is the schema-validated sanitized attestation. It contains public image
 identity, entity IDs and addresses, check names, and pass/fail summaries. The
+attestation must contain each of the five required checks exactly once, with
+image and check identities matching the selected public contract. A complete
+failure attestation remains valid; omitted checks do not count as a pass. The
 ordinary `.github/workflows/checks.yml` workflow remains asset-free.

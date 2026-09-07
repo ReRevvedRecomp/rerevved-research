@@ -5,6 +5,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import ghidra.app.script.GhidraScript;
@@ -21,7 +22,8 @@ public class DumpDataValues extends GhidraScript {
         AddressSpace space = currentProgram.getAddressFactory().getDefaultAddressSpace();
         Listing listing = currentProgram.getListing();
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.println("VAs: " + targets);
             for (String token : targets.split(",")) {
@@ -38,6 +40,9 @@ public class DumpDataValues extends GhidraScript {
                 out.println("Value: " + escape(String.valueOf(data.getValue())));
                 out.println("Representation: " + escape(data.getDefaultValueRepresentation()));
             }
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

@@ -41,8 +41,9 @@ public class ExportFunctionFingerprints extends GhidraScript {
     public void run() throws Exception {
         String outPath = requireEnv("REREVVED_DUMP_PATH");
         List<Function> functions = collectFunctions(currentProgram.getFunctionManager());
-        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(
-                new FileOutputStream(outPath), StandardCharsets.UTF_8))) {
+        PrintWriter out = new PrintWriter(new OutputStreamWriter(
+                new FileOutputStream(outPath), StandardCharsets.UTF_8));
+        try (out) {
             out.print("{\"recordType\":\"program\",\"program\":");
             out.print(jsonQuote(currentProgram.getName()));
             out.print(",\"imageBase\":");
@@ -59,10 +60,9 @@ public class ExportFunctionFingerprints extends GhidraScript {
                 Fingerprint fingerprint = fingerprint(function);
                 writeFunction(out, function, fingerprint);
             }
-            out.flush();
-            if (out.checkError()) {
-                throw new IOException("failed while writing fingerprint export: " + outPath);
-            }
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing fingerprint export: " + outPath);
         }
         println("WROTE: " + outPath);
     }

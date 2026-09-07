@@ -6,6 +6,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import ghidra.app.script.GhidraScript;
@@ -19,7 +20,8 @@ public class DumpMemoryWords extends GhidraScript {
         String outPath = requireEnv("REREVVED_DUMP_PATH");
         int radius = parseRadius(System.getenv("REREVVED_WORD_RADIUS"));
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.println("Targets: " + targets);
             out.println("Word radius: " + radius);
@@ -36,6 +38,9 @@ public class DumpMemoryWords extends GhidraScript {
                         symbol == null ? "" : " " + symbol.getName());
                 }
             }
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

@@ -10,6 +10,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.HashSet;
@@ -53,7 +54,8 @@ public class FindFieldAccesses extends GhidraScript {
         long scanned = 0;
         long hits = 0;
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Offsets: " + System.getenv("REREVVED_FIELD_OFFSETS"));
             out.println("Seeds: " + System.getenv("REREVVED_SEED_VAS"));
             out.println("Caller depth: " + callerDepth);
@@ -105,6 +107,9 @@ public class FindFieldAccesses extends GhidraScript {
                 }
             }
             out.printf("Scanned %d instructions; found %d accesses.%n", scanned, hits);
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

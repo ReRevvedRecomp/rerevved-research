@@ -6,6 +6,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,8 @@ public class FindStrings extends GhidraScript {
         ReferenceManager references = currentProgram.getReferenceManager();
         int matches = 0;
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.println("Terms: " + String.join(",", terms));
             DefinedDataIterator strings = DefinedDataIterator.byDataInstance(
@@ -56,6 +58,9 @@ public class FindStrings extends GhidraScript {
                 matches++;
             }
             out.println("Matches: " + matches);
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

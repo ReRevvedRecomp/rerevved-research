@@ -6,6 +6,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import ghidra.app.script.GhidraScript;
@@ -22,7 +23,8 @@ public class DumpInstructions extends GhidraScript {
         int count = parseCount(System.getenv("REREVVED_INSTRUCTION_COUNT"));
         Listing listing = currentProgram.getListing();
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.println("Targets: " + targets);
             out.println("Instruction count: " + count);
@@ -38,6 +40,9 @@ public class DumpInstructions extends GhidraScript {
                     emitted++;
                 }
             }
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

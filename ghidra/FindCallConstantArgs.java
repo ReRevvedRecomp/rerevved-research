@@ -8,6 +8,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +37,8 @@ public class FindCallConstantArgs extends GhidraScript {
         Listing listing = currentProgram.getListing();
         int matches = 0;
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.printf("Target: 0x%08X%n", targetOffset);
             out.println("Argument: " + registerName + " = " + expected);
@@ -58,6 +60,9 @@ public class FindCallConstantArgs extends GhidraScript {
                 matches++;
             }
             out.println("Matches: " + matches);
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

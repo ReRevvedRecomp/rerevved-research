@@ -127,6 +127,10 @@ mechanics stay in manifests and private operations stay in the maintainer island
 
 ## Verification
 
+The gate requires Python with `requirements.txt` installed and a JDK with
+`java` and `javac` on `PATH`. Query-writer tests run standalone Java fixtures;
+they do not require a Ghidra project or retail assets.
+
 Run the repository gate after changing a script, schema, manifest, or linked Markdown page:
 
 ```powershell

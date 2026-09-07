@@ -7,6 +7,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import ghidra.app.script.GhidraScript;
@@ -27,7 +28,8 @@ public class DumpStringsInRange extends GhidraScript {
         }
 
         int matches = 0;
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.printf("Program: %s%n", currentProgram.getName());
             out.printf("Range: 0x%08X-0x%08X%n", start.getOffset(), end.getOffset());
             DefinedDataIterator strings = DefinedDataIterator.byDataInstance(
@@ -47,6 +49,9 @@ public class DumpStringsInRange extends GhidraScript {
                 matches++;
             }
             out.println("Matches: " + matches);
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

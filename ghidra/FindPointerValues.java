@@ -6,6 +6,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import ghidra.app.script.GhidraScript;
@@ -21,7 +22,8 @@ public class FindPointerValues extends GhidraScript {
         int maxMatches = parseMaxMatches(System.getenv("REREVVED_MAX_MATCHES"));
         Memory memory = currentProgram.getMemory();
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.println("Pointer VAs: " + targets);
             for (String token : targets.split(",")) {
@@ -52,6 +54,9 @@ public class FindPointerValues extends GhidraScript {
                 }
                 out.println("Matches: " + matches);
             }
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

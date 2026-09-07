@@ -7,6 +7,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -28,7 +29,8 @@ public class FindScalarUses extends GhidraScript {
         int matchedInstructions = 0;
         boolean truncated = false;
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.println("Values: " + formatValues(values));
             out.println("Mnemonics: " + (mnemonics.isEmpty() ? "<all>" : String.join(",", mnemonics)));
@@ -65,6 +67,9 @@ public class FindScalarUses extends GhidraScript {
             out.println("Functions: " + matchedFunctions.size());
             out.println("Instructions: " + matchedInstructions);
             out.println("Truncated: " + truncated);
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

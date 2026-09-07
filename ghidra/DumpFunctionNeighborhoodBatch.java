@@ -5,6 +5,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import ghidra.app.script.GhidraScript;
@@ -41,7 +42,8 @@ public class DumpFunctionNeighborhoodBatch extends GhidraScript {
         Listing listing = currentProgram.getListing();
         ReferenceManager references = currentProgram.getReferenceManager();
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.println("Targets: " + rawTargets);
             out.println("Target cap: " + MAX_TARGETS);
@@ -100,6 +102,9 @@ public class DumpFunctionNeighborhoodBatch extends GhidraScript {
                 }
                 out.println("Instruction count emitted: " + emitted);
             }
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

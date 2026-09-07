@@ -5,6 +5,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import ghidra.app.script.GhidraScript;
@@ -23,7 +24,8 @@ public class DumpReferences extends GhidraScript {
         FunctionManager functions = currentProgram.getFunctionManager();
         ReferenceManager references = currentProgram.getReferenceManager();
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.println("Targets: " + targets);
             for (String token : targets.split(",")) {
@@ -44,6 +46,9 @@ public class DumpReferences extends GhidraScript {
                 }
                 out.println("References: " + count);
             }
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

@@ -231,6 +231,18 @@ def validate_attestation(document: dict[str, Any], repo: Path = REPO) -> None:
     errors = list(attestation_validator(repo).iter_errors(document))
     if errors:
         raise CanonicalImageContractError("sanitized attestation failed its schema")
+
+    expected = build_attestation(None, load_contract(repo))
+    if document["image"] != expected["image"]:
+        raise CanonicalImageContractError("attestation image does not match the contract")
+    expected_checks = {item["name"]: item for item in expected["checks"]}
+    for item in document["checks"]:
+        for field in ("entities", "addresses"):
+            if item[field] != expected_checks[item["name"]][field]:
+                raise CanonicalImageContractError(
+                    f"attestation {item['name']} {field} do not match the contract"
+                )
+
     result = document["result"]
     passed = sum(item["status"] == "pass" for item in document["checks"])
     if result["passed"] != passed or result["total"] != len(document["checks"]):

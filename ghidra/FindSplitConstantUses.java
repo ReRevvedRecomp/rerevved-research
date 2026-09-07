@@ -7,6 +7,7 @@
 //@category ReRevved
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -38,7 +39,8 @@ public class FindSplitConstantUses extends GhidraScript {
         Set<Long> matchedFunctions = new LinkedHashSet<>();
         boolean truncated = false;
 
-        try (PrintWriter out = new PrintWriter(new FileWriter(outPath))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.println("Program: " + currentProgram.getName());
             out.println("Targets: " + formatValues(new ArrayList<>(targets)));
             out.println("Lookahead: " + lookahead);
@@ -93,6 +95,9 @@ public class FindSplitConstantUses extends GhidraScript {
             }
             out.println("Matches: " + matchedFunctions.size());
             out.println("Truncated: " + truncated);
+        }
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
         }
         println("WROTE: " + outPath);
     }

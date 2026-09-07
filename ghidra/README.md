@@ -2,6 +2,8 @@
 
 Read-only scripts run through `tools\run-headless.ps1` with `-ReadOnly`.
 Query output and logs belong in an ignored scratch directory.
+Query output failures raise an error instead of reporting `WROTE`; partial
+scratch files remain available for diagnosis and are not accepted evidence.
 
 ## Script index
 

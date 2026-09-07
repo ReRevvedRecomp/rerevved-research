@@ -22,6 +22,7 @@ generated code remain outside the tracked tree.
 ## Documentation
 
 - [Documentation home](docs/README.md)
+- [Research style guide](docs/style-guide.md)
 - [Evidence model](docs/evidence-model.md)
 - [Catalog mining method](docs/catalog-mining.md)
 - [Catalog contract](docs/catalogs.md)

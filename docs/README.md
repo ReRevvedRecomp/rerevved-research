@@ -8,6 +8,7 @@ contribution needs repository-level rules, see
 - [Topic manifest contract](topic-manifests.md) - bounded findings and promotion.
 - [Catalog mining method](catalog-mining.md) - bounded packets, stops, and promotion.
 - [Catalog contract](catalogs.md) - canonical inventory formats and checks.
+- [Style guide](style-guide.md) - scripts, records, and evidence-facing prose.
 - [Recovered game reference](reference/README.md) - readable unit, system, and enum findings.
 - [Headless workflow](workflow.md) - read-only queries and disposable repairs.
 - [Automated and AI-assisted contributions](ai_agents/README.md) - conditional contribution policy.

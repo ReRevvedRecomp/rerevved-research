@@ -6,6 +6,9 @@ maintain a reproducible headless query that establishes one.
 If a change uses AI assistance, also follow the portable policy in
 [`docs/ai_agents/README.md`](docs/ai_agents/README.md).
 
+Use the [Research style guide](docs/style-guide.md) for script formatting,
+machine-readable records, and evidence-facing links.
+
 ## Findings
 
 Keep the claim narrow and identify the image, guest locator, evidence source,

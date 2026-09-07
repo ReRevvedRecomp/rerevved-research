@@ -5,8 +5,9 @@ records a guest-code locator, ABI or data-layout constraint, safety boundary,
 tool interface, generated-output boundary, or provenance citation that names
 and types cannot show.
 
-Compress a survivor to one to three lines at the use site. Remove process
-narration and comments that only restate the next instruction.
+Prefer a survivor of one to three lines at the use site. Clarity, correctness,
+source quotations, licensing, and provenance may require more context. Remove
+process narration and comments that only restate the next instruction.
 
 Preserve source, reference, permission, and provenance citations verbatim.
 Addresses, offsets, hashes, symbols, confidence labels, and uncertainty remain

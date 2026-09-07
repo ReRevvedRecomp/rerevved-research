@@ -10,7 +10,7 @@
     "functions": ["0x82CD5A70", "0x82CF0CB0", "0x82CF1F70"],
     "tables": ["0x82F700D8"],
     "fields": ["unit definition +0x42", "unit definition +0x50"],
-    "boundary": "This packet identifies the base movement byte, three retail UEA increments, and bounded Jaguar/Impi hook facts inside the effective movement accessor. It does not establish the gameplay meaning of the special return beyond Jaguar exclusion, name every pre-UEA modifier, UEA 29, the auxiliary signed halfword, every caller, movement-budget scaling, AI, presentation, save, scenario, multiplayer, or runtime behavior."
+    "boundary": "This packet identifies the base movement byte, three retail UEA increments, bounded Jaguar/Impi hook facts inside the effective movement accessor, and the owner-observed Jaguar movement acceptance. It does not establish the gameplay meaning of the special return beyond Jaguar exclusion, name every pre-UEA modifier, UEA 29, the auxiliary signed halfword, every caller, movement-budget scaling, AI, save, scenario, multiplayer, or broader presentation and runtime behavior."
   },
   "dependencies": [
     { "topic": "unit-definitions-ai-evaluation", "use": "Provides the accepted 0x82F700D8 unit-definition table, 0x94-byte records, and internal UnitType names." },
@@ -92,7 +92,7 @@
       { "role": "ordinary composed return", "address": "0x82CF2194", "confidence": "strong" }
     ],
     "locators": ["ghidra/DumpMemoryWords.java:0x82CF2098..0x82CF2198", "generated:rerevved/sub_82CF1F70", "unit-definitions-ai-evaluation#/unitDefinitions/records/6", "unit-definitions-ai-evaluation#/unitDefinitions/records/10"],
-    "qualification": "No runtime action was performed. Static evidence establishes the base byte, exact predicates, lookup dataflow, increments, and ordinary return composition; all other movement modifiers and consumers remain outside the packet."
+    "qualification": "The static query performed no runtime action. Static evidence establishes the base byte, exact predicates, lookup dataflow, increments, and ordinary return composition; all other movement modifiers and consumers remain outside the packet. The separate owner-observed result is recorded in runtimeAcceptance."
   },
   "currentImageFacts": {
     "warriorDefinition": {
@@ -105,6 +105,8 @@
     },
     "jaguarMovementHook": {
       "identity": "Jaguar uses the Warrior definition / UnitType 6 movement contract",
+      "identityLocator": "https://github.com/ReRevvedRecomp/rerevved/blob/335425de9da44e10beeb01c788cbc4ef34a684d0/src/unit_catalog_api.cpp#L70-L72",
+      "identityQualification": "The title's semantic identity table maps Aztec plus Warrior to Jaguar Warrior; this is not a claim that the native guest identity selector was recovered for Jaguar.",
       "specialReturnPredicate": "0x82CF2154..0x82CF2174",
       "specialReturn": "The accepted current-image hook evidence excludes Jaguar from the special return.",
       "ordinaryComposition": "Jaguar remains on the ordinary composed path: signed definition +0x42, local modifiers, cumulative UEA lookup, and ordinary return composition at 0x82CF2194.",
@@ -115,10 +117,21 @@
       "result": "Native Impi UEA 55 is the control for the UnitType 6 cumulative lookup and +1 increment path; it does not establish the same result for every Warrior-definition identity."
     },
     "limits": {
-      "runtime": "No runtime action was performed; current-image hook evidence does not establish complete runtime coverage or cadence.",
+      "runtime": "The dated runtimeAcceptance records the bounded Jaguar result; complete runtime coverage and cadence remain unverified. Native Impi was a static reference, not a runtime-tested control.",
       "ai": "No AI movement-parity claim is established.",
-      "presentation": "No presentation or displayed-movement claim is established."
+      "presentation": "The owner observed the Jaguar's displayed movement in runtimeAcceptance; broader presentation coverage remains unverified."
     }
+  },
+  "runtimeAcceptance": {
+    "date": "2026-09-05",
+    "platform": "Windows x64",
+    "method": "Owner-observed enabled-mod test followed by disabling both Jaguar mods and restarting the title.",
+    "titleCommit": "335425de9da44e10beeb01c788cbc4ef34a684d0",
+    "modsCommit": "399c8e2333322649e39ffb460e7b9f5eaaf0a5e3",
+    "mod": "aztec-jaguar-movement",
+    "enabledResult": "A newly created Jaguar displayed and spent one additional movement point relative to the native baseline.",
+    "disabledRestartResult": "With both Jaguar mods disabled and the title restarted, a newly created Jaguar returned to native one movement.",
+    "qualification": "This records the owner's bounded gameplay acceptance, not a captured runtime probe or an independent replay. It does not establish save/load persistence, AI parity, or runtime behavior for Impi and other identities."
   },
   "guards": [
     "Do not infer that UEA 3 selects a single UnitType; the accepted predicate is definition flag 0x200.",
@@ -127,5 +140,5 @@
     "Do not equate the effective movement stat directly with unit-record movement budget +0x02 or command path cost.",
     "Do not claim complete AI, presentation, save, scenario, multiplayer, or runtime parity."
   ],
-  "conclusion": "EffectiveUnitMovementLookup at 0x82CF1F70 reads signed definition byte +0x42 and owns three retail movement UEAs on its ordinary composed return: UEA 3 adds one under definition flag 0x200, UEA 12 adds one for Riflemen UnitType 10, and UEA 55 adds one on the UnitType 6 branch when active. The current-image Warrior definition has +0x50 bit 0 clear, and accepted Jaguar hook evidence excludes Jaguar from the special return while native Impi UEA 55 supplies the control case. UEA 12 reaches a merged common callsite; no broad Warrior-definition, AI, presentation, or complete runtime movement claim is made."
+  "conclusion": "EffectiveUnitMovementLookup at 0x82CF1F70 reads signed definition byte +0x42 and owns three retail movement UEAs on its ordinary composed return: UEA 3 adds one under definition flag 0x200, UEA 12 adds one for Riflemen UnitType 10, and UEA 55 adds one on the UnitType 6 branch when active. The current-image Warrior definition has +0x50 bit 0 clear, and accepted Jaguar hook evidence excludes Jaguar from the special return while native Impi UEA 55 supplies the static control case. UEA 12 reaches a merged common callsite. On 2026-09-05 the owner accepted one additional displayed and spendable Jaguar movement point, with native one movement restored after disabling both Jaguar mods and restarting. No broad Warrior-definition, AI, presentation, or complete runtime movement claim is made."
 }

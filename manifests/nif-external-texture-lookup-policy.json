@@ -56,9 +56,12 @@
       "0x8235ED80",
       "0x82347100",
       "0x82C831A8",
+      "0x82C832A0",
+      "0x82C833A0",
+      "0x82466BD8",
       "0x82C8D918"
     ],
-    "boundary": "The packet follows the exact external filename from the accepted NiSourceTexture reader through its title-owned runtime name, lazy resource request, file-object creation, and NtCreateFile boundary. It inspects only direct helpers required to characterize that path. It does not inventory filenames, decode texture payloads, inspect the renderer, or perform an executable-wide file-open search. A bounded runtime observation identifies one concrete stream-provider vtable; its callbacks, exact vtable constructors, and immediate storage helpers establish static initialization and registration mechanics. A static shared-provider attachment path is established, and a fresh runtime observation matches the sampled provider and stream to their shared globals. Runtime registration order for that provider, global-list population, and filesystem roots remain outside the accepted result."
+    "boundary": "The packet follows the exact external filename from the accepted NiSourceTexture reader through its title-owned runtime name, lazy resource request, file-object creation, and NtCreateFile boundary. It inspects only direct helpers required to characterize that path. It does not inventory filenames, decode texture payloads, inspect the renderer, or perform an executable-wide file-open search. A bounded runtime observation identifies one concrete stream-provider vtable; its callbacks, exact vtable constructors, and immediate storage helpers establish static initialization and registration mechanics. Static corroboration resolves the observed shared-provider attachment caller and a separate three-function candidate-collection closure. Runtime registration order for that provider, global-list population, and filesystem roots remain outside the accepted result."
   },
   "acceptedPopulation": {
     "externalReferences": 383,
@@ -120,7 +123,7 @@
     ],
     "unresolved": [
       "Concrete candidate roots and their deterministic order",
-      "Original provider class name and the construction call and registration sequence used by the observed runtime instance",
+      "Original provider class name, whether the resolved getter invocation took its constructor branch, and the registration sequence used by the observed runtime instance",
       "Whether any candidate is relative to the owning NIF",
       "Whether any candidate is relative to the containing archive",
       "The runtime population and namespace ownership of the provider table and optional global object list, including any archive or mounted-device relationship",
@@ -202,6 +205,12 @@
         "address": "0x8235E120, 0x8314F244, 0x8314F268, 0x8235ED80, 0x82C82C08",
         "result": "Sixteen lookup samples from 0x82391CE4 matched the provider and stream to both shared globals. Checked provider +0x14 entry counts were 0, 1, or 2. The earlier capped registration observations belonged to a different provider and cannot establish the matched provider's registration order.",
         "confidence": "confirmed"
+      },
+      {
+        "role": "resolved shared-provider attachment caller and candidate-collection boundary",
+        "address": "0x82C833A0, 0x82C83448, 0x82C83458, 0x82C8345C, 0x82C831A8, 0x82C832A0, 0x82466BD8",
+        "result": "The observed LR is the return from sub_82C833A0's direct setter call. That function obtains r4 from the shared getter immediately before loading shared stream global 0x8314F268 into r3. It contains no direct stream +0x124 access, provider-registration call, or global-list-root reference. A separate path reads stream +0x124 and conditionally passes an opaque caller value to 0x82466BD8, which mutates candidate collection +0x10C. Its sole decoded caller forwards its fifth argument unchanged and has no decoded references.",
+        "confidence": "confirmed"
       }
     ],
     "locators": [
@@ -229,14 +238,20 @@
       "ghidra/DumpFunctions.java:0x8235ED80,0x82347100,0x82C831A8,0x82C8D918",
       "ghidra/DumpMemoryWords.java:0x82C8D948,0x82C831D0,0x8235EDB0,0x8234716C",
       "generated:rerevved/sub_8235ED80,sub_82347100,sub_82C831A8,sub_82C8D918",
-      "runtime:nif_provider_probe@3bf8f1239d76c2a5b4dfd55be78b666fc8d1773b:lookup,attachment,registration"
+      "runtime:nif_provider_probe@3bf8f1239d76c2a5b4dfd55be78b666fc8d1773b:lookup,attachment,registration",
+      "ghidra/DumpFunctionNeighborhoodBatch.java:0x82C8345C",
+      "ghidra/DumpFunctions.java:0x82C831A8,0x82C832A0,0x82466BD8",
+      "ghidra/FindFieldAccesses.java:0x82C831A8,+0x124",
+      "ghidra/DumpReferences.java:0x82C832A0",
+      "generated:rerevved/sub_82C833A0,sub_82C831A8,sub_82C832A0,sub_82466BD8"
     ],
     "privacy": "Static findings and probe output retain numeric code, slot, field, and runtime identity information only. No retail filename text, texture values, payload bytes, per-file hashes, or filename-to-target mapping was analyzed or promoted. No asset checkout was queried or modified by this investigation; the isolated title consumed a disposable runtime copy through its normal load path."
   },
   "boundedNegatives": [
     "The ANSI_STRING carrier does not prove ASCII, UTF-8, a code page, or Unicode semantics.",
     "No exact title rule is promoted for dot components, absolute-name acceptance, malformed byte sequences, or all overlength outcomes.",
-    "Shared-global pointer equality identifies the sampled provider and stream in the fresh run; it does not prove a particular constructor call, completed setter invocation, or the instance from the earlier session. Candidate roots, registration sequence for the shared provider, owning-NIF or archive relationship, and mounted-device ownership remain unresolved. Local equal-key replacement does not establish duplicate-source precedence.",
+    "Shared-global pointer equality plus LR 0x82C8345C identifies the executed pre-hook attachment call in sub_82C833A0 and its immediately preceding getter invocation. It does not prove that the getter took its constructor branch, that the setter completed, or that an earlier session used the same instance. Candidate roots, registration sequence for the shared provider, owning-NIF or archive relationship, and mounted-device ownership remain unresolved. Local equal-key replacement does not establish duplicate-source precedence.",
+    "The resolved attachment path contains no direct candidate-collection, provider-registration, or global-list access. The separate +0x124 path mutates candidate collection +0x10C from an opaque caller argument whose sole decoded producer has no references. This bounded closure does not establish a root, source order, or target-container rule.",
     "The null initial prefix carrier and absence of a direct setter reference do not prove that an indirect runtime setup can never install a prefix.",
     "Object-attribute flag 0x40 describes the direct object-name request; it does not prove duplicate precedence or every mounted source's host comparison behavior.",
     "A null loaded resource proves neither visible rendering behavior nor a user-facing fallback; renderer consumption remains outside scope.",
@@ -247,11 +262,12 @@
     "newEntities": [
       "RVA-SYM-0342",
       "RVA-SYM-0343",
+      "RVA-SYM-0344",
       "RVA-VTBL-0032",
       "RVA-SLOT-0059",
       "RVA-SLOT-0060"
     ],
-    "result": "The observed provider vtable and its lookup and registration targets are promoted with their narrow dispatch roles. Static construction and registration mechanics are maintained in this topic; complete layout, runtime population, and namespace ownership are not cataloged."
+    "result": "The observed provider vtable, its lookup and registration targets, and the runtime-corroborated attachment caller are promoted with narrow roles. Static construction, registration, and candidate-collection mechanics are maintained in this topic; complete layout, runtime population, and namespace ownership are not cataloged."
   },
   "guards": [
     "Do not inspect the asset inventory until separate evidence proves an independently reproducible bounded root and matching rule.",
@@ -260,7 +276,7 @@
     "Do not expose, retain, hash, extract, or map retail filename or texture payload data.",
     "Do not implement Studio lookup, texture decoding, GPU work, rendering, editing, conversion, export, or writing from this packet."
   ],
-  "conclusion": "The exact title chain materializes NiSourceTexture external fixed strings into object +0x34 and later passes the retained byte name through a lazy file-object and converter path to NtCreateFile. A normal new-game map load identifies provider vtable 0x82161E9C and its lookup and registration callbacks. Static construction starts an empty 37-bucket table and enables optional global-list fallback; table keys compare byte for byte, and equal-key registration replaces the stored object. A static getter retains that provider type at 0x8314F244, and 0x82C831A8 attaches it to the stream at 0x8314F268 through a locked reference assignment. A fresh map-load observation matches both shared globals and reads local entry counts of 0, 1, or 2. Its registration cap was consumed by a different provider before those lookups. Registration order for the shared provider, candidate roots, global-list population, archive relationship, source precedence, and optional runtime prefix remain unresolved. Neither standalone-NIF nor archive-contained-NIF lookup is reproducible from these local mechanics, so the Studio lookup and target-container gates remain closed.",
+  "conclusion": "The exact title chain materializes NiSourceTexture external fixed strings into object +0x34 and later passes the retained byte name through a lazy file-object and converter path to NtCreateFile. A normal new-game map load identifies provider vtable 0x82161E9C and its lookup and registration callbacks. Static construction starts an empty 37-bucket table and enables optional global-list fallback; table keys compare byte for byte, and equal-key registration replaces the stored object. The runtime-observed LR 0x82C8345C resolves to sub_82C833A0, which invokes the shared getter and immediately attaches its result to stream global 0x8314F268. A separate static path through 0x82C831A8 reads stream +0x124 and conditionally mutates candidate collection +0x10C from an opaque caller argument. Neither bounded path identifies shared-provider registration, global-list population, a reproducible root, archive relationship, source precedence, or target-container policy. Neither standalone-NIF nor archive-contained-NIF lookup is reproducible from these local mechanics, so the Studio lookup and target-container gates remain closed.",
   "runtimeProvider": {
     "vtable": "0x82161E9C",
     "lookupCallback": {
@@ -297,7 +313,7 @@
       "registration": "The exact 0x82C82C08 body retains the supplied object and passes provider +0x8, the name argument, and the object carrier to 0x822EF668. This helper hashes and compares NUL-terminated byte keys, inserts a missing key at the bucket head, or assigns the object through the existing entry +0x8 for an equal key.",
       "analysisLimits": "Ghidra truncates several functions at save thunks or unsupported instructions. Exact raw split-constant candidates locate two vtable constructions outside decoded function bodies; bounded memory words and narrow generated functions confirm the stated writes. The fully decoded 0x822EF528 corroborates byte-key lookup. Candidate matches alone do not prove executable code or uninterrupted register lifetime."
     },
-    "qualification": "The observed vtable is a concrete provider identity, not an original class name, a filesystem root, or a successful lookup result. The fresh run matches its sampled provider and stream to the shared globals. Executed construction and attachment paths, registration sequence for that provider, optional global-list population, and namespace ownership remain unresolved.",
+    "qualification": "The observed vtable is a concrete provider identity, not an original class name, a filesystem root, or a successful lookup result. The fresh run matches its sampled provider and stream to the shared globals, and static corroboration resolves the observed attachment caller's getter-to-setter path. Whether that getter invocation constructed the instance, the completed setter result, registration sequence, optional global-list population, and namespace ownership remain unresolved.",
     "constructionAndRegistration": {
       "confidence": "strong",
       "method": "Static image words, decoded lookup helper, and exact-function generated corroboration; no additional runtime observation.",
@@ -325,7 +341,18 @@
       "setter": "0x8235ED80",
       "assignmentHelper": "0x82347100",
       "assignment": "The setter preserves its incoming stream and provider, enters the critical section at 0x82F8E350, calls 0x82347100(stream +0x1C0, provider), and leaves that critical section. The assignment helper compares the old and new pointers, leaves an identical pointer unchanged, otherwise releases the previous non-null object, stores the new pointer, and retains a non-null replacement through object +0x4.",
-      "qualification": "These are static call and field facts. The fresh observation below matches the sampled provider and stream to these globals but does not trace the getter or constructor. Setter pre-hook caller LR 0x82C8345C was observed for that pair; the admitted static caller 0x82C831A8 was not established as its executed attachment path. The global addresses do not identify a filesystem root, archive namespace, complete lifetime, or deterministic population order."
+      "qualification": "These are static call and field facts for one attachment path. The fresh observation below matches the sampled provider and stream to these globals. Its LR resolves to a separate getter-to-setter call in sub_82C833A0, recorded below. The global addresses do not identify a filesystem root, archive namespace, complete lifetime, or deterministic population order."
+    },
+    "observedAttachmentCaller": {
+      "confidence": "confirmed",
+      "function": "0x82C833A0",
+      "getterCall": "0x82C83448 -> 0x82C8D918",
+      "setterCall": "0x82C83458 -> 0x8235ED80",
+      "observedReturnAddress": "0x82C8345C",
+      "result": "sub_82C833A0 moves the getter result into setter r4, loads setter r3 from shared stream global 0x8314F268, and calls the setter. Twelve existing pre-hook samples from return address 0x82C8345C carried the same stream/provider pair as the admitted lookup samples and shared globals.",
+      "candidateCollectionBoundary": "The exact sub_82C833A0 body contains no stream +0x124 access, provider-registration call, or global-list-root reference. The separate sub_82C831A8 path reads stream +0x124 at 0x82C8320C and calls 0x82466BD8 at 0x82C83224 only when both the collection and its third argument are non-null. 0x82466BD8 clears candidate collection byte +0x10C for null or empty input and otherwise mutates the +0x10C subobject through bounded string helpers. sub_82C832A0 forwards its fifth argument unchanged to this path, but the exact reference query finds no producer for that function.",
+      "boundedNegative": "Across sub_82C833A0, sub_82C831A8, sub_82C832A0, and sub_82466BD8, no shared-provider registration call or global-list-root reference is present. The opaque candidate input is not bound to an owning NIF, archive, mounted source, or independently reproducible root.",
+      "qualification": "The pre-hook observation does not prove setter completion or that the getter took its constructor branch. The candidate mutation does not establish lookup order, duplicate-source precedence, or a target-container matching rule."
     },
     "sharedInstanceObservation": {
       "method": "runtime:nif_provider_probe",
@@ -367,7 +394,7 @@
       "attachment": {
         "sampleCount": 16,
         "result": "Twelve setter pre-hook samples from LR 0x82C8345C carried the same stream/provider pair as the lookup samples. One from LR 0x82C98B4C carried a different pair. Three from LR 0x82C73598 carried the matched provider with another stream.",
-        "qualification": "Incoming arguments are observations before the setter body, not completed reference assignments; caller LR values are numeric return-address locators, not assigned original method names."
+        "qualification": "Incoming arguments are observations before the setter body, not completed reference assignments. Static corroboration now identifies LR 0x82C8345C as the direct setter call in sub_82C833A0; the original method name remains unresolved."
       },
       "registration": {
         "sampleCount": 64,

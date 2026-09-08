@@ -11,7 +11,7 @@ function Add-Failure([string]$Message) {
     [void]$failures.Add($Message)
 }
 
-function Relative-Path([string]$Path) {
+function Get-RelativePath([string]$Path) {
     return $Path.Substring($repo.Length + 1).Replace('\', '/')
 }
 
@@ -48,7 +48,7 @@ foreach ($file in $jsonFiles) {
     try {
         $null = Get-Content -LiteralPath $file -Raw -Encoding UTF8 | ConvertFrom-Json
     } catch {
-        Add-Failure "JSON parse failed: $(Relative-Path $file): $($_.Exception.Message)"
+        Add-Failure "JSON parse failed: $(Get-RelativePath $file): $($_.Exception.Message)"
     }
 }
 
@@ -140,7 +140,7 @@ foreach ($file in $psFiles) {
         $null = $parser::ParseFile($file, [ref]$tokens, [ref]$errors)
         if ($errors.Count -gt 0) { throw $errors[0].Message }
     } catch {
-        Add-Failure "PowerShell AST parse failed: $(Relative-Path $file): $($_.Exception.Message)"
+        Add-Failure "PowerShell AST parse failed: $(Get-RelativePath $file): $($_.Exception.Message)"
     }
 }
 
@@ -160,7 +160,7 @@ foreach ($file in $markdownFiles) {
         try { $target = [Uri]::UnescapeDataString($target) } catch { }
         $candidate = Join-Path (Split-Path -Parent $file) $target
         if (-not (Test-Path -LiteralPath $candidate -PathType Leaf)) {
-            Add-Failure "Markdown link missing: $(Relative-Path $file) -> $target"
+            Add-Failure "Markdown link missing: $(Get-RelativePath $file) -> $target"
         }
     }
 }
@@ -174,7 +174,7 @@ foreach ($file in $trackedPaths) {
             }
         }
     } catch {
-        Add-Failure "ASCII check failed: $(Relative-Path $file): $($_.Exception.Message)"
+        Add-Failure "ASCII check failed: $(Get-RelativePath $file): $($_.Exception.Message)"
     }
 }
 

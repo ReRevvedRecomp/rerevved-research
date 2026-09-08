@@ -71,15 +71,15 @@ function Require-Explicit {
     return $Value
 }
 
-function Full-Path {
+function Get-FullPath {
     param([string]$Path)
     return [System.IO.Path]::GetFullPath($Path).TrimEnd('\', '/')
 }
 
 function Assert-OutsideSharedTemp {
     param([string]$Path, [string]$What, [switch]$AllowSharedTemp)
-    $fullPath = Full-Path $Path
-    $tempRoot = (Full-Path ([System.IO.Path]::GetTempPath())) + '\'
+    $fullPath = Get-FullPath $Path
+    $tempRoot = (Get-FullPath ([System.IO.Path]::GetTempPath())) + '\'
     if (-not $AllowSharedTemp -and
         $fullPath.StartsWith($tempRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
         throw "$What must not use the shared operating-system temp directory: $fullPath"
@@ -88,7 +88,7 @@ function Assert-OutsideSharedTemp {
 }
 
 if ([string]::IsNullOrWhiteSpace($Program)) { $Program = 'rerevved_image.bin' }
-$DisposableProjectDir = Full-Path (Require-Explicit $DisposableProjectDir 'Disposable project directory')
+$DisposableProjectDir = Get-FullPath (Require-Explicit $DisposableProjectDir 'Disposable project directory')
 $DisposableProjectName = Require-Explicit $DisposableProjectName 'Disposable project name'
 $Out = Assert-OutsideSharedTemp (Require-Explicit $Out 'Output path') 'Output path' -AllowSharedTemp:$Plan
 $LogPath = Assert-OutsideSharedTemp (Require-Explicit $LogPath 'Log path') 'Log path' -AllowSharedTemp:$Plan
@@ -101,7 +101,7 @@ if ((-not [string]::IsNullOrWhiteSpace($CanonicalProjectDir)) -xor
     throw 'Canonical project configuration must provide both directory and name.'
 }
 if (-not [string]::IsNullOrWhiteSpace($CanonicalProjectDir)) {
-    $canonicalDir = Full-Path $CanonicalProjectDir
+    $canonicalDir = Get-FullPath $CanonicalProjectDir
     if ($DisposableProjectDir.Equals($canonicalDir, [System.StringComparison]::OrdinalIgnoreCase) -and
         $DisposableProjectName.Equals($CanonicalProjectName, [System.StringComparison]::OrdinalIgnoreCase)) {
         throw "Refusing the configured canonical project '$CanonicalProjectName' at '$canonicalDir'."
@@ -112,7 +112,7 @@ $scriptRoot = Join-Path (Split-Path -Parent $PSScriptRoot) 'ghidra'
 $functionMapPath = if ([string]::IsNullOrWhiteSpace($FunctionMap)) {
     $null
 } else {
-    Full-Path $FunctionMap
+    Get-FullPath $FunctionMap
 }
 $planRecord = [ordered]@{
     Mode = if ($Plan) { 'Plan' } else { 'Execute' }
@@ -160,7 +160,7 @@ if ([string]::IsNullOrWhiteSpace($HeadlessExecutable)) {
     }
     $headless = $headless[0]
 } else {
-    $headless = Full-Path $HeadlessExecutable
+    $headless = Get-FullPath $HeadlessExecutable
     if (-not (Test-Path -LiteralPath $headless -PathType Leaf)) {
         throw "analyzeHeadless not found: $headless"
     }

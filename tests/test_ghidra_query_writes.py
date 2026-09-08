@@ -27,6 +27,7 @@ SCRIPTS = (
     "FindFieldRefs",
     "FindPointerValues",
     "FindScalarUses",
+    "FindSplitConstantCandidates",
     "FindSplitConstantUses",
     "FindStrings",
 )

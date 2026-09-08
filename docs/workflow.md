@@ -96,6 +96,14 @@ tools\run-headless.ps1 -Script DumpReferences.java -ReadOnly `
   -ScriptEnv @{ REREVVED_TARGET_VAS = '0x821FBC38' }
 ```
 
+When decoded references omit a split address construction, use
+`FindSplitConstantCandidates.java` with `REREVVED_TARGET_VAS` and an explicit
+output path. It searches aligned raw words for `lis` followed within eight
+words by a compatible `addi` or `ori`, and emits at most eight candidates.
+These candidates can be data or contain intervening register writes; confirm
+the exact instruction sequence and function before accepting a construction.
+This query does not disassemble or repair the database.
+
 ## Function fingerprint comparison
 
 Export each independently identified Ghidra program to JSON Lines. Change the

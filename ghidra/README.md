@@ -26,6 +26,7 @@ This index covers every Java script in this directory.
 - `FindPointerValues.java` finds exact aligned 32-bit pointer values in initialized guest memory.
 - `FindScalarUses.java` finds capped decoded-instruction uses of exact scalar values with an optional mnemonic allowlist.
 - `FindSplitConstantUses.java` finds capped functions that construct selected 32-bit values with PowerPC split constants.
+- `FindSplitConstantCandidates.java` finds capped raw-word split-constant candidates, including undefined code; each match requires instruction and register-lifetime confirmation.
 - `FindStrings.java` finds capped, case-insensitive substrings in defined guest strings.
 - `ObserveCanonicalImageEvidence.java` records the bounded manual canonical-image replay as private scratch JSON.
 - `FixXenonThunks.java` repairs undecodable Xenon VMX128 thunk slots.

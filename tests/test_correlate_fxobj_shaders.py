@@ -5,7 +5,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "tools"))
 
@@ -13,7 +12,9 @@ from correlate_fxobj_shaders import correlate, swap_dword_bytes  # noqa: E402
 
 
 class CorrelateFxobjShadersTests(unittest.TestCase):
-    def write_shader(self, directory: Path, shader_hash: str, stage: str, data: bytes) -> None:
+    def write_shader(
+        self, directory: Path, shader_hash: str, stage: str, data: bytes
+    ) -> None:
         (directory / f"shader_{shader_hash}.ucode.bin.{stage}").write_bytes(data)
 
     def test_correlates_raw_shader_bytes(self) -> None:

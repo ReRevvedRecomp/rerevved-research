@@ -8,7 +8,6 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-
 REPO = Path(__file__).resolve().parents[1]
 CANONICAL_MANIFEST = REPO / "manifests" / "native-renderer-d3d-inventory.json"
 FULL_COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
@@ -213,7 +212,9 @@ def _validate_copy_pointers(
 def _resolve_topic_ref(repo: Path, reference: str) -> Any:
     name, separator, pointer = reference.partition("#")
     _require(separator == "#", f"topic reference lacks JSON Pointer: {reference}")
-    _require(Path(name).name == name, f"topic reference is not a manifest name: {reference}")
+    _require(
+        Path(name).name == name, f"topic reference is not a manifest name: {reference}"
+    )
     path = repo / "manifests" / name
     _require(path.is_file(), f"topic manifest is missing: {name}")
     document = json.loads(path.read_text(encoding="utf-8"))
@@ -254,14 +255,22 @@ def _all_references(document: dict[str, Any]) -> set[str]:
 
 def _validate_authorities(document: dict[str, Any], repo: Path) -> None:
     references = _all_references(document)
-    _require(TOPIC_REFS <= references, "one or more accepted topic references are missing")
-    for reference in sorted(reference for reference in references if ".json#" in reference):
+    _require(
+        TOPIC_REFS <= references, "one or more accepted topic references are missing"
+    )
+    for reference in sorted(
+        reference for reference in references if ".json#" in reference
+    ):
         _resolve_topic_ref(repo, reference)
 
     counts = _catalog_id_counts(repo)
     _require(CATALOG_IDS <= references, "one or more accepted catalog IDs are missing")
-    for record_id in sorted(reference for reference in references if reference.startswith("RVA-")):
-        _require(counts.get(record_id) == 1, f"catalog ID does not resolve once: {record_id}")
+    for record_id in sorted(
+        reference for reference in references if reference.startswith("RVA-")
+    ):
+        _require(
+            counts.get(record_id) == 1, f"catalog ID does not resolve once: {record_id}"
+        )
 
 
 def _validate_ids_and_links(document: dict[str, Any]) -> None:
@@ -276,7 +285,9 @@ def _validate_ids_and_links(document: dict[str, Any]) -> None:
     all_ids: set[str] = set()
     for rows, pattern, label in families:
         ids = [row.get("id", "") for row in rows]
-        _require(all(pattern.fullmatch(row_id) for row_id in ids), f"malformed {label} ID")
+        _require(
+            all(pattern.fullmatch(row_id) for row_id in ids), f"malformed {label} ID"
+        )
         _require(len(ids) == len(set(ids)), f"duplicate {label} ID")
         _require(not (all_ids & set(ids)), "ID reused across aggregate row families")
         all_ids.update(ids)
@@ -288,12 +299,19 @@ def _validate_ids_and_links(document: dict[str, Any]) -> None:
     for operation in operations:
         address = operation.get("address", "")
         join = operation.get("runtimeJoinKey", "")
-        _require(ADDRESS_RE.fullmatch(address) is not None, "malformed operation address")
+        _require(
+            ADDRESS_RE.fullmatch(address) is not None, "malformed operation address"
+        )
         _require(address not in addresses, "duplicate operation address")
         addresses.add(address)
         _require(JOIN_RE.fullmatch(join) is not None, "malformed runtime join")
-        _require(join == f"d3d:{address}", "runtime join differs from operation address")
-        _require(set(operation.get("rootIds", [])) <= root_ids, "operation root does not resolve")
+        _require(
+            join == f"d3d:{address}", "runtime join differs from operation address"
+        )
+        _require(
+            set(operation.get("rootIds", [])) <= root_ids,
+            "operation root does not resolve",
+        )
         _require(
             set(operation.get("contractRefs", [])) <= contract_ids,
             "operation contract does not resolve",
@@ -304,7 +322,10 @@ def _validate_ids_and_links(document: dict[str, Any]) -> None:
         _require(linked <= operation_ids, "contract operation does not resolve")
         for operation_id in linked:
             operation = next(row for row in operations if row["id"] == operation_id)
-            _require(contract["id"] in operation["contractRefs"], "contract link is not bidirectional")
+            _require(
+                contract["id"] in operation["contractRefs"],
+                "contract link is not bidirectional",
+            )
 
 
 def _validate_no_retired_workflow_fields(document: dict[str, Any]) -> None:
@@ -313,7 +334,9 @@ def _validate_no_retired_workflow_fields(document: dict[str, Any]) -> None:
             continue
         retired = RETIRED_WORKFLOW_KEYS & set(value)
         if retired:
-            raise ValidationError(f"retired workflow field remains: {sorted(retired)[0]}")
+            raise ValidationError(
+                f"retired workflow field remains: {sorted(retired)[0]}"
+            )
 
 
 def _validate_unresolved_coverage(document: dict[str, Any]) -> None:
@@ -332,7 +355,10 @@ def _validate_unresolved_coverage(document: dict[str, Any]) -> None:
         coverage.get("evidenceBasis") == EXPECTED_UNRESOLVED_COVERAGE["evidenceBasis"],
         "unresolved coverage evidence basis differs from the accepted value",
     )
-    _require(EXPECTED_SCOPE["boundary"] == document["scope"].get("boundary"), "partial scope changed")
+    _require(
+        EXPECTED_SCOPE["boundary"] == document["scope"].get("boundary"),
+        "partial scope changed",
+    )
 
     forbidden_keys = {
         "id",
@@ -364,7 +390,9 @@ def _validate_partial_export(document: dict[str, Any], repo: Path) -> None:
     image_sha256 = _resolve_topic_ref(
         repo, "image.json#/analysisProgram/flatImageSha256"
     )
-    _require_exact(partial_export["image_sha256"], image_sha256, "partialExport image SHA-256")
+    _require_exact(
+        partial_export["image_sha256"], image_sha256, "partialExport image SHA-256"
+    )
     _require_exact(partial_export["surface"], "partial", "partialExport surface")
     _validate_copy_pointers(
         document,
@@ -391,10 +419,14 @@ def _validate_partial_export(document: dict[str, Any], repo: Path) -> None:
         "claim_refs",
     }
     _require_exact(
-        set(operation), semantic_fields | {"source_pointers"}, "partialExport operation field set"
+        set(operation),
+        semantic_fields | {"source_pointers"},
+        "partialExport operation field set",
     )
     accepted_operation = document["surface"][1]
-    _require_exact(operation["operation_id"], accepted_operation["id"], "export operation ID")
+    _require_exact(
+        operation["operation_id"], accepted_operation["id"], "export operation ID"
+    )
     _require_exact(
         operation["runtime_join_key"],
         accepted_operation["runtimeJoinKey"],
@@ -402,7 +434,9 @@ def _validate_partial_export(document: dict[str, Any], repo: Path) -> None:
     )
     _require_exact(operation["roles"], accepted_operation["roles"], "export roles")
     _require_exact(
-        operation["contract_ids"], accepted_operation["contractRefs"], "export contracts"
+        operation["contract_ids"],
+        accepted_operation["contractRefs"],
+        "export contracts",
     )
     _require_exact(
         operation["hook_sites"],
@@ -491,7 +525,10 @@ def _validate_exact_packet(document: dict[str, Any]) -> None:
         "root claim references",
     )
     for field in ("claim", "extentRule", "reproduction", "qualification"):
-        _require(isinstance(root.get(field), str) and bool(root[field]), f"root lacks {field}")
+        _require(
+            isinstance(root.get(field), str) and bool(root[field]),
+            f"root lacks {field}",
+        )
 
     expected_operations = {
         "NRD-OP-0001": {
@@ -563,8 +600,13 @@ def _validate_exact_packet(document: dict[str, Any]) -> None:
         ],
         "contract claim references",
     )
-    _require("site-fixed primitive discriminator 4" in contract["hostRequirement"], "primitive value changed")
-    _require("unknown discriminator" in contract["hostRequirement"], "unknown bucket missing")
+    _require(
+        "site-fixed primitive discriminator 4" in contract["hostRequirement"],
+        "primitive value changed",
+    )
+    _require(
+        "unknown discriminator" in contract["hostRequirement"], "unknown bucket missing"
+    )
     _require("0x82303E3C" in contract["reproduction"], "first hook site missing")
     _require("0x82303E8C" in contract["reproduction"], "second hook site missing")
     _require("0x826A3568" in contract["reproduction"], "hook target missing")
@@ -575,7 +617,10 @@ def _validate_exact_packet(document: dict[str, Any]) -> None:
         "unresolved coverage",
     )
     _require_exact(len(document["guards"]), 4, "guard count")
-    _require("Five unresolved coverage categories" in document["conclusion"], "conclusion changed")
+    _require(
+        "Five unresolved coverage categories" in document["conclusion"],
+        "conclusion changed",
+    )
 
 
 def validate_document(document: dict[str, Any], repo: Path = REPO) -> None:
@@ -600,7 +645,9 @@ def load_and_validate(path: Path = CANONICAL_MANIFEST) -> dict[str, Any]:
     return document
 
 
-def validate_partial_snapshot(snapshot: dict[str, Any], document: dict[str, Any]) -> None:
+def validate_partial_snapshot(
+    snapshot: dict[str, Any], document: dict[str, Any]
+) -> None:
     partial_export = document["partialExport"]
     _require_exact(
         set(snapshot),
@@ -641,8 +688,14 @@ def build_partial_snapshot(
     document: dict[str, Any], research_commit: str, aggregate_sha256: str
 ) -> dict[str, Any]:
     validate_document(document)
-    _require(FULL_COMMIT_RE.fullmatch(research_commit) is not None, "research commit must be full lowercase hex")
-    _require(SHA256_RE.fullmatch(aggregate_sha256) is not None, "aggregate SHA-256 must be lowercase hex")
+    _require(
+        FULL_COMMIT_RE.fullmatch(research_commit) is not None,
+        "research commit must be full lowercase hex",
+    )
+    _require(
+        SHA256_RE.fullmatch(aggregate_sha256) is not None,
+        "aggregate SHA-256 must be lowercase hex",
+    )
     copied = deepcopy(document["partialExport"])
     schema_version = copied.pop("schema_version")
     snapshot = {
@@ -656,7 +709,9 @@ def build_partial_snapshot(
 
 
 def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Validate the focused native-renderer D3D inventory")
+    parser = argparse.ArgumentParser(
+        description="Validate the focused native-renderer D3D inventory"
+    )
     parser.add_argument("manifest", nargs="?", type=Path, default=CANONICAL_MANIFEST)
     parser.add_argument("--emit-partial-snapshot", action="store_true")
     parser.add_argument("--research-commit")
@@ -669,16 +724,33 @@ def main() -> int:
     try:
         document = load_and_validate(args.manifest)
         if not args.emit_partial_snapshot:
-            _require(args.research_commit is None, "research commit is only valid for snapshot emission")
-            _require(args.aggregate_sha256 is None, "aggregate SHA-256 is only valid for snapshot emission")
+            _require(
+                args.research_commit is None,
+                "research commit is only valid for snapshot emission",
+            )
+            _require(
+                args.aggregate_sha256 is None,
+                "aggregate SHA-256 is only valid for snapshot emission",
+            )
             print("native-renderer-d3d-inventory: valid")
             return 0
 
-        _require(args.research_commit is not None, "snapshot emission requires --research-commit")
-        _require(args.aggregate_sha256 is not None, "snapshot emission requires --aggregate-sha256")
+        _require(
+            args.research_commit is not None,
+            "snapshot emission requires --research-commit",
+        )
+        _require(
+            args.aggregate_sha256 is not None,
+            "snapshot emission requires --aggregate-sha256",
+        )
         actual_sha256 = hashlib.sha256(args.manifest.read_bytes()).hexdigest()
-        _require(actual_sha256 == args.aggregate_sha256, "aggregate SHA-256 does not match manifest bytes")
-        snapshot = build_partial_snapshot(document, args.research_commit, args.aggregate_sha256)
+        _require(
+            actual_sha256 == args.aggregate_sha256,
+            "aggregate SHA-256 does not match manifest bytes",
+        )
+        snapshot = build_partial_snapshot(
+            document, args.research_commit, args.aggregate_sha256
+        )
         print(json.dumps(snapshot, indent=2))
         return 0
     except (OSError, json.JSONDecodeError, ValidationError) as exc:

@@ -8,7 +8,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[1]
 MODULE_PATH = REPO / "tools" / "reference_data.py"
 SPEC = importlib.util.spec_from_file_location("reference_data", MODULE_PATH)
@@ -77,9 +76,7 @@ class ReferenceDataTests(unittest.TestCase):
             "0,Roman,Roman,Julius Caesar",
             '0,"Roman,Roman,Julius Caesar',
         )
-        with self.assertRaisesRegex(
-            reference_data.ReferenceDataError, "malformed CSV"
-        ):
+        with self.assertRaisesRegex(reference_data.ReferenceDataError, "malformed CSV"):
             reference_data.load_reference_data(self.repo)
 
     def test_generated_marker_in_csv_is_rejected(self) -> None:
@@ -117,9 +114,7 @@ class ReferenceDataTests(unittest.TestCase):
         path = self.repo / "data" / "era-bonus-definitions.csv"
         with path.open("a", encoding="utf-8", newline="") as stream:
             stream.write("62,Unused effect\n")
-        with self.assertRaisesRegex(
-            reference_data.ReferenceDataError, "unused IDs 62"
-        ):
+        with self.assertRaisesRegex(reference_data.ReferenceDataError, "unused IDs 62"):
             reference_data.load_reference_data(self.repo)
 
     def test_manifest_name_disagreement_is_rejected(self) -> None:

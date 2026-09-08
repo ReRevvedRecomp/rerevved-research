@@ -8,13 +8,11 @@ import sys
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[1]
 TOOLS = REPO / "tools"
 sys.path.insert(0, str(TOOLS))
 
 import validate_native_renderer_d3d_inventory as validator  # noqa: E402
-
 
 MANIFEST = REPO / "manifests" / "native-renderer-d3d-inventory.json"
 TEST_COMMIT = "a" * 40
@@ -31,8 +29,12 @@ class NativeRendererD3DInventoryTests(unittest.TestCase):
             validator.validate_document(document, REPO)
 
     def test_committed_aggregate_and_deterministic_partial_export_pass(self) -> None:
-        first = validator.build_partial_snapshot(self.document, TEST_COMMIT, self.sha256)
-        second = validator.build_partial_snapshot(self.document, TEST_COMMIT, self.sha256)
+        first = validator.build_partial_snapshot(
+            self.document, TEST_COMMIT, self.sha256
+        )
+        second = validator.build_partial_snapshot(
+            self.document, TEST_COMMIT, self.sha256
+        )
         self.assertEqual(first, second)
         self.assertIsNot(
             first["operations"], self.document["partialExport"]["operations"]
@@ -113,7 +115,9 @@ class NativeRendererD3DInventoryTests(unittest.TestCase):
         }
         for field, pointer in replacements.items():
             document = copy.deepcopy(self.document)
-            document["partialExport"]["operations"][0]["source_pointers"][field] = pointer
+            document["partialExport"]["operations"][0]["source_pointers"][field] = (
+                pointer
+            )
             with self.subTest(field=field, pointer=pointer):
                 self.assert_invalid(document)
 
@@ -189,8 +193,12 @@ class NativeRendererD3DInventoryTests(unittest.TestCase):
             with self.subTest(document=document):
                 self.assert_invalid(document)
 
-    def test_changed_snapshot_register_site_phase_value_unknown_or_action_fails(self) -> None:
-        snapshot = validator.build_partial_snapshot(self.document, TEST_COMMIT, self.sha256)
+    def test_changed_snapshot_register_site_phase_value_unknown_or_action_fails(
+        self,
+    ) -> None:
+        snapshot = validator.build_partial_snapshot(
+            self.document, TEST_COMMIT, self.sha256
+        )
         mutations = []
         registers = copy.deepcopy(snapshot)
         registers["operations"][0]["registers"] = ["r3"]
@@ -219,12 +227,16 @@ class NativeRendererD3DInventoryTests(unittest.TestCase):
         aggregate = copy.deepcopy(self.document)
         aggregate["scope"]["surface"] = "complete"
         self.assert_invalid(aggregate)
-        snapshot = validator.build_partial_snapshot(self.document, TEST_COMMIT, self.sha256)
+        snapshot = validator.build_partial_snapshot(
+            self.document, TEST_COMMIT, self.sha256
+        )
         snapshot["surface"] = "complete"
         with self.assertRaises(validator.ValidationError):
             validator.validate_partial_snapshot(snapshot, self.document)
 
-    def test_unresolved_coverage_contract_rejects_invalid_categories_or_basis(self) -> None:
+    def test_unresolved_coverage_contract_rejects_invalid_categories_or_basis(
+        self,
+    ) -> None:
         mutations = []
         empty = copy.deepcopy(self.document)
         empty["unresolvedCoverage"]["categories"] = []
@@ -247,7 +259,9 @@ class NativeRendererD3DInventoryTests(unittest.TestCase):
             with self.subTest(document=document):
                 self.assert_invalid(document)
 
-    def test_unresolved_coverage_categories_cannot_leak_into_evidence_fields(self) -> None:
+    def test_unresolved_coverage_categories_cannot_leak_into_evidence_fields(
+        self,
+    ) -> None:
         mutations = []
         for field_path in ("id", "locator"):
             document = copy.deepcopy(self.document)
@@ -263,7 +277,9 @@ class NativeRendererD3DInventoryTests(unittest.TestCase):
             with self.subTest(document=document):
                 self.assert_invalid(document)
 
-        snapshot = validator.build_partial_snapshot(self.document, TEST_COMMIT, self.sha256)
+        snapshot = validator.build_partial_snapshot(
+            self.document, TEST_COMMIT, self.sha256
+        )
         snapshot["operations"][0]["claim_refs"][0] = "subsystem-anchors"
         with self.assertRaises(validator.ValidationError):
             validator.validate_partial_snapshot(snapshot, self.document)
@@ -317,7 +333,9 @@ class NativeRendererD3DInventoryTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
-        expected = validator.build_partial_snapshot(self.document, TEST_COMMIT, self.sha256)
+        expected = validator.build_partial_snapshot(
+            self.document, TEST_COMMIT, self.sha256
+        )
         self.assertEqual(completed.stdout, json.dumps(expected, indent=2) + "\n")
         self.assertEqual(set(REPO.rglob("*partial*snapshot*")), before)
 

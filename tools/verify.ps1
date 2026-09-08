@@ -54,7 +54,7 @@ foreach ($file in $jsonFiles) {
 
 $python = Get-Command python -ErrorAction SilentlyContinue
 if (-not $python) {
-    Add-Failure 'python executable is required for schema, AST, and unit-test checks'
+    Add-Failure 'python executable is required for schema, Ruff, and unit-test checks'
 } else {
     $validatorArgs = @(
         (Join-Path $repo 'tools/catalog_validator.py'),
@@ -88,27 +88,48 @@ if (-not $python) {
         Add-Failure "reference data validation failed: $($referenceOutput -join ' ')"
     }
 
-    $pythonFiles = @($trackedPaths | Where-Object { $_ -match '(?i)\.py$' })
+    $pythonFiles = @($trackedPaths | Where-Object {
+        $_ -match '(?i)[\\/]((tools)|(tests))[\\/].+\.py$'
+    })
     if ($pythonFiles.Count -eq 0) {
-        Add-Failure 'no tracked Python files found'
+        Add-Failure 'no tracked Python files found for Ruff checks'
     } else {
-        $astCode = @'
-import ast, pathlib, sys
-for name in sys.argv[1:]:
-    if name == chr(45) * 2:
-        continue
-    ast.parse(pathlib.Path(name).read_bytes().decode(), filename=name)
-'@
+        $ruffConfig = Join-Path $repo 'ruff.toml'
+        $ruffArgs = @(
+            '-m', 'ruff', 'check',
+            '--config', $ruffConfig,
+            '--'
+        )
+        $ruffArgs += $pythonFiles
         $savedErrorAction = $ErrorActionPreference
         $ErrorActionPreference = 'Continue'
         try {
-            $astOutput = @(& $python.Source -c $astCode -- $pythonFiles 2>&1)
-            $astExitCode = $LASTEXITCODE
+            $ruffOutput = @(& $python.Source @ruffArgs 2>&1)
+            $ruffExitCode = $LASTEXITCODE
         } finally {
             $ErrorActionPreference = $savedErrorAction
         }
-        if ($astExitCode -ne 0) {
-            Add-Failure "Python AST parse failed: $($astOutput -join ' ')"
+        if ($ruffExitCode -ne 0) {
+            Add-Failure "Ruff check failed: $($ruffOutput -join ' ')"
+        }
+
+        $ruffFormatArgs = @(
+            '-m', 'ruff', 'format',
+            '--config', $ruffConfig,
+            '--check',
+            '--'
+        )
+        $ruffFormatArgs += $pythonFiles
+        $savedErrorAction = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+        try {
+            $ruffFormatOutput = @(& $python.Source @ruffFormatArgs 2>&1)
+            $ruffFormatExitCode = $LASTEXITCODE
+        } finally {
+            $ErrorActionPreference = $savedErrorAction
+        }
+        if ($ruffFormatExitCode -ne 0) {
+            Add-Failure "Ruff format check failed: $($ruffFormatOutput -join ' ')"
         }
     }
 
@@ -238,7 +259,7 @@ if ($failures.Count -gt 0) {
     exit 1
 }
 
-$summary = "verify: passed JSON={0} PythonAST={1} PythonTests=1 ReferenceData=1 " +
+$summary = "verify: passed JSON={0} Ruff={1} PythonTests=1 ReferenceData=1 " +
     "PowerShellAST={2} MarkdownLinks={3} ASCII=1 GhidraIndex=1 " +
     "repository-hygiene=1 git-diff=1 cached-diff=1"
 Write-Output ($summary -f

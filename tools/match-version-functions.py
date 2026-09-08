@@ -16,7 +16,6 @@ from itertools import chain, islice
 from pathlib import Path
 from typing import Any, Iterable
 
-
 FUNCTION_FIELDS = (
     "address",
     "minAddress",
@@ -45,7 +44,9 @@ def _json_line(path: Path, line_number: int, line: str) -> dict[str, Any]:
     try:
         value = json.loads(line)
     except json.JSONDecodeError as exc:
-        raise InputFormatError(f"{path}:{line_number}: invalid JSON: {exc.msg}") from exc
+        raise InputFormatError(
+            f"{path}:{line_number}: invalid JSON: {exc.msg}"
+        ) from exc
     if not isinstance(value, dict):
         raise InputFormatError(f"{path}:{line_number}: record must be an object")
     return value
@@ -212,7 +213,9 @@ def _candidate_details(
         score, reasons = _heuristic_score(source, target)
         if score >= 45.0:
             details.append((target, score, reasons))
-    details.sort(key=lambda item: (-item[1], _address_key(item[0]["address"]), item[0]["name"]))
+    details.sort(
+        key=lambda item: (-item[1], _address_key(item[0]["address"]), item[0]["name"])
+    )
     return details
 
 
@@ -253,9 +256,7 @@ def _bounded_candidate_pool(
             overflow[target["address"]] = target
 
     mnemonic_buckets = mnemonic_index.get(source["mnemonicHash"], {})
-    exact_count_targets = mnemonic_buckets.get(
-        int(source["instructionCount"]), []
-    )
+    exact_count_targets = mnemonic_buckets.get(int(source["instructionCount"]), [])
     if len(exact_count_targets) > MAX_HEURISTIC_CANDIDATES:
         note_overflow("mnemonicHash/instructionCount bucket", exact_count_targets)
         addresses = sorted(overflow, key=_address_key)
@@ -485,8 +486,12 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             "pools are reported ambiguous without scoring."
         ),
     )
-    parser.add_argument("--source", type=Path, required=True, help="source JSONL export")
-    parser.add_argument("--target", type=Path, required=True, help="target JSONL export")
+    parser.add_argument(
+        "--source", type=Path, required=True, help="source JSONL export"
+    )
+    parser.add_argument(
+        "--target", type=Path, required=True, help="target JSONL export"
+    )
     parser.add_argument("--out", type=Path, required=True, help="output JSON report")
     return parser.parse_args(argv)
 

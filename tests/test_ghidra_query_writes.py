@@ -8,7 +8,6 @@ import textwrap
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[1]
 GHIDRA = REPO / "ghidra"
 SCRATCH = REPO / "docs" / "ai_agents" / "local" / ".tmp" / "rerevved-ghidra"
@@ -202,7 +201,14 @@ class GhidraQueryWriteTests(unittest.TestCase):
         cls.classes = cls.fixture / "classes"
         cls.classes.mkdir()
         compile_result = subprocess.run(
-            [cls.javac, "-encoding", "UTF-8", "-d", str(cls.classes), str(cls.source_path)],
+            [
+                cls.javac,
+                "-encoding",
+                "UTF-8",
+                "-d",
+                str(cls.classes),
+                str(cls.source_path),
+            ],
             cwd=cls.fixture,
             text=True,
             capture_output=True,
@@ -244,13 +250,11 @@ class GhidraQueryWriteTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         rows = [line.split("|") for line in result.stdout.splitlines()]
-        checked = {
-            (row[1], row[2]): row[3:]
-            for row in rows
-            if row[0] == "checked"
-        }
+        checked = {(row[1], row[2]): row[3:] for row in rows if row[0] == "checked"}
         for script in SCRIPTS:
-            self.assertEqual(checked[(script, "none")], ["RETURNED", "WROTE", "partial-output"])
+            self.assertEqual(
+                checked[(script, "none")], ["RETURNED", "WROTE", "partial-output"]
+            )
             for failure in ("write", "flush", "close"):
                 content = "partial" if failure == "write" else "partial-output"
                 self.assertEqual(
@@ -258,11 +262,7 @@ class GhidraQueryWriteTests(unittest.TestCase):
                     ["THREW", "java.io.IOException", content],
                 )
 
-        legacy = {
-            row[2]: row[3:]
-            for row in rows
-            if row[0] == "legacy"
-        }
+        legacy = {row[2]: row[3:] for row in rows if row[0] == "legacy"}
         for failure in ("write", "flush", "close"):
             content = "partial" if failure == "write" else "partial-output"
             self.assertEqual(legacy[failure], ["RETURNED", "WROTE", content])

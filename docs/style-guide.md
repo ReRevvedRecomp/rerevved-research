@@ -11,8 +11,8 @@ index](README.md), especially the [evidence model](evidence-model.md), [topic ma
   Follow an established local pattern first.
 - Tracked source is ASCII. Use ordinary ASCII punctuation and short declarative prose. Keep
   field names, command names, runtime strings, and test labels exact when they are interfaces.
-- Use four spaces for Python, PowerShell, and Java indentation. Keep surrounding formatting;
-  this repository has no configured source formatter.
+- Use four spaces for Python, PowerShell, and Java indentation. Ruff owns Python
+  formatting and import sorting; run it with the verification commands below.
 - Keep stable object and array order. Preserve domain order, such as field or vtable-slot
   offsets. Do not reorder existing catalog records only to sort IDs.
 
@@ -127,9 +127,26 @@ mechanics stay in manifests and private operations stay in the maintainer island
 
 ## Verification
 
-The gate requires Python with `requirements.txt` installed and a JDK with
-`java` and `javac` on `PATH`. Query-writer tests run standalone Java fixtures;
-they do not require a Ghidra project or retail assets.
+The gate requires Python with `tools/requirements-dev.txt` installed and a JDK with
+`java` and `javac` on `PATH`. The development requirements include the runtime
+requirements and the pinned Ruff version. Query-writer tests run standalone
+Java fixtures; they do not require a Ghidra project or retail assets.
+
+Install the development requirements and run the checks with:
+
+```powershell
+python -m pip install -r tools/requirements-dev.txt
+python -m ruff check .
+python -m ruff format --check .
+powershell -NoProfile -File tools\verify.ps1
+```
+
+Apply the safe Ruff fixes and formatting with:
+
+```powershell
+python -m ruff check --fix .
+python -m ruff format .
+```
 
 Run the repository gate after changing a script, schema, manifest, or linked Markdown page:
 
@@ -138,7 +155,7 @@ powershell -NoProfile -File tools\verify.ps1
 git diff --check
 ```
 
-`tools\verify.ps1` parses JSON, validates catalogs and reference data, checks Python and
-PowerShell syntax, runs Python tests, validates Markdown links and ASCII, checks the Ghidra
+`tools\verify.ps1` parses JSON, validates catalogs and reference data, checks Python with Ruff
+and PowerShell syntax, runs Python tests, validates Markdown links and ASCII, checks the Ghidra
 index, and checks repository hygiene. Run the focused test for a record family when its schema
 or validator changes.

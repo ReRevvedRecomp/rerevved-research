@@ -9,7 +9,6 @@ import json
 import re
 from pathlib import Path
 
-
 FUNCTION_RE = re.compile(r"^DEFINE_REX_FUNC\(sub_([0-9A-Fa-f]{8})\)\s*\{")
 INSTRUCTION_RE = re.compile(r"^\s*//\s+([A-Za-z].*)$")
 ADDRESS_RE = re.compile(r"0x[0-9A-Fa-f]+")

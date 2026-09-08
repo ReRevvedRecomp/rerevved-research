@@ -6,7 +6,6 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-
 CIVILIZATION_HEADERS = (
     "civ_id",
     "internal_name",
@@ -133,9 +132,7 @@ def _load_civilizations(path: Path) -> tuple[Civilization, ...]:
     for field_name in ("internal_name", "display_name"):
         values = tuple(getattr(row, field_name) for row in rows)
         if len(values) != len(set(values)):
-            raise ReferenceDataError(
-                f"civilizations.csv: duplicate {field_name} value"
-            )
+            raise ReferenceDataError(f"civilizations.csv: duplicate {field_name} value")
     return rows
 
 
@@ -144,9 +141,7 @@ def _load_bonus_effects(path: Path) -> dict[int, str]:
     effects: dict[int, str] = {}
     ids: list[int] = []
     for row_number, row in enumerate(raw_rows, start=2):
-        bonus_id = _parse_id(
-            row["bonus_id"], f"{path.name}:{row_number}:bonus_id"
-        )
+        bonus_id = _parse_id(row["bonus_id"], f"{path.name}:{row_number}:bonus_id")
         if bonus_id == 0:
             raise ReferenceDataError(
                 f"{path.name}:{row_number}: bonus_id must be positive"
@@ -191,7 +186,9 @@ def _load_manifest_rows(path: Path) -> tuple[CivilizationRow, ...]:
             name = raw["name"]
             bonuses = tuple(raw["bonuses"])
         except (KeyError, TypeError) as error:
-            raise ReferenceDataError(f"{path.name}: malformed civilization row") from error
+            raise ReferenceDataError(
+                f"{path.name}: malformed civilization row"
+            ) from error
         if type(index) is not int or not isinstance(name, str):
             raise ReferenceDataError(f"{path.name}: invalid row index or name")
         if len(bonuses) != len(ERA_NAMES) or not all(
@@ -211,9 +208,7 @@ def _load_manifest_rows(path: Path) -> tuple[CivilizationRow, ...]:
 
 def load_reference_data(repo: Path) -> ReferenceData:
     civilizations = _load_civilizations(repo / "data" / "civilizations.csv")
-    bonus_effects = _load_bonus_effects(
-        repo / "data" / "era-bonus-definitions.csv"
-    )
+    bonus_effects = _load_bonus_effects(repo / "data" / "era-bonus-definitions.csv")
     manifest_rows = _load_manifest_rows(
         repo / "manifests" / "civilization-bonus-storage.json"
     )
@@ -230,9 +225,7 @@ def load_reference_data(repo: Path) -> ReferenceData:
                 f"{manifest_row.name!r}"
             )
 
-    assigned_ids = {
-        bonus_id for row in manifest_rows for bonus_id in row.bonuses
-    }
+    assigned_ids = {bonus_id for row in manifest_rows for bonus_id in row.bonuses}
     defined_ids = set(bonus_effects)
     missing_ids = sorted(assigned_ids - defined_ids)
     unused_ids = sorted(defined_ids - assigned_ids)
@@ -243,8 +236,7 @@ def load_reference_data(repo: Path) -> ReferenceData:
         )
     if unused_ids:
         raise ReferenceDataError(
-            "era-bonus-definitions.csv: unused IDs "
-            + ", ".join(map(str, unused_ids))
+            "era-bonus-definitions.csv: unused IDs " + ", ".join(map(str, unused_ids))
         )
 
     return ReferenceData(civilizations, bonus_effects, manifest_rows)
@@ -253,10 +245,7 @@ def load_reference_data(repo: Path) -> ReferenceData:
 def _display_label(civilization: Civilization) -> str:
     if civilization.display_name == civilization.internal_name:
         return civilization.display_name
-    return (
-        f"{civilization.display_name} "
-        f"(`{civilization.internal_name}` internally)"
-    )
+    return f"{civilization.display_name} (`{civilization.internal_name}` internally)"
 
 
 def _render_bonus_table(data: ReferenceData) -> str:

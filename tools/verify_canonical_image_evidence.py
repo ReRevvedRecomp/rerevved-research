@@ -13,7 +13,6 @@ from typing import Any
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-
 REPO = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = REPO / "schemas" / "canonical-image-evidence-attestation.schema.json"
 BOUNDARY = "Canonical-image evidence validation, not retail derivation validation."
@@ -121,9 +120,7 @@ def nested(document: Any, *keys: str) -> Any:
     return current
 
 
-def build_attestation(
-    observations: Any, contract: dict[str, Any]
-) -> dict[str, Any]:
+def build_attestation(observations: Any, contract: dict[str, Any]) -> dict[str, Any]:
     image = contract["image"]
     program = nested(observations, "program")
     function = nested(observations, "function")
@@ -221,9 +218,7 @@ def attestation_validator(repo: Path = REPO) -> Draft202012Validator:
     common = load_json(repo / "schemas" / "common.schema.json")
     schema = load_json(repo / "schemas" / SCHEMA_PATH.name)
     Draft202012Validator.check_schema(schema)
-    registry = Registry().with_resource(
-        common["$id"], Resource.from_contents(common)
-    )
+    registry = Registry().with_resource(common["$id"], Resource.from_contents(common))
     return Draft202012Validator(schema, registry=registry)
 
 
@@ -234,7 +229,9 @@ def validate_attestation(document: dict[str, Any], repo: Path = REPO) -> None:
 
     expected = build_attestation(None, load_contract(repo))
     if document["image"] != expected["image"]:
-        raise CanonicalImageContractError("attestation image does not match the contract")
+        raise CanonicalImageContractError(
+            "attestation image does not match the contract"
+        )
     expected_checks = {item["name"]: item for item in expected["checks"]}
     for item in document["checks"]:
         for field in ("entities", "addresses"):

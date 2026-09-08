@@ -9,7 +9,6 @@ import struct
 from pathlib import Path
 from typing import Any
 
-
 ACTION_NAMES = {
     0x00: "End",
     0x04: "NextFrame",
@@ -161,7 +160,9 @@ def push_values(payload: bytes, pool: list[str]) -> list[dict[str, Any]]:
             pos += 1
         elif kind == 6:
             raw = payload[pos : pos + 8]
-            item.update(kind="double", value=struct.unpack("<d", raw[4:8] + raw[0:4])[0])
+            item.update(
+                kind="double", value=struct.unpack("<d", raw[4:8] + raw[0:4])[0]
+            )
             pos += 8
         elif kind == 7:
             item.update(kind="integer", value=struct.unpack_from("<i", payload, pos)[0])
@@ -169,13 +170,23 @@ def push_values(payload: bytes, pool: list[str]) -> list[dict[str, Any]]:
         elif kind == 8:
             index = payload[pos]
             pos += 1
-            item.update(kind="constant8", index=index, value=pool[index] if index < len(pool) else None)
+            item.update(
+                kind="constant8",
+                index=index,
+                value=pool[index] if index < len(pool) else None,
+            )
         elif kind == 9:
             index = u16(payload, pos)
             pos += 2
-            item.update(kind="constant16", index=index, value=pool[index] if index < len(pool) else None)
+            item.update(
+                kind="constant16",
+                index=index,
+                value=pool[index] if index < len(pool) else None,
+            )
         else:
-            raise ValueError(f"unsupported push type {kind} at payload offset 0x{pos - 1:X}")
+            raise ValueError(
+                f"unsupported push type {kind} at payload offset 0x{pos - 1:X}"
+            )
         values.append(item)
     return values
 
@@ -242,7 +253,9 @@ def parse_try_header(payload: bytes) -> tuple[dict[str, Any], tuple[int, int, in
     return result, sizes
 
 
-def decode_operands(opcode: int, payload: bytes, pool: list[str], base: int) -> dict[str, Any]:
+def decode_operands(
+    opcode: int, payload: bytes, pool: list[str], base: int
+) -> dict[str, Any]:
     if opcode == 0x88:
         return {"constants": parse_constant_pool(payload)}
     if opcode == 0x96:
@@ -277,7 +290,9 @@ def decode_operands(opcode: int, payload: bytes, pool: list[str], base: int) -> 
     return {}
 
 
-def parse_actions(data: bytes, base: int, inherited_pool: list[str] | None = None) -> list[dict[str, Any]]:
+def parse_actions(
+    data: bytes, base: int, inherited_pool: list[str] | None = None
+) -> list[dict[str, Any]]:
     actions: list[dict[str, Any]] = []
     pool = list(inherited_pool or [])
     pos = 0
@@ -304,11 +319,15 @@ def parse_actions(data: bytes, base: int, inherited_pool: list[str] | None = Non
         action.update(decode_operands(opcode, payload, pool, base + pos))
         body_end = end
         if opcode in (0x9B, 0x8E):
-            function, code_size = parse_function_header(payload, 1 if opcode == 0x9B else 2)
+            function, code_size = parse_function_header(
+                payload, 1 if opcode == 0x9B else 2
+            )
             body_end = end + code_size
             if body_end > len(data):
                 raise ValueError(f"function body at 0x{base + end:X} exceeds its block")
-            function["body"] = parse_actions(data[end:body_end], base + end, pool.copy())
+            function["body"] = parse_actions(
+                data[end:body_end], base + end, pool.copy()
+            )
             action.update(function)
         elif opcode == 0x94:
             if len(payload) != 2:
@@ -325,7 +344,13 @@ def parse_actions(data: bytes, base: int, inherited_pool: list[str] | None = Non
                 raise ValueError(f"Try bodies at 0x{base + end:X} exceed their block")
             cursor = end
             for name, size in zip(("tryBody", "catchBody", "finallyBody"), sizes):
-                action[name] = parse_actions(data[cursor : cursor + size], base + cursor, pool.copy()) if size else []
+                action[name] = (
+                    parse_actions(
+                        data[cursor : cursor + size], base + cursor, pool.copy()
+                    )
+                    if size
+                    else []
+                )
                 cursor += size
         actions.append(action)
         if opcode == 0x88:
@@ -391,7 +416,9 @@ def parse_tag_stream(
                 block["spriteId"] = u16(data, payload_start)
                 action_start += 2
             block["actionOffset"] = f"0x{action_start:X}"
-            block["actions"] = parse_actions(data[action_start:payload_end], action_start)
+            block["actions"] = parse_actions(
+                data[action_start:payload_end], action_start
+            )
             strings = strings_in(block["actions"])
             matched = [target for target in targets if target in strings]
             if matched:
@@ -421,7 +448,9 @@ def inspect_movie(path: Path, targets: list[str]) -> dict[str, Any]:
         raise ValueError("expected an uncompressed GFX or FWS movie")
     declared_size = u32(data, 4)
     if declared_size != len(data):
-        raise ValueError(f"declared size {declared_size} does not match file size {len(data)}")
+        raise ValueError(
+            f"declared size {declared_size} does not match file size {len(data)}"
+        )
     frame_end = rect_end(data, 8)
     tag_start = frame_end + 4
     if tag_start > len(data):

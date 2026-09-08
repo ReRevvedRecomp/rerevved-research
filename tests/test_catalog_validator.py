@@ -6,7 +6,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "tools"))
 
@@ -153,9 +152,7 @@ class CatalogValidatorNegativeTests(unittest.TestCase):
 
     def test_rejects_malformed_address(self):
         self.reject(
-            lambda docs: docs["symbols"]["records"][0].update(
-                address="0x8200000a"
-            ),
+            lambda docs: docs["symbols"]["records"][0].update(address="0x8200000a"),
             "does not match",
         )
 
@@ -176,11 +173,9 @@ class CatalogValidatorNegativeTests(unittest.TestCase):
         for kind, locator in invalid_pairs:
             with self.subTest(kind=kind, locator=locator):
                 self.reject(
-                    lambda docs, kind=kind, locator=locator: docs[
-                        "symbols"
-                    ]["records"][0].update(
-                        evidence=[{"kind": kind, "locator": locator}]
-                    ),
+                    lambda docs, kind=kind, locator=locator: docs["symbols"]["records"][
+                        0
+                    ].update(evidence=[{"kind": kind, "locator": locator}]),
                     "is not valid under any of the given schemas",
                 )
 
@@ -251,17 +246,13 @@ class CatalogValidatorNegativeTests(unittest.TestCase):
 
     def test_rejects_unknown_confidence(self):
         self.reject(
-            lambda docs: docs["symbols"]["records"][0].update(
-                confidence="probable"
-            ),
+            lambda docs: docs["symbols"]["records"][0].update(confidence="probable"),
             "is not one of",
         )
 
     def test_rejects_invalid_relation_endpoint(self):
         self.reject(
-            lambda docs: docs["relations"]["records"][0].update(
-                to="RVA-FLD-9999"
-            ),
+            lambda docs: docs["relations"]["records"][0].update(to="RVA-FLD-9999"),
             "unknown to endpoint RVA-FLD-9999",
         )
 
@@ -287,9 +278,7 @@ class CatalogValidatorNegativeTests(unittest.TestCase):
             manifests = repo / "manifests"
             (manifests / "catalogs").mkdir(parents=True)
             try:
-                (manifests / "image.json").symlink_to(
-                    REPO / "manifests" / "image.json"
-                )
+                (manifests / "image.json").symlink_to(REPO / "manifests" / "image.json")
             except OSError as exc:
                 self.skipTest(f"file symlinks unavailable: {exc}")
             with self.assertRaisesRegex(

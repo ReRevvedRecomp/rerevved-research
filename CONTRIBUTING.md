@@ -9,6 +9,12 @@ If a change uses AI assistance, also follow the portable policy in
 Use the [Research style guide](docs/style-guide.md) for script formatting,
 machine-readable records, and evidence-facing links.
 
+Install the development requirements before running local checks:
+
+```powershell
+python -m pip install -r tools/requirements-dev.txt
+```
+
 ## Findings
 
 Keep the claim narrow and identify the image, guest locator, evidence source,
@@ -26,8 +32,9 @@ starts from a catalog gap or needs a bounded static investigation packet.
 
 Keep game assets, decrypted images, Ghidra projects, raw query output, and
 generated code outside the tracked tree. Use the existing read-only query
-workflow for inspections and keep mutating repair runs disposable. Update
-`docs/README.md` when adding a tracked Markdown page under `docs/`.
+workflow for inspections and keep mutating repair runs disposable. Run
+`powershell -NoProfile -File tools\verify.ps1` before submitting a change.
+Update `docs/README.md` when adding a tracked Markdown page under `docs/`.
 
 ## Commit subjects
 

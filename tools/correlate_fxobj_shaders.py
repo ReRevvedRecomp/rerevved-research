@@ -9,10 +9,7 @@ import json
 import re
 from pathlib import Path
 
-
-SHADER_DUMP_RE = re.compile(
-    r"^shader_([0-9a-fA-F]{16})\.ucode\.bin\.(vert|frag)$"
-)
+SHADER_DUMP_RE = re.compile(r"^shader_([0-9a-fA-F]{16})\.ucode\.bin\.(vert|frag)$")
 MIN_SHADER_BYTES = 12
 
 
@@ -23,7 +20,9 @@ def sha256(data: bytes) -> str:
 def swap_dword_bytes(data: bytes) -> bytes | None:
     if len(data) % 4:
         return None
-    return b"".join(data[offset : offset + 4][::-1] for offset in range(0, len(data), 4))
+    return b"".join(
+        data[offset : offset + 4][::-1] for offset in range(0, len(data), 4)
+    )
 
 
 def find_offsets(haystack: bytes, needle: bytes, maximum: int) -> list[int]:
@@ -52,9 +51,7 @@ def load_shader_dumps(shader_directory: Path) -> list[dict[str, object]]:
             )
         identity = (match.group(1).upper(), match.group(2))
         if identity in identities:
-            raise ValueError(
-                f"duplicate shader identity {identity[0]} {identity[1]}"
-            )
+            raise ValueError(f"duplicate shader identity {identity[0]} {identity[1]}")
         identities.add(identity)
         shaders.append(
             {

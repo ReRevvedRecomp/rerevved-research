@@ -12,7 +12,6 @@ from typing import Any
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-
 CATALOG_NAMES = ("symbols", "structs", "vtables", "relations")
 
 
@@ -114,11 +113,15 @@ def validate_catalog_documents(
 
 def _resolve_json_pointer(document: Any, pointer: str) -> Any:
     if not isinstance(pointer, str):
-        raise CatalogValidationError(f"evidence JSON pointer is not a string: {pointer}")
+        raise CatalogValidationError(
+            f"evidence JSON pointer is not a string: {pointer}"
+        )
     if pointer == "":
         return document
     if not pointer.startswith("/"):
-        raise CatalogValidationError(f"evidence JSON pointer must start with /: {pointer}")
+        raise CatalogValidationError(
+            f"evidence JSON pointer must start with /: {pointer}"
+        )
     current = document
     for encoded_part in pointer[1:].split("/"):
         if re.search(r"~(?![01])", encoded_part):

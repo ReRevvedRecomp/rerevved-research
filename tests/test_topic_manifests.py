@@ -5,7 +5,6 @@ import re
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[1]
 MANIFESTS = REPO / "manifests"
 ID_RE = re.compile(r"^RVA-F-[0-9]{4}$")
@@ -100,20 +99,28 @@ class TopicManifestTests(unittest.TestCase):
                 self.assertIsInstance(historical, list)
                 for reference in historical:
                     self.assertEqual(set(reference), {"locator", "qualification"})
-                    self.assertRegex(reference["locator"], r"^ghidra/[A-Za-z0-9_]+\.java$")
-                    self.assertFalse((REPO / reference["locator"]).exists(),
-                                     "Historical tool references are for unavailable producers")
+                    self.assertRegex(
+                        reference["locator"], r"^ghidra/[A-Za-z0-9_]+\.java$"
+                    )
+                    self.assertFalse(
+                        (REPO / reference["locator"]).exists(),
+                        "Historical tool references are for unavailable producers",
+                    )
                     self.assertIsInstance(reference["qualification"], str)
                     self.assertTrue(reference["qualification"].strip())
-                current = {key: value for key, value in document.items()
-                           if key != "historicalToolReferences"}
+                current = {
+                    key: value
+                    for key, value in document.items()
+                    if key != "historicalToolReferences"
+                }
                 for locator in visit(current):
                     self.assertIsNotNone(
                         re.fullmatch(r"ghidra/[^:\s]+\.java(?::.+)?", locator), locator
                     )
                     script = (REPO / locator.split(":", 1)[0]).resolve()
-                    self.assertTrue(script.is_relative_to((REPO / "ghidra").resolve()),
-                                    locator)
+                    self.assertTrue(
+                        script.is_relative_to((REPO / "ghidra").resolve()), locator
+                    )
                     self.assertTrue(script.is_file(), f"{path.name}: missing {locator}")
 
     def test_production_cost_ownership_preserves_boundaries(self) -> None:
@@ -128,22 +135,28 @@ class TopicManifestTests(unittest.TestCase):
         )
         non_unit = document["nonUnitBaseCostFields"]["inputRanges"]
         self.assertEqual(
-            (non_unit["first"]["table"], non_unit["first"]["recordSize"],
-             non_unit["first"]["fieldOffset"], non_unit["first"]["width"]),
+            (
+                non_unit["first"]["table"],
+                non_unit["first"]["recordSize"],
+                non_unit["first"]["fieldOffset"],
+                non_unit["first"]["width"],
+            ),
             ("0x82F71FD8", "0xCC", "0x41", "signed byte"),
         )
         self.assertEqual(
-            (non_unit["second"]["table"], non_unit["second"]["recordSize"],
-             non_unit["second"]["fieldOffset"], non_unit["second"]["width"]),
+            (
+                non_unit["second"]["table"],
+                non_unit["second"]["recordSize"],
+                non_unit["second"]["fieldOffset"],
+                non_unit["second"]["width"],
+            ),
             ("0x82F73238", "0x14C", "0x40", "signed halfword"),
         )
         self.assertEqual(
             [entry["function"] for entry in document["consumers"]["ai"]],
             ["0x82CB44E0", "0x82CB6E48"],
         )
-        self.assertTrue(
-            any("runtime" in guard.lower() for guard in document["guards"])
-        )
+        self.assertTrue(any("runtime" in guard.lower() for guard in document["guards"]))
 
     def test_unique_era_ability_effect_ownership_counts(self) -> None:
         path = MANIFESTS / "unique-era-ability-effect-ownership.json"
@@ -156,16 +169,16 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn(47, {entry["ueaId"] for entry in shared})
         self.assertIn(1, {entry["ueaId"] for entry in shared})
         self.assertIn(50, {entry["ueaId"] for entry in shared})
-        self.assertTrue({3, 12, 18, 19, 20, 24, 55}.issubset(
-            {entry["ueaId"] for entry in shared}
-        ))
+        self.assertTrue(
+            {3, 12, 18, 19, 20, 24, 55}.issubset({entry["ueaId"] for entry in shared})
+        )
         terrain_ids = {16, 28, 30, 32, 41, 56}
-        self.assertTrue(terrain_ids.issubset(
-            {entry["ueaId"] for entry in shared}
-        ))
-        self.assertTrue({16, 28}.issubset(
-            document["lookupInventorySeed"]["retailIdsObservedAsLiteralRequests"]
-        ))
+        self.assertTrue(terrain_ids.issubset({entry["ueaId"] for entry in shared}))
+        self.assertTrue(
+            {16, 28}.issubset(
+                document["lookupInventorySeed"]["retailIdsObservedAsLiteralRequests"]
+            )
+        )
         self.assertEqual(
             document["lookupInventorySeed"]["retailIdsAbsentAsLiteralRequests"],
             [40],
@@ -176,12 +189,14 @@ class TopicManifestTests(unittest.TestCase):
         self.assertNotIn(47, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(1, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(50, document["retailOwnerClasses"]["unknown"])
-        self.assertTrue({3, 12, 18, 19, 20, 24, 55}.isdisjoint(
-            document["retailOwnerClasses"]["unknown"]
-        ))
-        self.assertTrue(terrain_ids.isdisjoint(
-            document["retailOwnerClasses"]["unknown"]
-        ))
+        self.assertTrue(
+            {3, 12, 18, 19, 20, 24, 55}.isdisjoint(
+                document["retailOwnerClasses"]["unknown"]
+            )
+        )
+        self.assertTrue(
+            terrain_ids.isdisjoint(document["retailOwnerClasses"]["unknown"])
+        )
         self.assertEqual(
             document["retailCellProjection"]["counts"],
             {
@@ -207,22 +222,48 @@ class TopicManifestTests(unittest.TestCase):
                     entry["component"],
                     entry["baseTable"],
                     entry["body"],
-                    [(branch["terrain"], branch["ueaId"], branch["callsite"],
-                      branch["increment"]) for branch in entry["branches"]],
+                    [
+                        (
+                            branch["terrain"],
+                            branch["ueaId"],
+                            branch["callsite"],
+                            branch["increment"],
+                        )
+                        for branch in entry["branches"]
+                    ],
                 )
                 for entry in terrain["ownerResults"]
             ],
             [
-                ("0x82CF17C8", "trade", "0x82F771E2", "complete",
-                 [("desert", 32, "0x82CF1A28", 1)]),
-                ("0x82CF1AF0", "production", "0x82F771E1", "complete",
-                 [("forest", 30, "0x82CF1C18", 1),
-                  ("hill", 41, "0x82CF1C40", 1),
-                  ("mountain", 56, "0x82CF1C68", 2)]),
-                ("0x82CF1CE8", "food", "0x82F771E0", "complete",
-                 [("plains", 16, "0x82CF1E28", 1),
-                  ("sea", 28, "0x82CF1E28", 1),
-                  ("desert", 32, "0x82CF1E28", 1)]),
+                (
+                    "0x82CF17C8",
+                    "trade",
+                    "0x82F771E2",
+                    "complete",
+                    [("desert", 32, "0x82CF1A28", 1)],
+                ),
+                (
+                    "0x82CF1AF0",
+                    "production",
+                    "0x82F771E1",
+                    "complete",
+                    [
+                        ("forest", 30, "0x82CF1C18", 1),
+                        ("hill", 41, "0x82CF1C40", 1),
+                        ("mountain", 56, "0x82CF1C68", 2),
+                    ],
+                ),
+                (
+                    "0x82CF1CE8",
+                    "food",
+                    "0x82F771E0",
+                    "complete",
+                    [
+                        ("plains", 16, "0x82CF1E28", 1),
+                        ("sea", 28, "0x82CF1E28", 1),
+                        ("desert", 32, "0x82CF1E28", 1),
+                    ],
+                ),
             ],
         )
 
@@ -247,10 +288,20 @@ class TopicManifestTests(unittest.TestCase):
         document = json.loads(path.read_text(encoding="utf-8"))
 
         self.assertEqual(
-            [(record["itemId"], record["name"], record["baseCostFactor"], record["ueaId"])
-             for record in document["buildingRecords"]],
-            [(101, "Barracks", 4, 19), (105, "Library", 4, 20),
-             (114, "Courthouse", 8, 18)],
+            [
+                (
+                    record["itemId"],
+                    record["name"],
+                    record["baseCostFactor"],
+                    record["ueaId"],
+                )
+                for record in document["buildingRecords"]
+            ],
+            [
+                (101, "Barracks", 4, 19),
+                (105, "Library", 4, 20),
+                (114, "Courthouse", 8, 18),
+            ],
         )
         self.assertEqual(document["wonderRange"]["itemIds"], "200 through 299")
         self.assertEqual(document["wonderRange"]["ueaId"], 24)
@@ -288,8 +339,11 @@ class TopicManifestTests(unittest.TestCase):
             (MANIFESTS / "catalogs" / "relations.json").read_text(encoding="utf-8")
         )["records"]
         self.assertEqual(
-            {record["id"]: record["address"] for record in symbols
-             if record["id"] in document["catalogPromotion"]["symbols"]},
+            {
+                record["id"]: record["address"]
+                for record in symbols
+                if record["id"] in document["catalogPromotion"]["symbols"]
+            },
             {
                 "RVA-SYM-0334": "0x82D06380",
                 "RVA-SYM-0335": "0x82D91A78",
@@ -297,8 +351,11 @@ class TopicManifestTests(unittest.TestCase):
             },
         )
         self.assertEqual(
-            {record["id"] for record in relations
-             if record["id"] in document["catalogPromotion"]["relations"]},
+            {
+                record["id"]
+                for record in relations
+                if record["id"] in document["catalogPromotion"]["relations"]
+            },
             set(document["catalogPromotion"]["relations"]),
         )
 
@@ -312,24 +369,39 @@ class TopicManifestTests(unittest.TestCase):
             ["0x82D55808", "0x82D55C68"],
         )
         self.assertIn("do not directly consume", document["boundedNegative"]["result"])
-        self.assertIn("decode-coverage observation", document["currentEvidence"]["qualification"])
+        self.assertIn(
+            "decode-coverage observation", document["currentEvidence"]["qualification"]
+        )
 
     def test_scene_root_ref_vtable_consumer_boundary(self) -> None:
         path = MANIFESTS / "scene-root-ref-vtable-consumer-boundary.json"
         document = json.loads(path.read_text(encoding="utf-8"))
 
         self.assertEqual(document["id"], "RVA-F-0104")
-        self.assertEqual(document["currentEvidence"]["entries"][0]["address"], "0x82147EF8")
-        self.assertIn("eight exact targets", document["currentEvidence"]["entries"][0]["result"])
+        self.assertEqual(
+            document["currentEvidence"]["entries"][0]["address"], "0x82147EF8"
+        )
+        self.assertIn(
+            "eight exact targets", document["currentEvidence"]["entries"][0]["result"]
+        )
         self.assertEqual(
             [entry["slot"] for entry in document["slotReadSet"]],
             ["+0x04", "+0x08", "+0x0C", "+0x10", "+0x18", "+0x1C", "+0x20", "+0x24"],
         )
         self.assertEqual(len(document["scope"]["candidateTargets"]), 8)
-        self.assertIn("318 decoded instructions", document["currentEvidence"]["entries"][1]["result"])
-        self.assertIn("every decompilation reported", document["currentEvidence"]["entries"][2]["result"])
+        self.assertIn(
+            "318 decoded instructions",
+            document["currentEvidence"]["entries"][1]["result"],
+        )
+        self.assertIn(
+            "every decompilation reported",
+            document["currentEvidence"]["entries"][2]["result"],
+        )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
-        self.assertIn("decoded-listing observation only", document["currentEvidence"]["qualification"])
+        self.assertIn(
+            "decoded-listing observation only",
+            document["currentEvidence"]["qualification"],
+        )
 
     def test_gfx_child_slot_consumer_boundary(self) -> None:
         path = MANIFESTS / "gfx-child-slot-consumer-boundary.json"
@@ -345,7 +417,10 @@ class TopicManifestTests(unittest.TestCase):
             document["catalogPromotion"]["updatedEntities"],
             ["RVA-FLD-0002", "RVA-FLD-0003"],
         )
-        self.assertIn("corrected exact-function query", document["currentEvidence"]["qualification"])
+        self.assertIn(
+            "corrected exact-function query",
+            document["currentEvidence"]["qualification"],
+        )
 
     def test_non_unit_production_threshold_boundary(self) -> None:
         path = MANIFESTS / "non-unit-production-threshold-boundary.json"
@@ -354,8 +429,13 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["id"], "RVA-F-0106")
         self.assertEqual(document["scope"]["function"], "0x82D13978")
         self.assertEqual(document["scope"]["costHelper"], "0x82CF1278")
-        self.assertIn("independent item-less-than-300 guard", document["itemSelection"]["rangeQualification"])
-        self.assertEqual(document["buildingPath"]["firstWrite"]["address"], "0x82D16150")
+        self.assertIn(
+            "independent item-less-than-300 guard",
+            document["itemSelection"]["rangeQualification"],
+        )
+        self.assertEqual(
+            document["buildingPath"]["firstWrite"]["address"], "0x82D16150"
+        )
         self.assertEqual(
             [entry["address"] for entry in document["wonderPath"]["firstWrites"]],
             ["0x82D16310", "0x82D16318", "0x82D16320"],
@@ -402,11 +482,19 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["id"], "RVA-F-0102")
         self.assertEqual(document["acceptedAnchors"]["commandType"], 57)
         self.assertEqual(document["ghidraCoverage"]["entry"]["bodyBytes"], "0x8")
-        self.assertIsNone(document["ghidraCoverage"]["submitSite"]["containingFunction"])
-        self.assertEqual(document["ghidraCoverage"]["submitSite"]["decodedInstructions"], 0)
-        self.assertEqual(document["generatedCorroboration"]["receiverCandidate"]["register"], "r14")
-        self.assertEqual(document["generatedCorroboration"]["wrapperFlow"]["submitCall"],
-                         "0x82D224F0 calls 0x82CE1830")
+        self.assertIsNone(
+            document["ghidraCoverage"]["submitSite"]["containingFunction"]
+        )
+        self.assertEqual(
+            document["ghidraCoverage"]["submitSite"]["decodedInstructions"], 0
+        )
+        self.assertEqual(
+            document["generatedCorroboration"]["receiverCandidate"]["register"], "r14"
+        )
+        self.assertEqual(
+            document["generatedCorroboration"]["wrapperFlow"]["submitCall"],
+            "0x82D224F0 calls 0x82CE1830",
+        )
         self.assertIn("does not prove", document["boundedNegative"]["result"])
         self.assertIn("not a claim", document["conclusion"])
 
@@ -415,11 +503,17 @@ class TopicManifestTests(unittest.TestCase):
         document = json.loads(path.read_text(encoding="utf-8"))
 
         self.assertEqual(
-            [(record["itemId"], record["name"], record["baseCostFactor"])
-             for record in document["records"]],
-            [(200, "Pyramids of Egypt", 30), (201, "The Great Wall", 30),
-             (202, "Hanging Gardens of Babylon", 20), (203, "Stonehenge", 10),
-             (204, "Colossus of Rhodes", 20)],
+            [
+                (record["itemId"], record["name"], record["baseCostFactor"])
+                for record in document["records"]
+            ],
+            [
+                (200, "Pyramids of Egypt", 30),
+                (201, "The Great Wall", 30),
+                (202, "Hanging Gardens of Babylon", 20),
+                (203, "Stonehenge", 10),
+                (204, "Colossus of Rhodes", 20),
+            ],
         )
         self.assertEqual(
             [entry["offset"] for entry in document["textOffsets"]],
@@ -432,13 +526,17 @@ class TopicManifestTests(unittest.TestCase):
         document = json.loads(path.read_text(encoding="utf-8"))
 
         self.assertEqual(
-            [(record["itemId"], record["name"], record["baseCostFactor"])
-             for record in document["records"]],
-            [(205, "Oracle of Delphi", 25),
-             (206, "Great Library of Alexandria", 30),
-             (207, "The East India Company", 40),
-             (208, "Oxford University", 30),
-             (209, "Shakespeare's Theatre", 30)],
+            [
+                (record["itemId"], record["name"], record["baseCostFactor"])
+                for record in document["records"]
+            ],
+            [
+                (205, "Oracle of Delphi", 25),
+                (206, "Great Library of Alexandria", 30),
+                (207, "The East India Company", 40),
+                (208, "Oxford University", 30),
+                (209, "Shakespeare's Theatre", 30),
+            ],
         )
         self.assertIn("0x21", document["records"][2]["shortTokenBoundary"])
         self.assertIn("0x27", document["records"][4]["shortTokenBoundary"])
@@ -470,10 +568,12 @@ class TopicManifestTests(unittest.TestCase):
             document["itemIdScan"]["emittedFunctions"],
             ["0x8286FD70", "0x82951B58", "0x829C1298"],
         )
-        self.assertTrue(all(
-            "bad instruction data" in entry["stop"]
-            for entry in document["candidateResults"]
-        ))
+        self.assertTrue(
+            all(
+                "bad instruction data" in entry["stop"]
+                for entry in document["candidateResults"]
+            )
+        )
         self.assertIn("does not establish", document["boundedNegative"]["result"])
         self.assertIn("not an executable-wide absence", document["conclusion"])
 
@@ -486,7 +586,9 @@ class TopicManifestTests(unittest.TestCase):
         self.assertFalse(document["itemIdScan"]["truncated"])
         self.assertEqual(document["itemIdScan"]["emittedFunctions"], ["0x82500288"])
         self.assertEqual(document["candidateResults"][0]["body"], "complete")
-        self.assertIn("D3D format-name decoder", document["candidateResults"][0]["result"])
+        self.assertIn(
+            "D3D format-name decoder", document["candidateResults"][0]["result"]
+        )
         self.assertEqual(
             document["terrainYieldBoundary"]["functions"],
             ["0x82CF17C8", "0x82CF1AF0", "0x82CF1CE8"],
@@ -520,8 +622,10 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(consumer["function"], "0x82CF9F38")
         self.assertEqual(consumer["lookupCallsite"], "0x82CF9FE8")
         self.assertEqual(consumer["reserveBase"]["value"], "0x830ED544")
-        self.assertEqual(document["arithmetic"]["term"],
-                         "signed divide toward zero of (reserve + 25) by 50")
+        self.assertEqual(
+            document["arithmetic"]["term"],
+            "signed divide toward zero of (reserve + 25) by 50",
+        )
 
     def test_gold_reserve_aggregate_lifecycle_boundary(self) -> None:
         path = MANIFESTS / "gold-reserve-aggregate-lifecycle-boundary.json"
@@ -531,8 +635,12 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["scope"]["aggregate"], "0x830ED544 + player*4")
         self.assertEqual(document["aggregateReferenceResult"]["references"], 0)
         self.assertEqual(len(document["ownerResults"]), 2)
-        self.assertTrue(all(entry["modeledCallers"] == 0 for entry in document["ownerResults"]))
-        self.assertIn("No additional exact reserve source", document["boundedNegative"]["result"])
+        self.assertTrue(
+            all(entry["modeledCallers"] == 0 for entry in document["ownerResults"])
+        )
+        self.assertIn(
+            "No additional exact reserve source", document["boundedNegative"]["result"]
+        )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_native_renderer_indexed_draw_caller_frontier(self) -> None:
@@ -545,7 +653,9 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["referenceResult"]["rows"][0]["source"], "0x82169E6C")
         self.assertEqual(document["referenceResult"]["directCodeCallers"], [])
         self.assertEqual(document["referenceResult"]["decompiledCallerFunctions"], [])
-        self.assertIn("No direct caller-family ownership", document["boundedNegative"]["result"])
+        self.assertIn(
+            "No direct caller-family ownership", document["boundedNegative"]["result"]
+        )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_save_profile_owner_lifetime_boundary(self) -> None:
@@ -555,10 +665,14 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["id"], "RVA-F-0111")
         self.assertEqual(document["scope"]["ownerGlobal"], "0x8314EFE0")
         self.assertEqual(document["globalReferenceResult"]["references"], 107)
-        self.assertEqual(document["globalReferenceResult"]["types"], {"READ": 107, "WRITE": 0})
+        self.assertEqual(
+            document["globalReferenceResult"]["types"], {"READ": 107, "WRITE": 0}
+        )
         self.assertEqual(document["globalReferenceResult"]["modeledFunctions"], 65)
         self.assertEqual(len(document["bodyResults"]), 3)
-        self.assertIn("No teardown, republication", document["boundedNegative"]["result"])
+        self.assertIn(
+            "No teardown, republication", document["boundedNegative"]["result"]
+        )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_xbox_dds_map_authoring_consumer_boundary(self) -> None:
@@ -574,7 +688,10 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(len(document["bodyResults"]), 2)
         self.assertEqual(document["provedProperties"]["newRoleSpecificProperties"], [])
         self.assertEqual(len(document["remainingBlockers"]), 6)
-        self.assertIn("No new role-specific DDS consumer contract", document["boundedNegative"]["result"])
+        self.assertIn(
+            "No new role-specific DDS consumer contract",
+            document["boundedNegative"]["result"],
+        )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_calendar_event_year_consumer(self) -> None:
@@ -586,8 +703,13 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["discovery"]["pointerPlacements"], 0)
         self.assertEqual(document["eventYearConsumer"]["function"], "0x82DF9FD0")
         self.assertEqual(document["eventYearConsumer"]["objectYearField"], "+0x444")
-        self.assertIn("return value 1", document["eventYearConsumer"]["immediateBranch"])
-        self.assertEqual(document["catalogPromotion"]["newEntities"], ["RVA-SYM-0337", "RVA-REL-0473"])
+        self.assertIn(
+            "return value 1", document["eventYearConsumer"]["immediateBranch"]
+        )
+        self.assertEqual(
+            document["catalogPromotion"]["newEntities"],
+            ["RVA-SYM-0337", "RVA-REL-0473"],
+        )
 
     def test_key2_game_start_registration_boundary(self) -> None:
         path = MANIFESTS / "key2-game-start-registration-boundary.json"
@@ -597,8 +719,13 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["referenceResults"]["combinedFunctionCount"], 2)
         self.assertEqual(document["referenceResults"]["factory"]["references"], 0)
         self.assertEqual(document["referenceResults"]["vtablePointerPlacements"], 0)
-        self.assertEqual([entry["function"] for entry in document["bodyResults"]], ["0x821B0AF0", "0x82E60D50"])
-        self.assertIn("No direct key-2 registration owner", document["boundedNegative"]["result"])
+        self.assertEqual(
+            [entry["function"] for entry in document["bodyResults"]],
+            ["0x821B0AF0", "0x82E60D50"],
+        )
+        self.assertIn(
+            "No direct key-2 registration owner", document["boundedNegative"]["result"]
+        )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_frame_timing_field10_reader_boundary(self) -> None:
@@ -607,9 +734,18 @@ class TopicManifestTests(unittest.TestCase):
 
         self.assertEqual(document["id"], "RVA-F-0115")
         self.assertEqual(len(document["writerReconfirmation"]["fieldAccesses"]), 2)
-        self.assertEqual(document["ownerReferenceResult"]["primaryGlobal"]["distinctReaderFunctions"], 28)
-        self.assertEqual(document["ownerReferenceResult"]["candidateReadersInspected"], [])
-        self.assertIn("exceeding the six-candidate cap", document["boundedNegative"]["result"])
+        self.assertEqual(
+            document["ownerReferenceResult"]["primaryGlobal"][
+                "distinctReaderFunctions"
+            ],
+            28,
+        )
+        self.assertEqual(
+            document["ownerReferenceResult"]["candidateReadersInspected"], []
+        )
+        self.assertIn(
+            "exceeding the six-candidate cap", document["boundedNegative"]["result"]
+        )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_audio_stream_handle_lifecycle_boundary(self) -> None:
@@ -633,7 +769,10 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["slotResult"]["referenceCount"], 1)
         self.assertEqual(document["targetOperation"]["body"], "complete")
         self.assertEqual(document["targetOperation"]["returnedGlobal"], "0x8314F5D0")
-        self.assertEqual(document["catalogPromotion"]["newEntities"], ["RVA-SYM-0338", "RVA-SYM-0339", "RVA-SLOT-0058", "RVA-REL-0474"])
+        self.assertEqual(
+            document["catalogPromotion"]["newEntities"],
+            ["RVA-SYM-0338", "RVA-SYM-0339", "RVA-SLOT-0058", "RVA-REL-0474"],
+        )
 
     def test_nif_scene_transform_contract(self) -> None:
         path = MANIFESTS / "nif-scene-transform-contract.json"
@@ -705,13 +844,21 @@ class TopicManifestTests(unittest.TestCase):
             [field["width"] for field in tex_desc["fields"]],
             [4, 2, 1, 32],
         )
-        self.assertEqual(document["descriptorContracts"]["BumpTexDesc"]["extraWidth"], 24)
-        self.assertEqual(document["descriptorContracts"]["ParallaxTexDesc"]["extraWidth"], 4)
+        self.assertEqual(
+            document["descriptorContracts"]["BumpTexDesc"]["extraWidth"], 24
+        )
+        self.assertEqual(
+            document["descriptorContracts"]["ParallaxTexDesc"]["extraWidth"], 4
+        )
         shader = document["descriptorContracts"]["ShaderTexDesc"]
-        self.assertEqual([field["field"] for field in shader["fields"]], ["Has Map", "Map", "Map ID"])
+        self.assertEqual(
+            [field["field"] for field in shader["fields"]], ["Has Map", "Map", "Map ID"]
+        )
         self.assertIn("does not store", shader["titleRetention"])
         self.assertIn("0xF00F", document["derivedProfileLayout"]["flagsReadPolicy"])
-        self.assertEqual(document["implementationContract"]["status"], "retention-supported")
+        self.assertEqual(
+            document["implementationContract"]["status"], "retention-supported"
+        )
         unresolved = " ".join(document["boundedNegatives"]).lower()
         self.assertIn("uv-set", unresolved)
         self.assertIn("filter", unresolved)
@@ -746,9 +893,21 @@ class TopicManifestTests(unittest.TestCase):
         )
         self.assertEqual(
             [field["serializedOffset"] for field in fields],
-            ["+0x00", "+0x01", "+0x05", "+0x09", "+0x0D", "+0x11", "+0x15", "+0x16", "+0x17"],
+            [
+                "+0x00",
+                "+0x01",
+                "+0x05",
+                "+0x09",
+                "+0x0D",
+                "+0x11",
+                "+0x15",
+                "+0x16",
+                "+0x17",
+            ],
         )
-        self.assertEqual([field["width"] for field in fields], [1, 4, 4, 4, 4, 4, 1, 1, 1])
+        self.assertEqual(
+            [field["width"] for field in fields], [1, 4, 4, 4, 4, 4, 1, 1, 1]
+        )
         observed = document["sourceSelectionContract"]["observedCombination"]
         self.assertEqual(observed["Use External"], 1)
         self.assertEqual(observed["count"], 383)
@@ -759,8 +918,13 @@ class TopicManifestTests(unittest.TestCase):
         )
         self.assertIn("both Use External values", fields[1]["profileCondition"])
         self.assertIn("both Use External values", fields[2]["profileCondition"])
-        self.assertIn("not a lossless carrier", document["titleReadWriteBehavior"]["rawPreservation"])
-        self.assertEqual(document["implementationContract"]["status"], "retention-supported")
+        self.assertIn(
+            "not a lossless carrier",
+            document["titleReadWriteBehavior"]["rawPreservation"],
+        )
+        self.assertEqual(
+            document["implementationContract"]["status"], "retention-supported"
+        )
         unresolved = " ".join(document["boundedNegatives"]).lower()
         self.assertIn("embedded", unresolved)
         self.assertIn("path", unresolved)
@@ -849,7 +1013,9 @@ class TopicManifestTests(unittest.TestCase):
         )
         self.assertIn("unconditionally", document["profileConditions"]["titleBehavior"])
         self.assertIn("no arithmetic", document["rawValueBehavior"]["readPath"])
-        self.assertEqual(document["implementationContract"]["status"], "retention-supported")
+        self.assertEqual(
+            document["implementationContract"]["status"], "retention-supported"
+        )
         unresolved = " ".join(document["boundedNegatives"]).lower()
         self.assertIn("finite", unresolved)
         self.assertIn("color-space", unresolved)
@@ -864,7 +1030,9 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["referenceResult"]["references"], 96)
         self.assertEqual(document["referenceResult"]["cap"], 6)
         self.assertEqual(document["referenceResult"]["inspectedCallerBodies"], [])
-        self.assertIn("No exact allocation generation", document["boundedNegative"]["result"])
+        self.assertIn(
+            "No exact allocation generation", document["boundedNegative"]["result"]
+        )
         self.assertEqual(
             document["missingContracts"]["generationAndLifetime"], "unresolved"
         )
@@ -902,9 +1070,7 @@ class TopicManifestTests(unittest.TestCase):
             "completedSpanAcknowledgement",
         }
         self.assertEqual(set(contracts), gate_names)
-        self.assertTrue(
-            all(contracts[name] == "unresolved" for name in gate_names)
-        )
+        self.assertTrue(all(contracts[name] == "unresolved" for name in gate_names))
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_nif_external_texture_lookup_policy(self) -> None:
@@ -916,7 +1082,9 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["acceptedPopulation"]["externalReferences"], 383)
         chain = document["lookupChain"]
         self.assertEqual(chain["serializedCarrier"]["reader"], "0x82391BA8")
-        self.assertEqual(chain["serializedCarrier"]["runtimeFilenameField"], "object +0x34")
+        self.assertEqual(
+            chain["serializedCarrier"]["runtimeFilenameField"], "object +0x34"
+        )
         self.assertEqual(chain["streamResolution"]["provider"], "stream +0x1C0")
         self.assertEqual(chain["lazyResourceRequest"]["resourceField"], "object +0x3C")
         self.assertEqual(
@@ -932,7 +1100,9 @@ class TopicManifestTests(unittest.TestCase):
         )
         policy = document["filenamePolicy"]
         self.assertIn("NUL-terminated", policy["byteInterpretation"]["proved"])
-        self.assertIn("not a proved text encoding", policy["byteInterpretation"]["encoding"])
+        self.assertIn(
+            "not a proved text encoding", policy["byteInterpretation"]["encoding"]
+        )
         self.assertIn("both backslash and forward slash", policy["separatorHandling"])
         self.assertIn("collapses repeated backslashes", policy["separatorHandling"])
         self.assertIn("after the leading bytes", policy["separatorHandling"])
@@ -976,11 +1146,9 @@ class TopicManifestTests(unittest.TestCase):
         owner = document["thresholdOwner"]
         self.assertEqual(owner["function"], "0x82CF1060")
         self.assertEqual(owner["lookupCallsite"], "0x82CF10F8")
-        self.assertEqual(owner["adjustment"]["activeResult"],
-                         "max(20, baseline - 10)")
+        self.assertEqual(owner["adjustment"]["activeResult"], "max(20, baseline - 10)")
         consumer = document["cityUpdateConsumer"]
-        self.assertEqual(consumer["thresholdCalls"],
-                         ["0x82D163BC", "0x82D163D4"])
+        self.assertEqual(consumer["thresholdCalls"], ["0x82D163BC", "0x82D163D4"])
         self.assertEqual(consumer["storedProgressField"]["offset"], "0x34")
 
     def test_unit_movement_stat_contract(self) -> None:
@@ -1029,9 +1197,7 @@ class TopicManifestTests(unittest.TestCase):
             document["coreRole"]["domain"], ["attack-side", "defense-side"]
         )
         self.assertEqual(document["coreRole"]["carrier"], "derived-callsite-state")
-        self.assertEqual(
-            document["coreRole"]["ordering"], ["0x82CDA214", "0x82CDA234"]
-        )
+        self.assertEqual(document["coreRole"]["ordering"], ["0x82CDA214", "0x82CDA234"])
         self.assertEqual(document["coreRole"]["attackSide"]["playerLocal"], "r1+1572")
         self.assertEqual(document["coreRole"]["defenseSide"]["playerLocal"], "r1+1596")
         self.assertEqual(
@@ -1039,7 +1205,10 @@ class TopicManifestTests(unittest.TestCase):
             "one-resolver-backed-consumer",
         )
         self.assertEqual(
-            {entry["function"] for entry in document["aiEvaluationBoundary"]["entries"]},
+            {
+                entry["function"]
+                for entry in document["aiEvaluationBoundary"]["entries"]
+            },
             {"0x82CB44E0", "0x82CB6E48", "0x82CBF570"},
         )
         self.assertEqual(document["aiRoleConsumer"]["function"], "0x82CBF570")

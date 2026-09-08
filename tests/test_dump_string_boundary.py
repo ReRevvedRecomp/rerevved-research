@@ -4,7 +4,6 @@ import unittest
 from collections import OrderedDict
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[1]
 SCRIPT = REPO / "ghidra" / "DumpStringBoundary.java"
 
@@ -24,9 +23,7 @@ class DumpStringBoundaryTests(unittest.TestCase):
     def method_body(self) -> str:
         source = SCRIPT.read_text(encoding="utf-8")
         start = source.index("    private void addFunctions(")
-        end = source.index(
-            "    private void followRegistrationWindow(", start
-        )
+        end = source.index("    private void followRegistrationWindow(", start)
         return source[start:end]
 
     def test_cap_guard_precedes_insertion(self):
@@ -49,9 +46,7 @@ class DumpStringBoundaryTests(unittest.TestCase):
                 self.assertEqual(add_functions(initial, additions, cap), expected)
 
     def test_overflow_stops_at_cap_without_reordering(self):
-        result = add_functions(
-            ("root",), ("caller-a", "callee-a", "callee-b"), 3
-        )
+        result = add_functions(("root",), ("caller-a", "callee-a", "callee-b"), 3)
         self.assertEqual(result, ("root", "caller-a", "callee-a"))
         self.assertEqual(len(result), 3)
 

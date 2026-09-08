@@ -8,7 +8,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 TOOLS = Path(__file__).resolve().parents[1] / "tools"
 MODULE_PATH = TOOLS / "match-version-functions.py"
 SPEC = importlib.util.spec_from_file_location("match_version_functions", MODULE_PATH)
@@ -173,9 +172,7 @@ class MatcherTests(unittest.TestCase):
             matcher._heuristic_score = original
         self.assertEqual(item["status"], "ambiguous")
         self.assertEqual(item["candidateAddress"], None)
-        self.assertEqual(
-            len(item["ambiguity"]), matcher.MAX_HEURISTIC_CANDIDATES
-        )
+        self.assertEqual(len(item["ambiguity"]), matcher.MAX_HEURISTIC_CANDIDATES)
         self.assertIn("exceeds cap", " ".join(item["reasons"]))
         self.assertEqual(scored, [])
 
@@ -184,8 +181,20 @@ class MatcherTests(unittest.TestCase):
             "0x100", exact="source", shape="source", mnemonic="source", anchors=["A"]
         )
         targets = [
-            function("0x200", exact="target-a", shape="target-a", mnemonic="other", anchors=["A"]),
-            function("0x300", exact="target-b", shape="target-b", mnemonic="other", anchors=["A"]),
+            function(
+                "0x200",
+                exact="target-a",
+                shape="target-a",
+                mnemonic="other",
+                anchors=["A"],
+            ),
+            function(
+                "0x300",
+                exact="target-b",
+                shape="target-b",
+                mnemonic="other",
+                anchors=["A"],
+            ),
         ]
         item = report([source], targets)["matches"][0]
         self.assertEqual(item["status"], "ambiguous")
@@ -223,16 +232,15 @@ class MatcherTests(unittest.TestCase):
             path = Path(directory) / "bad.jsonl"
             malformed = function("0x100")
             del malformed["shapeHash"]
-            path.write_text(json.dumps(program("bad")) + "\n" + json.dumps(malformed) + "\n")
+            path.write_text(
+                json.dumps(program("bad")) + "\n" + json.dumps(malformed) + "\n"
+            )
             with self.assertRaises(matcher.InputFormatError):
                 matcher.load_export(path)
 
             count_mismatch = function("0x100")
             path.write_text(
-                json.dumps(program("bad", 2))
-                + "\n"
-                + json.dumps(count_mismatch)
-                + "\n"
+                json.dumps(program("bad", 2)) + "\n" + json.dumps(count_mismatch) + "\n"
             )
             with self.assertRaisesRegex(matcher.InputFormatError, "functionCount"):
                 matcher.load_export(path)
@@ -240,11 +248,17 @@ class MatcherTests(unittest.TestCase):
             duplicate = function("0x100")
             path.write_text(
                 "\n".join(
-                    [json.dumps(program("bad")), json.dumps(duplicate), json.dumps(duplicate)]
+                    [
+                        json.dumps(program("bad")),
+                        json.dumps(duplicate),
+                        json.dumps(duplicate),
+                    ]
                 )
                 + "\n"
             )
-            with self.assertRaisesRegex(matcher.InputFormatError, "duplicate function address"):
+            with self.assertRaisesRegex(
+                matcher.InputFormatError, "duplicate function address"
+            ):
                 matcher.load_export(path)
 
     def test_results_and_json_are_deterministically_ordered(self) -> None:

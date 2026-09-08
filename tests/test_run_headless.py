@@ -7,7 +7,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[1]
 DRIVER = REPO / "tools" / "run-headless.ps1"
 SCRATCH = REPO / "docs" / "ai_agents" / "local" / ".tmp"
@@ -72,8 +71,10 @@ class RunHeadlessReadOnlyTests(unittest.TestCase):
     def assert_read_only(self, *extra_args: str) -> None:
         result = self.run_driver(*extra_args)
         log = self.work / "query.log"
-        details = result.stdout + result.stderr + (
-            log.read_text(encoding="utf-8") if log.exists() else ""
+        details = (
+            result.stdout
+            + result.stderr
+            + (log.read_text(encoding="utf-8") if log.exists() else "")
         )
         self.assertEqual(result.returncode, 0, details)
         arguments = json.loads(self.capture.read_text(encoding="utf-8"))

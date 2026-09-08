@@ -7,7 +7,6 @@ import subprocess
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[1]
 BOOTSTRAP = REPO / "tools" / "bootstrap-ghidra.ps1"
 
@@ -74,9 +73,7 @@ class GhidraBootstrapTests(unittest.TestCase):
 
     def test_plan_refuses_configured_canonical_project(self):
         result = self.run_bootstrap(
-            *self.plan_args(
-                project_dir=REPO / "canonical", project_name="canonical"
-            )
+            *self.plan_args(project_dir=REPO / "canonical", project_name="canonical")
         )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("configured canonical project", result.stderr)
@@ -119,9 +116,7 @@ class GhidraBootstrapTests(unittest.TestCase):
         self.assertIn("Disposable project directory is required", result.stderr)
 
     def test_code_seeds_require_function_map(self):
-        result = self.run_bootstrap(
-            *self.plan_args(), "-CodeSeedSites", "0x8269CAE0"
-        )
+        result = self.run_bootstrap(*self.plan_args(), "-CodeSeedSites", "0x8269CAE0")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("require a generated function map", result.stderr)
 
@@ -135,9 +130,7 @@ class GhidraBootstrapTests(unittest.TestCase):
     def test_execution_log_is_written_as_utf8(self):
         script = BOOTSTRAP.read_text(encoding="utf-8")
         self.assertIn("$stepOutput = @(& $headless @headlessArgs 2>&1)", script)
-        self.assertIn(
-            "Add-Content -LiteralPath $LogPath -Encoding UTF8", script
-        )
+        self.assertIn("Add-Content -LiteralPath $LogPath -Encoding UTF8", script)
         self.assertIn(".Replace([string][char]0, '')", script)
         self.assertNotIn(">> $LogPath", script)
 

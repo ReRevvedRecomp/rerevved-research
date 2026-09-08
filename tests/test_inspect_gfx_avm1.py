@@ -3,7 +3,6 @@ import struct
 import unittest
 from pathlib import Path
 
-
 TOOL_PATH = Path(__file__).parents[1] / "tools" / "inspect-gfx-avm1.py"
 SPEC = importlib.util.spec_from_file_location("inspect_gfx_avm1", TOOL_PATH)
 MODULE = importlib.util.module_from_spec(SPEC)

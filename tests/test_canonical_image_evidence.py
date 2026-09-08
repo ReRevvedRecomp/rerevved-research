@@ -5,7 +5,6 @@ import unittest
 from copy import deepcopy
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "tools"))
 
@@ -28,8 +27,7 @@ def observations() -> dict:
             "processor": "PowerPC:BE:32:default",
             "sourceSize": 18939904,
             "sourceSha256": (
-                "5C7A8C3AD9B6A9D39CC9BBF3DA5AB230"
-                "15A568C65C723D298F846086324C4680"
+                "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680"
             ),
         },
         "function": {
@@ -79,7 +77,9 @@ class CanonicalImageEvidenceTests(unittest.TestCase):
     def test_matching_observations_pass(self):
         attestation = build_attestation(observations(), self.contract)
         validate_attestation(attestation, REPO)
-        self.assertEqual(attestation["result"], {"status": "pass", "passed": 5, "total": 5})
+        self.assertEqual(
+            attestation["result"], {"status": "pass", "passed": 5, "total": 5}
+        )
 
     def test_negative_field_mutation_fails(self):
         mutated = observations()
@@ -88,14 +88,18 @@ class CanonicalImageEvidenceTests(unittest.TestCase):
         validate_attestation(attestation, REPO)
         self.assertEqual(attestation["result"]["status"], "fail")
         self.assertEqual(
-            next(item for item in attestation["checks"] if item["name"] == "field-access")["status"],
+            next(
+                item for item in attestation["checks"] if item["name"] == "field-access"
+            )["status"],
             "fail",
         )
 
     def test_missing_observations_produce_schema_valid_failure(self):
         attestation = build_attestation(None, self.contract)
         validate_attestation(attestation, REPO)
-        self.assertEqual(attestation["result"], {"status": "fail", "passed": 0, "total": 5})
+        self.assertEqual(
+            attestation["result"], {"status": "fail", "passed": 0, "total": 5}
+        )
 
     def test_incomplete_or_duplicate_checks_fail_even_with_consistent_summary(self):
         original = build_attestation(observations(), self.contract)
@@ -158,6 +162,7 @@ class CanonicalImageEvidenceTests(unittest.TestCase):
                     document["checks"][index][field] = value
                     with self.assertRaisesRegex(CanonicalImageContractError, field):
                         validate_attestation(document, REPO)
+
 
 if __name__ == "__main__":
     unittest.main()

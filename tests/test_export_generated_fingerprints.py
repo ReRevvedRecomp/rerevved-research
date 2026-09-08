@@ -6,7 +6,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[1]
 TOOL = REPO / "tools" / "export-generated-fingerprints.py"
 SPEC = importlib.util.spec_from_file_location("export_generated_fingerprints", TOOL)
@@ -42,9 +41,7 @@ class ExportGeneratedFingerprintsTests(unittest.TestCase):
             self.assertEqual(MODULE.export(root, "sample", output), 2)
             records = [json.loads(line) for line in output.read_text().splitlines()]
             self.assertEqual(records[0]["functionCount"], 2)
-            self.assertEqual(
-                records[0]["fingerprintAlgorithm"], "rexglue-comment-v1"
-            )
+            self.assertEqual(records[0]["fingerprintAlgorithm"], "rexglue-comment-v1")
             self.assertEqual(
                 [record["address"] for record in records[1:]],
                 ["0x82000000", "0x82000010"],
@@ -68,10 +65,7 @@ class ExportGeneratedFingerprintsTests(unittest.TestCase):
             self.write_chunk(
                 root,
                 0,
-                "DEFINE_REX_FUNC(sub_82000000) {\n"
-                "  // bctrl\n"
-                "  // bl 0x82100000\n"
-                "}\n",
+                "DEFINE_REX_FUNC(sub_82000000) {\n  // bctrl\n  // bl 0x82100000\n}\n",
             )
             records = MODULE.parse_chunks(root, "sample")
             self.assertEqual(records[0]["directCallCount"], 1)

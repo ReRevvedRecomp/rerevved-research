@@ -31,7 +31,7 @@
       "site": "0x826A4884",
       "target": "0x82E92454",
       "continuation": "0x826A4888",
-      "result": "The generated owner prepares all VdSwap register and stack arguments, calls the exact import, then retains the returned primary-ring position in device field +0x30."
+      "result": "The owner prepares all VdSwap register and stack arguments and calls the exact import. It then stores the retained reservation helper result plus 256 bytes in device field +0x30, not VdSwap's return value."
     },
     "generatedCorroboration": {
       "definition": "generated/default/rerevved_recomp.65.cpp:12613",
@@ -39,11 +39,22 @@
       "systemCommandBuffer": "generated/default/rerevved_recomp.65.cpp:12869",
       "swapCall": "generated/default/rerevved_recomp.65.cpp:12905"
     },
+    "reservationDataflow": {
+      "proof": "0x826A4840 requests 64 dwords, 0x826A4848 calls 0x8269C7A8, and 0x826A4858 retains its r3 in r30. The helper's successful return at 0x8269C804 loads device +0x30. At 0x826A4880, VdSwap r3 becomes r30 + 4. After the import call, 0x826A4888 computes r11 = r30 + 0x100 and 0x826A488C stores r11 at device +0x30. No VdSwap return-value dependency supplies that store.",
+      "storage": "Initializer 0x8269C8E0 separates primary-ring base +0x3A30 and mask +0x3A34 from command-buffer segment start +0x3A50 and cursor +0x30. The reservation argument establishes neither primary-ring membership nor physical allocation non-overlap.",
+      "locators": [
+        "ghidra/DumpFunctions.java:0x8269C7A8,0x826A4638,0x8269C8E0",
+        "ghidra/DumpMemoryWords.java:0x8269C7D8,0x826A4868 word radius 12; ranges 0x8269C7A8-0x8269C808,0x826A4838-0x826A4898",
+        "ghidra/DumpMemoryWords.java:0x8269CB60 word radius 32; range 0x8269CAE0-0x8269CBE0",
+        "rerevved generated/default/rerevved_recomp.211.cpp:sub_826A4638, guest 0x826A4840-0x826A488C"
+      ],
+      "qualification": "Exact instruction words and narrow generated corroboration establish this static register flow despite save-thunk truncation. They do not prove runtime reservation publication, ownership, lifetime, or completion. Earlier generated-file locators above retain their original provenance."
+    },
     "sdkAuthority": "rerevved-rexglue-sdk e89618a src/kernel/xboxkrnl/xboxkrnl_video.cpp:440-521",
     "sourceCompletionBoundary": {
       "ordinaryCaller": "The generated 0x826ABEA8 worker holds the device critical section, calls 0x826A4630 at 0x826ABF80, then calls the VdSwap owner at 0x826ABF90. The alternate 0x82517E38 caller has the same 0x826A4630-before-0x826A4638 order at 0x82517E58 and 0x82517E88.",
       "flushEntry": "0x826A4630 is only a tail wrapper that passes literal zero as r4 to 0x826A4150.",
-      "flushBody": "One read-only DumpFunctions.java query identifies 0x826A4150 and its direct callees. Narrow generated corroboration shows that it emits command words through 0x8269CD20 and 0x8269BF40, passes 0x826A3FB8 as a packet callback target, advances the primary ring pointer, and sets device byte +0x2ABD bit 0x10. The exact body contains no frontbuffer read and no source-specific CPU completion wait.",
+      "flushBody": "One read-only DumpFunctions.java query identifies 0x826A4150 and its direct callees. Narrow generated corroboration shows that it emits command words through 0x8269CD20 and 0x8269BF40, passes 0x826A3FB8 as a packet callback target, advances the device +0x30 command-buffer cursor, and sets device byte +0x2ABD bit 0x10. The exact body contains no frontbuffer read and no source-specific CPU completion wait.",
       "packetCallback": "A second read-only DumpFunctions.java query identifies 0x8269BF40, 0x826A3FB8, and 0x826A9C30. Ghidra truncates the first two at save thunks and the third at bad instruction data. Narrow generated corroboration shows 0x8269BF40 writing command words and 0x826A3FB8 updating pacing, writeback, and MMIO-related device state when invoked; it does not establish CPU-side frontbuffer freshness at the later VdSwap call.",
       "result": "The pre-swap chain establishes command-stream order, not a CPU-readable producer-completion gate for the frontbuffer virtual address. A native hook at 0x826A4884 therefore cannot treat page readability as proof that the source contains the completed frame."
     },
@@ -111,7 +122,7 @@
     }
   },
   "abi": {
-    "r3": "primary ring-buffer reservation + 0x4, produced by helper 0x8269C7A8 with requested size 64 dwords",
+    "r3": "command-buffer reservation + 0x4, produced from device +0x30 by helper 0x8269C7A8 with requested size 64 dwords; primary-ring membership is not established",
     "r4": "pointer to the six-dword frontbuffer texture-fetch descriptor copied from incoming argument r28 + 0x1C and adjusted by the owner",
     "r5": "system writeback pointer derived from device field +0x2A90 + 0x8",
     "r6": "buffer returned through VdGetSystemCommandBuffer",
@@ -130,7 +141,7 @@
   },
   "guards": [
     "Do not infer native provider, Resolve, VdSwap, or visible-frame execution from the native factory observation.",
-    "Do not treat the primary ring-buffer reservation, system writeback, or system-command-buffer values as the frontbuffer source.",
+    "Do not treat the command-buffer reservation, system writeback, or system-command-buffer values as the frontbuffer source.",
     "Do not copy ReBlue surface fields, formats, offsets, or present policy.",
     "Do not bypass guest-memory lifetime and synchronization requirements merely because the ABI exposes a virtual address or a pre-swap command-stream flush.",
     "Do not make the research manifest a title runtime dependency."

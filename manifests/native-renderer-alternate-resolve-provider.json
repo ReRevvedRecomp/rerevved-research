@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0142",
+  "topic": "native-renderer-alternate-resolve-provider",
+  "status": "closed",
+  "confidence": "confirmed",
+  "image": "image.json",
+  "question": "What exact resource does alternate Resolve provider 0x82517800 return, and what bounded creation, publication, mutation, release, and reuse facts apply to it?",
+  "scope": {
+    "resolveCallsite": "0x8250AFEC",
+    "observedVtable": "0x82047628",
+    "observedProvider": "0x82517800",
+    "wrapperFactory": "0x82517EC0",
+    "wrapperSize": "0x18",
+    "returnedResourceField": "0x14",
+    "wrapperCleanup": "0x825180B8",
+    "lowerCleanup": "0x82518B40",
+    "boundary": "This packet joins one exact pre-Resolve runtime item to vtable 0x82047628 and provider 0x82517800, then traces that provider's first output and the smallest static wrapper lifecycle. Factory 0x82517EC0 is a supported constructor path for the same vtable but is not dynamically joined to the observed item. The explicit-buffer vtable 0x8204767C and its +0x90, +0x94, and +0x98 fields remain a separate type."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-resolve-destination-lifecycle-discriminator",
+      "use": "Provides the exact selected-item virtual +0x0C dispatch and unchanged first-output-to-Resolve-r6 dataflow at 0x8250AFEC."
+    },
+    {
+      "topic": "native-renderer-resolve-resource-contract",
+      "use": "Provides the accepted Resolve resource reads and the separate explicit device-creator candidate whose runtime selection remains unresolved."
+    },
+    {
+      "topic": "native-renderer-resource-lifetime-boundary",
+      "use": "Provides the accepted allocation-generation and lower-recycling limits that remain unresolved here."
+    }
+  ],
+  "runtimeObservation": {
+    "probe": "native_resolve_identity_probe",
+    "titleRevision": "911dc92ba232f2f9f702d1767db3d38a1b243141",
+    "sdkRevision": "b144a3ac4fe6487fe8ace5155eba8bbaaed5174f",
+    "placement": "Immediately before Resolve callsite 0x8250AFEC after r6 was loaded at 0x8250AFB8.",
+    "records": {
+      "total": 8,
+      "alternate": "One record reported vptr 0x82047628 and provider 0x82517800.",
+      "explicitBufferCandidate": "Seven records reported vptr 0x8204767C, provider 0x82517860, selector zero or one, and selected-slot-equals-r6 true."
+    },
+    "artifactDigests": {
+      "analysisSha256": "7BA02F57837A9EB2C6EFC56C91227460ACBC832D4B4B66B9F17BAF66D5A1A250",
+      "candidateSha256": "BB38B0E3ADDA24DDF8341093D5BA1225B2665E001ECCDF460D23C45A88346494",
+      "exitSha256": "780A8E0F8AD91BA8581C8BD6284C057F52066C7FCEAFA356576DFCAC21649B7E",
+      "runtimeLogSha256": "87C69371CCF9C025679A1B85888F083132A8F690D9DCC15E0BF0575B77B15EA2"
+    },
+    "exit": "The process exited normally with code zero and no remaining title process.",
+    "configurationQualification": "The ReRevved logo pack was enabled. All eight identity records occurred before the logo override was applied. The observation is accepted only for this configuration and does not establish retail-only visual parity.",
+    "privacy": "The probe emitted no object, resource, slot, descriptor, or backing pointer or payload. Its capture root is consumed and is not a reusable evidence input."
+  },
+  "providerVtable": {
+    "address": "0x82047628",
+    "rttiAccessor": "Slot +0x08 contains 0x82518C68, which returns RTTI address 0x82F8FBA4. No accepted catalog or named RTTI record supplies an original class name.",
+    "providerSlot": "Slot +0x0C contains 0x82517800.",
+    "cleanupSlot": "Slot +0x18 contains 0x825180B8.",
+    "qualification": "The table is distinct from explicit-buffer vtable 0x8204767C. Uninterpreted slots and the original type name remain unresolved."
+  },
+  "provider": {
+    "function": "0x82517800",
+    "firstOutput": "Loads wrapper field +0x14 and stores it through incoming output pointer r4.",
+    "secondOutput": "Stores zero through incoming output pointer r5.",
+    "return": "Returns Boolean one.",
+    "resolveJoin": "RVA-F-0140 proves that the first output of the runtime-selected provider reaches Resolve r6 unchanged. The observed vptr and slot identify 0x82517800, so the alternate Resolve resource is exactly the selected wrapper's +0x14 value.",
+    "qualification": "This identifies the returned resource field, not the resource's concrete lower type, creator leaf, allocation, contents generation, or backing-recycling policy."
+  },
+  "wrapperLayout": {
+    "extent": "Factory 0x82517EC0 allocates 24 bytes. Constructor-style initialization installs vptr 0x82047628, initializes +0x04, +0x08, +0x0C, and +0x14 to zero, initializes +0x10 to 0x100, and then overwrites only the low 16 bits at +0x10 from the configuration input.",
+    "fields": {
+      "0x04": "Atomic wrapper reference count used by publication links.",
+      "0x08": "Pointer to the distinct publication link that retains this wrapper.",
+      "0x0C": "Pointer to an optional 68-byte copy of factory configuration metadata.",
+      "0x10": "Configuration halfword; no generation role is supported.",
+      "0x14": "Returned resource pointer exported by provider 0x82517800."
+    },
+    "qualification": "The 24-byte allocation proves this wrapper extent only. The 68-byte copied block is separate metadata and is not the returned resource header or backing."
+  },
+  "creationAndPublication": {
+    "factory": "0x82517EC0 allocates and initializes the 24-byte wrapper. It treats r4 as publication-head storage, r5 as source/context, and r6 as configuration input.",
+    "creatorInputs": "Source/context virtual slots +0x48 and +0x4C produce two creator arguments. Helper 0x8251C9C0 produces a configuration pointer; its +0x0C word, after one bounded conditional patch, becomes another creator argument.",
+    "dynamicCreator": "At 0x82517FFC the factory dispatches through the current device's vtable slot +0x08 with the two context-derived values, literal one, the configuration +0x0C word, and zero. A non-null result is stored at wrapper +0x14.",
+    "metadata": "After a non-null resource result, the factory allocates 68 bytes, copies the configuration block into it when allocation succeeds, and stores that pointer at wrapper +0x0C. Metadata allocation failure leaves +0x0C null without clearing the returned resource.",
+    "linkPublication": "When publication-head storage is null, 0x823DC6F8 creates a distinct 20-byte link; otherwise 0x82347100 replaces the existing link target with the new wrapper. The link is stored through the publication head and at wrapper +0x08, and link +0x10 points to the wrapper.",
+    "outerPublication": "One bounded caller, 0x8252EF20, calls the factory and on success stores wrapper +0x14 at outer-container field +0x58.",
+    "qualification": "The observed runtime wrapper is not proved to originate from 0x82517EC0. Publication-head and outer-container ownership outside these exact edges remain unresolved."
+  },
+  "headerAndBacking": {
+    "returnedResource": "Resolve retains r6 as the returned resource and reads resource offsets +0x1C, +0x20, +0x24, +0x28, and +0x30. This distinguishes the resource from the wrapper's separate 68-byte metadata copy.",
+    "dynamicBoundary": "The known device vtable 0x8204A1B0 has slot +0x08 target 0x82533DB8 and its accepted 0x34-byte header/backing path, but 0x82517EC0 selects device slot +0x08 indirectly. No runtime device vptr or slot target joins the alternate wrapper to 0x82533DB8.",
+    "result": "No concrete header builder, lower allocation, backing storage identity, dimensions, format, usage, allocation generation, or contents generation is established for the alternate resource."
+  },
+  "mutationAndReuse": {
+    "resourceFieldWrites": "Within the bounded wrapper closure, +0x14 is initialized to null, assigned the non-null dynamic creator result, read by the provider and bounded caller, used to locate the pointed resource's +0x04 reference count during release, and cleared. No static replacement setter is identified.",
+    "configurationField": "Wrapper +0x10 is a configuration halfword and is not an allocation or contents generation counter.",
+    "linkReuse": "An existing publication link may replace its retained wrapper target through 0x82347100. This is link-target reuse, not resource-memory or backing-address reuse.",
+    "boundedNegative": "No scalar generation, dirty publication, replacement, invalidation, allocation identity, contents identity, lower backing deallocation, or address-recycling policy is supported for the alternate resource. The same allocation/contents-generation and lower-recycling limits remain unresolved for the seven explicit-buffer candidate matches."
+  },
+  "release": {
+    "wrapperCleanup": "0x825180B8 loads wrapper +0x14 and atomically decrements the pointed resource's +0x04 reference count. When the count reaches zero it calls lower cleanup 0x82518B40, then clears wrapper +0x14. It passes wrapper +0x0C and size 68 to helper 0x82465DA8, then clears +0x0C.",
+    "linkCleanup": "Link cleanup 0x823DC590 atomically decrements wrapper +0x04 and, when that count reaches zero, dispatches wrapper vtable slot +0x04. Its exact target 0x82359DD8 then tail-dispatches wrapper slot +0x00 with argument one. The link is passed to 0x82353A40, which installs a base vptr and decrements a global count; no link-storage deallocation is proved.",
+    "outerCleanup": "The bounded outer container independently decrements its +0x58 resource's +0x04 and calls the same lower cleanup when that count reaches zero. No AddRef is visible at the wrapper +0x14 to outer +0x58 handoff.",
+    "lowerCleanup": "0x82518B40 classifies the resource dynamically and dispatches classifier code 3 to device slot +0x0C, code 17 to +0x1C, code 18 to +0x14, and code 19 to +0x24. Code 20 and other values take no lower release call in the bounded body.",
+    "qualification": "The classifier and dynamic device calls do not identify a concrete lower destructor, backing deallocator, release completion point, or recycling policy. Reference decrements do not prove runtime destruction or address retirement."
+  },
+  "remainingDynamicDiscriminator": {
+    "purpose": "Join the observed alternate wrapper to factory 0x82517EC0 and identify the exact dynamic device creator without emitting guest pointers or accepting an address-reuse collision.",
+    "placement": [
+      "Immediately before dynamic creator call 0x82517FFC, retain internally the wrapper in r30 and the device slot +0x08 target.",
+      "Immediately before successful store 0x82518034, assign a monotonic transient creation token to that wrapper and non-null resource result in r11; replace any older entry for the same wrapper address.",
+      "At wrapper cleanup 0x825180B8 and destructor 0x82518D90, invalidate the matching transient token before the wrapper can be freed.",
+      "Immediately before Resolve callsite 0x8250AFEC, compare selected r30 and r6 only with a still-live retained wrapper/resource token."
+    ],
+    "emittedValues": "Emit only the transient creation token, device creator target, selected vptr, selected provider, a Boolean for a live selected-item-to-created-wrapper match, and a Boolean for r6-to-created-resource equality. Do not emit wrapper, resource, metadata, link, descriptor, or backing pointers or payloads, and do not persist the transient table across a process run.",
+    "decisiveResult": "One still-live token record with creator success and both equality Booleans true joins the observed alternate Resolve resource to 0x82517EC0 and the exact device creator leaf without relying on raw address equality across lifetimes. A missing, expired, or false match leaves factory origin unresolved. This discriminator does not identify allocation or contents generation or lower backing recycling."
+  },
+  "currentEvidence": {
+    "method": "One consumed default-off exact-callsite runtime observation against the pinned Title and SDK revisions, foreground read-only Ghidra function and vtable queries against the canonical version 1.3 project, and narrow exact-function generated-code corroboration.",
+    "entries": [
+      {
+        "role": "runtime-selected alternate provider",
+        "address": "0x8250AFEC, 0x82047628, 0x82517800",
+        "result": "One exact pre-Resolve record selected vtable 0x82047628 and its +0x0C provider 0x82517800.",
+        "confidence": "confirmed"
+      },
+      {
+        "role": "first-output producer",
+        "address": "0x82517800",
+        "result": "The provider exports wrapper +0x14 as its first output, zeroes its second output, and returns one.",
+        "confidence": "confirmed"
+      },
+      {
+        "role": "bounded wrapper lifecycle",
+        "address": "0x82517EC0, 0x825180B8, 0x82518B40",
+        "result": "The static factory, publication, reference-count, cleanup, and dynamic lower-release paths are bounded without assigning the runtime-selected wrapper to this factory.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpFunctions.java:0x82517800,0x82517EC0,0x825180B8,0x82518B40",
+      "ghidra/DumpMemoryWords.java:0x82047628,0x8204767C",
+      "generated:rerevved/sub_8250AC90",
+      "generated:rerevved/sub_82517800",
+      "generated:rerevved/sub_82517EC0",
+      "generated:rerevved/sub_82517958",
+      "generated:rerevved/sub_82518C68",
+      "generated:rerevved/sub_825180B8",
+      "generated:rerevved/sub_82518D90",
+      "generated:rerevved/sub_82518B40",
+      "generated:rerevved/sub_823DC6F8",
+      "generated:rerevved/sub_82347100",
+      "generated:rerevved/sub_823DC590",
+      "generated:rerevved/sub_82359DD8",
+      "generated:rerevved/sub_82353A40",
+      "generated:rerevved/sub_8252EF20",
+      "generated:rerevved/sub_8251DC80",
+      "runtime:native_resolve_identity_probe"
+    ],
+    "qualification": "Runtime evidence proves one selected vtable/provider identity and static evidence proves that provider's first output. Static factory and cleanup paths do not prove runtime construction, mutation, destruction, lower allocation, backing release, or address recycling."
+  },
+  "catalogPromotion": {
+    "newEntities": [
+      "RVA-SYM-0345",
+      "RVA-SYM-0346",
+      "RVA-STR-0055",
+      "RVA-FLD-0176",
+      "RVA-FLD-0177",
+      "RVA-FLD-0178",
+      "RVA-FLD-0179",
+      "RVA-FLD-0180",
+      "RVA-VTBL-0033",
+      "RVA-SLOT-0061",
+      "RVA-REL-0476",
+      "RVA-REL-0477",
+      "RVA-REL-0478"
+    ],
+    "result": "Promotes the reusable provider, factory, partial wrapper layout, observed provider vtable slot, and exact production and installation relations without naming the unresolved class or lower resource type."
+  },
+  "guards": [
+    "Do not apply explicit-buffer fields +0x90, +0x94, or +0x98 to vtable 0x82047628 or provider 0x82517800.",
+    "Do not apply device creator 0x82533DB8 or its 0x34-byte header/backing path until the dynamic device +0x08 target is observed for this factory result.",
+    "Do not treat the 68-byte wrapper metadata copy as the returned resource, descriptor, or backing.",
+    "Do not treat reference counts, wrapper +0x10, observer sequence, command-ring state, or guest pointers as allocation or contents generation.",
+    "Do not infer lower backing deallocation, retirement, or address recycling from the dynamic cleanup classifier.",
+    "Do not implement a persistent native mirror or reuse the consumed capture."
+  ],
+  "conclusion": "One exact pre-Resolve runtime record selected vtable 0x82047628 and provider 0x82517800. That provider returns selected-wrapper field +0x14 as the first output that reaches Resolve r6, writes zero as its second output, and returns true. Static factory 0x82517EC0 creates a distinct 24-byte wrapper, obtains +0x14 through a dynamic device +0x08 creator, optionally copies 68 bytes of separate metadata, and publishes the wrapper through a refcounted link; one caller also publishes the resource at outer +0x58. Cleanup decrements resource and wrapper reference counts, clears wrapper fields, and selects a lower release slot through dynamic classification. No runtime edge joins the observed wrapper to that factory or identifies the creator leaf. The resource header builder, lower allocation and backing identity, mutation or contents generation, concrete lower release, and address recycling remain unresolved."
+}

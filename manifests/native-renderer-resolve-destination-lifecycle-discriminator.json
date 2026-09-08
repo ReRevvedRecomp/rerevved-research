@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0140",
+  "topic": "native-renderer-resolve-destination-lifecycle-discriminator",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Can static guest code uniquely bind the resource passed in r6 at Resolve callsite 0x8250AFEC to the accepted NiXenonExplicitBuffersData creation and lifetime chain?",
+  "scope": {
+    "rendererEntry": "0x8250AC90",
+    "providerBoundary": "0x8250AE84 through 0x8250AEA4",
+    "resolveResourceLoad": "0x8250AFB8",
+    "resolveCallsite": "0x8250AFEC",
+    "candidateVtable": "0x8204767C",
+    "candidateProvider": "0x82517860",
+    "boundary": "This packet follows only the current-group item selection, NiXenon2DBufferData base filter, virtual +0x0C output, and unchanged register path to the exact Resolve call. It reuses accepted candidate creation, descriptor, selector, cleanup, and allocator-frontier facts without widening their searches. It does not inspect arbitrary group members, allocator callers, descriptors, assets, SDK internals, or runtime captures."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-vdswap-boundary",
+      "use": "Provides the accepted current-group path, NiXenon2DBufferData RTTI filter, explicit-buffer candidate, factory publication, alternating slots, cleanup, and runtime Resolve-to-VdSwap operation correlation."
+    },
+    {
+      "topic": "native-renderer-resolve-resource-contract",
+      "use": "Provides the accepted 0x34-byte resource header, six-dword descriptor roles, creator and backing-allocation path while keeping the exact runtime creator unresolved."
+    },
+    {
+      "topic": "native-renderer-resource-lifetime-boundary",
+      "use": "Provides the accepted two-slot retention and cleanup boundary and the bounded negative for allocation generation and recycling."
+    }
+  ],
+  "exactDispatch": {
+    "groupEnumeration": "At 0x8250AE44 the function loads renderer +0x550, supplies the current item index in r4, and dispatches group vtable +0x7C at 0x8250AE58. The returned item is copied to r30 at 0x8250AE5C.",
+    "baseFilter": "A non-null item is tested through 0x821CAA40 against the accepted NiXenon2DBufferData RTTI. The successful path restores that item to r3 at 0x8250AE74. The code proves base compatibility, not a concrete subclass vptr.",
+    "providerDispatch": "The function zero-initializes first and second output slots at stack +0x74 and +0x70, passes them in r4 and r5, loads the selected item's vptr at 0x8250AE94, loads vtable +0x0C at 0x8250AE98, and dispatches it at 0x8250AEA0. A false low-byte return skips Resolve.",
+    "resolveJoin": "On the successful path, r30 remains the selected item. No store rewrites stack +0x74 before 0x8250AFB8 loads it into r6, and 0x8250AFEC calls Resolve 0x8269E520. Thus r6 is exactly the first output of that selected item's virtual +0x0C call.",
+    "dynamicEdge": "No instruction between item selection and Resolve compares the selected item's vptr or provider slot with 0x8204767C or 0x82517860. Because the group returns a base-compatible object through virtual enumeration, static code does not uniquely select the concrete provider used by the runtime item."
+  },
+  "candidateChain": {
+    "provider": "For vptr 0x8204767C, slot +0x0C is 0x82517860. That provider reads selector +0x98, selects retained object +0x90 or +0x94, writes it to the first output, writes zero to the second output, and returns true.",
+    "creationAndPublication": "Accepted dependency evidence shows factory 0x825184D0 creating the 0x9C-byte container, obtaining two objects through device creator 0x82533DB8, storing them at +0x90 and +0x94, setting +0x98 to zero, and callers publishing the container into the default render-target group later enumerated through renderer +0x550.",
+    "headerAndBacking": "Accepted dependency evidence shows 0x82533DB8 allocating a 0x34-byte header, deriving primary and optional secondary backing sizes, allocating through 0x82E29168, and patching page-aligned bases into header +0x20 and optionally +0x30 through 0x826B7140. Exact runtime dimensions, format or usage inputs, and lower allocation generation remain unresolved.",
+    "mutationAndReuse": "Accepted dependency evidence shows present virtual 0x82517E38 selecting the same retained slot and flipping +0x98 between zero and one after its present path. The selector is alternating frame state, not allocation or contents generation. No scalar generation, replacement, invalidation, or dirty publication field is accepted for either retained object or its backing.",
+    "release": "Accepted dependency evidence shows 0x82518678 atomically releasing and clearing both retained entries, destroying an entry when its reference count reaches zero, and 0x82518E88 invoking cleanup before freeing the container. The lower backing deallocation and address-reuse policy remain unresolved behind the capped 0x82E29168 allocator frontier.",
+    "qualification": "Every fact in this object is conditional on the exact runtime selected item using vptr 0x8204767C. The static dispatch path does not establish that condition, so these facts are not promoted as the lifecycle of the exact Resolve r6 resource."
+  },
+  "decisiveObservation": {
+    "status": "required",
+    "instructionBoundary": "Immediately before guest instruction 0x8250AFEC at the exact Resolve callsite, after r6 was loaded at 0x8250AFB8.",
+    "registers": {
+      "r30": "The selected base-compatible per-item object returned at 0x8250AE58 and preserved from 0x8250AE5C.",
+      "r6": "The successful virtual +0x0C first output loaded from stack +0x74."
+    },
+    "readOnlyFields": [
+      "selected item [r30 + 0x0] concrete vptr",
+      "selected vtable [vptr + 0x0C] provider target",
+      "only when vptr is exactly 0x8204767C: selector [r30 + 0x98] and selected slot [r30 + 0x90 + 4 * selector]"
+    ],
+    "emittedValues": "Emit only the concrete vptr, provider target, candidate selector when admitted, and a Boolean stating whether the selected slot equals r6. Do not emit r30, r6, slot pointers, descriptor contents, backing addresses, payloads, or guest writes.",
+    "alternatives": [
+      {
+        "condition": "vptr = 0x8204767C, provider = 0x82517860, selector is 0 or 1, and selected-slot-equals-r6 is true",
+        "result": "The exact runtime Resolve destination is joined to the accepted explicit-buffer container and its conditional creator, alternating reuse, and cleanup chain. Allocation and contents generation plus lower backing recycling would remain unresolved."
+      },
+      {
+        "condition": "a different readable vptr or provider target",
+        "result": "The explicit-buffer candidate is not the exact provider for that Resolve item. The returned code identity becomes the sole next static provider trace; no candidate layout field may be interpreted."
+      },
+      {
+        "condition": "the candidate vptr matches but selector is outside 0 or 1, selected-slot-equals-r6 is false, or a required word is unreadable",
+        "result": "The observation contradicts the admitted candidate layout or boundary and must be rejected pending a narrower placement or state explanation."
+      }
+    ],
+    "decisiveResult": "One successful exact-callsite record distinguishes the concrete provider while directly joining it to the r6 output. Repeating a native boot that does not reach 0x8250AFEC cannot answer this question. This manifest defines the observation but does not authorize or execute it."
+  },
+  "boundedNegative": {
+    "result": "Static guest code proves the base-compatible per-item dispatch and exact first-output-to-r6 dataflow, but it does not uniquely bind the runtime item to NiXenonExplicitBuffersData vptr 0x8204767C or provider 0x82517860.",
+    "effect": "The candidate factory, resource-header builder, backing allocator, selector, and cleanup remain accepted facts, but they cannot yet supply allocation identity, mutation generation, release, or reuse policy for the exact Resolve destination.",
+    "falsificationCondition": "The exact callsite observation records the admitted candidate identity and selected-slot equality, or returns one different concrete provider identity for a bounded static trace."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only DumpFunctionNeighborhoodBatch.java, DumpFunctions.java, and DumpMemoryWords.java queries against the canonical version-1.3 project, followed by one narrow exact-function generated-code window for sub_8250AC90 and reuse of accepted topic manifests.",
+    "entries": [
+      {
+        "role": "dynamic provider boundary",
+        "address": "0x8250AE44, 0x8250AE5C, 0x8250AE84, 0x8250AE94, 0x8250AE98, 0x8250AEA0, 0x8250AEA4",
+        "result": "A current-group item is preserved in r30, base-filtered, and dispatched through its own vtable +0x0C without a concrete-vptr check.",
+        "confidence": "strong"
+      },
+      {
+        "role": "provider output to exact Resolve",
+        "address": "0x8250AFB8, 0x8250AFEC",
+        "result": "The first provider output at stack +0x74 is loaded into r6 and passed to Resolve; r30 still preserves the selected item at that boundary.",
+        "confidence": "strong"
+      },
+      {
+        "role": "explicit-buffer candidate provider",
+        "address": "0x8204767C, 0x82517860",
+        "result": "The candidate vtable's +0x0C slot selects +0x90 or +0x94 from selector +0x98, but no static edge proves the exact runtime item's vptr.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpFunctionNeighborhoodBatch.java:0x8250AE84,0x8250AFEC,0x82517860",
+      "ghidra/DumpFunctions.java:0x8250AC90,0x82517860",
+      "ghidra/DumpMemoryWords.java:0x8250AE44,0x8250AE5C,0x8250AE84,0x8250AEA4,0x8250AFB8,0x8250AFEC",
+      "generated:rerevved/sub_8250AC90:0x8250AE44-0x8250AFEC",
+      "manifest:RVA-F-0118",
+      "manifest:RVA-F-0126",
+      "manifest:RVA-F-0127"
+    ],
+    "qualification": "The configured project truncates sub_8250AC90 at its save thunk, so exact image words provide the instruction anchors and the generated exact function supplies bounded register-flow corroboration. No incomplete body or absent reference is used as proof of a concrete type."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "result": "No reusable concrete resource identity or lifecycle relation is promoted until the dynamic provider edge is resolved."
+  },
+  "guards": [
+    "Do not treat RTTI base compatibility as a concrete subclass or provider identity.",
+    "Do not apply the explicit-buffer +0x90, +0x94, or +0x98 layout unless the exact vptr equals 0x8204767C.",
+    "Do not use a guest pointer, descriptor snapshot, selector, observer sequence, or command-ring generation as allocation or contents generation.",
+    "Do not implement a persistent native mirror or infer backing retirement from this static result.",
+    "Do not launch a capture from this manifest; runtime observation requires separate Title authorization and ownership."
+  ],
+  "conclusion": "The exact guest path preserves the current-group item in r30, filters it only through the NiXenon2DBufferData base, dispatches that item's virtual +0x0C, and passes the unchanged first output in r6 to Resolve at 0x8250AFEC. It never checks the concrete vptr, so static code cannot join the exact runtime destination to the accepted NiXenonExplicitBuffersData factory, header/backing creator, alternating selector, cleanup, or allocator frontier. One read-only record immediately before 0x8250AFEC can close that edge by reporting only the r30 vptr, its +0x0C provider, the admitted selector, and selected-slot-equals-r6 Boolean. Until that result exists, allocation identity, contents generation, lower backing recycling, and a persistent Title mirror remain unauthorized."
+}

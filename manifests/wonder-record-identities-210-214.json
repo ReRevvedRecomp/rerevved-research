@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0136",
+  "topic": "wonder-record-identities-210-214",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Can wonder items 210 through 214 bind exact identity, production factor, and initialized text while preserving the visible string-boundary bytes?",
+  "scope": {
+    "table": "0x82F73238",
+    "recordSize": "0x14C",
+    "itemIds": [210, 211, 212, 213, 214],
+    "range": "0x82F73F30 through 0x82F745AB",
+    "boundary": "This packet closes five additional record identities, their signed +0x40 factors, repeated initialized text roles, and the visible +0x49 and name-storage qualifications. It does not establish remaining identities, table extent, complete layout, final costs, consumers, effect execution, or runtime behavior."
+  },
+  "dependencies": [
+    { "topic": "wonder-record-identities-205-209", "use": "Provides the accepted preceding identity frontier and the rule that printable +0x49 bytes remain separate from short tokens beginning at +0x4A." },
+    { "topic": "production-cost-ownership", "use": "Provides the accepted signed +0x40 cost-factor consumer." }
+  ],
+  "records": [
+    {
+      "itemId": 210,
+      "record": "0x82F73F30",
+      "name": "Himeji Samurai Castle",
+      "shortToken": "Obelisk",
+      "artToken": "Pyramid_anc",
+      "effectDescription": "+1 attack for military units.",
+      "baseCostAddress": "0x82F73F70",
+      "baseCostFactor": 30,
+      "shortTokenBoundary": "Byte +0x49 is 0x20 and Ghidra therefore defines a leading-space string beginning one byte early; the token bytes at +0x4A spell Obelisk."
+    },
+    {
+      "itemId": 211,
+      "record": "0x82F7407C",
+      "name": "Leonardo's Workshop",
+      "shortToken": "NotreDame",
+      "artToken": "Pyramid_anc",
+      "effectDescription": "all units are upgraded.",
+      "baseCostAddress": "0x82F740BC",
+      "baseCostFactor": 40
+    },
+    {
+      "itemId": 212,
+      "record": "0x82F741C8",
+      "name": "The Magna Carta",
+      "shortToken": "NotreDame",
+      "artToken": "Pyramid_anc",
+      "effectDescription": "Courthouses produce culture.",
+      "baseCostAddress": "0x82F74208",
+      "baseCostFactor": 30
+    },
+    {
+      "itemId": 213,
+      "record": "0x82F74314",
+      "name": "Troyes Trade Fair",
+      "shortToken": "GlobeTheater",
+      "artToken": "Pyramid_anc",
+      "effectDescription": "gold production doubled in this city.",
+      "baseCostAddress": "0x82F74354",
+      "baseCostFactor": 50,
+      "shortTokenBoundary": "Byte +0x49 is 0x2D and Ghidra therefore defines -GlobeTheater beginning one byte early; the token bytes at +0x4A spell GlobeTheater."
+    },
+    {
+      "itemId": 214,
+      "record": "0x82F74460",
+      "name": "Military-Industrial Complex ",
+      "shortToken": "Pentagon",
+      "artToken": "Pyramid_anc",
+      "effectDescription": "the cost of military units will be reduced.",
+      "baseCostAddress": "0x82F744A0",
+      "baseCostFactor": 100,
+      "nameBoundary": "The defined name string contains one trailing 0x20 byte before its terminator; the stored text is preserved exactly and no display normalization is inferred."
+    }
+  ],
+  "costRelationship": {
+    "consumer": "0x82CF1278",
+    "fieldOffset": "0x40",
+    "fieldWidth": "signed halfword",
+    "result": "For item IDs 210 through 214, the accepted lookup consumes factors 30, 40, 30, 50, and 100 before common wonder scaling and later modifiers.",
+    "qualification": "These are signed native factors, not final player-facing production costs."
+  },
+  "textBoundary": {
+    "positive": "Full name, short-token bytes, art token, and effect-description text retain the accepted repeated roles.",
+    "negative": "The printable +0x49 bytes in items 210 and 213 are not named or merged into the +0x4A short-token field. The trailing space in item 214's stored name does not prove display behavior. No text consumer or gameplay effect owner is present in the bounded read set.",
+    "qualification": "The effect descriptions are record data, not proof of gameplay execution."
+  },
+  "currentEvidence": {
+    "method": "Two sequential foreground read-only Ghidra queries over exactly five records, joined to accepted stride and cost ownership.",
+    "entries": [
+      { "role": "record strings", "address": "0x82F73F30", "result": "Twenty defined strings bind five exact record names and repeated text positions; two short-token strings begin at +0x49 because that adjacent byte is printable, and the final name includes a trailing space.", "confidence": "strong" },
+      { "role": "cost and token boundaries", "address": "0x82F73F70", "result": "Exact big-endian words expose signed +0x40 factors and prove Obelisk and GlobeTheater begin at +0x4A after printable +0x49 bytes.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpStringsInRange.java:0x82F73F30..0x82F745AB",
+      "ghidra/DumpMemoryWords.java:0x82F73F70,0x82F740BC,0x82F74208,0x82F74354,0x82F744A0",
+      "generated:rerevved/sub_82CF1278"
+    ],
+    "qualification": "Identity is bound at exact computed record bases. The raw boundary words prevent defined-string artifacts from shifting the accepted token offset. No runtime probe was performed."
+  },
+  "guards": [
+    "Do not name or assign byte +0x49 from its printable values.",
+    "Keep the short-token offset at +0x4A; Ghidra's combined strings for items 210 and 213 begin in an adjacent byte.",
+    "Preserve the trailing space in item 214's stored name; do not infer presentation or normalization behavior.",
+    "Do not treat effect descriptions as proof of display or gameplay execution.",
+    "Do not infer remaining identities, table extent, full layout, final costs, AI, persistence, or runtime behavior."
+  ],
+  "conclusion": "Wonder items 210 through 214 are Himeji Samurai Castle, Leonardo's Workshop, The Magna Carta, Troyes Trade Fair, and the exact stored string Military-Industrial Complex followed by one space, with signed +0x40 production factors 30, 40, 30, 50, and 100. Repeated record text remains identifiable, while printable +0x49 bytes in items 210 and 213 are kept separate from short tokens beginning at +0x4A. No display consumer or gameplay implementation is proved."
+}

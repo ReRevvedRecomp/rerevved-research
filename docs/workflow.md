@@ -104,6 +104,14 @@ These candidates can be data or contain intervening register writes; confirm
 the exact instruction sequence and function before accepting a construction.
 This query does not disassemble or repair the database.
 
+For a known instruction opcode and displacement with varying register fields,
+`FindPointerValues.java` accepts `REREVVED_WORD_MASK`. The mask applies to each
+read word before comparison with `REREVVED_POINTER_VAS`; target patterns must
+have zeroes in the ignored bits. Omitting the mask preserves exact matching.
+For example, mask `0xFFE0FFFF` and pattern `0x386001C0` locate raw `addi r3,rN,0x1C0`
+candidates. Confirm code ownership and the base register before assigning a
+field role. A result at the configured match cap is not an exhaustive search.
+
 ## Function fingerprint comparison
 
 Export each independently identified Ghidra program to JSON Lines. Change the

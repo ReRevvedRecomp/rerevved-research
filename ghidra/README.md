@@ -23,7 +23,7 @@ This index covers every Java script in this directory.
 - `FindCallSplitConstantArgs.java` finds capped direct calls whose selected argument uses a direct or split 32-bit constant.
 - `FindFieldAccesses.java` classifies reads and writes inside selected functions and an optional caller closure.
 - `FindFieldRefs.java` finds PowerPC register-plus-displacement operands for selected offsets.
-- `FindPointerValues.java` finds exact aligned 32-bit pointer values in initialized guest memory.
+- `FindPointerValues.java` finds aligned 32-bit values in initialized guest memory, with an optional word mask for raw instruction candidates.
 - `FindScalarUses.java` finds capped decoded-instruction uses of exact scalar values with an optional mnemonic allowlist.
 - `FindSplitConstantUses.java` finds capped functions that construct selected 32-bit values with PowerPC split constants.
 - `FindSplitConstantCandidates.java` finds capped raw-word split-constant candidates, including undefined code; each match requires instruction and register-lifetime confirmation.

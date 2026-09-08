@@ -21,6 +21,7 @@ This index covers every Java script in this directory.
 - `DumpStringsInRange.java` prints defined strings inside one bounded guest address range.
 - `FindCallConstantArgs.java` finds direct calls whose nearest selected argument write is a requested immediate constant.
 - `FindCallSplitConstantArgs.java` finds capped direct calls whose selected argument uses a direct or split 32-bit constant.
+- `FindDirectCallers.java` finds capped raw PowerPC direct branch-and-link callers for exact target VAs.
 - `FindFieldAccesses.java` classifies reads and writes inside selected functions and an optional caller closure.
 - `FindFieldRefs.java` finds PowerPC register-plus-displacement operands for selected offsets.
 - `FindPointerValues.java` finds aligned 32-bit values in initialized guest memory, with an optional word mask for raw instruction candidates.

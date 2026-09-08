@@ -18,6 +18,7 @@ SCRIPTS = (
     "DumpInstructions",
     "DumpMemoryWords",
     "DumpReferences",
+    "FindDirectCallers",
     "DumpStringsInRange",
     "ExportFunctionFingerprints",
     "FindCallConstantArgs",

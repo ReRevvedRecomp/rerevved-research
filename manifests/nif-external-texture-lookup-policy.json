@@ -27,6 +27,8 @@
   "scope": {
     "guestMethods": [
       "0x82391BA8",
+      "0x82391FAC",
+      "0x82391FB0",
       "0x82391A20",
       "0x823914A0",
       "0x823941D8",
@@ -83,7 +85,7 @@
       "provider": "stream +0x1C0",
       "providerLookup": "0x8235E120 -> provider vtable +0x08",
       "providerRegistration": "0x8235E108 -> provider vtable +0x0C",
-      "result": "The reader can consult a candidate collection and the provider at stream +0x1C0 before retaining the runtime filename. A new-game map observation identifies provider vtable 0x82161E9C with lookup 0x82C82BC8 and registration 0x82C82C08. Static constructors and table insertion mechanics are identified below; a fresh observation binds the sampled provider and stream to the shared globals, but not to a particular construction call, registration sequence, search root, or owning-NIF/archive relationship. The static path 0x82C831A8 -> 0x8235ED80 attaches the provider returned by 0x82C8D918 to the stream referenced by 0x8314F268; the getter retains a constructed provider at 0x8314F244."
+      "result": "The reader can consult a candidate collection and the provider at stream +0x1C0 before retaining the runtime filename. A new-game map observation identifies provider vtable 0x82161E9C with lookup 0x82C82BC8 and registration 0x82C82C08. Static constructors and table insertion mechanics are identified below; fresh observations bind the sampled provider and stream to the shared globals and identify one reader-owned registration source, but not a particular construction call, completed registration sequence, search root, or owning-NIF/archive relationship. The static path 0x82C831A8 -> 0x8235ED80 attaches the provider returned by 0x82C8D918 to the stream referenced by 0x8314F268; the getter retains a constructed provider at 0x8314F244."
     },
     "lazyResourceRequest": {
       "method": "0x82391A20",
@@ -126,7 +128,7 @@
     ],
     "unresolved": [
       "Concrete candidate roots and their deterministic order",
-      "Original provider class name, whether the resolved getter invocation took its constructor branch, and the registration sequence used by the observed runtime instance",
+      "Original provider class name, whether the resolved getter invocation took its constructor branch, and the complete registration sequence and completion status of the observed runtime instance",
       "Whether any candidate is relative to the owning NIF",
       "Whether any candidate is relative to the containing archive",
       "The runtime population and namespace ownership of the provider table and optional global object list, including any archive or mounted-device relationship",
@@ -206,7 +208,13 @@
       {
         "role": "runtime shared-provider and stream match",
         "address": "0x8235E120, 0x8314F244, 0x8314F268, 0x8235ED80, 0x82C82C08",
-        "result": "Sixteen lookup samples from 0x82391CE4 matched the provider and stream to both shared globals. Checked provider +0x14 entry counts were 0, 1, or 2. The earlier capped registration observations belonged to a different provider and cannot establish the matched provider's registration order.",
+        "result": "Sixteen lookup samples from 0x82391CE4 matched the provider and stream to both shared globals. Checked provider +0x14 entry counts were 0, 1, or 2. The earlier capped registration observations belonged to a different provider; a later filtered observation identifies shared-provider registration entries separately below.",
+        "confidence": "confirmed"
+      },
+      {
+        "role": "filtered shared-provider registration caller and candidate-wrapper observation",
+        "address": "0x82C82C08, 0x8314F244, 0x82391FAC, 0x82391FB0, 0x82C832A0",
+        "result": "Eight pre-entry registration observations passed the shared-provider-global equality filter before counting; all retained LR 0x82391FB0. No candidate-wrapper entry was observed during the same full boot and new-game map scene. Static image words and the exact sub_82391BA8 body resolve LR 0x82391FB0 to the call at 0x82391FAC, where the NiSourceTexture reader passes its stream, the runtime filename at object +0x34, and the object to stream registration 0x8235E108. This identifies a runtime-entered shared-provider population source, but not call completion, lookup order, or any root.",
         "confidence": "confirmed"
       },
       {
@@ -248,15 +256,19 @@
       "ghidra/DumpReferences.java:0x82C832A0",
       "ghidra/FindDirectCallers.java:0x82C832A0",
       "ghidra/DumpFunctionNeighborhoodBatch.java:0x82C63064,0x82C83678,0x82E74960",
-      "generated:rerevved/sub_82C833A0,sub_82C831A8,sub_82C832A0,sub_82466BD8,sub_82C62FC0,sub_82C83640,sub_82E74920"
+      "generated:rerevved/sub_82C833A0,sub_82C831A8,sub_82C832A0,sub_82466BD8,sub_82C62FC0,sub_82C83640,sub_82E74920",
+      "runtime:nif_caller_probe@c5f9b00018ef85015cb6d47f2767617e393e8096",
+      "ghidra/DumpFunctionNeighborhoodBatch.java:0x82391FB0",
+      "generated:rerevved/sub_82391BA8:0x82391FAC"
     ],
     "privacy": "Static findings and probe output retain numeric code, slot, field, and runtime identity information only. No retail filename text, texture values, payload bytes, per-file hashes, or filename-to-target mapping was analyzed or promoted. No asset checkout was queried or modified by this investigation; the isolated title consumed a disposable runtime copy through its normal load path."
   },
   "boundedNegatives": [
     "The ANSI_STRING carrier does not prove ASCII, UTF-8, a code page, or Unicode semantics.",
     "No exact title rule is promoted for dot components, absolute-name acceptance, malformed byte sequences, or all overlength outcomes.",
-    "Shared-global pointer equality plus LR 0x82C8345C identifies the executed pre-hook attachment call in sub_82C833A0 and its immediately preceding getter invocation. It does not prove that the getter took its constructor branch, that the setter completed, or that an earlier session used the same instance. Candidate roots, registration sequence for the shared provider, owning-NIF or archive relationship, and mounted-device ownership remain unresolved. Local equal-key replacement does not establish duplicate-source precedence.",
+    "Shared-global pointer equality plus LR 0x82C8345C identifies the executed pre-hook attachment call in sub_82C833A0 and its immediately preceding getter invocation. It does not prove that the getter took its constructor branch, that the setter completed, or that an earlier session used the same instance. Candidate roots, completed registration sequence for the shared provider, owning-NIF or archive relationship, and mounted-device ownership remain unresolved. Local equal-key replacement does not establish duplicate-source precedence.",
     "The resolved attachment path contains no direct candidate-collection, provider-registration, or global-list access. The separate +0x124 path mutates candidate collection +0x10C from an opaque caller argument. Its complete raw direct-call set narrows that argument to fields +0x10 or +0x4 of three caller objects, but does not establish a root, source order, namespace owner, archive relationship, or target-container rule.",
+    "A full boot and new-game map observation entered the filtered shared-provider registration callback eight times from LR 0x82391FB0 but never entered candidate wrapper 0x82C832A0. The zero applies only to that scene and does not prove the wrapper is globally dead. Registration pre-entry does not prove completion, lookup order, global-list population, archive ownership, or a reproducible root.",
     "The null initial prefix carrier and absence of a direct setter reference do not prove that an indirect runtime setup can never install a prefix.",
     "Object-attribute flag 0x40 describes the direct object-name request; it does not prove duplicate precedence or every mounted source's host comparison behavior.",
     "A null loaded resource proves neither visible rendering behavior nor a user-facing fallback; renderer consumption remains outside scope.",
@@ -281,7 +293,7 @@
     "Do not expose, retain, hash, extract, or map retail filename or texture payload data.",
     "Do not implement Studio lookup, texture decoding, GPU work, rendering, editing, conversion, export, or writing from this packet."
   ],
-  "conclusion": "The exact title chain materializes NiSourceTexture external fixed strings into object +0x34 and later passes the retained byte name through a lazy file-object and converter path to NtCreateFile. A normal new-game map load identifies provider vtable 0x82161E9C and its lookup and registration callbacks. Static construction starts an empty 37-bucket table and enables optional global-list fallback; table keys compare byte for byte, and equal-key registration replaces the stored object. The runtime-observed LR 0x82C8345C resolves to sub_82C833A0, which invokes the shared getter and immediately attaches its result to stream global 0x8314F268. A separate static path through 0x82C831A8 reads stream +0x124 and conditionally mutates candidate collection +0x10C from an opaque caller argument. Three exact raw callers narrow that argument to caller-object fields +0x10 or +0x4, but do not identify their semantic owner. Neither bounded path identifies shared-provider registration, global-list population, a reproducible root, archive relationship, source precedence, or target-container policy. Neither standalone-NIF nor archive-contained-NIF lookup is reproducible from these local mechanics, so the Studio lookup and target-container gates remain closed.",
+  "conclusion": "The exact title chain materializes NiSourceTexture external fixed strings into object +0x34 and later passes the retained byte name through a lazy file-object and converter path to NtCreateFile. A normal new-game map load identifies provider vtable 0x82161E9C and its lookup and registration callbacks. Static construction starts an empty 37-bucket table and enables optional global-list fallback; table keys compare byte for byte, and equal-key registration replaces the stored object. A filtered runtime observation enters the shared provider's registration callback eight times from the NiSourceTexture reader call at 0x82391FAC, with the stream, object +0x34 runtime filename, and object as the static arguments. The same scene never enters candidate wrapper 0x82C832A0. These are pre-entry and scene-bounded facts: they do not prove registration completion, lookup ordering, global-list population, a reproducible root, archive relationship, source precedence, or target-container policy. Neither standalone-NIF nor archive-contained-NIF lookup is reproducible from these local mechanics, so the Studio lookup and target-container gates remain closed.",
   "runtimeProvider": {
     "vtable": "0x82161E9C",
     "lookupCallback": {
@@ -318,7 +330,7 @@
       "registration": "The exact 0x82C82C08 body retains the supplied object and passes provider +0x8, the name argument, and the object carrier to 0x822EF668. This helper hashes and compares NUL-terminated byte keys, inserts a missing key at the bucket head, or assigns the object through the existing entry +0x8 for an equal key.",
       "analysisLimits": "Ghidra truncates several functions at save thunks or unsupported instructions. Exact raw split-constant candidates locate two vtable constructions outside decoded function bodies; bounded memory words and narrow generated functions confirm the stated writes. The fully decoded 0x822EF528 corroborates byte-key lookup. Candidate matches alone do not prove executable code or uninterrupted register lifetime."
     },
-    "qualification": "The observed vtable is a concrete provider identity, not an original class name, a filesystem root, or a successful lookup result. The fresh run matches its sampled provider and stream to the shared globals, and static corroboration resolves the observed attachment caller's getter-to-setter path. Whether that getter invocation constructed the instance, the completed setter result, registration sequence, optional global-list population, and namespace ownership remain unresolved.",
+    "qualification": "The observed vtable is a concrete provider identity, not an original class name, a filesystem root, or a successful lookup result. Fresh runs match the sampled provider and stream to the shared globals, resolve the observed attachment caller's getter-to-setter path, and identify one reader-owned registration source. Whether the getter invocation constructed the instance, the completed setter and registration results, complete registration sequence, optional global-list population, and namespace ownership remain unresolved.",
     "constructionAndRegistration": {
       "confidence": "strong",
       "method": "Static image words, decoded lookup helper, and exact-function generated corroboration; no additional runtime observation.",
@@ -358,6 +370,48 @@
       "candidateCollectionBoundary": "The exact sub_82C833A0 body contains no stream +0x124 access, provider-registration call, or global-list-root reference. The separate sub_82C831A8 path reads stream +0x124 at 0x82C8320C and calls 0x82466BD8 at 0x82C83224 only when both the collection and its third argument are non-null. 0x82466BD8 clears candidate collection byte +0x10C for null or empty input and otherwise mutates the +0x10C subobject through bounded string helpers. sub_82C832A0 forwards its r5 input unchanged to this path. The canonical listing has no decoded references to that wrapper; an exact raw scan of initialized executable words finds three direct calls at 0x82C63064, 0x82C83678, and 0x82E74960, with no truncation. Narrow exact-function corroboration shows that sub_82C62FC0 supplies caller object +0x10, while sub_82C83640 and sub_82E74920 each supply caller object +0x4. Their return addresses 0x82C63068, 0x82C8367C, and 0x82E74964 are the complete admitted runtime caller discriminator set.",
       "boundedNegative": "Across sub_82C833A0, sub_82C831A8, sub_82C832A0, sub_82466BD8, and the three raw direct callers, no shared-provider registration call or global-list-root reference is established. The +0x10 and +0x4 candidate-input fields are not bound to an owning NIF, archive, mounted source, independently reproducible root, or target-container rule. Tracing all three caller families would widen beyond the runtime-selectable discriminator.",
       "qualification": "The pre-hook observation does not prove setter completion or that the getter took its constructor branch. The candidate mutation does not establish lookup order, duplicate-source precedence, or a target-container matching rule."
+    },
+    "filteredRegistrationAndCandidateObservation": {
+      "method": "runtime:nif_caller_probe",
+      "date": "2026-09-08",
+      "configuration": "Windows x64 Release, default-off init-only probe enabled for an isolated normal title launch. Renderer tracing was disabled.",
+      "instrumentRevision": "c5f9b00018ef85015cb6d47f2767617e393e8096",
+      "titleBaseRevision": "c6dc718d9bfe5fcc42e5aeda90cb9820578c976f",
+      "sdkRevision": "40f134107410832a886f4c90c330a5ffbe1fcd4d",
+      "executableSha256": "ACA50918DB68F72FC51655282F6D3EEFD14C6B1A7F2EE691ADED426D0A5DED8D",
+      "scene": "The owner confirmed a normal full boot, reached a new-game map, and closed the title normally. The process exited with code 0.",
+      "hooks": {
+        "candidateWrapper": "0x82C832A0 entry, retaining only an admitted incoming LR",
+        "registration": "0x82C82C08 entry, counted only after provider r3 equaled the readable shared-provider global word at 0x8314F244"
+      },
+      "candidateWrapper": {
+        "sampleCount": 0,
+        "admittedCallers": [
+          "0x82C63068",
+          "0x82C8367C",
+          "0x82E74964"
+        ],
+        "result": "No entry was observed, so the run selects none of the statically admitted +0x10 or +0x4 candidate-input producers.",
+        "qualification": "This is a bounded negative for one normal boot and new-game map scene. It does not prove that the wrapper is globally dead or that the candidate collection has no other initializer or mutation path."
+      },
+      "registration": {
+        "sampleCount": 8,
+        "observedCaller": "0x82391FB0",
+        "eventSequences": [1, 2, 3, 4, 5, 6, 7, 8],
+        "capMarkers": 0,
+        "result": "All eight retained events entered the shared provider's registration callback from LR 0x82391FB0 after passing the provider-global equality filter. No unfiltered call consumed the cap.",
+        "staticCorrelation": "Raw image word 0x4BFCC15D at 0x82391FAC is the direct call to stream registration 0x8235E108 and produces LR 0x82391FB0. In exact sub_82391BA8, r30 is the NiSourceTexture reader object and r31 is its stream; the call passes r3 = stream, r4 = the runtime filename pointer loaded from object +0x34, and r5 = object. The stream registration dispatches through the provider attached at stream +0x1C0.",
+        "qualification": "These are callback pre-entry observations. They identify a runtime-entered shared-provider registration source, not a completed insertion, an order relative to lookup, or a successful later match."
+      },
+      "captureBoundary": "The capture retained eight numeric events containing only sequence, kind, and LR. The registration filter compared the incoming provider with the readable global word before counting. It emitted no provider or candidate pointers, pointer contents, names, text, hashes, payloads, callback returns, entry counts, or guest writes. No cap marker was emitted.",
+      "artifactDigests": {
+        "runtimeLogSha256": "91260829334E4DCD1F41C157E8ACFF7774D129869D895979B5B2D521FBC292C6",
+        "driverLogSha256": "E8FEA670FE075B7228594DA1EC5CB2BFE2E2AF67EA4319A42EC5848BCF5DF603",
+        "exitRecordSha256": "673DFB4DD2281D67F8ADAACDB80FD5533A318DE794C1971CDAA8001CF879103E",
+        "candidateRecordSha256": "CEAE0AE07ADEB70EC3B81F42256AD4E5AF69661B7111610B8069731D901BFCBB"
+      },
+      "verification": "The committed instrument passed a Windows Release build, all 28 registered CTests, the Title verifier, and an independent privacy, ABI, and cap review before launch.",
+      "qualification": "The observation does not expose a candidate root, establish global-list population, connect the provider to an archive or mounted source, order registrations against lookups, prove cross-source duplicate precedence, or supply a target-container matching rule."
     },
     "sharedInstanceObservation": {
       "method": "runtime:nif_provider_probe",
@@ -414,7 +468,7 @@
           }
         ],
         "result": "All samples used one different provider pointer with the same expected vtable and readable entry counts. The 64-attempt cap was reached before the first admitted lookup sample.",
-        "qualification": "The cap prevents a conclusion about later registration calls for the matched shared provider. These pre-hook observations do not prove successful insertion, equal-key replacement, or completed registration order."
+        "qualification": "These samples do not describe the matched shared provider. The later filtered observation separately identifies shared-provider registration entries; neither pre-hook run proves successful insertion, equal-key replacement, or completed registration order."
       },
       "captureBoundary": "The process emitted 99 numeric events: 16 lookup, 16 attachment, 64 registration, and one cap marker for each hook. Event numbers order emitted pre-hook observations only, not completed calls or cross-thread transactions. Reads were bounded to stream/provider identity, callback words, two shared globals, and the expected-vtable-gated entry count. No name, key hash, payload, object contents, callback return, or guest write was captured. A fresh-session pointer match does not retroactively identify an earlier session instance."
     }

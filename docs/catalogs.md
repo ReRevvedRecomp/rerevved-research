@@ -31,12 +31,20 @@ after it is verified against that image.
 
 ## Evidence and confidence
 
-Each claim has one or more evidence entries. Supported evidence kinds are
-`topic-manifest`, `ghidra-static`, `generated-code`, `runtime-probe`, and
-`external-reference`. A topic-manifest locator is a catalog-relative JSON file
-plus a resolving JSON Pointer, for example
-`../runtime-baseline.json#/configuredRoot`. Other locator forms are constrained
-by the catalog schemas.
+Each claim has one or more evidence entries. Supported evidence kinds and their
+locator forms are:
+
+- `topic-manifest`: a catalog-relative JSON file plus a resolving JSON Pointer,
+  such as `../runtime-baseline.json#/configuredRoot`;
+- `ghidra-static`: a maintained query script with an optional reported site,
+  such as `ghidra/DumpFunctions.java:0x821F3F48`;
+- `generated-code`: a generated-code reference, such as
+  `generated:rerevved/sub_821B0AF0`;
+- `runtime-probe`: a named runtime probe, such as `runtime:save_slot_probe`;
+- `external-reference`: an HTTPS URL.
+
+The catalog schema associates each kind with its locator form, and the
+validator confirms that each `ghidra-static` script exists under `ghidra/`.
 
 Confidence is exactly `confirmed`, `strong`, `candidate`, or `rejected`.
 `confirmed` requires authoritative static identity or runtime corroboration for

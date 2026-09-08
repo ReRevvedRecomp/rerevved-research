@@ -147,6 +147,7 @@ def validate_local_references(repo: Path, documents: dict[str, Any]) -> None:
     repo = repo.resolve()
     catalog_dir = repo / "manifests" / "catalogs"
     manifests_dir = (repo / "manifests").resolve()
+    ghidra_dir = (repo / "ghidra").resolve()
     image_file = repo / "manifests" / "image.json"
     contract_image_path = image_file.resolve()
     if (
@@ -176,6 +177,31 @@ def validate_local_references(repo: Path, documents: dict[str, Any]) -> None:
                 )
             for entity in _record_entities(record):
                 for evidence in entity.get("evidence", []):
+                    if evidence["kind"] == "ghidra-static":
+                        locator = evidence["locator"]
+                        if not isinstance(locator, str):
+                            raise CatalogValidationError(
+                                f"ghidra-static evidence has invalid locator: {locator}"
+                            )
+                        script_reference, separator, site = locator.partition(":")
+                        if (
+                            not script_reference.startswith("ghidra/")
+                            or not script_reference.endswith(".java")
+                            or (separator and not site)
+                        ):
+                            raise CatalogValidationError(
+                                f"ghidra-static evidence has invalid locator: {locator}"
+                            )
+                        script_path = (repo / Path(script_reference)).resolve()
+                        if (
+                            not script_path.is_relative_to(ghidra_dir)
+                            or not script_path.is_file()
+                        ):
+                            raise CatalogValidationError(
+                                f"ghidra-static evidence script is missing or leaves "
+                                f"ghidra/: {script_reference}"
+                            )
+                        continue
                     if evidence["kind"] != "topic-manifest":
                         continue
                     try:

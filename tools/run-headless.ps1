@@ -11,9 +11,10 @@
       REREVVED_GHIDRA_PROGRAM       default rerevved_image.bin
       REREVVED_GHIDRA_JAVA_HOME     JDK root
 
-    Query scripts must pass -ReadOnly. Run in the foreground. Query output and
-    process logs must use a dedicated scratch directory outside the shared
-    operating-system temp directory.
+    Query runs always use Ghidra read-only mode. The compatibility -ReadOnly
+    switch may be supplied explicitly, but an explicit false value is rejected.
+    Run in the foreground. Query output and process logs must use a dedicated
+    scratch directory outside the shared operating-system temp directory.
 #>
 [CmdletBinding()]
 param(
@@ -35,6 +36,10 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+if ($PSBoundParameters.ContainsKey('ReadOnly') -and -not $ReadOnly) {
+    throw '-ReadOnly cannot be false; query runs are always read-only.'
+}
 
 function Require-Value {
     param([string]$Value, [string]$EnvName, [string]$What)
@@ -122,7 +127,7 @@ foreach ($key in $ScriptEnv.Keys) { $applied[$key] = [string]$ScriptEnv[$key] }
 
 $headlessArgs = @($ProjectDir, $ProjectName, '-process', $Program)
 if (-not $Analyze) { $headlessArgs += '-noanalysis' }
-if ($ReadOnly) { $headlessArgs += '-readOnly' }
+$headlessArgs += '-readOnly'
 $headlessArgs += @(
     '-scriptPath', ($ScriptPath -join [System.IO.Path]::PathSeparator),
     '-postScript', $Script
@@ -164,7 +169,7 @@ if ($log -match 'LockException: Unable to lock project') {
     Script = $Script
     Status = $status
     Seconds = [math]::Round($timer.Elapsed.TotalSeconds, 1)
-    ReadOnly = [bool]$ReadOnly
+    ReadOnly = $true
     Output = $Out
     Log = $LogPath
 } | Format-List

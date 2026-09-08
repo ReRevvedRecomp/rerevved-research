@@ -70,6 +70,14 @@ the static, generated, runtime, or external evidence that supports the narrow
 claim. Do not turn address proximity, matching shapes, or a decompiler guess
 into an identity or behavioral claim.
 
+Java script locators under `ghidra/` must resolve to maintained scripts. When
+an original tool citation has no recoverable implementation, preserve its exact
+text in top-level `historicalToolReferences`, with `locator` and a nonempty
+`qualification` explaining the provenance and replay limit. This records an
+unavailable historical producer, not a current tool dependency or an assertion
+that a similarly named maintained script produced the evidence. Other script
+references remain subject to the checkout-resolution check.
+
 ## Recording findings
 
 Start with a narrow read-only query and keep its output in ignored scratch.

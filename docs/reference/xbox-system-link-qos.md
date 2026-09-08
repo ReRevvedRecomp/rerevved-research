@@ -361,9 +361,19 @@ A controlled one-process trace used a debug-only exact filter for caller
 252 and message `0x0005800E`. During the corrected host-setup flow, it recorded
 exactly one matching call from guest callsite `0x82A1F890`; the title then
 reached the lobby and completed normal leave, cleanup, and process exit. This
-links one runtime event to the exact static callsite only. The message, record,
-result, success requirements, session behavior, host authority, advertisement,
-discovery, delivery, framing, transport, relay, Internet play, payload meaning,
-and relationship to lobby progress remain unproved.
+links one runtime event to the exact static callsite only.
+
+The topic manifest records the exact pinned source locations and bounded title
+dataflow. It closes `0x0005800E` as `XUserMuteListQuery` with a 16-byte
+user-index/remote-XUID input record and a caller-owned four-byte BOOL output.
+The guest wrapper ignores the imported dispatch result and returns its
+initialized local `+0x10` word. No accepted receiver evidence establishes a
+callee write through imported arg1 to that word, so zero is only the current
+modeled outcome and not a universal return guarantee.
+This closes the message identity and input/output ABI only. The pinned
+implementation is clean-room guidance, not retail behavior. Mute-list state,
+validation policy, empty-list and BOOL write rules, completion behavior, state
+ownership, and any voice, lobby, discovery, session, transport, payload, or
+causation effect remain unproved.
 
 Evidence: [topic manifest](../../manifests/xbox-system-link-qos-root.json).

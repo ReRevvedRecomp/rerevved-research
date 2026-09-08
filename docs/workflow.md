@@ -1,7 +1,9 @@
 # Headless Ghidra workflow
 
-All Ghidra access uses the repository drivers. Read-only queries use
-`tools\run-headless.ps1` and must pass `-ReadOnly`. The repair chain uses
+All Ghidra access uses the repository drivers. Query runs use
+`tools\run-headless.ps1`, which always passes Ghidra's `-readOnly` option.
+The compatibility `-ReadOnly` switch may be supplied explicitly, but an
+explicit `-ReadOnly:$false` is rejected. The repair chain uses
 `tools\bootstrap-ghidra.ps1` and always targets a disposable project.
 
 Set the local environment once per shell:

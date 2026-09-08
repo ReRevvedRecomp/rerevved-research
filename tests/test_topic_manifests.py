@@ -82,6 +82,40 @@ class TopicManifestTests(unittest.TestCase):
             for key in current_evidence:
                 self.assertNotIn(key, FORBIDDEN_CURRENT_EVIDENCE_KEYS, path.name)
 
+    def test_script_locators_resolve_or_preserve_historical_provenance(self) -> None:
+        def visit(value: object):
+            if isinstance(value, str):
+                if value.startswith("ghidra/"):
+                    yield value
+            elif isinstance(value, dict):
+                for child in value.values():
+                    yield from visit(child)
+            elif isinstance(value, list):
+                for child in value:
+                    yield from visit(child)
+
+        for path, document in self.documents:
+            with self.subTest(manifest=path.name):
+                historical = document.get("historicalToolReferences", [])
+                self.assertIsInstance(historical, list)
+                for reference in historical:
+                    self.assertEqual(set(reference), {"locator", "qualification"})
+                    self.assertRegex(reference["locator"], r"^ghidra/[A-Za-z0-9_]+\.java$")
+                    self.assertFalse((REPO / reference["locator"]).exists(),
+                                     "Historical tool references are for unavailable producers")
+                    self.assertIsInstance(reference["qualification"], str)
+                    self.assertTrue(reference["qualification"].strip())
+                current = {key: value for key, value in document.items()
+                           if key != "historicalToolReferences"}
+                for locator in visit(current):
+                    self.assertIsNotNone(
+                        re.fullmatch(r"ghidra/[^:\s]+\.java(?::.+)?", locator), locator
+                    )
+                    script = (REPO / locator.split(":", 1)[0]).resolve()
+                    self.assertTrue(script.is_relative_to((REPO / "ghidra").resolve()),
+                                    locator)
+                    self.assertTrue(script.is_file(), f"{path.name}: missing {locator}")
+
     def test_production_cost_ownership_preserves_boundaries(self) -> None:
         path = MANIFESTS / "production-cost-ownership.json"
         document = json.loads(path.read_text(encoding="utf-8"))

@@ -165,6 +165,82 @@ class CatalogValidatorNegativeTests(unittest.TestCase):
             "'evidence' is a required property",
         )
 
+    def test_rejects_evidence_kind_locator_mismatch(self):
+        invalid_pairs = (
+            ("topic-manifest", "generated:test-fixture"),
+            ("ghidra-static", "runtime:test-fixture"),
+            ("generated-code", "https://example.test/reference"),
+            ("runtime-probe", "../runtime-baseline.json#/configuredRoot"),
+            ("external-reference", "ghidra/DumpFunctions.java:0x82000000"),
+        )
+        for kind, locator in invalid_pairs:
+            with self.subTest(kind=kind, locator=locator):
+                self.reject(
+                    lambda docs, kind=kind, locator=locator: docs[
+                        "symbols"
+                    ]["records"][0].update(
+                        evidence=[{"kind": kind, "locator": locator}]
+                    ),
+                    "is not valid under any of the given schemas",
+                )
+
+    def test_accepts_maintained_ghidra_script_locator(self):
+        documents = copy.deepcopy(self.documents)
+        documents["symbols"]["records"][0]["evidence"] = [
+            {"kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java"},
+            {
+                "kind": "ghidra-static",
+                "locator": "ghidra/DumpFunctions.java:0x82000000",
+            },
+        ]
+        validate_catalog_documents(self.schemas, documents)
+        validate_local_references(REPO, documents)
+
+    def test_accepts_all_evidence_locator_forms(self):
+        documents = copy.deepcopy(self.documents)
+        documents["symbols"]["records"][0]["evidence"] = [
+            {
+                "kind": "topic-manifest",
+                "locator": "../runtime-baseline.json#/configuredRoot",
+            },
+            {"kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java"},
+            {"kind": "generated-code", "locator": "generated:test-fixture"},
+            {"kind": "runtime-probe", "locator": "runtime:test-fixture"},
+            {
+                "kind": "external-reference",
+                "locator": "https://example.test/reference",
+            },
+        ]
+        validate_catalog_documents(self.schemas, documents)
+        validate_local_references(REPO, documents)
+
+    def test_rejects_missing_ghidra_script(self):
+        self.reject_local(
+            lambda docs: docs["symbols"]["records"][0].update(
+                evidence=[
+                    {
+                        "kind": "ghidra-static",
+                        "locator": "ghidra/MissingQuery.java:0x82000000",
+                    }
+                ]
+            ),
+            "script is missing or leaves ghidra",
+        )
+
+    def test_rejects_ghidra_script_path_escape(self):
+        scratch = REPO / "docs" / "ai_agents" / "local" / ".tmp"
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as temporary:
+            script = Path(temporary) / "OutsideQuery.java"
+            script.write_text("class OutsideQuery {}\n", encoding="ascii")
+            locator = f"ghidra/../{script.relative_to(REPO).as_posix()}:0x82000000"
+            self.reject_local(
+                lambda docs: docs["symbols"]["records"][0].update(
+                    evidence=[{"kind": "ghidra-static", "locator": locator}]
+                ),
+                "script is missing or leaves ghidra",
+            )
+
     def test_rejects_duplicate_ids(self):
         def duplicate(docs):
             docs["symbols"]["records"].append(

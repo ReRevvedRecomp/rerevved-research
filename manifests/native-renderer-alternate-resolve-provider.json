@@ -311,11 +311,19 @@
   "consumerCallerRawBoundary": {
     "query": "A raw-word query scanned aligned initialized executable memory for PowerPC lwz instructions with positive displacements +0x11C and +0x120, excluding base registers r0 and r1. It subtracted every address accepted by the decoded slot-load matcher, then inspected at most eight raw successor words for a same-register mtctr followed by bctrl without an intervening raw branch form.",
     "coverage": "The query scanned 4734976 executable words, found 866 raw lwz slot-load candidates, matched and subtracted all 169 decoded candidates, and left 697 raw-only slot loads. Thirty-seven raw-only loads reached a syntactic same-register mtctr and bctrl window. The result cap of 64 was not reached and the query was not cancelled.",
-    "generatedOwners": "The 37 raw-only callsites map through the pinned generated function table to 25 functions. The smallest unresolved pair is 0x82871560 and 0x828715E0, each 0x80 bytes before the next generated function and containing one raw-only dispatch.",
+    "generatedOwners": "The 37 raw-only callsites map through the pinned generated function table to 25 functions. The smallest generated owners are 0x82871560 and 0x828715E0, each 0x80 bytes before the next generated function and containing one raw-only dispatch.",
     "smallestBoundary": "Function 0x82871560 loads the receiver from caller object +0x3A4 and dispatches its vtable +0x11C at 0x8287159C through bctrl 0x828715A4. Adjacent function 0x828715E0 performs the same receiver load and dispatches +0x120 at 0x8287161C through bctrl 0x82871624.",
     "receiverProducer": "Caller-family function 0x82869ED0 allocates 1408 bytes and constructs the object through 0x828797F8, which installs owner table 0x820B31F8. That table places 0x82871560 and 0x828715E0 at +0x168 and +0x16C. Function 0x82869ED0 obtains a non-null candidate receiver from the +0x10 virtual call at 0x8286A310 on its input object's +0xB0 provider and passes that result to 0x8287C6A8. Function 0x8287C6A8 stores its r4 input at owner object +0x3A4.",
-    "result": "The raw scan is not a no-result: it recovers 37 previously omitted syntactic call shapes and narrows the first receiver-provenance task to the adjacent 0x82871560/0x828715E0 pair. No static edge yet proves that their +0x3A4 receiver installs NiXenonRenderer table 0x82047050 or a distinct table.",
+    "result": "The raw scan is not a no-result: it recovers 37 previously omitted syntactic call shapes and narrows the first receiver-provenance task to the adjacent 0x82871560/0x828715E0 pair. The separate rawPairReceiverProvenance trace resolves that pair to distinct table 0x820BCA70; the other raw-only shapes remain unclassified.",
     "qualification": "The raw query recognizes only direct same-register lwz-to-mtctr-to-bctrl windows of at most eight words. It does not prove register lifetime through undefined intervening words, function semantics, receiver vtable identity, reachability, or runtime execution. Generated code corroborates the exact functions and field flow but is not independent guest evidence."
+  },
+  "rawPairReceiverProvenance": {
+    "providerConstruction": "Constructor 0x8286BC70 calls factory 0x828803A8 at 0x8286BDD4 and stores its exact return at object +0xB0 at 0x8286BDDC. Factory 0x828803A8 calls constructor 0x82880238, which materializes table 0x820B3C0C at 0x82880244 through 0x8288024C and stores it at provider offset zero at 0x82880260.",
+    "producerTarget": "Provider table word 0x820B3C1C, exactly +0x10 from 0x820B3C0C, contains 0x82880068. The virtual call at 0x8286A310 therefore reaches 0x82880068 in the exact constructor path, with no this-pointer adjustment in the call sequence.",
+    "receiverConstruction": "Function 0x82880068 allocates 1944 bytes and calls constructor 0x828C4AA8 at 0x828800A8. Constructor 0x828C4AA8 materializes table 0x820BCA70 at 0x828C4AB8 through 0x828C4AC8 and stores it at receiver offset zero at 0x828C4AE4. Its narrow generated body contains no later replacement of the outer first word and returns the original allocation without pointer adjustment.",
+    "slotTargets": "Distinct table 0x820BCA70 contains 0x8294D320 at +0x11C and 0x8294D508 at +0x120. NiXenonRenderer table 0x82047050 instead contains 0x8250E0F0 and 0x8250E1D0 at those offsets.",
+    "result": "The receiver returned by the call at 0x8286A310 and stored at owner +0x3A4 through 0x8287C6A8 has proved table 0x820BCA70 in the exact construction path. Calls 0x828715A4 and 0x82871624 therefore dispatch 0x8294D320 and 0x8294D508, not the NiXenonRenderer methods.",
+    "qualification": "This exclusion is bounded to the exact 0x8286BC70 to 0x828803A8 to 0x82880238 provider path and the 0x82880068 to 0x828C4AA8 receiver path. It does not name either class, prove runtime reachability, classify the remaining raw-only shapes, or establish an owner-visible sequence."
   },
   "release": {
     "wrapperCleanup": "0x825180B8 loads wrapper +0x14 and atomically decrements the pointed resource's +0x04 reference count. When the count reaches zero it calls lower cleanup 0x82518B40, then clears wrapper +0x14. It passes wrapper +0x0C and size 68 to helper 0x82465DA8, then clears +0x0C.",
@@ -325,17 +333,17 @@
     "qualification": "The classifier and dynamic device calls do not identify a concrete lower destructor, backing deallocator, release completion point, or recycling policy. Reference decrements do not prove runtime destruction or address retirement."
   },
   "nextSemanticDiscriminator": {
-    "purpose": "Determine the installed vtable of the receiver returned at 0x8286A310 and stored at the paired raw caller object's +0x3A4, without adding or widening runtime telemetry.",
+    "purpose": "Classify raw-only +0x120 callsite 0x828DD910 in generated owner 0x828DD8C8 after excluding the smaller 0x82871560/0x828715E0 pair, without adding or widening runtime telemetry.",
     "placement": [
-      "Start from the +0x10 virtual producer call at 0x8286A310 in 0x82869ED0 and identify the input +0xB0 provider's exact installed table or bounded producer.",
-      "Trace only the returned object's first-word initializer through the non-null handoff to 0x8287C6A8 and object +0x3A4.",
-      "Stop at exact table 0x82047050, one proved distinct table that excludes the paired raw calls, or the smallest unresolved provider boundary."
+      "Start from generated function 0x828DD8C8, whose raw slot load at 0x828DD908 reaches bctrl 0x828DD910 and whose exact extent to the next generated function is 0xA0 bytes.",
+      "Trace only that callsite's receiver producer and first-word initializer; do not inspect unrelated methods, revisit the excluded pair, or widen the raw matcher.",
+      "Stop at exact table 0x82047050, one proved distinct table that excludes the selected call, or the smallest unresolved producer boundary."
     ],
     "authorization": {
       "status": "research-static-only",
       "titleCodeCondition": "Do not add another owner sequence or widen the consumed token probe without a new exact caller or separately accepted runtime discriminator."
     },
-    "decisiveResult": "Exact receiver table 0x82047050 permits tracing the paired raw callers' owner-visible entry path. A proved distinct table excludes this pair. An unresolved producer leaves the caller and user sequence unknown."
+    "decisiveResult": "Exact receiver table 0x82047050 permits tracing the selected raw caller's owner-visible entry path. A proved distinct table excludes it. An unresolved producer leaves the caller and user sequence unknown."
   },
   "currentEvidence": {
     "method": "Two consumed default-off exact-callsite runtime observations against pinned clean Title and SDK revisions, foreground read-only Ghidra function, reference, vtable, raw-word, decoded slot-call, and decoded global-address queries against the canonical version 1.3 project, and narrow exact-function generated-code corroboration.",
@@ -427,7 +435,13 @@
       {
         "role": "raw-only caller boundary",
         "address": "0x8286A310, 0x8287159C, 0x828715A4, 0x8287161C, 0x82871624, 0x8287C6A8",
-        "result": "A bounded aligned executable-word scan subtracted all 169 decoded slot loads and found 37 raw-only syntactic callsites in 25 generated functions. The smallest adjacent pair belongs to owner table 0x820B31F8 and dispatches +0x11C and +0x120 through a receiver stored at owner +0x3A4; that receiver comes from an unresolved +0x10 virtual producer at 0x8286A310.",
+        "result": "A bounded aligned executable-word scan subtracted all 169 decoded slot loads and found 37 raw-only syntactic callsites in 25 generated functions. The smallest adjacent pair belongs to owner table 0x820B31F8 and dispatches +0x11C and +0x120 through a receiver stored at owner +0x3A4.",
+        "confidence": "strong"
+      },
+      {
+        "role": "raw-pair receiver exclusion",
+        "address": "0x82880238, 0x820B3C0C, 0x82880068, 0x828C4AA8, 0x820BCA70, 0x820BCB8C, 0x820BCB90",
+        "result": "The exact provider construction installs table 0x820B3C0C, whose +0x10 target constructs and returns a receiver with distinct table 0x820BCA70. Its +0x11C and +0x120 targets are 0x8294D320 and 0x8294D508, excluding the 0x82871560/0x828715E0 pair as NiXenonRenderer callers in that path.",
         "confidence": "strong"
       }
     ],
@@ -522,9 +536,18 @@
       "generated:rerevved/sub_828715E0",
       "generated:rerevved/sub_82869ED0",
       "generated:rerevved/sub_828797F8",
-      "generated:rerevved/sub_8287C6A8"
+      "generated:rerevved/sub_8287C6A8",
+      "ghidra/FindSplitConstantCandidates.java:0x820B3C0C,0x820BCA70,0x82047050",
+      "ghidra/DumpMemoryWords.java:0x8286BDDC,0x8286A310,0x828800A8,0x828C4AB8,0x828C4AE4,0x820B3C0C,0x820BCA70,0x820BCB8C,0x820BCB90,0x8204716C,0x82047170",
+      "generated:rerevved/sub_8286BC70",
+      "generated:rerevved/sub_828803A8",
+      "generated:rerevved/sub_82880238",
+      "generated:rerevved/sub_82880068",
+      "generated:rerevved/sub_828C4AA8",
+      "generated:rerevved/sub_8294D320",
+      "generated:rerevved/sub_8294D508"
     ],
-    "qualification": "Runtime evidence proves one selected vtable/provider identity, joins seven accepted input records to creator 0x82533DB8, and records a bounded stable-menu no-join at the consumer methods. Static evidence proves the provider output, builder chain, rendered-texture outer holder, CPU-access-like implementations, and exclusion of fixed receiver 0x8314F76C, registry-produced receiver 0x82CAE220, and input-field receiver 0x8222DE98 by their distinct installed vtables. The decoded searches do not prove an exact caller or user-visible sequence. The raw scan recovers 37 previously omitted syntactic shapes but does not prove receiver identity; branch-separated raw flow, register aliases, memory spills, and broader interprocedural shapes remain outside its coverage. No evidence proves mutation, contents, lower allocation or free completion, backing release, or address recycling."
+    "qualification": "Runtime evidence proves one selected vtable/provider identity, joins seven accepted input records to creator 0x82533DB8, and records a bounded stable-menu no-join at the consumer methods. Static evidence proves the provider output, builder chain, rendered-texture outer holder, CPU-access-like implementations, and exclusion of fixed receiver 0x8314F76C, registry-produced receiver 0x82CAE220, input-field receiver 0x8222DE98, and raw-pair receiver at owner +0x3A4 by their distinct installed vtables in their exact construction paths. The decoded searches do not prove an exact caller or user-visible sequence. The raw scan recovers 37 previously omitted syntactic shapes; only the first adjacent pair now has proved receiver identity. Branch-separated raw flow, register aliases, memory spills, and broader interprocedural shapes remain outside its coverage. No evidence proves mutation, contents, lower allocation or free completion, backing release, or address recycling."
   },
   "catalogPromotion": {
     "newEntities": [
@@ -543,7 +566,7 @@
       "RVA-REL-0478",
       "RVA-REL-0494"
     ],
-    "result": "Promotes the reusable provider, factory, partial wrapper layout, observed provider vtable slot, accepted alternate-factory-to-creator join, and exact production and installation relations without naming the unresolved class or lower resource type. The three distinct-receiver exclusions remain topic-local and add no catalog entities."
+    "result": "Promotes the reusable provider, factory, partial wrapper layout, observed provider vtable slot, accepted alternate-factory-to-creator join, and exact production and installation relations without naming the unresolved class or lower resource type. The distinct-receiver exclusions remain topic-local and add no catalog entities."
   },
   "guards": [
     "Do not apply explicit-buffer fields +0x90, +0x94, or +0x98 to vtable 0x82047628 or provider 0x82517800.",
@@ -566,8 +589,8 @@
     "Do not infer absence of every possible later raw overwrite from the decoded global-address query; its coverage excludes undefined bytes.",
     "Do not derive an owner-visible runtime sequence from the five syntactic callsites; none has an exact NiXenonRenderer receiver flow.",
     "Do not generalize the zero-result decoded CFG query beyond its 16-instruction, two-branch, 256-state, exact-register-copy boundary or treat it as proof that the renderer methods have no caller.",
-    "Do not treat any of the 37 raw-only syntactic windows as a NiXenonRenderer caller without proving its receiver table; the smallest 0x82871560/0x828715E0 pair remains unresolved at producer call 0x8286A310.",
+    "Do not treat any remaining raw-only syntactic window as a NiXenonRenderer caller without proving its receiver table; the smallest 0x82871560/0x828715E0 pair is excluded by distinct table 0x820BCA70.",
     "Do not implement a persistent native mirror or reuse either consumed capture."
   ],
-  "conclusion": "One exact pre-Resolve runtime record selected vtable 0x82047628 and provider 0x82517800. That provider returns selected-wrapper field +0x14 as the first output that reaches Resolve r6, writes zero as its second output, and returns true. The accepted creator-input run joins the alternate factory pre-call 0x82517FFC to creator 0x82533DB8 for seven records and three input sets. Outer creator 0x8252EF20 is associated with NiXenonRenderedTextureData::Create and stores the lower resource at outer +0x58. NiXenonRenderer methods 0x8250E0F0 and 0x8250E1D0 are the first concrete non-cleanup consumers of that field, but the consumed stable-menu run joined exact alternate creation and Resolve tokens 2, 5, and 6 to neither method. A decoded scan found five same-displacement virtual-call shapes. Fixed receiver 0x8314F76C is excluded because initializer 0x82D7E758 installs distinct vtable 0x82138768 and +0x11C target 0x82D7ED00. Registry receiver 0x82CAE220 is excluded because producer 0x82CABC78 inserts the object from factory 0x82CB12F0, which installs distinct vtable 0x8215FA78 and +0x120 target 0x822E2768. Input-field receiver 0x8222DE98 is excluded because factory caller 0x82237478 publishes the object constructed by 0x8221A708, which installs distinct vtable 0x8213F660 and +0x120 target 0x82219E58. The other two shapes cannot provide a meaningful exact traversal. A separate decoded CFG traversal found no additional branch-separated or exact-copy-aliased shape within 16 instructions, two branch edges, and 256 states per load; it independently recognized all five straight-line controls and reached no cap. A bounded raw executable-word scan then subtracted all 169 decoded candidates and recovered 37 raw-only syntactic callsites in 25 generated functions. The smallest adjacent pair, 0x82871560 and 0x828715E0, belongs to owner table 0x820B31F8 and dispatches +0x11C and +0x120 through a receiver stored at owner +0x3A4. That receiver is returned by an unresolved input-provider virtual +0x10 call at 0x8286A310 and handed through 0x8287C6A8. No exact receiver table or owner-visible sequence is supported. The next bounded static method must identify that returned receiver's first-word initializer before runtime telemetry can be widened. Original method names, concrete lower class, offscreen or render-target use, Scaleform or GFx ownership, presentation identity, input semantics beyond the accepted numeric boundary, exact per-set header/size values, mutation or contents generation, lower allocation/free, and address recycling remain unresolved."
+  "conclusion": "One exact pre-Resolve runtime record selected vtable 0x82047628 and provider 0x82517800. That provider returns selected-wrapper field +0x14 as the first output that reaches Resolve r6, writes zero as its second output, and returns true. The accepted creator-input run joins the alternate factory pre-call 0x82517FFC to creator 0x82533DB8 for seven records and three input sets. Outer creator 0x8252EF20 is associated with NiXenonRenderedTextureData::Create and stores the lower resource at outer +0x58. NiXenonRenderer methods 0x8250E0F0 and 0x8250E1D0 are the first concrete non-cleanup consumers of that field, but the consumed stable-menu run joined exact alternate creation and Resolve tokens 2, 5, and 6 to neither method. A decoded scan found five same-displacement virtual-call shapes. Fixed receiver 0x8314F76C is excluded because initializer 0x82D7E758 installs distinct vtable 0x82138768 and +0x11C target 0x82D7ED00. Registry receiver 0x82CAE220 is excluded because producer 0x82CABC78 inserts the object from factory 0x82CB12F0, which installs distinct vtable 0x8215FA78 and +0x120 target 0x822E2768. Input-field receiver 0x8222DE98 is excluded because factory caller 0x82237478 publishes the object constructed by 0x8221A708, which installs distinct vtable 0x8213F660 and +0x120 target 0x82219E58. The other two shapes cannot provide a meaningful exact traversal. A separate decoded CFG traversal found no additional branch-separated or exact-copy-aliased shape within 16 instructions, two branch edges, and 256 states per load; it independently recognized all five straight-line controls and reached no cap. A bounded raw executable-word scan then subtracted all 169 decoded candidates and recovered 37 raw-only syntactic callsites in 25 generated functions. The smallest adjacent pair, 0x82871560 and 0x828715E0, belongs to owner table 0x820B31F8 and dispatches +0x11C and +0x120 through a receiver stored at owner +0x3A4. Constructor 0x8286BC70 publishes a provider with table 0x820B3C0C at +0xB0. Its +0x10 target 0x82880068 constructs and returns the receiver with distinct table 0x820BCA70; that table's +0x11C and +0x120 targets are 0x8294D320 and 0x8294D508. The pair is therefore excluded as a caller of the NiXenonRenderer methods in the exact construction path. No owner-visible sequence is supported, and the remaining raw-only shapes are unclassified. The next bounded static method is raw +0x120 callsite 0x828DD910 in generated owner 0x828DD8C8, the next smallest exact function extent at 0xA0 bytes. Its receiver table must be proved before runtime telemetry can be widened. Original method names, concrete lower class, offscreen or render-target use, Scaleform or GFx ownership, presentation identity, input semantics beyond the accepted numeric boundary, exact per-set header/size values, mutation or contents generation, lower allocation/free, and address recycling remain unresolved."
 }

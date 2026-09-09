@@ -163,7 +163,9 @@
     "metadata": "After a non-null resource result, the factory allocates 68 bytes, copies the configuration block into it when allocation succeeds, and stores that pointer at wrapper +0x0C. Metadata allocation failure leaves +0x0C null without clearing the returned resource.",
     "linkPublication": "When publication-head storage is null, 0x823DC6F8 creates a distinct 20-byte link; otherwise 0x82347100 replaces the existing link target with the new wrapper. The link is stored through the publication head and at wrapper +0x08, and link +0x10 points to the wrapper.",
     "outerPublication": "One bounded caller, 0x8252EF20, calls the factory and on success stores wrapper +0x14 at outer-container field +0x58.",
-    "qualification": "The accepted run joins one runtime wrapper/resource token to 0x82517EC0 and creator 0x82533DB8, with three input sets. Publication-head and outer-container ownership outside these exact edges remain unresolved."
+    "outerOwnerClassification": "The sole reference to exact diagnostic string `NiXenonRenderedTextureData::Create> Failed NiXenonTextureBufferData::Create - %s` is the failure path inside 0x8252EF20. The function allocates the 0xAC-byte outer object, installs vtable 0x82049B80, invokes 0x82517EC0, and stores the returned lower resource at outer +0x58. This associates the alternate resource with the NiXenonRenderedTextureData creation path and a nested NiXenonTextureBufferData creation failure.",
+    "outerRegistration": "Caller 0x8250DF08 creates the outer object only while object field +0x24 is null, then passes manager field +0x578, the object as key, and the value loaded from object field +0x24 to 0x824AC4A0. Exact generated code proves 0x824AC4A0 is a generic hash-table insert/update operation; it is bookkeeping, not a texture, Resolve, or presentation consumer.",
+    "qualification": "The accepted run joins one runtime wrapper/resource token to 0x82517EC0 and creator 0x82533DB8, with three input sets. The diagnostic string supports the named outer creation path and nested texture-buffer role, but it does not prove an original lower resource class, offscreen use, Scaleform ownership, VdSwap eligibility, or presentation identity. Ownership outside these exact creation, storage, and registration edges remains unresolved."
   },
   "headerAndBacking": {
     "returnedResource": "Resolve retains r6 as the returned resource and reads resource offsets +0x1C, +0x20, +0x24, +0x28, and +0x30. This distinguishes the resource from the wrapper's separate 68-byte metadata copy.",
@@ -237,6 +239,12 @@
         "address": "0x82533DB8, 0x826B6FE8, 0x826B6D68, 0x8269A378, 0x82699208, 0x826B7140",
         "result": "The matched creator allocates a 0x34-byte result, forwards extents and derived controls through the builder chain, and applies the page-base patch; exact per-set header words, requested sizes, and backing identity remain unobserved.",
         "confidence": "strong"
+      },
+      {
+        "role": "rendered-texture outer owner",
+        "address": "0x82049B28, 0x82049B80, 0x8252EF20, 0x8250DF08, 0x824AC4A0",
+        "result": "The sole exact diagnostic-string reference associates 0x8252EF20 with NiXenonRenderedTextureData::Create and nested NiXenonTextureBufferData::Create failure. The created lower resource is stored at outer +0x58, and the immediate caller registers the owning object through a generic hash-table insert/update.",
+        "confidence": "strong"
       }
     ],
     "locators": [
@@ -266,6 +274,11 @@
       "generated:rerevved/sub_826B7140",
       "generated:rerevved/sub_826A4638",
       "ghidra/DumpFunctions.java:0x82533DB8,0x826B6FE8,0x826B6D68,0x82698FC8,0x8269A378,0x82699208,0x826B7140",
+      "ghidra/FindStrings.java:NiXenonRenderedTextureData,NiXenonTextureBufferData",
+      "ghidra/DumpReferences.java:0x82049B28,0x82049B80,0x8252EF20,0x824AC4A0",
+      "ghidra/DumpFunctions.java:0x8252EF20,0x8250DF08,0x824AC4A0",
+      "generated:rerevved/sub_8250DF08",
+      "generated:rerevved/sub_824AC4A0",
       "topic-manifest:../native-renderer-vdswap-boundary.json#/abi",
       "runtime:native_resolve_identity_probe",
       "runtime:native_creator_inputs_probe"
@@ -299,9 +312,11 @@
     "Do not infer lower backing deallocation, retirement, or address recycling from the dynamic cleanup classifier.",
     "Do not assign ordered width versus height, depth/count, r7 upper-bit, or fifth-input usage/flag names to alternate creator inputs; only r7 low-six-bit values 0x06 and 0x36 have accepted Xenos format names.",
     "Do not promote exact per-set header words, allocation sizes, contents, lower-free, or recycling facts without a separate bounded observation.",
+    "Do not generalize the NiXenonRenderedTextureData diagnostic boundary into a concrete lower resource class, offscreen or render-target use, Scaleform or GFx ownership, VdSwap eligibility, swap-chain membership, or presentation identity.",
+    "Do not assign a semantic role to outer field +0x24 or treat generic hash registration at 0x824AC4A0 as a renderer or presentation consumer.",
     "Do not emit alternate creator r4-r8 except on the exact live wrapper/resource Resolve match, and do not emit pointers or payloads separately.",
     "Do not treat the transient input token or its numeric r4-r8 values as allocation generation or recycling evidence.",
     "Do not implement a persistent native mirror or reuse the consumed capture."
   ],
-  "conclusion": "One exact pre-Resolve runtime record selected vtable 0x82047628 and provider 0x82517800. That provider returns selected-wrapper field +0x14 as the first output that reaches Resolve r6, writes zero as its second output, and returns true. The accepted creator-input run joins the alternate factory pre-call 0x82517FFC to creator 0x82533DB8 for seven records and three sets: 0x400/0x400, 0x500/0x2D0 with r7 0x28280106, and 0x500/0x2D0 with r7 0x1A200136; r6 is one and r8 is zero in every set. The narrow static join proves r4/r5 are ordered extent-like inputs, r7 is a packed selector word whose low six bits are accepted Xenos formats 0x06 or 0x36, and the creator result is 0x34 bytes through the listed builder chain. r4/r5 order, r6 depth/count semantics, r7 upper bits, r8 semantic role, exact per-set header/size values, mutation or contents generation, lower allocation/free, and address recycling remain unresolved."
+  "conclusion": "One exact pre-Resolve runtime record selected vtable 0x82047628 and provider 0x82517800. That provider returns selected-wrapper field +0x14 as the first output that reaches Resolve r6, writes zero as its second output, and returns true. The accepted creator-input run joins the alternate factory pre-call 0x82517FFC to creator 0x82533DB8 for seven records and three sets: 0x400/0x400, 0x500/0x2D0 with r7 0x28280106, and 0x500/0x2D0 with r7 0x1A200136; r6 is one and r8 is zero in every set. The narrow static join proves r4/r5 are ordered extent-like inputs, r7 is a packed selector word whose low six bits are accepted Xenos formats 0x06 or 0x36, and the creator result is 0x34 bytes through the listed builder chain. The sole diagnostic reference associates outer creator 0x8252EF20 with NiXenonRenderedTextureData::Create and nested NiXenonTextureBufferData::Create failure; it stores the lower resource at outer +0x58, after which 0x8250DF08 performs generic owner registration. This names the outer creation and texture-buffer family, not a concrete lower class, offscreen or render-target use, Scaleform or GFx ownership, or presentation identity. r4/r5 order, r6 depth/count semantics, r7 upper bits, r8 semantic role, exact per-set header/size values, mutation or contents generation, lower allocation/free, and address recycling remain unresolved."
 }

@@ -26,6 +26,7 @@ SCRIPTS = (
     "FindFieldAccesses",
     "FindFieldRefs",
     "FindGlobalAddressAccesses",
+    "FindRawVtableSlotCalls",
     "FindVtableSlotCalls",
     "FindVtableSlotCallsCfg",
     "FindPointerValues",
@@ -307,6 +308,19 @@ class GhidraQueryWriteTests(unittest.TestCase):
         self.assertIn("instruction.getFlowType().isCall()", source)
         self.assertIn("else if (writesCtr(instruction))", source)
         self.assertIn('!registerName(operandRegisters.get(1)).equals("r0")', source)
+
+    def test_raw_vtable_query_subtracts_decoded_candidates_and_is_bounded(self):
+        source = (GHIDRA / "FindRawVtableSlotCalls.java").read_text(encoding="utf-8")
+        self.assertIn("MAX_WINDOW_WORDS = 8", source)
+        self.assertIn("!block.isExecute()", source)
+        self.assertIn("decodedCandidates.contains(current.getOffset())", source)
+        self.assertIn("LWZ_OPCODE = 0x80000000L", source)
+        self.assertIn("MTCTR_MASK = 0xFC1FFFFFL", source)
+        self.assertIn("BCTRL_WORD = 0x4E800421L", source)
+        self.assertIn("BRANCH_FORM_MASK = 0xFC0007FEL", source)
+        self.assertIn('"Raw-only slot-load candidates: "', source)
+        self.assertIn('"Truncated: "', source)
+        self.assertIn('"Cancelled: "', source)
 
     def test_global_query_continues_after_a_nonmatching_split_part(self):
         source = (GHIDRA / "FindGlobalAddressAccesses.java").read_text(encoding="utf-8")

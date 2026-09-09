@@ -25,6 +25,7 @@ SCRIPTS = (
     "FindCallSplitConstantArgs",
     "FindFieldAccesses",
     "FindFieldRefs",
+    "FindVtableSlotCalls",
     "FindPointerValues",
     "FindScalarUses",
     "FindSplitConstantCandidates",
@@ -267,6 +268,31 @@ class GhidraQueryWriteTests(unittest.TestCase):
         for failure in ("write", "flush", "close"):
             content = "partial" if failure == "write" else "partial-output"
             self.assertEqual(legacy[failure], ["RETURNED", "WROTE", content])
+
+    def test_vtable_query_allows_source_writes_after_ctr_transfer(self):
+        source = (GHIDRA / "FindVtableSlotCalls.java").read_text(encoding="utf-8")
+        find_start = source.index("private Match findCallsite")
+        post_ctr_start = source.index(
+            "if (writesRegister(next, trackedSource))", find_start
+        )
+        post_ctr_end = source.index("if (hasControlFlow(next))", post_ctr_start)
+        post_ctr = source[post_ctr_start:post_ctr_end]
+        self.assertRegex(post_ctr, r"sourceValueLive\s*=\s*false;")
+        self.assertNotIn("writesRegister(next, destination)", post_ctr)
+
+    def test_vtable_query_rejects_unproven_later_ctr_transfer(self):
+        source = (GHIDRA / "FindVtableSlotCalls.java").read_text(encoding="utf-8")
+        find_start = source.index("private Match findCallsite")
+        post_ctr_branch = source.index("} else {", find_start)
+        transfer_start = source.index("if (isMtctr(next))", post_ctr_branch)
+        self.assertGreater(transfer_start, post_ctr_branch)
+        transfer_end = source.index(
+            "if (writesRegister(next, trackedSource))", transfer_start
+        )
+        transfer = source[transfer_start:transfer_end]
+        self.assertIn("source == null", transfer)
+        self.assertIn("!sameRegister(source, trackedSource)", transfer)
+        self.assertIn("!sourceValueLive", transfer)
 
 
 if __name__ == "__main__":

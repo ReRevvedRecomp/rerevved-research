@@ -29,6 +29,7 @@ This index covers every Java script in this directory.
 - `FindSplitConstantUses.java` finds capped functions that construct selected 32-bit values with PowerPC split constants.
 - `FindSplitConstantCandidates.java` finds capped raw-word split-constant candidates, including undefined code; each match requires instruction and register-lifetime confirmation.
 - `FindStrings.java` finds capped, case-insensitive substrings in defined guest strings.
+- `FindVtableSlotCalls.java` finds bounded decoded indirect calls whose vtable slot load feeds `mtctr` and `bctrl`.
 - `ObserveCanonicalImageEvidence.java` records the bounded manual canonical-image replay as private scratch JSON.
 - `FixXenonThunks.java` repairs undecodable Xenon VMX128 thunk slots.
 - `RebuildTruncatedFunctions.java` rebuilds functions whose last instruction is a call.

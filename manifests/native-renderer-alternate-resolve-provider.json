@@ -80,7 +80,15 @@
   "creationAndPublication": {
     "factory": "0x82517EC0 allocates and initializes the 24-byte wrapper. It treats r4 as publication-head storage, r5 as source/context, and r6 as configuration input.",
     "creatorInputs": "Source/context virtual slots +0x48 and +0x4C produce two creator arguments. Helper 0x8251C9C0 produces a configuration pointer; its +0x0C word, after one bounded conditional patch, becomes another creator argument.",
-    "dynamicCreator": "At 0x82517FFC the factory dispatches through the current device's vtable slot +0x08 with the two context-derived values, literal one, the configuration +0x0C word, and zero. A non-null result is stored at wrapper +0x14.",
+    "creatorInputMap": {
+      "r4": "Source/context virtual +0x48 result",
+      "r5": "Source/context virtual +0x4C result",
+      "r6": "Literal 1",
+      "r7": "Configuration +0x0C word after its bounded conditional patch",
+      "r8": "Literal 0",
+      "qualification": "These are exact source positions and constants at the alternate factory pre-call boundary; no width, height, depth, format, or usage name is assigned."
+    },
+    "dynamicCreator": "At pre-call boundary 0x82517FFC the factory dispatches through the current device's vtable slot +0x08 with r4/r5 from the context virtuals, r6 literal one, r7 from configuration +0x0C after its bounded patch, and r8 literal zero. A non-null result is stored at wrapper +0x14.",
     "metadata": "After a non-null resource result, the factory allocates 68 bytes, copies the configuration block into it when allocation succeeds, and stores that pointer at wrapper +0x0C. Metadata allocation failure leaves +0x0C null without clearing the returned resource.",
     "linkPublication": "When publication-head storage is null, 0x823DC6F8 creates a distinct 20-byte link; otherwise 0x82347100 replaces the existing link target with the new wrapper. The link is stored through the publication head and at wrapper +0x08, and link +0x10 points to the wrapper.",
     "outerPublication": "One bounded caller, 0x8252EF20, calls the factory and on success stores wrapper +0x14 at outer-container field +0x58.",
@@ -105,15 +113,21 @@
     "qualification": "The classifier and dynamic device calls do not identify a concrete lower destructor, backing deallocator, release completion point, or recycling policy. Reference decrements do not prove runtime destruction or address retirement."
   },
   "remainingDynamicDiscriminator": {
-    "purpose": "Join the observed alternate wrapper to factory 0x82517EC0 and identify the exact dynamic device creator without emitting guest pointers or accepting an address-reuse collision.",
+    "purpose": "Join the observed alternate wrapper to factory 0x82517EC0 and identify the exact dynamic device creator while retaining only numeric creator inputs inside a transient token and emitting them only after the existing exact live wrapper/resource Resolve match.",
     "placement": [
-      "Immediately before dynamic creator call 0x82517FFC, retain internally the wrapper in r30 and the device slot +0x08 target.",
+      "Immediately before dynamic creator call 0x82517FFC, retain internally the wrapper in r30, the device slot +0x08 target, and numeric r4-r8 inputs mapped by creationAndPublication.creatorInputMap.",
       "Immediately before successful store 0x82518034, assign a monotonic transient creation token to that wrapper and non-null resource result in r11; replace any older entry for the same wrapper address.",
       "At wrapper cleanup 0x825180B8 and destructor 0x82518D90, invalidate the matching transient token before the wrapper can be freed.",
       "Immediately before Resolve callsite 0x8250AFEC, compare selected r30 and r6 only with a still-live retained wrapper/resource token."
     ],
-    "emittedValues": "Emit only the transient creation token, device creator target, selected vptr, selected provider, a Boolean for a live selected-item-to-created-wrapper match, and a Boolean for r6-to-created-resource equality. Do not emit wrapper, resource, metadata, link, descriptor, or backing pointers or payloads, and do not persist the transient table across a process run.",
-    "decisiveResult": "One still-live token record with creator success and both equality Booleans true joins the observed alternate Resolve resource to 0x82517EC0 and the exact device creator leaf without relying on raw address equality across lifetimes. A missing, expired, or false match leaves factory origin unresolved. This discriminator does not identify allocation or contents generation or lower backing recycling."
+    "authorization": {
+      "status": "research-only-default-off",
+      "retention": "The probe may retain numeric r4-r8 in the transient token at 0x82517FFC, using only the exact static source map above.",
+      "emissionGate": "Numeric r4-r8 may be emitted only on the existing exact live wrapper/resource match at Resolve: selected wrapper vptr 0x82047628, provider 0x82517800, still-live token for selected r30, and r6 equal to the token's created resource.",
+      "titleCodeCondition": "No Title implementation or persistent native table is authorized by this Research record; the probe remains default-off and transient."
+    },
+    "emittedValues": "After the exact live wrapper/resource Resolve match, emit only the transient creation token, numeric r4-r8, device creator target, selected vptr, selected provider, a Boolean for the live selected-item-to-created-wrapper match, and a Boolean for r6-to-created-resource equality. Do not emit wrapper, resource, metadata, link, descriptor, or backing pointers or payloads, and do not persist the transient table across a process run.",
+    "decisiveResult": "One still-live token record with creator success, the exact live wrapper/resource Resolve match, and both equality Booleans true joins the observed alternate Resolve resource to 0x82517EC0 and the exact device creator leaf while exposing only numeric r4-r8 inputs. A missing, expired, or false match leaves factory origin and input emission unresolved. This discriminator does not identify allocation or contents generation or lower backing recycling."
   },
   "currentEvidence": {
     "method": "One consumed default-off exact-callsite runtime observation against the pinned Title and SDK revisions, foreground read-only Ghidra function and vtable queries against the canonical version 1.3 project, and narrow exact-function generated-code corroboration.",
@@ -134,6 +148,12 @@
         "role": "bounded wrapper lifecycle",
         "address": "0x82517EC0, 0x825180B8, 0x82518B40",
         "result": "The static factory, publication, reference-count, cleanup, and dynamic lower-release paths are bounded without assigning the runtime-selected wrapper to this factory.",
+        "confidence": "strong"
+      },
+      {
+        "role": "alternate creator input map",
+        "address": "0x82517FFC",
+        "result": "The alternate factory pre-call supplies r4/r5 from source/context virtual +0x48/+0x4C results, r6 literal 1, r7 from configuration +0x0C after its bounded conditional patch, and r8 literal 0; no public dimension or format/usage name is assigned.",
         "confidence": "strong"
       }
     ],
@@ -183,6 +203,9 @@
     "Do not treat the 68-byte wrapper metadata copy as the returned resource, descriptor, or backing.",
     "Do not treat reference counts, wrapper +0x10, observer sequence, command-ring state, or guest pointers as allocation or contents generation.",
     "Do not infer lower backing deallocation, retirement, or address recycling from the dynamic cleanup classifier.",
+    "Do not assign width, height, depth, format, or usage names to alternate creator r4-r8; retain only the exact source positions and constants recorded above.",
+    "Do not emit alternate creator r4-r8 except on the exact live wrapper/resource Resolve match, and do not emit pointers or payloads separately.",
+    "Do not treat the transient input token or its numeric r4-r8 values as allocation generation or recycling evidence.",
     "Do not implement a persistent native mirror or reuse the consumed capture."
   ],
   "conclusion": "One exact pre-Resolve runtime record selected vtable 0x82047628 and provider 0x82517800. That provider returns selected-wrapper field +0x14 as the first output that reaches Resolve r6, writes zero as its second output, and returns true. Static factory 0x82517EC0 creates a distinct 24-byte wrapper, obtains +0x14 through a dynamic device +0x08 creator, optionally copies 68 bytes of separate metadata, and publishes the wrapper through a refcounted link; one caller also publishes the resource at outer +0x58. Cleanup decrements resource and wrapper reference counts, clears wrapper fields, and selects a lower release slot through dynamic classification. No runtime edge joins the observed wrapper to that factory or identifies the creator leaf. The resource header builder, lower allocation and backing identity, mutation or contents generation, concrete lower release, and address recycling remain unresolved."

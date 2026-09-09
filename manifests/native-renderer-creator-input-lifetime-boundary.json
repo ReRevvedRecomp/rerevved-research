@@ -1,0 +1,355 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0143",
+  "topic": "native-renderer-creator-input-lifetime-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which factory values reach creator 0x82533DB8, which lower release targets are reachable from its resources, and what allocation identity, contents generation, or address-recycling facts are statically proved?",
+  "scope": {
+    "factory": "0x825184D0",
+    "factoryInputBoundary": "0x82518608",
+    "factoryCallContinuation": "0x8251860C",
+    "containerVtable": "0x8204767C",
+    "deviceVtable": "0x8204A1B0",
+    "creator": "0x82533DB8",
+    "builderChain": ["0x826B6FE8", "0x826B6D68", "0x8269A378", "0x82699208"],
+    "basePatcher": "0x826B7140",
+    "allocator": "0x82E29168",
+    "heapPath": ["0x8280DAC0", "0x8281B4F0", "0x82811658"],
+    "cleanup": "0x82518678",
+    "destructor": "0x82518E88",
+    "lowerDispatcher": "0x82518B40",
+    "lowerClassifier": "0x826979B8",
+    "alternateRuntimeGate": {
+      "factory": "0x82517EC0",
+      "wrapperVtable": "0x82047628",
+      "creatorDispatch": "0x82517FFC",
+      "qualification": "The current alternate Resolve observation is gated by this distinct wrapper factory and vtable path. It is not statically or dynamically joined to the explicit-buffer factory, container vtable, creator input map, or lower path in this packet."
+    },
+    "boundary": "This packet follows only the explicit-buffer factory 0x825184D0, its pre-call input boundary 0x82518608, the six-dword header builder, the flag-selected allocator path, and the cleanup-to-device release dispatcher. It does not assign public API names to dynamic configuration words, infer heap generations from address shape, or claim a lower heap free or contents producer that the bounded bodies do not call."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-resolve-resource-contract",
+      "use": "Provides the accepted 0x34-byte header, creator, builder, base-patcher, and descriptor-word roles."
+    },
+    {
+      "topic": "native-renderer-resource-lifetime-boundary",
+      "use": "Provides the accepted two retained slots, refcount cleanup boundary, and prior allocator-frontier negative."
+    },
+    {
+      "topic": "native-renderer-vdswap-boundary",
+      "use": "Provides the accepted renderer-device vtable, factory, creator slot, and container lifetime context."
+    },
+    {
+      "topic": "native-renderer-alternate-resolve-provider",
+      "use": "Provides the separate alternate wrapper factory 0x82517EC0, wrapper vtable 0x82047628, and runtime-origin qualification that must not be applied to this explicit-buffer packet."
+    }
+  ],
+  "factoryInputs": {
+    "deviceDispatch": {
+      "vtable": "0x8204A1B0",
+      "slot": "+0x08",
+      "target": "0x82533DB8",
+      "qualification": "The slot word is an exact static table entry for the explicit-buffer device dispatch. The factory calls it indirectly after loading the device from the accepted global device publication path; this static edge does not join the distinct alternate factory 0x82517EC0 runtime gate."
+    },
+    "registers": [
+      {
+        "register": "r4",
+        "source": "factory config +0x00",
+        "creatorRole": "first extent input forwarded into builder arithmetic and the backing-size path",
+        "publicName": "unresolved between width and height"
+      },
+      {
+        "register": "r5",
+        "source": "factory config +0x04",
+        "creatorRole": "second extent input forwarded into builder arithmetic and the backing-size path",
+        "publicName": "unresolved between width and height"
+      },
+      {
+        "register": "r6",
+        "source": "literal 1",
+        "creatorRole": "third extent or depth-like input; creator tests equality with one and forwards it to the builder",
+        "publicName": "depth/count label is not independently proved"
+      },
+      {
+        "register": "r7",
+        "source": "factory config +0x40",
+        "creatorRole": "selector input; low six bits feed classifier 0x82698FC8 and the full value feeds packed builder fields",
+        "publicName": "format-or-usage name is unresolved"
+      },
+      {
+        "register": "r8",
+        "source": "literal 0",
+        "creatorRole": "flag input tested for bits 0x1000 and 0x2000; it controls builder mode and optional-secondary merging",
+        "publicName": "usage or flag name is unresolved"
+      }
+    ],
+    "staticValues": {
+      "r6": 1,
+      "r8": 0,
+      "r4": "config[0]",
+      "r5": "config[1]",
+      "r7": "config[16]",
+      "qualification": "Only r6 and r8 are fixed by the exact factory body. The three configuration words remain runtime inputs; no bounded producer selects their values."
+    }
+  },
+  "creatorDataflow": {
+    "header": {
+      "bytes": "0x34",
+      "allocation": "0x82533DB8 requests 52 bytes through 0x82465E18 before the helper chain writes the header.",
+      "builder": "0x826B6FE8 forwards r4/r5, maps the depth-one predicate, and carries the output pointers to 0x826B6D68; 0x826B6D68 passes the extent and selector values into 0x8269A378 and copies exactly 52 bytes into the header.",
+      "baseFields": "0x826B7140 adds the primary page base to header +0x20 and, when the descriptor count exceeds one, the second page base to +0x30 while preserving low 12 bits."
+    },
+    "factoryConstantEffects": [
+      "Factory r6=1 makes the creator depth-one predicate false after helper inversion, so builder mode receives zero in its corresponding control input.",
+      "Factory r8=0 clears both creator flag tests; the header's low type nibble remains 3 and the optional flag bits are not selected by this callsite.",
+      "The creator may still receive a nonzero second backing size from the selector and extent calculations; its presence is not fixed by the factory constants alone."
+    ],
+    "selectorDomain": "The accepted classifier body maps the lower-six-bit selector to numeric values 1, 2, or 4 for the ordinary ranges, with the exact exceptional values 39 and 44 writing 4 to the first output and 1 to the second. The numeric results are not named as public formats."
+  },
+  "allocationPath": {
+    "creatorCalls": [
+      {
+        "instruction": "0x82533E98",
+        "continuation": "0x82533E9C",
+        "target": "0x82E29168",
+        "size": "computed primary backing size",
+        "flags": "0xBCFF0000"
+      },
+      {
+        "instruction": "0x82533EB0",
+        "continuation": "0x82533EB4",
+        "target": "0x82E29168",
+        "size": "computed secondary backing size when nonzero",
+        "flags": "0xBCFF0000"
+      }
+    ],
+    "lowerAllocator": {
+      "flagBranch": "0x8280DAC0 tests flag bit 31 and, for 0xBCFF0000, takes the special branch to 0x8281B4F0 instead of the normal 0x8280DE40 path.",
+      "poolSelector": "The special branch derives 0x40 for 0x8281B4F0; that wrapper derives heap selector 0x8 and passes the requested size to 0x82811658.",
+      "heapBody": "0x82811658 aligns the requested size to a minimum 16-byte boundary and searches or splits the heap's bucket and linked-block structures. This proves an allocator/free-list frontier, not a generation token or a particular future address reuse.",
+      "contents": "The special flag branch contains no call to the normal-path 0x827F7BB0 fill helper. The bounded creator/helper bodies visibly write descriptor/header words and contain no direct returned-range write, but indirect or later writers remain outside this static path, so backing contents generation is not statically proved."
+    }
+  },
+  "lowerRelease": {
+    "refcountBoundary": "0x82518678 decrements each retained resource's +0x04 atomically and calls 0x82518B40 only when the count reaches zero, then clears the slot. 0x82518E88 invokes this cleanup before the container teardown path.",
+    "classifier": {
+      "function": "0x826979B8",
+      "callInstruction": "0x82518B60",
+      "postCallContinuation": "0x82518B64",
+      "creatorHeaderDomain": "The creator header low nibble is 3. The classifier then reads header +0x30 bits 30..31; when that field is 1 it additionally tests header +0x20 bit 0x400 and a nested +0x18 resource word.",
+      "returns": [3, 17, 18, 19, 20],
+      "qualification": "The high two bits of +0x30 can be changed by 0x826B7140 from the dynamic second backing page base, so the exact return value is not statically fixed by factory r6/r8 alone."
+    },
+    "deviceDispatch": {
+      "function": "0x82518B40",
+      "mapping": [
+        {
+          "classifierCode": 3,
+          "deviceSlot": "+0x0C",
+          "staticTarget": "0x825348A8"
+        },
+        {
+          "classifierCode": 17,
+          "deviceSlot": "+0x1C",
+          "staticTarget": "0x825349F8"
+        },
+        {
+          "classifierCode": 18,
+          "deviceSlot": "+0x14",
+          "staticTarget": "0x82534950"
+        },
+        {
+          "classifierCode": 19,
+          "deviceSlot": "+0x24",
+          "staticTarget": "0x82533D10"
+        },
+        {
+          "classifierCode": 20,
+          "deviceSlot": "none",
+          "staticTarget": "none; dispatcher returns without an indirect device release"
+        }
+      ],
+      "vtableEvidence": "For device vtable 0x8204A1B0, +0x0C=0x825348A8, +0x14=0x82534950, +0x1C=0x825349F8, and +0x24=0x82533D10. If a different runtime device vptr is present, these target identities do not transfer."
+    },
+    "targetBodies": {
+      "managerTargets": "0x825348A8, 0x82534950, and 0x825349F8 write distinct resource flag constants, update device manager state, and call 0x825325E0, whose bounded body updates a counted manager table with the resource pointer.",
+      "successStub": "0x82533D10 returns one and has no visible free or backing write.",
+      "deallocatorResult": "None of the reachable device release targets calls 0x82E29168, 0x82811658, or the generic 0x82465DA8 deallocator for the resource backing. The concrete lower path therefore closes at device-manager release bookkeeping, not at a proved heap deallocation."
+    }
+  },
+  "identityAndReuse": {
+    "allocationIdentity": "unresolved; the allocator returns a pointer but no generation, owner token, or allocation record is joined to later cleanup.",
+    "contentsGeneration": "unresolved; no backing-range fill or producer write is statically connected to the returned primary or secondary range on this path.",
+    "addressRecycling": "unresolved; 0x82811658 visibly maintains free-list/bucket links, but the bounded code does not correlate a later allocation with an earlier released address.",
+    "containerOnlyFree": "The destructor's flag path calls 0x82465DA8 with size 156 for the 0x9C-byte container; this is container teardown and does not prove backing-region release."
+  },
+  "boundedNegative": [
+    "The factory fixes creator r6=1 and r8=0 but leaves config words +0x00, +0x04, and +0x40 dynamic, so exact runtime width, height, selector, and derived sizes remain unresolved.",
+    "The lower classifier and device vtable targets are exact, but +0x30 high bits and the +0x20 control branch depend on dynamic backing and packed fields; no single lower release target is statically selected.",
+    "The exact lower release bodies update device-manager bookkeeping or return success; no backing deallocator, allocation-generation field, contents producer, or address-reuse event is proved.",
+    "A readable pointer, descriptor snapshot, selector, allocator pool selector, or free-list position is not an allocation-generation key."
+  ],
+  "runtimeDiscriminator": {
+    "status": "proposed-default-off",
+    "smallestDecisiveObservation": "For the explicit-buffer path, one read-only record at pre-call boundary 0x82518608 should emit only r4, r5, r6, r7, r8 and the device vptr, with 0x8251860C retained only as the call continuation. One record at classifier call 0x82518B60 and post-call continuation 0x82518B64 should emit classifier code and selected device slot offset. Contents require bounded destination write tracking, and no reuse probe is admissible until a concrete lower free is independently observed; current reachable targets provide none.",
+    "inputDomain": {
+      "site": "0x82518608 pre-call boundary",
+      "continuation": "0x8251860C",
+      "emits": ["r4/r5/r6/r7/r8 numeric inputs", "device vptr"],
+      "doesNotEmit": ["header pointer", "backing pointers", "descriptor payload"],
+      "decisiveFor": "explicit-buffer runtime configuration values and the concrete device-vtable qualification",
+      "qualification": "This observation is scoped to factory 0x825184D0 and must not be used as the runtime origin gate for alternate factory 0x82517EC0."
+    },
+    "releaseSelection": {
+      "classifierCall": "0x82518B60",
+      "site": "0x82518B64 post-call continuation",
+      "emits": ["classifier code", "selected device slot offset", "Boolean indicating an indirect release call"],
+      "doesNotEmit": ["resource pointer", "backing addresses", "payload"],
+      "decisiveFor": "which bounded manager-release branch actually ran"
+    },
+    "contents": {
+      "site": "allocator returns after instructions 0x82533E98 and 0x82533EB0, through continuations 0x82533E9C and 0x82533EB4",
+      "trackingWindow": "Create transient internal range tokens for each returned primary or secondary allocation and record only bounded guest writes whose destination falls inside a tracked range until cleanup 0x82518678; emit a write-site class or unresolved flag without emitting pointers or bytes.",
+      "emits": ["allocation size class", "Boolean indicating a bounded write to the tracked returned range", "bounded write-site class or unresolved flag"],
+      "doesNotEmit": ["returned address", "backing bytes", "descriptor payload"],
+      "decisiveFor": "whether a bounded write to a returned range was observed before lower release, not complete contents generation",
+      "qualification": "No bounded write event is not proof that indirect device or uninstrumented code never wrote the range."
+    },
+    "lowerFreeGate": {
+      "site": "reachable lower release targets after 0x82518B64",
+      "emits": ["Boolean indicating entry to a concrete lower deallocator or free transition", "size class only"],
+      "doesNotEmit": ["raw addresses", "payload", "guest pointer identity"],
+      "decisiveFor": "whether a lower free exists on the selected runtime branch; the current bounded targets provide no such call"
+    },
+    "reuseGate": {
+      "status": "deferred-until-lower-free",
+      "requires": "A concrete lower deallocator or free transition must first be observed; the current manager-release targets do not provide one.",
+      "emits": ["none until the lower-free gate is satisfied"],
+      "doesNotEmit": ["raw addresses", "payload", "guest pointer identity"],
+      "decisiveFor": "No address-reuse or allocation-generation conclusion is permitted at this boundary."
+    },
+    "guard": "Do not enable this probe from the manifest or use one observation to infer persistent identity, GPU completion, complete contents parity, or address reuse."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only DumpFunctions.java, DumpMemoryWords.java, and DumpReferences.java queries against the canonical version-1.3 project, followed by exact generated-code windows for the factory, creator/helper chain, allocator, classifier, cleanup, destructor, release targets, and heap body.",
+    "entries": [
+      {
+        "role": "exact function inventory",
+        "address": "0x825184D0, 0x82533DB8, 0x82518678, 0x82518E88, 0x82518B40, 0x826979B8, 0x8280DAC0, 0x8281B4F0, 0x82811658, 0x825348A8, 0x82534950, 0x825349F8, 0x82533D10, 0x825325E0",
+        "result": "A foreground read-only DumpFunctions.java query identified the exact function entries and caller/callee inventory used by this packet; target 0x82E29168 resolves to containing function 0x82AB9DE8, so its allocator-entry identity is supported by the generated tail-jump and the separate reference query rather than an exact DumpFunctions entry. Generated-code citations are retained only for bounded instruction bodies.",
+        "confidence": "strong"
+      },
+      {
+        "role": "factory-to-creator input map",
+        "address": "0x82518608 pre-call boundary, 0x8251860C continuation",
+        "result": "The explicit-buffer factory loads config +0x00, +0x04, and +0x40 into r4, r5, and r7, fixes r6=1 and r8=0, and dispatches device vtable +0x08; the continuation is not used as the input boundary.",
+        "confidence": "strong"
+      },
+      {
+        "role": "creator argument forwarding and allocation flags",
+        "address": "0x82533E64, 0x82533E98/0x82533E9C, 0x82533EB0/0x82533EB4, 0x82533ECC",
+        "result": "The creator forwards the five incoming words through the helper chain, requests one or two sizes, executes allocator instructions 0x82533E98 and 0x82533EB0 with continuations 0x82533E9C and 0x82533EB4, allocates both with 0xBCFF0000, and patches page bases into the header.",
+        "confidence": "strong"
+      },
+      {
+        "role": "lower release dispatcher",
+        "address": "0x825186E8, 0x82518B40, 0x82518B60, 0x82518B64, 0x826979B8",
+        "result": "Refcount-zero cleanup reaches the classifier call at 0x82518B60 and post-call continuation 0x82518B64, then conditionally dispatches the accepted device vtable slots; no lower heap free is present in the reachable target bodies.",
+        "confidence": "strong"
+      },
+      {
+        "role": "allocator and heap frontier",
+        "address": "0x8280DB38, 0x8281B51C, 0x82811658",
+        "result": "The creator flag selects the special heap path with selector 0x8 and aligned free-list allocation; the normal fill-helper branch is bypassed.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpFunctions.java:0x825184D0,0x82533DB8,0x82518678,0x82518E88,0x82518B40,0x826979B8,0x8280DAC0,0x8281B4F0,0x82811658,0x825348A8,0x82534950,0x825349F8,0x82533D10,0x825325E0",
+      "ghidra/DumpMemoryWords.java:0x8204A1B0",
+      "ghidra/DumpReferences.java:0x82E29168,0x82518B40,0x82465DA8,0x82518678,0x82518E88",
+      "generated:rerevved/sub_825184D0",
+      "generated:rerevved/sub_82533DB8",
+      "generated:rerevved/sub_826B6FE8",
+      "generated:rerevved/sub_826B6D68",
+      "generated:rerevved/sub_8269A378",
+      "generated:rerevved/sub_82699208",
+      "generated:rerevved/sub_826B7140",
+      "generated:rerevved/sub_826979B8",
+      "generated:rerevved/sub_82518B40",
+      "generated:rerevved/sub_825348A8",
+      "generated:rerevved/sub_82534950",
+      "generated:rerevved/sub_825349F8",
+      "generated:rerevved/sub_82533D10",
+      "generated:rerevved/sub_825325E0",
+      "generated:rerevved/sub_8280DAC0",
+      "generated:rerevved/sub_8281B4F0",
+      "generated:rerevved/sub_82811658",
+      "generated:rerevved/sub_82812B20",
+      "generated:rerevved/sub_82518678",
+      "generated:rerevved/sub_82518E88",
+      "generated:rerevved/sub_82465DA8"
+    ],
+    "qualification": "Generated code is used only for exact functions selected from accepted anchors and narrow foreground queries. Static release and allocator paths do not establish runtime execution, pointer identity, contents, or reuse."
+  },
+  "catalogPromotion": {
+    "newEntities": [
+      "RVA-SYM-0347",
+      "RVA-SYM-0348",
+      "RVA-SYM-0349",
+      "RVA-SYM-0350",
+      "RVA-SYM-0351",
+      "RVA-SYM-0352",
+      "RVA-SYM-0353",
+      "RVA-SYM-0354",
+      "RVA-SYM-0355",
+      "RVA-SYM-0356",
+      "RVA-SYM-0357",
+      "RVA-SYM-0358",
+      "RVA-SYM-0359",
+      "RVA-SYM-0360",
+      "RVA-SYM-0361"
+    ],
+    "newRelations": [
+      "RVA-REL-0479",
+      "RVA-REL-0480",
+      "RVA-REL-0481",
+      "RVA-REL-0482",
+      "RVA-REL-0483",
+      "RVA-REL-0484",
+      "RVA-REL-0485",
+      "RVA-REL-0486",
+      "RVA-REL-0487",
+      "RVA-REL-0488",
+      "RVA-REL-0489",
+      "RVA-REL-0490",
+      "RVA-REL-0491",
+      "RVA-REL-0492",
+      "RVA-REL-0493"
+    ],
+    "result": "The exact explicit-buffer creator, factory, cleanup, lower classifier/dispatcher, allocator frontier, and conditional device release targets become reusable symbols and relations. The alternate factory 0x82517EC0 remains a separate runtime gate. Dynamic input values, release selection, heap generation, contents production, and reuse remain explicitly qualified."
+  },
+  "missingContracts": {
+    "runtimeExtentValues": "unresolved",
+    "runtimeSelectorAndUsage": "unresolved",
+    "concreteReleaseSelection": "unresolved",
+    "backingAllocationIdentity": "unresolved",
+    "backingContentsGeneration": "unresolved",
+    "backingAddressRecycling": "unresolved",
+    "reason": "The static path closes argument positions, allocator flags, classifier domain, device release targets, and manager bookkeeping, but the dynamic configuration words, backing addresses, contents writers, and temporal reuse relation are not selected."
+  },
+  "guards": [
+    "Do not call config +0x00 or +0x04 width and height by public name without a runtime or independent ABI discriminator.",
+    "Do not call config +0x40 a format or usage value without matching title dataflow beyond its classifier and packed-field roles.",
+    "Do not treat the device-manager release targets as heap deallocators; none of their bounded bodies calls the backing allocator or generic free helper for the resource.",
+    "Do not treat the 0x8 heap selector, free-list position, header descriptor, or page base as allocation generation.",
+    "Do not treat the absence of a special-path fill call as proof that backing contents are zero, initialized, or GPU-complete; a contents observation requires bounded destination write tracking against transient returned-range tokens.",
+    "Do not apply this explicit-buffer input map or lower path to alternate factory 0x82517EC0, wrapper vtable 0x82047628, or creator-dispatch gate 0x82517FFC without a separate runtime join.",
+    "Do not infer address reuse or allocation recycling until a concrete lower deallocator or free transition has been observed; the current reachable manager-release targets provide none.",
+    "Do not enable the proposed runtime discriminator by changing the research manifest."
+  ],
+  "conclusion": "Explicit-buffer factory 0x825184D0 reaches creator 0x82533DB8 through device vtable 0x8204A1B0 slot +0x08 at pre-call boundary 0x82518608, with config words +0x00, +0x04, and +0x40 in r4, r5, and r7, fixed r6=1, and fixed r8=0; 0x8251860C is only the call continuation. The creator builds a 0x34-byte header, executes allocator instructions 0x82533E98 and 0x82533EB0 with continuations 0x82533E9C and 0x82533EB4, and reaches the special heap path 0x8280DAC0 -> 0x8281B4F0 -> 0x82811658. Refcount-zero cleanup reaches classifier call 0x82518B60 and post-call continuation 0x82518B64; for the accepted device vtable, classifier codes 3, 17, 18, and 19 select exact manager targets 0x825348A8, 0x825349F8, 0x82534950, and 0x82533D10, while code 20 performs no indirect device release. The target bodies update manager bookkeeping or return success, not a proved backing free. Static code proves no allocation-generation token, backing contents producer, or address-reuse event. A default-off input/release observation plus bounded returned-range write tracking is proposed; no reuse observation is admissible before a lower-free proof, and alternate factory 0x82517EC0 remains a separate runtime gate."
+}

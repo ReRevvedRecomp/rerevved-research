@@ -268,12 +268,22 @@
         "callsite": "0x82E28A70",
         "slot": "+0x11C",
         "container": "Ghidra 0x82D7E750; generated body 0x82E289D0",
-        "classification": "unproved-open-candidate",
-        "reason": "The receiver is fixed BSS object 0x8314F76C and the dispatch supplies the open-position arguments, but its vtable is runtime-initialized and no accepted edge joins that object to constructor 0x8250F0E8 or vtable 0x82047050."
+        "classification": "excluded-distinct-receiver-vtable",
+        "reason": "Initializer 0x82D7E758 stores distinct vtable 0x82138768 at fixed BSS receiver 0x8314F76C. That table's +0x11C word is 0x82D7ED00, not 0x8250E0F0."
       }
     ],
-    "result": "The recognized same-displacement shapes do not prove an exact caller of either implementation. Close shapes 0x8222DE98 and 0x82CAE220 and open shape 0x82E28A70 remain syntactic candidates without receiver-vtable identity; the fixed receiver provides the narrower provenance question.",
+    "result": "The recognized same-displacement shapes do not prove an exact caller of either implementation. Fixed-receiver open shape 0x82E28A70 is excluded by its distinct installed vtable. Close shapes 0x8222DE98 and 0x82CAE220 remain syntactic candidates without receiver-vtable identity; the registry receiver provides the narrower remaining provenance question.",
     "qualification": "The five-row result is exhaustive only for the decoded positive-displacement lwz-to-mtctr-to-bctrl shape within the query's eight-instruction straight-line window. It is not whole-program points-to analysis and cannot establish a user-visible sequence."
+  },
+  "fixedReceiverProvenance": {
+    "receiver": "0x8314F76C",
+    "initializerEntry": "Caller 0x82E895A0 materializes 0x8314F76C and calls initializer 0x82D7E758 at 0x82E895B4.",
+    "rawInitializer": "Canonical image words 0x82D7E764 through 0x82D7E780 materialize r31 as 0x8314F76C, materialize r10 as 0x82138768, and store r10 at receiver offset zero. The canonical decoder truncates 0x82D7E758 after its Xenon save thunk, so the exact raw split/store sequence is corroborated by the narrow generated body.",
+    "installedTable": "Vtable 0x82138768 contains 0x82D7E750 at +0x10C and 0x82D7ED00 at +0x11C. The generated 0x82D7E750 thunk reaches body 0x82E289D0, whose callsite 0x82E28A70 loads and invokes receiver slot +0x11C. The known initialized dispatch target is therefore 0x82D7ED00.",
+    "rendererSeparation": "Vtable 0x82047050 has one decoded materializer in constructor 0x8250F0E8. Caller 0x8250F2B0 first allocates a separate 1920-byte object and invokes that constructor on the allocation; no edge joins it to fixed BSS receiver 0x8314F76C.",
+    "decodedGlobalQuery": "The reusable decoded query emitted 39 materializers of 0x8314F76C from 654329 instructions at cap 256, with no truncation or cancellation. It identifies the initializer call at 0x82E895B4 but intentionally excludes the raw body hidden by the save-thunk boundary.",
+    "result": "In the known initialized state, callsite 0x82E28A70 dispatches the distinct table's 0x82D7ED00 method and is not a caller of 0x8250E0F0.",
+    "qualification": "The scoped evidence does not prove the absence of an unseen later raw overwrite of receiver offset zero. No observed or decoded edge supports such an overwrite, and the exclusion applies to the proved initialized state."
   },
   "release": {
     "wrapperCleanup": "0x825180B8 loads wrapper +0x14 and atomically decrements the pointed resource's +0x04 reference count. When the count reaches zero it calls lower cleanup 0x82518B40, then clears wrapper +0x14. It passes wrapper +0x0C and size 68 to helper 0x82465DA8, then clears +0x0C.",
@@ -283,20 +293,20 @@
     "qualification": "The classifier and dynamic device calls do not identify a concrete lower destructor, backing deallocator, release completion point, or recycling policy. Reference decrements do not prove runtime destruction or address retirement."
   },
   "nextSemanticDiscriminator": {
-    "purpose": "Determine whether the fixed receiver at callsite 0x82E28A70 can hold the NiXenonRenderer vtable, without adding or widening runtime telemetry.",
+    "purpose": "Determine whether the registry receiver at callsite 0x82CAE220 can hold the NiXenonRenderer vtable, without adding or widening runtime telemetry.",
     "placement": [
-      "Trace only stores and initializer calls that can write fixed BSS object 0x8314F76C or install its first word.",
-      "Test only whether that provenance reaches constructor 0x8250F0E8 or exact table base 0x82047050.",
-      "If the fixed receiver is excluded, return to registry receiver 0x82CAE220 as a separately bounded provenance question."
+      "Trace only the producer and insertion path for the object returned by 0x82CAAAA8 from registry root 0x8314F204 at 0x82CAE1D8.",
+      "Identify the returned object's first-word initializer and compare its installed table with exact NiXenonRenderer table 0x82047050.",
+      "Stop at an exact distinct vtable, an exact 0x82047050 store, or the smallest unresolved indirect registry producer."
     ],
     "authorization": {
       "status": "research-static-only",
-      "titleCodeCondition": "Do not add another owner sequence or widen the consumed token probe until the fixed-receiver provenance question is resolved."
+      "titleCodeCondition": "Do not add another owner sequence or widen the consumed token probe until the registry-receiver provenance question is resolved."
     },
-    "decisiveResult": "An exact store or constructor flow that installs 0x82047050 at 0x8314F76C promotes 0x82E28A70 as an exact caller candidate and permits tracing its owner-visible entry path. A distinct installed vtable rejects it. An unresolved indirect initializer leaves the caller and user sequence unknown."
+    "decisiveResult": "An exact store or constructor flow that installs 0x82047050 in the returned registry object promotes 0x82CAE220 as an exact close caller candidate and permits tracing its owner-visible entry path. A distinct installed vtable rejects it. An unresolved indirect producer leaves the caller and user sequence unknown."
   },
   "currentEvidence": {
-    "method": "Two consumed default-off exact-callsite runtime observations against pinned clean Title and SDK revisions, foreground read-only Ghidra function, reference, vtable, and decoded slot-call queries against the canonical version 1.3 project, and narrow exact-function generated-code corroboration.",
+    "method": "Two consumed default-off exact-callsite runtime observations against pinned clean Title and SDK revisions, foreground read-only Ghidra function, reference, vtable, raw-word, decoded slot-call, and decoded global-address queries against the canonical version 1.3 project, and narrow exact-function generated-code corroboration.",
     "entries": [
       {
         "role": "runtime-selected alternate provider",
@@ -355,7 +365,13 @@
       {
         "role": "decoded consumer caller boundary",
         "address": "0x8222DE98, 0x8224AAEC, 0x822976DC, 0x82CAE220, 0x82E28A70",
-        "result": "Five untruncated same-displacement call shapes were found. Two cannot provide a meaningful exact target traversal; three remain syntactic candidates without receiver-vtable identity. No owner-visible runtime sequence is statically supported.",
+        "result": "Five untruncated same-displacement call shapes were found. Two cannot provide a meaningful exact target traversal, fixed receiver 0x8314F76C has a distinct installed vtable, and two close shapes remain without receiver-vtable identity. No owner-visible runtime sequence is statically supported.",
+        "confidence": "strong"
+      },
+      {
+        "role": "fixed receiver exclusion",
+        "address": "0x8314F76C, 0x82D7E758, 0x82138768, 0x82138884, 0x82D7ED00, 0x82E28A70",
+        "result": "The fixed receiver is initialized with distinct vtable 0x82138768, whose +0x11C entry is 0x82D7ED00. The same receiver dispatch at 0x82E28A70 is therefore excluded as a caller of NiXenonRenderer method 0x8250E0F0 in the proved initialized state.",
         "confidence": "strong"
       }
     ],
@@ -412,9 +428,17 @@
       "generated:rerevved/sub_8224AA60",
       "generated:rerevved/sub_82297608",
       "generated:rerevved/sub_82CAE1D8",
-      "generated:rerevved/sub_82E289D0"
+      "generated:rerevved/sub_82E289D0",
+      "ghidra/FindGlobalAddressAccesses.java:0x8314F76C,0x82047050",
+      "ghidra/FindSplitConstantCandidates.java:0x82138768",
+      "ghidra/DumpMemoryWords.java:0x82D7E770,0x82138884",
+      "generated:rerevved/sub_82D7E758",
+      "generated:rerevved/sub_82E895A0",
+      "generated:rerevved/sub_82D7ED00",
+      "generated:rerevved/sub_8250F0E8",
+      "generated:rerevved/sub_8250F2B0"
     ],
-    "qualification": "Runtime evidence proves one selected vtable/provider identity, joins seven accepted input records to creator 0x82533DB8, and records a bounded stable-menu no-join at the consumer methods. Static evidence proves the provider output, builder chain, rendered-texture outer holder, and CPU-access-like implementations, but the decoded same-displacement callsites do not prove a receiver vtable or user-visible sequence. No evidence proves mutation, contents, lower allocation or free completion, backing release, or address recycling."
+    "qualification": "Runtime evidence proves one selected vtable/provider identity, joins seven accepted input records to creator 0x82533DB8, and records a bounded stable-menu no-join at the consumer methods. Static evidence proves the provider output, builder chain, rendered-texture outer holder, CPU-access-like implementations, and exclusion of fixed receiver 0x8314F76C in its proved initialized state. The two remaining same-displacement close shapes do not prove a receiver vtable or user-visible sequence. No evidence proves mutation, contents, lower allocation or free completion, backing release, or address recycling."
   },
   "catalogPromotion": {
     "newEntities": [
@@ -450,8 +474,10 @@
     "Do not emit alternate creator r4-r8 except on the exact live wrapper/resource Resolve match, and do not emit pointers or payloads separately.",
     "Do not treat the transient input token or its numeric r4-r8 values as allocation generation or recycling evidence.",
     "Do not treat a same-displacement indirect call as a caller of 0x8250E0F0 or 0x8250E1D0 without proving receiver vtable 0x82047050.",
-    "Do not derive an owner-visible runtime sequence from the five syntactic callsites while the three remaining receiver identities are unresolved.",
+    "Do not treat fixed-receiver callsite 0x82E28A70 as a NiXenonRenderer open caller in the proved 0x82138768 initialized state.",
+    "Do not infer absence of every possible later raw overwrite from the decoded global-address query; its coverage excludes undefined bytes.",
+    "Do not derive an owner-visible runtime sequence from the five syntactic callsites while the two remaining close receiver identities are unresolved.",
     "Do not implement a persistent native mirror or reuse either consumed capture."
   ],
-  "conclusion": "One exact pre-Resolve runtime record selected vtable 0x82047628 and provider 0x82517800. That provider returns selected-wrapper field +0x14 as the first output that reaches Resolve r6, writes zero as its second output, and returns true. The accepted creator-input run joins the alternate factory pre-call 0x82517FFC to creator 0x82533DB8 for seven records and three input sets. Outer creator 0x8252EF20 is associated with NiXenonRenderedTextureData::Create and stores the lower resource at outer +0x58. NiXenonRenderer methods 0x8250E0F0 and 0x8250E1D0 are the first concrete non-cleanup consumers of that field, but the consumed stable-menu run joined exact alternate creation and Resolve tokens 2, 5, and 6 to neither method. A decoded scan found five same-displacement virtual-call shapes; two cannot provide a meaningful exact traversal and three lack receiver-vtable identity, so no owner-visible sequence is supported. The next discriminator is a static provenance trace for fixed receiver 0x8314F76C at open candidate 0x82E28A70, stopping at an exact installed vtable or unresolved initializer. Original method names, concrete lower class, offscreen or render-target use, Scaleform or GFx ownership, presentation identity, input semantics beyond the accepted numeric boundary, exact per-set header/size values, mutation or contents generation, lower allocation/free, and address recycling remain unresolved."
+  "conclusion": "One exact pre-Resolve runtime record selected vtable 0x82047628 and provider 0x82517800. That provider returns selected-wrapper field +0x14 as the first output that reaches Resolve r6, writes zero as its second output, and returns true. The accepted creator-input run joins the alternate factory pre-call 0x82517FFC to creator 0x82533DB8 for seven records and three input sets. Outer creator 0x8252EF20 is associated with NiXenonRenderedTextureData::Create and stores the lower resource at outer +0x58. NiXenonRenderer methods 0x8250E0F0 and 0x8250E1D0 are the first concrete non-cleanup consumers of that field, but the consumed stable-menu run joined exact alternate creation and Resolve tokens 2, 5, and 6 to neither method. A decoded scan found five same-displacement virtual-call shapes. Fixed receiver 0x8314F76C is now excluded: initializer 0x82D7E758 installs distinct vtable 0x82138768, whose +0x11C target is 0x82D7ED00 rather than 0x8250E0F0. Two meaningful close shapes remain without receiver-vtable identity, so no owner-visible sequence is supported. The next discriminator is a static provenance trace for the registry receiver returned by 0x82CAAAA8 at callsite 0x82CAE220. Original method names, concrete lower class, offscreen or render-target use, Scaleform or GFx ownership, presentation identity, input semantics beyond the accepted numeric boundary, exact per-set header/size values, mutation or contents generation, lower allocation/free, and address recycling remain unresolved."
 }

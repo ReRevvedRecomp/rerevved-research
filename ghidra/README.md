@@ -24,6 +24,7 @@ This index covers every Java script in this directory.
 - `FindDirectCallers.java` finds capped raw PowerPC direct branch-and-link callers for exact target VAs.
 - `FindFieldAccesses.java` classifies reads and writes inside selected functions and an optional caller closure.
 - `FindFieldRefs.java` finds PowerPC register-plus-displacement operands for selected offsets.
+- `FindGlobalAddressAccesses.java` finds exact decoded split-constant global-address materializers and their first bounded use.
 - `FindPointerValues.java` finds aligned 32-bit values in initialized guest memory, with an optional word mask for raw instruction candidates.
 - `FindScalarUses.java` finds capped decoded-instruction uses of exact scalar values with an optional mnemonic allowlist.
 - `FindSplitConstantUses.java` finds capped functions that construct selected 32-bit values with PowerPC split constants.

@@ -25,6 +25,7 @@ SCRIPTS = (
     "FindCallSplitConstantArgs",
     "FindFieldAccesses",
     "FindFieldRefs",
+    "FindGlobalAddressAccesses",
     "FindVtableSlotCalls",
     "FindPointerValues",
     "FindScalarUses",
@@ -293,6 +294,22 @@ class GhidraQueryWriteTests(unittest.TestCase):
         self.assertIn("source == null", transfer)
         self.assertIn("!sameRegister(source, trackedSource)", transfer)
         self.assertIn("!sourceValueLive", transfer)
+
+    def test_global_query_continues_after_a_nonmatching_split_part(self):
+        source = (GHIDRA / "FindGlobalAddressAccesses.java").read_text(encoding="utf-8")
+        scan_start = source.index("SplitPart low = splitPart")
+        low_start = source.rindex("if (low != null)", scan_start)
+        low_open = source.index("{", low_start)
+        low_end = matching_brace(source, low_open)
+        low_block = source[low_open:low_end]
+        self.assertNotIn(
+            "\n                        break;\n                    }", low_block
+        )
+        overwrite_start = source.index(
+            "if (writesRegister(current, highRegister) || hasControlFlow(current))",
+            low_end,
+        )
+        self.assertGreater(overwrite_start, low_end)
 
 
 if __name__ == "__main__":

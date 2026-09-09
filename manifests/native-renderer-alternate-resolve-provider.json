@@ -301,6 +301,13 @@
     "result": "Callsite 0x8222DE98 dispatches the produced receiver's distinct 0x82219E58 method and is not a caller of NiXenonRenderer method 0x8250E1D0 in the exact factory path.",
     "qualification": "The exclusion applies to the exact 0x82237478 to 0x8221A708 to 0x82228D80 key-zero path. No static edge in the bounded producer trace supports a different first-word initializer for the object published at container +0x24."
   },
+  "consumerCallerExtendedBoundary": {
+    "query": "A separate decoded CFG query scanned the same positive vtable displacements +0x11C and +0x120. For each decoded slot load, it followed at most 16 instructions, at most two intra-function branch edges, at most 256 path states, and only exact register-copy aliases. Direct calls, terminal flow, and unresolved destinations stop traversal; a CTR write invalidates any earlier tracked transfer.",
+    "coverage": "The query examined 654329 decoded instructions and 169 matching slot-load candidates, explored 1266 path states, reached no per-load state cap, and was neither result-truncated nor cancelled.",
+    "control": "The same traversal independently recognized all five previously accepted straight-line callsites. Those controls are counted separately and are not re-emitted as extended results.",
+    "result": "No additional branch-separated or exact-copy-aliased callsite reached a live CTR transfer and bctrl within the bounded decoded CFG search.",
+    "qualification": "This is a bounded negative for decoded instructions, the stated path limits, and exact register-copy aliases only. It does not cover undefined image words, memory-spilled function pointers, computed jumps, interprocedural value flow, longer paths, more than two branch edges, or non-copy transformations. It does not prove that 0x8250E0F0 or 0x8250E1D0 has no caller."
+  },
   "release": {
     "wrapperCleanup": "0x825180B8 loads wrapper +0x14 and atomically decrements the pointed resource's +0x04 reference count. When the count reaches zero it calls lower cleanup 0x82518B40, then clears wrapper +0x14. It passes wrapper +0x0C and size 68 to helper 0x82465DA8, then clears +0x0C.",
     "linkCleanup": "Link cleanup 0x823DC590 atomically decrements wrapper +0x04 and, when that count reaches zero, dispatches wrapper vtable slot +0x04. Its exact target 0x82359DD8 then tail-dispatches wrapper slot +0x00 with argument one. The link is passed to 0x82353A40, which installs a base vptr and decrements a global count; no link-storage deallocation is proved.",
@@ -309,17 +316,17 @@
     "qualification": "The classifier and dynamic device calls do not identify a concrete lower destructor, backing deallocator, release completion point, or recycling policy. Reference decrements do not prove runtime destruction or address retirement."
   },
   "nextSemanticDiscriminator": {
-    "purpose": "Determine whether either NiXenonRenderer consumer has a statically recoverable caller outside the five recognized straight-line same-displacement shapes, without adding or widening runtime telemetry.",
+    "purpose": "Determine whether undefined image words contain a raw same-displacement slot-call shape omitted from the decoded listing, without adding or widening runtime telemetry.",
     "placement": [
-      "Keep the search static and bounded to unresolved call shapes that load NiXenonRenderer slots +0x11C or +0x120 across a branch or register alias not covered by the eight-instruction straight-line query.",
-      "Require an exact receiver flow to installed table 0x82047050 before naming a caller or tracing an owner-visible entry path.",
-      "Stop at one exact caller, a bounded no-result for the selected additional shape, or the smallest unresolved receiver producer."
+      "Scan aligned raw words for PowerPC lwz slot loads with displacements +0x11C and +0x120, then subtract the 169 decoded candidates already covered.",
+      "Inspect only the bounded raw successor window for each remaining candidate and map any load-to-CTR-to-bctrl shape to its generated function before tracing receiver provenance.",
+      "Stop at one exact 0x82047050 receiver flow, a bounded no-result for raw-only candidates, or the smallest unresolved raw function boundary."
     ],
     "authorization": {
       "status": "research-static-only",
       "titleCodeCondition": "Do not add another owner sequence or widen the consumed token probe without a new exact caller or separately accepted runtime discriminator."
     },
-    "decisiveResult": "An exact receiver flow to installed table 0x82047050 permits tracing one caller's owner-visible entry path. Another distinct installed table rejects that shape. A bounded no-result or unresolved receiver leaves the caller and user sequence unknown."
+    "decisiveResult": "An exact raw-only shape with receiver flow to installed table 0x82047050 permits tracing one caller's owner-visible entry path. A bounded no-result or unresolved raw function leaves the caller and user sequence unknown."
   },
   "currentEvidence": {
     "method": "Two consumed default-off exact-callsite runtime observations against pinned clean Title and SDK revisions, foreground read-only Ghidra function, reference, vtable, raw-word, decoded slot-call, and decoded global-address queries against the canonical version 1.3 project, and narrow exact-function generated-code corroboration.",
@@ -400,6 +407,12 @@
         "role": "input-field receiver exclusion",
         "address": "0x82237478, 0x8221A708, 0x82228D80, 0x8213F660, 0x8213F780, 0x82219E58, 0x8222DE98",
         "result": "Factory caller 0x82237478 publishes the object constructed by 0x8221A708 at container +0x24 through the key-zero branch of 0x82228D80. The constructor installs distinct vtable 0x8213F660, whose +0x120 entry is 0x82219E58, excluding 0x8222DE98 as a caller of NiXenonRenderer method 0x8250E1D0 in the exact factory path.",
+        "confidence": "strong"
+      },
+      {
+        "role": "decoded extended caller boundary",
+        "address": "+0x11C, +0x120",
+        "result": "A bounded decoded CFG traversal independently recognized the five accepted straight-line controls and found no additional branch-separated or exact-copy-aliased slot call. It explored 1266 states without reaching a state cap and was not truncated or cancelled.",
         "confidence": "strong"
       }
     ],
@@ -484,9 +497,10 @@
       "generated:rerevved/sub_82228218",
       "generated:rerevved/sub_8221A708",
       "generated:rerevved/sub_82228D80",
-      "generated:rerevved/sub_82219E58"
+      "generated:rerevved/sub_82219E58",
+      "ghidra/FindVtableSlotCallsCfg.java:+0x11C,+0x120"
     ],
-    "qualification": "Runtime evidence proves one selected vtable/provider identity, joins seven accepted input records to creator 0x82533DB8, and records a bounded stable-menu no-join at the consumer methods. Static evidence proves the provider output, builder chain, rendered-texture outer holder, CPU-access-like implementations, and exclusion of fixed receiver 0x8314F76C, registry-produced receiver 0x82CAE220, and input-field receiver 0x8222DE98 by their distinct installed vtables. The five recognized same-displacement shapes do not prove an exact caller or user-visible sequence. No evidence proves mutation, contents, lower allocation or free completion, backing release, or address recycling."
+    "qualification": "Runtime evidence proves one selected vtable/provider identity, joins seven accepted input records to creator 0x82533DB8, and records a bounded stable-menu no-join at the consumer methods. Static evidence proves the provider output, builder chain, rendered-texture outer holder, CPU-access-like implementations, and exclusion of fixed receiver 0x8314F76C, registry-produced receiver 0x82CAE220, and input-field receiver 0x8222DE98 by their distinct installed vtables. The decoded straight-line and extended CFG searches do not prove an exact caller or user-visible sequence; raw-only and broader interprocedural shapes remain outside their coverage. No evidence proves mutation, contents, lower allocation or free completion, backing release, or address recycling."
   },
   "catalogPromotion": {
     "newEntities": [
@@ -527,7 +541,8 @@
     "Do not treat input-field callsite 0x8222DE98 as a NiXenonRenderer close caller in the exact 0x82237478 factory path that publishes the 0x8213F660 receiver.",
     "Do not infer absence of every possible later raw overwrite from the decoded global-address query; its coverage excludes undefined bytes.",
     "Do not derive an owner-visible runtime sequence from the five syntactic callsites; none has an exact NiXenonRenderer receiver flow.",
+    "Do not generalize the zero-result decoded CFG query beyond its 16-instruction, two-branch, 256-state, exact-register-copy boundary or treat it as proof that the renderer methods have no caller.",
     "Do not implement a persistent native mirror or reuse either consumed capture."
   ],
-  "conclusion": "One exact pre-Resolve runtime record selected vtable 0x82047628 and provider 0x82517800. That provider returns selected-wrapper field +0x14 as the first output that reaches Resolve r6, writes zero as its second output, and returns true. The accepted creator-input run joins the alternate factory pre-call 0x82517FFC to creator 0x82533DB8 for seven records and three input sets. Outer creator 0x8252EF20 is associated with NiXenonRenderedTextureData::Create and stores the lower resource at outer +0x58. NiXenonRenderer methods 0x8250E0F0 and 0x8250E1D0 are the first concrete non-cleanup consumers of that field, but the consumed stable-menu run joined exact alternate creation and Resolve tokens 2, 5, and 6 to neither method. A decoded scan found five same-displacement virtual-call shapes. Fixed receiver 0x8314F76C is excluded because initializer 0x82D7E758 installs distinct vtable 0x82138768 and +0x11C target 0x82D7ED00. Registry receiver 0x82CAE220 is excluded because producer 0x82CABC78 inserts the object from factory 0x82CB12F0, which installs distinct vtable 0x8215FA78 and +0x120 target 0x822E2768. Input-field receiver 0x8222DE98 is excluded because factory caller 0x82237478 publishes the object constructed by 0x8221A708, which installs distinct vtable 0x8213F660 and +0x120 target 0x82219E58. The other two shapes cannot provide a meaningful exact traversal. None of the five recognized shapes is an exact caller, so no owner-visible sequence is supported. A new bounded static caller-recovery method is required before runtime telemetry can be widened. Original method names, concrete lower class, offscreen or render-target use, Scaleform or GFx ownership, presentation identity, input semantics beyond the accepted numeric boundary, exact per-set header/size values, mutation or contents generation, lower allocation/free, and address recycling remain unresolved."
+  "conclusion": "One exact pre-Resolve runtime record selected vtable 0x82047628 and provider 0x82517800. That provider returns selected-wrapper field +0x14 as the first output that reaches Resolve r6, writes zero as its second output, and returns true. The accepted creator-input run joins the alternate factory pre-call 0x82517FFC to creator 0x82533DB8 for seven records and three input sets. Outer creator 0x8252EF20 is associated with NiXenonRenderedTextureData::Create and stores the lower resource at outer +0x58. NiXenonRenderer methods 0x8250E0F0 and 0x8250E1D0 are the first concrete non-cleanup consumers of that field, but the consumed stable-menu run joined exact alternate creation and Resolve tokens 2, 5, and 6 to neither method. A decoded scan found five same-displacement virtual-call shapes. Fixed receiver 0x8314F76C is excluded because initializer 0x82D7E758 installs distinct vtable 0x82138768 and +0x11C target 0x82D7ED00. Registry receiver 0x82CAE220 is excluded because producer 0x82CABC78 inserts the object from factory 0x82CB12F0, which installs distinct vtable 0x8215FA78 and +0x120 target 0x822E2768. Input-field receiver 0x8222DE98 is excluded because factory caller 0x82237478 publishes the object constructed by 0x8221A708, which installs distinct vtable 0x8213F660 and +0x120 target 0x82219E58. The other two shapes cannot provide a meaningful exact traversal. A separate decoded CFG traversal found no additional branch-separated or exact-copy-aliased shape within 16 instructions, two branch edges, and 256 states per load; it independently recognized all five straight-line controls and reached no cap. No exact caller or owner-visible sequence is supported. The next bounded static method must inspect raw-only slot-load candidates omitted from the decoded listing before runtime telemetry can be widened. Original method names, concrete lower class, offscreen or render-target use, Scaleform or GFx ownership, presentation identity, input semantics beyond the accepted numeric boundary, exact per-set header/size values, mutation or contents generation, lower allocation/free, and address recycling remain unresolved."
 }

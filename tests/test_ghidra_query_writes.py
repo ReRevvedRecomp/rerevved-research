@@ -27,6 +27,7 @@ SCRIPTS = (
     "FindFieldRefs",
     "FindGlobalAddressAccesses",
     "FindVtableSlotCalls",
+    "FindVtableSlotCallsCfg",
     "FindPointerValues",
     "FindScalarUses",
     "FindSplitConstantCandidates",
@@ -294,6 +295,18 @@ class GhidraQueryWriteTests(unittest.TestCase):
         self.assertIn("source == null", transfer)
         self.assertIn("!sameRegister(source, trackedSource)", transfer)
         self.assertIn("!sourceValueLive", transfer)
+
+    def test_cfg_vtable_query_is_bounded_and_keeps_control_count(self):
+        source = (GHIDRA / "FindVtableSlotCallsCfg.java").read_text(encoding="utf-8")
+        self.assertIn("MAX_PATH_INSTRUCTIONS = 16", source)
+        self.assertIn("MAX_BRANCH_EDGES = 2", source)
+        self.assertIn("MAX_STATES_PER_LOAD = 256", source)
+        self.assertIn("state.branchEdges == 0 && state.aliasCopies == 0", source)
+        self.assertIn('"Recognized straight-line callsites: "', source)
+        self.assertIn('"Straight-line controls: "', source)
+        self.assertIn("instruction.getFlowType().isCall()", source)
+        self.assertIn("else if (writesCtr(instruction))", source)
+        self.assertIn('!registerName(operandRegisters.get(1)).equals("r0")', source)
 
     def test_global_query_continues_after_a_nonmatching_split_part(self):
         source = (GHIDRA / "FindGlobalAddressAccesses.java").read_text(encoding="utf-8")

@@ -351,9 +351,9 @@
     "receiverConstruction": "Function 0x82880178 allocates 352 bytes and calls constructor 0x82864828. That constructor returns the original allocation and installs final first-word table 0x820AFB70 after its base construction; its narrow generated body contains no later outer first-word replacement.",
     "slotTarget": "Distinct receiver table 0x820AFB70 contains 0x82864050 at +0x1C. Owner table 0x820B31F8 instead contains 0x828737E0 at +0x1C.",
     "syntacticFalsePositive": "At raw candidate 0x82883738, the earlier +0x1C load into r11 is overwritten by the effective receiver's first word and then by that table's +0xA4 entry before mtctr. At 0x82886C08 and 0x82886C48, candidate loads of owner field +0x1C are overwritten by that receiver's table +0x140 and +0x148 entries before mtctr. None of the three is a live +0x1C dispatch.",
-    "nextReceiverBoundary": "Candidates 0x82895344 and 0x828953B8 are resolved by the extended rawGlobalReceiverProvenance trace. The next live unresolved candidate is 0x8289BE84 in function 0x8289BC40.",
-    "result": "Raw candidates 0x82895344 and 0x828953B8 dispatch 0x82839258 rather than owner method 0x828737E0 in the proved global-subobject path. Candidate 0x8289BE84 is the earliest unresolved live +0x1C call.",
-    "qualification": "The exclusions are bounded to their exact construction, table-entry, and return paths. They do not name any class, prove runtime reachability, classify 0x8289BE84 or later capped candidates, or establish an owner-visible sequence."
+    "nextReceiverBoundary": "Candidates 0x82895344 and 0x828953B8 are resolved by the extended rawGlobalReceiverProvenance trace. Candidate 0x8289BE84 in function 0x8289BC40 is excluded for the proved default source by rawFactoryReceiverBoundary, but remains unresolved for the conditional descriptor-linked source.",
+    "result": "Raw candidates 0x82895344 and 0x828953B8 dispatch 0x82839258 rather than owner method 0x828737E0 in the proved global-subobject path. Candidate 0x8289BE84 is the earliest live +0x1C call whose conditional source remains unresolved.",
+    "qualification": "The exclusions are bounded to their exact construction, table-entry, and return paths. They do not name any class, prove runtime reachability, classify the conditional source at 0x8289BE84 or later capped candidates, or establish an owner-visible sequence."
   },
   "rawCollectionReceiverBoundary": {
     "ownerRoute": "Owner table 0x820B31F8 maps +0x50 at table word 0x820B3248 to 0x8286F9F8. That method forwards its incoming r4 input through 0x82888DE0 to 0x82887D60. Function 0x82887D60 passes the input as r6 to source producer 0x828869C0 and preserves its return.",
@@ -373,6 +373,15 @@
     "result": "In the proved table-0x820B47D8 construction and virtual-entry path, candidate 0x8288B288 dispatches 0x8288B578 rather than owner method 0x828737E0 and cannot make the descriptor-linked alternative relevant.",
     "qualification": "The exclusion is bounded to the exact 0x8288D8E8 construction, 0x820B47D8 table entry for 0x8288B180, and 0x820B47F4 slot target. It does not name the class, prove runtime reachability, exclude an unobserved duplicate raw function-pointer table, classify later candidates, or establish an owner-visible sequence."
   },
+  "rawFactoryReceiverBoundary": {
+    "subobjectConstruction": "Owner method 0x828737E0 passes its selected source to constructor 0x828A6B38 at 0x828747C4. The constructor embeds a subobject at parent +0x14 and calls 0x82897460, which installs table 0x820B5FFC, stores the selected source at subobject +0x08, and initializes receiver field +0x10 to null. Table entry zero is callback 0x8289BC40.",
+    "receiverPublication": "Updater 0x8289BA38 has exactly two stores to subobject +0x10. One stores the selected source +0x38 virtual return directly at 0x8289BBB4; the null-field path stores the return of helper 0x828986B0 at 0x8289BBF0. The helper's accepted descriptor +0x04 cases 0 through 7 each call the same selected source +0x38 virtual and return that result, while its separately constructed 0x828E-family object remains temporary. When an existing receiver's +0x04 virtual returns 9, the updater preserves the field.",
+    "candidateFlow": "Callback 0x8289BC40 preserves its subobject in r31. Raw callsite 0x8289BE84 loads receiver r31 +0x10, rejects null, reads its first-word table, and dispatches +0x1C without a receiver adjustment.",
+    "defaultSourceResolution": "The proved default selected source has table 0x820BCA70 and +0x38 target 0x828BFFA0. Helper selectors 0 through 7 reach constructors 0x82935AD8, 0x82933678, 0x82930EF0, 0x8292E130, 0x82900B70, 0x8292AF60, 0x8292A8A0, and 0x82917B10, which install tables 0x820C1E18, 0x820C1B78, 0x820C1928, 0x820C1670, 0x820C0788, 0x820C1420, 0x820C1130, and 0x820C0C58. Every one maps +0x1C to 0x828FDA98. The updater's direct selector 9 reaches constructor 0x82914680 and table 0x820C0A18, whose +0x1C target is 0x828C7888. None is owner table 0x820B31F8 or owner method 0x828737E0.",
+    "alternativeSourceBoundary": "Owner method 0x828737E0 may instead select the source returned through descriptor +0x48, then +0x28, then +0x20. No exact table, +0x38 target, or returned receiver table is proved for that source, so 0x8289BE84 remains unresolved only in this conditional path.",
+    "result": "Candidate 0x8289BE84 cannot dispatch owner method 0x828737E0 in the proved default-source construction and update paths. The conditional descriptor-linked source prevents a global exclusion.",
+    "qualification": "This boundary proves the subobject constructor, its only two receiver-field stores, the helper return identity, and all default-source selector outputs used by those stores. It does not identify the classes, prove runtime reachability, resolve the conditional source, or establish an owner-visible sequence."
+  },
   "release": {
     "wrapperCleanup": "0x825180B8 loads wrapper +0x14 and atomically decrements the pointed resource's +0x04 reference count. When the count reaches zero it calls lower cleanup 0x82518B40, then clears wrapper +0x14. It passes wrapper +0x0C and size 68 to helper 0x82465DA8, then clears +0x0C.",
     "linkCleanup": "Link cleanup 0x823DC590 atomically decrements wrapper +0x04 and, when that count reaches zero, dispatches wrapper vtable slot +0x04. Its exact target 0x82359DD8 then tail-dispatches wrapper slot +0x00 with argument one. The link is passed to 0x82353A40, which installs a base vptr and decrements a global count; no link-storage deallocation is proved.",
@@ -383,15 +392,15 @@
   "nextSemanticDiscriminator": {
     "purpose": "Classify the earliest remaining receiver that could make the conditional descriptor-linked source relevant to raw-only +0x120 callsite 0x828DD910, without adding or widening runtime telemetry.",
     "placement": [
-      "Start at live raw +0x1C callsite 0x8289BE84 in function 0x8289BC40 and classify the table-bearing receiver loaded from object +0x10.",
-      "If a receiver table is 0x820B31F8, first prove whether the value passed into owner method 0x828737E0 participates in the descriptor-linked route, then trace its potential +0x48 publication; if the table is distinct, record the exclusion.",
-      "Do not widen the raw matcher or add telemetry. Stop after classifying the candidate or at the smallest unresolved producer or constructor boundary."
+      "At candidate 0x8289BE84, trace the conditional source returned through descriptor +0x48, then +0x28, then +0x20 from owner method 0x828737E0.",
+      "Prove that source's first-word table, its +0x38 target, and the receiver table returned for the updater's accepted selectors 0 through 7 and direct selector 9.",
+      "If every returned receiver table is distinct from 0x820B31F8, exclude 0x8289BE84 and advance to raw candidate 0x8289CE64. If any is 0x820B31F8, trace the exact descriptor passed into that owner-method call. Do not widen the raw matcher or add telemetry."
     ],
     "authorization": {
       "status": "research-static-only",
       "titleCodeCondition": "Do not add another owner sequence or widen the consumed token probe without a new exact caller or separately accepted runtime discriminator."
     },
-    "decisiveResult": "A receiver table of 0x820B31F8 at 0x8289BE84 makes that call's descriptor-linked input publication the next discriminator. A distinct table excludes the candidate; an unresolved producer or constructor leaves the conditional alternative and user sequence unknown."
+    "decisiveResult": "Distinct conditional-source return tables exclude 0x8289BE84 globally. A returned table of 0x820B31F8 makes that exact call's descriptor publication the next discriminator; an unresolved conditional source leaves the candidate and user sequence unknown."
   },
   "currentEvidence": {
     "method": "Two consumed default-off exact-callsite runtime observations against pinned clean Title and SDK revisions, foreground read-only Ghidra function, reference, vtable, raw-word, decoded slot-call, and decoded global-address queries against the canonical version 1.3 project, and narrow exact-function generated-code corroboration.",
@@ -532,6 +541,12 @@
         "role": "raw-shape receiver exclusion",
         "address": "0x82876FB0, 0x8288D8E8, 0x820B47D8, 0x8288B180, 0x8288B280, 0x8288B288, 0x820B47F4, 0x8288B578",
         "result": "Constructor 0x8288D8E8 installs final first-word table 0x820B47D8, whose entry zero is 0x8288B180 and whose +0x1C target is 0x8288B578. Function 0x8288B180 preserves its table-bearing input in r31 and selects that +0x1C slot at 0x8288B288, excluding the candidate as owner method 0x828737E0 in the proved table path.",
+        "confidence": "strong"
+      },
+      {
+        "role": "raw-factory receiver default-path exclusion",
+        "address": "0x828737E0, 0x828747C4, 0x828A6B38, 0x82897460, 0x820B5FFC, 0x8289BA38, 0x828986B0, 0x8289BC40, 0x8289BE84, 0x820BCA70, 0x820BCAA8, 0x828BFFA0, 0x820C1E18, 0x820C1B78, 0x820C1928, 0x820C1670, 0x820C0788, 0x820C1420, 0x820C1130, 0x820C0C58, 0x828FDA98, 0x820C0A18, 0x828C7888",
+        "result": "The embedded callback subobject initializes receiver +0x10 to null and its updater publishes only returns from selected source virtual +0x38. For default source table 0x820BCA70, helper selectors 0 through 7 produce eight distinct tables whose +0x1C target is 0x828FDA98, while direct selector 9 produces table 0x820C0A18 and target 0x828C7888. This excludes 0x8289BE84 as owner method 0x828737E0 in the default path; the conditional descriptor-linked source remains unresolved.",
         "confidence": "strong"
       }
     ],
@@ -743,9 +758,20 @@
       "generated:rerevved/sub_82895278",
       "ghidra/DumpFunctions.java:0x82895278",
       "ghidra/DumpMemoryWords.java:0x820AF7DC,0x820AFFC4",
-      "ghidra/FindRawVtableSlotCalls.java:+0x1C"
+      "ghidra/FindRawVtableSlotCalls.java:+0x1C",
+      "generated:rerevved/sub_828737E0",
+      "generated:rerevved/sub_828A6B38",
+      "generated:rerevved/sub_82897460",
+      "generated:rerevved/sub_8289BA38",
+      "generated:rerevved/sub_828986B0",
+      "generated:rerevved/sub_8289BC40",
+      "generated:rerevved/sub_828BFFA0",
+      "ghidra/FindDirectCallers.java:0x828A6B38,0x82897460",
+      "ghidra/FindPointerValues.java:0x8289BA38,0x8289BC40,0x828A20F8",
+      "ghidra/FindSplitConstantCandidates.java:0x820B5FFC,0x820B73BC",
+      "ghidra/DumpMemoryWords.java:0x820BCAA8,0x820C1E34,0x820C1B94,0x820C1944,0x820C168C,0x820C07A4,0x820C143C,0x820C114C,0x820C0C74,0x820C0A34"
     ],
-    "qualification": "Runtime evidence proves one selected vtable/provider identity, joins seven accepted input records to creator 0x82533DB8, and records a bounded stable-menu no-join at the consumer methods. Static evidence proves the provider output, builder chain, rendered-texture outer holder, CPU-access-like implementations, and exclusion of fixed receiver 0x8314F76C, registry-produced receiver 0x82CAE220, input-field receiver 0x8222DE98, raw-pair receiver at owner +0x3A4, the 0x828DD910 default source, sixteen global-subobject raw +0x1C receivers, raw receiver 0x8287F170, collection element receiver 0x82883B9C, and table-0x820B47D8 receiver 0x8288B288 by distinct installed vtables. Candidates 0x82883738, 0x82886C08, and 0x82886C48 are rejected because their candidate loads are not the live dispatch slots. The next live unresolved receiver is at 0x8289BE84. Three proved owner calls explicitly disable the separate descriptor-linked alternative. The decoded searches do not prove an exact caller or user-visible sequence. The global raw +0x1C query reached its 256-callsite cap; branch-separated raw flow, register aliases, memory spills, and broader interprocedural shapes remain outside coverage. No evidence proves mutation, contents, lower allocation or free completion, backing release, or address recycling."
+    "qualification": "Runtime evidence proves one selected vtable/provider identity, joins seven accepted input records to creator 0x82533DB8, and records a bounded stable-menu no-join at the consumer methods. Static evidence proves the provider output, builder chain, rendered-texture outer holder, CPU-access-like implementations, and exclusion of fixed receiver 0x8314F76C, registry-produced receiver 0x82CAE220, input-field receiver 0x8222DE98, raw-pair receiver at owner +0x3A4, the 0x828DD910 default source, sixteen global-subobject raw +0x1C receivers, raw receiver 0x8287F170, collection element receiver 0x82883B9C, table-0x820B47D8 receiver 0x8288B288, and raw receiver 0x8289BE84 in its default-source path by distinct installed vtables. Candidates 0x82883738, 0x82886C08, and 0x82886C48 are rejected because their candidate loads are not the live dispatch slots. Candidate 0x8289BE84 remains unresolved only for the conditional descriptor-linked source. Three proved owner calls explicitly disable that alternative, but this does not generalize to unproved owner calls. The decoded searches do not prove an exact caller or user-visible sequence. The global raw +0x1C query reached its 256-callsite cap; branch-separated raw flow, register aliases, memory spills, and broader interprocedural shapes remain outside coverage. No evidence proves mutation, contents, lower allocation or free completion, backing release, or address recycling."
   },
   "catalogPromotion": {
     "newEntities": [
@@ -808,6 +834,9 @@
     "Do not treat raw candidates 0x82886C08 or 0x82886C48 as live +0x1C dispatches; each candidate field load is overwritten before a +0x140 or +0x148 virtual call.",
     "Do not treat table 0x820B47D8 as owner table 0x820B31F8 at raw callsite 0x8288B288; its +0x1C target is 0x8288B578 rather than owner method 0x828737E0.",
     "Do not treat raw callsites 0x828919E4, 0x82891A58, 0x82895344, or 0x828953B8 as owner method 0x828737E0 in the proved global-subobject path; receiver table 0x820AFFA8 maps +0x1C to 0x82839258.",
+    "Do not treat the 0x828E-family temporary built by 0x828986B0 as the receiver stored at callback subobject +0x10; the helper returns the separate selected-source +0x38 result.",
+    "Do not treat raw callsite 0x8289BE84 as owner method 0x828737E0 in the proved default-source path; accepted helper tables map +0x1C to 0x828FDA98 and the direct selector-9 table maps it to 0x828C7888.",
+    "Do not globally exclude 0x8289BE84 until the conditional descriptor-linked source, its +0x38 target, and returned receiver table are proved.",
     "Do not treat 0x828BCAA0's receiver +0x110 store as the collection item's descriptor +0x20 source publication; no proved edge joins those fields.",
     "Do not implement a persistent native mirror or reuse either consumed capture."
   ],

@@ -425,6 +425,15 @@
     "result": "Raw candidate 0x82900298 can dispatch only one of five distinct receiver-table targets, none owner method 0x828737E0, and is excluded. The consecutive capped boundary advances to 0x82954970, whose candidate load is at 0x82954968 in function 0x829545E8.",
     "qualification": "This exclusion is bounded to the exact table-0x820BCA70 construction through 0x828C4AA8, embedded dispatcher initialization and publication through 0x828FFE08, 0x828BDBA8, 0x828FFFA0, and 0x828FFE78, the complete five-way factory switch, source method 0x8294C6C8, and the live dispatch at 0x82900298. Same numeric +0x120/+0x124 fields written by 0x828F50C8 belong to the separate 0x828F5AB8 caller path and have no proved join to this source. It does not name the source or receiver classes, prove runtime reachability, classify raw result 0x82954970 or later capped candidates, or establish an owner-visible sequence. The raw +0x1C scan remains capped at 256 results."
   },
+  "rawUnresolvedOwnerFieldReceiverBoundary": {
+    "dispatchFlow": "Function 0x829545E8 preserves incoming r5 in r27. On the candidate path it loads the receiver's first word at 0x82954958, loads table +0x1C at 0x82954968, and transfers that exact value through mtctr 0x8295496C to bctrl 0x82954970. This is a live +0x1C dispatch rather than an overwritten-load false positive.",
+    "callerFlow": "The sole canonical call to 0x829545E8 is at 0x82955254 in function 0x82954D28. That caller loads r5 from incoming r3 +0x150 at 0x82954D48, preserves it through the function, converts a non-null value to receiver +0x15C at 0x82955230, and passes that value as r5. The candidate receiver is therefore exactly (*(incoming r3 +0x150)) +0x15C.",
+    "producerBoundary": "Canonical references find no caller or data reference to 0x82954D28. A bounded 32-instruction split-constant search also finds no construction of that address. Its only aligned pointer occurrence is 0x8218FCB8 in the alternating unwind-metadata table, not a receiver or call edge. The identity of incoming r3 and the producer of its +0x150 field are therefore unresolved.",
+    "rejectedAssociations": "Constructor 0x829421C8 installs table 0x820C3098 on a separately allocated 364-byte object and copies three words from its constructor input +0x24 into object +0x150 through +0x158; no edge joins that object to 0x82954D28's incoming r3. Constructor 0x82864828 separately installs table 0x820B0E2C at its own object +0x15C, but no edge joins that object to the pointer loaded from incoming r3 +0x150. Numeric offset agreement is not object identity.",
+    "rawOrdering": "The capped raw +0x1C scan reports 0x82954968/0x82954970 as result 246 and later 0x82954A20/0x82954A2C as result 247. Because result 246 remains unresolved, the consecutive boundary does not advance to result 247.",
+    "result": "Raw candidate 0x82954970 is a live +0x1C dispatch, but its receiver table and exact target remain unresolved at the first missing producer: incoming object field r3 +0x150 in sole caller 0x82954D28. Equality with owner method 0x828737E0 is unknown, so the candidate is not excluded and the capped boundary remains at 0x82954970.",
+    "qualification": "This boundary proves only the exact register flow, sole direct call, absence of canonical and bounded split-constant references to 0x82954D28, and the lack of an object-identity join to two same-offset constructor paths. It does not prove that 0x82954D28 is unreachable, classify its incoming objects, resolve receiver table *(*(r3 +0x150) +0x15C), classify later raw result 0x82954A2C, or establish an owner-visible sequence. No matcher or telemetry was widened."
+  },
   "rawOverwrittenVectorF4Boundaries": {
     "candidateFlow": "Function 0x828F3088 loads r26 +0x1C into r11 at 0x828F3120, 0x828F31E0, and 0x828F3260. Instructions 0x828F3124, 0x828F31E4, and 0x828F3264 consume the respective values as indexed-load bases and place the selected pointers in r31.",
     "liveDispatch": "None of the three candidate values survives to its indirect call. The sequences replace r11 with the selected r31 object's first word and then that table's +0xF4 entry before the respective mtctr/bctrl pairs at 0x828F3134/0x828F3138, 0x828F31F4/0x828F31F8, and 0x828F3274/0x828F3278.",
@@ -505,8 +514,8 @@
   "nextSemanticDiscriminator": {
     "purpose": "Classify the earliest remaining receiver that could call owner method 0x828737E0 and make raw-only +0x120 callsite 0x828DD910 relevant, without adding or widening runtime telemetry.",
     "placement": [
-      "At raw result 0x82954970 in function 0x829545E8, first determine whether the +0x1C load at 0x82954968 remains the live function-pointer producer at mtctr 0x8295496C.",
-      "If the candidate load is overwritten, reject the syntactic result and advance to the next capped raw-only +0x1C result. If it remains live, prove the receiver's first-word table and resolve the exact +0x1C target.",
+      "At raw result 0x82954970, start from sole caller 0x82954D28 and identify its incoming r3 object or the exact producer of field r3 +0x150.",
+      "Join that field to the non-null object whose +0x15C subobject is passed as the live receiver to 0x829545E8, then prove the subobject's first-word table and exact +0x1C target.",
       "If a live +0x1C target equals owner method 0x828737E0, trace the exact input object and determine whether it can select the proved table-0x820BCA70 conditional source.",
       "Stop at the first exact unresolved producer. Do not widen the raw matcher or add telemetry."
     ],
@@ -514,7 +523,7 @@
       "status": "research-static-only",
       "titleCodeCondition": "Do not add another owner sequence or widen the consumed token probe without a new exact caller or separately accepted runtime discriminator."
     },
-    "decisiveResult": "A proved overwrite rejects raw result 0x82954970 without receiver classification. Otherwise, a distinct live +0x1C target excludes it; owner method 0x828737E0 requires tracing the exact input object. An unresolved producer or receiver leaves the candidate and user sequence unknown."
+    "decisiveResult": "A proved distinct receiver-table +0x1C target excludes raw result 0x82954970. Owner method 0x828737E0 requires tracing the exact input object. An unresolved incoming r3 or r3 +0x150 producer leaves the candidate and user sequence unknown."
   },
   "currentEvidence": {
     "method": "Two consumed default-off exact-callsite runtime observations against pinned clean Title and SDK revisions, foreground read-only Ghidra function, reference, vtable, raw-word, decoded slot-call, and decoded global-address queries against the canonical version 1.3 project, and narrow exact-function generated-code corroboration.",
@@ -692,6 +701,12 @@
         "address": "0x820BCA70, 0x828C4AA8, 0x828FFE08, 0x828BDBA8, 0x828FFFA0, 0x828FFE78, 0x82997578, 0x8298EF30, 0x82994910, 0x829916C0, 0x8298FE50, 0x820C41E4, 0x820C4100, 0x820C41AC, 0x820C4174, 0x820C413C, 0x8294C6C8, 0x829001D0, 0x82900288, 0x82900290, 0x82900294, 0x82900298, 0x82997C40, 0x8298EC90, 0x82996C88, 0x82993A50, 0x82990158, 0x829545E8, 0x82954968, 0x82954970",
         "result": "The table-0x820BCA70 constructor publishes both source +0x120 dispatcher receivers through 0x828BDBA8, 0x828FFFA0, and the complete five-way factory 0x828FFE78. The possible final tables map +0x1C to 0x82997C40, 0x8298EC90, 0x82996C88, 0x82993A50, or 0x82990158, excluding live candidate 0x82900298 as owner method 0x828737E0. The capped ordering advances to 0x82954970 in function 0x829545E8 with candidate load 0x82954968.",
         "confidence": "strong"
+      },
+      {
+        "role": "raw unresolved owner-field receiver boundary",
+        "address": "0x82954D28, 0x82954D48, 0x82955230, 0x82955254, 0x829545E8, 0x82954958, 0x82954968, 0x8295496C, 0x82954970, 0x8218FCB8, 0x829421C8, 0x820C3098, 0x828C3BA0, 0x82864828, 0x820B0E2C, 0x82954A20, 0x82954A2C",
+        "result": "The sole direct caller passes (*(incoming r3 +0x150)) +0x15C as the receiver for live +0x1C dispatch 0x82954970. No canonical reference or bounded split-constant construction identifies the caller's incoming object, and neither same-offset constructor path has a proved object-identity join. The first-word table and +0x1C target remain unresolved, so equality with 0x828737E0 is unknown and the capped boundary stays at 0x82954970.",
+        "confidence": "strong for flow and unresolved boundary"
       },
       {
         "role": "raw overwritten vector +0xF4 rejections",
@@ -1088,9 +1103,19 @@
       "generated:rerevved/sub_829001D0",
       "ghidra/DumpFunctions.java:0x828C4AA8,0x828BDBA8,0x828FFFA0,0x828FFE78,0x82997578,0x8298EF30,0x82994910,0x829916C0,0x8298FE50,0x829001D0",
       "ghidra/DumpMemoryWords.java:0x820C4100,0x820C413C,0x820C4174,0x820C41AC,0x820C41E4",
+      "generated:rerevved/sub_82954D28",
+      "generated:rerevved/sub_829545E8",
+      "generated:rerevved/sub_829421C8",
+      "generated:rerevved/sub_828C3BA0",
+      "generated:rerevved/sub_82864828",
+      "ghidra/DumpFunctions.java:0x829545E8,0x82954D28",
+      "ghidra/DumpReferences.java:0x829545E8,0x82954D28",
+      "ghidra/DumpInstructions.java:0x82954D28",
+      "ghidra/FindPointerValues.java:0x82954D28",
+      "ghidra/FindSplitConstantUses.java:0x82954D28",
       "ghidra/FindRawVtableSlotCalls.java:+0x1C"
     ],
-    "qualification": "Runtime evidence proves one selected vtable/provider identity, joins seven accepted input records to creator 0x82533DB8, and records a bounded stable-menu no-join at the consumer methods. Static evidence proves the provider output, builder chain, rendered-texture outer holder, CPU-access-like implementations, and exclusion of fixed receiver 0x8314F76C, registry-produced receiver 0x82CAE220, input-field receiver 0x8222DE98, raw-pair receiver at owner +0x3A4, the 0x828DD910 default source, thirty-three global-subobject raw +0x1C receivers, raw receiver 0x8287F170, collection element receiver 0x82883B9C, table-0x820B47D8 receiver 0x8288B288, raw receivers 0x8289BE84, 0x8289CE64, and 0x8289D3E8 in both proved selected-source paths, point-on-line receiver 0x828BAB0C, material receiver 0x828BB788, body-record receiver 0x828EBEFC, manager-return receiver 0x828EC6B8, selector-2 manager-return receiver 0x828ECB10, and manager-plus-forty selector-2 receiver 0x828ED118, and raw receivers 0x828F77F8 and 0x82900298 by distinct installed vtables. Candidates 0x82883738, 0x82886C08, 0x82886C48, 0x828D2EC0, 0x828D4F40, 0x828F30DC, 0x828F3138, 0x828F31F8, 0x828F3278, 0x828F3310, and 0x828F34AC are rejected because their candidate loads are not the live dispatch slots. Candidate 0x828E0424 is excluded by the proved SDK height-field producer: internal table 0x820BCDBC +0x10 returns its linked table-0x820B3614 wrapper, whose +0x1C target is 0x8287DE88. The consecutive capped boundary now advances through 0x82900298, and 0x82954970 is next. The proved table-0x820BCA70 conditional source does not generalize beyond its exact rigid-body-compartment construction. The decoded searches do not prove an exact caller or user-visible sequence. The global raw +0x1C query reached its 256-callsite cap; branch-separated raw flow, register aliases, memory spills, and broader interprocedural shapes remain outside coverage. No evidence proves mutation, contents, lower allocation or free completion, backing release, or address recycling."
+    "qualification": "Runtime evidence proves one selected vtable/provider identity, joins seven accepted input records to creator 0x82533DB8, and records a bounded stable-menu no-join at the consumer methods. Static evidence proves the provider output, builder chain, rendered-texture outer holder, CPU-access-like implementations, and exclusion of fixed receiver 0x8314F76C, registry-produced receiver 0x82CAE220, input-field receiver 0x8222DE98, raw-pair receiver at owner +0x3A4, the 0x828DD910 default source, thirty-three global-subobject raw +0x1C receivers, raw receiver 0x8287F170, collection element receiver 0x82883B9C, table-0x820B47D8 receiver 0x8288B288, raw receivers 0x8289BE84, 0x8289CE64, and 0x8289D3E8 in both proved selected-source paths, point-on-line receiver 0x828BAB0C, material receiver 0x828BB788, body-record receiver 0x828EBEFC, manager-return receiver 0x828EC6B8, selector-2 manager-return receiver 0x828ECB10, and manager-plus-forty selector-2 receiver 0x828ED118, and raw receivers 0x828F77F8 and 0x82900298 by distinct installed vtables. Candidates 0x82883738, 0x82886C08, 0x82886C48, 0x828D2EC0, 0x828D4F40, 0x828F30DC, 0x828F3138, 0x828F31F8, 0x828F3278, 0x828F3310, and 0x828F34AC are rejected because their candidate loads are not the live dispatch slots. Candidate 0x828E0424 is excluded by the proved SDK height-field producer: internal table 0x820BCDBC +0x10 returns its linked table-0x820B3614 wrapper, whose +0x1C target is 0x8287DE88. Candidate 0x82954970 is proved live but remains unresolved at sole caller 0x82954D28's incoming r3 +0x150 producer, so the consecutive capped boundary remains there. The proved table-0x820BCA70 conditional source does not generalize beyond its exact rigid-body-compartment construction. The decoded searches do not prove an exact caller or user-visible sequence. The global raw +0x1C query reached its 256-callsite cap; branch-separated raw flow, register aliases, memory spills, and broader interprocedural shapes remain outside coverage. No evidence proves mutation, contents, lower allocation or free completion, backing release, or address recycling."
   },
   "catalogPromotion": {
     "newEntities": [
@@ -1168,6 +1193,7 @@
     "Do not treat raw result 0x828F34AC as a live +0x1C dispatch; its r27 +0x1C load selects an r31 vector element and is overwritten by that element's table +0x134 entry before mtctr.",
     "Do not treat raw callsite 0x828F77F8 as owner method 0x828737E0; its table-0x820C0158 receiver dispatches distinct +0x1C target 0x828F7A60.",
     "Do not treat raw callsite 0x82900298 as owner method 0x828737E0 in the proved table-0x820BCA70 construction; its source +0x120 embedded dispatcher can publish only five receiver tables, whose +0x1C targets are 0x82997C40, 0x8298EC90, 0x82996C88, 0x82993A50, and 0x82990158.",
+    "Do not assign raw callsite 0x82954970 a receiver table from numeric offsets alone; sole caller 0x82954D28 has no proved incoming-object producer, and neither table-0x820C3098 construction nor the table-0x820B0E2C +0x15C subobject has an object-identity join to its r3 +0x150 field.",
     "Do not treat the 0x828E-family temporary built by 0x828986B0 as the receiver stored at callback subobject +0x10; the helper returns the separate selected-source +0x38 result.",
     "Do not treat raw callsite 0x8289BE84 as owner method 0x828737E0 in either proved selected-source path; both source paths reach 0x828BFFA0 and receiver tables whose +0x1C targets are 0x828FDA98 or 0x828C7888.",
     "Do not treat raw callsites 0x8289CE64 or 0x8289D3E8 as owner method 0x828737E0 in either proved selected-source path; both consume the source +0x48 receiver with table 0x820BFAF0, whose +0x1C target is 0x828EEA20.",

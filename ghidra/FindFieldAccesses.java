@@ -4,6 +4,7 @@
 //   REREVVED_FIELD_OFFSETS  comma-separated hex offsets
 //   REREVVED_SEED_VAS       optional comma-separated function or interior VAs
 //   REREVVED_CALLER_DEPTH   optional non-negative integer, default 0
+//   REREVVED_CALLEE_DEPTH   optional non-negative integer, default 0
 //   REREVVED_BASE_REGS      optional comma-separated register names
 //   REREVVED_ACCESS_TYPES   optional READ,WRITE,READ_WRITE,ADDRESS filter
 //   REREVVED_DUMP_PATH      output path
@@ -47,10 +48,12 @@ public class FindFieldAccesses extends GhidraScript {
         Set<String> baseRegisters = parseUpperSet(System.getenv("REREVVED_BASE_REGS"));
         Set<String> accessTypes = parseUpperSet(System.getenv("REREVVED_ACCESS_TYPES"));
         int callerDepth = parseDepth(System.getenv("REREVVED_CALLER_DEPTH"));
+        int calleeDepth = parseDepth(System.getenv("REREVVED_CALLEE_DEPTH"));
         String outPath = requireEnv("REREVVED_DUMP_PATH");
 
         FunctionManager functions = currentProgram.getFunctionManager();
-        Map<Long, Integer> functionDepths = buildCallerClosure(functions, seedVas, callerDepth);
+        Map<Long, Integer> functionDepths = buildClosure(
+            functions, seedVas, callerDepth, calleeDepth);
         long scanned = 0;
         long hits = 0;
 
@@ -59,6 +62,7 @@ public class FindFieldAccesses extends GhidraScript {
             out.println("Offsets: " + System.getenv("REREVVED_FIELD_OFFSETS"));
             out.println("Seeds: " + System.getenv("REREVVED_SEED_VAS"));
             out.println("Caller depth: " + callerDepth);
+            out.println("Callee depth: " + calleeDepth);
             out.println("Access filter: " + System.getenv("REREVVED_ACCESS_TYPES"));
             if (!functionDepths.isEmpty()) {
                 out.println("Functions in scope:");
@@ -114,10 +118,10 @@ public class FindFieldAccesses extends GhidraScript {
         println("WROTE: " + outPath);
     }
 
-    private Map<Long, Integer> buildCallerClosure(
-            FunctionManager functions, Set<Long> seedVas, int maxDepth) {
+    private Map<Long, Integer> buildClosure(
+            FunctionManager functions, Set<Long> seedVas, int callerDepth, int calleeDepth) {
         Map<Long, Integer> depths = new TreeMap<>();
-        ArrayDeque<FunctionAtDepth> queue = new ArrayDeque<>();
+        Set<Function> seeds = new HashSet<>();
         AddressSpace space = currentProgram.getAddressFactory().getDefaultAddressSpace();
 
         for (long seedVa : seedVas) {
@@ -131,23 +135,35 @@ public class FindFieldAccesses extends GhidraScript {
             long entry = function.getEntryPoint().getOffset();
             if (!depths.containsKey(entry)) {
                 depths.put(entry, 0);
-                queue.add(new FunctionAtDepth(function, 0));
+                seeds.add(function);
             }
         }
+
+        addDirectionalClosure(depths, seeds, callerDepth, true);
+        addDirectionalClosure(depths, seeds, calleeDepth, false);
+        return depths;
+    }
+
+    private void addDirectionalClosure(Map<Long, Integer> depths, Set<Function> seeds,
+            int maxDepth, boolean callers) {
+        ArrayDeque<FunctionAtDepth> queue = new ArrayDeque<>();
+        for (Function seed : seeds) queue.add(new FunctionAtDepth(seed, 0));
 
         while (!queue.isEmpty() && !monitor.isCancelled()) {
             FunctionAtDepth current = queue.remove();
             if (current.depth >= maxDepth) continue;
-            for (Function caller : current.function.getCallingFunctions(monitor)) {
-                long entry = caller.getEntryPoint().getOffset();
+            Set<Function> adjacent = callers
+                ? current.function.getCallingFunctions(monitor)
+                : current.function.getCalledFunctions(monitor);
+            for (Function function : adjacent) {
+                long entry = function.getEntryPoint().getOffset();
                 int depth = current.depth + 1;
                 Integer knownDepth = depths.get(entry);
                 if (knownDepth != null && knownDepth <= depth) continue;
                 depths.put(entry, depth);
-                queue.add(new FunctionAtDepth(caller, depth));
+                queue.add(new FunctionAtDepth(function, depth));
             }
         }
-        return depths;
     }
 
     private Address toAddress(long value) {
@@ -169,7 +185,7 @@ public class FindFieldAccesses extends GhidraScript {
         if (value == null || value.isBlank()) return 0;
         int depth = Integer.parseInt(value.trim());
         if (depth < 0 || depth > 8) {
-            throw new IllegalArgumentException("REREVVED_CALLER_DEPTH must be between 0 and 8");
+            throw new IllegalArgumentException("closure depth must be between 0 and 8");
         }
         return depth;
     }

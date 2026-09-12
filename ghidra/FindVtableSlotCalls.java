@@ -2,6 +2,8 @@
 // Environment:
 //   REREVVED_VTABLE_SLOT_DISPLACEMENTS  comma-separated positive 16-bit displacements, max 8
 //   REREVVED_MAX_CALLSITES              optional result cap, default 64
+//   REREVVED_RANGE_START                optional inclusive guest VA
+//   REREVVED_RANGE_END                  optional inclusive guest VA
 //   REREVVED_DUMP_PATH                  output path
 //@category ReRevved
 
@@ -26,6 +28,12 @@ public class FindVtableSlotCalls extends GhidraScript {
         Set<Long> displacements = parseDisplacements(
             requireEnv("REREVVED_VTABLE_SLOT_DISPLACEMENTS"));
         int maxCallsites = parseMaxCallsites(System.getenv("REREVVED_MAX_CALLSITES"));
+        Long rangeStart = parseOptionalAddress(System.getenv("REREVVED_RANGE_START"));
+        Long rangeEnd = parseOptionalAddress(System.getenv("REREVVED_RANGE_END"));
+        if (rangeStart != null && rangeEnd != null && rangeStart > rangeEnd) {
+            throw new IllegalArgumentException(
+                "REREVVED_RANGE_START must not exceed REREVVED_RANGE_END");
+        }
         String outPath = requireEnv("REREVVED_DUMP_PATH");
         int callsites = 0;
         long scanned = 0;
@@ -38,10 +46,17 @@ public class FindVtableSlotCalls extends GhidraScript {
             out.println("Slot displacements: " + formatDisplacements(displacements));
             out.println("Callsite cap: " + maxCallsites);
             out.println("Straight-line window: " + MAX_WINDOW_INSTRUCTIONS + " instructions");
+            out.println("Range: " + formatRange(rangeStart, rangeEnd));
 
-            InstructionIterator instructions = currentProgram.getListing().getInstructions(true);
+            InstructionIterator instructions = rangeStart == null
+                ? currentProgram.getListing().getInstructions(true)
+                : currentProgram.getListing().getInstructions(toAddr(rangeStart), true);
             while (instructions.hasNext() && !monitor.isCancelled()) {
                 Instruction load = instructions.next();
+                long loadAddress = load.getAddress().getOffset();
+                if (rangeEnd != null && loadAddress > rangeEnd) {
+                    break;
+                }
                 scanned++;
                 LoadCandidate candidate = matchLoad(load, displacements);
                 if (candidate == null) {
@@ -291,6 +306,19 @@ public class FindVtableSlotCalls extends GhidraScript {
             throw new IllegalArgumentException("REREVVED_MAX_CALLSITES must be 1 through 256");
         }
         return value;
+    }
+
+    private Long parseOptionalAddress(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        return Long.decode(raw.trim());
+    }
+
+    private String formatRange(Long start, Long end) {
+        String first = start == null ? "program-start" : String.format("0x%08X", start);
+        String last = end == null ? "program-end" : String.format("0x%08X", end);
+        return first + " through " + last;
     }
 
     private String formatDisplacements(Set<Long> values) {

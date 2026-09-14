@@ -178,7 +178,10 @@ only their recovered roles. Their wider state ownership remains unresolved.
 The CPU shader path selects vertex variants and patches their fetch instructions
 before publishing the command cursor. The copied code buffer passed to
 `0x826AD150` is therefore a direct observation point for the immediate patched
-variant. Pixel shader code is addressed through the object at graphics state
+variant. The shader emitter's common exit at `0x826AE5B8` also retains the
+regular persistent variant selected by the pointer-emission block. Its variant
+metadata identifies the emitted physical program and word count, including the
+case where an already patched program is reused. Pixel shader code is addressed through the object at graphics state
 `+0x3194`. The viewport setter retains the complete viewport and derived
 scale/offset words in graphics state; the scissor helper retains its clipped
 rectangle separately. The [CPU draw-state contract](../../manifests/gfx-draw-producer.json)

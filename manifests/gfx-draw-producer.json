@@ -106,7 +106,9 @@
       "object": "The shader-state helper 0x826ADD88 loads the vertex object from G+0x3198.",
       "variantMetadata": "For variant v, 0x826ADA38 reads a relative word at VS+896+8*v. The metadata begins at VS+relative+872; its first two words are code offset and byte size. The resource base is VS+32.",
       "cpuPatch": "0x826ADA38 copies the selected variant into an owned command allocation and calls 0x826AD150 at 0x826ADB6C with r3=VS, r4=the copied code buffer, r5=vertex declaration, r6=G+0x30F0, and r7=variant. The return site is 0x826ADB70. The helper patches that buffer before its caller publishes the command cursor.",
-      "qualification": "This identifies the immediate CPU-patched path. Persistent shader variants and other callers of 0x826AD150 require their own contracts."
+      "persistentSelection": "At the common exit 0x826AE5B8, r30 is G, r31 is VS, r19 is the regular persistent variant or -1, and r15 is the conditional variant or -1. The regular block 0x826AE538..0x826AE5B4 emits only when r19 is not -1. With metadata=VS+[VS+896+8*r19]+872, raw=[VS+32]+[metadata], its physical program pointer is (raw & 0x1FFFFFFF)+(((raw >> 20)+512)&0x1000) and its instruction count is [metadata+4] >> 2.",
+      "persistentPatch": "0x826ADC48 can patch the persistent resource through 0x826AD150 at 0x826ADD0C, returning at 0x826ADD10. Its compatible-cache path reuses the existing variant; both successful paths allow the caller to select that variant for emission.",
+      "qualification": "A -1 regular variant does not establish absence of a vertex shader: an immediate program may have been emitted, or existing state retained. Conditional program selection is separate. These static selection contracts do not establish resource lifetime or runtime shader identity."
     },
     "pixelShader": {
       "object": "0x826ADD88 loads the pixel object PS from G+0x3194; the metadata starts at PS+[PS+64]+40 and contains code offset and byte size.",

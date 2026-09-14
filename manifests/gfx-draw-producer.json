@@ -100,6 +100,25 @@
     },
     "result": "The version 1.3 renderer has a guarded, indexed triangle submission path at vtable slot +0x3C."
   },
+  "cpuDrawState": {
+    "graphics": "G is the indexed wrapper's graphics-state argument, loaded from renderer +0xB8.",
+    "vertexShader": {
+      "object": "The shader-state helper 0x826ADD88 loads the vertex object from G+0x3198.",
+      "variantMetadata": "For variant v, 0x826ADA38 reads a relative word at VS+896+8*v. The metadata begins at VS+relative+872; its first two words are code offset and byte size. The resource base is VS+32.",
+      "cpuPatch": "0x826ADA38 copies the selected variant into an owned command allocation and calls 0x826AD150 at 0x826ADB6C with r3=VS, r4=the copied code buffer, r5=vertex declaration, r6=G+0x30F0, and r7=variant. The return site is 0x826ADB70. The helper patches that buffer before its caller publishes the command cursor.",
+      "qualification": "This identifies the immediate CPU-patched path. Persistent shader variants and other callers of 0x826AD150 require their own contracts."
+    },
+    "pixelShader": {
+      "object": "0x826ADD88 loads the pixel object PS from G+0x3194; the metadata starts at PS+[PS+64]+40 and contains code offset and byte size.",
+      "physicalCode": "At 0x826ADF14, raw=[PS+24]+metadata.codeOffset. Before adding the pixel-stage tag, the physical code address is (raw & 0x1FFFFFFE) + (((raw >> 20)+512) & 0x1000). The emitted instruction count is metadata.byteSize >> 2."
+    },
+    "viewport": {
+      "call": "GFx setup 0x82302F60 calls 0x826903A0 at 0x823032B4 with the viewport at its stack +144. That wrapper forwards x, y, width, height, minDepth, and maxDepth to 0x82690138.",
+      "retained": "0x82690138 retains six floats at G+0x3168..G+0x317C: x, y, clipped width, clipped height, minDepth, maxDepth. It writes derived viewport scale/offset values at G+0x2908..G+0x291C.",
+      "scissor": "0x8268F9C0 intersects the viewport with the explicit scissor when G+0x2E50 is nonzero. It stores the packed top-left and bottom-right shadow words at G+0x28C4 and G+0x28C8. This describes the CPU shadow, not later tiled command overrides."
+    },
+    "evidence": "Foreground read-only DumpFunctions.java and DumpInstructions.java queries against image.json's program, corroborated by the exact generated bodies of 0x826ADA38, 0x826AD150, 0x826ADD88, 0x82690138, 0x826903A0, and 0x8268F9C0. The configured Ghidra database truncates at Xenon save thunks or undecoded instructions; generated bodies supply the bounded arithmetic and store sequences where the listing has gaps. No repaired database or runtime output is implied."
+  },
   "geometry": {
     "rendererFields": [
       { "offset": "0x164", "role": "vertex-buffer pointer", "producer": "0x82303BF0" },

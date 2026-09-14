@@ -175,6 +175,16 @@ Other bounded setup functions include color transform `0x823029B8`, viewport
 setup `0x82302F60`, and blend setup `0x823036D0`. The last two names describe
 only their recovered roles. Their wider state ownership remains unresolved.
 
+The CPU shader path selects vertex variants and patches their fetch instructions
+before publishing the command cursor. The copied code buffer passed to
+`0x826AD150` is therefore a direct observation point for the immediate patched
+variant. Pixel shader code is addressed through the object at graphics state
+`+0x3194`. The viewport setter retains the complete viewport and derived
+scale/offset words in graphics state; the scissor helper retains its clipped
+rectangle separately. The [CPU draw-state contract](../../manifests/gfx-draw-producer.json)
+records the object arithmetic, argument mapping, store offsets, and Ghidra
+listing limitations. These CPU shadows do not establish later tile overrides.
+
 ## Guest fetch and command emission
 
 `GraphicsFlushAndIssue` forwards to `GraphicsDirtyStateAndDrawPrepare` at

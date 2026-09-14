@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0162",
+  "topic": "movie-nonindexed-up-draw",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which nonindexed wrapper call submits the four-vertex movie strip, and where does the pixel path obtain resource literals?",
+  "scope": {
+    "caller": "0x82E305F8",
+    "call": "0x82E39878",
+    "wrapper": "0x826A3000",
+    "pixelLiteralLoader": "0x826ADB98",
+    "boundary": "Call arguments, synchronous vertex copy, fetch-shadow cleanup and pixel resource literal records. Dynamic shader identity, descriptor values and output require runtime correlation."
+  },
+  "dependencies": [
+    { "topic": "gfx-nonindexed-up-draw", "use": "wrapper and automatic-index lowerer semantics" },
+    { "topic": "menu-indexed-buffer-draw", "use": "shared resource literal-loader and packet layout" },
+    { "topic": "gfx-backend-fetch-descriptor", "use": "fetch-shadow setter offsets" }
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra queries against image.json, corroborated by narrow generated wrapper, caller, setter and literal-loader windows.",
+    "queries": [
+      {
+        "script": "ghidra/FindDirectCallers.java",
+        "sha256": "F48F121404B5C36F58C518B2E72674C7672254E8CFA153C387C94C317191B741",
+        "addresses": ["0x826A3000", "0x826ADB98"]
+      },
+      {
+        "script": "ghidra/DumpMemoryWords.java",
+        "sha256": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71",
+        "addresses": ["0x82E39878", "0x826A3000", "0x826ADEF8", "0x826ADF14", "0x82E335A8", "0x82E3361C", "0x82E33690", "0x82E36784", "0x82E398CC", "0x82E39920", "0x82E39974", "0x82E399EC"]
+      },
+      {
+        "script": "ghidra/DumpInstructions.java",
+        "sha256": "6F86DB8F59BC98F6800E4EC3E7D3911FDFDDC775BA8F3D2B4A76B8AEA0ABA320",
+        "addresses": ["0x826A3000", "0x826ADB98", "0x826ADEFC"]
+      }
+    ],
+    "directCalls": ["0x823035BC", "0x82303F48", "0x82304254", "0x82E39878"],
+    "draw": {
+      "call": "0x82E39878, word 0x4B869789, calls 0x826A3000 and returns to 0x82E3987C.",
+      "arguments": "The caller passes r3=G loaded from frame+0x384, r4=6, a computed count in r5, r6=frame+0x70 and r7=20. The count evaluates to four for the saved tuple.",
+      "vertices": "The 80-byte range at frame+0x70 contains four 20-byte vertices. Primitive 6 selects a triangle strip.",
+      "copy": "0x826A3020 calls lowerer 0x826A2B58. On success, 0x826A3034 calls 0x827F8550 to copy count*stride bytes synchronously from the supplied vertex pointer.",
+      "completion": "0x826A3038 loads G+0x3484 and 0x826A303C publishes that cursor to G+0x30."
+    },
+    "fetchBinding": {
+      "setter": "0x8269AF10 receives G, renderer slot, backend descriptor or null, and dirty mask.",
+      "shadow": "The six-word shadow is G+(slot+0x30)*0x18: slots 0, 1 and 2 begin at G+0x480, G+0x498 and G+0x4B0.",
+      "backendTable": "The backend pointer table is G+(slot+0xC40)*4; dirty state is G+0x18.",
+      "bindingCalls": ["0x82E335A8", "0x82E3361C", "0x82E33690", "0x82E36784"],
+      "cleanupCalls": ["0x82E398CC", "0x82E39920", "0x82E39974", "0x82E399EC"],
+      "qualification": "The post-draw calls clear backend binding entries for slots 0 through 3; they do not zero the six-word fetch shadows. The setter decompile is thunk-truncated; the field mapping is corroborated by its bounded generated body. This identifies a capture window, not backing lifetime or GPU completion."
+    },
+    "pixelLiterals": {
+      "call": "0x826ADEF8 calls 0x826ADB98 and returns to 0x826ADEFC with r3=G, r4=PS+0x28 and r5=[PS+0x18], where PS=[G+0x3194].",
+      "table": "The loader reads a relative table offset at header+0x14. If nonzero, table=header+relative, records=table+0x14 and recordBytes=[table+0x10].",
+      "record": "Each eight-byte record contains BE16 first ALU float4 at +0, BE16 dword count at +2 and BE32 resource-relative byte offset at +4. A zero count terminates the loop.",
+      "payload": "raw=resourceBase+recordOffset; the physical alias is (raw & 0x1FFFFFFF) + (((raw >> 20) + 512) & 0x1000).",
+      "submission": "The loader emits PM4 header 0xC0022F00, physical backing, firstFloat4*4 and wordCount, then publishes G+0x30. The first index belongs to the unified ALU file, not the shader-relative pixel constant namespace.",
+      "qualification": "PS+0x28 is the literal-table header. Shader code metadata is reached through PS+[PS+0x40]+0x28. 0x826ADF14 emits pixel shader code addresses; it is not the literal-loader call. The actual record spans and values for a selected shader require a live resource capture."
+    }
+  },
+  "guards": [
+    "Do not infer visible movie or shader identity from the call tuple alone.",
+    "Do not infer that renderer slot order equals pixel shader binding order.",
+    "Do not retain borrowed guest descriptors or plane pointers across the post-draw cleanup.",
+    "Keep original lowering, state emission, memory copy and cursor publication active during input validation.",
+    "Static CPU-readable resource addresses do not establish native resource ownership, release/reuse safety or GPU-write completion."
+  ],
+  "conclusion": "For the four-vertex tuple, the call at 0x82E39878 submits stride-20 vertices through the existing nonindexed wrapper. The wrapper synchronously copies 80 bytes before returning, after which the caller clears backend binding entries. The pixel path supplies the PS+0x28 literal-table header and PS+0x18 backing to the shared resource literal loader. These exact boundaries support runtime input correlation while preserving original guest execution."
+}

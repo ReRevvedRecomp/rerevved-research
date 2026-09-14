@@ -241,5 +241,6 @@ are related stages, not interchangeable identities.
 - [GFx backend fetch descriptor](../../manifests/gfx-backend-fetch-descriptor.json)
 - [GFx fetch allocation](../../manifests/gfx-fetch-allocation.json)
 - [GFx nonindexed UP draw boundary](../../manifests/gfx-nonindexed-up-draw.json)
+- [Bound indexed draw and CPU fetch array](../../manifests/menu-indexed-buffer-draw.json)
 - [GFx dirty-fetch packet](../../manifests/gfx-dirty-fetch-packet.json)
 - [Catalog contract](../catalogs.md)

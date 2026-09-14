@@ -183,6 +183,14 @@ which converts contiguous dirty texture ordinals into guest register-write
 runs. `CommandRangeRolloverWriter` at `0x826AC610` handles the bounded rollover
 case.
 
+The indexed wrapper takes source geometry and a stride word at guest entry
+`SP+84`. After its lowerer succeeds, it copies the selected vertex span and
+four-byte-rounded index span into guest upload buffers, then publishes the
+prepared command cursor. Its final return register comes from the index copy;
+it is not the lowerer's success status. The
+[draw producer contract](../../manifests/gfx-draw-producer.json) records the
+argument mapping and exact copy sites.
+
 The recovered fetch allocation is non-overlapping:
 
 - Texture fetch 0 occupies guest registers `0x4800` through `0x4805`.

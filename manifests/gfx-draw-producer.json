@@ -87,6 +87,17 @@
       "0x82303DB4 calls composed-transform producer 0x823038D8 with renderer matrix state at +0xFC."
     ],
     "issue": "0x82303E3C and 0x82303E8C call 0x826A3568 with primitive value 4. Large draws are split into bounded chunks; the remainder path multiplies the incoming triangle count by three for the submitted index count.",
+    "indexedUpWrapper": {
+      "function": "0x826A3568",
+      "identityEvidence": "gfx-dirty-fetch-packet.json currentEvidence identifies the current 40-instruction wrapper; its source-copy and return contract is corroborated by the bounded generated body at 0x826A3568..0x826A3608.",
+      "entry": "r3 is graphics state G from renderer +0xB8; r4 is primitive; r5 is minimum vertex a; r6 is vertex count b; r7 is index count n; r8 is the source index pointer; r9 is the guest index-format word; r10 is the source vertex pointer; the guest word at entry SP+84 is vertex stride s.",
+      "lowering": "0x826A35AC calls 0x826A3048 with r5=-a, the format in r8, stride in r9, and local vertex/index output pointers. A nonzero lowerer return skips both copies and the final cursor store.",
+      "lowererOutputs": "On the successful lowerer path, 0x826A3524..0x826A353C stores the prepared cursor at G+0x3484 and the vertex/index output pointers at G+0x3488 and G+0x348C, then writes those pointers to the wrapper's output locals.",
+      "vertexCopy": "0x826A35C8 calls 0x827F8550 with source r10(entry)+a*s and byte count b*s, using the lowerer's vertex output as destination.",
+      "indexCopy": "0x826A35F4 calls 0x827F8550 from r8(entry) with the index byte count rounded up to four bytes. The element size is four when format bit 0x4 is set and two otherwise.",
+      "completion": "On that path, 0x826A35F8..0x826A35FC copies G+0x3484 into G+0x30. The final r3 is left by the second copy call; it is not the lowerer's zero success status.",
+      "qualification": "This describes original guest effects and arithmetic, not an allocation, resource-lifetime, host draw, or runtime success guarantee. G is not identified with the published VdGlobalDevice object."
+    },
     "result": "The version 1.3 renderer has a guarded, indexed triangle submission path at vtable slot +0x3C."
   },
   "geometry": {

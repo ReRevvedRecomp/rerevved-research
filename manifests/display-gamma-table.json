@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0163",
+  "topic": "display-gamma-table",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Where is the complete converted 256-entry display gamma table available before the original device setter retains it?",
+  "scope": {
+    "setter": "0x8268FE08",
+    "conversion": "0x826A6F20",
+    "displayCurve": "0x826A6D98",
+    "initialization": "0x826A5EB8",
+    "pwlSetter": "0x8268FED0",
+    "boundary": "Converted CPU channel layout and original device retention. Dynamic reachability, final GPU table equality and presentation require runtime observation."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra memory-word queries against image.json, corroborated by narrow generated function bodies. Canonical decompilation truncates on Xenon instructions and save thunks and is not treated as complete control flow.",
+    "queries": [
+      {
+        "script": "ghidra/DumpMemoryWords.java",
+        "sha256": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71",
+        "addresses": ["0x8268FE70", "0x8268FF38", "0x826A6F70", "0x826A6E58", "0x826A6060", "0x826A70A0", "0x826A3EB0", "0x826A4884", "0x826A4A60", "0x826A44B0", "0x826A4610"],
+        "wordRadius": 48
+      }
+    ],
+    "conversion": {
+      "call": "0x8268FE2C, word 0x480170F5, calls 0x826A6F20 with output r3=r1+80, input r4=the setter's r5, and selector r5=0.",
+      "loop": "The converter sets count 256 at 0x826A6F50. It looks up each source channel through the curve returned by 0x826A6D98, shifts the result left six bits and masks with 0xFFC0.",
+      "stores": "Stores at 0x826A6F68, 0x826A6F7C and 0x826A6F90 write channel offsets 0, 512 and 1024 respectively; pointers advance two bytes per entry.",
+      "layout": "1536 bytes: three channels of 256 big-endian unsigned halfwords. Each halfword stores a ten-bit value in bits 6..15; its low six bits are zero.",
+      "displayCurve": "0x826A6D98 obtains display type and power through VdGetCurrentDisplayGamma, builds or reuses the selected conversion curve, and returns its address. The caller's source samples therefore are not already the converted output table."
+    },
+    "retention": {
+      "observer": "At 0x8268FE30, the converted table is complete at r1+80 and r31 is the original device argument. The original instruction 0x3BDF3A9C computes device+0x3A9C.",
+      "comparison": "The setter compares all 1536 converted bytes with device+0x3A9C. Equality skips the copy; inequality follows the original resource handling and copies the converted bytes there at call 0x8268FEA4.",
+      "dirty": "On replacement, the setter sets bit 1 at device+0x4144. The observer does not replace copy, dirty-state publication or subsequent GPU submission."
+    },
+    "emission": {
+      "retainedInput": "After the VdSwap call at 0x826A4884, sub_826A4638 computes device+0x3A9C at 0x826A4A1C. Its conditional call 0x826A4AA8 passes that pointer as r10 to 0x826A4458, which preserves it as r23 and, when flag bit 1 is set, passes it as r5 to 0x826A3E48 at call 0x826A4620.",
+      "selection": "0x826A3E48 chooses table emitter 0x826A7040 at call 0x826A3EAC or PWL emitter 0x826A7138 at call 0x826A3EA0. Its r5 supplies the channel table; a null pointer takes its explicit generated-ramp branch.",
+      "layout": "0x826A7040 reads aligned halfwords from the three channel planes and packs red in bits 20..29, green in bits 10..19 and blue in bits 0..9.",
+      "registers": "The 256-entry loop beginning at 0x826A709C emits the packed words to register 0x1925, DC_LUT_30_COLOR, with conditional writes involving index register 0x1922. The original emitter retains allocation and cursor publication.",
+      "timing": "This retained-input edge runs after the swap call. A current setter value alone does not prove that the preceding swap consumed it; observe actual emitter inputs and preserve CPU ordering when correlating a frame. Original emitter return establishes CPU packet publication, not Xenos GPU completion."
+    },
+    "initialization": {
+      "selection": "0x826A6094 and 0x826A609C compare the selected format with 7 and 54. Other formats call 0x826A7238 at 0x826A60AC and the table setter 0x8268FE08 at 0x826A60BC.",
+      "pwl": "Formats 7 and 54 instead call 0x826A7288 at 0x826A60CC and 0x8268FED0 at 0x826A60DC. The PWL setter calls converter 0x826A6FB8 at 0x8268FEF4 and reaches 0x8268FEF8 with a different channel layout using the same retained storage."
+    }
+  },
+  "guards": [
+    "Observe the converted output, not the unconverted source ramp or a runtime initialization default.",
+    "Preserve every original setter instruction and guest register effect.",
+    "Require a complete readable 1536-byte range and low-six-bit alignment before decoding the 256-entry path.",
+    "Do not interpret the alternate PWL layout as 256 independent entries.",
+    "Compare retained device bytes at the consumption boundary to detect disagreement with the observed converted producer.",
+    "Do not apply a pending setter update to an earlier frame: correlate the last completed CPU emitter input as well as retained state.",
+    "Static producer layout does not establish executed reachability, the final GPU table, update ordering across threads, reset semantics or visible presentation."
+  ],
+  "conclusion": "The post-conversion point 0x8268FE30 exposes a complete CPU-owned three-channel table before the original compare/copy. It supports a bounded direct-input observation, qualified by runtime device association and equality with the consumed GPU table."
+}

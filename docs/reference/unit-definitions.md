@@ -74,31 +74,51 @@ IDs 0 through 99. `CurrentProductionItemCostLookup` at `0x82CF8308` selects the
 current city item at `+0x38` and returns the same unit result. Both route item
 IDs 100 through 299 through separate `BuildingWonderProductionCostLookup` at
 `0x82CF1278`. IDs 100 through 199 use a signed byte at `+0x41` of `0xCC`-byte
-building records rooted at `0x82F71FD8`. Exact records now identify item 101
-Barracks with factor 4, item 105 Library with factor 4, and item 114 Courthouse
-with factor 8. The helper selects those item IDs with masks `0x2`, `0x20`, and
-`0x4000`; cumulative UEA 19, 20, and 18 respectively reduce the composed
-signed cost by half with truncation toward zero.
+building records rooted at `0x82F71FD8`. The initialized block has 23 exact
+records, IDs 100 through 122. Each has a name at `+0x00`, token text at
+`+0x20`, signed production factor at `+0x41`, and stored description at
+`+0x4C`. The next stride position overlaps adjacent non-record data. The
+cost helper's broader ID range does not validate IDs 123 through 199. Exact
+identities and factors are in
+[`building-record-identities-100-122.json`](../../manifests/building-record-identities-100-122.json).
+Barracks 101, Library 105, and Courthouse 114 have cumulative UEA 19, 20,
+and 18 half-cost branches. Cathedral 111 has a UEA 21 branch, with no accepted
+retail activation. University 112 and Factory 116 have separate neutral-gated
+reductions. The exact branch sequence and other common modifiers are in
+[`building-wonder-cost-modifier-branches.json`](../../manifests/building-wonder-cost-modifier-branches.json).
 
 IDs 200 through 299 use a signed halfword at `+0x40` of `0x14C`-byte wonder
 records rooted at `0x82F73238`. The helper applies a common signed half-scale
 to every item in that range, then applies another signed half reduction when
 cumulative UEA 24, Wonders cost half as much, is active. The common scale is
-part of the native wonder formula, not UEA 24 itself. Exact records identify
-items 200 through 204 as Pyramids of Egypt factor 30, The Great Wall factor 30,
-Hanging Gardens of Babylon factor 20, Stonehenge factor 10, and Colossus of
-Rhodes factor 20. Items 205 through 209 are Oracle of Delphi factor 25, Great
-Library of Alexandria factor 30, The East India Company factor 40, Oxford
-University factor 30, and Shakespeare's Theatre factor 30. Each carries
-initialized name, short-token, art-token, and effect-description strings at repeated offsets.
-No display consumer or effect implementation is proved.
-The remaining building and wonder identities, complete layouts,
-adjacent fields, and other modifiers remain unresolved. Cost locators are in
+part of the native wonder formula, not UEA 24 itself. The initialized block
+has 37 exact records, IDs 200 through 236. Each has a name at `+0x00`, signed
+production factor at `+0x40`, short token at `+0x4A`, art token at `+0x8A`,
+and stored effect description at `+0xCA`; record-specific byte boundaries
+remain in the identity manifests. The next twelve complete stride positions
+are zero and the following position contains non-wonder data. Neither this
+boundary nor the cost helper proves a program-wide valid-ID rule. See
+[`wonder-record-identities.json`](../../manifests/wonder-record-identities.json)
+and the subsequent wonder identity manifests through
+[`wonder-record-identity-236.json`](../../manifests/wonder-record-identity-236.json),
+plus the bounded
+[`wonder-record-byte-boundary-237-249.json`](../../manifests/wonder-record-byte-boundary-237-249.json).
+Stored descriptions do not prove implemented effects. The text and art-token
+consumers, complete layouts, final runtime costs, and gameplay effects remain
+unresolved. The exact cost inputs are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).
-The five wonder records are in
-[`wonder-record-identities.json`](../../manifests/wonder-record-identities.json).
-The next five and their +0x49 token-boundary guard are in
-[`wonder-record-identities-205-209.json`](../../manifests/wonder-record-identities-205-209.json).
+
+One bounded wonder production gate uses normalized wonder index. In one fresh
+game, its receiver dispatched virtual slot `+0x1E4` to `0x82D80C30` for
+indices 0 through 32; every logged result was zero. This implementation can
+return one for indices 21 through 32 only when the corresponding one of three
+bits from slot `+0x1DC` is set. The observed slot's getter at `0x82D7D2A8`
+returns frontend-root `+0x08`, except that context state codes 4 through 6
+force zero. The field writer, bit meanings, other virtual targets, outer gate,
+and effects remain unresolved. See
+[`wonder-eligibility-virtual-target.json`](../../manifests/wonder-eligibility-virtual-target.json)
+and
+[`wonder-eligibility-mask-source.json`](../../manifests/wonder-eligibility-mask-source.json).
 
 A bounded Pyramids consumer packet did not establish an exact item-200 edge to
 government availability or state, completion, display, or AI. Exact references

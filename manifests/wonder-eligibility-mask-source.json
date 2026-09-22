@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0171",
+  "topic": "wonder-eligibility-mask-source",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What supplies the three bits tested by the observed wonder gate implementation?",
+  "scope": {
+    "observedReceiver": "0x8314F76C",
+    "vtable": "0x82138768",
+    "slot": "0x1DC at 0x82138944",
+    "target": "0x82D7D2A8",
+    "boundary": "This packet identifies one installed vtable's mask getter and its immediate source. It does not identify the writer, bit meanings, other vtables, or effects."
+  },
+  "dependencies": [
+    { "topic": "wonder-eligibility-virtual-target", "use": "Establishes the observed receiver, +0x1E4 target, and three bit tests." },
+    { "topic": "presentation-speed-producers", "use": "Establishes installation of vtable 0x82138768 in the singleton at 0x8314F76C." }
+  ],
+  "staticResult": {
+    "vtableWords": "The current image has 0x82D7D2A8 at 0x82138944 (+0x1DC) and 0x82D80C30 at 0x8213894C (+0x1E4).",
+    "maskGetter": "0x82D7D2A8 reads pointer global 0x8314EFC8. If nonzero and its +4 signed word is 4, 5, or 6, it returns zero. Otherwise it returns the word at +8 of the object pointed to by global 0x82FFD624.",
+    "consumer": "0x82D80C30 tests bits 0, 1, and 2 of this getter's return on its three bounded normalized-index bands.",
+    "qualification": "The +8 word's writer and semantics are unproved. The adjacent function 0x82D7D208 reads the same source and can combine its low three bits with another state record, so its result cannot be substituted for the +0x1DC getter."
+  },
+  "runtimeObservation": {
+    "source": "wonder-eligibility-virtual-target",
+    "result": "One fresh-game run observed the +0x1E4 target return zero for normalized indices 0 through 32 while the readable word at *(0x8314EFC8)+4 was one. The +0x1DC call and its returned mask were not logged separately.",
+    "qualification": "Zero +0x1E4 returns do not identify the stored +8 word or show when any bit changes."
+  },
+  "currentEvidence": {
+    "method": "A foreground read-only canonical-project word query checked both exact vtable slots. A bounded decompilation of 0x82D7D2A8 identified its source and override; exact Ghidra references corroborated both global reads.",
+    "entries": [
+      { "role": "mask slot", "address": "0x82138944", "result": "Word is 0x82D7D2A8.", "confidence": "confirmed" },
+      { "role": "gate slot", "address": "0x8213894C", "result": "Word is 0x82D80C30.", "confidence": "confirmed" },
+      { "role": "mask getter", "address": "0x82D7D2A8", "result": "Returns zero for state codes 4 through 6; otherwise returns frontend-root +8 word.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82138948 radius=2", "ghidra/DumpFunctions.java:0x82D7D2A8", "ghidra/DumpReferences.java:0x82FFD624,0x8314EFC8"],
+    "qualification": "The Ghidra global-address materializer query emitted no matches for 0x82FFD624 despite 67 direct Ghidra references. It is not evidence that the root has no writer."
+  },
+  "guards": [
+    "Do not name bits 0 through 2 as wonder effects or ownership flags without writer and consumer evidence.",
+    "Do not infer +8 values from the zero returns observed in one runtime state.",
+    "Do not treat the state-code override or this implementation as a global valid-ID rule."
+  ],
+  "conclusion": "For the observed vtable, the +0x1DC mask getter returns frontend-root +8 except when a nonzero context pointer has state code 4 through 6, in which case it returns zero. The +0x1E4 gate tests its low three bits for normalized indices 21 through 32. The root-field producer, bit meanings, runtime mask values, and effects remain unresolved."
+}

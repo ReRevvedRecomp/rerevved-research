@@ -11,7 +11,7 @@
     "outerGate": "0x82CF3608",
     "innerGate": "0x82CF0E28",
     "indirectCall": "0x82CF0EB0",
-    "boundary": "This packet follows the first direct gate call inside the outer helper and the inner helper's local return conditions. It stops at the unresolved virtual target at slot +0x1E4 and does not classify the rest of the outer helper, the dynamic target, global writers, or runtime behavior."
+    "boundary": "This packet follows the first direct gate call inside the outer helper and the inner helper's local return conditions. It stops at virtual slot +0x1E4; wonder-eligibility-virtual-target owns one observed implementation. The rest of the outer helper and global writers remain outside this packet."
   },
   "dependencies": [
     { "topic": "non-unit-production-threshold-boundary", "use": "Provides the accepted sufficient-production wonder path and its neutral direct gate at 0x82D162EC." },
@@ -27,7 +27,7 @@
     "dynamicCondition": "When byte 0x8314F10B is zero and word at pointer 0x8314EFC8 + 4 differs from two, 0x82CF0E94 through 0x82CF0EB0 calls slot +0x1E4 of the object pointer stored at 0x8314F76C, passing r3 = 0x8314F76C, r4 = normalized index, and r5 = 0.",
     "dynamicResult": "A nonzero low byte from the indirect return makes this helper return one at 0x82CF0EB4 through 0x82CF0ECC.",
     "fallback": "If the dynamic result is zero or the dynamic condition is bypassed, the signed comparison at 0x82CF0EC0 returns one only for normalized indices below 21 and zero for indices at least 21.",
-    "qualification": "The dynamic slot target, receiver ownership, global-word meanings, and runtime state are unresolved. No lower-bound check is assigned to this helper from the bounded read set."
+    "qualification": "Wonder-eligibility-virtual-target identifies one observed slot target. Other implementations, receiver ownership, global-word meanings, and general runtime state remain unresolved. No lower-bound check is assigned to this helper from the bounded read set."
   },
   "domainImplication": {
     "normalized0Through20": "The common fallback can admit these indices, subject to the special index-one gate and later outer-helper conditions.",
@@ -43,7 +43,7 @@
       { "role": "dynamic and fallback gate", "address": "0x82CF0E70 through 0x82CF0ED0", "result": "Raw words show the global conditions, receiver address, vtable slot +0x1E4, indirect call, low-byte return test, and signed threshold 21.", "confidence": "strong" }
     ],
     "locators": ["ghidra/DumpMemoryWords.java:0x82CF361C,0x82CF0E34 radius=12", "ghidra/DumpMemoryWords.java:0x82CF0EAC radius=20", "generated:rerevved/sub_82CF3608", "generated:rerevved/sub_82CF0E28"],
-    "qualification": "The raw words establish the local static conditions. The dynamic slot target and observed return values are not established. No runtime probe was performed."
+    "qualification": "The raw words establish this packet's local static conditions. Wonder-eligibility-virtual-target owns the later observed slot target and return values."
   },
   "guards": [
     "Do not treat index below 21 as unconditional eligibility; the special gate and outer helper still apply.",
@@ -51,5 +51,5 @@
     "Do not infer that the stored records 233 through 236 are globally unavailable from the later helper-body limit.",
     "Do not infer runtime reachability or semantics from stored descriptions or dynamic slot shape."
   ],
-  "conclusion": "The city-update wonder path requires nonzero 0x82CF3608, whose first direct gate is 0x82CF0E28. That inner gate has an index-one special zero result, an unresolved virtual slot +0x1E4 whose nonzero low-byte result can admit an index, and a fallback accepting only normalized indices below 21. For indices 21 through 36, the dynamic result is the decisive unresolved edge on this path; even then the outer helper and later 0-through-32 helper-body gate remain separate."
+  "conclusion": "The city-update wonder path requires nonzero 0x82CF3608, whose first direct gate is 0x82CF0E28. That inner gate has an index-one special zero result, virtual slot +0x1E4 whose nonzero low-byte result can admit an index, and a fallback accepting only normalized indices below 21. For indices 21 through 36, the dynamic result is decisive on this local path; wonder-eligibility-virtual-target owns one observed implementation. The outer helper and later 0-through-32 helper-body gate remain separate."
 }

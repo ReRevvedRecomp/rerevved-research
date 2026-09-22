@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0167",
+  "topic": "building-wonder-cost-modifier-branches",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which additional exact item-specific and common reductions occur inside BuildingWonderProductionCostLookup after its accepted signed factor multiplication?",
+  "scope": {
+    "function": "0x82CF1278",
+    "rawWindows": ["0x82CF137C through 0x82CF147C", "0x82CF147C through 0x82CF1550"],
+    "boundary": "This packet follows the remainder of one exact cost helper and records reduction gates and arithmetic. It does not establish the meanings or writers of the neutral globals, caller-side cost parity, validity of uninitialized record IDs, production completion, or runtime execution of these branches."
+  },
+  "dependencies": [
+    { "topic": "building-wonder-cost-identities", "use": "Provides the accepted building IDs 101, 105, 114 and UEA 18, 19, 20, 24 reduction branches." },
+    { "topic": "building-record-identities-100-122", "use": "Binds item IDs 111, 112, and 116 to exact Cathedral, University, and Factory records without assigning text as effect execution." },
+    { "topic": "civilization-bonus-storage", "use": "Defines cumulative-mode ActiveCivilizationBonusLookup and the retail UEA table; ID 21 has no entry in that table." },
+    { "topic": "playable-game-state-gates", "use": "Provides the bounded player-mask classifier role of 0x82CD5A70 without proving this cost branch at runtime." }
+  ],
+  "acceptedInputs": {
+    "building": "For item IDs 100 through 199, signed record byte +0x41 is multiplied by the current scalar and joins the common reduction path.",
+    "wonder": "For item IDs 200 through 299, signed record halfword +0x40 is multiplied by the current scalar and joins the common reduction path.",
+    "scalar": "The helper starts its scalar at ten and subtracts a positive signed player-indexed halfword from 0x830E9050 before either record-factor multiplication.",
+    "qualification": "The address ranges are cost-helper routing ranges, not validated initialized-definition domains. Multiplication and later shifts use guest 32-bit arithmetic."
+  },
+  "additionalBuildingBranches": [
+    {
+      "itemId": 111,
+      "name": "Cathedral",
+      "mask": "0x00000800",
+      "gate": "At 0x82CF13C0 the item-minus-100 mask selects the branch; 0x82CF13D0 requests cumulative UEA ID 21 for the current player.",
+      "result": "A nonzero lookup result subtracts signed cost divided by two with truncation toward zero at 0x82CF13E4 through 0x82CF13EC.",
+      "retailQualification": "The supported image's 16-by-4 retail UEA table contains no ID 21, so this static branch has no accepted retail activation or runtime observation."
+    },
+    {
+      "itemId": 112,
+      "name": "University",
+      "mask": "0x00001000",
+      "gate": "At 0x82CF13F8 the item mask matches; word 0x830EDC34 must differ from -1 and a halfword selected by that word from 0x830E9070 must equal the halfword selected by the current signed player byte from the same base.",
+      "result": "The matching gate subtracts signed cost divided by two with truncation toward zero at 0x82CF1434 through 0x82CF143C.",
+      "qualification": "The global word, halfword array, and policy meaning are neutral; no University gameplay effect or runtime activation is inferred."
+    },
+    {
+      "itemId": 116,
+      "name": "Factory",
+      "mask": "0x00010000",
+      "gate": "At 0x82CF1444 the item mask matches; word 0x830EDC08 must differ from -1 and its selected halfword from 0x830E9070 must equal the current-player-selected halfword.",
+      "result": "The matching gate subtracts signed cost divided by three with truncation toward zero at 0x82CF1478 through 0x82CF1480.",
+      "qualification": "The global word, halfword array, and policy meaning are neutral; no Factory gameplay effect or runtime activation is inferred."
+    }
+  ],
+  "additionalCommonBranches": [
+    {
+      "itemIds": [105, 112],
+      "gate": "Unsigned halfword at 0x830E8FFE is nonzero and the item mask equals 0x00000020 or 0x00001000 at 0x82CF148C through 0x82CF14A4.",
+      "result": "Subtract signed truncation-toward-zero of three times the current cost divided by four at 0x82CF14A8 through 0x82CF14B8.",
+      "qualification": "The halfword's meaning and writer are unresolved. This applies after prior applicable item-specific reductions, not directly to the base factor."
+    },
+    {
+      "itemIds": "200 through 299 cost-helper range",
+      "gate": "The native wonder branch subtracts signed cost divided by two at 0x82CF14CC through 0x82CF14E4, then cumulative UEA 24 can subtract a further signed half at 0x82CF14E8 through 0x82CF14FC.",
+      "result": "The first half is unconditional within the helper's wonder range; the second requires a nonzero lookup result.",
+      "qualification": "Only item IDs 200 through 236 have accepted initialized wonder records. The helper range does not validate the other IDs."
+    },
+    {
+      "itemIds": "200 through 299 cost-helper range",
+      "gate": "After the UEA 24 test, the low byte of 0x82CD5A70(current player) is zero and word 0x82FFE7C8 is greater than two at 0x82CF1500 through 0x82CF1528.",
+      "result": "The shared final branch subtracts signed cost divided by two with truncation toward zero at 0x82CF1540 through 0x82CF1548.",
+      "qualification": "The classifier has a bounded human-mask role elsewhere, but this exact cost branch and the global word's policy meaning have no runtime observation."
+    },
+    {
+      "itemIds": "100 through 199 cost-helper range",
+      "gate": "City halfword +0x3C has bit 0x0008 set at 0x82CF152C through 0x82CF153C.",
+      "result": "The same shared final branch subtracts signed cost divided by two with truncation toward zero at 0x82CF1540 through 0x82CF1548.",
+      "qualification": "The field's producer and policy meaning are unresolved."
+    }
+  ],
+  "currentEvidence": {
+    "method": "One exact-function generated-code window identified the remaining branch conditions and arithmetic; one foreground read-only Ghidra raw-word query covered the two adjoining late-function windows. Previously accepted packets supply the earlier item factors and UEA branches.",
+    "entries": [
+      { "role": "Cathedral and global comparison branches", "address": "0x82CF13C0 through 0x82CF1480", "result": "Exact guest words corroborate item masks, UEA ID 21 call, two neutral word-and-halfword equality gates, and the half and third reductions.", "confidence": "strong" },
+      { "role": "late common reductions", "address": "0x82CF1484 through 0x82CF1550", "result": "Exact guest words corroborate the neutral halfword gate for Library and University, native wonder half, UEA 24 test, classifier/global gate, city flag gate, and shared final half reduction.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82CF13FC radius=32", "ghidra/DumpMemoryWords.java:0x82CF14FC radius=32", "generated:rerevved/sub_82CF1278"],
+    "qualification": "Ghidra's configured function listing truncates after the save-register thunk, so current-image raw words, not its decompilation, support the interior addresses. Generated code is exact-function corroboration only. No runtime probe was performed."
+  },
+  "guards": [
+    "Do not treat UEA 21 as a retail active bonus or assign it a player-facing name from this dormant branch.",
+    "Do not name neutral global words, halfword array, or city +0x3C bit without separate producer and consumer evidence.",
+    "Do not apply percentage reductions to original factors when the branch acts on the already modified cost.",
+    "Do not treat the helper's ID ranges as initialized-definition validation or claim every caller uses identical final cost.",
+    "Do not infer gameplay-effect execution, UI parity, AI parity, production completion, or runtime behavior from cost arithmetic."
+  ],
+  "conclusion": "Beyond the accepted Barracks, Library, Courthouse, and UEA 24 branches, the exact cost helper contains a Cathedral UEA-21 half reduction, neutral-gated University half and Factory one-third reductions, a neutral-gated Library/University three-quarter reduction, and separate final half reductions for the wonder and building paths. The formula is static and sequential; activation, global meanings, valid-ID enforcement, and runtime parity remain unresolved."
+}

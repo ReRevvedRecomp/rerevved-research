@@ -114,8 +114,11 @@ indices 0 through 32; every logged result was zero. This implementation can
 return one for indices 21 through 32 only when the corresponding one of three
 bits from slot `+0x1DC` is set. The observed slot's getter at `0x82D7D2A8`
 returns frontend-root `+0x08`, except that context state codes 4 through 6
-force zero. The field writer, bit meanings, other virtual targets, outer gate,
-and effects remain unresolved. See
+force zero. The later generic outer gate reads signed wonder-record halfwords
+at `+0x44`, `+0x46`, and `+0x48`; exact values for IDs 200 through 236 are in
+[`wonder-outer-gate-record-fields.json`](../../manifests/wonder-outer-gate-record-fields.json).
+The field writer, bit meanings, other virtual targets, special outer-gate
+branches, runtime eligibility, and effects remain unresolved. See
 [`wonder-eligibility-virtual-target.json`](../../manifests/wonder-eligibility-virtual-target.json)
 and
 [`wonder-eligibility-mask-source.json`](../../manifests/wonder-eligibility-mask-source.json).

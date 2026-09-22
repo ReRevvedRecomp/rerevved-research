@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0169",
+  "topic": "wonder-eligibility-dispatch-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact helper and dynamic edge can reject a normalized wonder index before the accepted post-threshold city writes?",
+  "scope": {
+    "cityUpdateCall": "0x82D162EC",
+    "outerGate": "0x82CF3608",
+    "innerGate": "0x82CF0E28",
+    "indirectCall": "0x82CF0EB0",
+    "boundary": "This packet follows the first direct gate call inside the outer helper and the inner helper's local return conditions. It stops at the unresolved virtual target at slot +0x1E4 and does not classify the rest of the outer helper, the dynamic target, global writers, or runtime behavior."
+  },
+  "dependencies": [
+    { "topic": "non-unit-production-threshold-boundary", "use": "Provides the accepted sufficient-production wonder path and its neutral direct gate at 0x82D162EC." },
+    { "topic": "wonder-post-threshold-helper-boundary", "use": "Provides the distinct later helper-body range of normalized indices 0 through 32." }
+  ],
+  "directChain": {
+    "cityUpdate": "At 0x82D162E8 the path passes normalized wonder index r27 to 0x82CF3608; a zero return branches away before the promoted city writes.",
+    "outerHelper": "At 0x82CF361C, 0x82CF3608 calls 0x82CF0E28 with the same r3 index and returns zero immediately when that result is zero. Its later conditions remain unclassified.",
+    "qualification": "A nonzero inner result is necessary but not proved sufficient for a nonzero outer result."
+  },
+  "innerGate": {
+    "specialIndexOne": "For normalized index one, unsigned halfword at 0x830E8FE2 equal to two returns zero at 0x82CF0E58 before the common path.",
+    "dynamicCondition": "When byte 0x8314F10B is zero and word at pointer 0x8314EFC8 + 4 differs from two, 0x82CF0E94 through 0x82CF0EB0 calls slot +0x1E4 of the object pointer stored at 0x8314F76C, passing r3 = 0x8314F76C, r4 = normalized index, and r5 = 0.",
+    "dynamicResult": "A nonzero low byte from the indirect return makes this helper return one at 0x82CF0EB4 through 0x82CF0ECC.",
+    "fallback": "If the dynamic result is zero or the dynamic condition is bypassed, the signed comparison at 0x82CF0EC0 returns one only for normalized indices below 21 and zero for indices at least 21.",
+    "qualification": "The dynamic slot target, receiver ownership, global-word meanings, and runtime state are unresolved. No lower-bound check is assigned to this helper from the bounded read set."
+  },
+  "domainImplication": {
+    "normalized0Through20": "The common fallback can admit these indices, subject to the special index-one gate and later outer-helper conditions.",
+    "normalized21Through36": "The common fallback rejects these indices. Admission requires the dynamic condition and a nonzero indirect result, followed by the still-unclassified outer helper.",
+    "storedItemIds233Through236": "These correspond to normalized indices 33 through 36; even if the dynamic gate admits them, the separately accepted 0x82D16BA0 helper does not enter its interior body for indices at least 33.",
+    "qualification": "These are local gates on one city-update path, not global selection, display, validity, effect, or runtime rules."
+  },
+  "currentEvidence": {
+    "method": "Exact-function generated-code windows localized the two direct calls and the inner dynamic branch; two sequential foreground read-only Ghidra raw-word queries corroborated the caller-to-callee branch, the special gate, the indirect slot load and call, and the fallback comparison.",
+    "entries": [
+      { "role": "outer gate entry", "address": "0x82CF361C through 0x82CF3628", "result": "Raw words call 0x82CF0E28 and return zero when its result is zero.", "confidence": "strong" },
+      { "role": "inner special gate", "address": "0x82CF0E3C through 0x82CF0E58", "result": "Raw words compare normalized index one and the unsigned halfword against two before a zero return.", "confidence": "strong" },
+      { "role": "dynamic and fallback gate", "address": "0x82CF0E70 through 0x82CF0ED0", "result": "Raw words show the global conditions, receiver address, vtable slot +0x1E4, indirect call, low-byte return test, and signed threshold 21.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82CF361C,0x82CF0E34 radius=12", "ghidra/DumpMemoryWords.java:0x82CF0EAC radius=20", "generated:rerevved/sub_82CF3608", "generated:rerevved/sub_82CF0E28"],
+    "qualification": "The raw words establish the local static conditions. The dynamic slot target and observed return values are not established. No runtime probe was performed."
+  },
+  "guards": [
+    "Do not treat index below 21 as unconditional eligibility; the special gate and outer helper still apply.",
+    "Do not treat a dynamic nonzero result as sufficient for the outer gate or complete wonder effects.",
+    "Do not infer that the stored records 233 through 236 are globally unavailable from the later helper-body limit.",
+    "Do not infer runtime reachability or semantics from stored descriptions or dynamic slot shape."
+  ],
+  "conclusion": "The city-update wonder path requires nonzero 0x82CF3608, whose first direct gate is 0x82CF0E28. That inner gate has an index-one special zero result, an unresolved virtual slot +0x1E4 whose nonzero low-byte result can admit an index, and a fallback accepting only normalized indices below 21. For indices 21 through 36, the dynamic result is the decisive unresolved edge on this path; even then the outer helper and later 0-through-32 helper-body gate remain separate."
+}

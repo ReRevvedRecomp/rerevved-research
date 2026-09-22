@@ -19,6 +19,7 @@ This index covers every Java script in this directory.
 - `DumpReferences.java` lists code and data references to selected guest VAs.
 - `DumpStringBoundary.java` dumps exact string references and a bounded native closure.
 - `DumpStringsInRange.java` prints defined strings inside one bounded guest address range.
+- `SummarizeRecordBytes.java` counts nonzero bytes in bounded stride-sized records.
 - `FindCallConstantArgs.java` finds direct calls whose nearest selected argument write is a requested immediate constant.
 - `FindCallSplitConstantArgs.java` finds capped direct calls whose selected argument uses a direct or split 32-bit constant.
 - `FindDirectCallers.java` finds capped raw PowerPC direct branch-and-link callers for exact target VAs.

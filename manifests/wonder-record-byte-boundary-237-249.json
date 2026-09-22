@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0165",
+  "topic": "wonder-record-byte-boundary-237-249",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does a complete byte scan of the twelve stride positions after accepted wonder item 236 show initialized records, and what occupies the next stride position?",
+  "scope": {
+    "table": "0x82F73238",
+    "recordSize": "0x14C",
+    "acceptedPredecessor": 236,
+    "zeroCandidateItemIds": "237 through 248",
+    "zeroRange": "0x82F76234 through 0x82F771C3",
+    "nextStridePosition": "0x82F771C4 through 0x82F7730F",
+    "boundary": "This packet counts every byte at twelve consecutive stride positions and the immediate next position. It does not establish a program-wide validity predicate, other-table ownership, caller bounds, runtime behavior, or what invalid IDs do in every path."
+  },
+  "dependencies": [
+    { "topic": "wonder-record-identity-236", "use": "Provides the last accepted exact initialized record and item ID." },
+    { "topic": "wonder-record-continuation-boundary-237-239", "use": "Provides the earlier five-offset negative for the first three candidates." },
+    { "topic": "production-cost-ownership", "use": "Provides the unguarded cost lookup range and 0x14C address formation." }
+  ],
+  "byteSummary": {
+    "item236": { "range": "0x82F760E8 through 0x82F76233", "nonzeroBytes": 66, "firstNonzeroOffset": "0x0", "lastNonzeroOffset": "0xDF" },
+    "candidates237Through248": { "range": "0x82F76234 through 0x82F771C3", "recordsChecked": 12, "bytesPerRecord": 332, "nonzeroBytesPerRecord": 0, "totalBytesChecked": 3984 },
+    "position249": { "range": "0x82F771C4 through 0x82F7730F", "nonzeroBytes": 146, "firstNonzeroOffset": "0x0", "lastNonzeroOffset": "0x14B", "qualification": "The nonzero content begins with words 0x41800000 and 0x53656100 at 0x82F771C4 and 0x82F771C8, unlike the accepted wonder name-at-base pattern. This is an adjacent data boundary, not a wonder identity." }
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only Ghidra byte-count query over exactly fourteen 0x14C-byte positions, starting with accepted item 236 and stopping after the first nonzero position following twelve all-zero candidates; bounded prior string and word queries corroborate the first three candidates.",
+    "entries": [
+      { "role": "positive predecessor", "address": "0x82F760E8 through 0x82F76233", "result": "Accepted item 236 contains 66 nonzero bytes in its complete 0x14C-byte extent.", "confidence": "strong" },
+      { "role": "complete zero range", "address": "0x82F76234 through 0x82F771C3", "result": "Each of twelve complete 0x14C-byte positions contains zero nonzero bytes.", "confidence": "strong" },
+      { "role": "next initialized data", "address": "0x82F771C4 through 0x82F7730F", "result": "The next stride position has 146 nonzero bytes and starts with non-wonder words rather than a name string.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/SummarizeRecordBytes.java:0x82F760E8..0x82F7730F",
+      "ghidra/DumpMemoryWords.java:0x82F771C4,0x82F771C8",
+      "ghidra/DumpStringsInRange.java:0x82F76234..0x82F7B3F7"
+    ],
+    "qualification": "The byte scan proves exact static contents for the bounded range, not why the zeros are present or how every consumer treats item IDs after 236. No runtime probe was performed."
+  },
+  "guards": [
+    "Do not promote items 237 through 248 as initialized wonder records.",
+    "Do not treat all-zero bytes alone as a global table-end or invalid-ID check.",
+    "Do not interpret the next nonzero position as wonder item 249; it lacks the accepted name-at-base pattern and its owner is unresolved here.",
+    "Do not infer the behavior of cost, display, completion, AI, or persistence paths for any unsupported ID."
+  ],
+  "conclusion": "The accepted contiguous initialized wonder records remain items 200 through 236. The twelve complete stride positions for candidate IDs 237 through 248 are all zero, and the next stride position at 249 contains different initialized data. This closes the static byte boundary of the immediate continuation, while a safe general valid-ID rule and runtime behavior remain unresolved."
+}

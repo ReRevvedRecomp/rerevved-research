@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0180",
+  "topic": "building-completion-state-writer",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact city state does the sufficient-production building path write through 0x82D02090?",
+  "scope": {
+    "caller": "0x82D13978",
+    "helper": "0x82D02090",
+    "cityTable": "0x8314FE28",
+    "cityStride": "0xBC",
+    "normalizedInput": "item ID minus 100 in r4",
+    "initializedRecords": "items 100 through 122",
+    "boundary": "This packet follows the accepted sufficient-production building call through its direct state writer. It does not establish validity of absent records 123 through 199, downstream bit consumers, building-specific description effects, presentation, persistence, or runtime execution."
+  },
+  "dependencies": [
+    { "topic": "non-unit-production-threshold-boundary", "use": "Provides the invested-versus-cost gate, first city +0x36 write, and direct call at 0x82D16158." },
+    { "topic": "building-record-identities-100-122", "use": "Binds initialized item identities and the four spaceship-part records 119 through 122." },
+    { "topic": "production-cost-ownership", "use": "Establishes city table base, stride, and signed production cost routing." },
+    { "topic": "civilization-bonus-storage", "use": "Identifies 0x830ECD08 as the current player-era array used by the ordinary building bit path." }
+  ],
+  "callsite": {
+    "address": "0x82D16154 through 0x82D16158",
+    "inputs": "After the sufficient-production test and invested-minus-cost store, r3 is the city index and r4 is item ID minus 100; the direct call targets 0x82D02090.",
+    "qualification": "The local call is evidence of a state-writing path, not proof of gameplay effects described in building records."
+  },
+  "staticWriter": {
+    "specialRange": "At 0x82D020A0 through 0x82D020AC, normalized indices 19 through 22 select a separate path, corresponding at this callsite to initialized spaceship-part items 119 through 122. It reads signed city owner +0x00, then word 0x830ECC0C + 8*owner. Only when that word equals -1 does 0x82D020EC OR bit 0x00000100 into city word +0x24. This special path skips the generic building-presence bit stores.",
+    "ordinaryBits": "For other normalized indices, 0x82D02114 reads the accepted current player-era word 0x830ECD08 + 4*owner and clamps it to 0 through 3. At 0x82D02158 and 0x82D02164, the helper ORs 1 shifted by normalized index into city word +0x14 + 4*clampedEra and city word +0x10, then calls 0x82D00C78 at 0x82D02168. The two bitfield consumers and their precise roles remain unresolved.",
+    "commonItem": "Both paths join at 0x82D0216C and store item ID 100 + normalized index as a halfword to city +0x3A at 0x82D02180.",
+    "boundedList": "The helper checks signed bytes city +0x87 through +0xA2 in order. If a byte equals the normalized index it returns; if it first finds zero it writes the index there at 0x82D021B8 and returns. It stops after the 28th checked byte. For normalized index zero, an existing zero matches before the empty-slot write; no separate meaning is inferred.",
+    "qualification": "This is a static producer of city state. The helper itself has no established independent upper item-ID validation, and the shifts and list behavior must not be used as a contract for synthetic IDs. The later consumers of these fields and actual runtime completion remain unobserved."
+  },
+  "runtimeObservation": {
+    "source": "wonder-eligibility-virtual-target",
+    "result": "The earlier wonder probe did not observe this building helper or any building completion.",
+    "buildingWriteObserved": false
+  },
+  "currentEvidence": {
+    "method": "A narrow generated-code window located the direct building completion call and the helper's local branches. One foreground read-only canonical-project function query confirmed a save-thunk truncation; one bounded raw-word query covered helper entry through its final list store in the current image.",
+    "entries": [
+      { "role": "special spaceship-part branch", "address": "0x82D020A0 through 0x82D020F0", "result": "Indices 19 through 22 conditionally set city +0x24 bit 0x100 when a player-indexed word equals -1.", "confidence": "strong" },
+      { "role": "ordinary building state", "address": "0x82D020F4 through 0x82D02168", "result": "Other indices set two city building-index bits and call a city helper.", "confidence": "strong" },
+      { "role": "common item and list", "address": "0x82D0216C through 0x82D021BC", "result": "The helper stores item ID at city +0x3A, then checks or fills one of 28 city bytes.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpFunctions.java:0x82D02090", "ghidra/DumpMemoryWords.java:0x82D020D8,0x82D02150,0x82D021A4 radius=24", "generated:rerevved/sub_82D13978", "generated:rerevved/sub_82D02090", "manifests/building-record-identities-100-122.json#/records"],
+    "qualification": "Ghidra's helper decompilation truncates at a save thunk. Current-image words support the local instructions; exact-function generated code corroborates operand flow. No runtime probe was performed."
+  },
+  "guards": [
+    "Do not equate city bits or the bounded list with a particular building's described effect.",
+    "Do not treat initialized spaceship-part identities as ordinary bit-path buildings.",
+    "Do not infer record validity for IDs 123 through 199 from the helper's lack of a local upper bound.",
+    "Do not call the static writes a runtime completion observation or a safe public modding API."
+  ],
+  "conclusion": "The accepted building sufficient-production path calls 0x82D02090, which writes generic city building-index state for ordinary indices and a distinct conditional city flag for spaceship-part indices 19 through 22, then records the item and checks a bounded city byte list. Field consumers, described effects, runtime execution, and unsupported-ID behavior remain unresolved."
+}

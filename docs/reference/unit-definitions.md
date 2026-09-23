@@ -86,6 +86,13 @@ and 18 half-cost branches. Cathedral 111 has a UEA 21 branch, with no accepted
 retail activation. University 112 and Factory 116 have separate neutral-gated
 reductions. The exact branch sequence and other common modifiers are in
 [`building-wonder-cost-modifier-branches.json`](../../manifests/building-wonder-cost-modifier-branches.json).
+After a sufficient-production building test, `0x82D02090` stores building-index
+bits in city state, including a bank selected by clamped player era, for
+ordinary indices. Spaceship-part items 119-122
+take a separate conditional city-flag path. Both paths store the item ID
+at city `+0x3A` and check a bounded city byte list. These static writes do not
+establish each building's described effect or runtime execution. See
+[`building-completion-state-writer.json`](../../manifests/building-completion-state-writer.json).
 
 IDs 200 through 299 use a signed halfword at `+0x40` of `0x14C`-byte wonder
 records rooted at `0x82F73238`. The helper applies a common signed half-scale

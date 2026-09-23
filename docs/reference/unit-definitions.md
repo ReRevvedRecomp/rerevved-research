@@ -108,6 +108,11 @@ post-threshold branch for Hanging Gardens item 202 changes city population
 byte `+0x03` to `clamp(trunc((3*x+1)/2),0,31)` and calls two city helpers; no
 runtime execution or persistent doubled-growth rule is proved. See
 [`hanging-gardens-population-branch.json`](../../manifests/hanging-gardens-population-branch.json).
+The Oxford University item-208 branch scans 48 technology records, filters
+owned and other candidates, ranks survivors with an unresolved score helper,
+and can call the ordinary technology acquisition owner with the selected ID.
+No selected runtime ID or successful acquisition has been observed. See
+[`oxford-technology-acquisition-branch.json`](../../manifests/oxford-technology-acquisition-branch.json).
 Text and art-token consumers, complete layouts, final runtime costs, and most
 gameplay effects remain unresolved. The exact cost inputs are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).

@@ -540,7 +540,10 @@ class TopicManifestTests(unittest.TestCase):
         )
         self.assertIn("0x21", document["records"][2]["shortTokenBoundary"])
         self.assertIn("0x27", document["records"][4]["shortTokenBoundary"])
-        self.assertIn("No display consumer", document["conclusion"])
+        self.assertIn(
+            "This identity packet does not classify gameplay implementation",
+            document["conclusion"],
+        )
 
     def test_pyramids_government_availability_boundary(self) -> None:
         path = MANIFESTS / "pyramids-government-availability.json"

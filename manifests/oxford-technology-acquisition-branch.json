@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0175",
+  "topic": "oxford-technology-acquisition-branch",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the direct post-threshold branch for Oxford University reach ordinary technology acquisition, and how is its candidate selected?",
+  "scope": {
+    "wonderItem": 208,
+    "storedName": "Oxford University",
+    "normalizedIndex": 8,
+    "postThresholdHelper": "0x82D16BA0",
+    "technologyTable": "0x82F77460",
+    "technologyRecordStride": "0x6A",
+    "technologyAcquisitionOwner": "0x82D09208",
+    "boundary": "This packet follows only the normalized-index-eight branch from its accepted city-update caller through one direct acquisition call. The score helper, full technology field semantics, other acquisition sources, user presentation, save effects, and runtime execution remain outside this packet."
+  },
+  "dependencies": [
+    { "topic": "wonder-record-identities-205-209", "use": "Binds item 208 to Oxford University and its stored description." },
+    { "topic": "wonder-post-threshold-helper-boundary", "use": "Provides the post-threshold helper and direct mode-one city call." },
+    { "topic": "starting-technology-grants", "use": "Establishes the 48 technology records, ordinary ownership query, and generic TechnologyAcquire writer and fan-out." }
+  ],
+  "staticBranch": {
+    "gate": "At 0x82D17098 the helper compares signed normalized index with eight. Other indices branch to 0x82D1719C. The direct city caller supplies mode one, which reaches this branch group after the helper's 0-through-32 guard.",
+    "scan": "The branch resets word 0x830E33CC to -1, then scans 48 records beginning at 0x82F77460 in 0x6A-byte steps; the loop stops at table base +0x1400.",
+    "candidateFilters": "For each technology ID, it requires ordinary technology ownership query 0x82CEF6A8 to return zero for the city player, excludes ID zero and an indexed neutral word at 0x830EDD48 + player*4, requires at least one non-sentinel technology among three record halfwords at +0x20, +0x22, and +0x24 to pass the ownership query, and excludes ID 44 before scoring.",
+    "selection": "At 0x82D17148 it calls neutral helper 0x82CF0EE8 with candidate technology ID and city player. A strictly greater returned score replaces the retained best score and technology ID. The helper's policy meaning remains unresolved.",
+    "acquisition": "If a best ID other than -1 and zero remains, 0x82D17194 calls TechnologyAcquire 0x82D09208 with r3 = city player, r4 = selected technology ID, r5 = caller city index, r6 = 5, and r7 = 1. The selected ID is stored to 0x830E33CC at 0x82D17198.",
+    "qualification": "This establishes one static effect-owner call in the Oxford branch. It does not prove which ID is chosen in a game state, the reason-code meaning of five, whether acquisition succeeds at runtime, or that the description fully specifies the behavior."
+  },
+  "runtimeObservation": {
+    "source": "wonder-eligibility-virtual-target",
+    "result": "The earlier fresh-game probe did not observe item-208 completion or this post-threshold branch.",
+    "acquisitionObserved": false
+  },
+  "currentEvidence": {
+    "method": "A narrow exact-function generated-code window localized the Oxford branch and candidate loop. Two foreground read-only canonical-project word windows checked the index comparison, 48-record stride and stop, filters, score call, direct TechnologyAcquire call, and selected-ID store. Accepted technology ownership and acquisition packets supply the callee meanings.",
+    "entries": [
+      { "role": "branch and candidate scan", "address": "0x82D17098 through 0x82D17130", "result": "Index eight selects a 48-entry technology-record scan with ownership and prerequisite-like filters.", "confidence": "strong" },
+      { "role": "score and acquisition", "address": "0x82D17130 through 0x82D17198", "result": "A greatest-score candidate is passed to 0x82D09208 unless no positive nonzero ID remains.", "confidence": "strong" },
+      { "role": "ordinary acquisition owner", "address": "0x82D09208", "result": "Previously accepted generic owner sets technology ownership and fans out ordinary consequences.", "confidence": "confirmed" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82D170D8,0x82D17158 radius=20", "ghidra/DumpFunctions.java:0x82CF0EE8", "generated:rerevved/sub_82D16BA0", "manifests/starting-technology-grants.json#/ordinaryOwnership"],
+    "qualification": "The configured post-threshold and score-helper decompilers truncate at save thunks. The current-image raw words and narrow generated-code window establish branch mechanics; the score helper remains semantically neutral."
+  },
+  "guards": [
+    "Do not infer the selected technology ID from the stored effect description.",
+    "Do not call source/reason value five an Oxford-specific public API contract.",
+    "Do not treat this static acquisition call as a runtime observation or proof of every Oxford effect.",
+    "Do not transfer this item-208 path to Great Library item 206 or another wonder."
+  ],
+  "conclusion": "The post-threshold helper has a concrete item-208 Oxford University branch that selects a technology candidate and can call the generic TechnologyAcquire owner. Candidate filters and the direct call are established statically; score policy, selected runtime ID, actual acquisition, and presentation remain unobserved."
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0177",
+  "topic": "great-wall-player-pair-branch",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact state does the direct normalized-index-one Great Wall branch write?",
+  "scope": {
+    "wonderItem": 201,
+    "storedName": "The Great Wall",
+    "normalizedIndex": 1,
+    "postThresholdHelper": "0x82D16BA0",
+    "pairTable": "0x830ED1D8",
+    "neutralGateTable": "0x830ED2D8",
+    "boundary": "This packet follows only the direct index-one branch through its pair-table writes. The producer and consumer semantics of the pair table, the neutral clock-like word, diplomacy decisions, user presentation, and runtime execution remain outside this packet."
+  },
+  "dependencies": [
+    { "topic": "wonder-record-identities", "use": "Binds item 201 to The Great Wall and its stored peace description." },
+    { "topic": "wonder-post-threshold-helper-boundary", "use": "Provides the direct mode-one city call, player argument, and normalized-index guard." },
+    { "topic": "wonder-eligibility-dispatch-boundary", "use": "Independently identifies the special 0x830E8FE2 value-two gate on the index-one eligibility path." }
+  ],
+  "staticBranch": {
+    "gate": "At 0x82D16FE8 the helper requires normalized index one. The unsigned halfword at 0x830E8FE2 must differ from two, and signed word 0x82F700AC must be positive before the loop enters.",
+    "loop": "The branch iterates player index i from zero while i is less than the reloaded positive signed bound at 0x82F700AC. The source-city signed owner byte, retained in r21, is player p.",
+    "filters": "It skips i when signed halfword 0x830E9070 + 2*i equals that for p, when i equals the excluded-player word at 0x82F700B0, or when word 0x830ED2D8 + 4*(8*p+i) is nonzero.",
+    "writes": "For a passing i, 0x82D17078 and 0x82D1707C store the same value, word 0x830EB8DC minus ten, to 0x830ED1D8 + 4*(8*i+p) and 0x830ED1D8 + 4*(8*p+i). The branch then continues the loop; it makes no direct diplomacy API call in this bounded window.",
+    "qualification": "The symmetric pair writes are static facts. The halfword grouping, pair-table field, stored value, and relationship to the description's peace-offer promise remain semantically unresolved. No valid bound of eight players is inferred from the indexing scale."
+  },
+  "runtimeObservation": {
+    "source": "wonder-eligibility-virtual-target",
+    "result": "The earlier fresh-game probe did not observe item-201 completion or the pair-table branch.",
+    "pairWriteObserved": false
+  },
+  "currentEvidence": {
+    "method": "A narrow generated-code window localized the index-one loop and symmetric stores. One foreground read-only canonical-project word window checked the entire local branch in the current image.",
+    "entries": [
+      { "role": "index and mode gates", "address": "0x82D16FE8 through 0x82D17014", "result": "Index one, halfword unequal to two, and positive signed loop bound gate the branch.", "confidence": "strong" },
+      { "role": "pair selection and writes", "address": "0x82D17018 through 0x82D17094", "result": "Halfword grouping, excluded player, and neutral pair-table word filter i before two symmetric stores of the same neutral-derived value.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82D17040 radius=40", "generated:rerevved/sub_82D16BA0", "manifests/wonder-record-identities.json#/records/1"],
+    "qualification": "The post-threshold helper decompiler truncates at save thunks. The exact current-image words and narrow generated-code window support the local dataflow; no runtime probe was performed."
+  },
+  "guards": [
+    "Do not call either pair-table write a peace offer or treaty without its consumer.",
+    "Do not name the 0x830EB8DC word as a turn counter from the minus-ten arithmetic alone.",
+    "Do not infer a fixed valid player count from the eight-wide pair-table index.",
+    "Do not claim the stored description proves runtime activation or diplomatic outcome."
+  ],
+  "conclusion": "The direct item-201 Great Wall branch can set symmetric entries in a neutral player-pair table after exact local filters. Static evidence does not yet establish that the writes cause peace offers, their timing, or any observed runtime behavior."
+}

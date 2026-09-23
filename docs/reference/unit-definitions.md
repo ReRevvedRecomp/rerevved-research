@@ -117,6 +117,10 @@ The Statue of Liberty item-227 branch scans 128 city slots and adds two to
 population byte `+0x03`, clamped to 31, for populated cities owned by the
 source city's player. Its execution and persistence have not been observed.
 See [`statue-of-liberty-population-branch.json`](../../manifests/statue-of-liberty-population-branch.json).
+The Great Wall item-201 branch writes equal values into two symmetric entries
+of a player-pair table after local filters. The table's consumer and any
+peace-offer behavior are unresolved. See
+[`great-wall-player-pair-branch.json`](../../manifests/great-wall-player-pair-branch.json).
 Text and art-token consumers, complete layouts, final runtime costs, and most
 gameplay effects remain unresolved. The exact cost inputs are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).

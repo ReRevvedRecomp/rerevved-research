@@ -118,11 +118,29 @@ production factor at `+0x40`, short token at `+0x4A`, art token at `+0x8A`,
 and stored effect description at `+0xCA`; record-specific byte boundaries
 remain in the identity manifests. The next twelve complete stride positions
 are zero and the following position contains non-wonder data. Neither this
-boundary nor the cost helper proves a program-wide valid-ID rule. See
-[`wonder-record-identities.json`](../../manifests/wonder-record-identities.json)
-and the subsequent wonder identity manifests through
-[`wonder-record-identity-236.json`](../../manifests/wonder-record-identity-236.json),
-plus the bounded
+boundary nor the cost helper proves a program-wide valid-ID rule. Identity
+packets cover the full initialized range: [items 200-204](../../manifests/wonder-record-identities.json),
+[205-209](../../manifests/wonder-record-identities-205-209.json),
+[210-214](../../manifests/wonder-record-identities-210-214.json), and
+[215-219](../../manifests/wonder-record-identities-215-219.json), followed by
+individual records for
+[220](../../manifests/wonder-record-identity-220.json),
+[221](../../manifests/wonder-record-identity-221.json),
+[222](../../manifests/wonder-record-identity-222.json),
+[223](../../manifests/wonder-record-identity-223.json),
+[224](../../manifests/wonder-record-identity-224.json),
+[225](../../manifests/wonder-record-identity-225.json),
+[226](../../manifests/wonder-record-identity-226.json),
+[227](../../manifests/wonder-record-identity-227.json),
+[228](../../manifests/wonder-record-identity-228.json),
+[229](../../manifests/wonder-record-identity-229.json),
+[230](../../manifests/wonder-record-identity-230.json),
+[231](../../manifests/wonder-record-identity-231.json),
+[232](../../manifests/wonder-record-identity-232.json),
+[233](../../manifests/wonder-record-identity-233.json),
+[234](../../manifests/wonder-record-identity-234.json),
+[235](../../manifests/wonder-record-identity-235.json), and
+[236](../../manifests/wonder-record-identity-236.json). Also see the bounded
 [`wonder-record-byte-boundary-237-249.json`](../../manifests/wonder-record-byte-boundary-237-249.json).
 The bounded decoded city-item writer scan did not locate an item-selection or
 validity rule; its coverage limits are recorded in

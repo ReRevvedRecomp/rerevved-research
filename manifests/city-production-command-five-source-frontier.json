@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0188",
+  "topic": "city-production-command-five-source-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does a bounded census of direct local-drain calls identify another command-five production-item source outside the accepted city-choice producer?",
+  "scope": {
+    "localDrain": "0x82CE16C8",
+    "separateSubmit": "0x82CE1950",
+    "knownProducer": "0x82CEE650",
+    "callsiteLookback": "0x100 bytes before each exact local-drain call",
+    "literalFilter": "PowerPC addi rD,r0,5 (li rD,5) raw word",
+    "stopCondition": "Classify each nearby literal-five candidate or stop at the per-target direct-call cap; do not treat absence of that instruction shape as absence of type-five records.",
+    "boundary": "The scan covers direct calls in initialized executable memory and a fixed local lookback. It does not follow indirect calls, values loaded from memory or passed by callers, earlier record construction, or other command routes."
+  },
+  "dependencies": [
+    { "topic": "city-production-choice-submit", "use": "Owns the accepted UI command-five producer and its direct local-drain branch." },
+    { "topic": "city-production-command-five-writer", "use": "Owns the observed command-five item write at city +0x38." },
+    { "topic": "wonder-eligibility-virtual-target", "use": "Defines the remaining non-menu source question for initialized IDs 233 through 236." }
+  ],
+  "directCallCensus": {
+    "localDrain": "The raw direct-call scan found 27 calls to 0x82CE16C8 at cap 64, without truncation.",
+    "separateSubmit": "The same scan emitted 64 calls to 0x82CE1950 and reported truncation. It is not a complete submit-entry caller inventory.",
+    "nearbyLiterals": "Across 0x100-byte lookbacks for the 27 drain callsites, three pre-call li rD,5 sites were found: 0x82CD0570 before call 0x82CD0670, 0x82CEE6C0 before call 0x82CEE76C, and 0x82D24E0C before call 0x82D24EA4. A second window also overlapped 0x82CEE6C0 after an earlier call; it is not another pre-call candidate."
+  },
+  "candidateClassification": [
+    {
+      "literal": "0x82CD0570",
+      "call": "0x82CD0670",
+      "result": "The command record at stack +0xA0 receives literal type 2 at 0x82CD05DC. Register r30, initially set to 5 and conditionally changed to 2 or 3, is stored at record +0x08 at 0x82CD05E4. The literal is not the command type on this call path."
+    },
+    {
+      "literal": "0x82CEE6C0",
+      "call": "0x82CEE76C",
+      "result": "This is the already accepted 0x82CEE650 UI producer: literal type 5 is stored to its command record before the local-drain call."
+    },
+    {
+      "literal": "0x82D24E0C",
+      "call": "0x82D24EA4",
+      "result": "Register r9 receives 5 and is moved to CTR at 0x82D24E44 for the five-word copy loop at 0x82D24E48 through 0x82D24E58. The copied record at stack +0xF0 receives its type from retained r20, initialized to 38 on this loop path; the nearby five is a copy count, not a command type."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Two sequential foreground read-only canonical-project queries enumerated exact raw direct calls and then read 0x100-byte windows around only the 27 local-drain callsites. Narrow generated-code windows corroborated the two false literal-five candidates; the accepted UI producer was already mapped.",
+    "locators": [
+      "ghidra/FindDirectCallers.java:0x82CE16C8,0x82CE1950 cap=64 drain=27 submit=64 truncated=true",
+      "ghidra/DumpMemoryWords.java:27 drain callsites radius=64",
+      "generated:rerevved/sub_82CCEFA8:0x82CD0570..0x82CD0670",
+      "generated:rerevved/sub_82D217C8:0x82D24E0C..0x82D24EA4"
+    ],
+    "qualification": "The raw-word windows locate only immediate li rD,5 forms. The generated windows classify exact candidate register uses, not all commands in either large function. No new runtime behavior was observed."
+  },
+  "guards": [
+    "Do not conclude that 0x82CEE650 is the sole type-five producer from a local literal scan.",
+    "Do not treat the 64-site submit-entry result as exhaustive.",
+    "Do not infer that initialized wonder IDs 233 through 236 are globally invalid or unreachable from this negative result."
+  ],
+  "conclusion": "The 27 direct local-drain callsites are an uncapped census, but the bounded 0x100-byte literal-five check identifies no additional type-five source. Its two apparent non-UI candidates use five as a record argument or copy count. Other command record producers and the capped separate submit route remain unresolved, so this packet does not supply a non-menu source for IDs 233 through 236."
+}

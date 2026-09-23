@@ -137,6 +137,11 @@ at `0x82CEE650` for unit, building, and wonder categories. It forwards the
 selected item into the command record without a local ID bound; the producer
 can pass that record to the local drain at `0x82CEE76C`. A Barracks-selection
 session logged no type-five calls at the separate submit entry `0x82CE1950`.
+A bounded census found 27 direct local-drain calls; a 0x100-byte literal-five
+check around each found no second proved type-five producer. The separate
+submit-entry caller list hit its 64-site cap, and earlier record construction
+remains possible. See
+[`city-production-command-five-source-frontier.json`](../../manifests/city-production-command-five-source-frontier.json).
 The actual choice child copies nonnegative IDs from separate parent arrays and
 checks the selected vector index before forwarding an item. Its wonder-array
 generator tests exactly normalized indices 0 through 32, so this UI path can

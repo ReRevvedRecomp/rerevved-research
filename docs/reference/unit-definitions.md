@@ -305,7 +305,11 @@ field. This [bounded writer census](../../manifests/wonder-eligibility-mask-writ
 does not cover indirect or constructor paths. The application-owner base
 constructor initializes this field to zero before its pointer is published
 through `0x82FFD624`; see the [publication and initialization record](../../manifests/frontend-root-publication-mask-init.json).
-Later field writers, bit meanings, other virtual targets, special-branch state owners, runtime
+The owner's vtable slot `+0x80` conditionally passes a nonzero `+0x08` word
+to the Xbox `NtClose` wrapper and clears the field if that call returns. The
+[bounded vtable review](../../manifests/frontend-root-vtable-offset8-clear.json)
+does not identify the handle's producer or kind.
+Bit meanings, other virtual targets, special-branch state owners, runtime
 eligibility, and effects remain unresolved. See
 [`wonder-eligibility-virtual-target.json`](../../manifests/wonder-eligibility-virtual-target.json)
 and

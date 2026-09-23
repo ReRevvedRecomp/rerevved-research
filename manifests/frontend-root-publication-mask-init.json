@@ -24,7 +24,7 @@
   "staticResult": {
     "allocationAndPublication": "At 0x82E83EE0 the caller requests 0xD4 bytes from 0x82D3DBA0. Its nonzero branch calls 0x82E294D0 at 0x82E83EF0; the zero branch assigns r3 = 0 at 0x82E83EF8. Both converge on the word store at 0x82E83F04 to global 0x82FFD624. The nonzero branch can publish the constructed object pointer; actual runtime success was not observed.",
     "constructorJoin": "0x82E294D0 preserves its incoming object pointer in r31 at 0x82E294DC, calls 0x82E2AFD0 at 0x82E294E0, installs vtable 0x82121100 at object +0x00 at 0x82E294F4, and restores the same pointer to r3 at 0x82E29560 before the epilogue thunk. The object published through 0x82FFD624 is therefore the same application owner represented by catalog RVA-STR-0024; catalog RVA-STR-0038 remains its partial frontend-root field view.",
-    "initialMaskWord": "0x82E2AFD0 preserves the object pointer in r31 at 0x82E2AFDC, sets r30 to zero at 0x82E2AFF0, and stores r30 to object +0x08 at 0x82E2B00C. This establishes initialization to zero, not the later mask writer or bit meaning.",
+    "initialMaskWord": "0x82E2AFD0 preserves the object pointer in r31 at 0x82E2AFDC, sets r30 to zero at 0x82E2AFF0, and stores r30 to object +0x08 at 0x82E2B00C. This establishes initialization to zero, not a nonzero writer or bit meaning.",
     "otherRawCandidate": "The only other raw eight-word split-constant candidate for 0x82FFD624 loads that global at 0x82E2D0C0; it is not a publication store."
   },
   "runtimeObservation": {
@@ -52,8 +52,8 @@
   },
   "guards": [
     "Do not interpret the constructor's zero initialization as a permanent mask value or evidence that wonder indices 21 through 32 are always gated out.",
-    "Do not assign meaning to bits zero through two without a later writer and consumer evidence.",
+    "Do not assign meaning to bits zero through two without a nonzero writer and consumer evidence.",
     "Do not treat the conditional allocation path as a runtime observation of pointer publication."
   ],
-  "conclusion": "The startup path conditionally publishes a 0xD4-byte application owner with vtable 0x82121100 through frontend-root global 0x82FFD624. Its base constructor initializes +0x08 to zero. The later producer of the word consumed by the wonder-mask getter, its bit meanings, runtime transitions, and effects remain unresolved."
+  "conclusion": "The startup path conditionally publishes a 0xD4-byte application owner with vtable 0x82121100 through frontend-root global 0x82FFD624. Its base constructor initializes +0x08 to zero. A conditional later zero clear is recorded in frontend-root-vtable-offset8-clear; a nonzero producer of the word consumed by the wonder-mask getter, its bit meanings, runtime transitions, and effects remain unresolved."
 }

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0194",
+  "topic": "frontend-root-vtable-offset8-clear",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the published application owner's vtable contain a later writer of its +0x08 word?",
+  "scope": {
+    "ownerVtable": "0x82121100",
+    "slotCells": "0x82121100 through 0x821211E8 inclusive, offsets +0x00 through +0xE8",
+    "slotCount": 59,
+    "distinctDirectTargets": 32,
+    "nextWord": "0x821211EC = 0x43634172, the start of CcArtifactEntity text",
+    "fieldOffset": "0x08",
+    "stopCondition": "Stop after the 59 pointer cells and their 32 distinct direct targets are checked for receiver +0x08 access; do not follow other callees or claim a program-wide writer census.",
+    "boundary": "The slot scan covers this installed application-owner vtable, direct targets, and one explicitly checked thunk destination. It does not cover all calls made by those targets, other vtables, or stores outside their bodies."
+  },
+  "dependencies": [
+    { "topic": "frontend-root-publication-mask-init", "use": "Joins the published frontend root with the application owner and its installed vtable; proves initial +0x08 zero." },
+    { "topic": "wonder-eligibility-mask-source", "use": "Identifies the observed wonder-gate getter's read of frontend-root +0x08." },
+    { "topic": "wonder-eligibility-mask-writer-frontier", "use": "Separates the direct-global-reference writer census from this owner-vtable investigation." },
+    { "topic": "xbox-kernel-handle-close-boundary", "use": "Identifies 0x8280DA78 as the Xbox NtClose wrapper and establishes its handle argument and status conversion." }
+  ],
+  "staticResult": {
+    "tableBoundary": "Raw image words at 0x82121100 through 0x821211E8 are 59 code pointers with 32 distinct direct targets. The next word at 0x821211EC begins CcArtifactEntity text, bounding this pointer table in the image.",
+    "conditionalClear": "Slot +0x80 at 0x82121180 points to 0x82D384D8. This function saves incoming r3 in r31 at 0x82D384EC, loads receiver +0x08 at 0x82D38518, sets r30 to zero at 0x82D3851C, and branches around the call and store when the loaded word is zero. Otherwise it calls the cataloged NtClose wrapper 0x8280DA78 with the loaded word in r3 at 0x82D38528; if that call returns, 0x82D3852C stores zero from r30 to receiver +0x08.",
+    "otherTargets": "The bounded decoded-instruction scan of the 32 direct targets found one syntactic +0x08 store in 0x82E293E8, but its decompiled base is a separately allocated 0x48-byte object. Narrow exact generated-function review found no further receiver +0x08 writer in the 32 direct targets; it exposed the conditional clear missed by Ghidra's truncated listing.",
+    "meaning": "The previous +0x08 word is used as a handle argument to the cataloged Xbox NtClose wrapper. The handle's producer and kind, low-bit meanings, and any relationship between this close and wonder eligibility remain unknown."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No runtime dispatch of slot +0x80, nonzero +0x08 value, conditional clear, or effect on the wonder gate was observed."
+  },
+  "currentEvidence": {
+    "method": "Four bounded foreground read-only Ghidra word batches covered table offsets +0x00 through +0xFC. Four bounded +0x08 write batches scanned the 32 distinct direct targets, and one two-instruction thunk destination was checked separately. Narrow generated-function review addressed Ghidra listing gaps. Exact raw windows confirmed the candidate branch and store.",
+    "entries": [
+      { "role": "vtable bound", "address": "0x82121100..0x821211FC", "result": "59 code-pointer cells ending at +0xE8; +0xEC starts text and +0xFC is zero." },
+      { "role": "direct target scan", "address": "32 distinct direct targets", "result": "432 decoded instructions, one unrelated syntactic +0x08 store, no query cap reached; listing gaps remain." },
+      { "role": "thunk destination", "address": "0x821B31B8", "result": "Two decoded instructions, no +0x08 store." },
+      { "role": "conditional clear slot", "address": "0x82121180", "result": "Pointer word is 0x82D384D8." },
+      { "role": "conditional clear", "address": "0x82D384EC..0x82D3852C", "result": "Incoming receiver preserved in r31; nonzero +0x08 word passed to the cataloged NtClose wrapper 0x8280DA78, then +0x08 zeroed if the call returns." }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82121100..0x821211FC radius=0, four batches",
+      "ghidra/FindFieldAccesses.java:+0x08 WRITE, four direct-target batches",
+      "ghidra/FindFieldAccesses.java:0x821B31B8 +0x08 WRITE",
+      "ghidra/DumpMemoryWords.java:0x82D384D8 radius=8,0x82D38520 radius=12",
+      "generated:rerevved/sub_82D384D8",
+      "manifests/xbox-kernel-handle-close-boundary.json#/leafResolution"
+    ],
+    "qualification": "Ghidra's decoded body of 0x82D384D8 omits the conditional store. Raw image words and its exact generated function establish that store. The bounded scan cannot establish absence of another writer elsewhere."
+  },
+  "guards": [
+    "Do not treat this zero clear as the producer of a nonzero wonder-mask value.",
+    "Do not infer the handle's kind or producer from the NtClose call.",
+    "Do not infer that low bits of the +0x08 word are conventional gameplay flags or assign effects from this clear.",
+    "Do not generalize this installed vtable's direct-target census to other vtables or indirect callees."
+  ],
+  "conclusion": "The published application owner's vtable contains a conditional +0x08 close-and-zero path at slot +0x80. The word is used as an Xbox handle in that path. Its nonzero producer, handle kind, low-bit meanings in the observed wonder gate, and runtime effect remain unresolved."
+}

@@ -195,7 +195,9 @@ unresolved. See the [technology-field match](../../manifests/definition-technolo
 A separate [conditional list](../../manifests/definition-technology-conditional-list.json)
 reads building `+0x42` and wonder `+0x44` and `+0x46`. Its wonder path compares
 the two technology IDs with a selected value and can query ownership of the
-other field. Its list output and runtime use remain unresolved.
+other field. Its two direct callers pass an item-minus-600 selector from the
+preview helper or an indexed byte from another function. Its list output and
+runtime use remain unresolved.
 
 These are partial layouts, with no supported meaning for unlisted bytes.
 Editing a known signed factor can change the accepted static cost calculation

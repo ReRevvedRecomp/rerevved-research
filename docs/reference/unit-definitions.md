@@ -81,6 +81,11 @@ records, IDs 100 through 122. Each has a name at `+0x00`, token text at
 cost helper's broader ID range does not validate IDs 123 through 199. Exact
 identities and factors are in
 [`building-record-identities-100-122.json`](../../manifests/building-record-identities-100-122.json).
+The production menu also reads signed technology ID `+0x42`, a required city
+building-bit mask at `+0x44`, and a forbidden mask at `+0x48`. Exact values
+for all 23 records are in
+[`building-menu-record-gates.json`](../../manifests/building-menu-record-gates.json).
+These checks alone do not establish menu availability or gameplay effects.
 Barracks 101, Library 105, and Courthouse 114 have cumulative UEA 19, 20,
 and 18 half-cost branches. Cathedral 111 has a UEA 21 branch, with no accepted
 retail activation. University 112 and Factory 116 have separate neutral-gated

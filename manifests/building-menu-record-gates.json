@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0186",
+  "topic": "building-menu-record-gates",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which building-record fields does the mode-two city production menu consume before appending IDs 100 through 122?",
+  "scope": {
+    "consumer": "0x82CEBC38 building loop 0x82CEC878 through 0x82CECA4C",
+    "table": "0x82F71FD8, 0xCC-byte records",
+    "records": "initialized item IDs 100 through 122",
+    "boundary": "This packet assigns three local menu-gate fields and their exact initialized values. It does not close all conditions in the generator, live menu contents, other producers, or implemented building effects."
+  },
+  "dependencies": [
+    { "topic": "city-production-option-source", "use": "Establishes the production child, mode-two building route, and count initialized to 23." },
+    { "topic": "building-record-identities-100-122", "use": "Provides accepted record addresses, names, text, and production factors." },
+    { "topic": "building-completion-state-writer", "use": "Establishes ordinary completed-building bits in city word +0x10; this menu loop reads the same word." },
+    { "topic": "wonder-outer-gate-record-fields", "use": "Provides accepted ordinary technology ownership query 0x82CEF6A8 used here with building +0x42." }
+  ],
+  "fieldUse": {
+    "technologyId": "At 0x82CEC878, the loop reads signed halfword record +0x42. If it is not -1, 0x82CEC898 calls 0x82CEF6A8 with that value and the signed city owner; a zero result skips the candidate. This is a local technology ownership prerequisite, not the complete admission rule.",
+    "existingBit": "At 0x82CEC8AC through 0x82CEC8C0, the loop rejects the candidate when city word +0x10 already contains 1 shifted by normalized building index. The ordinary completion writer sets such bits for non-spaceship buildings; special indices 19 through 22 have a distinct completion path.",
+    "forbiddenBits": "At 0x82CEC8C8 through 0x82CEC8E0, a nonzero record +0x48 word is ANDed with city word +0x10; any matching bit skips the candidate. The mask names no particular dependency without a separate producer/consumer join.",
+    "requiredBits": "At 0x82CEC8E0 through 0x82CEC8FC, a nonzero record +0x44 word is ANDed with city word +0x10; no matching bit skips the candidate. The condition requires at least one matching bit, not necessarily every mask bit.",
+    "special": "Normalized indices 19 through 22 take additional spaceship-part conditions at 0x82CEC8FC through 0x82CEC9C8. Indices 17, 6, 15, 2, and 13 take separate city-state count checks at 0x82CEC9C8 through 0x82CECA18. These branches are additional gates and do not turn stored description text into an implemented effect."
+  },
+  "values": [
+    { "itemId": 100, "technologyId": 0, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 101, "technologyId": 2, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 102, "technologyId": 5, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 103, "technologyId": 3, "requiredBits": "0x00000000", "forbiddenBits": "0x00000800" },
+    { "itemId": 104, "technologyId": 14, "requiredBits": "0x00000000", "forbiddenBits": "0x00000400" },
+    { "itemId": 105, "technologyId": 1, "requiredBits": "0x00000000", "forbiddenBits": "0x00001000" },
+    { "itemId": 106, "technologyId": 10, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 107, "technologyId": 7, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 108, "technologyId": 16, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 109, "technologyId": 0, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 110, "technologyId": 20, "requiredBits": "0x00000010", "forbiddenBits": "0x00000000" },
+    { "itemId": 111, "technologyId": 19, "requiredBits": "0x00000008", "forbiddenBits": "0x00000000" },
+    { "itemId": 112, "technologyId": 21, "requiredBits": "0x00000020", "forbiddenBits": "0x00000000" },
+    { "itemId": 113, "technologyId": 23, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 114, "technologyId": 12, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 115, "technologyId": 31, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 116, "technologyId": 30, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 117, "technologyId": 9, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 118, "technologyId": 46, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 119, "technologyId": 44, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 120, "technologyId": 44, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 121, "technologyId": 44, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" },
+    { "itemId": 122, "technologyId": 44, "requiredBits": "0x00000000", "forbiddenBits": "0x00000000" }
+  ],
+  "currentEvidence": {
+    "method": "One foreground read-only Ghidra exact-word query for all 23 accepted record addresses at +0x40/+0x44/+0x48 and two bounded raw-word windows over the consumer. Generated-code corroboration was restricted to the 0x82CEC878 through 0x82CECA4C branch of exact function 0x82CEBC38 because Ghidra truncates its decompilation.",
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82F7201C..0x82F731A4 radius=2,23 accepted records",
+      "ghidra/DumpMemoryWords.java:0x82CEC8D0,0x82CEC990 radius=36",
+      "generated:rerevved/sub_82CEBC38:0x82CEC878..0x82CECA4C"
+    ],
+    "runtimeObserved": false
+  },
+  "guards": [
+    "Do not treat a passed technology or mask check as sufficient for menu admission.",
+    "Do not turn the +0x44 and +0x48 masks into named building dependencies without a separate bit-owner join.",
+    "Do not infer that spaceship-part records use the ordinary completion-bit path.",
+    "Do not infer gameplay effects from stored building descriptions or menu availability."
+  ],
+  "conclusion": "The building-choice loop consumes signed technology ID +0x42 and two city building-bit masks at +0x44 and +0x48 from each accepted record; exact initialized values for IDs 100 through 122 are recorded. These are local menu admission checks. Other branch conditions, live results, and implemented effects remain separate."
+}

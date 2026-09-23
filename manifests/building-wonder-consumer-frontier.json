@@ -11,13 +11,14 @@
     "costHelper": "0x82CF1278",
     "materializerCap": 16,
     "directCallCap": 16,
-    "boundary": "The first query scans decoded split-address materializers for six exact targets. The second scans aligned raw direct branch-and-link words to one exact helper, stopping at sixteen emitted matches. A third scans the exact body at 0x82CF0268 for register-relative operands at +0x42, +0x4A, +0x8A, and +0xCA; it does not resolve scaled/indexed address calculations. These bounded queries do not resolve indirect or undecoded text/asset consumers or an executable-wide producer and consumer inventory."
+    "boundary": "The first query scans decoded split-address materializers for six exact targets. The second scans aligned raw direct branch-and-link words to one exact helper, stopping at sixteen emitted matches. A third scans the exact body at 0x82CF0268 for register-relative operands at +0x42, +0x4A, +0x8A, and +0xCA; it does not resolve scaled/indexed address calculations. A later exact-body scan checks eight building/wonder offsets in the accepted production-choice vtable slot target 0x82C7BCC0. Neither field scan resolves indexed/computed/indirect accesses, other readers, or an executable-wide producer and consumer inventory."
   },
   "dependencies": [
     { "topic": "production-cost-ownership", "use": "Provides the accepted cost helper, wrappers, and known cost consumers." },
     { "topic": "non-unit-production-threshold-boundary", "use": "Provides the accepted building and wonder invested-production comparisons and first writes." },
     { "topic": "building-record-identities-100-122", "use": "Provides exact initialized building text and token fields." },
-    { "topic": "wonder-record-identities", "use": "Provides the wonder text and token offsets used as bounded targets." }
+    { "topic": "wonder-record-identities", "use": "Provides the wonder text and token offsets used as bounded targets." },
+    { "topic": "city-production-option-source", "use": "Provides the accepted production-choice child vtable and slot +0x08 dispatch site." }
   ],
   "addressMaterializers": {
     "decodedInstructionsScanned": 654329,
@@ -39,7 +40,7 @@
     "qualification": "The bounded queries add no text or asset consumer, no valid-definition gate, and no executed gameplay-effect owner. The prior accepted threshold does not establish completion or final modding behavior."
   },
   "currentEvidence": {
-    "method": "Two sequential foreground read-only canonical-project queries: six exact values with split-constant lookahead twelve and first-use window sixteen, then a capped raw direct-caller scan for the one accepted cost helper. A later function-boundary preflight and field scan checked four exact wonder-record offsets in 0x82CF0268.",
+    "method": "Foreground read-only canonical-project queries: six exact values with split-constant lookahead twelve, a capped raw direct-caller scan for the one accepted cost helper, and exact-body scans of 0x82CF0268 and the initialized production-choice vtable slot target 0x82C7BCC0.",
     "functionPreflight": {
       "script": "DumpFunctionNeighborhood.java",
       "address": "0x82CF0268",
@@ -58,20 +59,53 @@
       "matches": 0,
       "truncated": false
     },
+    "productionChoiceSlotMethod": {
+      "constructor": "0x82DFC528",
+      "vtable": "0x82125548",
+      "slotOffset": "0x08",
+      "slotCell": "0x82125550",
+      "dispatchFunction": "0x82E01888",
+      "dispatchCallSite": "0x82E019B8",
+      "target": "0x82C7BCC0",
+      "functionNeighborhood": {
+        "script": "DumpFunctionNeighborhood.java",
+        "radius": "0x40",
+        "instructionCap": 64,
+        "containingFunction": "0x82C7BCC0 through 0x82C7BCE7",
+        "body": "[0x82C7BCC0, 0x82C7BCE8)",
+        "referencesEmitted": 64,
+        "referencesTruncated": true
+      },
+      "fieldScan": {
+        "script": "FindFieldAccesses.java",
+        "fieldOffsets": ["0x00", "0x20", "0x40", "0x42", "0x4A", "0x4C", "0x8A", "0xCA"],
+        "seed": "0x82C7BCC0",
+        "callerDepth": 0,
+        "calleeDepth": 0,
+        "scanRange": "[0x82C7BCC0, 0x82C7BCE8)",
+        "instructionsScanned": 10,
+        "hitCap": 64,
+        "matches": 0,
+        "truncated": false
+      },
+      "result": "The exact function body has no decoded register-relative access at the listed offsets and ends with a branch to 0x82E41538.",
+      "qualification": "The neighborhood query's separate reference listing reached its 64-reference cap; function bounds and instructions were emitted. The field scan does not resolve scaled, indexed, computed, or indirect definition reads, or behavior in the tail target. Text and art meaning remain unestablished."
+    },
     "entries": [
       { "role": "decoded address construction", "address": "0x82CF03F4 through 0x82CF0408", "result": "One non-truncated materializer result, for the wonder table base, with a first halfword load at +0x1B84.", "confidence": "strong" },
       { "role": "direct cost calls", "address": "0x82CB6410 through 0x82CF838C", "result": "Sixteen raw direct-call sites emitted and the per-target cap reached; owners are undefined in the configured listing.", "confidence": "strong" },
-      { "role": "wonder-reader field scan", "address": "0x82CF0268 through 0x82CF054F", "result": "The exact 0x2E8-byte body contained 186 scanned instructions and no register-relative operand at +0x42, +0x4A, +0x8A, or +0xCA; the scan was not truncated.", "confidence": "strong" }
+      { "role": "wonder-reader field scan", "address": "0x82CF0268 through 0x82CF054F", "result": "The exact 0x2E8-byte body contained 186 scanned instructions and no register-relative operand at +0x42, +0x4A, +0x8A, or +0xCA; the scan was not truncated.", "confidence": "strong" },
+      { "role": "production-choice slot method field scan", "address": "0x82C7BCC0 through 0x82C7BCE7", "result": "The initialized vtable slot +0x08 target's exact body contained 10 scanned instructions and no register-relative access at +0x00, +0x20, +0x40, +0x42, +0x4A, +0x4C, +0x8A, or +0xCA; the 64-hit field scan was not truncated.", "confidence": "strong" }
     ],
-    "locators": ["ghidra/FindGlobalAddressAccesses.java:0x82F71FD8,0x82F71FF8,0x82F72024,0x82F73238,0x82F73282,0x82F73302", "ghidra/FindDirectCallers.java:0x82CF1278", "ghidra/DumpFunctionNeighborhood.java:0x82CF0268 radius=0x40 maxInstructions=64", "ghidra/FindFieldAccesses.java:0x82CF0268 fields=0x42,0x4A,0x8A,0xCA range=[0x82CF0268,0x82CF0550)"],
-    "qualification": "No runtime observation was performed. The direct-call query stops at its declared cap. The exact-body field scan covers decoded register-relative operands in 0x82CF0268 only; scaled/indexed calculations, other readers, generated code, and runtime are outside this result."
+    "locators": ["ghidra/FindGlobalAddressAccesses.java:0x82F71FD8,0x82F71FF8,0x82F72024,0x82F73238,0x82F73282,0x82F73302", "ghidra/FindDirectCallers.java:0x82CF1278", "ghidra/DumpFunctionNeighborhood.java:0x82CF0268 radius=0x40 maxInstructions=64", "ghidra/FindFieldAccesses.java:0x82CF0268 fields=0x42,0x4A,0x8A,0xCA range=[0x82CF0268,0x82CF0550)", "ghidra/DumpMemoryWords.java:0x82125550 radius=0", "ghidra/DumpFunctionNeighborhood.java:0x82C7BCC0 radius=0x40 maxInstructions=64", "ghidra/FindFieldAccesses.java:0x82C7BCC0 fields=0x00,0x20,0x40,0x42,0x4A,0x4C,0x8A,0xCA callerDepth=0 calleeDepth=0 range=[0x82C7BCC0,0x82C7BCE8) hitCap=64"],
+    "qualification": "No runtime observation was performed. The direct-call query stops at its declared cap. Both exact-body field scans cover decoded register-relative operands only; scaled/indexed calculations, other readers, generated code, and runtime are outside this result. The production-choice target's tail branch and the truncated reference listing remain unresolved."
   },
   "guards": [
     "Do not treat a zero decoded-materializer result as absence of text, asset, or effect use.",
     "Do not classify the sixteen cost callers as distinct semantic consumers from raw branch targets alone.",
     "Do not treat stored descriptions, ordinary cost selection, or first production writes as implemented wonder or building effects.",
     "Do not treat broad ID range routing as validation of initialized definitions.",
-    "Do not treat the absence of exact register-relative operands in 0x82CF0268 as excluding scaled/indexed or indirect field reads."
+    "Do not treat the absence of exact register-relative operands in 0x82CF0268 or 0x82C7BCC0 as excluding scaled/indexed, computed, or indirect field reads."
   ],
-  "conclusion": "The bounded direct scans add no supported text, asset, or gameplay-effect consumer. One decoded function materializes the wonder table base for a halfword read, while the raw cost-helper caller scan reaches its sixteen-site cap with undefined owners. A follow-up exact-body scan of 0x82CF0268 found no register-relative operands at wonder-record offsets +0x42, +0x4A, +0x8A, or +0xCA, so this scan supplies no static meaning for those fields. Scaled/indexed calculations, other readers, exact validity, presentation, effect execution, and runtime behavior remain open. The accepted cost and production-threshold paths remain the reusable static consumers."
+  "conclusion": "The bounded direct scans add no supported text, asset, or gameplay-effect consumer. One decoded function materializes the wonder table base for a halfword read, while the raw cost-helper caller scan reaches its sixteen-site cap with undefined owners. Exact-body scans of 0x82CF0268 and production-choice slot target 0x82C7BCC0 found no register-relative operands at their respective checked offsets. The production-choice target's text or art meaning is not established; its reference listing hit its cap, and its tail branch, scaled/indexed calculations, other readers, exact validity, presentation, effect execution, and runtime behavior remain open. The accepted cost and production-threshold paths remain the reusable static consumers."
 }

@@ -151,6 +151,16 @@ of the callback string and live row values are unknown, so an unconditional
 submission bound is not established. Runtime execution, indirect routes, and
 earlier record construction also remain unresolved. See
 [`city-production-command-five-source-frontier.json`](../../manifests/city-production-command-five-source-frontier.json).
+The seven direct callers of this city-list generator pass mode 2 from the
+building-choice wrapper, mode 1 from the unit-choice wrapper, or mode -1 from
+AI, city-update, and turn paths. The `-12` wonder marker scan requires mode bit
+`0x2`, so mode 1 skips it; mode and eligible slots alone do not select the
+marker. In one interactive session, the owner reported selecting a wonder and
+the default-off observer enabled at `0x82CECC98` logged zero calls before a
+normal exit. That run does not establish whether another state reaches this
+separate submit path. The array end register `r30`, relative to `r15-3808`,
+provides its populated count; `r31` counts all 33 scanned slots.
+
 The actual choice child copies nonnegative IDs from separate parent arrays and
 checks the selected vector index before forwarding an item. Its wonder-array
 generator tests exactly normalized indices 0 through 32, so this UI path can

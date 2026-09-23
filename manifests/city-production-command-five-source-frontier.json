@@ -48,7 +48,7 @@
     "record": "At 0x82CB44C8 the helper sets r3 to literal type 5 before calling 0x82CE1950. Its r6 item argument comes from a preceding branch. On the r7 == -12 branch, 0x82CB4498 adds 200 to r6 after a call to 0x82D038E8; on the other type-five branch, 0x82CB44BC copies r7 to r6 after that helper call. The resulting r6 is not bounded here.",
     "caller": "Exact direct-call census for 0x82CB42B8 found only 0x82CECC98 and 0x82CECCB8, both within the accepted city-list generator 0x82CEBC38. The first passes r6 loaded from an indexed array; the second passes retained r24. The meanings and live values of those inputs are not established by this packet.",
     "otherLiteralSites": "At 0x82CBB140, r27=5 flows to a non-type argument before a call with r3=2. At 0x82CD0D1C, r9=5 precedes calls 0x82CD0D7C and 0x82CD0DA0, both with r3=43. At 0x82CF41DC, r8=5 precedes a call with r3=28. At 0x82D2C088, r11=5 precedes a call with r3=17. At 0x82D2C298, r20=5 is copied to r6 before a call with r3=18. These local literals do not set the command type at those calls.",
-    "runtime": "No observation of this helper or its type-five branch was made. The earlier Barracks-selection session logged zero type-five calls at the separate submit entry.",
+    "runtime": "No observation of this helper or its type-five branch was made. The earlier Barracks-selection session logged zero type-five calls at the separate submit entry. A later owner-reported wonder selection logged zero events at the helper's 0x82CECC98 caller.",
     "qualification": "The static branch establishes another type-five producer, not that any specific item ID, including 233 through 236, reaches it. Local li filtering cannot exclude record types constructed earlier, loaded from memory, or sent indirectly."
   },
   "cityListOrdinalPath": {
@@ -56,7 +56,13 @@
     "selection": "When the first chooser result selects that -12 candidate, a second scan at 0x82CECBFC through 0x82CECC54 traverses the same 33 slots and writes qualifying raw ordinals 0 through 32 into a separate array at 0x82CECC38. The second call to 0x82CE8338 returns a row selector. The caller checks only selector != -1 at 0x82CECC78, then reads the selected ordinal at 0x82CECC94 and passes it as r6 to 0x82CB42B8 at 0x82CECC98.",
     "helperPreservation": "The intervening 0x82D038E8 call in the helper writes a separate global and does not assign r6 in its bounded 0x82D038E8 through 0x82D0392C body. The -12 branch then adds 200 at 0x82CB4498 before submitting type 5.",
     "conditionalRange": "If the second chooser returns a valid row of the populated ordinal array, this path submits only IDs 200 through 232. The visible caller checks against -1 but does not check the upper row bound. The known initialized vtable resolves the chooser's indirect slot +0x30 call, but the eventual dialog row-return contract remains unproved. The unconditional reachable ID bound therefore remains unproved.",
-    "runtime": "No invocation of this submit path or second chooser result was observed."
+    "runtime": "No invocation of this submit path or second chooser result was observed. One owner-reported wonder selection logged zero events at 0x82CECC98 and cannot establish that the path is unused."
+  },
+  "cityListDirectCallers": {
+    "census": "An exact direct-call scan for 0x82CEBC38 found seven sites at cap 16, without truncation: 0x82CB9FEC, 0x82CBA098, 0x82CBA1C8, 0x82CED784, 0x82CED86C, 0x82D160F8, and 0x82D1E0E0.",
+    "modes": "The three 0x82CB6E48 AI-turn calls, city-update call 0x82D160F8, and turn-follow-up call 0x82D1E0E0 pass mode -1. The production-choice building-array wrapper 0x82CED700 calls at 0x82CED784 with mode 2; unit-array wrapper 0x82CED7E8 calls at 0x82CED86C with mode 1.",
+    "markerGate": "At 0x82CEC5D4 through 0x82CEC5DC, the -12 marker scan requires mode bit 0x2. Modes -1 and 2 can enter that scan; mode 1 skips it. Entry additionally depends on an empty wonder slot and nonzero 0x82CF3608 result. Reaching 0x82CECC98 requires the first chooser to select the -12 candidate and the second chooser to return a value other than -1; the visible caller does not reject other negative values. The ordinary wonder-choice array is generated through a separate 0x82CE2FD0 path; an owner selecting a displayed wonder is not by itself an invocation of this -12 branch.",
+    "qualification": "The seven calls exhaust direct calls in initialized executable memory, not indirect calls. Caller mode alone does not prove the local marker, chooser results, or live invocation. The exact user action that selects -12 remains unresolved."
   },
   "chooserReturnFrontier": {
     "knownReceiver": "0x82CE8338 calls receiver 0x8314F76C through slot +0x30 at 0x82CE86F4. The accepted initialized vtable 0x82138768 has 0x82D84630 at word 0x82138798. Other live vptr states are not excluded.",
@@ -64,10 +70,22 @@
     "constructedObject": "Constructor 0x82E056F8 installs vtable 0x8212431C at 0x82E0575C after initializing +0x42C to -1 at 0x82E05730. Its slot +0x34 word 0x82124350 targets 0x82E053E8, which can reset +0x42C to -1 at 0x82E05474. Slot +0x04 word 0x82124320 targets 0x82E07200. Slot +0x30 word 0x8212434C targets the selected-row return writer 0x82E05490.",
     "rowSource": "0x82E07290 copies the supplied vector using its preceding count word at 0x82E072F0. One dialog callback 0x82E06C70 parses its r5 string as a base-ten integer at call 0x82E06D50 and passes that result as r4 to 0x82E06B88 at 0x82E06D60. The parser checks digits but does not compare the result with the dialog count. A second direct 0x82E06B88 caller passes constant row zero at 0x82E071C4. At 0x82E06BB0, 0x82E06B88 stores r4 into dialog +0x470 before calling 0x82E06968 at 0x82E06BB8.",
     "countAndCommit": "On its +0x478 == 0 path, 0x82E06968 rejects negative +0x470 values and values at least the 16-byte-entry count computed from dialog +0x454 and +0x458 at 0x82E06A18 through 0x82E06A40; it also rejects an entry whose first word is -1 at 0x82E06A58. This comparison gates later content handling, not the prior +0x470 store. Constructor 0x82E056F8 initializes +0x478 to zero, but dialog body 0x82E07290 then stores incoming r7 to +0x478 at 0x82E072CC; a nonzero path invokes that callback without the local count comparison. Vtable slot +0x30 target 0x82E05490 checks state bytes +0x11 and +0x434, then copies +0x470 to return field +0x42C at 0x82E05518 through 0x82E0551C without a row-count comparison. 0x82E07290 returns +0x42C at 0x82E07810. The copied vector count and the +0x454/+0x458 entry count are not proved identical in every state.",
-    "smallestNextObservation": "The existing default-off pre-instruction probe at the -12 caller 0x82CECC98, capped at eight events, would record raw r11 (second chooser selector times four), r31 (populated ordinal count), r6 (chosen ordinal), r4 (first chooser row), and r3 (player). One event would decide whether this live submission is in range and which ID it sends. For the dialog edge, a same-object observation at parser handoff 0x82E06D60 and commit 0x82E0551C would record parsed r4, +0x470, +0x42C, and the +0x454/+0x458 count. Neither probe was built or run in this packet. A sample cannot prove a program-wide valid-ID rule."
+    "smallestNextObservation": "At 0x82CECC98, raw r11 is the second chooser selector times four, r31 is the 33-slot scan ordinal, r30 is the populated-array end, and r15-3808 is its base. The approved default-off pre-instruction observer logged r11, r31, r30, r15, r6 chosen ordinal, r4 first chooser row, and r3 player with an eight-event cap, but one owner-reported wonder selection produced zero events. The next narrower predecessor discriminator is a default-off pre-instruction observation at 0x82CECBD0, capped at eight events, of r27 selected row and r11 selected candidate before comparison with -12. It would distinguish a different first selection from the -12 marker when that first chooser is reached; it was prepared as an address and field specification but not built or run. A future event at 0x82CECC98 would establish a live row and item, not a program-wide valid-ID rule. For the dialog edge, a same-object observation at parser handoff 0x82E06D60 and commit 0x82E0551C could record parsed r4, +0x470, +0x42C, and the +0x454/+0x458 count; no such probe was built or run."
+  },
+  "runtimeObservation": {
+    "date": "2026-09-23",
+    "titleCommit": "4ae5e9c0a03729afeb6ec905998f43950e01e139",
+    "sdkCommit": "1cbd9a6d06ab06b8e9bffbbf4a0dc80fe44b6f27",
+    "sourceXexSha256": "B59B8957A3ED9DD90E9296C96D5C7AB1B16078D3F08B015582714A06C7D6A7BD",
+    "titleUpdateSha256": "C1FC6149A63550987D991EFDBB80E3697845A9A49D3F2EC180EA9817DB8D12D4",
+    "probeExecutableSha256": "3D6CFE7C7DEFF3608B04F85466852A3F4D965B85ACA86C41B38EB18501C3D006",
+    "logSha256": "CFA4B38DAF7B50A838B4BB68482641B325C4FEDA92D423C5070451D833B5512F",
+    "method": "A temporary default-off scratch Title hook was generated before the guest 0x82CECC98 call, read registers only, and capped logging at eight events. It was enabled by launch argument for one interactive Xenos session using an isolated user-data root whose two input files were copied and hash-checked before launch. ReXGlue codegen and build passed; CTest passed 41 and skipped one. The process exited normally with code zero. The owner reported selecting a wonder. The log contained zero city-list-row events.",
+    "qualification": "The hook was present in generated code before the call and the enabled launch argument was supplied, but no positive hook hit occurred. This single negative does not show whether the -12 marker was available, either chooser selected it, any other call path submitted the selected wonder, or the route is globally unused.",
+    "runtimeLocator": "runtime:city_list_row_probe:2026-09-23:zero-events"
   },
   "currentEvidence": {
-    "method": "Sequential foreground read-only canonical-project queries enumerated raw direct calls, read 0x100-byte windows around the 27 local-drain and 100 separate-submit callsites, enumerated direct callers of the identified helper, and read exact caller, chooser, vtable, row-store, and count-test words. Narrow generated-code windows classified exact candidates and the dialog row flow where Ghidra truncates at save thunks.",
+    "method": "Sequential foreground read-only canonical-project queries enumerated raw direct calls, read 0x100-byte windows around the 27 local-drain and 100 separate-submit callsites, enumerated two helper callers and seven city-list-generator callers, and read exact caller, chooser, vtable, row-store, and count-test words. Narrow generated-code windows classified exact candidates and the dialog row flow where Ghidra truncates at save thunks. One separate interactive runtime session used a default-off hook at 0x82CECC98 and logged no events.",
     "locators": [
       "ghidra/FindDirectCallers.java:0x82CE16C8 cap=64 matches=27 truncated=false",
       "ghidra/FindDirectCallers.java:0x82CE1950 cap=256 matches=100 truncated=false",
@@ -82,6 +100,10 @@
       "ghidra/DumpMemoryWords.java:0x8212431C radius=32",
       "ghidra/DumpMemoryWords.java:0x82E05518,0x82E06BB0,0x82E06A3C,0x82E072D4,0x82E07810 radius=8",
       "ghidra/DumpMemoryWords.java:0x82E06D50,0x82E06D60,0x82E071C4,0x82E05490,0x82E05730,0x82E0575C radius=5",
+      "ghidra/DumpMemoryWords.java:0x82CECBE8,0x82CECBF0,0x82CECC38,0x82CECC40,0x82CECC98 radius=8",
+      "ghidra/FindDirectCallers.java:0x82CEBC38 cap=16 matches=7 truncated=false",
+      "ghidra/DumpMemoryWords.java:0x82CB9FEC,0x82CBA098,0x82CBA1C8,0x82CED784,0x82CED86C,0x82D160F8,0x82D1E0E0,0x82CEC5D4 radius=5",
+      "ghidra/DumpMemoryWords.java:0x82CECBB8,0x82CECBD0 radius=7",
       "ghidra/DumpFunctions.java:0x82D84630,0x82E2F1A0 known thunk-truncated",
       "generated:rerevved/sub_82CCEFA8:0x82CD0570..0x82CD0670",
       "generated:rerevved/sub_82D217C8:0x82D24E0C..0x82D24EA4",
@@ -98,15 +120,24 @@
       "generated:rerevved/sub_82E06B88:0x82E06BA0..0x82E06BB8",
       "generated:rerevved/sub_82E06968:0x82E06A18..0x82E06A5C",
       "generated:rerevved/sub_82E05490:0x82E054AC..0x82E0551C",
-      "generated:rerevved/sub_82D39138"
+      "generated:rerevved/sub_82D39138",
+      "generated:rerevved/sub_82CB6E48:0x82CB9FEC,0x82CBA098,0x82CBA1C8",
+      "generated:rerevved/sub_82CED700:0x82CED784",
+      "generated:rerevved/sub_82CED7E8:0x82CED86C",
+      "generated:rerevved/sub_82D13978:0x82D160F8",
+      "generated:rerevved/sub_82D1D1C0:0x82D1E0E0",
+      "generated:rerevved/sub_82CEBC38:0x82CECBB8..0x82CECBD4",
+      "runtime:city_list_row_probe:2026-09-23:zero-events"
     ],
-    "qualification": "The raw-word windows locate only immediate li rD,5 forms. The generated windows classify exact candidate register uses, not all commands in either large function. The dialog's content-update count test occurs after the selected-row store and does not establish a return-value bound. No new runtime behavior was observed."
+    "qualification": "The raw-word windows locate only immediate li rD,5 forms. The generated windows classify exact candidate register uses, not all commands in either large function. The dialog's content-update count test occurs after the selected-row store and does not establish a return-value bound. The single runtime session logged zero events at the probed caller; it did not observe this alternate submit branch."
   },
   "guards": [
     "Do not conclude that 0x82CEE650 is the sole type-five producer from a local literal scan.",
     "Do not treat the direct-call census as exhaustive of indirect or earlier-constructed command records.",
     "Do not infer that initialized wonder IDs 233 through 236 are globally valid, invalid, reachable, or unreachable from this local source census.",
-    "Do not assert an unconditional 200-through-232 submit range from the 33-slot scan: the dialog can copy a parsed row to its return field without a count comparison in the traced path."
+    "Do not assert an unconditional 200-through-232 submit range from the 33-slot scan: the dialog can copy a parsed row to its return field without a count comparison in the traced path.",
+    "Do not interpret r31 at 0x82CECC98 as the populated array count; it is the scan ordinal and reaches 33 after traversing all slots.",
+    "Do not infer global nonuse of the -12 path from one selected wonder that produced zero events at 0x82CECC98."
   ],
-  "conclusion": "The exact direct-call censuses found 27 local-drain calls and 100 separate-submit calls without truncation. The local-drain literal check found only the accepted UI type-five producer. A separate-submit call at 0x82CB44D0 sets type 5 inside helper 0x82CB42B8, which the city-list generator calls twice. Its -12 branch receives an ordinal from a 33-slot wonder scan and adds 200, yielding IDs 200 through 232 if the indirect chooser returns a valid populated row. The constructed dialog's callback parses a decimal row, stores it to +0x470 before its content-update count test, and can copy +0x470 to its return field +0x42C without a row-count comparison. The producer of the callback string and runtime values are unresolved, so this packet does not settle whether IDs 233 through 236 can reach command five. Other indirect or earlier-constructed sources remain outside this bounded census."
+  "conclusion": "The exact direct-call censuses found 27 local-drain calls, 100 separate-submit calls, and seven direct city-list-generator calls without truncation. The local-drain literal check found only the accepted UI type-five producer. A separate-submit call at 0x82CB44D0 sets type 5 inside helper 0x82CB42B8, which the city-list generator calls twice. Its -12 branch receives an ordinal from a 33-slot wonder scan and adds 200, yielding IDs 200 through 232 if the indirect chooser returns a valid populated row. The mode-2 building-array wrapper and five AI, update, and turn callers passing mode -1 can enter the -12 marker scan; the mode-1 unit-array wrapper skips it. The constructed dialog's callback parses a decimal row, stores it to +0x470 before its content-update count test, and can copy +0x470 to its return field +0x42C without a row-count comparison. One owner-reported wonder selection logged zero events at 0x82CECC98. The marker choice, callback string source, and live row values are unresolved, so this packet does not settle whether IDs 233 through 236 can reach command five. Other indirect or earlier-constructed sources remain outside this bounded census."
 }

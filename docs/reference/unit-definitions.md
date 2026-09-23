@@ -157,6 +157,46 @@ individual records for
 [235](../../manifests/wonder-record-identity-235.json), and
 [236](../../manifests/wonder-record-identity-236.json). Also see the bounded
 [`wonder-record-byte-boundary-237-249.json`](../../manifests/wonder-record-byte-boundary-237-249.json).
+
+## Building and wonder record contract
+
+The table below lists assigned definition fields. Exact values for each ID live
+in the [building identities](../../manifests/building-record-identities-100-122.json),
+[building menu gates](../../manifests/building-menu-record-gates.json),
+[wonder identities](../../manifests/wonder-record-identities.json) and their
+linked continuation packets, and [wonder outer-gate fields](../../manifests/wonder-outer-gate-record-fields.json).
+No runtime probe has recorded an individual definition-field value or observed
+execution of a described effect. The recorded sessions establish some menu and
+production-item behavior, not these field values or effects.
+
+| Record field | Static meaning | Remaining unknown |
+|---|---|---|
+| Building `+0x00` | Stored name text in IDs 100-122 | Text reader, localization, and display |
+| Building `+0x20` | Stored token text | Token consumer and asset binding |
+| Building `+0x41` | Signed byte factor read by the non-unit cost helper | Final cost for a live player and all caller paths |
+| Building `+0x42` | Signed technology ID checked by the city-menu ownership query; `-1` skips that query | Complete admission rule and live result |
+| Building `+0x44` | Required city building-bit mask; a nonzero mask needs at least one matching bit | Other city-bit writers and complete policy |
+| Building `+0x48` | Forbidden city building-bit mask; a matching bit rejects the menu candidate | Other city-bit writers and complete policy |
+| Building `+0x4C` | Stored English description | Display reader and implemented gameplay effect |
+| Wonder `+0x00` | Stored name text in IDs 200-236 | Text reader, localization, and display |
+| Wonder `+0x40` | Signed halfword factor read by the non-unit cost helper | Final cost for a live player and all caller paths |
+| Wonder `+0x42` | Stored halfword; exact exposed values are recorded for 220, 223, and 236 | Writer, reader, and meaning |
+| Wonder `+0x44`, `+0x46` | Signed technology IDs or `-1` sentinels checked by the generic outer gate | Full eligibility and special-index 19/20 use; those indices bypass these generic reads |
+| Wonder `+0x48` | Signed technology ID or `-1`; the generic gate tests other-player ownership | Full eligibility and special-index 19/20 use; those indices bypass this generic read |
+| Wonder `+0x4A` | Stored short token | Token consumer and display role |
+| Wonder `+0x8A` | Stored art token, often repeated across records | Asset consumer and art binding |
+| Wonder `+0xCA` | Stored English effect description | Display reader and implemented gameplay effect |
+
+These are partial layouts, with no supported meaning for unlisted bytes.
+Editing a known signed factor can change the accepted static cost calculation
+for an initialized ID, subject to its later modifiers; it does not establish a
+final in-game price. Building menu masks and wonder technology cells are known
+inputs to local gates, not a complete buildability policy. Repeated or mismatched
+tokens do not identify assets. The initialized record blocks cover IDs 100-122
+and 200-236;
+the helper's broader 100-199 and 200-299 routing cannot be used as an
+arbitrary-ID extension contract.
+
 The bounded decoded city-item writer scan did not locate an item-selection or
 validity rule; its coverage limits are recorded in
 [`production-item-writer-decoded-frontier.json`](../../manifests/production-item-writer-decoded-frontier.json).

@@ -46,6 +46,23 @@
     "result": "For a newly initialized Warrior record, active cumulative UEA 50 increments byte +0x05. The same routine later clamps values above two back to two, so the UEA path raises a lower initial level to the accepted veteran level without exceeding it.",
     "qualification": "A separate local flag can reach the same increment block when UEA 50 is inactive. This packet proves UEA 50's direct route and saturation, not exclusive ownership of every veteran grant."
   },
+  "ghidraListingBoundary": {
+    "cityUpdateEntry": {
+      "address": "0x82D13978",
+      "definedBody": "0x82D13978..0x82D1397F",
+      "bodyBytes": "0x8",
+      "instructions": ["0x82D13978: mfspr r12,LR", "0x82D1397C: bl 0x827F7C50"],
+      "nextDefinedFunction": "0x82D16BA0"
+    },
+    "alternateGate": {
+      "address": "0x82D15B84",
+      "containingFunction": null,
+      "decodedInstructionCount": 0,
+      "queriedWindow": "0x82D15B44..0x82D15BC4",
+      "nextDefinedFunction": "0x82D16BA0"
+    },
+    "qualification": "These results describe the canonical Ghidra function and instruction listing only. They do not mean the bytes or behavior are absent; the existing raw current-image words and generated code continue to support the separately mapped city-update and veteran paths. The connection from Barracks 101 state to the creation-record +0x3C bit remains unresolved."
+  },
   "uniqueUnitCreationGrant": {
     "hook": "0x82D15B84",
     "player": "Resolve civilization from 0x830ECD28[player_index].",
@@ -68,16 +85,18 @@
     "behavior": "The accepted creation-time grant raises a lower rank to level two through the existing +1 step at 0x82D15BA0; values above two are saturated back to two."
   },
   "currentEvidence": {
-    "method": "One foreground read-only 69-word current-image query centered at 0x82D15B78, exact verification of 20 selected words and branch targets including the alternate gate at 0x82D15B84, and narrow generated-code corroboration of the retained player and unit-record addressing in 0x82D13978.",
+    "method": "One foreground read-only 69-word current-image query centered at 0x82D15B78, exact verification of 20 selected words and branch targets including the alternate gate at 0x82D15B84, narrow generated-code corroboration of the retained player and unit-record addressing in 0x82D13978, and two foreground read-only function-neighborhood queries bounding the canonical Ghidra listing at 0x82D13978 and 0x82D15B84.",
     "entries": [
       { "role": "Warrior predicate", "address": "0x82D15B5C", "confidence": "strong" },
       { "role": "UEA 50 lookup", "address": "0x82D15B78", "confidence": "strong" },
       { "role": "alternate +0x3C bit-0x20 gate", "address": "0x82D15B84", "confidence": "strong" },
       { "role": "veteran-level increment", "address": "0x82D15B9C", "confidence": "strong" },
-      { "role": "level-two saturation", "address": "0x82D15BF4", "confidence": "strong" }
+      { "role": "level-two saturation", "address": "0x82D15BF4", "confidence": "strong" },
+      { "role": "Ghidra city-update entry boundary", "address": "0x82D13978..0x82D1397F", "result": "The defined body contains two instructions and the next defined function begins at 0x82D16BA0.", "confidence": "strong" },
+      { "role": "Ghidra alternate-gate listing boundary", "address": "0x82D15B84", "result": "No containing function or decoded instructions were returned for 0x82D15B44..0x82D15BC4.", "confidence": "strong" }
     ],
-    "locators": ["ghidra/DumpMemoryWords.java:0x82D15AF0..0x82D15C00", "generated:rerevved/sub_82D13978", "civilization-bonus-storage#/storage/rows/0", "civilization-bonus-storage#/lookup/playerCivilizationArray", "unit-definitions-ai-evaluation#/unitDefinitions/records/6", "unit-definitions-ai-evaluation#/unitDefinitions/records/8"],
-    "qualification": "The static query performed no runtime action. The current-image window contains the initialization, UEA gate, increment, alternate route, and final saturation. The separate owner-observed result is recorded in runtimeAcceptance."
+    "locators": ["ghidra/DumpMemoryWords.java:0x82D15AF0..0x82D15C00", "ghidra/DumpFunctionNeighborhood.java:0x82D13978,0x82D15B84", "generated:rerevved/sub_82D13978", "civilization-bonus-storage#/storage/rows/0", "civilization-bonus-storage#/lookup/playerCivilizationArray", "unit-definitions-ai-evaluation#/unitDefinitions/records/6", "unit-definitions-ai-evaluation#/unitDefinitions/records/8"],
+    "qualification": "The static queries performed no runtime action. The current-image window contains the initialization, UEA gate, increment, alternate route, and final saturation. Ghidra's defined bodies do not cover the city-update code or alternate gate, so they cannot supply the missing Barracks-to-creation-bit link. The separate owner-observed result is recorded in runtimeAcceptance."
   },
   "runtimeAcceptance": {
     "date": "2026-09-05",

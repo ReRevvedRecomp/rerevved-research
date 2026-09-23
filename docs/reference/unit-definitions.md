@@ -269,7 +269,10 @@ Barracks 101 remains a specific unresolved link: its stored description says
 veteran units are produced, while the native veteran grant branch is gated by a
 creation-record bit. The accepted [building writer](../../manifests/building-completion-state-writer.json)
 and [veteran branch](../../manifests/new-warrior-veteran.json) do not establish
-that Barracks completion or ownership supplies that bit. The modded veteran
+that Barracks completion or ownership supplies that bit. Ghidra defines only an
+8-byte body at city-update entry `0x82D13978` and no containing function or
+instructions at veteran gate `0x82D15B84`, so its current function listing cannot
+join those paths. The modded veteran
 runtime acceptance recorded in the latter packet does not test the Barracks
 description.
 

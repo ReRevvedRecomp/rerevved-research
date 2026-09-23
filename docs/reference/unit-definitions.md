@@ -138,9 +138,11 @@ selected item into the command record without a local ID bound; the producer
 can pass that record to the local drain at `0x82CEE76C`. A Barracks-selection
 session logged no type-five calls at the separate submit entry `0x82CE1950`.
 A bounded census found 27 direct local-drain calls; a 0x100-byte literal-five
-check around each found no second proved type-five producer. The separate
-submit-entry caller list hit its 64-site cap, and earlier record construction
-remains possible. See
+check around each found no second proved type-five producer. A separate census
+found all 100 direct calls to the submit entry. Helper `0x82CB42B8`, called
+twice by the city-list generator, submits type five at `0x82CB44D0`; one
+branch adds 200 to its item argument. Its live inputs and reachable item IDs
+remain unknown, as do indirect routes and earlier record construction. See
 [`city-production-command-five-source-frontier.json`](../../manifests/city-production-command-five-source-frontier.json).
 The actual choice child copies nonnegative IDs from separate parent arrays and
 checks the selected vector index before forwarding an item. Its wonder-array

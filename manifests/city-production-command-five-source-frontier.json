@@ -5,14 +5,14 @@
   "status": "closed",
   "confidence": "strong",
   "image": "image.json",
-  "question": "Does a bounded census of direct local-drain calls identify another command-five production-item source outside the accepted city-choice producer?",
+  "question": "Which bounded direct-call sources submit command type five outside the accepted city-choice producer?",
   "scope": {
     "localDrain": "0x82CE16C8",
     "separateSubmit": "0x82CE1950",
     "knownProducer": "0x82CEE650",
-    "callsiteLookback": "0x100 bytes before each exact local-drain call",
+    "callsiteLookback": "0x100 bytes before each exact local-drain and separate-submit call",
     "literalFilter": "PowerPC addi rD,r0,5 (li rD,5) raw word",
-    "stopCondition": "Classify each nearby literal-five candidate or stop at the per-target direct-call cap; do not treat absence of that instruction shape as absence of type-five records.",
+    "stopCondition": "Enumerate direct calls to both targets without truncation at caps 64 and 256 respectively, classify each distinct nearby literal-five site, and stop at the exact helper's direct callers.",
     "boundary": "The scan covers direct calls in initialized executable memory and a fixed local lookback. It does not follow indirect calls, values loaded from memory or passed by callers, earlier record construction, or other command routes."
   },
   "dependencies": [
@@ -22,7 +22,7 @@
   ],
   "directCallCensus": {
     "localDrain": "The raw direct-call scan found 27 calls to 0x82CE16C8 at cap 64, without truncation.",
-    "separateSubmit": "The same scan emitted 64 calls to 0x82CE1950 and reported truncation. It is not a complete submit-entry caller inventory.",
+    "separateSubmit": "A second exact scan found 100 direct calls to 0x82CE1950 at cap 256, without truncation. Seven 0x100-byte pre-call windows contain li rD,5 at six distinct addresses.",
     "nearbyLiterals": "Across 0x100-byte lookbacks for the 27 drain callsites, three pre-call li rD,5 sites were found: 0x82CD0570 before call 0x82CD0670, 0x82CEE6C0 before call 0x82CEE76C, and 0x82D24E0C before call 0x82D24EA4. A second window also overlapped 0x82CEE6C0 after an earlier call; it is not another pre-call candidate."
   },
   "candidateClassification": [
@@ -42,20 +42,34 @@
       "result": "Register r9 receives 5 and is moved to CTR at 0x82D24E44 for the five-word copy loop at 0x82D24E48 through 0x82D24E58. The copied record at stack +0xF0 receives its type from retained r20, initialized to 38 on this loop path; the nearby five is a copy count, not a command type."
     }
   ],
+  "separateSubmitCandidate": {
+    "source": "0x82CB42B8",
+    "call": "0x82CB44D0",
+    "record": "At 0x82CB44C8 the helper sets r3 to literal type 5 before calling 0x82CE1950. Its r6 item argument comes from a preceding branch. On the r7 == -12 branch, 0x82CB4498 adds 200 to r6 after a call to 0x82D038E8; on the other type-five branch, 0x82CB44BC copies r7 to r6 after that helper call. The resulting r6 is not bounded here.",
+    "caller": "Exact direct-call census for 0x82CB42B8 found only 0x82CECC98 and 0x82CECCB8, both within the accepted city-list generator 0x82CEBC38. The first passes r6 loaded from an indexed array; the second passes retained r24. The meanings and live values of those inputs are not established by this packet.",
+    "otherLiteralSites": "At 0x82CBB140, r27=5 flows to a non-type argument before a call with r3=2. At 0x82CD0D1C, r9=5 precedes calls 0x82CD0D7C and 0x82CD0DA0, both with r3=43. At 0x82CF41DC, r8=5 precedes a call with r3=28. At 0x82D2C088, r11=5 precedes a call with r3=17. At 0x82D2C298, r20=5 is copied to r6 before a call with r3=18. These local literals do not set the command type at those calls.",
+    "runtime": "No observation of this helper or its type-five branch was made. The earlier Barracks-selection session logged zero type-five calls at the separate submit entry.",
+    "qualification": "The static branch establishes another type-five producer, not that any specific item ID, including 233 through 236, reaches it. Local li filtering cannot exclude record types constructed earlier, loaded from memory, or sent indirectly."
+  },
   "currentEvidence": {
-    "method": "Two sequential foreground read-only canonical-project queries enumerated exact raw direct calls and then read 0x100-byte windows around only the 27 local-drain callsites. Narrow generated-code windows corroborated the two false literal-five candidates; the accepted UI producer was already mapped.",
+    "method": "Sequential foreground read-only canonical-project queries enumerated raw direct calls, read 0x100-byte windows around the 27 local-drain and 100 separate-submit callsites, and enumerated direct callers of the identified helper. Narrow generated-code windows classified only the exact candidates and helper calls.",
     "locators": [
-      "ghidra/FindDirectCallers.java:0x82CE16C8,0x82CE1950 cap=64 drain=27 submit=64 truncated=true",
+      "ghidra/FindDirectCallers.java:0x82CE16C8 cap=64 matches=27 truncated=false",
+      "ghidra/FindDirectCallers.java:0x82CE1950 cap=256 matches=100 truncated=false",
+      "ghidra/DumpMemoryWords.java:100 submit callsites radius=64",
+      "ghidra/FindDirectCallers.java:0x82CB42B8 cap=64 matches=2 truncated=false",
       "ghidra/DumpMemoryWords.java:27 drain callsites radius=64",
       "generated:rerevved/sub_82CCEFA8:0x82CD0570..0x82CD0670",
-      "generated:rerevved/sub_82D217C8:0x82D24E0C..0x82D24EA4"
+      "generated:rerevved/sub_82D217C8:0x82D24E0C..0x82D24EA4",
+      "generated:rerevved/sub_82CB42B8:0x82CB4488..0x82CB44D0",
+      "generated:rerevved/sub_82CEBC38:0x82CECC98..0x82CECCB8"
     ],
     "qualification": "The raw-word windows locate only immediate li rD,5 forms. The generated windows classify exact candidate register uses, not all commands in either large function. No new runtime behavior was observed."
   },
   "guards": [
     "Do not conclude that 0x82CEE650 is the sole type-five producer from a local literal scan.",
-    "Do not treat the 64-site submit-entry result as exhaustive.",
-    "Do not infer that initialized wonder IDs 233 through 236 are globally invalid or unreachable from this negative result."
+    "Do not treat the direct-call census as exhaustive of indirect or earlier-constructed command records.",
+    "Do not infer that initialized wonder IDs 233 through 236 are globally valid, invalid, reachable, or unreachable from this local source census."
   ],
-  "conclusion": "The 27 direct local-drain callsites are an uncapped census, but the bounded 0x100-byte literal-five check identifies no additional type-five source. Its two apparent non-UI candidates use five as a record argument or copy count. Other command record producers and the capped separate submit route remain unresolved, so this packet does not supply a non-menu source for IDs 233 through 236."
+  "conclusion": "The exact direct-call censuses found 27 local-drain calls and 100 separate-submit calls without truncation. The local-drain literal check found only the accepted UI type-five producer. A separate-submit call at 0x82CB44D0 sets type 5 inside helper 0x82CB42B8, which the city-list generator calls twice. One helper branch adds 200 to its item argument; no supported static bound or runtime observation establishes whether IDs 233 through 236 can pass. Other indirect or earlier-constructed sources remain outside this bounded census."
 }

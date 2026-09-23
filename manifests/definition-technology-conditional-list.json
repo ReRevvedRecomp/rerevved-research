@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0196",
+  "topic": "definition-technology-conditional-list",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What fields do the paired building and wonder table-base constructions inside 0x82CE77D8 consume?",
+  "scope": {
+    "function": "0x82CE77D8",
+    "buildingPair": "0x82CE7BD4+0x82CE7BDC",
+    "wonderPair": "0x82CE7988+0x82CE7994",
+    "buildingField": "+0x42",
+    "wonderFields": ["+0x44", "+0x46"],
+    "stopCondition": "Resolve the two exact raw candidate pairs, the first indexed field reads, and their immediate comparisons and ownership checks; stop before classifying callers, output presentation, or other table candidates.",
+    "boundary": "This packet covers the two local record loops and their accepted field offsets. It does not identify a runtime caller, a text or asset reader, the list's final owner, or gameplay effects."
+  },
+  "dependencies": [
+    { "topic": "building-menu-record-gates", "use": "Identifies building +0x42 as a signed technology ID and the live count initialized to 23 elsewhere." },
+    { "topic": "wonder-outer-gate-record-fields", "use": "Identifies wonder +0x44 and +0x46 as signed technology IDs or -1 sentinels on the generic outer gate." },
+    { "topic": "definition-technology-match-list", "use": "Records a separate technology-field comparison path reached from TechnologyAcquire." },
+    { "topic": "building-wonder-consumer-frontier", "use": "Records the earlier decoded-materializer and text-consumer search limits." }
+  ],
+  "staticResult": {
+    "wonderLoop": "At 0x82CE7988..0x82CE79B0, the function constructs wonder base 0x82F73238 and a pointer to record +0x46. After a nonzero 0x82CF0E28 result and a -1 slot test, 0x82CE79D4 loads signed halfword -2 from that pointer, which is record +0x44, and compares it with selected value r14. When unequal, it calls the ordinary technology ownership query 0x82CEF6A8 with that +0x44 value and skips the candidate on zero. It then reads signed +0x46 at 0x82CE7A08, likewise compares with r14, and on inequality requires a nonzero ownership result for +0x46. The final local check at 0x82CE7A40..0x82CE7A54 requires at least one of the two field values to equal r14 before storing a tagged ordinal. The field pointer advances by 0x14C and the parallel slot pointer by 8, stopping after 33 positions; this local loop addresses initialized wonder IDs 200 through 232.",
+    "buildingLoop": "At 0x82CE7BD4..0x82CE7BE4, the function constructs building base 0x82F71FD8 and adds +0x42. When live count 0x830E45CC is positive, 0x82CE7BFC loads that signed halfword and compares it with r14 at 0x82CE7C04. Unequal values skip the local match path; the pointer advances by 0xCC. The runtime count and full output policy are not established here.",
+    "selector": "The comparison value r14 is selected earlier from an indexed word or caller r6 when r6 is not -1. The policy behind either source and the list's intended display or effect are not established by these field reads.",
+    "textBoundary": "These two loop bodies use numeric technology fields. They do not directly read the accepted definition name, short token, art token, or description offsets; other code and called functions are outside this packet."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No invocation of 0x82CE77D8, selected r14, list entry, text use, or building/wonder effect was observed in this packet."
+  },
+  "currentEvidence": {
+    "method": "The prior two-target raw split-constant query reached a global cap of 16 and supplied these two candidate pairs. Three foreground read-only raw-word windows checked their immediate record uses and both wonder halfword branches. Ghidra's listing gives an eight-byte entry and no containing function at the candidates; narrow exact-function generated windows corroborated register aliases and branch meaning.",
+    "entries": [
+      { "role": "wonder candidate pair", "address": "0x82CE7988..0x82CE7994", "result": "Forms base 0x82F73238 in r23 and record +0x46 in r31." },
+      { "role": "wonder field checks", "address": "0x82CE79D4..0x82CE7A54", "result": "Reads signed +0x44 through -2(r31) and signed +0x46 through 0(r31), compares each with r14, and conditionally calls the ordinary ownership query for the other field." },
+      { "role": "building candidate pair", "address": "0x82CE7BD4..0x82CE7BE4", "result": "Forms base 0x82F71FD8 and field pointer +0x42." },
+      { "role": "building field check", "address": "0x82CE7BFC..0x82CE7C08", "result": "Reads and sign-extends building +0x42, compares it with r14, and branches away on inequality." }
+    ],
+    "locators": [
+      "ghidra/FindSplitConstantCandidates.java:0x82F71FD8,0x82F73238 lookahead=8 cap=16",
+      "ghidra/DumpMemoryWords.java:0x82CE7994,0x82CE7BDC radius=24",
+      "ghidra/DumpMemoryWords.java:0x82CE7A1C radius=24",
+      "ghidra/DumpMemoryWords.java:0x82CE7830,0x82CE7C4C radius=8",
+      "ghidra/DumpFunctionNeighborhood.java:0x82CE7994,0x82CE7BDC radius=0x40",
+      "generated:rerevved/sub_82CE77D8:0x82CE7988..0x82CE7C4C"
+    ],
+    "qualification": "The raw base search is capped and incomplete. The indexed wonder +0x44 read is -2 from an alias of base +0x46; following only the base register would miss it. Raw words and narrow generated windows establish this local alias and both field checks, not all consumers or the list's runtime purpose."
+  },
+  "guards": [
+    "Do not infer a text or asset consumer from table-base construction or the numeric field comparisons.",
+    "Do not interpret the local 33-position wonder loop as a program-wide valid-ID rule or the building live count as permanently 23.",
+    "Do not identify the list as a player-facing unlock message without a caller and output consumer.",
+    "Do not infer gameplay effects from stored descriptions or these technology checks."
+  ],
+  "conclusion": "A second bounded function reads building +0x42 and wonder +0x44/+0x46 as numeric technology comparison inputs while forming a conditional list. For wonders it requires a local matched selected value and checks ownership of the other field when unequal. Text and asset consumers, list purpose, and runtime behavior remain unresolved."
+}

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0187",
+  "topic": "wonder-claim-slot-state",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What initializes and writes the 33 mutable wonder slots consumed by the city production menu?",
+  "scope": {
+    "table": "0x830E5148 through 0x830E524F",
+    "slotSize": "0x8",
+    "resetFunction": "0x82D05D50",
+    "postThresholdWriter": "0x82D16BA0",
+    "menuReader": "0x82CE2FD0",
+    "boundary": "This packet identifies one reset and one completion-path writer for 33 slots. It does not prove when the reset runs, save/load parity, all table writers, actual runtime slot values, global wonder validity, or construction effects."
+  },
+  "dependencies": [
+    { "topic": "city-production-option-source", "use": "Establishes the 33-slot -1 test and 200 through 232 menu output range." },
+    { "topic": "wonder-post-threshold-helper-boundary", "use": "Establishes the 0 through 32 helper entry guard and city-update mode-one call." },
+    { "topic": "wonder-record-identity-236", "use": "Separates 37 initialized definition identities from this 33-slot state table." }
+  ],
+  "reset": {
+    "address": "0x82D060C4 through 0x82D060D4",
+    "action": "Inside 0x82D05D50, r3 receives table base 0x830E5148, r4 receives -1, and r5 receives 0x108 bytes before direct call to 0x827F7BB0. This sets all bytes of the 33 eight-byte slots to 0xFF on that path.",
+    "qualification": "The image's zero-filled bytes are pre-runtime content. This call establishes a static reset path; its execution timing and live values were not observed."
+  },
+  "claimWrite": {
+    "address": "0x82D16BC8 through 0x82D16C14",
+    "guard": "0x82D16BA0 branches out for a negative normalized wonder index or index at least 33. Its mode-one bit test at 0x82D16BE0 guards the slot stores.",
+    "fields": "At 0x82D16BF4 index*8 selects a slot. 0x82D16C08 writes the city's signed owner byte to first word +0x00. 0x82D16C10 writes incoming city index r4 to second word +0x04. The helper then calls 0x82D00480 with an owner/index-derived value; that call's meaning is outside this packet.",
+    "qualification": "The accepted city-update caller reaches this helper only after sufficient production and the separate nonzero eligibility gate. These are static writes; no wonder construction or effect was observed at runtime."
+  },
+  "menuUse": "At 0x82CE3038 through 0x82CE3040 the menu generator loads slot first word and compares it with -1, then calls 0x82CF3608 only when it matches. The reset and mode-one writer provide a local unclaimed/claimed interpretation for this equality; other writers and restored state remain unclassified.",
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra exact raw-word and capped split-constant scans against the pinned image, followed by narrow generated-code corroboration of exact reset and helper windows where Ghidra lacks containing functions.",
+    "locators": [
+      "ghidra/FindSplitConstantCandidates.java:0x830E5148 cap=64 candidates=46 truncated=false",
+      "ghidra/DumpMemoryWords.java:0x82D060CC,0x82D16BF8 radius=9",
+      "generated:rerevved/sub_82D05D50:0x82D060C4..0x82D060D4",
+      "generated:rerevved/sub_82D16BA0:0x82D16BC8..0x82D16C14"
+    ],
+    "runtimeObserved": false
+  },
+  "guards": [
+    "Do not infer live -1 values solely from image zeros or the presence of a reset call.",
+    "Do not equate the 33-slot table with the 37 initialized wonder definitions.",
+    "Do not assign save/load, other writer, effect, or multiplayer ownership semantics from these two local paths."
+  ],
+  "conclusion": "The city wonder menu's -1 slot test has an explicit 0x108-byte all-FF reset path and an accepted 0-through-32 mode-one completion-path writer that stores owner and city index in the same slots. The exact runtime table contents, save/load handling, and other consumers remain unresolved."
+}

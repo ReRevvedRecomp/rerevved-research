@@ -3,6 +3,7 @@
 // Matches require instruction and register-lifetime confirmation by the caller.
 // Environment:
 //   REREVVED_TARGET_VAS   comma-separated exact 32-bit values, max 8
+//   REREVVED_MAX_MATCHES  optional candidate cap, default 8, max 128
 //   REREVVED_DUMP_PATH    output path
 //@category ReRevved
 
@@ -31,6 +32,11 @@ public class FindSplitConstantCandidates extends GhidraScript {
         if (targets.isEmpty() || targets.size() > 8) {
             throw new IllegalArgumentException("target list must contain 1 through 8 values");
         }
+        String capValue = System.getenv("REREVVED_MAX_MATCHES");
+        int cap = capValue == null || capValue.isBlank() ? 8 : Integer.parseInt(capValue);
+        if (cap < 1 || cap > 128) {
+            throw new IllegalArgumentException("REREVVED_MAX_MATCHES must be 1 through 128");
+        }
         String outPath = requireEnv("REREVVED_DUMP_PATH");
         Memory memory = currentProgram.getMemory();
         int matches = 0;
@@ -41,7 +47,7 @@ public class FindSplitConstantCandidates extends GhidraScript {
             for (long target : targets) {
                 out.printf("Target: 0x%08X%n", target);
             }
-            out.println("Lookahead: 8 words; candidate cap: 8");
+            out.println("Lookahead: 8 words; candidate cap: " + cap);
             out.println("Raw candidates only; intervening writes and code ownership are unchecked.");
             outer:
             for (MemoryBlock block : memory.getBlocks()) {
@@ -78,7 +84,7 @@ public class FindSplitConstantCandidates extends GhidraScript {
                         if (!targets.contains(value)) {
                             continue;
                         }
-                        if (matches == 8) {
+                        if (matches == cap) {
                             truncated = true;
                             break outer;
                         }

@@ -142,7 +142,11 @@ checks the selected vector index before forwarding an item. Its wonder-array
 generator tests exactly normalized indices 0 through 32, so this UI path can
 offer wonder IDs 200 through 232; the mutable runtime slot and wonder gate
 decide which appear. Initialized wonder IDs 233 through 236 are outside this
-choice loop. The building array uses a live count initialized to 23 and an
+choice loop. A static reset fills its 33 mutable claim slots with -1; the
+accepted mode-one completion helper writes owner and city index into a slot.
+Live slot values remain unobserved. See
+[`wonder-claim-slot-state.json`](../../manifests/wonder-claim-slot-state.json).
+The building array uses a live count initialized to 23 and an
 index-plus-100 append loop, yielding IDs 100 through 122 under that count.
 Its availability predicates and any later count mutation remain unresolved.
 The branch taken in the Barracks session

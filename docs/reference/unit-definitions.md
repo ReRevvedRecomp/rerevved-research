@@ -126,6 +126,11 @@ halfwords, checks technology ownership, and can replace live unit type byte
 `+0x01` in qualifying records. Its virtual calls and runtime coverage do not
 establish that every unit upgrades. See
 [`leonardo-unit-type-branch.json`](../../manifests/leonardo-unit-type-branch.json).
+Those are the five explicit indices in the direct mode-one branch group of
+`0x82D16BA0`. The direct call skips the helper's later mode-two tail. A
+separate mode-two call for items 219 and 220 can enter that unclassified tail;
+the branch census is in
+[`wonder-post-threshold-helper-boundary.json`](../../manifests/wonder-post-threshold-helper-boundary.json).
 Text and art-token consumers, complete layouts, final runtime costs, and most
 gameplay effects remain unresolved. The exact cost inputs are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).

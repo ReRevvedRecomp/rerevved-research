@@ -128,9 +128,14 @@ establish that every unit upgrades. See
 [`leonardo-unit-type-branch.json`](../../manifests/leonardo-unit-type-branch.json).
 Those are the five explicit indices in the direct mode-one branch group of
 `0x82D16BA0`. The direct call skips the helper's later mode-two tail. A
-separate mode-two call for items 219 and 220 can enter that unclassified tail;
+separate mode-two call for items 219 and 220 can enter that tail;
 the branch census is in
 [`wonder-post-threshold-helper-boundary.json`](../../manifests/wonder-post-threshold-helper-boundary.json).
+At its terminal join, that conditional mode-two path clears two state bits
+and sets bit `0x10000` in shared status word `0x82FFE7C4` for index 19 or 20.
+No bit-specific consumer or victory meaning has been established. One player-matched path also
+updates a halfword at `0x830EF348 + 2*index`, whose meaning is unknown. See
+[`wonder-mode-two-terminal-state.json`](../../manifests/wonder-mode-two-terminal-state.json).
 Text and art-token consumers, complete layouts, final runtime costs, and most
 gameplay effects remain unresolved. The exact cost inputs are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).

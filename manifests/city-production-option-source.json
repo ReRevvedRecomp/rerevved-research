@@ -13,7 +13,7 @@
     "selectionInput": "0x82E01620",
     "wonderGenerator": "0x82CE2FD0",
     "buildingGenerator": "0x82CED700",
-    "boundary": "This packet establishes the production-choice child, its option-vector path, and the local wonder enumeration bound. It does not establish a global wonder-validity rule, all building-list predicates, runtime list contents, or the availability of other choice paths."
+    "boundary": "This packet establishes the production-choice child, its option-vector path, the local wonder enumeration bound, and the initialized building-list bound. It does not establish a global validity rule, all building-list predicates, runtime list contents, or the availability of other choice paths."
   },
   "dependencies": [
     { "topic": "city-production-choice-submit", "use": "Provides the child +0x440 category and +0x448 selected item consumed by the command-five handler." },
@@ -35,7 +35,8 @@
   },
   "buildingChoice": {
     "source": "At 0x82E017F4 the parent calls 0x82CED7E8 with mode 1 for the unit array; at 0x82E01804 it calls 0x82CED700 with mode 2 for the building array. 0x82CED700 calls the large 0x82CEBC38 city-list generator, copies its output from a 100-word scratch array after leading negative values, and returns the copied count.",
-    "qualification": "0x82CEBC38 has city-state, map, technology, and building checks across a large body. Its full candidate range and predicates were not closed in this bounded packet. The initialized building records 100 through 122 and cost helper's broader 100 through 199 range must not be equated with menu availability."
+    "modeAndLoop": "0x82CEBC38 preserves incoming mode 2. At 0x82CEC5D4 it takes the bit-one path; at 0x82CEC644 its clear bit zero skips the unit-output loop. If its building-loop guard is nonzero, the loop at 0x82CEC878 reads live count 0x830E45CC and, after local conditions, appends index+100 at 0x82CECA38 through 0x82CECA40 for indices below that count. The initializer at 0x82D251A0 through 0x82D251AC writes 23 to that count. With that initialized count, this list path can append building IDs 100 through 122 and no higher building ID from this loop.",
+    "qualification": "0x82CEBC38 has city-state, map, technology, and building checks across a large body. The predicates deciding which IDs appear remain unclosed. The count is read from a live global; later indirect mutation and runtime list contents were not observed. The cost helper's broader 100 through 199 range is not a menu-validity rule."
   },
   "currentEvidence": {
     "method": "Foreground read-only Ghidra exact-word, reference, function, and bounded raw-store queries against the pinned image. Generated-code corroboration was restricted to the exact parent, constructor, option-copy, selection, and four category-generator functions when Ghidra truncated at save/restore thunks.",
@@ -43,8 +44,10 @@
       "ghidra/DumpMemoryWords.java:0x82125548,0x82DFC58C,0x82E0197C radius=16",
       "ghidra/FindRawFieldStores.java:[0x82DFB000,0x82E03000) offsets=0x434..0x450 cap=128 hits=54 truncated=false",
       "ghidra/DumpMemoryWords.java:0x82CE3034,0x82DFF344,0x82E01680 radius=40",
+      "ghidra/DumpMemoryWords.java:0x82CED784,0x82E01804 radius=5",
+      "ghidra/DumpMemoryWords.java:0x82D251AC,0x82CEC5D4,0x82CEC644,0x82CEC878,0x82CECA30,0x82CECA4C radius=10",
       "ghidra/DumpFunctions.java:0x82CF8240",
-      "generated:rerevved/sub_82E01888,sub_82E017D8,sub_82DFC528,sub_82DFF310,sub_82E01620,sub_82CE2FD0,sub_82CED700"
+      "generated:rerevved/sub_82E01888,sub_82E017D8,sub_82DFC528,sub_82DFF310,sub_82E01620,sub_82CE2FD0,sub_82CED700,sub_82CEBC38:0x82CEC5D4..0x82CECA4C"
     ],
     "qualification": "The mutable 0x830E5148 table and list options were not observed at runtime. Ghidra decompilation truncates several relevant functions at save/restore thunks; exact raw words and narrow generated-code dataflow corroborate the reported branches."
   },
@@ -52,7 +55,7 @@
     "Do not treat matching object offsets as ownership proof; 0x82E03528 is a different CityList class.",
     "Do not infer that IDs 233 through 236 are absent definitions or globally unusable from this one 33-entry menu loop.",
     "Do not infer live menu contents from zero-initialized mutable table slots or from the 0 through 32 loop bound.",
-    "Do not claim complete building validity from the 100-word scratch capacity or the initialized record block."
+    "Do not claim complete building validity from the 100-word scratch capacity, the initialized 23-count, or the initialized record block."
   ],
-  "conclusion": "The actual production-choice child receives a filtered vector of IDs from category-specific parent arrays and copies an in-range vector entry to the selected-item field read by the command-five handler. The wonder array generator tests exactly normalized indices 0 through 32 and can emit IDs 200 through 232; the runtime sentinel and eligibility result decide which of those appear. Building-list predicates, other UI paths, and global validity remain unresolved."
+  "conclusion": "The actual production-choice child receives a filtered vector of IDs from category-specific parent arrays and copies an in-range vector entry to the selected-item field read by the command-five handler. The wonder array generator tests exactly normalized indices 0 through 32 and can emit IDs 200 through 232; the runtime sentinel and eligibility result decide which appear. The building path uses mode 2 and a live count initialized to 23, so its indexed append loop yields only IDs 100 through 122 under that initialized count. Building-list predicates, later count mutation, other UI paths, and global validity remain unresolved."
 }

@@ -133,8 +133,10 @@ checks the selected vector index before forwarding an item. Its wonder-array
 generator tests exactly normalized indices 0 through 32, so this UI path can
 offer wonder IDs 200 through 232; the mutable runtime slot and wonder gate
 decide which appear. Initialized wonder IDs 233 through 236 are outside this
-choice loop. The building array comes from a larger city-list generator whose
-full predicates remain unresolved. The branch taken in the Barracks session
+choice loop. The building array uses a live count initialized to 23 and an
+index-plus-100 append loop, yielding IDs 100 through 122 under that count.
+Its availability predicates and any later count mutation remain unresolved.
+The branch taken in the Barracks session
 was not observed. See
 [`city-production-choice-submit.json`](../../manifests/city-production-choice-submit.json)
 and [`city-production-option-source.json`](../../manifests/city-production-option-source.json).

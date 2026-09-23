@@ -31,7 +31,7 @@
     "generator": "Parent setup calls 0x82CE2FD0 at 0x82E01814 with the city index and the parent wonder array at +0x76C. The generator has an early city-state branch: city flags +0x24 bit 0x400 plus current item +0x38 at least 200 returns zero.",
     "loop": "At 0x82CE3034 through 0x82CE3068, the generator walks 33 eight-byte slots from runtime table 0x830E5148 to exclusive end 0x830E5250. It only tests a slot when its first signed word equals -1; it calls 0x82CF3608 with normalized index 0 through 32 and signed city-owner byte, and appends index+200 only when that helper returns nonzero. It returns the appended count.",
     "bound": "This production-choice generator can append only item IDs 200 through 232. Initialized definition IDs 233 through 236 are outside its fixed loop. This is a local UI-enumeration bound, not a global definition-table end or a proof that another path cannot use those IDs.",
-    "state": "The 33 loop slots are zero in the pinned image, but wonder-claim-slot-state establishes a 0x108-byte all-FF reset and a mode-one owner/city writer for this mutable table. Neither static path establishes live values or which options appeared in the reported game session."
+    "state": "The 33 loop slots are zero in the pinned image, but wonder-claim-slot-state establishes a 0x108-byte all-FF reset and a mode-one owner/city writer for this mutable table. Its one-city runtime observation found both words at -1 in all 33 slots and nonzero eligibility for indices 2, 8, 11, 12, and 14 through 18. Other menu states and the final option vector were not observed."
   },
   "buildingChoice": {
     "source": "At 0x82E017F4 the parent calls 0x82CED7E8 with mode 1 for the unit array; at 0x82E01804 it calls 0x82CED700 with mode 2 for the building array. 0x82CED700 calls the large 0x82CEBC38 city-list generator, copies its output from a 100-word scratch array after leading negative values, and returns the copied count.",
@@ -49,12 +49,12 @@
       "ghidra/DumpFunctions.java:0x82CF8240",
       "generated:rerevved/sub_82E01888,sub_82E017D8,sub_82DFC528,sub_82DFF310,sub_82E01620,sub_82CE2FD0,sub_82CED700,sub_82CEBC38:0x82CEC5D4..0x82CECA4C"
     ],
-    "qualification": "The mutable 0x830E5148 table and list options were not observed at runtime. Ghidra decompilation truncates several relevant functions at save/restore thunks; exact raw words and narrow generated-code dataflow corroborate the reported branches."
+    "qualification": "One city-menu pass observed the mutable 0x830E5148 table and gate returns, but not the final list options. Ghidra decompilation truncates several relevant functions at save/restore thunks; exact raw words and narrow generated-code dataflow corroborate the reported branches."
   },
   "guards": [
     "Do not treat matching object offsets as ownership proof; 0x82E03528 is a different CityList class.",
     "Do not infer that IDs 233 through 236 are absent definitions or globally unusable from this one 33-entry menu loop.",
-    "Do not infer live menu contents from zero-initialized mutable table slots or from the 0 through 32 loop bound.",
+    "Do not generalize the one observed menu pass to other city states or infer final option-vector contents from this probe.",
     "Do not claim complete building validity from the 100-word scratch capacity, the initialized 23-count, or the initialized record block."
   ],
   "conclusion": "The actual production-choice child receives a filtered vector of IDs from category-specific parent arrays and copies an in-range vector entry to the selected-item field read by the command-five handler. The wonder array generator tests exactly normalized indices 0 through 32 and can emit IDs 200 through 232; the runtime sentinel and eligibility result decide which appear. The building path uses mode 2 and a live count initialized to 23, so its indexed append loop yields only IDs 100 through 122 under that initialized count. Building-list predicates, later count mutation, other UI paths, and global validity remain unresolved."

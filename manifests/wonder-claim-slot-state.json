@@ -12,7 +12,7 @@
     "resetFunction": "0x82D05D50",
     "postThresholdWriter": "0x82D16BA0",
     "menuReader": "0x82CE2FD0",
-    "boundary": "This packet identifies one reset and one completion-path writer for 33 slots. It does not prove when the reset runs, save/load parity, all table writers, actual runtime slot values, global wonder validity, or construction effects."
+    "boundary": "This packet identifies one reset and one completion-path writer for 33 slots, plus one observed city-menu pass. It does not prove when the reset runs, save/load parity, all table writers, global wonder validity, or construction effects."
   },
   "dependencies": [
     { "topic": "city-production-option-source", "use": "Establishes the 33-slot -1 test and 200 through 232 menu output range." },
@@ -22,7 +22,7 @@
   "reset": {
     "address": "0x82D060C4 through 0x82D060D4",
     "action": "Inside 0x82D05D50, r3 receives table base 0x830E5148, r4 receives -1, and r5 receives 0x108 bytes before direct call to 0x827F7BB0. This sets all bytes of the 33 eight-byte slots to 0xFF on that path.",
-    "qualification": "The image's zero-filled bytes are pre-runtime content. This call establishes a static reset path; its execution timing and live values were not observed."
+    "qualification": "The image's zero-filled bytes are pre-runtime content. This call establishes a static reset path; its execution timing was not observed. The separate menu observation found -1 in all 33 live slots for one city state."
   },
   "claimWrite": {
     "address": "0x82D16BC8 through 0x82D16C14",
@@ -30,7 +30,15 @@
     "fields": "At 0x82D16BF4 index*8 selects a slot. 0x82D16C08 writes the city's signed owner byte to first word +0x00. 0x82D16C10 writes incoming city index r4 to second word +0x04. The helper then calls 0x82D00480 with an owner/index-derived value; that call's meaning is outside this packet.",
     "qualification": "The accepted city-update caller reaches this helper only after sufficient production and the separate nonzero eligibility gate. These are static writes; no wonder construction or effect was observed at runtime."
   },
-  "menuUse": "At 0x82CE3038 through 0x82CE3040 the menu generator loads slot first word and compares it with -1, then calls 0x82CF3608 only when it matches. The reset and mode-one writer provide a local unclaimed/claimed interpretation for this equality; other writers and restored state remain unclassified.",
+  "menuUse": "At 0x82CE3038 through 0x82CE3040 the menu generator loads slot first word and compares it with -1, then calls 0x82CF3608 only when it matches. The reset and mode-one writer provide a local unclaimed/claimed interpretation for this equality; other writers and restored state remain unclassified. One observed pass had both slot words equal to -1 for every index 0 through 32.",
+  "runtimeObservation": {
+    "date": "2026-09-23",
+    "method": "A default-off, read-only scratch Title observer ran at 0x82CE3034 before each slot read and at 0x82CE3050 after the eligibility call. The owner opened one city wonder menu and exited normally (process exit 0). The probe logged one marker-1 pass with exactly 33 sequential slot events and 33 matched post-call results, without an incomplete-pass event.",
+    "provenance": "Supported 0.0.3.2 image pinned by image.json; scratch Title source commit 4ae5e9c0a03729afeb6ec905998f43950e01e139 plus the default-off observer; ReXGlue SDK commit 1cbd9a6d06ab06b8e9bffbbf4a0dc80fe44b6f27. Private runtime log SHA-256 EADA7CFA6F6DBC1ED59D309A02DB3ED6A231D6A0F1762313FE339D9FB218FF42.",
+    "slotValues": "For normalized indices 0 through 32, the slot pointer advanced from 0x830E5148 to 0x830E5248 in eight-byte steps; both +0x00 and +0x04 words were 0xFFFFFFFF and each eight-byte read was valid. City byte offset r25 was 3760 (0xEB0) throughout.",
+    "eligibility": "The post-call r3 value was 1 for indices 2, 8, 11, 12, and 14 through 18; it was 0 for the other 24 indices. By the accepted append branch, this invocation could append IDs 202, 208, 211, 212, and 214 through 218. The probe did not record the final option vector or prove these items were selected or built.",
+    "limit": "One city and one menu invocation establish neither a global validity rule nor other gameplay states. The pass never tested definition IDs 233 through 236, which lie outside this menu's 33-slot loop. It did not observe reset timing, slot writes, save/load, or wonder effects."
+  },
   "currentEvidence": {
     "method": "Foreground read-only Ghidra exact raw-word and capped split-constant scans against the pinned image, followed by narrow generated-code corroboration of exact reset and helper windows where Ghidra lacks containing functions.",
     "locators": [
@@ -39,18 +47,13 @@
       "generated:rerevved/sub_82D05D50:0x82D060C4..0x82D060D4",
       "generated:rerevved/sub_82D16BA0:0x82D16BC8..0x82D16C14"
     ],
-    "runtimeObserved": false
+    "runtimeObserved": true,
+    "runtimeLocator": "runtime:wonder_menu_slot_probe:2026-09-23:marker=1"
   },
   "guards": [
-    "Do not infer live -1 values solely from image zeros or the presence of a reset call.",
+    "Do not generalize the observed -1 values from one city-menu pass to other cities, turns, or saves.",
     "Do not equate the 33-slot table with the 37 initialized wonder definitions.",
     "Do not assign save/load, other writer, effect, or multiplayer ownership semantics from these two local paths."
   ],
-  "nextObservation": {
-    "authorization": "Plan only. A new Title runtime probe requires separate user authorization and must not be run from this Research task without it.",
-    "placement": "Default-off, one-menu probe at 0x82CE3034 before each slot read and 0x82CE3050 immediately after the 0x82CF3608 eligibility call. No other hooks are needed for this discriminator.",
-    "requiredFields": "For each first-hook event log normalized index r30, city byte-offset r25, both words at slot pointer r31, and a per-invocation marker. For each second-hook event log r30 and returned r3, with the same marker. Record at most one complete 33-index menu pass and at most 33 post-call results; do not sample other gameplay.",
-    "stopCondition": "The owner opens one city's wonder choices and exits normally. A complete pass includes exactly normalized indices 0 through 32; correlate each -1 first-word slot with the second-hook return to establish which IDs this menu admitted in that state. Any incomplete pass remains inconclusive. This still does not test IDs 233 through 236, which this menu never enumerates."
-  },
-  "conclusion": "The city wonder menu's -1 slot test has an explicit 0x108-byte all-FF reset path and an accepted 0-through-32 mode-one completion-path writer that stores owner and city index in the same slots. The exact runtime table contents, save/load handling, and other consumers remain unresolved."
+  "conclusion": "The city wonder menu's -1 slot test has an explicit 0x108-byte all-FF reset path and an accepted 0-through-32 mode-one completion-path writer that stores owner and city index in the same slots. One complete live pass observed both words at -1 in all 33 slots, with nonzero eligibility only for indices 2, 8, 11, 12, and 14 through 18. Other states, save/load handling, and other consumers remain unresolved."
 }

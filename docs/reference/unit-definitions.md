@@ -144,7 +144,9 @@ offer wonder IDs 200 through 232; the mutable runtime slot and wonder gate
 decide which appear. Initialized wonder IDs 233 through 236 are outside this
 choice loop. A static reset fills its 33 mutable claim slots with -1; the
 accepted mode-one completion helper writes owner and city index into a slot.
-Live slot values remain unobserved. See
+One live city-menu pass found both words at -1 in all 33 slots; its eligibility
+call returned nonzero for indices 2, 8, 11, 12, and 14 through 18. This
+observes one city state, not a global validity rule. See
 [`wonder-claim-slot-state.json`](../../manifests/wonder-claim-slot-state.json).
 The building array uses a live count initialized to 23 and an
 index-plus-100 append loop, yielding IDs 100 through 122 under that count.

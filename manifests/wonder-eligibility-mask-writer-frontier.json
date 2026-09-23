@@ -26,7 +26,8 @@
     "boundary": "The displacement scan covers decoded register-plus-0x08 writes inside these Ghidra-defined functions. It does not prove the absence of computed, indexed, indirect, constructor, or unlisted writes."
   },
   "dependencies": [
-    { "topic": "wonder-eligibility-mask-source", "use": "Identifies the observed getter and frontend-root +0x08 source." }
+    { "topic": "wonder-eligibility-mask-source", "use": "Identifies the observed getter and frontend-root +0x08 source." },
+    { "topic": "frontend-root-publication-mask-init", "use": "Identifies a zero initialization in the constructor outside this direct-reference-owner census." }
   ],
   "currentEvidence": {
     "method": "One exact-reference query, seven bounded field-write batches, and one exact initialized-word query ran in the canonical version-1.3 Ghidra project, foreground and read-only. Three candidate function bodies were decompiled to compare each store base with the global-root read.",
@@ -51,5 +52,5 @@
     "Do not assign gameplay meanings to the mask bits from this census.",
     "Do not extend this direct-reference result to constructors, computed addresses, indirect references, or functions missing from Ghidra's listing."
   ],
-  "conclusion": "None of the 60 functions with a direct Ghidra reference to 0x82FFD624 contains a proved store to the root's +0x08 word under this bounded scan. The writer and bit meanings remain unresolved. A decisive next observation would identify the actual base object and value at one +0x08 store, either by a narrower constructor dataflow trace or an authorized runtime write watch on the resolved root pointer."
+  "conclusion": "None of the 60 functions with a direct Ghidra reference to 0x82FFD624 contains a proved store to the root's +0x08 word under this bounded scan. A separate constructor writes the initial zero; later writers and bit meanings remain unresolved. A decisive next observation would identify a later +0x08 write and its value source."
 }

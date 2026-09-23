@@ -302,8 +302,10 @@ Indices 19 and 20 use separate state checks mapped in
 All 60 functions with direct Ghidra references to the frontend-root pointer
 were checked for a `+0x08` store; none yielded a proved write to that root
 field. This [bounded writer census](../../manifests/wonder-eligibility-mask-writer-frontier.json)
-does not cover indirect or constructor paths. The mask-field writer, its bit
-meanings, other virtual targets, special-branch state owners, runtime
+does not cover indirect or constructor paths. The application-owner base
+constructor initializes this field to zero before its pointer is published
+through `0x82FFD624`; see the [publication and initialization record](../../manifests/frontend-root-publication-mask-init.json).
+Later field writers, bit meanings, other virtual targets, special-branch state owners, runtime
 eligibility, and effects remain unresolved. See
 [`wonder-eligibility-virtual-target.json`](../../manifests/wonder-eligibility-virtual-target.json)
 and

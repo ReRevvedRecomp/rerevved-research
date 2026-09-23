@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0193",
+  "topic": "frontend-root-publication-mask-init",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the application owner constructed at 0x82E83EA8 become the frontend root at 0x82FFD624, and how is its +0x08 word initialized?",
+  "scope": {
+    "publisher": "0x82E83EA8",
+    "global": "0x82FFD624",
+    "allocationCall": "0x82E83EE4",
+    "allocationSize": "0xD4",
+    "derivedConstructor": "0x82E294D0",
+    "baseConstructor": "0x82E2AFD0",
+    "fieldOffset": "0x08",
+    "boundary": "This packet follows the direct allocation, constructor, and publication path and the initial +0x08 store. It does not find later field writers or establish bit meanings, runtime allocation success, or gameplay effects."
+  },
+  "dependencies": [
+    { "topic": "wonder-eligibility-mask-source", "use": "Identifies frontend-root +0x08 as the observed wonder-mask getter's source." },
+    { "topic": "scene-active-gate-publication", "use": "Identifies the derived constructor and application-owner vtable 0x82121100." },
+    { "topic": "gameplay-main-frame-boundary", "use": "Identifies the base constructor's callback-registration role." }
+  ],
+  "staticResult": {
+    "allocationAndPublication": "At 0x82E83EE0 the caller requests 0xD4 bytes from 0x82D3DBA0. Its nonzero branch calls 0x82E294D0 at 0x82E83EF0; the zero branch assigns r3 = 0 at 0x82E83EF8. Both converge on the word store at 0x82E83F04 to global 0x82FFD624. The nonzero branch can publish the constructed object pointer; actual runtime success was not observed.",
+    "constructorJoin": "0x82E294D0 preserves its incoming object pointer in r31 at 0x82E294DC, calls 0x82E2AFD0 at 0x82E294E0, installs vtable 0x82121100 at object +0x00 at 0x82E294F4, and restores the same pointer to r3 at 0x82E29560 before the epilogue thunk. The object published through 0x82FFD624 is therefore the same application owner represented by catalog RVA-STR-0024; catalog RVA-STR-0038 remains its partial frontend-root field view.",
+    "initialMaskWord": "0x82E2AFD0 preserves the object pointer in r31 at 0x82E2AFDC, sets r30 to zero at 0x82E2AFF0, and stores r30 to object +0x08 at 0x82E2B00C. This establishes initialization to zero, not the later mask writer or bit meaning.",
+    "otherRawCandidate": "The only other raw eight-word split-constant candidate for 0x82FFD624 loads that global at 0x82E2D0C0; it is not a publication store."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "The allocation branch, global publication, initial field value, later field transitions, and wonder eligibility effects were not observed in this packet."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only raw split-constant query for 0x82FFD624 found two candidates without reaching cap 64. Bounded raw-word windows resolved the read and the conditional store, followed by exact windows in the two constructor bodies. Narrow generated-code windows corroborated branch, return, and thunk behavior where Ghidra's listing is truncated.",
+    "entries": [
+      { "role": "raw global candidates", "address": "0x82FFD624", "result": "Two candidates under an eight-word lookahead, cap 64, not truncated." },
+      { "role": "other candidate read", "address": "0x82E2D0C0", "result": "Loads the global word." },
+      { "role": "conditional global publication", "address": "0x82E83EE8 through 0x82E83F04", "result": "Allocation-result branch calls the derived constructor on nonzero and stores its returned pointer to 0x82FFD624; the zero branch stores zero." },
+      { "role": "derived constructor", "address": "0x82E294DC through 0x82E29560", "result": "Preserves the original object pointer, calls the base constructor, installs vtable 0x82121100, then restores the pointer to r3." },
+      { "role": "initial +0x08 writer", "address": "0x82E2AFDC through 0x82E2B00C", "result": "The base constructor stores zero to the original object's +0x08 word at 0x82E2B00C." }
+    ],
+    "locators": [
+      "ghidra/FindSplitConstantCandidates.java:0x82FFD624 lookahead=8 cap=64",
+      "ghidra/DumpMemoryWords.java:0x82E2D0B0,0x82E83EFC radius=12",
+      "ghidra/DumpMemoryWords.java:0x82E294D0..0x82E29578,0x82E2AFD0..0x82E2B020 radius=0",
+      "generated:rerevved/sub_82E83EA8",
+      "generated:rerevved/sub_82E294D0",
+      "generated:rerevved/sub_82E2AFD0"
+    ],
+    "qualification": "Ghidra does not define the caller body at 0x82E83EE4 and truncates the constructor functions at save/restore thunks. Exact image words establish the branches and stores; narrow generated functions corroborate the return path. The raw candidate scan excludes address construction outside its lis/addi-or-ori eight-word pattern."
+  },
+  "guards": [
+    "Do not interpret the constructor's zero initialization as a permanent mask value or evidence that wonder indices 21 through 32 are always gated out.",
+    "Do not assign meaning to bits zero through two without a later writer and consumer evidence.",
+    "Do not treat the conditional allocation path as a runtime observation of pointer publication."
+  ],
+  "conclusion": "The startup path conditionally publishes a 0xD4-byte application owner with vtable 0x82121100 through frontend-root global 0x82FFD624. Its base constructor initializes +0x08 to zero. The later producer of the word consumed by the wonder-mask getter, its bit meanings, runtime transitions, and effects remain unresolved."
+}

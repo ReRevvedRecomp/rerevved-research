@@ -117,8 +117,12 @@ has 37 exact records, IDs 200 through 236. Each has a name at `+0x00`, signed
 production factor at `+0x40`, short token at `+0x4A`, art token at `+0x8A`,
 and stored effect description at `+0xCA`; record-specific byte boundaries
 remain in the identity manifests. The adjacent halfword at `+0x42` is
-preserved in those packets but remains semantically unnamed. The bounded
-consumer frontier does not resolve indexed, indirect, or undecoded readers.
+preserved in those packets but remains semantically unnamed. Ghidra's reference
+manager returned no entries for the exact starts of the 217 accepted building
+and wonder text fields; this does not resolve indexed, indirect, computed-address,
+interior-string, or undecoded readers. See the [bounded text-field reference
+census](../../manifests/building-wonder-text-field-reference-boundary.json) and
+[consumer frontier](../../manifests/building-wonder-consumer-frontier.json).
 The next twelve complete stride positions
 are zero and the following position contains non-wonder data. Neither this
 boundary nor the cost helper proves a program-wide valid-ID rule. Identity

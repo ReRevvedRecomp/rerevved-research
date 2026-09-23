@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0189",
+  "topic": "building-wonder-text-field-reference-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the Ghidra reference manager contain direct references to any initialized building or wonder text-field start address?",
+  "scope": {
+    "buildings": {
+      "itemIds": "100 through 122",
+      "recordCount": 23,
+      "fieldOffsets": ["0x00", "0x20", "0x4C"],
+      "targetCount": 69
+    },
+    "wonders": {
+      "itemIds": "200 through 236",
+      "recordCount": 37,
+      "fieldOffsets": ["0x00", "0x4A", "0x8A", "0xCA"],
+      "targetCount": 148
+    },
+    "targetConstruction": "For each explicit record address in the identity manifests, add only the listed field offsets. No missing IDs or stride-only candidates were queried.",
+    "totalDistinctTargets": 217,
+    "boundary": "The query asks Ghidra's reference manager for references to exact field-start addresses. It does not scan instruction bytes for computed addresses or resolve references to enclosing records, interior string bytes, indexed fields, indirect dispatch, or code omitted from the listing."
+  },
+  "dependencies": [
+    { "topic": "building-record-identities-100-122", "use": "Provides the 23 exact building record addresses and stored text-field offsets." },
+    { "topic": "wonder-record-identities", "use": "Provides exact wonder record addresses for IDs 200 through 204." },
+    { "topic": "wonder-record-identities-205-209", "use": "Provides exact wonder record addresses for IDs 205 through 209." },
+    { "topic": "wonder-record-identities-210-214", "use": "Provides exact wonder record addresses for IDs 210 through 214." },
+    { "topic": "wonder-record-identities-215-219", "use": "Provides exact wonder record addresses for IDs 215 through 219." },
+    { "topic": "wonder-record-identity-220", "use": "Provides the exact wonder record address for ID 220." },
+    { "topic": "wonder-record-identity-221", "use": "Provides the exact wonder record address for ID 221." },
+    { "topic": "wonder-record-identity-222", "use": "Provides the exact wonder record address for ID 222." },
+    { "topic": "wonder-record-identity-223", "use": "Provides the exact wonder record address for ID 223." },
+    { "topic": "wonder-record-identity-224", "use": "Provides the exact wonder record address for ID 224." },
+    { "topic": "wonder-record-identity-225", "use": "Provides the exact wonder record address for ID 225." },
+    { "topic": "wonder-record-identity-226", "use": "Provides the exact wonder record address for ID 226." },
+    { "topic": "wonder-record-identity-227", "use": "Provides the exact wonder record address for ID 227." },
+    { "topic": "wonder-record-identity-228", "use": "Provides the exact wonder record address for ID 228." },
+    { "topic": "wonder-record-identity-229", "use": "Provides the exact wonder record address for ID 229." },
+    { "topic": "wonder-record-identity-230", "use": "Provides the exact wonder record address for ID 230." },
+    { "topic": "wonder-record-identity-231", "use": "Provides the exact wonder record address for ID 231." },
+    { "topic": "wonder-record-identity-232", "use": "Provides the exact wonder record address for ID 232." },
+    { "topic": "wonder-record-identity-233", "use": "Provides the exact wonder record address for ID 233." },
+    { "topic": "wonder-record-identity-234", "use": "Provides the exact wonder record address for ID 234." },
+    { "topic": "wonder-record-identity-235", "use": "Provides the exact wonder record address for ID 235." },
+    { "topic": "wonder-record-identity-236", "use": "Provides the exact wonder record address for ID 236." }
+  ],
+  "currentEvidence": {
+    "method": "One foreground read-only DumpReferences.java query against the canonical version-1.3 Ghidra project, using the 217 exact field-start targets constructed from the accepted identity manifests.",
+    "entries": [
+      {
+        "role": "Ghidra reference-manager census",
+        "queriedTargets": 217,
+        "zeroReferenceTargets": 217,
+        "nonzeroReferenceTargets": 0,
+        "result": "Every requested target had References: 0, and all 217 result sections were emitted."
+      }
+    ],
+    "locators": ["ghidra/DumpReferences.java:217 exact targets from the identity manifests"],
+    "qualification": "This is a bounded negative for references recorded by Ghidra to these exact field-start addresses. It does not establish that the fields have no consumers, and no runtime behavior was observed."
+  },
+  "guards": [
+    "Do not interpret zero reference-manager entries as proof that text or art tokens are unused.",
+    "Do not infer absence of indexed, indirect, computed-address, interior-string, or undecoded consumers from this query.",
+    "Do not infer implemented gameplay effects from stored descriptions or this bounded reference result."
+  ],
+  "conclusion": "Ghidra's reference manager contains no recorded references to the exact starts of the 69 initialized building text fields and 148 initialized wonder text fields queried here. Token and description consumers remain unresolved; the result adds no catalog entity or relation."
+}

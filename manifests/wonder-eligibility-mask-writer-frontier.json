@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0192",
+  "topic": "wonder-eligibility-mask-writer-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Do functions with direct Ghidra references to frontend-root pointer global 0x82FFD624 contain a proved store to the root object's +0x08 word?",
+  "scope": {
+    "rootPointerGlobal": "0x82FFD624",
+    "initialImageWord": "0x00000000",
+    "fieldOffset": "0x08",
+    "knownReader": "0x82D7D2A8",
+    "referenceCount": 67,
+    "distinctContainingFunctions": 60,
+    "queryBatches": [
+      { "functions": ["0x82E87D18", "0x82DE6D58", "0x82D5F858", "0x82D83B38", "0x82DE0608", "0x82E60348", "0x82E60D38", "0x82E0FE98"], "instructionsScanned": 392, "syntacticStores": 2, "truncated": false },
+      { "functions": ["0x82E0FEA8", "0x82E0FEE8", "0x82E0FF50", "0x82E0FF68", "0x82E0FFA8"], "instructionsScanned": 30, "syntacticStores": 0, "truncated": false },
+      { "functions": ["0x82E77060", "0x82E76070", "0x82E75EB0", "0x82D90C58", "0x82E102F8", "0x82E102D8", "0x82E102A0", "0x82E10290", "0x82E103B8", "0x82E10338"], "instructionsScanned": 65, "syntacticStores": 0, "truncated": false },
+      { "functions": ["0x82E10320", "0x82E10308", "0x82E101F0", "0x82E101C0", "0x82E10650", "0x82E10638", "0x82E104E8", "0x82E17238", "0x82D960D0", "0x82D96020"], "instructionsScanned": 253, "syntacticStores": 0, "truncated": false },
+      { "functions": ["0x82E557A0", "0x82E554A8", "0x82D95590", "0x82E555A0", "0x82E54FD8", "0x82D9BF40", "0x82D7B250", "0x82E59EA0", "0x82E59D80", "0x82E59D60"], "instructionsScanned": 545, "syntacticStores": 0, "truncated": false },
+      { "functions": ["0x82DB8258", "0x82CFF1F8", "0x82CFF1A8", "0x82D7D2A8", "0x82D7D208", "0x82D7CE90", "0x82DC36B0", "0x82D25170", "0x82D84560", "0x82E4B0F8"], "instructionsScanned": 323, "syntacticStores": 0, "truncated": false },
+      { "functions": ["0x82E4AF68", "0x82D8A6A0", "0x82D898D0", "0x82E4F3E8", "0x82E0EC88", "0x82E0EC48", "0x82D8D430"], "instructionsScanned": 278, "syntacticStores": 1, "truncated": false }
+    ],
+    "stopCondition": "Stop after all 60 direct-reference owners are checked or after a store is proved to use the pointer loaded from 0x82FFD624 as its base. Do not expand to functions without a direct recorded reference in this packet.",
+    "boundary": "The displacement scan covers decoded register-plus-0x08 writes inside these Ghidra-defined functions. It does not prove the absence of computed, indexed, indirect, constructor, or unlisted writes."
+  },
+  "dependencies": [
+    { "topic": "wonder-eligibility-mask-source", "use": "Identifies the observed getter and frontend-root +0x08 source." }
+  ],
+  "currentEvidence": {
+    "method": "One exact-reference query, seven bounded field-write batches, and one exact initialized-word query ran in the canonical version-1.3 Ghidra project, foreground and read-only. Three candidate function bodies were decompiled to compare each store base with the global-root read.",
+    "entries": [
+      { "role": "initial root pointer", "address": "0x82FFD624", "result": "The program image word is zero. This does not identify when or how a live root pointer is published." },
+      { "role": "direct reference census", "address": "0x82FFD624", "result": "Ghidra returned 67 READ references in 60 distinct containing functions." },
+      { "role": "displacement-write census", "address": "+0x08", "result": "Seven batches scanned 1886 decoded instructions in the 60 functions without truncation and found three syntactic stores." },
+      { "role": "candidate store", "address": "0x82D5F8DC", "result": "A word store in 0x82D5F858 uses an object allocated in that function; its frontend-root read is at +0x5C, so this is not a proved root +0x08 write." },
+      { "role": "candidate store", "address": "0x82DE6D74", "result": "A byte store in 0x82DE6D58 uses the value decompiled as returned by thunk 0x827F7C88, not the visible frontend-root read at +0x54. The decompilation reports truncated control flow." },
+      { "role": "candidate store", "address": "0x82D8D4E4", "result": "A word store in 0x82D8D430 uses the value decompiled as returned by thunk 0x827F7C88, while the visible frontend-root read is at +0x04." }
+    ],
+    "locators": [
+      "ghidra/DumpReferences.java:0x82FFD624",
+      "ghidra/DumpMemoryWords.java:0x82FFD624 radius=0",
+      "ghidra/FindFieldAccesses.java:+0x08 WRITE; seven exact function batches in scope.queryBatches",
+      "ghidra/DumpFunctions.java:0x82D5F858,0x82DE6D58,0x82D8D430"
+    ],
+    "qualification": "No candidate was proved to store to frontend-root +0x08. Ghidra's thunk interpretation and truncated control flow limit the candidate-body inference. This is a direct-reference-owner census, not a program-wide writer search; no runtime mask value or bit transition was observed."
+  },
+  "guards": [
+    "Do not infer that frontend-root +0x08 has no writer from these three unproved candidate stores.",
+    "Do not assign gameplay meanings to the mask bits from this census.",
+    "Do not extend this direct-reference result to constructors, computed addresses, indirect references, or functions missing from Ghidra's listing."
+  ],
+  "conclusion": "None of the 60 functions with a direct Ghidra reference to 0x82FFD624 contains a proved store to the root's +0x08 word under this bounded scan. The writer and bit meanings remain unresolved. A decisive next observation would identify the actual base object and value at one +0x08 store, either by a narrower constructor dataflow trace or an authorized runtime write watch on the resolved root pointer."
+}

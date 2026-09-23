@@ -299,8 +299,12 @@ values for IDs 200 through 236 are in
 [`wonder-outer-gate-record-fields.json`](../../manifests/wonder-outer-gate-record-fields.json).
 Indices 19 and 20 use separate state checks mapped in
 [`wonder-outer-gate-special-19-20.json`](../../manifests/wonder-outer-gate-special-19-20.json).
-The mask-field writer, its bit meanings, other virtual targets, special-branch
-state owners, runtime eligibility, and effects remain unresolved. See
+All 60 functions with direct Ghidra references to the frontend-root pointer
+were checked for a `+0x08` store; none yielded a proved write to that root
+field. This [bounded writer census](../../manifests/wonder-eligibility-mask-writer-frontier.json)
+does not cover indirect or constructor paths. The mask-field writer, its bit
+meanings, other virtual targets, special-branch state owners, runtime
+eligibility, and effects remain unresolved. See
 [`wonder-eligibility-virtual-target.json`](../../manifests/wonder-eligibility-virtual-target.json)
 and
 [`wonder-eligibility-mask-source.json`](../../manifests/wonder-eligibility-mask-source.json).

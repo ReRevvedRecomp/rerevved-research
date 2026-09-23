@@ -187,6 +187,12 @@ production-item behavior, not these field values or effects.
 | Wonder `+0x8A` | Stored art token, often repeated across records | Asset consumer and art binding |
 | Wonder `+0xCA` | Stored English effect description | Display reader and implemented gameplay effect |
 
+Generic `TechnologyAcquire` calls one other static consumer, `0x82CEA5A0`,
+with its technology ID. That function compares the ID with
+building `+0x42` and wonder `+0x44` while forming a local list. Its wonder
+loop spans 33 positions; the list's downstream meaning remains
+unresolved. See the [technology-field match](../../manifests/definition-technology-match-list.json).
+
 These are partial layouts, with no supported meaning for unlisted bytes.
 Editing a known signed factor can change the accepted static cost calculation
 for an initialized ID, subject to its later modifiers; it does not establish a

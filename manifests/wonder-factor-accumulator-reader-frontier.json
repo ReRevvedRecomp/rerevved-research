@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0198",
+  "topic": "wonder-factor-accumulator-reader-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the global updated from wonder +0x40 at 0x830ECCC8 have an identified reader or final-cost path?",
+  "scope": {
+    "global": "0x830ECCC8",
+    "copyFunction": "0x82D02AB8",
+    "copySite": "0x82D02B1C..0x82D02B2C",
+    "stopCondition": "Run raw split-constant queries with cap 32 for source and exact destination; verify one complete raw copy loop and stop before following enclosing-object or indirect consumers.",
+    "boundary": "This packet identifies one eight-word copy and bounded address-candidate searches. It does not identify the copied words' meaning, all computed readers, the destination's later use, or a final production-cost path."
+  },
+  "dependencies": [
+    { "topic": "wonder-factor-array-accumulation", "use": "Identifies the owner-indexed global factor accumulation at 0x830ECCC8." },
+    { "topic": "building-wonder-cost-identities", "use": "Distinguishes the accepted production-cost helper from this global-copy path." }
+  ],
+  "staticResult": {
+    "referenceCensus": "A raw split-constant query returned seven candidate pairs without truncation below cap 32: 0x82CB2F1C+0x82CB2F24, 0x82CC5768+0x82CC5770, 0x82CC578C+0x82CC5794, 0x82D02AF0+0x82D02AF8, 0x82D05384+0x82D0538C, 0x82D83038+0x82D83050, and 0x82E86E8C+0x82E86E98. These raw pairs are not a complete reader inventory.",
+    "copy": "At 0x82D02AF0..0x82D02B04, 0x82D02AB8 forms source 0x830ECCC8. At 0x82D02AC8..0x82D02AD4 it forms base 0x83122898, then 0x82D02B0C sets destination to base +0x4C = 0x831228E4. The 0x82D02B14 count of eight, ctr setup, word load at 0x82D02B1C, four-byte pointer increments, word store at 0x82D02B24, and backward branch at 0x82D02B2C copy eight words from 0x830ECCC8..0x830ECCE4 to 0x831228E4..0x83122900. The copy destination's purpose is not established.",
+    "otherCandidates": "Narrow generated-function inspection associated the other raw pairs with 0x82CC4040, 0x82D052C8, 0x82D82E88, and 0x82E86A30. Their base construction or indexed/delegated use does not establish a word's gameplay meaning. Ghidra has no containing function at the raw candidate sites.",
+    "destinationBoundary": "A follow-up decoded-materializer query scanned 654329 decoded instructions for exact destination 0x831228E4 and returned zero below cap 32. A raw split-constant query for that exact address also returned zero below cap 32. Neither query covers code that constructs the enclosing 0x83122898 base and adds +0x4C, or indexed readers of its eight words; destination use remains unresolved.",
+    "costBoundary": "A separate raw direct-caller census for the accepted cost helper 0x82CF1278 returned 21 callsites without truncation below cap 32. No direct edge from the six generated functions associated with the accumulator base pairs was established in the bounded check. Longer paths and indirect dispatch remain outside this packet."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No global value, copy execution, destination use, or final production-cost effect was observed at runtime."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra queries checked raw split-address candidates for source and destination, decoded exact-destination materializers, and direct callers of the accepted cost helper. A separate complete raw-word window verified the eight-word copy; narrow generated-function windows were used only to associate raw pairs with registered functions. Ghidra's decoded function bodies end at save thunks in these regions.",
+    "entries": [
+      { "role": "raw materializers", "address": "0x830ECCC8", "result": "Seven candidate pairs under cap 32, without truncation." },
+      { "role": "copy source", "address": "0x82D02AF0..0x82D02B04", "result": "Forms 0x830ECCC8 and moves it to the source pointer." },
+      { "role": "copy destination", "address": "0x82D02AC8..0x82D02B0C", "result": "Forms 0x831228E4 as the destination pointer." },
+      { "role": "copy loop", "address": "0x82D02B14..0x82D02B2C", "result": "Copies eight consecutive 32-bit words." }
+    ],
+    "locators": [
+      "ghidra/FindSplitConstantCandidates.java:0x830ECCC8 lookahead=8 cap=32",
+      "ghidra/FindDirectCallers.java:0x82CF1278 cap=32",
+      "ghidra/FindGlobalAddressAccesses.java:0x831228E4 cap=32",
+      "ghidra/FindSplitConstantCandidates.java:0x831228E4 lookahead=8 cap=32",
+      "ghidra/DumpMemoryWords.java:0x82D02B1C radius=24",
+      "generated:rerevved/sub_82D02AB8:0x82D02AC8..0x82D02B2C"
+    ],
+    "qualification": "The raw pair inventory is bounded by its query form, and Ghidra provides no enclosing functions at those sites. The copy is byte-address exact but its effect remains unknown."
+  },
+  "guards": [
+    "Do not identify the global or copied destination as the final cost without their consumers.",
+    "Do not treat seven raw materializers as all direct or indirect readers.",
+    "Do not infer a runtime copy or gameplay effect from static code."
+  ],
+  "conclusion": "One function copies eight words from the global wonder-factor accumulator to 0x831228E4. The destination's use and any link to final production cost remain unproved."
+}

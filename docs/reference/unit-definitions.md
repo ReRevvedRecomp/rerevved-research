@@ -115,6 +115,9 @@ and the subsequent wonder identity manifests through
 [`wonder-record-identity-236.json`](../../manifests/wonder-record-identity-236.json),
 plus the bounded
 [`wonder-record-byte-boundary-237-249.json`](../../manifests/wonder-record-byte-boundary-237-249.json).
+The bounded decoded city-item writer scan did not locate an item-selection or
+validity rule; its coverage limits are recorded in
+[`production-item-writer-decoded-frontier.json`](../../manifests/production-item-writer-decoded-frontier.json).
 Stored descriptions do not prove implemented effects. One bounded
 post-threshold branch for Hanging Gardens item 202 changes city population
 byte `+0x03` to `clamp(trunc((3*x+1)/2),0,31)` and calls two city helpers; no

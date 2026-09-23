@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0182",
+  "topic": "production-item-writer-decoded-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does a bounded decoded field-write scan reveal the producer or validity rule for city current production item +0x38?",
+  "scope": {
+    "field": "city +0x38 signed halfword current item",
+    "functionBand": "0x82CE0000 through 0x82D3FFFF",
+    "accessFilter": "decoded register-plus-0x38 WRITE operands in defined functions",
+    "resultCap": 32,
+    "boundary": "This is one exact-displacement decoded-instruction scan, not a complete city-field producer inventory. Indexed stores, aliases, undecoded function bodies, and code outside the selected address band are excluded."
+  },
+  "dependencies": [
+    { "topic": "non-unit-production-threshold-boundary", "use": "Establishes city +0x38 as the current production item read in the city update." },
+    { "topic": "building-completion-state-writer", "use": "Provides the accepted building completion call reached from that current item." },
+    { "topic": "wonder-eligibility-dispatch-boundary", "use": "Provides the accepted wonder gate reached from that current item." }
+  ],
+  "decodedScan": {
+    "scanRange": "[0x82CE0000,0x82D40000)",
+    "decodedInstructionsScanned": 8487,
+    "matches": [
+      { "function": "0x82CFA028", "store": "0x82CFA10C", "operation": "halfword at r3 +0x38 receives halfword from r4 +0x38 loaded at 0x82CFA108" },
+      { "function": "0x82D3EBE0", "store": "0x82D3EC7C", "operation": "word to r3 +0x38 within a sequence of adjacent word stores" },
+      { "function": "0x82D3EC90", "store": "0x82D3ED0C", "operation": "word to r3 +0x38 within a sequence of adjacent word stores" }
+    ],
+    "truncated": false,
+    "qualification": "The exact halfword match is a field copy, not an item choice or range check. The two word stores have no proved city-record base and are not classified as city item writers."
+  },
+  "callerClosure": {
+    "seed": "0x82D13978",
+    "callerDepth": 1,
+    "functions": ["0x82D13978", "0x82CEDF90"],
+    "decodedInstructionsScanned": 81,
+    "matches": 0,
+    "qualification": "The configured listing has only a short decoded prefix of the large city-update function. This zero does not establish absence of a writer in its complete body or callers."
+  },
+  "minimalTitleProbe": {
+    "purpose": "Identify the producer that changes the current production item when the player selects a known building or wonder in one city.",
+    "placement": "Default-off one-city data write watch at 0x8314FE28 + 0xBC*selectedCityIndex + 0x38, width two bytes, armed immediately before one natural production selection and stopped after the first changed-value write or normal menu exit.",
+    "requiredFields": "Selected city index, computed exact watched address, old and new signed halfword item IDs, guest program counter at write, guest r3 through r6, call return address, city owner byte +0x00, and the visible selected item name. A count cap of eight write events prevents unrelated repeated output.",
+    "decisionRule": "A changed-value write for a known initialized item identifies a concrete producer to inspect statically for its source and bounds; no write means this watch placement or city index must be checked before broadening. A single known-item write cannot establish a global valid-ID rule or unsupported-ID rejection.",
+    "status": "Prepared only; no Title probe was run or changed for this packet."
+  },
+  "currentEvidence": {
+    "method": "Two foreground read-only canonical-project FindFieldAccesses queries used exact offset +0x38 and WRITE filtering. The first bounded city-update caller depth to one; the second bounded the instruction-address band and stopped after at most 32 matches. A third foreground read-only raw-word query checked the three emitted store sites and the copy source.",
+    "entries": [
+      { "role": "decoded field-write cohort", "address": "0x82CE0000 through 0x82D3FFFF", "result": "Three exact-displacement writes among 8487 decoded instructions; cap 32 was not reached.", "confidence": "strong" },
+      { "role": "copy source", "address": "0x82CFA108 through 0x82CFA10C", "result": "The halfword at source +0x38 is copied to destination +0x38.", "confidence": "strong" },
+      { "role": "other stores", "address": "0x82D3EC7C and 0x82D3ED0C", "result": "Both are word stores in adjacent-field store sequences, without a proved city-record base.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/FindFieldAccesses.java:0x38 WRITE 0x82CE0000..0x82D40000 cap=32", "ghidra/FindFieldAccesses.java:0x38 WRITE 0x82D13978 callerDepth=1", "ghidra/DumpMemoryWords.java:0x82CFA10C,0x82D3EC7C,0x82D3ED0C radius=8", "generated:rerevved/sub_82CFA028"],
+    "qualification": "No runtime probe was performed. The scan's decoded-instruction and displacement limits preclude a program-wide negative claim."
+  },
+  "guards": [
+    "Do not call the halfword copy an item-selection or validity producer.",
+    "Do not identify the two word stores as city current-item stores without a proved city base.",
+    "Do not infer a global valid-ID rule or its absence from this bounded negative."
+  ],
+  "conclusion": "The bounded decoded WRITE scan finds no demonstrated item-selection or validity rule for city +0x38. Its only halfword store copies an input field, while two word stores lack a city-record base. The source of selected item IDs and any general building or wonder validity rule remain unresolved."
+}

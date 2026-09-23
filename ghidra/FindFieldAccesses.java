@@ -7,6 +7,9 @@
 //   REREVVED_CALLEE_DEPTH   optional non-negative integer, default 0
 //   REREVVED_BASE_REGS      optional comma-separated register names
 //   REREVVED_ACCESS_TYPES   optional READ,WRITE,READ_WRITE,ADDRESS filter
+//   REREVVED_MAX_HITS       optional positive result cap; zero means no cap
+//   REREVVED_SCAN_START_VA  optional inclusive instruction-address lower bound
+//   REREVVED_SCAN_END_VA    optional exclusive instruction-address upper bound
 //   REREVVED_DUMP_PATH      output path
 //@category ReRevved
 
@@ -49,6 +52,12 @@ public class FindFieldAccesses extends GhidraScript {
         Set<String> accessTypes = parseUpperSet(System.getenv("REREVVED_ACCESS_TYPES"));
         int callerDepth = parseDepth(System.getenv("REREVVED_CALLER_DEPTH"));
         int calleeDepth = parseDepth(System.getenv("REREVVED_CALLEE_DEPTH"));
+        int maxHits = parseMaxHits(System.getenv("REREVVED_MAX_HITS"));
+        long scanStart = parseAddressBound(System.getenv("REREVVED_SCAN_START_VA"), 0);
+        long scanEnd = parseAddressBound(System.getenv("REREVVED_SCAN_END_VA"), 0x100000000L);
+        if (scanStart >= scanEnd) {
+            throw new IllegalArgumentException("scan start must be below scan end");
+        }
         String outPath = requireEnv("REREVVED_DUMP_PATH");
 
         FunctionManager functions = currentProgram.getFunctionManager();
@@ -56,6 +65,7 @@ public class FindFieldAccesses extends GhidraScript {
             functions, seedVas, callerDepth, calleeDepth);
         long scanned = 0;
         long hits = 0;
+        boolean truncated = false;
 
         PrintWriter out = new PrintWriter(new FileWriter(outPath));
         try (out) {
@@ -64,6 +74,8 @@ public class FindFieldAccesses extends GhidraScript {
             out.println("Caller depth: " + callerDepth);
             out.println("Callee depth: " + calleeDepth);
             out.println("Access filter: " + System.getenv("REREVVED_ACCESS_TYPES"));
+            out.println("Max hits: " + maxHits);
+            out.printf("Scan range: [0x%08X, 0x%08X)%n", scanStart, scanEnd);
             if (!functionDepths.isEmpty()) {
                 out.println("Functions in scope:");
                 for (Map.Entry<Long, Integer> entry : functionDepths.entrySet()) {
@@ -73,9 +85,12 @@ public class FindFieldAccesses extends GhidraScript {
                 }
             }
 
-            InstructionIterator instructions = currentProgram.getListing().getInstructions(true);
+            InstructionIterator instructions = currentProgram.getListing().getInstructions(
+                toAddress(scanStart), true);
+            scan:
             while (instructions.hasNext() && !monitor.isCancelled()) {
                 Instruction instruction = instructions.next();
+                if (instruction.getAddress().getOffset() >= scanEnd) break;
                 Function function = functions.getFunctionContaining(instruction.getAddress());
                 if (function == null) continue;
                 long entry = function.getEntryPoint().getOffset();
@@ -108,9 +123,14 @@ public class FindFieldAccesses extends GhidraScript {
                         "0x%08X\t%s\tdepth=%d\t0x%08X\t%s\top%d\t%s\t+0x%X\t%s%n",
                         entry, function.getName(), depth, instruction.getAddress().getOffset(),
                         access, operand, base, displacement, instruction.toString());
+                    if (maxHits > 0 && hits >= maxHits) {
+                        truncated = instructions.hasNext();
+                        break scan;
+                    }
                 }
             }
             out.printf("Scanned %d instructions; found %d accesses.%n", scanned, hits);
+            out.println("Truncated: " + truncated);
         }
         if (out.checkError()) {
             throw new IOException("failed while writing output: " + outPath);
@@ -188,6 +208,24 @@ public class FindFieldAccesses extends GhidraScript {
             throw new IllegalArgumentException("closure depth must be between 0 and 8");
         }
         return depth;
+    }
+
+    private int parseMaxHits(String value) {
+        if (value == null || value.isBlank()) return 0;
+        int limit = Integer.parseInt(value.trim());
+        if (limit < 0 || limit > 10000) {
+            throw new IllegalArgumentException("REREVVED_MAX_HITS must be between 0 and 10000");
+        }
+        return limit;
+    }
+
+    private long parseAddressBound(String value, long defaultValue) {
+        if (value == null || value.isBlank()) return defaultValue;
+        long address = Long.decode(value.trim());
+        if (address < 0 || address > 0x100000000L) {
+            throw new IllegalArgumentException("scan bound must fit the 32-bit address space");
+        }
+        return address;
     }
 
     private String requireEnv(String name) {

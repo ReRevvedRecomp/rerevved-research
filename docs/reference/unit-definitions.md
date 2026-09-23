@@ -128,9 +128,16 @@ at `0x82CEE650` for unit, building, and wonder categories. It forwards the
 selected item into the command record without a local ID bound; the producer
 can pass that record to the local drain at `0x82CEE76C`. A Barracks-selection
 session logged no type-five calls at the separate submit entry `0x82CE1950`.
-The UI list's valid-entry rule and the exact branch taken in that session
-remain unobserved. See
-[`city-production-choice-submit.json`](../../manifests/city-production-choice-submit.json).
+The actual choice child copies nonnegative IDs from separate parent arrays and
+checks the selected vector index before forwarding an item. Its wonder-array
+generator tests exactly normalized indices 0 through 32, so this UI path can
+offer wonder IDs 200 through 232; the mutable runtime slot and wonder gate
+decide which appear. Initialized wonder IDs 233 through 236 are outside this
+choice loop. The building array comes from a larger city-list generator whose
+full predicates remain unresolved. The branch taken in the Barracks session
+was not observed. See
+[`city-production-choice-submit.json`](../../manifests/city-production-choice-submit.json)
+and [`city-production-option-source.json`](../../manifests/city-production-option-source.json).
 Stored descriptions do not prove implemented effects. One bounded
 post-threshold branch for Hanging Gardens item 202 changes city population
 byte `+0x03` to `clamp(trunc((3*x+1)/2),0,31)` and calls two city helpers; no

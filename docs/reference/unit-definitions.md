@@ -86,6 +86,10 @@ building-bit mask at `+0x44`, and a forbidden mask at `+0x48`. Exact values
 for all 23 records are in
 [`building-menu-record-gates.json`](../../manifests/building-menu-record-gates.json).
 These checks alone do not establish menu availability or gameplay effects.
+The nonzero masks join to the ordinary completion-bit writer: Bank requires
+Market, Cathedral requires Temple, and University requires Library; the menu
+hides each earlier-tier item when its later-tier bit is set. These are static
+menu checks, with no runtime building-completion observation.
 Barracks 101, Library 105, and Courthouse 114 have cumulative UEA 19, 20,
 and 18 half-cost branches. Cathedral 111 has a UEA 21 branch, with no accepted
 retail activation. University 112 and Factory 116 have separate neutral-gated

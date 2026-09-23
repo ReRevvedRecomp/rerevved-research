@@ -133,7 +133,8 @@ one-function scan does not cover scaled/indexed address calculations or other
 readers.
 A separate [factor consumer](../../manifests/wonder-factor-array-accumulation.json)
 reads wonder `+0x40` and adds a derived value to two indexed accumulators.
-Their owner and effect on final production cost remain unknown.
+The wonder claim-slot owner indexes one global and one stack-local accumulator;
+their downstream use and effect on final production cost remain unknown.
 The next twelve complete stride positions
 are zero and the following position contains non-wonder data. Neither this
 boundary nor the cost helper proves a program-wide valid-ID rule. Identity

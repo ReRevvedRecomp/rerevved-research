@@ -118,6 +118,11 @@ plus the bounded
 The bounded decoded city-item writer scan did not locate an item-selection or
 validity rule; its coverage limits are recorded in
 [`production-item-writer-decoded-frontier.json`](../../manifests/production-item-writer-decoded-frontier.json).
+An approved runtime write observer subsequently found command type five storing
+its record's item value to an owner-matched city `+0x38` at `0x82CE0020`.
+That local case does not check the item ID. A separate cost-preview path
+temporarily writes candidate IDs and restores the previous item. See
+[`city-production-command-five-writer.json`](../../manifests/city-production-command-five-writer.json).
 Stored descriptions do not prove implemented effects. One bounded
 post-threshold branch for Hanging Gardens item 202 changes city population
 byte `+0x03` to `clamp(trunc((3*x+1)/2),0,31)` and calls two city helpers; no

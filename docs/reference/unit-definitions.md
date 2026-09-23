@@ -103,9 +103,13 @@ and the subsequent wonder identity manifests through
 [`wonder-record-identity-236.json`](../../manifests/wonder-record-identity-236.json),
 plus the bounded
 [`wonder-record-byte-boundary-237-249.json`](../../manifests/wonder-record-byte-boundary-237-249.json).
-Stored descriptions do not prove implemented effects. The text and art-token
-consumers, complete layouts, final runtime costs, and gameplay effects remain
-unresolved. The exact cost inputs are in
+Stored descriptions do not prove implemented effects. One bounded
+post-threshold branch for Hanging Gardens item 202 changes city population
+byte `+0x03` to `clamp(trunc((3*x+1)/2),0,31)` and calls two city helpers; no
+runtime execution or persistent doubled-growth rule is proved. See
+[`hanging-gardens-population-branch.json`](../../manifests/hanging-gardens-population-branch.json).
+Text and art-token consumers, complete layouts, final runtime costs, and most
+gameplay effects remain unresolved. The exact cost inputs are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).
 
 One bounded wonder production gate uses normalized wonder index. In one fresh

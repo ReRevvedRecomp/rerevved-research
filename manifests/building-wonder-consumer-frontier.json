@@ -11,7 +11,7 @@
     "costHelper": "0x82CF1278",
     "materializerCap": 16,
     "directCallCap": 16,
-    "boundary": "The first query scans decoded split-address materializers for six exact targets. The second scans aligned raw direct branch-and-link words to one exact helper, stopping at sixteen emitted matches. Neither query resolves indexed, indirect, or undecoded text/asset consumers or an executable-wide producer and consumer inventory."
+    "boundary": "The first query scans decoded split-address materializers for six exact targets. The second scans aligned raw direct branch-and-link words to one exact helper, stopping at sixteen emitted matches. A third scans the exact body at 0x82CF0268 for register-relative operands at +0x42, +0x4A, +0x8A, and +0xCA; it does not resolve scaled/indexed address calculations. These bounded queries do not resolve indirect or undecoded text/asset consumers or an executable-wide producer and consumer inventory."
   },
   "dependencies": [
     { "topic": "production-cost-ownership", "use": "Provides the accepted cost helper, wrappers, and known cost consumers." },
@@ -39,19 +39,39 @@
     "qualification": "The bounded queries add no text or asset consumer, no valid-definition gate, and no executed gameplay-effect owner. The prior accepted threshold does not establish completion or final modding behavior."
   },
   "currentEvidence": {
-    "method": "Two sequential foreground read-only canonical-project queries: six exact values with split-constant lookahead twelve and first-use window sixteen, then a capped raw direct-caller scan for the one accepted cost helper.",
+    "method": "Two sequential foreground read-only canonical-project queries: six exact values with split-constant lookahead twelve and first-use window sixteen, then a capped raw direct-caller scan for the one accepted cost helper. A later function-boundary preflight and field scan checked four exact wonder-record offsets in 0x82CF0268.",
+    "functionPreflight": {
+      "script": "DumpFunctionNeighborhood.java",
+      "address": "0x82CF0268",
+      "radius": "0x40",
+      "instructionCap": 64,
+      "containingFunction": "0x82CF0268 through 0x82CF054F"
+    },
+    "fieldScan": {
+      "script": "FindFieldAccesses.java",
+      "fieldOffsets": ["0x42", "0x4A", "0x8A", "0xCA"],
+      "seed": "0x82CF0268",
+      "callerDepth": 0,
+      "calleeDepth": 0,
+      "scanRange": "[0x82CF0268, 0x82CF0550)",
+      "instructionsScanned": 186,
+      "matches": 0,
+      "truncated": false
+    },
     "entries": [
       { "role": "decoded address construction", "address": "0x82CF03F4 through 0x82CF0408", "result": "One non-truncated materializer result, for the wonder table base, with a first halfword load at +0x1B84.", "confidence": "strong" },
-      { "role": "direct cost calls", "address": "0x82CB6410 through 0x82CF838C", "result": "Sixteen raw direct-call sites emitted and the per-target cap reached; owners are undefined in the configured listing.", "confidence": "strong" }
+      { "role": "direct cost calls", "address": "0x82CB6410 through 0x82CF838C", "result": "Sixteen raw direct-call sites emitted and the per-target cap reached; owners are undefined in the configured listing.", "confidence": "strong" },
+      { "role": "wonder-reader field scan", "address": "0x82CF0268 through 0x82CF054F", "result": "The exact 0x2E8-byte body contained 186 scanned instructions and no register-relative operand at +0x42, +0x4A, +0x8A, or +0xCA; the scan was not truncated.", "confidence": "strong" }
     ],
-    "locators": ["ghidra/FindGlobalAddressAccesses.java:0x82F71FD8,0x82F71FF8,0x82F72024,0x82F73238,0x82F73282,0x82F73302", "ghidra/FindDirectCallers.java:0x82CF1278"],
-    "qualification": "No runtime observation was performed. The direct-call query stops at its declared cap, and no extra caller, callee, or generated-code function was inspected."
+    "locators": ["ghidra/FindGlobalAddressAccesses.java:0x82F71FD8,0x82F71FF8,0x82F72024,0x82F73238,0x82F73282,0x82F73302", "ghidra/FindDirectCallers.java:0x82CF1278", "ghidra/DumpFunctionNeighborhood.java:0x82CF0268 radius=0x40 maxInstructions=64", "ghidra/FindFieldAccesses.java:0x82CF0268 fields=0x42,0x4A,0x8A,0xCA range=[0x82CF0268,0x82CF0550)"],
+    "qualification": "No runtime observation was performed. The direct-call query stops at its declared cap. The exact-body field scan covers decoded register-relative operands in 0x82CF0268 only; scaled/indexed calculations, other readers, generated code, and runtime are outside this result."
   },
   "guards": [
     "Do not treat a zero decoded-materializer result as absence of text, asset, or effect use.",
     "Do not classify the sixteen cost callers as distinct semantic consumers from raw branch targets alone.",
     "Do not treat stored descriptions, ordinary cost selection, or first production writes as implemented wonder or building effects.",
-    "Do not treat broad ID range routing as validation of initialized definitions."
+    "Do not treat broad ID range routing as validation of initialized definitions.",
+    "Do not treat the absence of exact register-relative operands in 0x82CF0268 as excluding scaled/indexed or indirect field reads."
   ],
-  "conclusion": "The bounded direct scans add no supported text, asset, or gameplay-effect consumer. One decoded function materializes the wonder table base for a halfword read, while the raw cost-helper caller scan reaches its sixteen-site cap with undefined owners. The accepted cost and production-threshold paths remain the reusable static consumers; exact validity, presentation, effect execution, and runtime behavior remain open."
+  "conclusion": "The bounded direct scans add no supported text, asset, or gameplay-effect consumer. One decoded function materializes the wonder table base for a halfword read, while the raw cost-helper caller scan reaches its sixteen-site cap with undefined owners. A follow-up exact-body scan of 0x82CF0268 found no register-relative operands at wonder-record offsets +0x42, +0x4A, +0x8A, or +0xCA, so this scan supplies no static meaning for those fields. Scaled/indexed calculations, other readers, exact validity, presentation, effect execution, and runtime behavior remain open. The accepted cost and production-threshold paths remain the reusable static consumers."
 }

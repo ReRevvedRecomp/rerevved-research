@@ -123,6 +123,14 @@ its record's item value to an owner-matched city `+0x38` at `0x82CE0020`.
 That local case does not check the item ID. A separate cost-preview path
 temporarily writes candidate IDs and restores the previous item. See
 [`city-production-command-five-writer.json`](../../manifests/city-production-command-five-writer.json).
+The city choice handler at `0x82E02CE0` calls a distinct command-five producer
+at `0x82CEE650` for unit, building, and wonder categories. It forwards the
+selected item into the command record without a local ID bound; the producer
+can pass that record to the local drain at `0x82CEE76C`. A Barracks-selection
+session logged no type-five calls at the separate submit entry `0x82CE1950`.
+The UI list's valid-entry rule and the exact branch taken in that session
+remain unobserved. See
+[`city-production-choice-submit.json`](../../manifests/city-production-choice-submit.json).
 Stored descriptions do not prove implemented effects. One bounded
 post-threshold branch for Hanging Gardens item 202 changes city population
 byte `+0x03` to `clamp(trunc((3*x+1)/2),0,31)` and calls two city helpers; no

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0184",
+  "topic": "city-production-choice-submit",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which bounded producer supplies command type five's city item, and why can a city choice bypass the observed network submit entry?",
+  "scope": {
+    "choiceHandler": "0x82E02CE0",
+    "commandProducer": "0x82CEE650",
+    "localDrain": "0x82CE16C8",
+    "commandConsumer": "0x82CDDF08",
+    "boundary": "This packet follows three direct UI calls and the complete type-five record construction in one producer. It does not prove the UI list's valid-entry rule, the producer's runtime branch for the reported Barracks selection, unsupported-ID behavior, or construction effects."
+  },
+  "dependencies": [
+    { "topic": "city-production-command-five-writer", "use": "Provides the observed case-five city current-item write and temporary preview distinction." },
+    { "topic": "xbox-network-message-root", "use": "Provides the five-word command record, local drain, and dispatcher." },
+    { "topic": "building-record-identities-100-122", "use": "Binds item 101 to the initialized Barracks definition." }
+  ],
+  "choiceHandler": {
+    "selectionReads": "At 0x82E02D14 and 0x82E02D1C, 0x82E02CE0 reads selected value +0x448 and category +0x440 from its child object at parent +0xC40. A selected value of -1 enters a separate path before the three direct type-five calls.",
+    "categoryCalls": [
+      { "category": 0, "call": "0x82E02D94", "role": "unit choice" },
+      { "category": 1, "call": "0x82E02E1C", "role": "building choice" },
+      { "category": 2, "call": "0x82E02EA8", "role": "wonder choice" }
+    ],
+    "arguments": "Each call passes the signed owner byte at city pointer +0x00 as r3, parent +0xC20 as r4, and the selected +0x448 value as r5. The handler also reads the city's prior item +0x38 for later display work. No item-domain bound or definition-presence test appears between the category branch and these calls; the list that supplies +0x448 remains unclassified.",
+    "selectionChangeHelper": "The call at 0x82E02D40 to 0x82E02C50 runs only when the selection changes. Its 0/1/2 category paths return without converting the selected value; its other-category paths do not establish building or wonder validity."
+  },
+  "commandProducer": {
+    "entry": "0x82CEE650 copies r3 to r31 (player), r4 to r30 (city), and r5 to r29 (selected item).",
+    "record": "At 0x82CEE6BC through 0x82CEE6D0, stack +0x50 receives literal type 5, +0x54 receives player, +0x58 city, +0x5C item, and +0x60 receives the word at 0x82F7AD00. The item is forwarded without a local ID-range or definition-presence test.",
+    "route": "A guarded branch constructs a command object with 0x82D90A18 and invokes a manager-child virtual slot. The other branch passes the stack record to local drain 0x82CE16C8 at 0x82CEE76C, which reaches dispatcher 0x82CDDF08 at 0x82CE17B0. The runtime branch taken by the reported Barracks selection was not observed directly.",
+    "qualification": "The global fifth word, routing flags, and full UI-list population policy are unresolved. This producer is distinct from 0x82CE1950."
+  },
+  "runtimeObservation": {
+    "date": "2026-09-22",
+    "titleCommit": "4ae5e9c0a03729afeb6ec905998f43950e01e139",
+    "sdkCommit": "1cbd9a6d06ab06b8e9bffbbf4a0dc80fe44b6f27",
+    "probeExecutableSha256": "0BEB761EDD6E55DAB7AD0125CD6CDA3B01B544F531FF3E9462E8498794FA3A2E",
+    "logSha256": "E833046EECD3BEA3F552A9BDFF14A1819B76A399072E152E35BB278EE321EB5B",
+    "placement": "A temporary default-off midasm hook at 0x82CE1950 logged only incoming type 5, LR, and r4 through r6, with an eight-event cap when REREVVED_CITY_ITEM_SUBMIT_PROBE=1. Generated code placed it before the entry instruction. The scratch Title build passed CTest with 41 passed and one skipped.",
+    "result": "One isolated interactive session exited normally with code zero. The owner reported selecting Barracks. The enabled probe logged zero type-five calls at 0x82CE1950. This excludes observed use of that entry for type five in this session; it does not by itself prove the local producer branch executed or identify every command producer.",
+    "restoration": "The two temporary scratch Title source files were restored byte-for-byte, the uninstrumented executable was rebuilt, and scratch Title Git state was clean. Canonical Title and SDK were unchanged."
+  },
+  "currentEvidence": {
+    "method": "One approved bounded runtime submit-entry observation, followed by foreground read-only Ghidra raw-call, function, and exact-word queries against the pinned image. Generated-code inspection was restricted to the exact 0x82CEE650 and 0x82E02CE0 functions and three prior exact callsite windows.",
+    "entries": [
+      { "role": "producer's UI callers", "address": "0x82E02D94,0x82E02E1C,0x82E02EA8", "result": "The non-truncated direct-caller scan found exactly these three static calls to 0x82CEE650; category 1 is the building branch.", "confidence": "strong" },
+      { "role": "type-five record", "address": "0x82CEE6BC through 0x82CEE6D0", "result": "Exact words store type 5 and the three forwarded arguments into consecutive command-record words.", "confidence": "strong" },
+      { "role": "local dispatch", "address": "0x82CEE75C through 0x82CEE76C", "result": "The local branch passes the stack record to 0x82CE16C8; a non-truncated raw caller scan found the drain's one direct dispatcher call at 0x82CE17B0.", "confidence": "strong" },
+      { "role": "network-submit discriminator", "address": "0x82CE1950", "result": "Zero type-five entry observations in the owner-reported Barracks-selection session.", "confidence": "bounded-runtime" }
+    ],
+    "locators": [
+      "ghidra/FindDirectCallers.java:0x82CDDF08,0x82CE16C8,0x82CEE650,0x82E02CE0",
+      "ghidra/DumpFunctions.java:0x82CEE650,0x82E02CE0,0x82E02C50",
+      "ghidra/DumpMemoryWords.java:0x82CEE6C4,0x82CEE760,0x82E02D18,0x82E02E1C",
+      "generated:rerevved/sub_82CEE650",
+      "generated:rerevved/sub_82E02CE0"
+    ],
+    "qualification": "The configured Ghidra listing truncates 0x82CEE650 at its thunk, so exact raw words and narrow generated-code dataflow support its interior. The UI handler decompilation has a bad-instruction warning; exact callsites and field words corroborate the reported branch."
+  },
+  "guards": [
+    "Do not treat a selected UI value as validated merely because it reached the command producer.",
+    "Do not infer that every city choice bypasses 0x82CE1950 from one zero-event session.",
+    "Do not infer building completion or stored-description effects from a production-item command."
+  ],
+  "conclusion": "The city production UI has three direct calls to a distinct type-five producer for unit, building, and wonder choices. The producer forwards the selected item unchanged and can send its five-word record through the local drain to the observed city-item writer. The owner-reported Barracks session did not enter 0x82CE1950 with type five. The UI list's valid-entry rule and the exact runtime routing branch remain unresolved."
+}

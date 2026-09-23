@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0176",
+  "topic": "statue-of-liberty-population-branch",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What does the direct post-threshold normalized-index-27 branch write after Statue of Liberty completion?",
+  "scope": {
+    "wonderItem": 227,
+    "storedName": "Statue of Liberty",
+    "normalizedIndex": 27,
+    "postThresholdHelper": "0x82D16BA0",
+    "cityTable": "0x8315FE28",
+    "cityStride": "0xBC",
+    "boundary": "This packet follows only the index-27 branch from the accepted city-update caller through its bounded city-table loop. Later city refresh, save behavior, other callers, and runtime execution remain outside this packet."
+  },
+  "dependencies": [
+    { "topic": "wonder-record-identity-227", "use": "Binds item 227 to Statue of Liberty and its stored description." },
+    { "topic": "wonder-post-threshold-helper-boundary", "use": "Provides the direct mode-one city call and normalized-index guard." },
+    { "topic": "hanging-gardens-population-branch", "use": "Corroborates city population byte +0x03 and signed clamping interpretation." }
+  ],
+  "staticBranch": {
+    "gate": "At 0x82D16EA8 the helper compares normalized index with 27; other indices branch to the index-one test at 0x82D16FE8. The direct city-update caller supplies mode one and a city index whose signed owner byte +0x00 was loaded into r21 at helper entry.",
+    "scan": "Starting at city-table base +0x03, the branch processes four 0xBC-byte city records per loop and advances by 0x2F0 bytes. It repeats until the pointer reaches base +0x03 + 0x5E00, covering 128 city slots.",
+    "filter": "Each slot's signed population byte +0x03 must exceed zero; its signed owner byte +0x00 must differ from -1 and equal the source city's owner r21.",
+    "write": "For each passing slot, the branch adds two to signed population byte +0x03, clamps the result to 0 through 31, and writes it to the same byte. Four unrolled writes occur at 0x82D16EF8, 0x82D16F40, 0x82D16F88, and 0x82D16FD0.",
+    "qualification": "The implementation targets populated city slots owned by the source-city owner, not every player. The stored description says all cities grow by 2 population, but this static branch alone does not establish downstream city refresh, persistence, or runtime activation."
+  },
+  "runtimeObservation": {
+    "source": "wonder-eligibility-virtual-target",
+    "result": "The earlier fresh-game probe did not observe item-227 completion or this branch.",
+    "populationWriteObserved": false
+  },
+  "currentEvidence": {
+    "method": "A narrow generated-code window localized the unrolled branch. One foreground read-only canonical-project raw-word query checked the index test, owner and population filters, four clamped stores, and loop bound in the current image.",
+    "entries": [
+      { "role": "index gate and first store", "address": "0x82D16EA8 through 0x82D16EF8", "result": "Index 27 enters the loop; positive population and matching signed owner gate the first +2 clamped write.", "confidence": "strong" },
+      { "role": "remaining stores and bound", "address": "0x82D16EFC through 0x82D16FE4", "result": "Three further 0xBC-spaced slots use the same filter and write, followed by a 0x2F0 step and bounded backward branch.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82D16ED0,0x82D16F60,0x82D16FB8 radius=30", "generated:rerevved/sub_82D16BA0", "manifests/wonder-record-identity-227.json#/record"],
+    "qualification": "The helper decompiler truncates at save thunks. Current-image words and narrow generated-code corroboration establish the local branch; no runtime probe was performed."
+  },
+  "guards": [
+    "Do not generalize the write to cities of other owners or unpopulated slots.",
+    "Do not claim the stored description proves runtime execution or persistent population gain.",
+    "Do not reuse this index-27 effect for item 228 despite its repeated short token."
+  ],
+  "conclusion": "The direct item-227 Statue of Liberty completion path has a static normalized-index-27 branch that can add two population, clamped to 31, to occupied city slots owned by the source city player. Runtime execution, city refresh, and persistence remain unobserved."
+}

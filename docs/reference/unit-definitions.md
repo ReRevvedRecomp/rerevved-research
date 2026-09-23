@@ -113,6 +113,10 @@ owned and other candidates, ranks survivors with an unresolved score helper,
 and can call the ordinary technology acquisition owner with the selected ID.
 No selected runtime ID or successful acquisition has been observed. See
 [`oxford-technology-acquisition-branch.json`](../../manifests/oxford-technology-acquisition-branch.json).
+The Statue of Liberty item-227 branch scans 128 city slots and adds two to
+population byte `+0x03`, clamped to 31, for populated cities owned by the
+source city's player. Its execution and persistence have not been observed.
+See [`statue-of-liberty-population-branch.json`](../../manifests/statue-of-liberty-population-branch.json).
 Text and art-token consumers, complete layouts, final runtime costs, and most
 gameplay effects remain unresolved. The exact cost inputs are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0197",
+  "topic": "wonder-factor-array-accumulation",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What does the early raw wonder-table base pair at 0x82CB35A4+0x82CB35AC read?",
+  "scope": {
+    "function": "0x82CB2E48",
+    "wonderPair": "0x82CB35A4+0x82CB35AC",
+    "buildingPair": "0x82CB2F48+0x82CB2F68",
+    "stopCondition": "Resolve the two pair constructions and the first local wonder factor arithmetic through 0x82CB3660; stop before following the building pointer spill, distant branches, or array consumers.",
+    "boundary": "The first wonder factor is followed through its two stores. The second and third adjacent factor reads are identified, but their full branches and the output arrays' purpose are not classified."
+  },
+  "dependencies": [
+    { "topic": "building-wonder-cost-identities", "use": "Identifies initialized wonder +0x40 as a signed production factor." },
+    { "topic": "building-wonder-consumer-frontier", "use": "Records the earlier bounded definition-table materializer search." }
+  ],
+  "staticResult": {
+    "buildingBoundary": "0x82CB2F48 and 0x82CB2F68 form building base 0x82F71FD8 in r29, which is spilled to stack +0x68 at 0x82CB2F74. No building field read is established within the inspected local window.",
+    "wonderRead": "0x82CB35A4 and 0x82CB35AC form wonder base 0x82F73238. The first slot word at 0x830E5148 is compared with -1. When unequal, 0x82CB35C8 reads the halfword at base +0x40, and 0x82CB35D4 sign-extends it.",
+    "arithmeticAndStores": "The local arithmetic multiplies that signed factor by five, doubles the result, then applies signed shift-right by two with addze. It adds the computed value to words at two indexed destinations, using the slot word scaled by four, and stores both results at 0x82CB3600 and 0x82CB3604. The inspected span contains no write to the definition record. These stores do not establish a final production price or gameplay effect.",
+    "adjacentReads": "The same straight-line sequence checks slot words 0x830E5150 and 0x830E5158 against -1 and reads wonder halfwords at base +0x18C (0x82CB3614) and base +0x2D8 (0x82CB3660), corresponding to the +0x40 cells of the next two 0x14C-spaced records. This is a three-position local observation, not a full table bound or valid-ID rule."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No invocation, slot value, accumulator result, final cost, or described gameplay effect was observed."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only raw-word windows checked both split-base candidates and the first wonder field arithmetic. Ghidra has no containing function or decoded instructions at these interior addresses. The registered generated function sub_82CB2E48 was used only to corroborate the exact raw span.",
+    "entries": [
+      { "role": "building pointer", "address": "0x82CB2F48..0x82CB2F74", "result": "Forms building base and spills its pointer before a local field read is identified." },
+      { "role": "wonder factor", "address": "0x82CB35A4..0x82CB35D4", "result": "Forms wonder base and loads/sign-extends +0x40 after a -1 slot gate." },
+      { "role": "accumulator writes", "address": "0x82CB35D8..0x82CB3604", "result": "Derives a numeric value from the factor and adds it to two indexed words." },
+      { "role": "adjacent fields", "address": "0x82CB3608..0x82CB3660", "result": "Checks two further slots and reads the next two stride-spaced +0x40 cells." }
+    ],
+    "locators": [
+      "ghidra/DumpFunctionNeighborhoodBatch.java:0x82CB2F48,0x82CB2F68,0x82CB35A4,0x82CB35AC cap=32",
+      "ghidra/DumpMemoryWords.java:0x82CB2F78,0x82CB35B4 radius=16",
+      "ghidra/DumpMemoryWords.java:0x82CB35F8 radius=16",
+      "ghidra/DumpMemoryWords.java:0x82CB3608 radius=24",
+      "generated:rerevved/sub_82CB2E48:0x82CB35A4..0x82CB3660"
+    ],
+    "qualification": "The first factor's arithmetic and stores are local static evidence only. The building pointer's later use, complete function behavior, accumulator owner, and downstream cost effect remain unresolved."
+  },
+  "guards": [
+    "Do not equate these accumulator stores with the accepted production-cost helper or a final price.",
+    "Do not infer a building field consumer from the pointer spill alone.",
+    "Do not infer a full wonder loop or valid-ID rule from three adjacent stride positions."
+  ],
+  "conclusion": "One additional static consumer reads wonder +0x40 and adds a derived value to two indexed accumulators for a nonempty slot. The arrays' purpose and runtime behavior remain unknown."
+}

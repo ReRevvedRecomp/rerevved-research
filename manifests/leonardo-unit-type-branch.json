@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0178",
+  "topic": "leonardo-unit-type-branch",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the normalized-index-11 Leonardo branch reach live unit-type writes, and what local filters govern them?",
+  "scope": {
+    "wonderItem": 211,
+    "storedName": "Leonardo's Workshop",
+    "normalizedIndex": 11,
+    "postThresholdHelper": "0x82D16BA0",
+    "unitDefinitionTable": "0x82F700D8",
+    "unitDefinitionStride": "0x94",
+    "liveUnitTable": "0x830F2BF0",
+    "liveUnitStride": "0x54",
+    "boundary": "This packet follows only the direct index-11 branch through its unit-type write and immediate virtual calls. The meaning of definition halfwords +0x4A and +0x4C, full upgrade ordering, dynamic vptr state, other unit fields, and runtime execution remain outside this packet."
+  },
+  "dependencies": [
+    { "topic": "wonder-record-identities-210-214", "use": "Binds item 211 to Leonardo's Workshop and its stored description." },
+    { "topic": "wonder-post-threshold-helper-boundary", "use": "Provides the direct mode-one city call, source-city player, and index guard." },
+    { "topic": "unit-definitions-ai-evaluation", "use": "Establishes the 0x94-byte unit-definition table and live unit-type byte +0x01." },
+    { "topic": "unit-movement-lifecycle", "use": "Establishes player-major 256-slot, 0x54-byte live unit records." },
+    { "topic": "starting-technology-grants", "use": "Establishes ordinary technology ownership query 0x82CEF6A8." }
+  ],
+  "staticBranch": {
+    "gate": "At 0x82D16D0C the helper requires normalized index 11. A signed positive word at 0x830E45D0 bounds outer candidate and inner source-type scans of 0x94-byte definitions at 0x82F700D8.",
+    "definitionFilter": "For candidate type r27 and source type r24, candidate signed definition halfword +0x4A must equal source signed halfword +0x4C and differ from zero. The source player's ordinary technology ownership query 0x82CEF6A8 must return nonzero for that matching halfword. The halfwords' broader schema meaning remains unassigned.",
+    "unitFilter": "The branch scans 256 live 0x54-byte unit slots for the source player at 0x830F2BF0 + player*0x5400. It skips slot byte +0x00 equal to 0xFF, skips a record whose +0x0C high bit is set, requires signed type byte +0x01 to equal source type r24, and requires definition word +0x50 for that type masked by 0x00008081 to equal zero.",
+    "write": "At 0x82D16E08 the branch stores candidate type r27 into the live unit type byte +0x01. It sets a changed flag and repeats the definition scan until a pass makes no write.",
+    "callbacks": "Around the write, the branch calls receiver 0x8314F76C through virtual slots +0x1A4 and +0x1A0, then +0x1B4, and conditionally +0x1BC when the unit's byte +0x04 is nonzero. The accepted initialized vtable 0x82138768 has targets 0x82D7D9B0, 0x82D7FE40, 0x821D5678, and 0x82D81BA0 at those four slots respectively; the +0x1BC target is an accepted unit-record snapshot processor. The current runtime vptr and effects of the first two targets are unobserved.",
+    "qualification": "This establishes a conditional live type mutation and callback sequence, consistent with but narrower than the stored description 'all units are upgraded.' It does not prove every unit is eligible, that every replacement improves a statistic, or that the branch executes in a game session."
+  },
+  "runtimeObservation": {
+    "source": "wonder-eligibility-virtual-target",
+    "result": "The earlier fresh-game probe did not observe item-211 completion or this unit-type branch.",
+    "unitTypeWriteObserved": false
+  },
+  "currentEvidence": {
+    "method": "Narrow generated-code windows localized the nested scans and virtual calls. One foreground read-only canonical-project raw-word query checked the full branch window, and a second checked four exact initialized vtable slots. Bounded Ghidra function queries left the first two target behaviors unresolved.",
+    "entries": [
+      { "role": "definition and technology filters", "address": "0x82D16D0C through 0x82D16D88", "result": "Index 11 enters matching definition-halfword scans and an ordinary technology ownership test.", "confidence": "strong" },
+      { "role": "live unit write and callbacks", "address": "0x82D16D90 through 0x82D16E68", "result": "Filtered live unit slots can receive candidate type byte +0x01, with four surrounding virtual call sites.", "confidence": "strong" },
+      { "role": "repeat stop", "address": "0x82D16E7C through 0x82D16EA4", "result": "The branch repeats while a pass changed at least one unit, then joins the common exit.", "confidence": "strong" },
+      { "role": "initialized virtual targets", "address": "0x82138908 through 0x82138924", "result": "The four exact slots of vtable 0x82138768 resolve to the recorded target addresses.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82D16D70,0x82D16E40 radius=40", "ghidra/DumpMemoryWords.java:0x82138908,0x8213891C radius=8", "ghidra/DumpFunctions.java:0x82D7FE40,0x82D7D9B0,0x821D5678", "generated:rerevved/sub_82D16BA0"],
+    "qualification": "The main helper and two callback decompilers truncate at save thunks or bad instruction data. Current-image words and narrow generated-code corroboration establish the local branch, while callback semantics stay neutral."
+  },
+  "guards": [
+    "Do not turn the stored all-units description into an unconditional gameplay contract.",
+    "Do not label definition halfwords +0x4A and +0x4C as an upgrade chain without their producers and other consumers.",
+    "Do not claim that every source type, unit slot, or game state passes the local filters.",
+    "Do not treat initialized vtable targets as a runtime dispatch observation."
+  ],
+  "conclusion": "The direct item-211 Leonardo's Workshop branch can replace live unit type byte +0x01 after matched definition halfwords, owned technology, and live-record filters, then fan out through virtual calls. Full upgrade policy, coverage of all units, callback effects, and runtime execution remain unresolved."
+}

@@ -121,6 +121,11 @@ The Great Wall item-201 branch writes equal values into two symmetric entries
 of a player-pair table after local filters. The table's consumer and any
 peace-offer behavior are unresolved. See
 [`great-wall-player-pair-branch.json`](../../manifests/great-wall-player-pair-branch.json).
+The Leonardo's Workshop item-211 branch compares two unit-definition
+halfwords, checks technology ownership, and can replace live unit type byte
+`+0x01` in qualifying records. Its virtual calls and runtime coverage do not
+establish that every unit upgrades. See
+[`leonardo-unit-type-branch.json`](../../manifests/leonardo-unit-type-branch.json).
 Text and art-token consumers, complete layouts, final runtime costs, and most
 gameplay effects remain unresolved. The exact cost inputs are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).

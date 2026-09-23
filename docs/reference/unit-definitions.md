@@ -273,16 +273,17 @@ observations above cover choice, eligibility, and production-item state only.
 | Wonders 233-236 | Normalized indices 33-36 branch away before the direct post-threshold helper body on the accepted city-update callsite. Earlier city writes occur, and other paths remain unresolved. See the [branch census](../../manifests/wonder-post-threshold-helper-boundary.json). | Not observed |
 | Buildings 100-113, 115-122 | Stored descriptions are present, but no item-specific effect branch or bounded per-item negative packet is recorded here. The [consumer frontier](../../manifests/building-wonder-consumer-frontier.json) does not exclude indexed or indirect readers. | Not observed |
 
-Barracks 101 remains a specific unresolved link: its stored description says
-veteran units are produced, while the native veteran grant branch is gated by a
-creation-record bit. The accepted [building writer](../../manifests/building-completion-state-writer.json)
-and [veteran branch](../../manifests/new-warrior-veteran.json) do not establish
-that Barracks completion or ownership supplies that bit. Ghidra defines only an
-8-byte body at city-update entry `0x82D13978` and no containing function or
-instructions at veteran gate `0x82D15B84`, so its current function listing cannot
-join those paths. The modded veteran
-runtime acceptance recorded in the latter packet does not test the Barracks
-description.
+Barracks 101 remains an unresolved link to native veteran creation. The native
+veteran grant branch is gated by a creation-record bit, while the accepted
+building writer and veteran branch do not establish that Barracks completion or
+ownership supplies it. A bounded raw PowerPC displacement-store scan found no
++0x3C stores in [0x82D13978,0x82D16BA0). This scan does not exclude computed or
+indexed stores, other writers, or a link elsewhere; it does not establish that
+Barracks has a veteran effect. See the [bounded link scan](../../manifests/barracks-veteran-creation-record-link.json).
+Ghidra defines only an 8-byte body at city-update entry 0x82D13978 and no
+containing function or instructions at veteran gate 0x82D15B84, so its current
+function listing cannot join those paths. The modded veteran runtime acceptance
+recorded in the latter packet does not test the Barracks link.
 
 One bounded wonder production gate uses normalized wonder index. In one fresh
 game, its receiver dispatched virtual slot `+0x1E4` to `0x82D80C30` for

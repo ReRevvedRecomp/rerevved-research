@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0191",
+  "topic": "barracks-veteran-creation-record-link",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the bounded city-update scan establish that initialized Building 101 completion supplies the native veteran creation-record bit at +0x3C & 0x20?",
+  "scope": {
+    "buildingItem": 101,
+    "cityUpdateRange": "[0x82D13978,0x82D16BA0)",
+    "creationGate": "0x82D15B84",
+    "buildingCompletionCallsite": "0x82D16158",
+    "boundary": "One capped raw PowerPC displacement-store scan for +0x3C within the accepted city-update range. Other addressing forms, code regions, and writers are outside this result."
+  },
+  "dependencies": [
+    { "topic": "new-warrior-veteran", "use": "Defines the native creation-record +0x3C bit-0x20 veteran gate at 0x82D15B84." },
+    { "topic": "building-completion-state-writer", "use": "Defines the sufficient-production city-state writer called by the accepted city-update path." },
+    { "topic": "building-record-identities-100-122", "use": "Identifies initialized building item 101 as Barracks." }
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only canonical-image preflight at 0x82D13978, 0x82D15B84, 0x82D16158, and 0x82D16B9C, followed by one raw-store scan of initialized executable words in [0x82D13978,0x82D16BA0) for signed D-form displacement +0x3C, cap 16.",
+    "entries": [
+      {
+        "role": "current-image preflight",
+        "address": "0x82D13978, 0x82D15B84, 0x82D16158, 0x82D16B9C",
+        "result": "The query returned words at the accepted city-update start, native veteran gate, building-state callsite, and final included word before the bounded scan.",
+        "confidence": "strong"
+      },
+      {
+        "role": "raw +0x3C displacement-store scan",
+        "address": "[0x82D13978,0x82D16BA0)",
+        "result": "Scanned 3210 aligned initialized executable words; found 0 raw displacement stores to +0x3C; cap 16, not truncated, not cancelled.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82D13978,0x82D15B84,0x82D16158,0x82D16B9C",
+      "ghidra/FindRawFieldStores.java:[0x82D13978,0x82D16BA0) offsets=0x3C cap=16 hits=0 truncated=false",
+      "../new-warrior-veteran.json#/owner/alternateGate",
+      "../building-completion-state-writer.json#/callsite",
+      "../building-record-identities-100-122.json#/records"
+    ],
+    "qualification": "This scan covers only raw PowerPC D-form stores with signed displacement +0x3C in the stated range. It does not exclude indexed or computed stores, other displacements or aliases, writers elsewhere, or a Barracks link outside this range. The connection from Building 101 completion or ownership to creation-record bit 0x20 remains unresolved."
+  },
+  "guards": [
+    "Do not infer a Barracks gameplay effect from its stored description.",
+    "Do not treat zero D-form +0x3C stores in this range as proof that no other writer or addressing form exists.",
+    "Do not claim that Building 101 completion or ownership supplies the native creation-record bit 0x20."
+  ],
+  "conclusion": "The bounded current-image scan found no raw PowerPC displacement store to +0x3C in [0x82D13978,0x82D16BA0). It does not establish whether initialized Building 101 completion or ownership supplies bit 0x20 at the native veteran gate; that link remains unresolved."
+}

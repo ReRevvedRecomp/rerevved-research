@@ -17,7 +17,8 @@
     { "topic": "xbox-network-message-root", "use": "Provides the five-word command record, dispatcher, 0-through-65 type table, and local queue path." },
     { "topic": "non-unit-production-threshold-boundary", "use": "Establishes city +0x38 as the current item read by city update." },
     { "topic": "production-item-writer-decoded-frontier", "use": "The earlier decoded displacement scan excluded indexed stores and prepared the runtime discriminator." },
-    { "topic": "building-record-identities-100-122", "use": "Binds observed IDs 101, 104, and 105 to initialized building identities." }
+    { "topic": "building-record-identities-100-122", "use": "Binds observed IDs 101, 104, and 105 to initialized building identities." },
+    { "topic": "wonder-record-identities-215-219", "use": "Binds observed wonder item 218 to its initialized identity." }
   ],
   "staticCommandCase": {
     "recordInput": "0x82CDDF18 through 0x82CDDF24 load record words +0x00 type into r30, +0x04 into r31, +0x08 into r15, and +0x0C into r29. The accepted 0-through-65 dispatch at 0x82CDDFF4 through 0x82CDE010 selects the case-five branch at 0x82CDFFF8.",
@@ -47,21 +48,37 @@
     "temporaryEvents": "The other six captured changed-value events map to 0x82CE9DFC or 0x82CE9E20 in 0x82CE9490. They include candidate IDs 101, 104, and 105 but do not independently prove a lasting choice.",
     "qualification": "The session proves that command-five's city item store executed for IDs 101 and 104 during the interaction. It does not prove which item the user finally selected or that either item completed construction."
   },
+  "wonderSelectionFollowup": {
+    "date": "2026-09-23",
+    "titleCommit": "4ae5e9c0a03729afeb6ec905998f43950e01e139",
+    "sdkCommit": "1cbd9a6d06ab06b8e9bffbbf4a0dc80fe44b6f27",
+    "sourceXexSha256": "B59B8957A3ED9DD90E9296C96D5C7AB1B16078D3F08B015582714A06C7D6A7BD",
+    "titleUpdateSha256": "C1FC6149A63550987D991EFDBB80E3697845A9A49D3F2EC180EA9817DB8D12D4",
+    "probeExecutableSha256": "52D4F48E03C4C16AF19FB29E1512C1C148D03176153103FA0A32E22C10AAA558",
+    "logSha256": "9FD583BC01118DC3C04B1953C122BBE437C51A9F0140DEC7AE2A635C55954F9F",
+    "session": "One owner-operated interactive scratch Title launch exited normally with code zero after the owner selected Manhattan Project. The default-off one-event observer was enabled for this launch.",
+    "placement": "The observer ran immediately before the halfword store at 0x82CE0020 in 0x82CDDF08 and emitted exactly one owner-matched changed city +0x38 write for wonder item 218.",
+    "observedCity": { "index": 22, "itemAddress": "0x83150E88", "cityOwner": 0, "commandOwner": 0 },
+    "commandCaseEvent": { "old": 11, "new": 218, "sourceFunction": "0x82CDDF08", "guestStore": "0x82CE0020", "sourceLine": "generated:rerevved_recomp.71.cpp:33691", "lr": "0x82CE001C" },
+    "selectedItemId": 218,
+    "identityTopic": "wonder-record-identities-215-219",
+    "qualification": "The observed store records the selected item write. The producer that submitted command five, construction completion, wonder effects, and behavior for other IDs were not observed."
+  },
   "minimalTitleProbe": {
-    "status": "Prepared only; no Title edit, build, capture, or launch was performed for this follow-up.",
+    "status": "Executed once; one matching wonder write was observed and is recorded under wonderSelectionFollowup.",
     "placement": "Default-off read-only observer at the exact guest store 0x82CE0020 in 0x82CDDF08. Emit only when the owner-matched city +0x38 changes to a wonder item ID from 200 through 232. Do not count preview substitutions at 0x82CE9DFC or 0x82CE9E20.",
     "fields": "City index and owner, old and new city +0x38 item IDs, guest store address and source function, and LR.",
     "stop": "Cap at one matching changed-value event. After selecting one wonder actually offered by the city list, exit normally. If no matching write occurs, report zero events and stop. This observes the selected item write only, not construction completion or effect execution."
   },
   "currentEvidence": {
-    "method": "One approved interactive scratch-Title observer logged at most eight changed city +0x38 halfword writes, then the Title exited normally. Exact generated source lines identified two guest functions; a foreground read-only canonical-project raw-word query corroborated dispatcher inputs, type dispatch, owner gate, command store, and temporary preview/restore stores.",
+    "method": "An approved interactive scratch-Title observer logged at most eight changed city +0x38 halfword writes, then a separate default-off one-event observer recorded a wonder choice at the same store. Both Title launches exited normally. Exact generated source lines identified two guest functions; a foreground read-only canonical-project raw-word query corroborated dispatcher inputs, type dispatch, owner gate, command store, and temporary preview/restore stores.",
     "entries": [
       { "role": "command record and dispatch", "address": "0x82CDDF18 through 0x82CDE010", "result": "Record type and three arguments are loaded and numeric case five selects the city write path.", "confidence": "strong" },
-      { "role": "city current-item write", "address": "0x82CDFFF8 through 0x82CE0024", "result": "An owner-matched city receives low halfword of record +0x0C at city +0x38; runtime observed two changed writes at 0x82CE0020.", "confidence": "confirmed" },
+      { "role": "city current-item write", "address": "0x82CDFFF8 through 0x82CE0024", "result": "An owner-matched city receives low halfword of record +0x0C at city +0x38; runtime observed building IDs 101 and 104 and wonder ID 218 at 0x82CE0020.", "confidence": "confirmed" },
       { "role": "temporary cost preview", "address": "0x82CE9DF8 through 0x82CE9E20", "result": "A candidate item is temporarily written, passed through the cost helper path, and the prior item is restored.", "confidence": "confirmed" }
     ],
-    "locators": ["ghidra/DumpMemoryWords.java:0x82CDDF24,0x82CDDFF4,0x82CE0004,0x82CE0020,0x82CE9DFC,0x82CE9E20 radius=10", "generated:rerevved/sub_82CDDF08", "generated:rerevved/sub_82CE9490", "runtime:city-item-write-probe"],
-    "qualification": "The logged source-line-to-guest-store mapping is corroborated by current-image words. The private raw log and temporary executable are not tracked evidence payloads."
+    "locators": ["ghidra/DumpMemoryWords.java:0x82CDDF24,0x82CDDFF4,0x82CE0004,0x82CE0020,0x82CE9DFC,0x82CE9E20 radius=10", "generated:rerevved/sub_82CDDF08", "generated:rerevved/sub_82CE9490", "runtime:city-item-write-probe", "runtime:wonder_choice_write_probe"],
+    "qualification": "The observed source-line-to-guest-store mapping is corroborated by current-image words. The wonder follow-up establishes one selected item ID only; neither session observed construction completion or effects. Private raw logs and temporary executables are not tracked evidence payloads."
   },
   "guards": [
     "Do not call numeric type five the original platform command name without an independent source.",
@@ -69,5 +86,5 @@
     "Do not infer a global valid-ID rule from the local case-five absence of an ID check.",
     "Do not infer construction or described building effects from the current-item write."
   ],
-  "conclusion": "An observed numeric command-five path stores its record +0x0C low halfword to the owner-matched city's current production item +0x38 at 0x82CE0020. This local case has no item-ID validity check. A separate helper temporarily substitutes candidate IDs for a cost lookup and restores the prior item. A later packet maps one city-choice producer; the global validity rule, final choice in this observed session, and building effects remain unresolved."
+  "conclusion": "An observed numeric command-five path stores its record +0x0C low halfword to the owner-matched city's current production item +0x38 at 0x82CE0020. Runtime observed building IDs 101 and 104, plus selected wonder ID 218 (Manhattan Project), at that store. This local case has no item-ID validity check. A separate helper temporarily substitutes candidate IDs for a cost lookup and restores the prior item. The producer coverage, global validity rule, construction completion, and implemented effects remain unresolved."
 }

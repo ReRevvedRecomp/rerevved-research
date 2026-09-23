@@ -27,6 +27,13 @@
     "optionalArgument": "When r5 is nonzero on a success branch, the function invokes 0x82E6A430 and 0x821B2AD8 before returning one. The observed inner-gate call passed r5 = 0, so these calls did not run on that path; their purpose remains unclassified.",
     "qualification": "Wonder-eligibility-mask-source identifies this observed vtable's +0x1DC getter and its immediate frontend-root +8 source. The +8 writer and bit meanings remain unknown. The three bands are local rules of this one observed +0x1E4 implementation, not a global valid-ID rule."
   },
+  "localIds233Through236": {
+    "menu": "The accepted 0x82CE2FD0 production-choice loop only visits normalized indices 0 through 32, so it cannot append IDs 233 through 236.",
+    "knownVtableGate": "For initialized vtable 0x82138768 at receiver 0x8314F76C, slot +0x1E4 is 0x82D80C30. That function returns zero for normalized indices 33 through 36. If the dynamic call is bypassed, the 0x82CF0E28 fallback also returns zero for these indices because they are at least 21. Thus the inner gate rejects IDs 233 through 236 on the accepted city-update path while this vtable is installed, before the outer gate and promoted city writes.",
+    "laterHelper": "The separate 0x82D16BA0 helper also skips its interior body for normalized indices at least 33; its guard is not the pre-write validity check.",
+    "evidenceState": "The menu and gate implications are static joins of accepted exact paths. No call with normalized index 33 through 36 was observed at runtime. A capped receiver-materializer search did not prove absence of later vptr writes or other selection paths.",
+    "qualification": "These facts support excluding IDs 233 through 236 from the ordinary menu and from the known-vtable city-update gate. They do not establish a program-wide invalid-ID rule, alternate-vtable behavior, or effects."
+  },
   "runtimeObservation": {
     "date": "2026-09-22",
     "titleCommit": "4ae5e9c0a03729afeb6ec905998f43950e01e139",
@@ -42,21 +49,22 @@
     "qualification": "The deduplicated log establishes at least one zero return for each logged index in this state. It does not establish total call counts, other gameplay states, other virtual targets, or execution for unlogged indices."
   },
   "currentEvidence": {
-    "method": "One default-off interactive Title probe resolved the dynamic target and return values. A foreground read-only canonical-project query identified the containing function but its decompiler stopped at a save thunk; a second bounded raw-word query established the three bit-and-range bands and zero return. One exact generated-code function window corroborated those addresses.",
+    "method": "One default-off interactive Title probe resolved the dynamic target and return values. A foreground read-only canonical-project query identified the containing function but its decompiler stopped at a save thunk; a second bounded raw-word query established the three bit-and-range bands and zero return. One exact generated-code function window corroborated those addresses. A later exact-value read-only materializer scan tested the known receiver and vtable constants.",
     "entries": [
       { "role": "runtime indirect call", "address": "0x82CF0EB0 through 0x82CF0EB4", "result": "Thirty-three deduplicated events resolved CTR 0x82D80C30 with low-byte zero for indices 0 through 32.", "confidence": "confirmed" },
       { "role": "first band", "address": "0x82D80C48 through 0x82D80CA4", "result": "Slot +0x1DC supplies bit zero; a one return requires index 21 through 24.", "confidence": "strong" },
       { "role": "second band", "address": "0x82D80CA8 through 0x82D80D08", "result": "Slot +0x1DC supplies bit one; a one return requires index 25 through 28.", "confidence": "strong" },
-      { "role": "third band and zero", "address": "0x82D80D0C through 0x82D80D78", "result": "Slot +0x1DC supplies bit two; a one return requires index 29 through 32; the remaining path returns zero.", "confidence": "strong" }
+      { "role": "third band and zero", "address": "0x82D80D0C through 0x82D80D78", "result": "Slot +0x1DC supplies bit two; a one return requires index 29 through 32; the remaining path returns zero.", "confidence": "strong" },
+      { "role": "known-vtable materializer", "address": "0x82D7E768 through 0x82D7E770", "result": "The exact 0x82138768 query found one raw split-constant candidate at cap 64 without truncation, matching the accepted 0x82D7E758 constructor. A combined receiver-and-vtable query reached cap 64 on 0x8314F76C candidates before reaching the vtable target; it cannot exclude other receiver uses or vptr writes.", "confidence": "strong" }
     ],
-    "locators": ["ghidra/DumpFunctions.java:0x82D80C30", "ghidra/DumpMemoryWords.java:0x82D80C6C,0x82D80CF8,0x82D80D50 radius=16", "generated:rerevved/sub_82D80C30", "runtime:wonder_eligibility_probe"],
+    "locators": ["ghidra/DumpFunctions.java:0x82D80C30", "ghidra/DumpMemoryWords.java:0x82D80C6C,0x82D80CF8,0x82D80D50 radius=16", "ghidra/FindSplitConstantCandidates.java:0x82138768 cap=64 candidates=1 truncated=false", "ghidra/FindSplitConstantCandidates.java:0x8314F76C,0x82138768 cap=64 candidates=64 truncated=true", "generated:rerevved/sub_82D80C30", "runtime:wonder_eligibility_probe"],
     "qualification": "The configured Ghidra decompiler truncated at the save thunk, so raw current-image words and the narrow generated function support the static branch conditions. The runtime sample covers one receiver and one game state."
   },
   "guards": [
-    "Do not infer that indices 33 through 36 are never selected or globally invalid from their absence in this run.",
+    "Do not infer that indices 33 through 36 are never selected or globally invalid from their absence in this run or rejection by the known-vtable city-update gate.",
     "Do not infer that a nonzero +0x1E4 result completes the outer eligibility gate or executes a wonder effect.",
     "Do not assign a gameplay meaning to the +0x1DC bits or optional r5 output calls without their writers and consumers.",
     "Do not treat a stored wonder description as proof of its implemented effect."
   ],
-  "conclusion": "In the observed fresh-game state, the wonder gate's virtual slot +0x1E4 dispatched to 0x82D80C30 and returned zero for each logged normalized index 0 through 32. This implementation can return one only for indices 21 through 32 when one of three corresponding +0x1DC bits is set, and returns zero for indices 33 through 36. This closes that one dynamic target's local range rule, while global validity, other targets, outer eligibility, and effects remain unresolved."
+  "conclusion": "In the observed fresh-game state, the wonder gate's virtual slot +0x1E4 dispatched to 0x82D80C30 and returned zero for each logged normalized index 0 through 32. Static evidence shows that this implementation returns zero for indices 33 through 36. Together with the below-21 fallback, the known-vtable city-update gate rejects IDs 233 through 236; the ordinary production menu never enumerates them. Global validity, other targets, other selection paths, and effects remain unresolved."
 }

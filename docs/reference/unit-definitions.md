@@ -144,6 +144,12 @@ offer wonder IDs 200 through 232; the mutable runtime slot and wonder gate
 decide which appear. Initialized wonder IDs 233 through 236 are outside this
 choice loop. A static reset fills its 33 mutable claim slots with -1; the
 accepted mode-one completion helper writes owner and city index into a slot.
+With known vtable `0x82138768` installed at receiver `0x8314F76C`, the inner
+city-update gate also returns zero for normalized indices 33 through 36 (IDs
+233 through 236): its virtual target rejects them, and its fallback accepts
+only indices below 21. This is a static path result, not a runtime observation
+of those IDs or a program-wide invalid-ID rule. See
+[`wonder-eligibility-virtual-target.json`](../../manifests/wonder-eligibility-virtual-target.json).
 One live city-menu pass found both words at -1 in all 33 slots; its eligibility
 call returned nonzero for indices 2, 8, 11, 12, and 14 through 18. This
 observes one city state, not a global validity rule. See

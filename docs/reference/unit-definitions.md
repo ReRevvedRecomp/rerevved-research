@@ -93,6 +93,11 @@ take a separate conditional city-flag path. Both paths store the item ID
 at city `+0x3A` and check a bounded city byte list. These static writes do not
 establish each building's described effect or runtime execution. See
 [`building-completion-state-writer.json`](../../manifests/building-completion-state-writer.json).
+The directly called city helper reads the Courthouse index-14 bit in city
+`+0x10` and selects a scan of eight adjacent coordinate candidates or twenty
+including a second ring. This establishes a static consumer of the Courthouse
+bit, not which candidate tiles are worked or a runtime effect. See
+[`courthouse-city-coordinate-scan.json`](../../manifests/courthouse-city-coordinate-scan.json).
 
 IDs 200 through 299 use a signed halfword at `+0x40` of `0x14C`-byte wonder
 records rooted at `0x82F73238`. The helper applies a common signed half-scale

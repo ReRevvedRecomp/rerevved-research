@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0181",
+  "topic": "courthouse-city-coordinate-scan",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What does the first accepted city +0x10 building-bit reader do with Courthouse index 14?",
+  "scope": {
+    "function": "0x82D00C78",
+    "producer": "0x82D02090",
+    "building": "item 114 Courthouse, normalized index 14",
+    "boundary": "This packet follows one direct post-building-write city helper and its coordinate loop. It does not classify every city +0x10 reader or establish a runtime Courthouse effect."
+  },
+  "dependencies": [
+    { "topic": "building-completion-state-writer", "use": "Establishes the ordinary building-index bit producer and direct helper call." },
+    { "topic": "building-record-identities-100-122", "use": "Binds normalized index 14 to initialized Courthouse item 114." }
+  ],
+  "staticReader": {
+    "entry": "At 0x82D00C84 through 0x82D00CD0, the helper computes city base 0x8314FE28 + 0xBC*city index, reads city +0x10, extracts bit 0x00004000, and stores either 8 (bit clear) or 20 (bit set) to stack +0x78.",
+    "loop": "At 0x82D014EC through 0x82D01508, a positive stack +0x78 enters a coordinate loop. At 0x82D01774 through 0x82D01784, its index increments by one, its two table offsets advance by four bytes, and the index is compared with stack +0x78. The body adds signed city +0x30/+0x32 coordinates to the paired table words and checks map bounds before further tile-state processing.",
+    "offsetTables": "Paired signed word tables begin at 0x82F7A0B8 and 0x82F7A168. Entries 0 through 7 form the eight adjacent offsets: (0,1),(1,1),(1,0),(1,-1),(0,-1),(-1,-1),(-1,0),(-1,1). Entries 8 through 19 form twelve additional offsets: (0,2),(1,2),(2,1),(2,0),(2,-1),(1,-2),(0,-2),(-1,-2),(-2,-1),(-2,0),(-2,1),(-1,2).",
+    "meaning": "The initialized Courthouse bit increases the count of coordinate candidates examined by this city calculation from eight to twenty. Later tile scoring and city output in this large helper are outside this packet; the stored Courthouse description is not by itself evidence of their gameplay result."
+  },
+  "runtimeObservation": {
+    "courthouseBuilt": false,
+    "coordinateScanObserved": false,
+    "result": "No runtime observation establishes this path's execution or visible effect."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only canonical-project raw-word query covered the bit test and bounded loop headers and tail. A second foreground read-only query recovered the first twenty entries of each exact coordinate table. Narrow generated-code windows corroborated register and stack flow where Ghidra's function decompilation truncates at the save thunk.",
+    "entries": [
+      { "role": "building bit reader", "address": "0x82D00C84 through 0x82D00CD0", "result": "City +0x10 bit 0x4000 selects loop count eight or twenty.", "confidence": "strong" },
+      { "role": "bounded coordinate loop", "address": "0x82D014EC through 0x82D01784", "result": "The selected count bounds an index over paired coordinate-offset tables added to city coordinates.", "confidence": "strong" },
+      { "role": "coordinate offsets", "address": "0x82F7A0B8 through 0x82F7A104; 0x82F7A168 through 0x82F7A1B4", "result": "Twenty paired signed offsets comprise eight adjacent and twelve additional candidate coordinates.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82D00CA8,0x82D014EC,0x82D01508,0x82D01774 radius=14", "ghidra/DumpMemoryWords.java:0x82F7A0B8,0x82F7A168 radius=22", "generated:rerevved/sub_82D00C78", "manifests/building-completion-state-writer.json#/staticWriter/ordinaryBits"],
+    "qualification": "No runtime probe was performed. The direct bit and loop-count relation is static; downstream scoring and visible behavior remain unclassified."
+  },
+  "guards": [
+    "Do not treat the selected scan count as a complete Courthouse gameplay-effect contract.",
+    "Do not infer that all twenty candidate tiles are usable or worked.",
+    "Do not generalize this one reader to every building-index bit consumer."
+  ],
+  "conclusion": "The accepted ordinary building writer sets bit 14 for initialized Courthouse item 114. One directly called city helper reads that bit and scans eight adjacent coordinate candidates when clear or twenty candidates when set. The static candidate expansion is established; runtime execution and final city effects are not."
+}

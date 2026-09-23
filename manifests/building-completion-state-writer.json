@@ -13,7 +13,7 @@
     "cityStride": "0xBC",
     "normalizedInput": "item ID minus 100 in r4",
     "initializedRecords": "items 100 through 122",
-    "boundary": "This packet follows the accepted sufficient-production building call through its direct state writer. It does not establish validity of absent records 123 through 199, downstream bit consumers, building-specific description effects, presentation, persistence, or runtime execution."
+    "boundary": "This packet follows the accepted sufficient-production building call through its direct state writer. A downstream Courthouse bit reader is established separately in courthouse-city-coordinate-scan. This packet does not establish validity of absent records 123 through 199, other bit consumers, building-specific description effects, presentation, persistence, or runtime execution."
   },
   "dependencies": [
     { "topic": "non-unit-production-threshold-boundary", "use": "Provides the invested-versus-cost gate, first city +0x36 write, and direct call at 0x82D16158." },
@@ -28,10 +28,10 @@
   },
   "staticWriter": {
     "specialRange": "At 0x82D020A0 through 0x82D020AC, normalized indices 19 through 22 select a separate path, corresponding at this callsite to initialized spaceship-part items 119 through 122. It reads signed city owner +0x00, then word 0x830ECC0C + 8*owner. Only when that word equals -1 does 0x82D020EC OR bit 0x00000100 into city word +0x24. This special path skips the generic building-presence bit stores.",
-    "ordinaryBits": "For other normalized indices, 0x82D02114 reads the accepted current player-era word 0x830ECD08 + 4*owner and clamps it to 0 through 3. At 0x82D02158 and 0x82D02164, the helper ORs 1 shifted by normalized index into city word +0x14 + 4*clampedEra and city word +0x10, then calls 0x82D00C78 at 0x82D02168. The two bitfield consumers and their precise roles remain unresolved.",
+    "ordinaryBits": "For other normalized indices, 0x82D02114 reads the accepted current player-era word 0x830ECD08 + 4*owner and clamps it to 0 through 3. At 0x82D02158 and 0x82D02164, the helper ORs 1 shifted by normalized index into city word +0x14 + 4*clampedEra and city word +0x10, then calls 0x82D00C78 at 0x82D02168. One Courthouse bit reader in the direct callee is established separately in courthouse-city-coordinate-scan; other bitfield consumers and their precise roles remain unresolved.",
     "commonItem": "Both paths join at 0x82D0216C and store item ID 100 + normalized index as a halfword to city +0x3A at 0x82D02180.",
     "boundedList": "The helper checks signed bytes city +0x87 through +0xA2 in order. If a byte equals the normalized index it returns; if it first finds zero it writes the index there at 0x82D021B8 and returns. It stops after the 28th checked byte. For normalized index zero, an existing zero matches before the empty-slot write; no separate meaning is inferred.",
-    "qualification": "This is a static producer of city state. The helper itself has no established independent upper item-ID validation, and the shifts and list behavior must not be used as a contract for synthetic IDs. The later consumers of these fields and actual runtime completion remain unobserved."
+    "qualification": "This is a static producer of city state. The helper itself has no established independent upper item-ID validation, and the shifts and list behavior must not be used as a contract for synthetic IDs. One Courthouse bit reader is established separately; other consumers and actual runtime completion remain unobserved."
   },
   "runtimeObservation": {
     "source": "wonder-eligibility-virtual-target",
@@ -54,5 +54,5 @@
     "Do not infer record validity for IDs 123 through 199 from the helper's lack of a local upper bound.",
     "Do not call the static writes a runtime completion observation or a safe public modding API."
   ],
-  "conclusion": "The accepted building sufficient-production path calls 0x82D02090, which writes generic city building-index state for ordinary indices and a distinct conditional city flag for spaceship-part indices 19 through 22, then records the item and checks a bounded city byte list. Field consumers, described effects, runtime execution, and unsupported-ID behavior remain unresolved."
+  "conclusion": "The accepted building sufficient-production path calls 0x82D02090, which writes generic city building-index state for ordinary indices and a distinct conditional city flag for spaceship-part indices 19 through 22, then records the item and checks a bounded city byte list. One Courthouse bit reader is established separately; other field consumers, described effects, runtime execution, and unsupported-ID behavior remain unresolved."
 }

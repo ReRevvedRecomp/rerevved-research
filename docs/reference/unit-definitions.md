@@ -95,6 +95,10 @@ and 18 half-cost branches. Cathedral 111 has a UEA 21 branch, with no accepted
 retail activation. University 112 and Factory 116 have separate neutral-gated
 reductions. The exact branch sequence and other common modifiers are in
 [`building-wonder-cost-modifier-branches.json`](../../manifests/building-wonder-cost-modifier-branches.json).
+The shared Library/University three-quarter gate at `0x830E8FFE` has no
+identified writer or policy meaning; bounded address searches found no match,
+and its consumer lies in a Ghidra function gap. See the
+[gate source frontier](../../manifests/building-wonder-cost-gate-source-frontier.json).
 After a sufficient-production building test, `0x82D02090` stores building-index
 bits in city state, including a bank selected by clamped player era, for
 ordinary indices. Spaceship-part items 119-122

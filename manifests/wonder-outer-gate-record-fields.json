@@ -17,15 +17,16 @@
   },
   "dependencies": [
     { "topic": "wonder-eligibility-dispatch-boundary", "use": "Establishes the inner-gate call and early zero return." },
-    { "topic": "wonder-record-byte-boundary-237-249", "use": "Bounds the accepted initialized record domain at 200 through 236." }
+    { "topic": "wonder-record-byte-boundary-237-249", "use": "Bounds the accepted initialized record domain at 200 through 236." },
+    { "topic": "starting-technology-grants", "use": "Establishes 0x830EDC48 as 48 technology ownership words, one bit per player, with acquisition and persistence owners." }
   ],
   "genericBranch": {
     "condition": "After a nonzero inner result, normalized indices 19 and 20 take separate branches. Other indices enter the generic branch at 0x82CF3740.",
     "recordSelection": "The generic branch computes 0x82F73238 + normalizedIndex * 0x14C without a local bounds check.",
     "firstTwoCells": "It sign-extends the halfwords at +0x44 and +0x46, passing each as argument one to 0x82CEF6A8 with the caller-supplied r4 selector as argument two. Either zero helper result returns zero from the outer gate.",
-    "helperLocalRule": "0x82CEF6A8 returns one for input -1 and zero for input zero. For other inputs, a nonzero neutral condition 0x82CEF4E8(17,-1) accepts values other than 47; otherwise it tests the selector bit in the word at 0x830EDC48 + input*4. The condition and bitset owner are unresolved.",
-    "thirdCell": "The generic branch sign-extends +0x48. A value of -1 returns one. Otherwise it tests the word at 0x830EDC48 + value*4 after masking out one bit selected by r4; a nonzero masked result returns zero and zero returns one.",
-    "qualification": "These are exact branch conditions, not proof of a valid-ID predicate. The helper's neutral input values may be identifiers, but their gameplay domain is unproved."
+    "helperLocalRule": "0x82CEF6A8 is the accepted ordinary technology ownership query. It returns one for sentinel input -1 and zero for input zero. For other technology IDs, a nonzero neutral condition 0x82CEF4E8(17,-1) accepts values other than 47; otherwise it tests the selected player's bit in technology ownership word 0x830EDC48 + technologyId*4.",
+    "thirdCell": "The generic branch sign-extends +0x48. A value of -1 returns one. Otherwise it tests technology ownership word 0x830EDC48 + value*4 after masking out the selected player's bit; a nonzero remaining result returns zero and zero returns one.",
+    "qualification": "The three cells index the accepted technology ownership array on this path. Their broader policy meaning, the neutral selector-17 condition, and a global valid-ID predicate remain unresolved. The branch does not locally validate the record index."
   },
   "recordValues": {
     "format": "[itemId, signedHalfwordAt+0x44, signedHalfwordAt+0x46, signedHalfwordAt+0x48]",
@@ -45,7 +46,7 @@
       [233, 24, -1, -1], [234, 38, -1, -1], [235, 7, -1, -1],
       [236, 7, -1, 19]
     ],
-    "qualification": "Values for 219 and 220 are stored facts; their special gate branches bypass the generic reads. No gameplay labels are assigned from numerical resemblance."
+    "qualification": "Values for 219 and 220 are stored facts; their special gate branches bypass the generic reads. Other cells are technology IDs or -1 sentinels on this exact branch; their effects are not inferred from numerical resemblance."
   },
   "runtimeObservation": {
     "source": "wonder-eligibility-virtual-target",
@@ -63,9 +64,9 @@
     "qualification": "The configured decompiler truncates the outer function at a save thunk and the helper at bad instruction data. Current-image raw words support the branch and cells; generated code only corroborates decoded instruction meaning."
   },
   "guards": [
-    "Do not call +0x44, +0x46, or +0x48 technology prerequisites without independent owner evidence.",
+    "Do not turn the technology ownership checks into a complete wonder buildability or effect rule.",
     "Do not apply this branch to normalized indices 19 or 20 or treat its unchecked arithmetic as validation.",
     "Do not infer runtime branch activation, buildability, completion, or gameplay effects from stored values."
   ],
-  "conclusion": "The outer gate consumes three signed halfwords at wonder-record offsets +0x44, +0x46, and +0x48 for its generic branch. Their exact stored values are mapped for all initialized IDs 200 through 236. The branch has no local range check; wonder-outer-gate-special-19-20 owns the two special branches. Source meanings, complete eligibility, and runtime effects remain unresolved."
+  "conclusion": "The outer gate consumes three signed halfwords at wonder-record offsets +0x44, +0x46, and +0x48 for its generic branch. The first two pass technology IDs or -1 sentinels to the accepted ordinary ownership query; the third tests whether other players own a selected technology. Exact values are mapped for initialized IDs 200 through 236. The branch has no local range check; wonder-outer-gate-special-19-20 owns the two special branches. Complete eligibility and runtime effects remain unresolved."
 }

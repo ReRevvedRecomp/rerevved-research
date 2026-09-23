@@ -115,12 +115,15 @@ return one for indices 21 through 32 only when the corresponding one of three
 bits from slot `+0x1DC` is set. The observed slot's getter at `0x82D7D2A8`
 returns frontend-root `+0x08`, except that context state codes 4 through 6
 force zero. The later generic outer gate reads signed wonder-record halfwords
-at `+0x44`, `+0x46`, and `+0x48`; exact values for IDs 200 through 236 are in
+at `+0x44`, `+0x46`, and `+0x48`. The first two pass technology IDs or `-1`
+sentinels to the ordinary technology ownership query. The third selects a
+technology whose ownership bits are checked for other players. Exact stored
+values for IDs 200 through 236 are in
 [`wonder-outer-gate-record-fields.json`](../../manifests/wonder-outer-gate-record-fields.json).
 Indices 19 and 20 use separate state checks mapped in
 [`wonder-outer-gate-special-19-20.json`](../../manifests/wonder-outer-gate-special-19-20.json).
-The field writer, bit meanings, other virtual targets, state owners, runtime
-eligibility, and effects remain unresolved. See
+The mask-field writer, its bit meanings, other virtual targets, special-branch
+state owners, runtime eligibility, and effects remain unresolved. See
 [`wonder-eligibility-virtual-target.json`](../../manifests/wonder-eligibility-virtual-target.json)
 and
 [`wonder-eligibility-mask-source.json`](../../manifests/wonder-eligibility-mask-source.json).
@@ -135,14 +138,12 @@ functions remain unclassified. This is a bounded negative, not a claim that no
 Pyramids consumer exists. Exact limits are in
 [`pyramids-government-availability.json`](../../manifests/pyramids-government-availability.json).
 
-A separate bounded Great Library packet did not establish an exact item-206
-edge to technology ownership or acquisition, completion, display, or AI. Exact
-references and split-address recovery exposed only generic technology helpers
-and the accepted technology-table materializer. A complete filtered literal
-scan emitted three functions; their recovered prefixes were unrelated or had
-no Great Library carrier, and all three exact bodies truncated on bad
-instruction data. This is a bounded negative, not a claim that no Great
-Library consumer exists. Exact limits are in
+A separate bounded Great Library packet found no item-206 effect edge through
+direct references, split-address recovery, or filtered literal uses. The
+later record-indexed outer gate does read technology ownership for its
+eligibility check, using stored technology IDs 8 and 21. That read does not
+prove the description's technology-transfer effect, acquisition, completion,
+display, or AI behavior. Exact limits and the later edge are in
 [`great-library-technology-transfer.json`](../../manifests/great-library-technology-transfer.json).
 
 An effect-specific East India Company packet also found no exact item-207 edge

@@ -574,8 +574,14 @@ class TopicManifestTests(unittest.TestCase):
                 for entry in document["candidateResults"]
             )
         )
-        self.assertIn("does not establish", document["boundedNegative"]["result"])
-        self.assertIn("not an executable-wide absence", document["conclusion"])
+        self.assertEqual(
+            document["laterAcceptedEligibilityEdge"]["recordCells"],
+            {"+0x44": 8, "+0x46": -1, "+0x48": 21},
+        )
+        self.assertIn(
+            "no technology-acquisition", document["boundedNegative"]["result"]
+        )
+        self.assertIn("does not establish", document["conclusion"])
 
     def test_east_india_sea_trade_boundary(self) -> None:
         path = MANIFESTS / "east-india-sea-trade.json"

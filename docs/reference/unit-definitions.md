@@ -141,8 +141,10 @@ A bounded census found 27 direct local-drain calls; a 0x100-byte literal-five
 check around each found no second proved type-five producer. A separate census
 found all 100 direct calls to the submit entry. Helper `0x82CB42B8`, called
 twice by the city-list generator, submits type five at `0x82CB44D0`; one
-branch adds 200 to its item argument. Its live inputs and reachable item IDs
-remain unknown, as do indirect routes and earlier record construction. See
+branch takes an ordinal from a 33-slot wonder scan and adds 200. If its
+indirect chooser returns a valid row, that branch yields IDs 200 through 232.
+The chooser's row bound and runtime execution remain unknown, as do indirect
+routes and earlier record construction. See
 [`city-production-command-five-source-frontier.json`](../../manifests/city-production-command-five-source-frontier.json).
 The actual choice child copies nonnegative IDs from separate parent arrays and
 checks the selected vector index before forwarding an item. Its wonder-array

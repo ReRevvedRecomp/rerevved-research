@@ -240,6 +240,30 @@ Text and art-token consumers, complete layouts, final runtime costs, and most
 gameplay effects remain unresolved. The exact cost inputs are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).
 
+## Effect coverage by ID
+
+The records store descriptions, but description text does not prove that the
+game implements the described behavior. The table classifies the effect-specific
+evidence currently in scope. No gameplay-effect execution has been observed at
+runtime in the mapped building and wonder effect packets; the runtime
+observations above cover choice, eligibility, and production-item state only.
+
+| IDs | Static evidence | Runtime effect execution |
+|---|---|---|
+| Wonders 201, 202, 208, 211, 227 | Item-specific branches exist in the direct mode-one helper. Their local writes and calls are mapped in the [branch census](../../manifests/wonder-post-threshold-helper-boundary.json) and [individual packets](../../manifests/great-wall-player-pair-branch.json), [Hanging Gardens](../../manifests/hanging-gardens-population-branch.json), [Oxford](../../manifests/oxford-technology-acquisition-branch.json), [Leonardo](../../manifests/leonardo-unit-type-branch.json), and [Statue of Liberty](../../manifests/statue-of-liberty-population-branch.json). | Not observed |
+| Wonders 219-220 | A conditional mode-two path writes shared status bits and a halfword; their meanings and downstream consumers remain unknown. See [terminal state](../../manifests/wonder-mode-two-terminal-state.json). | Not observed |
+| Building 114 | The Courthouse bit selects a scan of eight or twenty coordinate candidates; downstream scoring and visible effect remain unknown. See [coordinate scan](../../manifests/courthouse-city-coordinate-scan.json). | Not observed |
+| Wonders 200, 206, 207, 209 | Bounded searches found no exact edge for the described effect within each packet's stated scope: [Pyramids](../../manifests/pyramids-government-availability.json), [Great Library](../../manifests/great-library-technology-transfer.json), [East India Company](../../manifests/east-india-sea-trade.json), and [Shakespeare](../../manifests/shakespeare-city-culture.json). These are bounded negatives, not proof that no effect exists. | Not observed |
+| Buildings 100-113, 115-122; wonders 203-205, 210, 212-218, 221-226, 228-236 | Stored descriptions are present, but this catalog has no item-specific effect branch or bounded negative packet for these IDs. The bounded consumer frontier is in [building-wonder-consumer-frontier.json](../../manifests/building-wonder-consumer-frontier.json). | Not observed |
+
+Barracks 101 remains a specific unresolved link: its stored description says
+veteran units are produced, while the native veteran grant branch is gated by a
+creation-record bit. The accepted [building writer](../../manifests/building-completion-state-writer.json)
+and [veteran branch](../../manifests/new-warrior-veteran.json) do not establish
+that Barracks completion or ownership supplies that bit. The modded veteran
+runtime acceptance recorded in the latter packet does not test the Barracks
+description.
+
 One bounded wonder production gate uses normalized wonder index. In one fresh
 game, its receiver dispatched virtual slot `+0x1E4` to `0x82D80C30` for
 indices 0 through 32; every logged result was zero. This implementation can

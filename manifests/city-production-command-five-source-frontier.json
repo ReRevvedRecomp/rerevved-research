@@ -55,11 +55,17 @@
     "marker": "In 0x82CEBC38, the scan at 0x82CEC5E8 through 0x82CEC618 tests eight-byte wonder slots for first word -1 and a nonzero 0x82CF3608(index, owner) result. Its pointer ends at base +0x108 after 33 positions. The success branch writes a -12 candidate marker at 0x82CEC640.",
     "selection": "When the first chooser result selects that -12 candidate, a second scan at 0x82CECBFC through 0x82CECC54 traverses the same 33 slots and writes qualifying raw ordinals 0 through 32 into a separate array at 0x82CECC38. The second call to 0x82CE8338 returns a row selector. The caller checks only selector != -1 at 0x82CECC78, then reads the selected ordinal at 0x82CECC94 and passes it as r6 to 0x82CB42B8 at 0x82CECC98.",
     "helperPreservation": "The intervening 0x82D038E8 call in the helper writes a separate global and does not assign r6 in its bounded 0x82D038E8 through 0x82D0392C body. The -12 branch then adds 200 at 0x82CB4498 before submitting type 5.",
-    "conditionalRange": "If the second chooser returns a valid row of the populated ordinal array, this path submits only IDs 200 through 232. The visible caller checks against -1 but does not check the upper row bound. The chooser at 0x82CE8338 returns the result of an indirect slot +0x30 call at 0x82CE86F4, whose target and return contract are not established here. The unconditional reachable ID bound therefore remains unproved.",
+    "conditionalRange": "If the second chooser returns a valid row of the populated ordinal array, this path submits only IDs 200 through 232. The visible caller checks against -1 but does not check the upper row bound. The known initialized vtable resolves the chooser's indirect slot +0x30 call, but the eventual dialog row-return contract remains unproved. The unconditional reachable ID bound therefore remains unproved.",
     "runtime": "No invocation of this submit path or second chooser result was observed."
   },
+  "chooserReturnFrontier": {
+    "knownReceiver": "0x82CE8338 calls receiver 0x8314F76C through slot +0x30 at 0x82CE86F4. The accepted initialized vtable 0x82138768 has 0x82D84630 at word 0x82138798. Other live vptr states are not excluded.",
+    "returnChain": "The known target 0x82D84630 can return -1; its other path calls 0x82E2F1A0 at 0x82D84798. That helper can also return -1 and otherwise forwards the 0x82E07290 result from call 0x82E2F368. The dialog body initializes field +0x42C to -1 at 0x82E072D4 and returns it at 0x82E07810, without a visible direct upper-row test in this chain.",
+    "constructedObject": "Constructor 0x82E056F8 installs vtable 0x8212431C at 0x82E0575C after initializing +0x42C to -1 at 0x82E05730. Its slot +0x34 word 0x82124350 targets 0x82E053E8, which can reset +0x42C to -1 at 0x82E05474. Slot +0x04 word 0x82124320 targets 0x82E07200; this local body does not establish a row-count bound for +0x42C. The complete dialog event path that assigns a selected row is not identified.",
+    "smallestNextObservation": "At the existing -12 caller 0x82CECC98, a default-off pre-instruction probe capped at eight events would record raw r11 (second chooser selector times four), r31 (populated ordinal count), r6 (chosen ordinal), r4 (first chooser row), and r3 (player). One event would decide whether this live selection is in range and which ID it submits. A sample cannot prove all states; the static contract still needs the actual +0x42C row writer and its count guard. No such probe was built or run."
+  },
   "currentEvidence": {
-    "method": "Sequential foreground read-only canonical-project queries enumerated raw direct calls, read 0x100-byte windows around the 27 local-drain and 100 separate-submit callsites, and enumerated direct callers of the identified helper. Narrow generated-code windows classified only the exact candidates and helper calls.",
+    "method": "Sequential foreground read-only canonical-project queries enumerated raw direct calls, read 0x100-byte windows around the 27 local-drain and 100 separate-submit callsites, enumerated direct callers of the identified helper, and read exact caller, chooser, and vtable words. Narrow generated-code windows classified exact candidates and the identified chooser return chain where Ghidra truncates at save thunks.",
     "locators": [
       "ghidra/FindDirectCallers.java:0x82CE16C8 cap=64 matches=27 truncated=false",
       "ghidra/FindDirectCallers.java:0x82CE1950 cap=256 matches=100 truncated=false",
@@ -69,11 +75,20 @@
       "ghidra/DumpMemoryWords.java:0x82CEC640,0x82CECC18,0x82CECC50,0x82CECC98,0x82CB4498,0x82D038E8 radius=18..24",
       "ghidra/DumpMemoryWords.java:0x82CE86F4 radius=18",
       "ghidra/DumpFunctions.java:0x82CE8338 known thunk-truncated",
+      "ghidra/DumpMemoryWords.java:0x82138798,0x82124320,0x82124350 radius=1..2",
+      "ghidra/DumpMemoryWords.java:0x82D84794,0x82E2F368,0x82E0572C,0x82E05750,0x82E072D4,0x82E07804,0x82E05470 radius=8..10",
+      "ghidra/DumpFunctions.java:0x82D84630,0x82E2F1A0 known thunk-truncated",
       "generated:rerevved/sub_82CCEFA8:0x82CD0570..0x82CD0670",
       "generated:rerevved/sub_82D217C8:0x82D24E0C..0x82D24EA4",
       "generated:rerevved/sub_82CB42B8:0x82CB4488..0x82CB44D0",
       "generated:rerevved/sub_82CEBC38:0x82CEC5E8..0x82CEC640,0x82CECBFC..0x82CECCB8",
-      "generated:rerevved/sub_82D038E8:0x82D038E8..0x82D0392C"
+      "generated:rerevved/sub_82D038E8:0x82D038E8..0x82D0392C",
+      "generated:rerevved/sub_82D84630:0x82D84630..0x82D847D8",
+      "generated:rerevved/sub_82E2F1A0:0x82E2F1A0..0x82E2F378",
+      "generated:rerevved/sub_82E056F8:0x82E05720..0x82E0575C",
+      "generated:rerevved/sub_82E07290:0x82E072D4..0x82E07810",
+      "generated:rerevved/sub_82E053E8:0x82E053E8..0x82E05474",
+      "generated:rerevved/sub_82E07200:0x82E07200..0x82E07278"
     ],
     "qualification": "The raw-word windows locate only immediate li rD,5 forms. The generated windows classify exact candidate register uses, not all commands in either large function. No new runtime behavior was observed."
   },

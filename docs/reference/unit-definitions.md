@@ -366,6 +366,8 @@ the branch census is in
 [`wonder-post-threshold-helper-boundary.json`](../../manifests/wonder-post-threshold-helper-boundary.json).
 At its terminal join, that conditional mode-two path clears two state bits
 and sets bit `0x10000` in shared status word `0x82FFE7C4` for index 19 or 20.
+An exact-base split-constant scan found no decoded materializers for that
+address; it does not cover direct-displacement accesses or derived addresses.
 No bit-specific consumer or victory meaning has been established. One player-matched path also
 updates a halfword at `0x830EF348 + 2*index`, whose meaning is unknown. See
 [`wonder-mode-two-terminal-state.json`](../../manifests/wonder-mode-two-terminal-state.json).

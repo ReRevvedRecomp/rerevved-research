@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0207",
+  "topic": "great-wall-player-pair-consumer-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Do exact Ghidra references or decoded split-constant materializers identify a reader of the Great Wall player-pair table?",
+  "scope": {
+    "tableBase": "0x830ED1D8",
+    "producer": "wonder item 201 in 0x82D16BA0",
+    "referenceTargetCount": 1,
+    "splitConstantLookahead": 8,
+    "firstUseWindow": 16,
+    "materializerCap": 64,
+    "boundary": "The queries check the exact table base in Ghidra's reference manager and as a decoded split-constant address materializer. They do not resolve interior or relative references, derived addresses, indexed or computed accesses, aliases, indirect dispatch, or readers omitted from the decoded listing."
+  },
+  "dependencies": [
+    { "topic": "great-wall-player-pair-branch", "use": "Defines the exact table base and symmetric writes made by the item-201 branch." },
+    { "topic": "wonder-record-identities", "use": "Binds item 201 to The Great Wall and its stored description." }
+  ],
+  "staticResult": {
+    "exactAddressReferences": {
+      "target": "0x830ED1D8",
+      "references": 0,
+      "result": "Ghidra's reference manager emitted References: 0 for the exact pair-table base."
+    },
+    "decodedMaterializers": {
+      "target": "0x830ED1D8",
+      "lookahead": 8,
+      "firstUseWindow": 16,
+      "materializerCap": 64,
+      "decodedInstructionsScanned": 654329,
+      "materializersEmitted": 0,
+      "truncated": false,
+      "result": "No decoded split-constant materializer for the exact table-base address was emitted."
+    },
+    "fieldBoundary": "Neither exact-base query establishes a consumer or resolves table semantics."
+  },
+  "runtimeObservation": {
+    "source": "great-wall-player-pair-branch",
+    "status": "not-observed",
+    "pairWriteObserved": false,
+    "qualification": "The earlier fresh-game probe did not observe item-201 completion or execution of the pair-table branch."
+  },
+  "currentEvidence": {
+    "method": "Two foreground read-only canonical-project queries against the exact 0x830ED1D8 address: DumpReferences and FindGlobalAddressAccesses with split-constant lookahead 8, first-use window 16, and materializer cap 64.",
+    "entries": [
+      { "role": "reference-manager query", "address": "0x830ED1D8", "result": "Zero recorded exact-address references.", "confidence": "strong" },
+      { "role": "decoded materializer query", "address": "0x830ED1D8", "result": "Zero exact split-constant materializers among 654329 decoded instructions; cap 64 was not reached.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpReferences.java:0x830ED1D8",
+      "ghidra/FindGlobalAddressAccesses.java:0x830ED1D8 lookahead=8 useWindow=16 maxMatches=64"
+    ],
+    "qualification": "These are bounded negatives for exact-base references and the decoded split-constant materializer form. The result does not exclude consumers using a derived table address, indexed or computed access, pointer alias, interior entry, indirect dispatch, or code outside the decoded listing. No runtime observation was made."
+  },
+  "guards": [
+    "Do not interpret zero exact-base references or materializers as proof that the pair table has no reader.",
+    "Do not call the table a peace-offer or treaty table without a consumer.",
+    "Do not infer a fixed player count from the eight-wide pair-table index.",
+    "Do not infer runtime behavior from the stored Great Wall description or the symmetric writes."
+  ],
+  "conclusion": "The two exact-base queries found no recorded Ghidra references or decoded split-constant materializers for 0x830ED1D8. They do not identify a consumer. Derived, indexed, computed, aliased, indirect, interior, and undecoded readers remain unresolved; the table's meaning and any effect of its writes are unknown."
+}

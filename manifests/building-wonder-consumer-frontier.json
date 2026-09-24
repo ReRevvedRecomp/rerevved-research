@@ -11,7 +11,7 @@
     "costHelper": "0x82CF1278",
     "materializerCap": 16,
     "directCallCap": 16,
-    "boundary": "The first query scans decoded split-address materializers for six exact targets. The second scans aligned raw direct branch-and-link words to one exact helper, stopping at sixteen emitted matches. A third scans the exact body at 0x82CF0268 for register-relative operands at +0x42, +0x4A, +0x8A, and +0xCA; it does not resolve scaled/indexed address calculations. Exact-body scans check eight building/wonder offsets in the accepted production-choice vtable slot target 0x82C7BCC0 and nine offsets in its terminal branch target 0x82E41538. These field scans do not resolve indexed/computed/indirect accesses, accesses through calls, other readers, or an executable-wide producer and consumer inventory."
+    "boundary": "The first query scans decoded split-address materializers for six exact targets. The second scans aligned raw direct branch-and-link words to one exact helper, stopping at sixteen emitted matches. A third scans the exact body at 0x82CF0268 for register-relative operands at +0x42, +0x4A, +0x8A, and +0xCA; it does not resolve scaled/indexed address calculations. Exact-body scans check eight building/wonder offsets in the accepted production-choice vtable slot target 0x82C7BCC0 and nine offsets in its terminal branch target 0x82E41538. The one direct callee at 0x827F7C8C was also checked; Ghidra defines a one-byte function body with no decoded instruction. These bounded checks do not resolve indexed/computed/indirect accesses, other callees or readers, or an executable-wide producer and consumer inventory."
   },
   "dependencies": [
     { "topic": "production-cost-ownership", "use": "Provides the accepted cost helper, wrappers, and known cost consumers." },
@@ -40,7 +40,7 @@
     "qualification": "The bounded queries add no text or asset consumer, no valid-definition gate, and no executed gameplay-effect owner. The prior accepted threshold does not establish completion or final modding behavior."
   },
   "currentEvidence": {
-    "method": "Foreground read-only canonical-project queries: six exact values with split-constant lookahead twelve, a capped raw direct-caller scan for the one accepted cost helper, and exact-body scans of 0x82CF0268, the initialized production-choice vtable slot target 0x82C7BCC0, and its terminal branch target 0x82E41538.",
+    "method": "Foreground read-only canonical-project queries: six exact values with split-constant lookahead twelve, a capped raw direct-caller scan for the one accepted cost helper, exact-body scans of 0x82CF0268 and the production-choice path through 0x82C7BCC0 and 0x82E41538, and a direct-callee check at 0x827F7C8C.",
     "functionPreflight": {
       "script": "DumpFunctionNeighborhood.java",
       "address": "0x82CF0268",
@@ -109,20 +109,34 @@
           "truncated": false
         },
         "result": "The exact 8-byte body contains no decoded register-relative access at any listed offset. Its two instructions are mfspr r12,LR and a call to 0x827F7C8C.",
-        "qualification": "Caller and callee depth were zero. The call target, indexed/computed/indirect accesses, other readers, and runtime behavior remain outside this scan."
+        "qualification": "Caller and callee depth were zero for this field scan; the separate direct-callee check found a one-byte target at 0x827F7C8C with no decoded instruction. Indexed/computed/indirect accesses, other readers, and runtime behavior remain outside these checks."
+      },
+      "tailDirectCallee": {
+        "script": "DumpFunctionNeighborhood.java",
+        "caller": "0x82E41538",
+        "address": "0x827F7C8C",
+        "containingFunction": "FUN_827f7c8c",
+        "bodyMin": "0x827F7C8C",
+        "bodyMax": "0x827F7C8C",
+        "bodyBytes": "0x1",
+        "instructionsEmitted": 0,
+        "referencesEmitted": 64,
+        "referencesTruncated": true,
+        "result": "The direct callee target has a one-byte Ghidra function body and no decoded instructions. No building or wonder field scan was run for this target."
       },
       "result": "The exact body at 0x82C7BCC0 has no decoded register-relative access at the listed offsets and ends with a branch to 0x82E41538. The exact target is an 8-byte in-image function whose body has no decoded register-relative access at the nine additionally checked offsets.",
-      "qualification": "The neighborhood query's separate reference listing reached its 64-reference cap; function bounds and instructions were emitted. Both production-choice field scans cover decoded register-relative operands only; they do not resolve scaled, indexed, computed, or indirect definition reads, accesses through calls, or other readers. Text and art meaning remain unestablished."
+      "qualification": "The neighborhood query's separate reference listing reached its 64-reference cap; function bounds and instructions were emitted. Both production-choice field scans cover decoded register-relative operands only; they do not resolve scaled, indexed, computed, or indirect definition reads or other readers. The direct callee at 0x827F7C8C has a one-byte body with no decoded instruction, and its reference listing is truncated at 64. Text and art meaning remain unestablished."
     },
     "entries": [
       { "role": "decoded address construction", "address": "0x82CF03F4 through 0x82CF0408", "result": "One non-truncated materializer result, for the wonder table base, with a first halfword load at +0x1B84.", "confidence": "strong" },
       { "role": "direct cost calls", "address": "0x82CB6410 through 0x82CF838C", "result": "Sixteen raw direct-call sites emitted and the per-target cap reached; owners are undefined in the configured listing.", "confidence": "strong" },
       { "role": "wonder-reader field scan", "address": "0x82CF0268 through 0x82CF054F", "result": "The exact 0x2E8-byte body contained 186 scanned instructions and no register-relative operand at +0x42, +0x4A, +0x8A, or +0xCA; the scan was not truncated.", "confidence": "strong" },
       { "role": "production-choice slot method field scan", "address": "0x82C7BCC0 through 0x82C7BCE7", "result": "The initialized vtable slot +0x08 target's exact body contained 10 scanned instructions and no register-relative access at +0x00, +0x20, +0x40, +0x42, +0x4A, +0x4C, +0x8A, or +0xCA; the 64-hit field scan was not truncated.", "confidence": "strong" },
-      { "role": "production-choice tail target field scan", "address": "0x82E41538 through 0x82E4153F", "result": "The terminal branch target is an 8-byte in-image function. Its exact body contained 2 scanned instructions and no register-relative operand at +0x00, +0x20, +0x40, +0x41, +0x42, +0x4A, +0x4C, +0x8A, or +0xCA; the 64-hit field scan was not truncated.", "confidence": "strong" }
+      { "role": "production-choice tail target field scan", "address": "0x82E41538 through 0x82E4153F", "result": "The terminal branch target is an 8-byte in-image function. Its exact body contained 2 scanned instructions and no register-relative operand at +0x00, +0x20, +0x40, +0x41, +0x42, +0x4A, +0x4C, +0x8A, or +0xCA; the 64-hit field scan was not truncated.", "confidence": "strong" },
+      { "role": "production-choice tail direct callee", "address": "0x827F7C8C", "result": "The exact Ghidra target is a one-byte function body with zero decoded instructions. Its reference listing emitted 64 entries and was truncated; no field scan or text-consumer conclusion is supported.", "confidence": "strong" }
     ],
-    "locators": ["ghidra/FindGlobalAddressAccesses.java:0x82F71FD8,0x82F71FF8,0x82F72024,0x82F73238,0x82F73282,0x82F73302", "ghidra/FindDirectCallers.java:0x82CF1278", "ghidra/DumpFunctionNeighborhood.java:0x82CF0268 radius=0x40 maxInstructions=64", "ghidra/FindFieldAccesses.java:0x82CF0268 fields=0x42,0x4A,0x8A,0xCA range=[0x82CF0268,0x82CF0550)", "ghidra/DumpMemoryWords.java:0x82125550 radius=0", "ghidra/DumpFunctionNeighborhood.java:0x82C7BCC0 radius=0x40 maxInstructions=64", "ghidra/FindFieldAccesses.java:0x82C7BCC0 fields=0x00,0x20,0x40,0x42,0x4A,0x4C,0x8A,0xCA callerDepth=0 calleeDepth=0 range=[0x82C7BCC0,0x82C7BCE8) hitCap=64", "ghidra/DumpFunctionNeighborhood.java:0x82E41538 radius=0x40 maxInstructions=64", "ghidra/FindFieldAccesses.java:0x82E41538 fields=0x00,0x20,0x40,0x41,0x42,0x4A,0x4C,0x8A,0xCA callerDepth=0 calleeDepth=0 range=[0x82E41538,0x82E41540) hitCap=64"],
-    "qualification": "No runtime observation was performed. The direct-call query stops at its declared cap. These exact-body field scans cover decoded register-relative operands only; they do not resolve indexed/computed/indirect calculations, accesses through calls, other readers, generated code, or runtime. The 0x82E41538 body scan does not follow its call to 0x827F7C8C. The production-choice method's separate reference listing remains truncated at its 64-reference cap."
+    "locators": ["ghidra/FindGlobalAddressAccesses.java:0x82F71FD8,0x82F71FF8,0x82F72024,0x82F73238,0x82F73282,0x82F73302", "ghidra/FindDirectCallers.java:0x82CF1278", "ghidra/DumpFunctionNeighborhood.java:0x82CF0268 radius=0x40 maxInstructions=64", "ghidra/FindFieldAccesses.java:0x82CF0268 fields=0x42,0x4A,0x8A,0xCA range=[0x82CF0268,0x82CF0550)", "ghidra/DumpMemoryWords.java:0x82125550 radius=0", "ghidra/DumpFunctionNeighborhood.java:0x82C7BCC0 radius=0x40 maxInstructions=64", "ghidra/FindFieldAccesses.java:0x82C7BCC0 fields=0x00,0x20,0x40,0x42,0x4A,0x4C,0x8A,0xCA callerDepth=0 calleeDepth=0 range=[0x82C7BCC0,0x82C7BCE8) hitCap=64", "ghidra/DumpFunctionNeighborhood.java:0x82E41538 radius=0x40 maxInstructions=64", "ghidra/FindFieldAccesses.java:0x82E41538 fields=0x00,0x20,0x40,0x41,0x4A,0x4C,0x8A,0xCA callerDepth=0 calleeDepth=0 range=[0x82E41538,0x82E41540) hitCap=64", "ghidra/DumpFunctionNeighborhood.java:0x827F7C8C radius=0x40 maxInstructions=64"],
+    "qualification": "No runtime observation was performed. The direct-call query stops at its declared cap. These exact-body field scans cover decoded register-relative operands only; they do not resolve indexed/computed/indirect calculations, other readers, generated code, or runtime. The 0x82E41538 body calls 0x827F7C8C, whose one-byte Ghidra body emits no instruction; that target's reference listing is truncated at 64 and does not support a consumer claim. The production-choice method's separate reference listing also remains truncated at its 64-reference cap."
   },
   "guards": [
     "Do not treat a zero decoded-materializer result as absence of text, asset, or effect use.",
@@ -131,5 +145,5 @@
     "Do not treat broad ID range routing as validation of initialized definitions.",
     "Do not treat the absence of exact register-relative operands in 0x82CF0268, 0x82C7BCC0, or 0x82E41538 as excluding scaled/indexed, computed, indirect, or called field reads."
   ],
-  "conclusion": "The bounded direct scans add no supported text, asset, or gameplay-effect consumer. One decoded function materializes the wonder table base for a halfword read, while the raw cost-helper caller scan reaches its sixteen-site cap with undefined owners. Exact-body scans of 0x82CF0268, production-choice slot target 0x82C7BCC0, and its terminal target 0x82E41538 found no register-relative operands at their respective checked offsets. The tail target is an 8-byte in-image function whose body calls 0x827F7C8C; its checked body adds no supported register-relative building or wonder definition-field read, while the call, scaled/indexed calculations, other readers, exact validity, presentation, effect execution, and runtime behavior remain open. The accepted cost and production-threshold paths remain the reusable static consumers."
+  "conclusion": "The bounded direct scans add no supported text, asset, or gameplay-effect consumer. One decoded function materializes the wonder table base for a halfword read, while the raw cost-helper caller scan reaches its sixteen-site cap with undefined owners. Exact-body scans of 0x82CF0268, production-choice slot target 0x82C7BCC0, and its terminal target 0x82E41538 found no register-relative operands at their respective checked offsets. The tail target's direct call to 0x827F7C8C reaches a one-byte Ghidra body with no decoded instruction; its separate reference listing is truncated at 64. This adds no supported definition-field read, while computed/indexed paths, other readers, exact validity, presentation, effect execution, and runtime behavior remain open. The accepted cost and production-threshold paths remain the reusable static consumers."
 }

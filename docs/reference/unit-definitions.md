@@ -118,6 +118,12 @@ operands across 272 function-owned instructions in `[0x82D00000,0x82D20000)`.
 Indexed, computed, functionless, and out-of-interval readers remain unresolved.
 See the [wonder threshold](../../manifests/non-unit-production-threshold-boundary.json)
 and [stored item ID reader frontier](../../manifests/city-stored-item-id-reader-frontier.json).
+An exact-base follow-up scanned 654329 decoded instructions for city-table
+base `0x8314FE28` and emitted 31 split-constant materializers below its cap of
+64. In one inspected path, `0x82CEDF90` reads a byte from the indexed city
+record at offset `+0`, then calls `0x82D038E8`, whose 17-instruction body does
+not read the incoming city-table base. This does not prove a `+0x3A` reader;
+the other materializers and computed or indexed item-ID paths remain open.
 The directly called city helper reads the Courthouse index-14 bit in city
 `+0x10` and selects a scan of eight adjacent coordinate candidates or twenty
 including a second ring. This establishes a static consumer of the Courthouse
@@ -160,7 +166,9 @@ census](../../manifests/building-wonder-text-field-reference-boundary.json) and
 The exact body at `0x82CF0268` also contains no decoded register-relative
 operand at wonder-record offsets `+0x42`, `+0x4A`, `+0x8A`, or `+0xCA`; that
 one-function scan does not cover scaled/indexed address calculations or other
-readers.
+readers. The production-choice tail at `0x82E41538` calls `0x827F7C8C`, whose
+Ghidra function body is one byte with no decoded instruction; its reference
+listing was truncated at 64. This path adds no text or token reader evidence.
 A separate [factor consumer](../../manifests/wonder-factor-array-accumulation.json)
 reads wonder `+0x40` and adds a derived value to two indexed accumulators.
 The wonder claim-slot owner indexes one global and one stack-local accumulator.
@@ -342,6 +350,10 @@ The Great Wall item-201 branch writes equal values into two symmetric entries
 of a player-pair table after local filters. The table's consumer and any
 peace-offer behavior are unresolved. See
 [`great-wall-player-pair-branch.json`](../../manifests/great-wall-player-pair-branch.json).
+A bounded follow-up found no exact Ghidra references or decoded split-constant
+materializers for table base `0x830ED1D8`; derived, indexed, computed, aliased,
+and indirect readers remain unresolved. See the [pair-table consumer
+frontier](../../manifests/great-wall-player-pair-consumer-frontier.json).
 The Leonardo's Workshop item-211 branch compares two unit-definition
 halfwords, checks technology ownership, and can replace live unit type byte
 `+0x01` in qualifying records. Its virtual calls and runtime coverage do not

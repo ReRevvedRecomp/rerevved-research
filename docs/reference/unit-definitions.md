@@ -368,8 +368,12 @@ At its terminal join, that conditional mode-two path clears two state bits
 and sets bit `0x10000` in shared status word `0x82FFE7C4` for index 19 or 20.
 An exact-base split-constant scan found no decoded materializers for that
 address; it does not cover direct-displacement accesses or derived addresses.
-No bit-specific consumer or victory meaning has been established. One player-matched path also
-updates a halfword at `0x830EF348 + 2*index`, whose meaning is unknown. See
+Three whole-word snapshot functions copy the status word to output parameter
+offset `+0x200`, but their exact function-entry reference counts are zero and
+the output-buffer provenance is unresolved. No bit-specific consumer or victory
+meaning has been established. One player-matched path also updates a halfword
+at `0x830EF348 + 2*index`; an exact-base materializer scan found no decoded
+split-constant materializer, and the field meaning remains unknown. See
 [`wonder-mode-two-terminal-state.json`](../../manifests/wonder-mode-two-terminal-state.json).
 Text and art-token consumers, complete layouts, final runtime costs, and most
 gameplay effects remain unresolved. The exact cost inputs are in

@@ -139,7 +139,9 @@ found an eight-word copy from the global at `0x830ECCC8` to `0x831228E4`.
 Three indexed reads of the enclosing object could reach those words with
 specific low-30-bit indices, but their selectors are data-dependent; no
 copied-word read is proved. The stack-local accumulator's use and any effect
-on final production cost remain unknown.
+on final production cost remain unknown. The [index-source boundary](../../manifests/wonder-copy-index-sources.json)
+traces one selector to an incoming object's `+0x434` pointee word and another
+to an unresolved virtual result; neither has a proved value range.
 The next twelve complete stride positions
 are zero and the following position contains non-wonder data. Neither this
 boundary nor the cost helper proves a program-wide valid-ID rule. Identity

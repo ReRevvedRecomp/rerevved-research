@@ -5152,7 +5152,7 @@
         { "kind": "ghidra-static", "locator": "ghidra/FindDirectCallers.java:0x82DD4058,0x82DD46D0" },
         { "kind": "generated-code", "locator": "generated:rerevved/sub_82DD46D0:0x82DD46E0..0x82DD4708" }
       ],
-      "qualification": { "alternatives": ["The r5 range and whether the copied words are read remain unresolved."] }
+      "qualification": { "alternatives": ["The +0x434 pointee type, r5 range, and whether the copied words are read remain unresolved."] }
     },
     {
       "id": "RVA-SYM-0395",
@@ -5160,14 +5160,30 @@
       "kind": "function",
       "address": "0x82DF91F8",
       "image": "../image.json",
-      "claim": "At 0x82DF92CC, reads 0x83122898+4*(r11 & 0x3FFFFFFF), with r11 from an indirect object result or -1; low-30-bit indices 19..26 would alias copied words, but none is proved.",
+      "claim": "At 0x82DF92CC, reads 0x83122898+4*(r11 & 0x3FFFFFFF), with r11 from an unresolved vtable +0x100 result +0xC or -1; low-30-bit indices 19..26 would alias copied words, but none is proved.",
       "confidence": "strong",
       "evidence": [
         { "kind": "topic-manifest", "locator": "../wonder-factor-accumulator-reader-frontier.json#/staticResult/destinationBoundary" },
+        { "kind": "topic-manifest", "locator": "../wonder-copy-index-sources.json#/staticResult/indirectSource" },
         { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82DF92B8" },
-        { "kind": "generated-code", "locator": "generated:rerevved/sub_82DF91F8:0x82DF92B8..0x82DF92CC" }
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82DF91F8:0x82DF9288..0x82DF92CC" }
       ],
-      "qualification": { "alternatives": ["The indirect result's range, an actual read of the copied words, and runtime execution remain unresolved."] }
+      "qualification": { "alternatives": ["The receiver, virtual target, result range, actual copied-word read, and runtime execution remain unresolved."] }
+    },
+    {
+      "id": "RVA-SYM-0396",
+      "name": "sub_82DD4948",
+      "kind": "function",
+      "address": "0x82DD4948",
+      "image": "../image.json",
+      "claim": "At 0x82DD5194, loads r5 from the first word of the pointer at incoming object +0x434, then calls sub_82DD46D0 at 0x82DD5198 without an intervening range check.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../wonder-copy-index-sources.json#/staticResult/r5Source" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82DD4954,0x82DD5194" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82DD4948:0x82DD4954..0x82DD5198" }
+      ],
+      "qualification": { "alternatives": ["The incoming object, +0x434 pointer writer, first-word meaning, and r5 range remain unresolved."] }
     }
   ]
 }

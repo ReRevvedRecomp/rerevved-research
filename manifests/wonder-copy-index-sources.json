@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0199",
+  "topic": "wonder-copy-index-sources",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Where do the two data-dependent indices for possible reads of the copied wonder-factor words come from?",
+  "scope": {
+    "wordLoad": "0x82DD5194",
+    "indirectResultLoad": "0x82DF92AC",
+    "indexedReads": ["0x82DD46F0", "0x82DD4068", "0x82DF92CC"],
+    "stopCondition": "Resolve the immediate r5 producer and exact virtual-result path, then stop at the incoming object's +0x434 pointer and unidentified vtable +0x100 target; do not infer a value range or follow unrelated effects.",
+    "boundary": "This packet identifies immediate index sources, not the underlying object types, pointer writers, concrete virtual target, runtime values, or actual reads of the copied words."
+  },
+  "dependencies": [
+    { "topic": "wonder-factor-accumulator-reader-frontier", "use": "Identifies the copy destination, indexed address expressions, and conditional alias ranges." },
+    { "topic": "playable-game-state-gates", "use": "Records a similar neutral virtual-slot +0x100 resolver elsewhere without identifying this receiver." }
+  ],
+  "staticResult": {
+    "r5Source": "In registered function 0x82DD4948, 0x82DD4954 copies incoming r3 to r25. At 0x82DD5188 it loads r9 from r25+0x434, at 0x82DD5194 it loads r5 from 0(r9), and at 0x82DD5198 it directly calls 0x82DD46D0. The exact function has no intervening r25 assignment in the checked generated window, and the immediate 0x82DD5188..0x82DD5198 sequence has no r5 range check. The +0x434 field's pointer writer, pointee type, first-word meaning, and r5 range remain unidentified.",
+    "indirectSource": "In registered function 0x82DF91F8, 0x82DF9288 loads an object pointer through r30-0x1020 and 0x82DF928C loads its +0x10 pointer. When that pointer is null, 0x82DF92B4 sets r11 to -1. Otherwise 0x82DF9298..0x82DF92A8 dispatches the receiver's vtable slot +0x100, then 0x82DF92AC loads r11 from returned pointer +0x0C. At 0x82DF92BC this r11 is scaled for the indexed read at 0x82DF92CC. The receiver/vtable target, result type, and value range remain unidentified.",
+    "aliasBoundary": "The previously mapped enclosing-object reads address the copied +0x4C..+0x68 words only for low-30-bit indices 11..18 at 0x82DD4068 or 19..26 at 0x82DD46F0 and 0x82DF92CC. These immediate source paths prove no such index value or runtime execution."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No r5 value, virtual result, indexed effective address, copied-word read, or final production-cost effect was observed."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only raw-word windows checked the exact r25 assignment and r5 handoff. Ghidra has no containing function or decoded instructions at the r5 load, so a narrow registered generated-function window corroborated r25 retention. A separate narrow generated window and earlier raw words checked the virtual dispatch and result load; the vtable catalog has no accepted concrete slot +0x100 target for this receiver.",
+    "entries": [
+      { "role": "incoming object", "address": "0x82DD4954", "result": "Copies incoming r3 to r25 in sub_82DD4948." },
+      { "role": "first index", "address": "0x82DD5188..0x82DD5198", "result": "Loads r5 from the first word of the pointer at incoming object +0x434, then passes it to sub_82DD46D0." },
+      { "role": "second index", "address": "0x82DF9288..0x82DF92B4", "result": "Uses vtable +0x100 result +0xC, or -1 if the receiver pointer is null." }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82DD4954 radius=8",
+      "ghidra/DumpMemoryWords.java:0x82DD5194 radius=16",
+      "ghidra/FindDirectCallers.java:0x82DD46D0 cap=32",
+      "ghidra/DumpMemoryWords.java:0x82DF92B8 radius=20",
+      "generated:rerevved/sub_82DD4948:0x82DD4948..0x82DD5198",
+      "generated:rerevved/sub_82DF91F8:0x82DF9288..0x82DF92CC"
+    ],
+    "qualification": "Raw words establish the entry assignment, immediate handoff, and indirect-call sequence. Generated code is used narrowly where Ghidra's function listing ends at a save thunk. No producer of the pointer or concrete vtable target is identified."
+  },
+  "guards": [
+    "Do not name the +0x434 object or the +0xC result field from offset similarity alone.",
+    "Do not infer that either source yields an index into the copied words.",
+    "Do not infer final cost or gameplay behavior from these static index sources."
+  ],
+  "conclusion": "The possible copied-word readers use an incoming object's +0x434 pointee word or an unresolved virtual-slot +0x100 result +0xC. Both index values and an actual copied-word read remain unproved."
+}

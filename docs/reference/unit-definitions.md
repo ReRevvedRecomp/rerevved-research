@@ -123,6 +123,12 @@ index. That byte's downstream meaning is unresolved. See the [bounded bit
 arithmetic](../../manifests/building-postwrite-city-bit-arithmetic.json),
 [weighted score](../../manifests/building-bit-weighted-yield-score.json), and
 [city byte store](../../manifests/building-bit-selected-city-index.json).
+The follow-up indexed-load census reproduced 18 `lbzx` sites in the nearby
+`sub_82D019F0` function and confirmed their instruction words against the
+supported image. None is joined to the stored city `+0x58` pointer; the earlier
+21/8/13 candidate filter is not recoverable from tracked evidence. This bounded
+check does not exclude readers outside that function. See the [consumer
+frontier](../../manifests/building-bit-selected-city-index-consumer-frontier.json).
 
 IDs 200 through 299 use a signed halfword at `+0x40` of `0x14C`-byte wonder
 records rooted at `0x82F73238`. The helper applies a common signed half-scale

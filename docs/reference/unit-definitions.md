@@ -115,8 +115,11 @@ The same helper also tests city `+0x10` bits for Barracks 101, Granary 102,
 Temple 103, Workshop 106, either Market 104 or Library 105, and either Bank
 110 or University 112. Passing each test adds half of an intermediate register
 back into that register. The two paired masks each cause only one update when
-either bit is present. Later output meaning and runtime effect are unknown; see
-the [bounded bit arithmetic](../../manifests/building-postwrite-city-bit-arithmetic.json).
+either bit is present. On one later branch, the adjusted registers weight
+food, production, and trade component returns in a local candidate score;
+another branch replaces the weights. The selected index's later consumer and
+runtime effect are unknown. See the [bounded bit arithmetic](../../manifests/building-postwrite-city-bit-arithmetic.json)
+and [weighted score](../../manifests/building-bit-weighted-yield-score.json).
 
 IDs 200 through 299 use a signed halfword at `+0x40` of `0x14C`-byte wonder
 records rooted at `0x82F73238`. The helper applies a common signed half-scale
@@ -350,7 +353,7 @@ observations above cover choice, eligibility, and production-item state only.
 | Wonders 201, 202, 208, 211, 227 | Item-specific branches exist in the direct mode-one helper. Their local writes and calls are mapped in the [branch census](../../manifests/wonder-post-threshold-helper-boundary.json) and [individual packets](../../manifests/great-wall-player-pair-branch.json), [Hanging Gardens](../../manifests/hanging-gardens-population-branch.json), [Oxford](../../manifests/oxford-technology-acquisition-branch.json), [Leonardo](../../manifests/leonardo-unit-type-branch.json), and [Statue of Liberty](../../manifests/statue-of-liberty-population-branch.json). | Not observed |
 | Wonders 219-220 | A conditional mode-two path writes shared status bits and a halfword; their meanings and downstream consumers remain unknown. See [terminal state](../../manifests/wonder-mode-two-terminal-state.json). | Not observed |
 | Building 114 | The Courthouse bit selects a scan of eight or twenty coordinate candidates; downstream scoring and visible effect remain unknown. See [coordinate scan](../../manifests/courthouse-city-coordinate-scan.json). | Not observed |
-| Buildings 101-106, 110, 112 | A direct post-completion city helper tests their presence bits and conditionally changes intermediate registers. Register meanings and final outputs are unknown. See [bit arithmetic](../../manifests/building-postwrite-city-bit-arithmetic.json). | Not observed |
+| Buildings 101-106, 110, 112 | A direct post-completion city helper tests their presence bits and can change local weights on food, production, and trade component returns. The final city effect is unknown. See [bit arithmetic](../../manifests/building-postwrite-city-bit-arithmetic.json) and [weighted score](../../manifests/building-bit-weighted-yield-score.json). | Not observed |
 | Wonders 200, 206, 207, 209 | Bounded searches found no exact edge for the described effect within each packet's stated scope: [Pyramids](../../manifests/pyramids-government-availability.json), [Great Library](../../manifests/great-library-technology-transfer.json), [East India Company](../../manifests/east-india-sea-trade.json), and [Shakespeare](../../manifests/shakespeare-city-culture.json). These are bounded negatives, not proof that no effect exists. | Not observed |
 | Wonders 203-205, 210, 212-218, 221-226, 228-232 | These IDs normalize into the helper's accepted 0-32 range on the direct city-update callsite but do not match one of its five explicit mode-one branches. This bounds only that helper path; other consumers remain possible. See the [branch census](../../manifests/wonder-post-threshold-helper-boundary.json). | Not observed |
 | Wonders 233-236 | Normalized indices 33-36 branch away before the direct post-threshold helper body. The known vtable's earlier gate also rejects them on this path; other receiver states and paths remain unresolved. See the [branch census](../../manifests/wonder-post-threshold-helper-boundary.json) and [eligibility target](../../manifests/wonder-eligibility-virtual-target.json). | Not observed |

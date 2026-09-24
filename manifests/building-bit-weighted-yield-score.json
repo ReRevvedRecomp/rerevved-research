@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0202",
+  "topic": "building-bit-weighted-yield-score",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What first consumes the three registers conditionally adjusted by building-presence bits in sub_82D00C78?",
+  "scope": {
+    "function": "0x82D00C78",
+    "tail": "[0x82D014A4,0x82D019F0)",
+    "trackedRegisters": ["r20", "r21", "r22"],
+    "queryWindows": ["0x82D014A4..0x82D01534", "0x82D0167C..0x82D0170C", "0x82D016E4..0x82D01774", "0x82D01740..0x82D017D0"],
+    "stopCondition": "Trace these three registers to their first direct callee-return multiplications and local comparison; stop before interpreting the score as a final city yield, stored field, or gameplay effect.",
+    "boundary": "The query covers one local helper path and four exact raw-word windows, not all callers or final outputs."
+  },
+  "dependencies": [
+    { "topic": "building-postwrite-city-bit-arithmetic", "use": "Establishes the six building-bit tests and their conditional r20/r21/r22 updates." },
+    { "topic": "unique-era-ability-effect-ownership", "use": "Establishes the exact food, production, and trade component accessors called in the weighted sum." },
+    { "topic": "courthouse-city-coordinate-scan", "use": "Establishes this helper's earlier bounded coordinate-candidate scan." }
+  ],
+  "staticResult": {
+    "preservationGate": "At 0x82D014A4..0x82D014B0, r17 is compared with word 0x82F700B0. An unequal result skips replacements of r20, r21, and r22, allowing the earlier building-bit-adjusted values to reach the weighted path. On the equal path, r20 is set to four or two at 0x82D014B8..0x82D014C8, r21 and r22 are cleared at 0x82D014D0..0x82D014D4, and r21 can become four when signed city byte +0x03 is at least two. The comparison word's meaning is not assigned.",
+    "componentJoin": "At 0x82D01688..0x82D016D4, the function calls accepted food component accessor 0x82CF1CE8, production component accessor 0x82CF1AF0, and trade component accessor 0x82CF17C8 with the same local argument shape. It multiplies their signed 32-bit returns by r20, r21, and r22 respectively, then adds the products into r31. These registers are local component weights on this path; their bit-driven changes are not proven changes to the underlying tile yields.",
+    "candidateJoin": "After a separate 0x82CF1558 call and a 0x82CEFBB0 selector, switch cases 0, 1, 3 or 5, and 4 can add twice r20, r21, r22, or r19 respectively to r31; case 2 adds no such term. At 0x82D01760..0x82D01770, signed r31 at least r24 replaces r24 with r31 and r23 with current loop index r25. These are local comparison and selection values, not a proved final city field.",
+    "laterJoin": "At 0x82D01788..0x82D017A4, signed division of a stack word by six multiplies r22 and adds r21; if that value exceeds r24, r23 becomes -1. This is a second local use of two weights. The later meaning of r23 and the final effect remain unresolved."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No building-bit branch, weighted path, selected index, city yield, or gameplay effect has been observed at runtime."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only canonical-project DumpMemoryWords query covered four bounded windows, with narrow generated-function register-flow corroboration. The three callee component meanings are accepted from a previously repaired-project exact-function query; they were not reinterpreted from record descriptions.",
+    "entries": [
+      { "role": "replacement gate", "address": "0x82D014A4..0x82D01534", "result": "One branch preserves the adjusted weights; the equal branch replaces them before the weighted path." },
+      { "role": "three component multiplications", "address": "0x82D0167C..0x82D016D4", "result": "Food, production, and trade component returns are multiplied by r20, r21, and r22, then joined." },
+      { "role": "local selected maximum", "address": "0x82D016E4..0x82D01774", "result": "An optional switch term joins r31 before its comparison against r24 and possible r23 index update." },
+      { "role": "later two-weight comparison", "address": "0x82D01788..0x82D017A4", "result": "r21 and r22 can cause r23 to become -1 after a second comparison." }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82D014EC,0x82D016C4,0x82D0172C,0x82D01788 radius=18",
+      "generated:rerevved/sub_82D00C78:0x82D014A4..0x82D017A4",
+      "manifests/unique-era-ability-effect-ownership.json#/terrainYieldBoundary/ownerResults"
+    ],
+    "qualification": "The configured function listing truncates at a save thunk. Current-image words support the local branches and arithmetic, and narrow generated code joins register flow. No callee was expanded in this packet."
+  },
+  "guards": [
+    "Do not identify these local component weights as the buildings' displayed or persistent food, production, trade, happiness, veteran, or science effects.",
+    "Do not infer that either branch always runs or that the weighted score is a final city yield.",
+    "Do not infer a complete city-tile assignment from r23 without its later consumer.",
+    "Do not report a runtime effect from this static join."
+  ],
+  "conclusion": "On one branch of the directly called city helper, the building-bit-adjusted values weight accepted food, production, and trade component returns in a local candidate score. A separate branch replaces the weights, and the later selected index and city effect remain unresolved."
+}

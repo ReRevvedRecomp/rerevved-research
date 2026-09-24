@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0216",
+  "topic": "building-cost-city-flag-computed-writer-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Do generated bodies for all exact city-table-base materializer owners expose a store statically joined to city +0x3C or an overlapping word?",
+  "scope": {
+    "cityTable": "0x8314FE28",
+    "cityStride": "0xBC",
+    "cityField": "+0x3C halfword",
+    "costConsumer": "0x82CF1278",
+    "consumerSite": "0x82CF152C..0x82CF153C",
+    "mask": "0x0008",
+    "functionOwnerSet": "The 31 exact city-table-base materializers enumerated in building-cost-city-flag-materializer-frontier and building-cost-city-flag-materializer-continuation.",
+    "candidateCap": 31,
+    "stopCondition": "Review only generated bodies corresponding to the 31 exact Ghidra materializer owners. Stop the candidate set at 31 bodies; do not follow callers, callees, or unresolved pointer chains.",
+    "boundary": "This is a bounded review of the listed generated bodies and Ghidra direct-displacement checks. A store through an unresolved pointer may alias city +0x3C; functionless, unmaterialized, and out-of-set writers are not excluded."
+  },
+  "dependencies": [
+    { "topic": "building-cost-city-flag-writer-frontier", "use": "Establishes the cost-helper city +0x3C bit-0x8 gate and earlier bounded writer checks." },
+    { "topic": "building-cost-city-flag-materializer-frontier", "use": "Lists the first eight exact city-table-base materializer owners and their direct-offset scan." },
+    { "topic": "building-cost-city-flag-materializer-continuation", "use": "Lists the remaining 23 owners and completes the direct-offset scan over all 31." }
+  ],
+  "staticResult": {
+    "directDisplacementCensus": "Across all 31 exact city-table-base materializer owners, Ghidra FindFieldAccesses found no non-R1-base direct +0x3C WRITE or READ_WRITE operand in 1817 function-owned instructions. The two source packets retain the per-query counts, candidate sets, and caps.",
+    "generatedBodyAudit": {
+      "matchedFunctionOwners": 31,
+      "ownersWithNonStackStores": 11,
+      "ownersWithNoNonStackStores": 13,
+      "ownersWithStackOnlyStores": 7,
+      "nonStackStoreCount": 39,
+      "cityFieldJoin": "None of the 39 locally reviewed store destinations resolves to 0x8314FE28 + 0xBC*cityIndex + 0x3C or a word spanning that halfword. Stores through unresolved object or pointer chains remain potential aliases and are not classified as unrelated city state.",
+      "storeSitesByFunction": [
+        { "function": "0x82E1E060", "sites": ["0x82E1E080"], "destination": "Caller output buffer; the city-derived address in the body is read-only." },
+        { "function": "0x82E1E168", "sites": ["0x82E1E188", "0x82E1E19C"], "destination": "Output pointer in r3 and r3 + 0x200." },
+        { "function": "0x82E1E1A8", "sites": ["0x82E1E1C8", "0x82E1E1DC"], "destination": "Output pointer in r3 and r3 + 0x200." },
+        { "function": "0x82E1E1E8", "sites": ["0x82E1E208", "0x82E1E21C"], "destination": "Output pointer in r3 and r3 + 0x200." },
+        { "function": "0x82E1E498", "sites": ["0x82E1E5C0", "0x82E1E5D0"], "destination": "Output pointer in r29 and r29 + 0x200." },
+        { "function": "0x82CE1C10", "sites": ["0x82CE1C6C", "0x82CE1CA0"], "destination": "Caller-provided output array through r4." },
+        { "function": "0x82CEDF90", "sites": ["0x82CEE058", "0x82CEE0A8"], "destination": "Fixed address 0x8314F1CA, not a city-row address." },
+        { "function": "0x82CFF528", "sites": ["0x82CFF8B4"], "destination": "Fixed address 0x830EE53C, not a city-row address." },
+        { "function": "0x82E557A0", "sites": ["0x82E55920", "0x82E5592C", "0x82E55968"], "destination": "Two pointer destinations have unresolved provenance; the third store copies through caller-provided r5 output." },
+        { "function": "0x82E57820", "sites": ["0x82E57870", "0x82E578A4", "0x82E5794C", "0x82E57950", "0x82E57958", "0x82E57980", "0x82E579D8", "0x82E57A00", "0x82E57A08", "0x82E57A0C", "0x82E57A10", "0x82E57A14", "0x82E57A20", "0x82E57A24", "0x82E57A28", "0x82E57A38", "0x82E57A50"], "destination": "Most stores use an entry-object or helper-returned pointer. At 0x82E57980, stb r29,0x88D(r7) uses r7 loaded from [r11+0x38], after r11 is loaded from [r30-0xD78] and r30 carries entry argument r4. The caller/object provenance and any city-table alias remain unresolved." },
+        { "function": "0x82E8AEC8", "sites": ["0x82E8AEE8", "0x82E8AF04", "0x82E8AF0C", "0x82E8AF10", "0x82E8AF18"], "destination": "The body writes city-row fields at +0xB0, +0xB4, and +0xB8, plus two fixed global destinations; exact row-field behavior is recorded separately below." }
+      ]
+    },
+    "cityRowFieldInitializer": {
+      "function": "0x82E8AEC8",
+      "loop": "Forms 0x8314FE28 + 0xB8, visits 128 positions with stride 0xBC, and stores pointer 0x8314F0A8 at each row +0xB8.",
+      "otherFields": "Stores zero at each row +0xB0 and +0xB4.",
+      "semanticBoundary": "These are static field writes only. The pointer target's role, field meanings, consumers, runtime invocation, and any relationship to buildings or wonders are unknown. This initializer does not establish a city +0x3C writer."
+    },
+    "opaqueStoreBoundary": "Ghidra decodes 0x82E57980 as stb r29,0x88D(r7). At function entry, r30 receives r4; 0x82E57960 then loads r11 from [r30-0xD78], and 0x82E57970 loads r7 from [r11+0x38]. The caller/object provenance does not identify the pointee. Stop at this ambiguous provenance; do not follow callers or assign a city-field meaning.",
+    "producerBoundary": "No writer is established by the tested direct-displacement forms or by locally resolved destinations in these 31 generated bodies. The opaque pointer stores, other aliases, functionless instructions, unmaterialized code, and code outside the 31-owner set remain unresolved."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No city +0x3C value, final cost reduction activation, invocation of the reviewed initializer, or visible city/building/wonder effect was observed."
+  },
+  "currentEvidence": {
+    "method": "Matched all 31 exact city-table-base Ghidra materializer owners to generated function bodies and reviewed every non-stack store destination, without following callers, callees, or unresolved pointers. Foreground read-only Ghidra listings corroborated the opaque store and the separate 128-row city-field loop.",
+    "entries": [
+      { "role": "complete direct-displacement census", "address": "0x8314FE28", "result": "The 31-owner set is listed across the two dependency packets; direct +0x3C WRITE and READ_WRITE queries found zero matches in 1817 instructions." },
+      { "role": "generated store census", "address": "31 function owners", "result": "Matched all 31 bodies; enumerated 39 non-stack stores in 11 bodies. None has a locally resolved destination equal to city row +0x3C or an overlapping word." },
+      { "role": "opaque pointer store", "address": "0x82E57960..0x82E57980", "result": "Ghidra confirms the pointer loads and byte store; the pointee remains unknown, so a city alias is not excluded." },
+      { "role": "city-row field loop", "address": "0x82E8AEC8..0x82E8AF20", "result": "Ghidra confirms the 0xBC-stride loop writes 0x8314F0A8 at row +0xB8 and zero at row +0xB0 and +0xB4 for 128 positions; meanings and consumers are unknown." }
+    ],
+    "locators": [
+      "../building-cost-city-flag-materializer-frontier.json#/currentEvidence/locators",
+      "../building-cost-city-flag-materializer-continuation.json#/currentEvidence/locators",
+      "ghidra/FindFieldAccesses.java:seed=0x82E57820 offset=0x88D access=WRITE callerDepth=0 calleeDepth=0 cap=32",
+      "ghidra/DumpInstructions.java:0x82E57960 count=8",
+      "ghidra/DumpInstructions.java:0x82E57970 count=48",
+      "ghidra/DumpInstructions.java:0x82E57820 count=24",
+      "ghidra/DumpInstructions.java:0x82E8AEC8 count=48",
+      "generated:rerevved/sub_82E1E060:0x82E1E080",
+      "generated:rerevved/sub_82E1E168:0x82E1E188..0x82E1E19C",
+      "generated:rerevved/sub_82E1E1A8:0x82E1E1C8..0x82E1E1DC",
+      "generated:rerevved/sub_82E1E1E8:0x82E1E208..0x82E1E21C",
+      "generated:rerevved/sub_82E1E498:0x82E1E5C0..0x82E1E5D0",
+      "generated:rerevved/sub_82CE1C10:0x82CE1C6C..0x82CE1CA0",
+      "generated:rerevved/sub_82CEDF90:0x82CEE058..0x82CEE0A8",
+      "generated:rerevved/sub_82CFF528:0x82CFF8B4",
+      "generated:rerevved/sub_82E557A0:0x82E55920..0x82E55968",
+      "generated:rerevved/sub_82E57820:0x82E57870..0x82E57A50",
+      "generated:rerevved/sub_82E8AEC8:0x82E8AEE8..0x82E8AF18"
+    ],
+    "qualification": "The 31-owner negative is limited to exact city-table-base materializers and locally resolved generated-code destinations. It does not exclude unknown pointer aliases or establish runtime activation or field meaning."
+  },
+  "catalogPromotion": {
+    "newEntities": ["RVA-SYM-0403"],
+    "updatedEntities": ["RVA-SYM-0323"],
+    "result": "The cost-helper symbol gains this bounded computed-writer result. A new function symbol records only the statically mapped city-row +0xB0/+0xB4/+0xB8 writes; no policy meaning or gameplay effect is added."
+  },
+  "guards": [
+    "Do not infer that city +0x3C bit 0x8 has no writer from these bounded forms or the 31-body review.",
+    "Do not treat the opaque 0x82E57980 pointer destination as either a city alias or proof that no city alias exists.",
+    "Do not assign meaning to city-row fields +0xB0, +0xB4, or +0xB8, or to pointer 0x8314F0A8, without consumer evidence.",
+    "Do not infer final prices, runtime activation, or a visible building or wonder effect from static arithmetic."
+  ],
+  "conclusion": "Ghidra direct-displacement scans across all 31 exact city-table-base materializer owners found no direct +0x3C write in 1817 instructions. A generated-body review matched all 31 owners and enumerated 39 non-stack stores; none has a locally resolved destination at city row +0x3C or an overlapping word. At 0x82E57980, the store destination remains behind an unresolved argument-derived pointer chain, so a city alias is not excluded. The separate loop at 0x82E8AEC8 writes city-row fields +0xB0, +0xB4, and +0xB8 for 128 stride positions; their meanings and consumers remain unknown. No city +0x3C source, cost activation, or visible effect is established."
+}

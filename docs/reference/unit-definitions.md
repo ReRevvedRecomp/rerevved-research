@@ -117,8 +117,14 @@ next eight unexamined functions. It found no direct non-stack `+0x3C` write in
 The continuation checked the other 23 exact-base materializer functions in
 four batches and also found no direct `+0x3C` stores. Together, those packets
 cover all 31 exact city-table-base materializer functions, with zero direct
-stores in 1817 decoded instructions; computed and indirect forms remain open.
-See the [remaining materializer results](../../manifests/building-cost-city-flag-materializer-continuation.json).
+stores in 1817 decoded instructions. A generated-body review of all 31 owners
+found no locally resolved store to `+0x3C` or an overlapping word; the pointer
+destination at `0x82E57980` remains unresolved and could alias city state. See
+the [remaining materializer results](../../manifests/building-cost-city-flag-materializer-continuation.json)
+and [computed-writer boundary](../../manifests/building-cost-city-flag-computed-writer-frontier.json).
+A separate 128-position loop at `0x82E8AEC8` stores `0x8314F0A8` at city-row
+`+0xB8` and zero at `+0xB0` and `+0xB4`. Their field meanings and consumers
+remain unknown; see the [city-row field initializer symbol](../../manifests/catalogs/symbols.json).
 The shared Library/University three-quarter gate at `0x830E8FFE` has no
 identified writer or policy meaning; bounded address searches found no match,
 and its consumer lies in a Ghidra function gap. See the

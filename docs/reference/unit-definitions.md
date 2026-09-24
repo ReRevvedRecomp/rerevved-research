@@ -404,6 +404,10 @@ established. One player-matched path also updates a halfword
 at `0x830EF348 + 2*index`; an exact-base materializer scan found no decoded
 split-constant materializer, and the field meaning remains unknown. See
 [`wonder-mode-two-terminal-state.json`](../../manifests/wonder-mode-two-terminal-state.json).
+The immediate slot `+0xD0` target on that path does not directly read this
+counter. It loads a pointer from `0x82FFD688` and branches to one direct tail
+target when nonzero; that pointer's identity and provenance remain unresolved.
+See the bounded [counter consumer frontier](../../manifests/wonder-mode-two-counter-consumer-frontier.json).
 Text and art-token consumers, complete layouts, final runtime costs, and most
 gameplay effects remain unresolved. The exact cost inputs are in
 [`building-wonder-cost-identities.json`](../../manifests/building-wonder-cost-identities.json).

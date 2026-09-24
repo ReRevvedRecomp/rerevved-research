@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0210",
+  "topic": "wonder-mode-two-counter-consumer-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the mode-two call through vtable slot +0xD0 read or forward the per-wonder halfword updated immediately before it?",
+  "scope": {
+    "storedWonderIds": [219, 220],
+    "normalizedIndices": [19, 20],
+    "counterBase": "0x830EF348",
+    "writerCall": "0x82D17250",
+    "slotOffset": "0xD0",
+    "initializedSlotTarget": "0x82D84560",
+    "directTailTarget": "0x82DB82C8",
+    "functionCap": "The exact caller window, one slot target function, and its single direct tail target.",
+    "stopCondition": "Stop at the first proved counter reader or forwarder, or when the one direct tail target receives only a pointer with unresolved provenance. Do not widen into callers or indirect dispatch from that pointer.",
+    "boundary": "This checks only the immediate slot +0xD0 path for the indexed halfword updated at 0x82D17220 through 0x82D1723C. It does not census other consumers, classify the tail target's broader object behavior, identify the global context field, or establish runtime semantics."
+  },
+  "dependencies": [
+    { "topic": "wonder-mode-two-terminal-state", "use": "Establishes the conditional update to 0x830EF348 + 2*normalizedIndex immediately before the slot +0xD0 call." },
+    { "topic": "wonder-record-identities-215-219", "use": "Identifies stored wonder 219 as United Nations." },
+    { "topic": "wonder-record-identity-220", "use": "Identifies stored wonder 220 as The World Bank." }
+  ],
+  "staticResult": {
+    "caller": "At 0x82D17240 through 0x82D17250, the caller loads the receiver vtable, places the receiver in r3, loads slot +0xD0, and performs an indirect call. The indexed halfword update precedes this call on the same player-matched path.",
+    "slotTarget": "Initialized vtable data at 0x82138838 references target 0x82D84560. Its exact 0x18-byte Ghidra function body loads a word from 0x82FFD688 into r3, returns when that word is zero, and otherwise branches directly to 0x82DB82C8. No instruction in this target body reads the indexed halfword or receives the normalized index as a separate argument.",
+    "tailTarget": "The one direct target 0x82DB82C8 has an 8-byte Ghidra function extent containing mfspr r12,LR and a branch-and-link to 0x827F7C6C. The loaded r3 value comes from the unresolved global context field at 0x82FFD688; no relationship from that pointer to 0x830EF348 is established here.",
+    "boundary": "No immediate consumer or forwarder of the indexed counter is proved. The slot target only forwards a nonzero pointer loaded from 0x82FFD688; its identity and provenance are unresolved, so the search stops at that boundary."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "priorObservation": {
+      "source": "wonder-mode-two-terminal-state",
+      "result": "An earlier fresh-game probe observed no item-219 or item-220 completion or mode-two terminal write.",
+      "qualification": "No invocation of slot +0xD0, read of the indexed halfword, or consumer behavior was observed."
+    }
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only canonical-project word inspection at the caller, exact function neighborhoods for 0x82D84560 and its one direct tail target 0x82DB82C8, followed by narrow generated-code corroboration of the slot target's load-and-tail-branch sequence.",
+    "entries": [
+      { "role": "caller and virtual dispatch", "address": "0x82D17220 through 0x82D17250", "result": "After the conditional indexed halfword update, the receiver is passed in r3 and called through slot +0xD0." },
+      { "role": "initialized slot target", "address": "0x82D84560", "result": "The 0x18-byte body reads 0x82FFD688 into r3, returns if zero, or branches to 0x82DB82C8. The target does not directly read 0x830EF348." },
+      { "role": "single direct tail target", "address": "0x82DB82C8", "result": "The bounded Ghidra function extent is 8 bytes. Generated code corroborates that this entry continues into a larger translated function; its incoming pointer provenance remains unresolved." }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82D17250 radius=12",
+      "ghidra/DumpFunctionNeighborhood.java:0x82D84560 radius=0x40 maxInstructions=64",
+      "ghidra/DumpFunctionNeighborhood.java:0x82DB82C8 radius=0x40 maxInstructions=64",
+      "generated:rerevved/sub_82D84560",
+      "generated:rerevved/sub_82DB82C8"
+    ],
+    "qualification": "The caller and slot-target instruction words establish this exact dispatch path. The tail-target function extent is only 8 bytes in the current Ghidra listing, while generated code shows a larger translated body; neither the generated decompilation nor an unresolved pointer establishes a counter consumer."
+  },
+  "guards": [
+    "Do not assign meaning to the halfword array at 0x830EF348 from its conditional write or this bounded call path.",
+    "Do not treat the global context word at 0x82FFD688 as an alias of the indexed counter without proving pointer provenance.",
+    "Do not treat this one slot-target path as a program-wide absence of counter readers.",
+    "Do not infer runtime behavior from the static dispatch or generated code."
+  ],
+  "conclusion": "The mode-two path for normalized indices 19 and 20 conditionally updates a halfword at 0x830EF348 + 2*index, then calls receiver slot +0xD0. The initialized slot target 0x82D84560 does not directly read that array; it loads a pointer from 0x82FFD688 and, when nonzero, branches to 0x82DB82C8. The loaded pointer's identity and provenance are unresolved, so this bounded path proves no counter consumer or visible effect. The earlier runtime probe observed no relevant completion or terminal write and did not observe this call path."
+}

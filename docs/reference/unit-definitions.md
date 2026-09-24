@@ -129,6 +129,10 @@ The writer also stores era-indexed building bits at city `+0x14`, `+0x18`,
 those offsets in 272 function-owned instructions across `[0x82D00000,0x82D20000)`;
 indexed, computed, functionless, and out-of-interval readers remain unresolved.
 See the [era-bit reader frontier](../../manifests/city-era-building-bit-reader-frontier.json).
+A follow-up reproduced 31 exact city-table-base materializers and checked the
+first eight unique functions after the previously followed `0x82CEDF90` path.
+It found no direct reads at those offsets across 664 function-owned
+instructions; other materializers and indexed or computed reads remain open.
 One sufficient-production wonder path also copies the current item ID from
 city `+0x38` to `+0x3A` after additional gates; later behavior remains outside
 that packet. A bounded direct-read census found zero decoded `+0x3A` READ

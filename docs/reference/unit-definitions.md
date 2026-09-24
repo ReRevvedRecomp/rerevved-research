@@ -97,8 +97,10 @@ reductions. The exact branch sequence and other common modifiers are in
 [`building-wonder-cost-modifier-branches.json`](../../manifests/building-wonder-cost-modifier-branches.json).
 The final building-cost half reduction tests city halfword `+0x3C` bit `0x8`.
 A bounded direct-write scan found no non-stack `+0x3C` WRITE or READ_WRITE
-operand in 272 function-owned decoded instructions; indexed, computed,
-functionless, and out-of-interval writers remain unresolved. See the
+operand in 272 function-owned decoded instructions. A raw D-form store scan
+found one candidate, but its resolved base targets a different global address;
+exact-address searches for `0x8314FE64` found no split-constant candidates.
+Indexed, computed, functionless, and out-of-interval writers remain unresolved. See the
 [city cost-flag writer frontier](../../manifests/building-cost-city-flag-writer-frontier.json).
 The shared Library/University three-quarter gate at `0x830E8FFE` has no
 identified writer or policy meaning; bounded address searches found no match,

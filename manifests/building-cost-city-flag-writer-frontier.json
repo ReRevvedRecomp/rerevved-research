@@ -17,8 +17,20 @@
       "access": "direct register-plus-displacement WRITE or READ_WRITE with the script's default R1 stack-base exclusion",
       "resultCap": 32
     },
-    "stopCondition": "Scan the exact interval for direct +0x3C writes under cap 32. Stop at the first candidate to verify city-pointer provenance and bit 0x8, or close this operand-form check at interval exhaustion.",
-    "boundary": "The query does not cover indexed, computed, aliased, indirect, functionless, or out-of-interval writers. It does not identify a policy meaning or establish runtime activation of the consumer branch."
+    "rawDFormStoreQuery": {
+      "scanRange": "[0x82D00000,0x82D20000)",
+      "operand": "raw PowerPC D-form store displacement +0x3C in initialized executable words",
+      "resultCap": 32
+    },
+    "exactAddressQueries": {
+      "target": "0x8314FE64",
+      "decodedSplitConstantLookahead": 8,
+      "decodedFirstUseWindow": 16,
+      "decodedCap": 32,
+      "rawSplitConstantCap": 32
+    },
+    "stopCondition": "Check decoded direct writes, then raw D-form stores in the exact interval. Follow each raw candidate only until its base is tied to city +0x3C or excluded; stop at a proved city writer, cap 32, or ambiguous pointer provenance.",
+    "boundary": "These checks do not cover indexed stores, other computed or aliased addresses, indirect writes, uninitialized words, or code outside the interval. They do not identify a policy meaning or establish runtime activation of the consumer branch."
   },
   "dependencies": [
     {
@@ -33,14 +45,16 @@
   "staticResult": {
     "knownConsumer": "At 0x82CF152C..0x82CF153C, the cost helper tests bit 0x8 of city halfword +0x3C for its final half reduction in the building route. This is a static gate, not proof of branch activation or a named policy.",
     "directWriteCheck": "FindFieldAccesses scanned 272 function-owned decoded instructions in [0x82D00000,0x82D20000) for direct +0x3C WRITE and READ_WRITE operands with its default R1 stack-base exclusion. It found zero accesses and did not reach the 32-site cap.",
-    "producerBoundary": "No direct writer is established by this operand-form query. Indexed, computed, aliased, indirect, functionless, and out-of-interval writers remain open; the field's source and policy meaning are unknown."
+    "rawDFormStoreCheck": "FindRawFieldStores examined 32768 aligned initialized executable words in [0x82D00000,0x82D20000) for D-form store displacement +0x3C. It found one candidate, 0x82D187A0 (word 0x917F003C), below cap 32. Ghidra words at 0x82D18700 and 0x82D18734 confirm lis r10,-31985 and addi r31,r10,-5752; narrow generated code in sub_82D17AE0 shows r31=0x830EE988, so the candidate writes 0x830EE9C4 rather than city address 0x8314FE64.",
+    "exactAddressMaterializerCheck": "FindGlobalAddressAccesses scanned 654329 decoded instructions for exact address 0x8314FE64 with lookahead 8, first-use window 16, and cap 32. It emitted zero materializers and was not truncated. FindSplitConstantCandidates found zero raw split-constant candidates for the same exact address under cap 32.",
+    "producerBoundary": "No city +0x3C writer is established by the tested forms. Indexed stores, other computed or aliased addresses, indirect writes, uninitialized words, and code outside the interval remain open; the field's source and policy meaning are unknown."
   },
   "runtimeObservation": {
     "status": "not-observed",
     "qualification": "No city +0x3C value, cost reduction activation, or visible building effect was observed at runtime."
   },
   "currentEvidence": {
-    "method": "One foreground read-only canonical-project direct field-write query over the bounded city gameplay interval, with the accepted cost-helper branch supplying the consumer anchor.",
+    "method": "Foreground read-only canonical-project direct field-write, raw executable D-form store, exact-address materializer, and raw split-constant candidate queries over bounded targets. One raw D-form candidate was excluded after its base was resolved through canonical image words and a narrow generated-function window.",
     "entries": [
       {
         "role": "final building-cost reduction gate",
@@ -53,14 +67,31 @@
         "address": "[0x82D00000,0x82D20000)",
         "result": "Zero non-R1-base direct +0x3C WRITE or READ_WRITE operands among 272 function-owned decoded instructions; cap 32 was not reached.",
         "confidence": "strong"
+      },
+      {
+        "role": "raw D-form store candidate",
+        "address": "0x82D18700..0x82D187A0",
+        "result": "The only +0x3C D-form store candidate targets 0x830EE9C4 from r31=0x830EE988, not city table address 0x8314FE64.",
+        "confidence": "strong"
+      },
+      {
+        "role": "exact city-field address searches",
+        "address": "0x8314FE64",
+        "result": "Zero decoded split-constant materializers among 654329 instructions and zero raw split-constant candidates; neither cap 32 was reached.",
+        "confidence": "strong"
       }
     ],
     "locators": [
       "ghidra/FindFieldAccesses.java:offset=0x3C access=WRITE,READ_WRITE range=[0x82D00000,0x82D20000) cap=32",
+      "ghidra/FindRawFieldStores.java:offset=0x3C range=[0x82D00000,0x82D20000) cap=32",
+      "ghidra/FindGlobalAddressAccesses.java:0x8314FE64 lookahead=8 useWindow=16 cap=32",
+      "ghidra/FindSplitConstantCandidates.java:0x8314FE64 cap=32",
+      "ghidra/DumpMemoryWords.java:0x82D18700,0x82D18734,0x82D187A0 radius=1",
+      "generated:rerevved/sub_82D17AE0:0x82D186FC..0x82D187A4",
       "manifests/building-wonder-cost-modifier-branches.json#/additionalCommonBranches/3",
       "manifests/building-record-identities-100-122.json#/records"
     ],
-    "qualification": "The scan covers only decoded function-owned direct displacement operands in the specified interval and excludes default R1 stack references. Several helper bodies truncate at save-register thunks. No runtime probe was performed."
+    "qualification": "The decoded and raw store scans cover only the stated operand forms and executable interval; the exact-address searches do not exclude indexed or computed table accesses. Ghidra has no decoded function at the raw candidate, so its base is corroborated by exact memory words and the exact registered generated function. No runtime probe was performed."
   },
   "guards": [
     "Do not infer that city +0x3C bit 0x8 has no writer from this bounded query.",
@@ -68,5 +99,5 @@
     "Do not treat the helper range 100 through 199 as validation of initialized building records.",
     "Do not infer runtime activation or a public modding interface from static cost arithmetic."
   ],
-  "conclusion": "The bounded decoded scan found no non-R1-base direct +0x3C WRITE or READ_WRITE operand among 272 function-owned instructions in [0x82D00000,0x82D20000). The cost helper's city-bit gate is known, but its writer, source, policy meaning, and runtime activation remain unresolved; other addressing forms and code outside the interval were not covered."
+  "conclusion": "The bounded decoded scan found no non-R1-base direct +0x3C WRITE or READ_WRITE operand among 272 function-owned instructions in [0x82D00000,0x82D20000). The sole raw D-form candidate in 32768 initialized executable words writes to 0x830EE9C4, not the city table. Decoded and raw split-constant searches for exact address 0x8314FE64 returned no candidates. The cost helper's city-bit gate is known, but its writer, source, policy meaning, and runtime activation remain unresolved; indexed/computed addressing and code outside the interval were not covered."
 }

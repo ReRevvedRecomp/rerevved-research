@@ -106,6 +106,13 @@ take a separate conditional city-flag path. Both paths store the item ID
 at city `+0x3A` and check a bounded city byte list. These static writes do not
 establish each building's described effect or runtime execution. See
 [`building-completion-state-writer.json`](../../manifests/building-completion-state-writer.json).
+One sufficient-production wonder path also copies the current item ID from
+city `+0x38` to `+0x3A` after additional gates; later behavior remains outside
+that packet. A bounded direct-read census found zero decoded `+0x3A` READ
+operands across 272 function-owned instructions in `[0x82D00000,0x82D20000)`.
+Indexed, computed, functionless, and out-of-interval readers remain unresolved.
+See the [wonder threshold](../../manifests/non-unit-production-threshold-boundary.json)
+and [stored item ID reader frontier](../../manifests/city-stored-item-id-reader-frontier.json).
 The directly called city helper reads the Courthouse index-14 bit in city
 `+0x10` and selects a scan of eight adjacent coordinate candidates or twenty
 including a second ring. This establishes a static consumer of the Courthouse

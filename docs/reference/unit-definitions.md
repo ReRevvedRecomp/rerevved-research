@@ -148,6 +148,9 @@ its object's `+0x434`. A separate initializer stores a pointer at the same
 offset under a different table value; no shared object or later live pointer
 writer is established. Zero image words at that pointer establish no index or
 copied-word read.
+Two direct callers of the reader initializer occur in the same function as a
+separate indexed read; their next method call has no direct `+0x434` store in
+its checked body. Neither path establishes a live factor read or cost effect.
 The next twelve complete stride positions
 are zero and the following position contains non-wonder data. Neither this
 boundary nor the cost helper proves a program-wide valid-ID rule. Identity

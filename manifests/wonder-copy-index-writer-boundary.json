@@ -12,8 +12,8 @@
     "candidateWriter": "0x82DD55B8",
     "reader": "0x82DD4948",
     "directCallerCap": 32,
-    "stopCondition": "Inspect both in-range stores, the candidate writer's immediate value source and caller, exact reader pointer cells, the two local function-pointer runs, and the reader initializer's one direct helper chain; stop at that chain's indirect dispatch and the still-unproved live +0x434 pointer writer.",
-    "boundary": "The store census is limited to one executable interval and one raw encoding. The two function-pointer runs establish distinct installed vptr values at the checked initializer sites, not all later object states or live pointer writes. The direct helper check excludes computed and aliased writes and stops at an indirect call. Static pointee bytes do not establish runtime contents."
+    "stopCondition": "Inspect both in-range stores, the candidate writer's immediate value source and caller, exact reader pointer cells, the two local function-pointer runs, the reader initializer's direct callers and helper chain, and its next slot +0x2C target; stop at computed or indirect effects and the still-unproved live +0x434 pointer writer.",
+    "boundary": "The store census is limited to one executable interval and one raw encoding. The two function-pointer runs establish distinct installed vptr values at the checked initializer sites, not all later object states or live pointer writes. Direct helper and slot-target checks exclude computed and aliased writes and stop at further dispatch. Static pointee bytes do not establish runtime contents."
   },
   "dependencies": [
     { "topic": "wonder-copy-index-sources", "use": "Identifies the reader's incoming-object +0x434 pointer load and first-word index source." }
@@ -25,6 +25,8 @@
     "pointerCells": "An exact aligned pointer-value search for 0x82DD4948 found two cells, 0x8212E104 and 0x8219E8E0, below cap 32. The first is slot +0x14 in a 15-function-pointer run at 0x8212E0F0..0x8212E128; the second is an untyped cell in a different alternating-word region and has no assigned owner.",
     "readerInitializer": "In sub_82DD4468, incoming r3 is saved in r31. At 0x82DD44C0..0x82DD44C8 the function installs vptr 0x8212E0F0 at r31+0x00, then at 0x82DD44D0 clears that same object's +0x434 word. The function later passes the receiver to sub_82C7BB20. This joins the zero initialization to the reader's function-pointer table, not to a live nonzero index value.",
     "postInitHelperBoundary": "The exact 43-word body of sub_82C7BB20 in [0x82C7BB20,0x82C7BBCC) contains no raw direct store at displacement +0x434 below cap 32. Its sole direct callee is 0x82C984B0, whose 21 decoded instructions have no direct +0x434 write. That callee loads r3 from global 0x82F8E270, then conditionally dispatches its vtable slot +0x80 at 0x82C984D8; no alias of that receiver to the reader object is established. This bounds one immediate helper chain, not all later writes or computed-address effects.",
+    "readerEntryPath": "An aligned raw direct-call scan found exactly two callers of sub_82DD4468, at 0x82DF94E8 and 0x82DF9A6C, below cap 32. Both lie in generated sub_82DF91F8, the function with the separately mapped indexed read at 0x82DF92CC. Each caller passes a nonzero 1096-byte allocation result to the initializer, which clears that object's +0x434. Both paths then dispatch the object's slot +0x2C; neither locally supplies a nonzero +0x434 pointer or directly calls reader sub_82DD4948.",
+    "slot2cBoundary": "The reader table's cell 0x8212E11C at slot +0x2C contains 0x82E40738. In that function, incoming r3 is saved in r31 before a vtable slot +0x08 indirect dispatch at 0x82E40774. A raw aligned-word scan of its exact body [0x82E40738,0x82E4093C) found zero direct +0x434 stores below cap 32, without truncation. The installed table's +0x08 cell contains 0x82C7BCC0, but this packet does not trace that target, aliased writes, runtime vptr state, or the reader's live pointer producer.",
     "tableBoundary": "sub_82DD55B8 installs vptr 0x8212DAE0 before writing 0x8314F0A8 at +0x434. Its 15-function-pointer run ends at 0x8212DB18, followed by a non-function word at 0x8212DB1C. The reader's separate 15-pointer run begins at 0x8212E0F0 and ends at 0x8212E128, followed by non-function data at 0x8212E12C. These checked initializer states use distinct vptr values; no transition or shared runtime instance is proved.",
     "readerJoin": "At 0x82DD4954, sub_82DD4948 saves its incoming r3 in r25 and later reads +0x434 at 0x82DD5188. Its table's initializer clears that field, but no subsequent nonzero pointer producer is identified. The 0x82DD5634 pointer store belongs to a different installed vptr state and is not proved to target the reader's object. No live index range, copied-word read, or final cost effect follows."
   },
@@ -33,11 +35,14 @@
     "qualification": "No post-initialization nonzero +0x434 pointer write on the reader object, live pointee value, indexed effective address, copied-word read, or production-cost effect was observed."
   },
   "currentEvidence": {
-    "method": "Foreground read-only canonical-project raw-store, word-window, direct-caller, exact-data, pointer-value, reference, and exact-callee field-access queries, with narrow generated-function corroboration for the two initializers, candidate writer's caller, and post-initialization helper chain. The configured listing lacks containing decoded functions at the reader initializer's zero store and the candidate writer callsite.",
+    "method": "Foreground read-only canonical-project raw-store, word-window, direct-caller, exact-data, pointer-value, reference, and exact-callee field-access queries, with narrow generated-function corroboration for the two initializers, their direct callers, the next slot target, and the post-initialization helper chain. The configured listing lacks containing decoded functions at the reader initializer's zero store and the candidate writer callsite; the next slot target truncates at a save thunk.",
     "entries": [
       { "role": "reader initializer", "address": "0x82DD44C0..0x82DD44D0", "result": "Stores vptr 0x8212E0F0 and zero at +0x434 to the same incoming object." },
       { "role": "post-initialization direct helper", "address": "0x82C7BB20..0x82C7BBC8", "result": "No raw direct +0x434 store in 43 words; sole direct callee reaches a global-object indirect dispatch." },
       { "role": "direct helper callee", "address": "0x82C984B0..0x82C98500", "result": "No decoded direct +0x434 write in 21 instructions; global 0x82F8E270 receiver's slot +0x80 dispatch remains unresolved." },
+      { "role": "reader initializer callers", "address": "0x82DF94E8,0x82DF9A6C", "result": "Two uncapped direct calls in sub_82DF91F8 pass nonzero 1096-byte allocations, then dispatch slot +0x2C." },
+      { "role": "reader next slot", "address": "0x8212E11C", "result": "Table slot +0x2C points to sub_82E40738." },
+      { "role": "next slot target", "address": "0x82E40738..0x82E40938", "result": "No raw direct +0x434 store in exact body; first unresolved edge is receiver slot +0x08 at 0x82E40774." },
       { "role": "candidate pointer store", "address": "0x82DD55E0..0x82DD5634", "result": "Saves incoming r3 in r31 and stores pointer 0x8314F0A8 at its +0x434 field." },
       { "role": "static pointee", "address": "0x8314F0A8..0x8314F0B4", "result": "Four image words are zero, with no runtime-value inference." },
       { "role": "direct callers", "address": "0x82D80F9C", "result": "One direct caller of candidate writer and no direct caller of reader, without truncation at cap 32; candidate writer receives the allocator's nonzero result." },
@@ -48,7 +53,11 @@
       "ghidra/FindRawFieldStores.java:[0x82DD4000,0x82DD6000) offset=0x434 cap=32",
       "ghidra/DumpMemoryWords.java:0x82DD44D0,0x82DD5634 radius=8",
       "ghidra/FindDirectCallers.java:0x82DD55B8,0x82DD4948 cap=32",
+      "ghidra/FindDirectCallers.java:0x82DD4468 cap=32",
       "ghidra/DumpMemoryWords.java:0x82D80F9C radius=16",
+      "ghidra/DumpMemoryWords.java:0x82DF94E8,0x82DF9A6C radius=20",
+      "ghidra/DumpMemoryWords.java:0x8212E11C radius=16",
+      "ghidra/FindRawFieldStores.java:[0x82E40738,0x82E4093C) offset=0x434 cap=32",
       "ghidra/FindPointerValues.java:0x82DD4948 cap=32",
       "ghidra/DumpMemoryWords.java:0x8212DAE0,0x8212E104 radius=16",
       "ghidra/DumpReferences.java:0x8212DAE0,0x8212E0F0",
@@ -58,20 +67,23 @@
       "ghidra/FindFieldAccesses.java:0x82C984B0 offset=0x434 access=WRITE callerDepth=0 calleeDepth=0 cap=32",
       "ghidra/DumpFunctions.java:0x82C984B0",
       "generated:rerevved/sub_82DD4468:0x82DD447C..0x82DD44F8",
+      "generated:rerevved/sub_82DF91F8:0x82DF94D8..0x82DF9510,0x82DF99FC..0x82DF9A18,0x82DF9A54..0x82DF9A74",
+      "generated:rerevved/sub_82E40738:0x82E40738..0x82E40778",
       "generated:rerevved/sub_82C7BB20:0x82C7BB20..0x82C7BBC8",
       "generated:rerevved/sub_82C984B0:0x82C984BC..0x82C984D8",
       "generated:rerevved/sub_82D80F28:0x82D80F74..0x82D80F9C",
       "generated:rerevved/sub_82DD55B8:0x82DD55E0..0x82DD5634",
       "generated:rerevved/sub_82DD4948:0x82DD4954..0x82DD5194"
     ],
-    "qualification": "The zero store is joined to the reader's installed table; the nonzero pointer store is not. Distinct table runs do not exclude a later vptr transition or shared instance. The immediate helper's bounded direct-store negatives do not exclude alias or indirect writes. The direct-caller census is exact for aligned branch-and-link words to these entries, not for virtual or other indirect entry."
+    "qualification": "The zero store is joined to the reader's installed table; the nonzero pointer store is not. Distinct table runs do not exclude a later vptr transition or shared instance. The helper and next-slot direct-store negatives do not exclude alias or indirect writes. The direct-caller censuses cover aligned branch-and-link words to these entries, not virtual or other indirect entry."
   },
   "guards": [
     "Do not treat the reader's initial zero as its later live pointer value.",
     "Do not identify the 0x82DD5634 nonzero store as the reader's pointer producer without a shared-object transition or alias edge.",
     "Do not infer a global absence of +0x434 writers from the immediate helper's direct-store check.",
+    "Do not treat the reader initializer's two callers or next vtable slot as proof of live reader dispatch, final cost, or a gameplay effect.",
     "Do not treat four zero image words as a runtime index or valid-ID bound.",
     "Do not infer a copied wonder-factor read or gameplay effect from candidate writer proximity."
   ],
-  "conclusion": "The index reader's installed function-pointer table is joined to an initializer that clears its incoming object's +0x434 field. A separate initializer installs a distinct table and stores 0x8314F0A8 at the same offset. The reader initializer's immediate direct helper chain adds no identified +0x434 writer before a global-loaded receiver's indirect dispatch. The reader object's later nonzero pointer producer, live index range, and any copied-word use remain unresolved."
+  "conclusion": "The index reader's installed function-pointer table is joined to an initializer that clears its incoming object's +0x434 field. A separate initializer installs a distinct table and stores 0x8314F0A8 at the same offset. Two callers in sub_82DF91F8 construct the reader-table object and next dispatch slot +0x2C; that target and the initializer's direct helper chain add no identified +0x434 writer before further indirect calls. The reader object's later nonzero pointer producer, live index range, and any copied-word use remain unresolved."
 }

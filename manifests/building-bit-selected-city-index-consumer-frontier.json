@@ -5,15 +5,15 @@
   "status": "closed",
   "confidence": "strong",
   "image": "image.json",
-  "question": "Can an external reader of the byte stored at city +0x58 be proved from the bounded generated indexed-load candidates?",
+  "question": "Can a static external reader of the city +0x58 byte array be proved, and which nearby indexed-load candidates remain unresolved?",
   "scope": {
     "producer": "0x82D00C78",
     "producerField": "+0x58 plus local index",
     "candidateFunction": "0x82D019F0",
     "candidateInterval": "[0x82D00000,0x82D04000)",
     "candidateCount": 18,
-    "stopCondition": "Reproduce the indexed byte-load sites in sub_82D019F0, cross-check their instruction words against the supported image, and stop when no candidate is joined to the producer's city +0x58 pointer and pointer provenance remains ambiguous.",
-    "boundary": "This is a bounded candidate check of one generated function, not a program-wide reader census. It does not prove absence of other indexed, indirect, computed-address, functionless, or out-of-interval readers."
+    "stopCondition": "Reproduce the indexed byte-load sites in sub_82D019F0 and cross-check their instruction words against the supported image. Stop that candidate set when its pointer provenance remains ambiguous. The separate exact reader at 0x82CE1C10 answers the bounded external-reader question; do not follow its caller or infer field meaning.",
+    "boundary": "The 18-site candidate check covers one generated function, and the separate exact reader proves one external indexed read. Neither is a program-wide reader census; other indexed, indirect, computed-address, functionless, or out-of-interval readers remain possible."
   },
   "dependencies": [
     { "topic": "building-bit-selected-city-index", "use": "Provides the city +0x58 indexed writer and the distinct same-function prior-byte read." },
@@ -47,29 +47,40 @@
       { "address": "0x82D01F04", "operands": "r4+r22", "word": "0x7D64B0AE" },
       { "address": "0x82D01F64", "operands": "r4+r22", "word": "0x7D64B0AE" }
     ],
-    "readerBoundary": "The 18 raw words decode as lbzx. Generated-code flow forms the candidate addresses using the fixed-register operands above and computed r4 or r11 operands. Function entry also reads city-table halfwords at +0x30 and +0x32, but no candidate load is joined to the separate city +0x58 pointer saved by sub_82D00C78. The computed address ranges and any alias to city +0x58 remain unresolved, so no external reader is proved."
+    "readerBoundary": "The 18 raw words decode as lbzx. Generated-code flow forms the candidate addresses using the fixed-register operands above and computed r4 or r11 operands. Function entry also reads city-table halfwords at +0x30 and +0x32, but none of these 18 loads is joined to the separate city +0x58 pointer saved by sub_82D00C78. Their computed address ranges and any alias remain unresolved.",
+    "externalReader": {
+      "function": "0x82CE1C10",
+      "cityAddress": "Forms 0x8314FE28 + 0xBC*cityIndex from the city index in r3, then reads the signed city byte at +0x03 as its loop bound.",
+      "indexedRead": "When the signed bound is positive, lbzx at 0x82CE1C40 reads city +0x58 + index for indices from zero through bound minus one.",
+      "result": "Counts bytes not equal to 0xFF and returns the positive bound minus that count, which is the number of 0xFF bytes. When the signed bound is at most zero, the scan is skipped and the signed bound is returned.",
+      "semanticBoundary": "This proves one external indexed reader and a 0xFF-count result. It does not identify the bytes as tile assignments or establish a gameplay meaning, visible effect, or runtime invocation."
+    }
   },
   "runtimeObservation": {
     "status": "not-observed",
-    "qualification": "No execution, actual city +0x58 byte value, external reader, or visible effect was observed."
+    "qualification": "No execution, actual city +0x58 byte value, reader invocation, or visible effect was observed."
   },
   "currentEvidence": {
-    "method": "Narrow generated-code census of sub_82D019F0, followed by one foreground read-only raw-word query at radius zero for all 18 guest PCs. Each word decodes to PowerPC lbzx (opcode 31, XO 87).",
+    "method": "Narrow generated-code census of sub_82D019F0, followed by one foreground read-only raw-word query at radius zero for all 18 guest PCs. Each word decodes to PowerPC lbzx (opcode 31, XO 87). Separately, a foreground read-only 48-instruction listing and function neighborhood at 0x82CE1C10 were cross-checked against its narrow generated-function body.",
     "entries": [
       { "role": "indexed byte-load candidates", "address": "0x82D01AFC, 0x82D01B84, 0x82D01B9C, 0x82D01BBC, 0x82D01BD8, 0x82D01C94, 0x82D01CAC, 0x82D01CCC, 0x82D01CE8, 0x82D01DA0, 0x82D01DB8, 0x82D01DD8, 0x82D01DF4, 0x82D01EB0, 0x82D01EC8, 0x82D01EE8, 0x82D01F04, 0x82D01F64", "result": "All 18 generated sites are confirmed as lbzx by the corresponding supported-image words." },
-      { "role": "candidate provenance", "address": "0x82D019F0", "result": "Fixed-register operands and computed offsets do not establish an alias to the city +0x58 pointer; the reader question stops at ambiguous address provenance." }
+      { "role": "candidate provenance", "address": "0x82D019F0", "result": "Fixed-register operands and computed offsets do not establish an alias to the city +0x58 pointer; these 18 candidates remain unresolved." },
+      { "role": "separate external indexed reader", "address": "0x82CE1C10", "result": "For a positive signed city +0x03 bound, reads city +0x58 + index, counts non-0xFF bytes, and returns bound minus that count (the number of 0xFF bytes); for a nonpositive bound, skips the scan and returns the bound." }
     ],
     "locators": [
       "ghidra/DumpMemoryWords.java:0x82D01AFC,0x82D01B84,0x82D01B9C,0x82D01BBC,0x82D01BD8,0x82D01C94,0x82D01CAC,0x82D01CCC,0x82D01CE8,0x82D01DA0,0x82D01DB8,0x82D01DD8,0x82D01DF4,0x82D01EB0,0x82D01EC8,0x82D01EE8,0x82D01F04,0x82D01F64 radius=0",
-      "generated:rerevved/sub_82D019F0:0x82D01AFC..0x82D01F64"
+      "generated:rerevved/sub_82D019F0:0x82D01AFC..0x82D01F64",
+      "ghidra/DumpFunctionNeighborhood.java:0x82CE1C10 radius=0x40",
+      "ghidra/DumpInstructions.java:0x82CE1C10 count=48",
+      "generated:rerevved/sub_82CE1C10:0x82CE1C10..0x82CE1CAC"
     ],
-    "qualification": "Generated code supplied candidate localization and register flow; exact image words independently confirm the 18 indexed byte-load opcodes. This does not establish any city +0x58 alias or a program-wide absence of readers."
+    "qualification": "Generated code supplied candidate localization and register flow; exact image words independently confirm the 18 indexed byte-load opcodes and the separate reader's city-table/indexed-byte flow. The reader does not establish gameplay meaning, runtime invocation, or a program-wide reader census."
   },
   "guards": [
     "Do not promote the unreproduced 21/8/13 filter or infer its missing selection rule.",
-    "Do not identify any of the indexed byte loads as a city +0x58 reader without proving the effective address aliases that pointer.",
-    "Do not treat this one-function candidate set as proof that no external reader exists elsewhere.",
-    "Do not infer a gameplay effect or runtime behavior from these loads."
+    "Do not identify any of the 18 sub_82D019F0 candidate loads as reading city +0x58; the separate 0x82CE1C10 reader does not join those candidates.",
+    "Do not treat this one-function candidate set as exhaustive of any other external readers.",
+    "Do not infer tile assignment, a gameplay effect, or runtime behavior from the separate reader's 0xFF count."
   ],
-  "conclusion": "The bounded generated-code lead reproduces 18 indexed byte loads inside sub_82D019F0, and the supported image confirms all 18 instruction words. Thirteen use fixed-register operands r20, r23, or r25 and five use r22. None is proved to read the city +0x58 byte stored by sub_82D00C78; pointer provenance stops before that alias can be established. The earlier 21/8/13 candidate filter is not recoverable from tracked evidence, and no external reader or visible effect is established."
+  "conclusion": "The bounded generated-code lead reproduces 18 indexed byte loads inside sub_82D019F0, and the supported image confirms all 18 instruction words. Thirteen use fixed-register operands r20, r23, or r25 and five use r22; none is joined to the city +0x58 pointer. Separately, sub_82CE1C10 statically reads the city +0x58 indexed bytes and returns the number of 0xFF entries among a positive signed city +0x03 bound by counting non-0xFF bytes and subtracting that count. The earlier 21/8/13 candidate filter is not recoverable from tracked evidence. The reader's gameplay meaning, visible effect, and runtime invocation remain unknown."
 }

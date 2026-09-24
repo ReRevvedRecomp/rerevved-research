@@ -181,16 +181,20 @@ either bit is present. On one later branch, the adjusted registers weight
 food, production, and trade component returns in a local candidate score;
 another branch replaces the weights. After further validation, the helper stores a
 selected or replacement byte, including `-1`, at city `+0x58` plus a local
-index. That byte's downstream meaning is unresolved. See the [bounded bit
+index. A separate function, `sub_82CE1C10`, reads the same indexed byte array
+for indices below the positive signed city `+0x03` bound, counts entries not
+equal to `0xFF`, and returns the bound minus that count, which equals the number
+of `0xFF` entries. This proves a static external reader but does not establish
+tile assignment, gameplay meaning, visible effect, or runtime invocation. See
+the [bounded bit
 arithmetic](../../manifests/building-postwrite-city-bit-arithmetic.json),
-[weighted score](../../manifests/building-bit-weighted-yield-score.json), and
-[city byte store](../../manifests/building-bit-selected-city-index.json).
-The follow-up indexed-load census reproduced 18 `lbzx` sites in the nearby
-`sub_82D019F0` function and confirmed their instruction words against the
-supported image. None is joined to the stored city `+0x58` pointer; the earlier
-21/8/13 candidate filter is not recoverable from tracked evidence. This bounded
-check does not exclude readers outside that function. See the [consumer
-frontier](../../manifests/building-bit-selected-city-index-consumer-frontier.json).
+[weighted score](../../manifests/building-bit-weighted-yield-score.json),
+[city byte store](../../manifests/building-bit-selected-city-index.json), and
+[consumer frontier](../../manifests/building-bit-selected-city-index-consumer-frontier.json).
+The nearby `sub_82D019F0` census still has 18 `lbzx` candidates, none joined to
+that city pointer. The earlier 21/8/13 candidate filter is not recoverable from
+tracked evidence, and the bounded census does not exclude readers outside that
+function.
 
 IDs 200 through 299 use a signed halfword at `+0x40` of `0x14C`-byte wonder
 records rooted at `0x82F73238`. The helper applies a common signed half-scale

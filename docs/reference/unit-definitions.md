@@ -108,9 +108,13 @@ Indexed, computed, functionless, and out-of-interval writers remain unresolved. 
 [city cost-flag writer frontier](../../manifests/building-cost-city-flag-writer-frontier.json).
 An exact city-table-base follow-up reproduced 31 materializers and checked the
 next eight unexamined functions. It found no direct non-stack `+0x3C` write in
-231 function-owned instructions; the remaining materializers and other store
-forms remain open. See the
+231 function-owned instructions. See the
 [city cost-flag materializer frontier](../../manifests/building-cost-city-flag-materializer-frontier.json).
+The continuation checked the other 23 exact-base materializer functions in
+four batches and also found no direct `+0x3C` stores. Together, those packets
+cover all 31 exact city-table-base materializer functions, with zero direct
+stores in 1817 decoded instructions; computed and indirect forms remain open.
+See the [remaining materializer results](../../manifests/building-cost-city-flag-materializer-continuation.json).
 The shared Library/University three-quarter gate at `0x830E8FFE` has no
 identified writer or policy meaning; bounded address searches found no match,
 and its consumer lies in a Ghidra function gap. See the

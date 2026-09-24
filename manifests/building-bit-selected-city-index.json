@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0203",
+  "topic": "building-bit-selected-city-index",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Where does the city helper store the candidate ordinal selected by the building-bit-weighted score?",
+  "scope": {
+    "function": "0x82D00C78",
+    "tail": "[0x82D017A8,0x82D019F0)",
+    "trackedValues": ["r23 selected ordinal or -1", "r24 best local score"],
+    "rawWindows": ["0x82D00DC0..0x82D00DD8", "0x82D01760..0x82D017A8", "0x82D0189C..0x82D019D4"],
+    "stopCondition": "Trace the selected ordinal through its local validation and first city-state store; stop before classifying the stored byte's downstream consumers or visible gameplay effect.",
+    "boundary": "This packet follows one exact city helper with three raw-word windows. It does not prove every valid loop count, later readers, save persistence, tile assignment, or runtime execution."
+  },
+  "dependencies": [
+    { "topic": "building-bit-weighted-yield-score", "use": "Establishes r23 selection from a weighted candidate score and a separate -1 comparison." },
+    { "topic": "building-postwrite-city-bit-arithmetic", "use": "Identifies eight building IDs whose bits can adjust the component weights on one branch." },
+    { "topic": "courthouse-city-coordinate-scan", "use": "Establishes the Courthouse-controlled eight- or twenty-coordinate candidate bound." },
+    { "topic": "production-cost-ownership", "use": "Provides the accepted city table base and stride." }
+  ],
+  "staticResult": {
+    "outputPointer": "After rejecting city byte +0x00 equal to 0xFF or signed city byte +0x03 at most zero, the helper forms city address 0x8314FE28 + 0xBC*cityIndex. At 0x82D00DCC it saves city +0x58 to stack +0x7C. No other write to this stack slot was found in the exact generated function.",
+    "selectedValue": "At 0x82D01760..0x82D01770, a signed candidate score at least the saved best score stores the candidate loop ordinal in r23. At 0x82D0179C..0x82D017A4, a separate r21/r22 comparison can instead set r23 to -1. A later validation path can replace r23 with a signed existing byte or set -1 before the store. Thus the stored value is not always the newly selected ordinal.",
+    "indexLoop": "The accepted positive signed city byte +0x03 is the loop bound. Stack +0x70 starts at zero; at 0x82D01788 the helper reloads it into r28, and at 0x82D019CC..0x82D019E4 it stores r28+1 back to that stack slot and loops while the incremented value is less than signed city byte +0x03. Every explicit path to the shared store follows the r28 reload. For this local path, the store index is nonnegative and less than the signed byte bound; no stronger destination-capacity rule is established.",
+    "cityStore": "At 0x82D019C4, r9 reloads stack +0x7C; at 0x82D019D4, stbx writes low byte r23 to r9+r28. The destination is city +0x58 + loop index. This exact store joins the building-bit-influenced candidate score and Courthouse candidate extent to a city byte array, subject to the replacement and sentinel paths above.",
+    "scoreBoundary": "No later r24 use was found after the 0x82D0179C comparison in the exact generated function. This is a local selection score, not a stored city score."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No execution of this store, actual stored byte, later reader, or gameplay effect was observed."
+  },
+  "currentEvidence": {
+    "method": "Three foreground read-only canonical-project raw-word windows checked the output-pointer stack store, selected-value comparison, and final byte store. Narrow generated-function control-flow inspection joined the city pointer, r28 loop index, replacement paths, and store where the configured Ghidra function truncates.",
+    "entries": [
+      { "role": "city output pointer", "address": "0x82D00DC0..0x82D00DD8", "result": "Saves computed city +0x58 address to stack +0x7C." },
+      { "role": "candidate and sentinel", "address": "0x82D01760..0x82D017A8", "result": "The winning candidate ordinal or -1 flows through r23; r28 is reloaded from loop-index stack state." },
+      { "role": "final indexed city write", "address": "0x82D0189C..0x82D019D4", "result": "After later validation, stbx writes r23 to city +0x58 + r28." }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82D00DCC radius=3",
+      "ghidra/DumpMemoryWords.java:0x82D01784 radius=9",
+      "ghidra/DumpMemoryWords.java:0x82D01938 radius=39",
+      "generated:rerevved/sub_82D00C78:0x82D00D98..0x82D00DD0,0x82D0175C..0x82D019E4"
+    ],
+    "qualification": "The raw windows verify exact store and branch words. Generated code is narrow corroboration for register and stack aliases across the function gap. The local signed-byte bound is not a program-wide city array capacity guarantee."
+  },
+  "guards": [
+    "Do not call the stored ordinal a worked tile without an accepted downstream reader or runtime observation.",
+    "Do not infer that every building-bit change reaches the final byte; another branch replaces the weights and later paths can replace r23.",
+    "Do not treat the signed-byte loop bound as proof that every computed address stays within the city record for arbitrary state.",
+    "Do not infer save persistence, presentation, or gameplay effect from this static store."
+  ],
+  "conclusion": "The post-building city helper can write its selected or replaced ordinal, including -1, to city +0x58 indexed by its local loop. The accepted Courthouse candidate bound and eight other building-bit weight tests can influence the selected value along conditional static paths. The field's downstream meaning and runtime behavior remain unknown."
+}

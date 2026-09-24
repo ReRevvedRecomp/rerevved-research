@@ -146,6 +146,9 @@ base `0x8314FE28` and emitted 31 split-constant materializers below its cap of
 record at offset `+0`, then calls `0x82D038E8`, whose 17-instruction body does
 not read the incoming city-table base. This does not prove a `+0x3A` reader;
 the other materializers and computed or indexed item-ID paths remain open.
+An additional direct-read check found no `+0x3A` operands in the first eight
+other exact-base materializer functions across 664 function-owned instructions;
+indexed, computed, and remaining materializer paths are still unresolved.
 The directly called city helper reads the Courthouse index-14 bit in city
 `+0x10` and selects a scan of eight adjacent coordinate candidates or twenty
 including a second ring. This establishes a static consumer of the Courthouse

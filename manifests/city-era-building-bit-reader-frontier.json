@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0206",
+  "topic": "city-era-building-bit-reader-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Do decoded direct field accesses in the bounded city gameplay interval read the era-indexed building bits written at city +0x14 through +0x20?",
+  "scope": {
+    "producer": "0x82D02090",
+    "producerSites": ["0x82D02158", "0x82D02164"],
+    "cityTable": "0x8314FE28",
+    "cityStride": "0xBC",
+    "fieldOffsets": ["0x14", "0x18", "0x1C", "0x20"],
+    "scanRange": "[0x82D00000,0x82D20000)",
+    "access": "direct register-plus-displacement READ",
+    "siteCap": 32,
+    "stopCondition": "Scan decoded function-owned instructions in the exact interval for direct reads at the four era-word offsets, stopping at the first candidate or the 32-site cap. With zero candidates, close this operand-form check without broadening to computed or indexed addresses.",
+    "boundary": "This query does not cover indexed or stack-reloaded readers, computed addresses without one of the exact displacements, functionless instructions, or code outside the interval. It does not establish the field's effect or runtime use."
+  },
+  "dependencies": [
+    { "topic": "building-completion-state-writer", "use": "Establishes the producer of city +0x14 + 4*clampedEra and city +0x10 building bits." },
+    { "topic": "building-postwrite-city-bit-arithmetic", "use": "Distinguishes the known city +0x10 consumer from the separately written era-indexed words." }
+  ],
+  "staticResult": {
+    "directReadCheck": "FindFieldAccesses scanned 272 function-owned decoded instructions in [0x82D00000,0x82D20000) for offsets 0x14, 0x18, 0x1C, and 0x20 with access READ. It found zero accesses and did not reach the 32-site cap.",
+    "fieldBoundary": "The direct city +0x10 consumer in sub_82D00C78 does not establish a reader of these separately written era-indexed words. The zero result applies only to this decoded direct-displacement query."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No execution, era-word value, consumer, or visible building effect was observed."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only canonical-project FindFieldAccesses query with four exact offsets, READ access filter, exact scan range, and result cap 32. No static candidate was emitted for generated-code corroboration.",
+    "entries": [
+      { "role": "bounded era-word direct-read census", "address": "[0x82D00000,0x82D20000)", "result": "Zero READ operands at +0x14, +0x18, +0x1C, or +0x20 across 272 function-owned decoded instructions; cap 32 was not reached." }
+    ],
+    "locators": [
+      "ghidra/FindFieldAccesses.java:[0x82D00000,0x82D20000) offsets=0x14,0x18,0x1C,0x20 access=READ cap=32"
+    ],
+    "qualification": "The query covers only decoded direct register-plus-displacement operands in the selected address interval. No program-wide or computed-address reader census is claimed."
+  },
+  "guards": [
+    "Do not treat the zero direct-operand result as proof that the era-indexed city words have no readers.",
+    "Do not equate these words with implemented building effects or a supported public modding interface.",
+    "Do not infer runtime behavior from this static query."
+  ],
+  "conclusion": "The bounded decoded-instruction query found no direct READ operand at city offsets +0x14, +0x18, +0x1C, or +0x20 in 272 function-owned instructions under the 32-site cap. Indexed, computed, functionless, and out-of-interval readers remain unresolved; the era-indexed words' downstream role and effect are unknown."
+}

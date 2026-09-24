@@ -106,6 +106,11 @@ take a separate conditional city-flag path. Both paths store the item ID
 at city `+0x3A` and check a bounded city byte list. These static writes do not
 establish each building's described effect or runtime execution. See
 [`building-completion-state-writer.json`](../../manifests/building-completion-state-writer.json).
+The writer also stores era-indexed building bits at city `+0x14`, `+0x18`,
+`+0x1C`, or `+0x20`. A bounded direct-read census found no decoded reads at
+those offsets in 272 function-owned instructions across `[0x82D00000,0x82D20000)`;
+indexed, computed, functionless, and out-of-interval readers remain unresolved.
+See the [era-bit reader frontier](../../manifests/city-era-building-bit-reader-frontier.json).
 One sufficient-production wonder path also copies the current item ID from
 city `+0x38` to `+0x3A` after additional gates; later behavior remains outside
 that packet. A bounded direct-read census found zero decoded `+0x3A` READ

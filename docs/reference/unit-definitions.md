@@ -95,6 +95,11 @@ and 18 half-cost branches. Cathedral 111 has a UEA 21 branch, with no accepted
 retail activation. University 112 and Factory 116 have separate neutral-gated
 reductions. The exact branch sequence and other common modifiers are in
 [`building-wonder-cost-modifier-branches.json`](../../manifests/building-wonder-cost-modifier-branches.json).
+The final building-cost half reduction tests city halfword `+0x3C` bit `0x8`.
+A bounded direct-write scan found no non-stack `+0x3C` WRITE or READ_WRITE
+operand in 272 function-owned decoded instructions; indexed, computed,
+functionless, and out-of-interval writers remain unresolved. See the
+[city cost-flag writer frontier](../../manifests/building-cost-city-flag-writer-frontier.json).
 The shared Library/University three-quarter gate at `0x830E8FFE` has no
 identified writer or policy meaning; bounded address searches found no match,
 and its consumer lies in a Ghidra function gap. See the

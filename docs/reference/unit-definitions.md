@@ -106,6 +106,13 @@ take a separate conditional city-flag path. Both paths store the item ID
 at city `+0x3A` and check a bounded city byte list. These static writes do not
 establish each building's described effect or runtime execution. See
 [`building-completion-state-writer.json`](../../manifests/building-completion-state-writer.json).
+The spaceship-part path sets city `+0x24` bit `0x100` under its separate
+player-indexed gate. A bounded direct-read scan found no non-stack `+0x24`
+READ or READ_WRITE operand in 272 function-owned decoded instructions; a decoded
+split-constant scan found no materializer for exact address `0x8314FE4C`.
+Indexed, computed, aliased, functionless, and out-of-interval readers remain
+unresolved. See the
+[spaceship-part flag frontier](../../manifests/spaceship-part-city-flag-consumer-frontier.json).
 The writer also stores era-indexed building bits at city `+0x14`, `+0x18`,
 `+0x1C`, or `+0x20`. A bounded direct-read census found no decoded reads at
 those offsets in 272 function-owned instructions across `[0x82D00000,0x82D20000)`;

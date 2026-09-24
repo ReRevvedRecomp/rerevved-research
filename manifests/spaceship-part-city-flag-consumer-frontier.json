@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0208",
+  "topic": "spaceship-part-city-flag-consumer-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the bounded city gameplay interval contain a decoded direct read of the +0x24 flag written by the spaceship-part completion branch?",
+  "scope": {
+    "producer": "0x82D02090",
+    "producerSites": ["0x82D020A0", "0x82D020EC"],
+    "initializedItems": [119, 120, 121, 122],
+    "cityTable": "0x8314FE28",
+    "cityStride": "0xBC",
+    "fieldOffset": "0x24",
+    "flagMask": "0x00000100",
+    "readQuery": {
+      "scanRange": "[0x82D00000,0x82D20000)",
+      "access": "direct register-plus-displacement READ or READ_WRITE with the script's default R1 stack-base exclusion",
+      "resultCap": 32
+    },
+    "exactAddressMaterializerQuery": {
+      "target": "0x8314FE4C",
+      "splitConstantLookahead": 8,
+      "firstUseWindow": 16,
+      "resultCap": 32
+    },
+    "stopCondition": "Scan the exact interval for direct +0x24 reads under cap 32. Stop at the first candidate to verify city-pointer provenance and bit 0x100 use, or close this operand-form check at interval exhaustion.",
+    "boundary": "The queries do not cover indexed, computed, aliased, indirect, functionless, or out-of-interval readers. They do not establish the flag's effect or runtime use."
+  },
+  "dependencies": [
+    {
+      "topic": "building-completion-state-writer",
+      "use": "Establishes the conditional city +0x24 bit 0x100 write for normalized indices 19 through 22."
+    },
+    {
+      "topic": "building-record-identities-100-122",
+      "use": "Binds those normalized indices at the accepted callsite to initialized spaceship-part IDs 119 through 122."
+    }
+  ],
+  "staticResult": {
+    "producer": "The accepted writer at 0x82D02090 conditionally ORs bit 0x100 into city word +0x24 when a player-indexed word equals -1. The path corresponds at its accepted callsite to initialized items 119 through 122 and skips the ordinary building-presence-bit stores.",
+    "directReadCheck": "FindFieldAccesses scanned 272 function-owned decoded instructions in [0x82D00000,0x82D20000) for direct +0x24 READ and READ_WRITE operands with its default R1 stack-base exclusion. It found zero accesses and did not reach the 32-site cap.",
+    "exactAddressMaterializerCheck": "FindGlobalAddressAccesses scanned 654329 decoded instructions for split-constant materializers of exact address 0x8314FE4C, with lookahead 8, first-use window 16, and cap 32. It emitted zero materializers and was not truncated.",
+    "consumerBoundary": "No direct reader of the flag is established. The exact-address materializer result is not an effective-address or access-direction census; both query forms leave indexed, computed, aliased, functionless, and out-of-range readers open."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No spaceship-part completion, flag value, consumer, or visible effect was observed at runtime."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only canonical-project direct field-read query and one bounded decoded split-constant materializer query. The accepted building completion manifest supplies the producer and item identities.",
+    "entries": [
+      {
+        "role": "conditional spaceship-part flag writer",
+        "address": "0x82D020A0..0x82D020EC",
+        "result": "Normalized indices 19 through 22 conditionally set city +0x24 bit 0x100 when the player-indexed word equals -1.",
+        "confidence": "strong"
+      },
+      {
+        "role": "direct field-read check",
+        "address": "[0x82D00000,0x82D20000)",
+        "result": "Zero non-R1-base direct +0x24 READ or READ_WRITE operands among 272 function-owned decoded instructions; cap 32 was not reached.",
+        "confidence": "strong"
+      },
+      {
+        "role": "exact-address materializer check",
+        "address": "0x8314FE4C",
+        "result": "Zero decoded split-constant materializers among 654329 instructions; cap 32 was not reached.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/FindFieldAccesses.java:offset=0x24 access=READ,READ_WRITE range=[0x82D00000,0x82D20000) cap=32",
+      "ghidra/FindGlobalAddressAccesses.java:0x8314FE4C lookahead=8 firstUseWindow=16 cap=32",
+      "manifests/building-completion-state-writer.json#/staticWriter/specialRange",
+      "manifests/building-record-identities-100-122.json#/records"
+    ],
+    "qualification": "Both negative results are limited to decoded instructions and their specified operand forms. The canonical listing truncates several guest helpers at save-register thunks, so functionless code is not represented by the direct field-read query. No runtime probe was performed."
+  },
+  "guards": [
+    "Do not infer that the spaceship-part flag has no reader from these bounded query forms.",
+    "Do not treat the stored spaceship-part descriptions as the flag's implemented effect.",
+    "Do not infer a safe modding interface or runtime completion behavior from the static write.",
+    "Do not infer valid item IDs outside the initialized 119 through 122 records from normalized-index arithmetic."
+  ],
+  "conclusion": "The bounded decoded queries found no non-R1-base direct +0x24 READ or READ_WRITE operand in 272 function-owned instructions and no split-constant materializer for exact address 0x8314FE4C. No external reader of the conditionally written bit is established; indexed, computed, aliased, functionless, and out-of-interval readers and the flag's effect remain unresolved."
+}

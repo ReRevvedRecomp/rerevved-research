@@ -54,6 +54,21 @@
       "consumer": "Unresolved: the output buffer origin and any later reader cannot be joined from these exact functions or their recorded references.",
       "qualification": "The decompiled bodies establish the parameter-relative stores, not the caller, buffer identity, indirect dispatch, or bit-specific interpretation."
     },
+    "directCallerSearch": {
+      "targets": ["0x82E1E168", "0x82E1E1A8", "0x82E1E1E8"],
+      "script": "FindDirectCallers.java",
+      "matchCapPerTarget": 32,
+      "scope": "Initialized executable memory, aligned raw words, exact PowerPC direct branch-and-link targets.",
+      "matches": {
+        "0x82E1E168": 0,
+        "0x82E1E1A8": 0,
+        "0x82E1E1E8": 0
+      },
+      "truncated": false,
+      "cancelled": false,
+      "result": "No aligned raw direct calls to any of the three snapshot-copy functions were emitted below the per-target cap.",
+      "qualification": "This scan does not cover indirect or CTR dispatch, non-executable or uninitialized code, or the snapshot output-buffer origin and later readers."
+    },
     "indexedHalfwordConsumerSearch": {
       "target": "0x830EF348",
       "script": "FindGlobalAddressAccesses.java",
@@ -65,7 +80,7 @@
       "truncated": false,
       "result": "No decoded lis-plus-split-low materializer for the exact indexed halfword table base was emitted; this does not resolve indexed reads through other bases or derived addresses."
     },
-    "qualification": "The displacement scan covers only decoded instructions using the exact signed displacement and listed load/store mnemonics. The exact-base queries only recognize bounded lis-plus-split-low materializers in a basic block; they do not match direct base-plus-displacement accesses, derived addresses, or other addressing forms. The snapshot copies have no exact recorded references and their output-buffer provenance is ambiguous. These bounded results do not exclude undecoded interiors or prove a bit-0x00010000 consumer."
+    "qualification": "The displacement scan covers only decoded instructions using the exact signed displacement and listed load/store mnemonics. The exact-base queries only recognize bounded lis-plus-split-low materializers in a basic block; they do not match direct base-plus-displacement accesses, derived addresses, or other addressing forms. The snapshot copies have no exact recorded references or aligned raw direct calls in initialized executable memory; indirect dispatch and output-buffer provenance remain unresolved. These bounded results do not exclude undecoded interiors or prove a bit-0x00010000 consumer."
   },
   "runtimeObservation": {
     "source": "wonder-eligibility-virtual-target",
@@ -79,7 +94,7 @@
     "stop": "Stop after one naturally completed item 219 or 220 and normal exit, or report no relevant call if the session ends first. A flag change without a correlated outcome proves only runtime execution of the write, not flag meaning."
   },
   "currentEvidence": {
-    "method": "Narrow generated-code windows localized the helper's mode split and terminal join. Foreground read-only canonical-project raw-word windows checked the mode gate, common clears, exact index tests, and flag store; a bounded displacement scan, exact candidate function windows, and a capped exact-base materializer scan tested the shared-word consumer frontier.",
+    "method": "Narrow generated-code windows localized the helper's mode split and terminal join. Foreground read-only canonical-project raw-word windows checked the mode gate, common clears, exact index tests, and flag store; a bounded displacement scan, exact candidate function windows, a capped exact-base materializer scan, and a capped raw direct-caller scan of the three snapshot-copy functions tested the shared-word consumer frontier.",
     "entries": [
       { "role": "mode-two entry", "address": "0x82D1719C through 0x82D171A8", "result": "Set mode bit one enters the longer helper tail.", "confidence": "strong" },
       { "role": "selected-player indexed halfword", "address": "0x82D171F0 through 0x82D17250", "result": "One player-matched path updates unsigned halfword 0x830EF348 + 2*index and calls two virtual slots.", "confidence": "strong" },
@@ -87,10 +102,11 @@
       { "role": "special index flag", "address": "0x82D17808 through 0x82D17820", "result": "Index 19 or 20 sets bit 0x10000 in 0x82FFE7C4.", "confidence": "strong" },
       { "role": "exact shared-word materializer check", "address": "0x82FFE7C4", "result": "Zero decoded lis-plus-split-low materializers among 654329 instructions; cap 32 was not reached. This does not cover direct displacement accesses or derived addresses.", "confidence": "strong" },
       { "role": "whole-word snapshot copies", "address": "0x82E1E168,0x82E1E1A8,0x82E1E1E8", "result": "Each copies the shared word to its output parameter at +0x200. Exact function-entry reference counts are zero; output-buffer provenance and later readers remain unresolved.", "confidence": "strong" },
+      { "role": "raw direct callers of snapshot copies", "address": "0x82E1E168,0x82E1E1A8,0x82E1E1E8", "result": "A full initialized-executable aligned-word scan emitted zero direct branch-and-link calls to all three targets, below the 32-match cap per target. Indirect calls and output-buffer provenance remain unresolved.", "confidence": "strong" },
       { "role": "exact indexed-halfword materializer check", "address": "0x830EF348", "result": "Zero decoded lis-plus-split-low materializers among 654329 instructions; cap 32 was not reached. This does not resolve indexed or derived accesses.", "confidence": "strong" }
     ],
-    "locators": ["ghidra/DumpMemoryWords.java:0x82D171A0 radius=9", "ghidra/DumpMemoryWords.java:0x82D171F0,0x82D17234,0x82138838,0x82138928 radius=13", "ghidra/DumpMemoryWords.java:0x82D17788,0x82D1780C radius=23", "ghidra/FindScalarUses.java:0xE7C4,0xFFFFE7C4 loads/stores cap=32", "ghidra/FindGlobalAddressAccesses.java:0x82FFE7C4 lookahead=8 useWindow=16 maxMatches=32", "ghidra/DumpFunctions.java:0x82CFF0D0,0x82D05C90,0x82D25170,0x82DB5DD8,0x82E1E168,0x82E1E1A8,0x82E1E1E8,0x82E1E538,0x82E60930", "ghidra/DumpReferences.java:0x82E1E168,0x82E1E1A8,0x82E1E1E8", "ghidra/FindGlobalAddressAccesses.java:0x830EF348 lookahead=8 useWindow=16 maxMatches=32", "generated:rerevved/sub_82D16BA0"],
-    "qualification": "The main helper decompiler truncates. Current-image words establish the local instructions; the long intermediate tail's dataflow is not promoted from generated code alone. The exact-base queries found no split-constant materializers but do not alter the bounded displacement cohort or identify a bit-specific consumer. Snapshot output-buffer provenance is unresolved."
+    "locators": ["ghidra/DumpMemoryWords.java:0x82D171A0 radius=9", "ghidra/DumpMemoryWords.java:0x82D171F0,0x82D17234,0x82138838,0x82138928 radius=13", "ghidra/DumpMemoryWords.java:0x82D17788,0x82D1780C radius=23", "ghidra/FindScalarUses.java:0xE7C4,0xFFFFE7C4 loads/stores cap=32", "ghidra/FindGlobalAddressAccesses.java:0x82FFE7C4 lookahead=8 useWindow=16 maxMatches=32", "ghidra/DumpFunctions.java:0x82CFF0D0,0x82D05C90,0x82D25170,0x82DB5DD8,0x82E1E168,0x82E1E1A8,0x82E1E1E8,0x82E1E538,0x82E60930", "ghidra/DumpReferences.java:0x82E1E168,0x82E1E1A8,0x82E1E1E8", "ghidra/FindDirectCallers.java:0x82E1E168,0x82E1E1A8,0x82E1E1E8 cap=32", "ghidra/FindGlobalAddressAccesses.java:0x830EF348 lookahead=8 useWindow=16 maxMatches=32", "generated:rerevved/sub_82D16BA0"],
+    "qualification": "The main helper decompiler truncates. Current-image words establish the local instructions; the long intermediate tail's dataflow is not promoted from generated code alone. The exact-base queries found no split-constant materializers but do not alter the bounded displacement cohort or identify a bit-specific consumer. No exact entry references or aligned raw direct calls to the snapshot-copy functions were found; indirect dispatch and output-buffer provenance remain unresolved."
   },
   "guards": [
     "Do not call bit 0x10000 a victory flag without its consumer or runtime observation.",
@@ -100,5 +116,5 @@
     "Do not infer the conditional extra call always executes for item 219 or 220.",
     "Do not equate stored victory descriptions with implemented or observed outcomes."
   ],
-  "conclusion": "The conditional mode-two item-219 or item-220 helper path can reach a terminal block that clears two state bits and sets bit 0x10000 in shared status word 0x82FFE7C4. Follow-up scans found no decoded split-constant materializer for either the status-word base or indexed halfword table base. Three whole-word snapshot functions copy the status word to parameter offset +0x200, but have no exact recorded function references and no established output-buffer provenance. The intermediate tail, bit-specific consumer, indexed-halfword meaning, victory interpretation, and runtime outcome remain unresolved."
+  "conclusion": "The conditional mode-two item-219 or item-220 helper path can reach a terminal block that clears two state bits and sets bit 0x10000 in shared status word 0x82FFE7C4. Follow-up scans found no decoded split-constant materializer for either the status-word base or indexed halfword table base. Three whole-word snapshot functions copy the status word to parameter offset +0x200, but have no exact recorded function references or aligned raw direct calls in initialized executable memory below the 32-match cap, and their output-buffer provenance remains unresolved. The intermediate tail, indirect snapshot callers, bit-specific consumer, indexed-halfword meaning, victory interpretation, and runtime outcome remain unresolved."
 }

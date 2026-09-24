@@ -124,6 +124,12 @@ split-constant scan found no materializer for exact address `0x8314FE4C`.
 Indexed, computed, aliased, functionless, and out-of-interval readers remain
 unresolved. See the
 [spaceship-part flag frontier](../../manifests/spaceship-part-city-flag-consumer-frontier.json).
+An additional exact-base sample checked the next eight unique city-table
+materializer functions after the previously followed path and the first eight
+other functions. It found no direct non-stack `+0x24` READ or READ_WRITE operand
+across 428 function-owned instructions. Remaining materializers and indexed,
+computed, aliased, indirect, and functionless readers remain unresolved. See the
+[materializer frontier](../../manifests/spaceship-part-city-flag-materializer-frontier.json).
 The writer also stores era-indexed building bits at city `+0x14`, `+0x18`,
 `+0x1C`, or `+0x20`. A bounded direct-read census found no decoded reads at
 those offsets in 272 function-owned instructions across `[0x82D00000,0x82D20000)`;

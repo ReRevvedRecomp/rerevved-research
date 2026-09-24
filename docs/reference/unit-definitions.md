@@ -106,6 +106,11 @@ found one candidate, but its resolved base targets a different global address;
 exact-address searches for `0x8314FE64` found no split-constant candidates.
 Indexed, computed, functionless, and out-of-interval writers remain unresolved. See the
 [city cost-flag writer frontier](../../manifests/building-cost-city-flag-writer-frontier.json).
+An exact city-table-base follow-up reproduced 31 materializers and checked the
+next eight unexamined functions. It found no direct non-stack `+0x3C` write in
+231 function-owned instructions; the remaining materializers and other store
+forms remain open. See the
+[city cost-flag materializer frontier](../../manifests/building-cost-city-flag-materializer-frontier.json).
 The shared Library/University three-quarter gate at `0x830E8FFE` has no
 identified writer or policy meaning; bounded address searches found no match,
 and its consumer lies in a Ghidra function gap. See the

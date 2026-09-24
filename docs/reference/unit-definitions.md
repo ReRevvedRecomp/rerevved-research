@@ -103,9 +103,13 @@ exact raw words match the generated-code paths, while Ghidra still has no decode
 body for these addresses. The concrete buffer virtual targets, external format,
 policy meaning, runtime value, and visible effect remain unresolved. A separate
 reader at `0x82D25330` uses signed less-than-two as one guard before an
-unresolved receiver slot `+0x80` call. See the
+slot `+0x80` call on receiver address `0x8314F76C` with arguments 13 and -1;
+an exact-address materializer scan for the receiver hit its 32-result cap, and
+the flat-image word at that address is zero, so the target and runtime value
+remain unresolved. See the
 [global cost-word transfer frontier](../../manifests/building-wonder-cost-global-transfer.json)
-and the earlier [bounded candidate search](../../manifests/building-wonder-cost-global-writer-frontier.json).
+and [secondary-reader boundary](../../manifests/building-wonder-cost-global-secondary-reader-frontier.json),
+plus the earlier [bounded candidate search](../../manifests/building-wonder-cost-global-writer-frontier.json).
 The final building-cost half reduction tests city halfword `+0x3C` bit `0x8`.
 A bounded direct-write scan found no non-stack `+0x3C` WRITE or READ_WRITE
 operand in 272 function-owned decoded instructions. A raw D-form store scan

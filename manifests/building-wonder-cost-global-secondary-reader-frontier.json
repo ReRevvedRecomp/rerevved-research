@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0219",
+  "topic": "building-wonder-cost-global-secondary-reader-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Can the receiver target of the separate 0x82FFE7C8 less-than-two reader's slot +0x80 call be resolved statically?",
+  "scope": {
+    "function": "0x82D25170",
+    "costWord": "0x82FFE7C8",
+    "reader": "0x82D25330",
+    "dispatch": "0x82D25368",
+    "receiverAddress": "0x8314F76C",
+    "receiverSlot": "+0x80",
+    "materializerSearch": {
+      "script": "FindGlobalAddressAccesses.java",
+      "lookahead": 8,
+      "firstUseWindow": 16,
+      "materializerCap": 32,
+      "decodedInstructionsScanned": 633469,
+      "materializersEmitted": 32,
+      "truncated": true
+    },
+    "referenceSearch": {
+      "script": "DumpReferences.java",
+      "references": 56
+    },
+    "imageWordSample": { "address": "0x8314F76C", "value": "0x00000000" },
+    "stopCondition": "Stop at the 32-materializer cap and the unresolved runtime receiver state. Do not classify other references, infer a runtime vtable from the zero image word, or continue to candidate slot implementations."
+  },
+  "dependencies": [
+    { "topic": "building-wonder-cost-modifier-branches", "use": "Establishes the signed less-than-two read of 0x82FFE7C8 and the local guards before receiver slot +0x80." },
+    { "topic": "building-wonder-cost-global-transfer", "use": "Establishes the two conditional transfer paths that pass the same word through BufferReadU32 and BufferWriteU32." }
+  ],
+  "staticResult": {
+    "readerPath": "In function 0x82D25170, the signed word at 0x82FFE7C8 is compared with two at 0x82D25334. On the below-two path that passes the additional local state checks, generated code uses r31 = 0x8314F76C as the receiver for virtual slot +0x80 at 0x82D25368, with r4 = 13 and r5 = -1.",
+    "receiverMaterializer": "FindGlobalAddressAccesses reports a materializer in this function at 0x82D252D8..0x82D252E0, with its first relevant use at 0x82D25300. The query also emitted 31 other materializers for the same exact receiver address before reaching its cap; the scan is truncated and does not inventory all references or stores.",
+    "referenceCount": "DumpReferences returned 56 references to 0x8314F76C. The count does not identify a unique initializer or classify every candidate as a writer.",
+    "imageWord": "DumpMemoryWords reads 0x00000000 at 0x8314F76C in the supported flat image. This is an image sample only and does not establish runtime initialization or the receiver's runtime vtable.",
+    "boundary": "The call-site receiver address and arguments are statically recoverable, but the slot +0x80 target, class, runtime object state, path invocation, and visible effect remain unresolved. The address-materializer scan reached its explicit cap of 32 and was truncated; no broader access claim is made."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "priorObservation": "No runtime receiver value, vtable target, branch activation, cost effect, or visible behavior was observed; this investigation is static-only."
+  },
+  "currentEvidence": {
+    "method": "A foreground read-only exact-address materializer scan and reference dump checked receiver address 0x8314F76C; a raw-word query sampled the initial image word. The existing bounded cost-reader query and a narrow generated-code window corroborate the guarded slot call.",
+    "entries": [
+      { "role": "receiver materializers", "address": "0x8314F76C", "result": "The scan examined 633469 decoded instructions, emitted 32 matches, and reported truncation at cap 32; this is not a complete address-use inventory." },
+      { "role": "references to receiver address", "address": "0x8314F76C", "result": "The reference manager returned 56 references; the list does not prove initialization or a unique virtual target." },
+      { "role": "initial image word", "address": "0x8314F76C", "result": "The flat-image word is 0x00000000; no runtime value is inferred." },
+      { "role": "guarded indirect call", "address": "0x82D25330..0x82D25368", "result": "The signed less-than-two branch and local state gates precede a slot +0x80 call on r31 with arguments 13 and -1; the indirect target is unresolved." }
+    ],
+    "locators": [
+      "ghidra/FindGlobalAddressAccesses.java:0x8314F76C lookahead=8 firstUseWindow=16 cap=32",
+      "ghidra/DumpReferences.java:0x8314F76C",
+      "ghidra/DumpMemoryWords.java:0x8314F76C radius=0",
+      "ghidra/DumpFunctionNeighborhood.java:0x82D25330 radius=0x40 maxInstructions=64",
+      "generated:rerevved/sub_82D25170:0x82D252D8..0x82D25368",
+      "manifests/building-wonder-cost-modifier-branches.json#/currentEvidence/relatedGlobalReaderSearch"
+    ],
+    "qualification": "The materializer scan covers decoded function-owned split-constant forms and reached its cap; references are not equivalent to direction-specific accesses. The flat-image zero word is not a runtime observation. No slot implementation, receiver class, or visible effect is promoted."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": ["RVA-SYM-0401"],
+    "newRelations": [],
+    "result": "The existing global-word symbol records the conditional receiver address and arguments while preserving the unresolved target and runtime boundary."
+  },
+  "guards": [
+    "Do not infer the receiver's runtime vtable, dynamic value, or validity from the zero word in the flat image.",
+    "Do not infer a writer or absence of a writer from the capped materializer scan or the reference count.",
+    "Do not infer the slot +0x80 implementation, a policy meaning, cost activation, or visible effect from the branch and arguments."
+  ],
+  "conclusion": "The separate less-than-two reader reaches an indirect slot +0x80 call on receiver address 0x8314F76C with arguments 13 and -1 after its local guards. The supported flat image contains zero at that receiver address, and an exact-address materializer scan emits 32 matches and is truncated. These static results do not resolve the runtime receiver, target, effect, or the word's policy meaning; the bounded search stops at the cap."
+}

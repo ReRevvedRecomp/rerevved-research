@@ -151,6 +151,10 @@ copied-word read.
 Two direct callers of the reader initializer occur in the same function as a
 separate indexed read; their next method call has no direct `+0x434` store in
 its checked body. Neither path establishes a live factor read or cost effect.
+The enclosing caller is slot `+0xC8` of the initialized singleton vtable at
+`0x82138768`. One indirect `+0xC8` call at `0x828AA8FC` uses a receiver loaded
+from another object's `+0x18`; that receiver is not joined to the singleton,
+so this is not a proved live caller or gameplay trigger.
 The next twelve complete stride positions
 are zero and the following position contains non-wonder data. Neither this
 boundary nor the cost helper proves a program-wide valid-ID rule. Identity

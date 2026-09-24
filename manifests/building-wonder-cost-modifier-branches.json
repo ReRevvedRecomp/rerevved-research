@@ -9,7 +9,7 @@
   "scope": {
     "function": "0x82CF1278",
     "rawWindows": ["0x82CF137C through 0x82CF147C", "0x82CF147C through 0x82CF1550"],
-    "boundary": "This packet follows the remainder of one exact cost helper and records reduction gates and arithmetic. It does not establish the meanings or writers of the neutral globals, caller-side cost parity, validity of uninitialized record IDs, production completion, or runtime execution of these branches."
+    "boundary": "This packet follows the remainder of one exact cost helper and records reduction gates and arithmetic. A bounded follow-up checks one exact scalar load form for the 0x82FFE7C8 input outside the helper. It does not establish the meanings or writers of the neutral globals, caller-side cost parity, validity of uninitialized record IDs, production completion, or runtime execution of these branches."
   },
   "dependencies": [
     { "topic": "building-wonder-cost-identities", "use": "Provides the accepted building IDs 101, 105, 114 and UEA 18, 19, 20, 24 reduction branches." },
@@ -76,20 +76,52 @@
     }
   ],
   "currentEvidence": {
-    "method": "One exact-function generated-code window identified the remaining branch conditions and arithmetic; one foreground read-only Ghidra raw-word query covered the two adjoining late-function windows. Previously accepted packets supply the earlier item factors and UEA branches.",
+    "method": "One exact-function generated-code window identified the remaining branch conditions and arithmetic; one foreground read-only Ghidra raw-word query covered the two adjoining late-function windows. A bounded exact-scalar load/store search found one function-owned 0xE7C8 use outside the cost helper, followed by exact-function and raw-word windows to verify its base and local branch. Previously accepted packets supply the earlier item factors and UEA branches.",
     "entries": [
       { "role": "Cathedral and global comparison branches", "address": "0x82CF13C0 through 0x82CF1480", "result": "Exact guest words corroborate item masks, UEA ID 21 call, two neutral word-and-halfword equality gates, and the half and third reductions.", "confidence": "strong" },
-      { "role": "late common reductions", "address": "0x82CF1484 through 0x82CF1550", "result": "Exact guest words corroborate the neutral halfword gate for Library and University, native wonder half, UEA 24 test, classifier/global gate, city flag gate, and shared final half reduction.", "confidence": "strong" }
+      { "role": "late common reductions", "address": "0x82CF1484 through 0x82CF1550", "result": "Exact guest words corroborate the neutral halfword gate for Library and University, native wonder half, UEA 24 test, classifier/global gate, city flag gate, and shared final half reduction.", "confidence": "strong" },
+      { "role": "separate reader of final-gate global", "address": "0x82D2532C through 0x82D25368", "result": "One exact decoded load/store displacement candidate at 0x82D25330 forms 0x82FFE7C8 from lis 0x8300 and displacement -0x1838. It compares the signed word with 2 and skips the following receiver slot +0x80 call when the word is at least 2; the indirect target and policy meaning are unresolved.", "confidence": "strong" }
     ],
-    "locators": ["ghidra/DumpMemoryWords.java:0x82CF13FC radius=32", "ghidra/DumpMemoryWords.java:0x82CF14FC radius=32", "generated:rerevved/sub_82CF1278"],
-    "qualification": "Ghidra's configured function listing truncates after the save-register thunk, so current-image raw words, not its decompilation, support the interior addresses. Generated code is exact-function corroboration only. No runtime probe was performed."
+    "relatedGlobalReaderSearch": {
+      "target": "0x82FFE7C8",
+      "scalarQuery": {
+        "script": "FindScalarUses.java",
+        "values": ["0xE7C8", "0xFFFFE7C8"],
+        "mnemonics": ["lwz", "stw", "lhz", "lha", "sth", "lbz", "stb"],
+        "functionCap": 32,
+        "matchingFunctions": 1,
+        "matchingInstructions": ["0x82D25330 lwz r11,-0x1838(r11)"],
+        "truncated": false,
+        "cancelled": false,
+        "qualification": "The query emits matching instructions only when Ghidra assigns them to a function; it does not cover functionless or undecoded code."
+      },
+      "candidateFunction": {
+        "script": "DumpFunctionNeighborhood.java",
+        "entry": "0x82D25170",
+        "body": "[0x82D25170,0x82D253B8)",
+        "candidate": "0x82D25330",
+        "result": "0x82D2532C forms 0x83000000 with lis; the load at 0x82D25330 uses -0x1838, producing effective address 0x82FFE7C8. The signed compare with 2 at 0x82D25334 branches to 0x82D2536C when the value is at least 2. If below 2, the code also loads a pointer from 0x82FFD624 and tests its +0xC word for zero before dispatching receiver slot +0x80 at 0x82D25368."
+      },
+      "rawWords": {
+        "0x82D2532C": "0x3D608300",
+        "0x82D25330": "0x816BE7C8",
+        "0x82D25334": "0x2F0B0002",
+        "0x82D25338": "0x40980034",
+        "0x82D2533C": "0x3D608300",
+        "0x82D25340": "0x816BD624"
+      },
+      "stopBoundary": "This proves one additional static reader and its local branch only. The global's writer, policy meaning, runtime value, indirect call target, and relation to the final cost reduction remain unresolved."
+    },
+    "locators": ["ghidra/DumpMemoryWords.java:0x82CF13FC radius=32", "ghidra/DumpMemoryWords.java:0x82CF14FC radius=32", "ghidra/FindScalarUses.java:0xE7C8,0xFFFFE7C8 mnemonics=lwz,stw,lhz,lha,sth,lbz,stb functionCap=32", "ghidra/DumpFunctionNeighborhood.java:0x82D25330 radius=0x40 maxInstructions=64", "ghidra/DumpMemoryWords.java:0x82D25330 radius=4", "generated:rerevved/sub_82CF1278"],
+    "qualification": "Ghidra's configured cost-helper function listing truncates after the save-register thunk, so current-image raw words, not its decompilation, support the interior cost addresses. The separate 0x82FFE7C8 reader is a decoded function body, but this follow-up searches only the exact signed/unsigned displacement in the listed load/store mnemonics and only function-owned decoded instructions. The base and local branch are confirmed; the global's meaning, writer, indirect target, and runtime value remain unresolved. No runtime probe was performed."
   },
   "guards": [
     "Do not treat UEA 21 as a retail active bonus or assign it a player-facing name from this dormant branch.",
     "Do not name neutral global words, halfword array, or city +0x3C bit without separate producer and consumer evidence.",
+    "Do not infer the policy meaning of 0x82FFE7C8 from its separate signed comparison or indirect call gate.",
     "Do not apply percentage reductions to original factors when the branch acts on the already modified cost.",
     "Do not treat the helper's ID ranges as initialized-definition validation or claim every caller uses identical final cost.",
     "Do not infer gameplay-effect execution, UI parity, AI parity, production completion, or runtime behavior from cost arithmetic."
   ],
-  "conclusion": "Beyond the accepted Barracks, Library, Courthouse, and UEA 24 branches, the exact cost helper contains a Cathedral UEA-21 half reduction, neutral-gated University half and Factory one-third reductions, a neutral-gated Library/University three-quarter reduction, and separate final half reductions for the wonder and building paths. The formula is static and sequential; activation, global meanings, valid-ID enforcement, and runtime parity remain unresolved."
+  "conclusion": "Beyond the accepted Barracks, Library, Courthouse, and UEA 24 branches, the exact cost helper contains a Cathedral UEA-21 half reduction, neutral-gated University half and Factory one-third reductions, a neutral-gated Library/University three-quarter reduction, and separate final half reductions for the wonder and building paths. A separate defined function reads the 0x82FFE7C8 word and uses a signed less-than-two comparison to gate an indirect slot +0x80 call; it does not establish that global's policy meaning or producer. The formulas and reader are static; activation, global meanings, valid-ID enforcement, and runtime parity remain unresolved."
 }

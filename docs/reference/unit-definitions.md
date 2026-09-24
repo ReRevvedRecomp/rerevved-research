@@ -95,6 +95,10 @@ and 18 half-cost branches. Cathedral 111 has a UEA 21 branch, with no accepted
 retail activation. University 112 and Factory 116 have separate neutral-gated
 reductions. The exact branch sequence and other common modifiers are in
 [`building-wonder-cost-modifier-branches.json`](../../manifests/building-wonder-cost-modifier-branches.json).
+The word `0x82FFE7C8` used by the final wonder reduction is also read at
+`0x82D25330` in a separate function; signed values below two are one guard
+before an unresolved receiver slot `+0x80` call. Its writer and policy meaning
+remain unknown.
 The final building-cost half reduction tests city halfword `+0x3C` bit `0x8`.
 A bounded direct-write scan found no non-stack `+0x3C` WRITE or READ_WRITE
 operand in 272 function-owned decoded instructions. A raw D-form store scan

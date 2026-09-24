@@ -10,8 +10,8 @@
     "function": "0x82CB2E48",
     "wonderPair": "0x82CB35A4+0x82CB35AC",
     "buildingPair": "0x82CB2F48+0x82CB2F68",
-    "stopCondition": "Resolve the two pair constructions and the first local wonder factor arithmetic through 0x82CB3660; stop before following the building pointer spill, distant branches, or array consumers.",
-    "boundary": "The first wonder factor is followed through its two stores. The second and third adjacent factor reads are identified, but their full branches and the output arrays' purpose are not classified."
+    "stopCondition": "Resolve the two pair constructions and the first local wonder factor arithmetic through 0x82CB3660, then follow the stack-local accumulator only to its first post-collection read at 0x82CB379C; stop before tracing that reader's output or any global accumulator reader.",
+    "boundary": "The first factor is followed through its two stores. The second and third adjacent factor reads are identified. One later read of the stack-local accumulator is mapped; its output meaning, the global accumulator's consumer, and final cost effect remain unknown."
   },
   "dependencies": [
     { "topic": "building-wonder-cost-identities", "use": "Identifies initialized wonder +0x40 as a signed production factor." },
@@ -22,7 +22,13 @@
     "buildingBoundary": "0x82CB2F48 and 0x82CB2F68 form building base 0x82F71FD8 in r29, which is spilled to stack +0x68 at 0x82CB2F74. No building field read is established within the inspected local window.",
     "wonderRead": "0x82CB35A4 and 0x82CB35AC form wonder base 0x82F73238. The first slot word at 0x830E5148 is compared with -1. When unequal, 0x82CB35C8 reads the halfword at base +0x40, and 0x82CB35D4 sign-extends it.",
     "arithmeticAndStores": "The local arithmetic multiplies that signed factor by five, doubles the result, then applies signed shift-right by two with addze. It adds the computed value to words at two indexed destinations, using the claim-slot owner word scaled by four, and stores both results at 0x82CB3600 and 0x82CB3604. The inspected span contains no write to the definition record. These stores do not establish a final production price or gameplay effect.",
-    "accumulatorBases": "0x82CB2F1C..0x82CB2F24 forms 0x830ECCC8 in r15. At 0x82CB35D0 the function forms r1+0xD0 in r8 inside its 0x2D0-byte stack frame. The read-modify-write sequence uses the claim-slot owner index at both bases. The global and stack-local accumulators' later consumers and meanings remain unidentified.",
+    "accumulatorBases": "0x82CB2F1C..0x82CB2F24 forms 0x830ECCC8 in r15. At 0x82CB35D0 the function forms r1+0xD0 in r8 inside its 0x2D0-byte stack frame. The read-modify-write sequence uses the claim-slot owner index at both bases. The stack-local accumulator has one later read mapped at 0x82CB379C; the global accumulator's reader and both arrays' final cost or gameplay meaning remain unidentified.",
+    "localAccumulatorReader": {
+      "address": "0x82CB379C",
+      "path": "After the factor-collection loop through 0x82CB36A0, the subsequent loop reaches switch arm 0 at 0x82CB3788. That arm forms r1+0xD0 in r11 and executes lwzx r11,r10,r11 at 0x82CB379C, reading the stack-local array at base plus r10.",
+      "staticQualification": "The canonical raw-word query confirms the base construction at 0x82CB3788 and indexed load at 0x82CB379C. Narrow generated code confirms these instructions follow the collection loop. This is a static read path; it does not prove a nonzero value, caller-visible field, final price, or gameplay effect.",
+      "stop": "Stop at this first post-collection read; no output-field consumer, next caller, or final cost path was followed."
+    },
     "adjacentReads": "The same straight-line sequence checks slot words 0x830E5150 and 0x830E5158 against -1 and reads wonder halfwords at base +0x18C (0x82CB3614) and base +0x2D8 (0x82CB3660), corresponding to the +0x40 cells of the next two 0x14C-spaced records. This is a three-position local observation, not a full table bound or valid-ID rule."
   },
   "runtimeObservation": {
@@ -30,13 +36,14 @@
     "qualification": "No invocation, slot value, accumulator result, final cost, or described gameplay effect was observed."
   },
   "currentEvidence": {
-    "method": "Foreground read-only raw-word windows checked both split-base candidates and the first wonder field arithmetic. Ghidra has no containing function or decoded instructions at these interior addresses. The registered generated function sub_82CB2E48 was used only to corroborate the exact raw span.",
+    "method": "Foreground read-only raw-word windows checked both split-base candidates and the first wonder field arithmetic. Ghidra has no containing function or decoded instructions at these interior addresses. The registered generated function sub_82CB2E48 was used only to corroborate exact raw spans, including a bounded post-collection read of the stack-local accumulator.",
     "entries": [
       { "role": "building pointer", "address": "0x82CB2F48..0x82CB2F74", "result": "Forms building base and spills its pointer before a local field read is identified." },
       { "role": "wonder factor", "address": "0x82CB35A4..0x82CB35D4", "result": "Forms wonder base and loads/sign-extends +0x40 after a -1 slot gate." },
       { "role": "accumulator writes", "address": "0x82CB35D8..0x82CB3604", "result": "Derives a numeric value from the factor and adds it to two indexed words." },
       { "role": "accumulator bases", "address": "0x82CB2F1C..0x82CB2F24,0x82CB35D0", "result": "Forms global base 0x830ECCC8 in r15 and stack-local base r1+0xD0 in r8; both use the claim-slot owner index." },
-      { "role": "adjacent fields", "address": "0x82CB3608..0x82CB3660", "result": "Checks two further slots and reads the next two stride-spaced +0x40 cells." }
+      { "role": "adjacent fields", "address": "0x82CB3608..0x82CB3660", "result": "Checks two further slots and reads the next two stride-spaced +0x40 cells." },
+      { "role": "first post-collection local accumulator read", "address": "0x82CB36E4..0x82CB379C", "result": "After the collection loop, switch arm 0 performs an indexed word load from stack-local base r1+0xD0 at 0x82CB379C. The accumulator's output role is unresolved." }
     ],
     "locators": [
       "ghidra/DumpFunctionNeighborhoodBatch.java:0x82CB2F48,0x82CB2F68,0x82CB35A4,0x82CB35AC cap=32",
@@ -45,14 +52,16 @@
       "ghidra/DumpMemoryWords.java:0x82CB3608 radius=24",
       "ghidra/DumpMemoryWords.java:0x82CB2F20,0x82CB35F8,0x82CB3600,0x82CB3604 radius=4",
       "ghidra/DumpMemoryWords.java:0x82CB35D0 radius=4",
-      "generated:rerevved/sub_82CB2E48:0x82CB35A4..0x82CB3660"
+      "ghidra/DumpMemoryWords.java:0x82CB36E4,0x82CB3730,0x82CB3788,0x82CB379C radius=7",
+      "generated:rerevved/sub_82CB2E48:0x82CB35A4..0x82CB3660",
+      "generated:rerevved/sub_82CB2E48:0x82CB36A0..0x82CB37BC"
     ],
-    "qualification": "The first factor's arithmetic and stores are local static evidence only. The building pointer's later use, complete function behavior, accumulator purpose, and downstream cost effect remain unresolved. Ghidra defines only the 0x82CB2E48 save thunk; exact raw words and narrow registered generated code establish the interior dataflow."
+    "qualification": "The first factor's arithmetic and stores and the later local-array read are static evidence only. The building pointer's later use, complete function behavior, global accumulator consumer, local read's output role, and downstream cost effect remain unresolved. Ghidra defines only the 0x82CB2E48 save thunk; exact raw words and narrow registered generated code establish the interior dataflow."
   },
   "guards": [
     "Do not equate these accumulator stores with the accepted production-cost helper or a final price.",
     "Do not infer a building field consumer from the pointer spill alone.",
     "Do not infer a full wonder loop or valid-ID rule from three adjacent stride positions."
   ],
-  "conclusion": "One additional static consumer reads wonder +0x40 and adds a derived value to a global and a stack-local accumulator indexed by the claimed slot's owner. Their downstream purpose and runtime behavior remain unknown."
+  "conclusion": "One additional static consumer reads wonder +0x40 and adds a derived value to a global and a stack-local accumulator indexed by the claimed slot's owner. The stack-local accumulator is read later at 0x82CB379C after the collection loop, but that read's output role and the global accumulator's reader remain unresolved. No final cost or gameplay effect was established, and no runtime behavior was observed."
 }

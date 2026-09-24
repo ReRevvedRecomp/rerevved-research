@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0218",
+  "topic": "building-wonder-cost-global-transfer",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Do the two raw split-constant candidates form global word 0x82FFE7C8 on conditional game-state transfer paths, and in which modes?",
+  "scope": {
+    "target": "0x82FFE7C8",
+    "candidates": [
+      { "address": "0x82CC4100", "lowWord": "0x82CC4104" },
+      { "address": "0x82CC4134", "lowWord": "0x82CC4138" }
+    ],
+    "modeOnePath": {
+      "guard": "r20 == 1 and r29 == 0",
+      "addressConstruction": "0x82CC4100 forms 0x82FFE7C8 in r4; 0x82CC4108 directly calls BufferReadU32.",
+      "direction": "The address is passed as the four-byte destination pointer."
+    },
+    "modeZeroPath": {
+      "guard": "r20 == 0 and r29 == 0",
+      "addressConstruction": "0x82CC4134 forms 0x82FFE7C8 in r4; 0x82CC4140 directly calls BufferWriteU32.",
+      "direction": "The address is passed as the four-byte source pointer."
+    },
+    "stopCondition": "Inspect only the two candidates recorded by building-wonder-cost-global-writer-frontier. Stop at the direct helper calls and the helper contracts already recorded in the catalog; do not follow indirect buffer targets or assign a policy meaning to the word.",
+    "listingBoundary": "Ghidra defines an eight-byte function at 0x82CC4040 containing mfspr r12,LR and bl 0x827F7C64, and returns no containing function or instructions around 0x82CC4134. The raw words and narrow generated-code path corroborate the candidate instructions, but Ghidra function ownership and decoded-body evidence remain absent."
+  },
+  "dependencies": [
+    { "topic": "building-wonder-cost-global-writer-frontier", "use": "Identifies the two exact raw candidate pairs for 0x82FFE7C8 and the prior stop boundary." },
+    { "topic": "building-wonder-cost-modifier-branches", "use": "Establishes the final wonder-cost consumer and the separate signed reader at 0x82D25330." },
+    { "topic": "xbox-network-message-root", "use": "Provides the existing static contracts for BufferReadU32 and BufferWriteU32; their concrete virtual targets remain unresolved." }
+  ],
+  "staticResult": {
+    "modeOnePath": {
+      "guard": "At 0x82CC40D8..0x82CC40E8, r20 is compared with one and r29 with zero; the zero path reaches 0x82CC4100.",
+      "transfer": "Generated code forms 0x82FFE7C8 at 0x82CC4100..0x82CC4104 and directly calls BufferReadU32 at 0x82CC4108. The helper contract forwards a four-byte destination to buffer virtual slot +0x4 and conditionally reverses the destination bytes."
+    },
+    "modeZeroPath": {
+      "guard": "At 0x82CC4110..0x82CC411C, r20 is compared with zero and r29 with zero; the zero path reaches 0x82CC4134.",
+      "transfer": "Generated code forms 0x82FFE7C8 at 0x82CC4134..0x82CC4138 and directly calls BufferWriteU32 at 0x82CC4140. The helper contract forwards a four-byte source through buffer virtual slot +0x8 and conditionally reverses the source value."
+    },
+    "boundary": "These are conditional helper paths, not proof of runtime invocation or an end-to-end external save/network format. Ghidra's listing does not own or decode the serializer body at these candidate addresses; the instruction interpretation comes from the narrow generated-code path corroborated against exact raw words. The concrete buffer virtual targets are not followed."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "priorObservation": "No runtime value, serializer invocation, external transfer representation, cost-gate activation, final price, or visible effect was observed; this continuation is static-only."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only canonical Ghidra raw-word queries checked both split-constant candidates and their mode guards. A bounded function-neighborhood query checked ownership at 0x82CC4134. Generated-code corroboration was limited to sub_82CC4040 lines covering 0x82CC40D8..0x82CC4144; helper contracts were taken from the existing catalog identities.",
+    "entries": [
+      { "role": "mode-one guard and transfer words", "address": "0x82CC40D8..0x82CC4108", "result": "The raw image words match the mode-one comparison, null-auxiliary guard, address materialization, and direct branch at 0x82CC4108; generated code identifies the branch target as BufferReadU32." },
+      { "role": "mode-zero guard words", "address": "0x82CC4110..0x82CC411C", "result": "The raw image words match the mode-zero comparison and null-auxiliary guard reaching 0x82CC4134." },
+      { "role": "mode-zero address and call words", "address": "0x82CC4134..0x82CC4140", "result": "The raw image words match the address materialization and direct branch at 0x82CC4140; generated code identifies the target as BufferWriteU32." },
+      { "role": "Ghidra function-listing boundary", "address": "0x82CC4134", "result": "No containing function, decoded instructions, or references to the candidate were returned; the preceding defined function is the eight-byte stub at 0x82CC4040." }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82CC40D8,0x82CC40DC,0x82CC40E0,0x82CC40E4,0x82CC40E8 radius=0",
+      "ghidra/DumpMemoryWords.java:0x82CC4100,0x82CC4104,0x82CC4108 radius=0",
+      "ghidra/DumpMemoryWords.java:0x82CC4110 radius=5",
+      "ghidra/DumpMemoryWords.java:0x82CC4134,0x82CC4140 radius=3",
+      "ghidra/DumpFunctionNeighborhood.java:0x82CC4134 radius=0x20 maxInstructions=32",
+      "generated:rerevved/sub_82CC4040:0x82CC40D8..0x82CC4144",
+      "manifests/xbox-network-message-root.json#/wireSerialization/embeddedRecord"
+    ],
+    "qualification": "DumpMemoryWords records raw words rather than decoded instructions. The Ghidra listing has no function body at these addresses, so generated-code interpretation is only promoted where it matches the exact raw words. This bounded check does not inventory other writers, consumers, aliases, or caller paths."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": ["RVA-SYM-0333", "RVA-SYM-0401"],
+    "newRelations": ["RVA-REL-0533", "RVA-REL-0534", "RVA-REL-0535", "RVA-REL-0536"],
+    "result": "The catalog records the two conditional helper calls and the serializer's destination/source use of the existing global. It does not assign the word a policy name or claim runtime activation."
+  },
+  "guards": [
+    "Do not infer a policy, difficulty, or gameplay setting from the threshold or repeated address.",
+    "Do not infer runtime transfer, a concrete external format, or a runtime value from the static mode branches.",
+    "Do not claim the indirect buffer targets, cost reduction activation, final cost, or visible effect are established.",
+    "Do not treat the missing Ghidra body as proof that the generated path is absent from the image."
+  ],
+  "conclusion": "The two candidates from the prior bounded raw scan match conditional mode-one and mode-zero transfer paths in generated code, and their exact guard, materialization, and call words match the canonical image. Mode one passes 0x82FFE7C8 as the BufferReadU32 destination; mode zero passes it as the BufferWriteU32 source. Ghidra still provides no decoded function body or owner for these candidate addresses. The external format, concrete virtual targets, word meaning, runtime value, cost activation, and visible effect remain unresolved."
+}

@@ -95,14 +95,17 @@ and 18 half-cost branches. Cathedral 111 has a UEA 21 branch, with no accepted
 retail activation. University 112 and Factory 116 have separate neutral-gated
 reductions. The exact branch sequence and other common modifiers are in
 [`building-wonder-cost-modifier-branches.json`](../../manifests/building-wonder-cost-modifier-branches.json).
-The word `0x82FFE7C8` used by the final wonder reduction is also read at
-`0x82D25330` in a separate function; signed values below two are one guard
-before an unresolved receiver slot `+0x80` call. Its writer and policy meaning
-remain unknown. An exact decoded materializer scan found no match, while a raw
-split-constant scan found two candidates; the first had no Ghidra function or
-decoded instructions, so no writer was proved and the search stopped at
-ambiguous code provenance. See the
-[global cost-word writer frontier](../../manifests/building-wonder-cost-global-writer-frontier.json).
+The word `0x82FFE7C8` used by the final wonder reduction also follows two
+conditional transfer paths in `BroadGameStateSerializer`: mode one with a null
+auxiliary pointer passes it as the destination to `BufferReadU32`, and mode zero
+with a null auxiliary pointer passes it as the source to `BufferWriteU32`. The
+exact raw words match the generated-code paths, while Ghidra still has no decoded
+body for these addresses. The concrete buffer virtual targets, external format,
+policy meaning, runtime value, and visible effect remain unresolved. A separate
+reader at `0x82D25330` uses signed less-than-two as one guard before an
+unresolved receiver slot `+0x80` call. See the
+[global cost-word transfer frontier](../../manifests/building-wonder-cost-global-transfer.json)
+and the earlier [bounded candidate search](../../manifests/building-wonder-cost-global-writer-frontier.json).
 The final building-cost half reduction tests city halfword `+0x3C` bit `0x8`.
 A bounded direct-write scan found no non-stack `+0x3C` WRITE or READ_WRITE
 operand in 272 function-owned decoded instructions. A raw D-form store scan

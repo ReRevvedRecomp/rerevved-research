@@ -11,8 +11,8 @@
     "tail": "[0x82D017A8,0x82D019F0)",
     "trackedValues": ["r23 selected ordinal or -1", "r24 best local score"],
     "rawWindows": ["0x82D00DC0..0x82D00DD8", "0x82D01760..0x82D017A8", "0x82D017C0..0x82D017E0", "0x82D0189C..0x82D019D4"],
-    "stopCondition": "Trace the selected ordinal through its local validation and first city-state store, then check the same function for reads of the derived city +0x58 pointer; stop before classifying external consumers or visible gameplay effect.",
-    "boundary": "This packet follows one exact city helper with four raw-word windows. It does not prove every valid loop count, external readers, save persistence, tile assignment, or runtime execution."
+    "stopCondition": "Trace the selected ordinal through its local validation and first city-state store, check the same function for reads of the derived city +0x58 pointer, then run one nearby direct-operand check; stop before computed external-consumer search or visible gameplay interpretation.",
+    "boundary": "This packet follows one exact city helper with four raw-word windows and one nearby direct-operand reader check. It does not prove every valid loop count, external readers, save persistence, tile assignment, or runtime execution."
   },
   "dependencies": [
     { "topic": "building-bit-weighted-yield-score", "use": "Establishes r23 selection from a weighted candidate score and a separate -1 comparison." },
@@ -26,6 +26,7 @@
     "indexLoop": "The accepted positive signed city byte +0x03 is the loop bound. Stack +0x70 starts at zero; at 0x82D01788 the helper reloads it into r28, and at 0x82D019CC..0x82D019E4 it stores r28+1 back to that stack slot and loops while the incremented value is less than signed city byte +0x03. Every explicit path to the shared store follows the r28 reload. For this local path, the store index is nonnegative and less than the signed byte bound; no stronger destination-capacity rule is established.",
     "cityStore": "At 0x82D019C4, r9 reloads stack +0x7C; at 0x82D019D4, stbx writes low byte r23 to r9+r28. The destination is city +0x58 + loop index. This exact store joins the building-bit-influenced candidate score and Courthouse candidate extent to a city byte array, subject to the replacement and sentinel paths above.",
     "localPriorByteRead": "On one separately bit-gated path at 0x82D017C8..0x82D017D8, the helper reloads stack +0x7C, reads city +0x58 + r28 at 0x82D017CC, sign-extends the byte, and branches to the later -1 assignment when it equals -1. A byte other than -1 is scaled for a later indexed table use. This is a read of the pre-store byte in the same local loop, not a downstream consumer of the final stored value.",
+    "nearbyDirectReadBoundary": "A bounded +0x58 READ operand query over [0x82D00000,0x82D04000) scanned 82 function-owned decoded instructions and emitted zero matches below cap 32 without truncation. It excludes only that direct decoded operand form in the inspected listing; it misses the known computed local read at 0x82D017CC and cannot exclude indexed, stack-reloaded, functionless, or external readers.",
     "scoreBoundary": "No later r24 use was found after the 0x82D0179C comparison in the exact generated function. This is a local selection score, not a stored city score."
   },
   "runtimeObservation": {
@@ -33,11 +34,12 @@
     "qualification": "No execution of this read or store, actual stored byte, external consumer, or gameplay effect was observed."
   },
   "currentEvidence": {
-    "method": "Three foreground read-only canonical-project raw-word windows checked the output-pointer stack store, selected-value comparison, and final byte store. A fourth exact raw-word window checked the same-function pre-store byte read and sentinel test. Narrow generated-function control-flow inspection joined the city pointer, r28 loop index, replacement paths, and store where the configured Ghidra function truncates.",
+    "method": "Three foreground read-only canonical-project raw-word windows checked the output-pointer stack store, selected-value comparison, and final byte store. A fourth exact raw-word window checked the same-function pre-store byte read and sentinel test. One bounded function-owned decoded-operand scan tested nearby direct +0x58 reads. Narrow generated-function control-flow inspection joined the city pointer, r28 loop index, replacement paths, and store where the configured Ghidra function truncates.",
     "entries": [
       { "role": "city output pointer", "address": "0x82D00DC0..0x82D00DD8", "result": "Saves computed city +0x58 address to stack +0x7C." },
       { "role": "candidate and sentinel", "address": "0x82D01760..0x82D017A8", "result": "The winning candidate ordinal or -1 flows through r23; r28 is reloaded from loop-index stack state." },
       { "role": "prior indexed byte read", "address": "0x82D017C8..0x82D017D8", "result": "Reads the existing city +0x58 + r28 byte and tests for -1 before final selection." },
+      { "role": "nearby direct-operand reader check", "address": "[0x82D00000,0x82D04000)", "result": "Zero +0x58 READ operands in 82 function-owned decoded instructions below cap 32; computed or unlisted readers remain open." },
       { "role": "final indexed city write", "address": "0x82D0189C..0x82D019D4", "result": "After later validation, stbx writes r23 to city +0x58 + r28." }
     ],
     "locators": [
@@ -45,12 +47,13 @@
       "ghidra/DumpMemoryWords.java:0x82D01784 radius=9",
       "ghidra/DumpMemoryWords.java:0x82D017D0 radius=4",
       "ghidra/DumpMemoryWords.java:0x82D01938 radius=39",
+      "ghidra/FindFieldAccesses.java:[0x82D00000,0x82D04000) offset=0x58 access=READ cap=32",
       "generated:rerevved/sub_82D00C78:0x82D00D98..0x82D00DD0,0x82D0175C..0x82D019E4"
     ],
     "qualification": "The raw windows verify exact read, store, and branch words. The configured Ghidra function listing truncates at a save thunk, so no complete local-read census follows from its decoded instructions. Generated code is narrow corroboration for register and stack aliases across the function gap. The local signed-byte bound is not a program-wide city array capacity guarantee."
   },
   "guards": [
-    "Do not call the stored ordinal a worked tile from this same-function pre-store read alone; an external downstream reader or runtime observation remains unproved.",
+    "Do not call the stored ordinal a worked tile from this same-function pre-store read or zero direct nearby operand matches; an external downstream reader or runtime observation remains unproved.",
     "Do not infer that every building-bit change reaches the final byte; another branch replaces the weights and later paths can replace r23.",
     "Do not treat the signed-byte loop bound as proof that every computed address stays within the city record for arbitrary state.",
     "Do not infer save persistence, presentation, or gameplay effect from this static store."

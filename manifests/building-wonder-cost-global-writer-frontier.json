@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0215",
+  "topic": "building-wonder-cost-global-writer-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Do bounded decoded-use and raw split-constant searches identify a writer for global word 0x82FFE7C8, used by the final wonder cost reduction?",
+  "scope": {
+    "target": "0x82FFE7C8",
+    "knownConsumers": [
+      { "function": "0x82CF1278", "site": "0x82CF1500..0x82CF1528", "result": "The final wonder cost branch tests whether the word is greater than two before the shared half-cost reduction." },
+      { "function": "0x82D25170", "site": "0x82D25330..0x82D25368", "result": "A separate decoded function compares the signed word with two; less than two is one guard before a receiver-slot +0x80 dispatch." }
+    ],
+    "decodedAddressMaterializerSearch": {
+      "script": "FindGlobalAddressAccesses.java",
+      "lookahead": 8,
+      "firstUseWindow": 16,
+      "materializerCap": 32,
+      "decodedInstructionsScanned": 654329,
+      "matches": 0,
+      "truncated": false
+    },
+    "rawSplitConstantSearch": {
+      "script": "FindSplitConstantCandidates.java",
+      "lookaheadWords": 8,
+      "candidateCap": 32,
+      "candidates": [
+        { "high": "0x82CC4100", "low": "0x82CC4104", "target": "0x82FFE7C8" },
+        { "high": "0x82CC4134", "low": "0x82CC4138", "target": "0x82FFE7C8" }
+      ],
+      "truncated": false
+    },
+    "firstCandidateInspection": {
+      "address": "0x82CC4100",
+      "script": "DumpFunctionNeighborhood.java",
+      "radius": "0x10",
+      "instructionCap": 16,
+      "containingFunction": null,
+      "decodedInstructions": 0,
+      "referencesToCandidateAddress": 0
+    },
+    "stopCondition": "Inspect at most 32 raw split-constant candidates. Stop at the first candidate whose code ownership or address-use provenance is ambiguous; promote only a writer whose store and target address are supported by decoded Ghidra evidence.",
+    "boundary": "The existing exact signed/unsigned displacement search found only the known lwz at 0x82D25330 among function-owned decoded instructions. The new decoded materializer search found none. The raw candidate scan found two lis-plus-split-low patterns, but the first inspected address has no containing Ghidra function or decoded instruction; it does not establish executable code, an access, a store, or a writer. The second candidate was not inspected after reaching the ambiguity stop condition."
+  },
+  "dependencies": [
+    { "topic": "building-wonder-cost-modifier-branches", "use": "Establishes the final wonder reduction, its 0x82FFE7C8 gate, the known separate reader, and the bounded signed/unsigned displacement query." }
+  ],
+  "staticResult": {
+    "decodedDisplacementSearch": "The dependency packet's FindScalarUses query matched only 0x82D25330 lwz r11,-0x1838(r11), which reads 0x82FFE7C8. No store matched the queried D-form displacement among function-owned decoded instructions.",
+    "decodedMaterializerSearch": "FindGlobalAddressAccesses scanned 654329 decoded instructions for split-constant materializers of 0x82FFE7C8 with lookahead 8, first-use window 16, and cap 32. It emitted zero materializers and was not truncated.",
+    "rawCandidateSearch": "FindSplitConstantCandidates found two raw lis-plus-addi/ori candidates at 0x82CC4100/0x82CC4104 and 0x82CC4134/0x82CC4138, below cap 32. The scan does not confirm instruction decoding, code ownership, register lifetime, or access direction.",
+    "candidateBoundary": "DumpFunctionNeighborhood at 0x82CC4100 found no containing function, zero decoded instructions in 0x82CC40F0..0x82CC4110, and no references to the candidate address. The candidate's code and pointer provenance are therefore ambiguous, so the inspection stopped without treating either raw pattern as a writer.",
+    "producerBoundary": "No writer, policy meaning, or relationship between the two consumers is established. Other address forms, indexed or computed writes, functionless and undecoded code, and the uninspected second raw candidate remain unresolved."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "priorObservation": "The cost-modifier packet records no runtime value, final cost activation, indirect call target, or visible effect. This investigation is static-only."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only queries against the configured canonical Ghidra project reproduced a decoded exact-address materializer scan, a raw exact split-constant candidate scan, and one bounded function-neighborhood check at the first candidate. The raw scan stopped after that candidate proved ambiguous.",
+    "entries": [
+      { "role": "decoded exact-address materializers", "address": "0x82FFE7C8", "result": "Zero split-constant materializers among 654329 decoded instructions; cap 32 was not reached." },
+      { "role": "raw split-constant candidates", "address": "0x82CC4100,0x82CC4134", "result": "Two candidate pairs formed 0x82FFE7C8 in initialized memory; the raw scan was not truncated at cap 32." },
+      { "role": "first raw candidate function boundary", "address": "0x82CC4100", "result": "No containing function or decoded instructions; candidate address had zero Ghidra references. Inspection stopped at ambiguous code and use provenance." }
+    ],
+    "locators": [
+      "ghidra/FindGlobalAddressAccesses.java:0x82FFE7C8 lookahead=8 firstUseWindow=16 cap=32",
+      "ghidra/FindSplitConstantCandidates.java:0x82FFE7C8 lookahead=8 cap=32",
+      "ghidra/DumpFunctionNeighborhood.java:0x82CC4100 radius=0x10 maxInstructions=16",
+      "manifests/building-wonder-cost-modifier-branches.json#/currentEvidence/relatedGlobalReaderSearch"
+    ],
+    "qualification": "The decoded scan covers only its lis-plus-split-low materializer form in function-owned instructions. The raw scan returns address patterns without instruction, function, register-lifetime, or access confirmation. The single neighborhood check found no decoded body, so no generated-code or access-direction claim is promoted."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": ["RVA-SYM-0401"],
+    "result": "The existing global-word symbol gains this bounded writer-search boundary; no write relation or policy meaning is added."
+  },
+  "guards": [
+    "Do not treat either raw split-constant candidate as executable code or as a writer without instruction and access-direction evidence.",
+    "Do not infer a policy or gameplay meaning for 0x82FFE7C8 from either consumer's threshold.",
+    "Do not infer a runtime value, final price, or activation from the static cost branch.",
+    "Do not infer that the global has no writer from the bounded materializer and displacement forms checked here."
+  ],
+  "conclusion": "The decoded exact-address and prior direct-displacement searches found no writer candidate within their tested forms. A raw search found two split-constant candidates, but the first inspected candidate has no Ghidra function or decoded instructions, so its code and use provenance are ambiguous. Following the stop condition, no candidate was promoted as a writer; the producer, policy meaning, relationship between consumers, and runtime behavior remain unresolved."
+}

@@ -98,7 +98,11 @@ reductions. The exact branch sequence and other common modifiers are in
 The word `0x82FFE7C8` used by the final wonder reduction is also read at
 `0x82D25330` in a separate function; signed values below two are one guard
 before an unresolved receiver slot `+0x80` call. Its writer and policy meaning
-remain unknown.
+remain unknown. An exact decoded materializer scan found no match, while a raw
+split-constant scan found two candidates; the first had no Ghidra function or
+decoded instructions, so no writer was proved and the search stopped at
+ambiguous code provenance. See the
+[global cost-word writer frontier](../../manifests/building-wonder-cost-global-writer-frontier.json).
 The final building-cost half reduction tests city halfword `+0x3C` bit `0x8`.
 A bounded direct-write scan found no non-stack `+0x3C` WRITE or READ_WRITE
 operand in 272 function-owned decoded instructions. A raw D-form store scan

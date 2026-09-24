@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0212",
+  "topic": "building-completion-list-menu-reader-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the known building-choice loop read the completed-building ordinal list at city +0x87 through +0xA2 to filter candidates?",
+  "scope": {
+    "producer": "0x82D02090",
+    "consumer": "0x82CEBC38",
+    "consumerWindow": "[0x82CEC878,0x82CECA4C)",
+    "cityTable": "0x8314FE28",
+    "cityStride": "0xBC",
+    "listOffsets": "0x87 through 0xA2, 28 signed bytes",
+    "initializedBuildingIds": "100 through 122 under the count initialized to 23",
+    "stopCondition": "Inspect only the exact building-loop body window. Stop at a proved read of one list byte, ambiguous city-pointer provenance, or the end of the window. Do not generalize to callees or other consumers.",
+    "boundary": "Ghidra has no decoded function owner for the loop window, so its direct-field query scans zero instructions. The generated-code slice and current-image words bound only this exact body window; callees, indirect or computed reads, and other consumers are outside scope."
+  },
+  "dependencies": [
+    { "topic": "building-completion-state-writer", "use": "Establishes the accepted producer that checks or fills city bytes +0x87 through +0xA2 with normalized building indices." },
+    { "topic": "building-menu-record-gates", "use": "Establishes the exact building-loop window and its local city and record gates." },
+    { "topic": "city-production-option-source", "use": "Establishes the mode-two building list and count initialized to 23." }
+  ],
+  "staticResult": {
+    "ghidraCoverage": "DumpFunctionNeighborhood at 0x82CEC878 identifies 0x82CEBC38 as ending at 0x82CEBC3F, no containing function for the loop, and the next function at 0x82CECCD8. FindFieldAccesses for city offsets +0x87 through +0xA2 over [0x82CEC878,0x82CECA4C), with caller and callee depth zero and cap 32, scans zero instructions. This query does not establish a zero-hit reader result.",
+    "generatedWindow": "The exact generated-code window contains 117 guest instruction comments and 25 memory operations. Its city base is formed as 0x8314FE28, with city index multiplied by stride 0xBC. The city-byte indexed loads at 0x82CEC890 and 0x82CEC90C use the city base and stride registers to read offset +0. The city building-bit word is addressed by adding 0x10 to that base at 0x82CEC8A8 and loaded by indexed word operation at 0x82CEC8B4. No load from offsets +0x87 through +0xA2 is shown in this generated body window.",
+    "imageWordCheck": "A foreground read-only Ghidra DumpMemoryWords query checked the current-image words at all 25 generated memory-operation PCs in the window. The key city operations decode as the two indexed byte loads at 0x82CEC890 and 0x82CEC90C and the indexed word load at 0x82CEC8B4. This corroborates those exact instruction words, not a Ghidra-owned decoded listing for the full window.",
+    "boundary": "No completed-building ordinal-list reader is proved in this exact generator body window. The result does not exclude reads in callees, elsewhere in 0x82CEBC38, via computed or aliased pointers, or in other consumers; it does not establish whether the list filters runtime menu candidates."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "priorObservation": "No runtime observation of a building completion-list read, list-based menu filter, or building completion is recorded by the source packets. This continuation is static-only."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only canonical-project function-neighborhood and direct-field query, followed by inspection of only the exact generated-code loop window and a current-image raw-word check for every memory-operation PC in that window.",
+    "entries": [
+      { "role": "Ghidra listing coverage", "address": "0x82CEC878 through 0x82CECA4C", "result": "No function owns the window; the direct-field query scanned zero instructions and therefore supplies no reader-negative coverage." },
+      { "role": "generated building-loop body", "address": "0x82CEC878 through 0x82CECA4C", "result": "117 guest instruction comments and 25 memory operations; the shown city reads use offsets +0 and +0x10, with no read of +0x87 through +0xA2 in this slice." },
+      { "role": "current-image words", "address": "25 memory-operation PCs in the exact window", "result": "The raw words at all 25 listed PCs were checked; the two city indexed byte loads and one city indexed word load match the generated operations described above." }
+    ],
+    "locators": [
+      "ghidra/DumpFunctionNeighborhood.java:0x82CEC878",
+      "ghidra/FindFieldAccesses.java:seed=0x82CEBC38 window=[0x82CEC878,0x82CECA4C) offsets=0x87..0xA2 access=READ,READ_WRITE callerDepth=0 calleeDepth=0 cap=32",
+      "ghidra/DumpMemoryWords.java:0x82CEC880,0x82CEC890,0x82CEC89C,0x82CEC8B4,0x82CEC8C8,0x82CEC8E4,0x82CEC90C,0x82CEC910,0x82CEC920,0x82CEC92C,0x82CEC930,0x82CEC958,0x82CEC978,0x82CEC998,0x82CEC9B8,0x82CEC9D0,0x82CEC9E0,0x82CEC9F0,0x82CECA00,0x82CECA10,0x82CECA20,0x82CECA28,0x82CECA34,0x82CECA40,0x82CECA48",
+      "generated:rerevved/sub_82CEBC38:0x82CEC878..0x82CECA4C"
+    ],
+    "qualification": "The generated body and raw words support only the local instruction claim. The Ghidra operand query has no coverage in this interval, and this packet does not inspect callees or other consumers."
+  },
+  "guards": [
+    "Do not report the zero-instruction FindFieldAccesses result as a zero-reader finding.",
+    "Do not infer that the completion list has no readers or does not affect building availability.",
+    "Do not treat the initialized count or candidate loop as a global building-ID validity rule.",
+    "Do not treat this static result as runtime menu behavior or a supported modding interface."
+  ],
+  "conclusion": "The generated code for the exact building-loop window shows city owner-byte and +0x10 building-bit reads, but no read of completion-list bytes +0x87 through +0xA2. Current-image words were checked for each memory operation in that slice. Ghidra owns no decoded instructions for the window, so its zero-instruction field query provides no negative coverage. Other body windows, callees, computed or indirect reads, runtime filtering, and the list's other consumers remain unresolved."
+}

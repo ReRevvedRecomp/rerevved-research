@@ -365,6 +365,13 @@ The branch taken in the Barracks session
 was not observed. See
 [`city-production-choice-submit.json`](../../manifests/city-production-choice-submit.json)
 and [`city-production-option-source.json`](../../manifests/city-production-option-source.json).
+The completion writer also checks or fills a 28-byte ordinal list at city
+`+0x87..+0xA2`. In the exact building-loop window, generated code shows city
+reads at `+0` and `+0x10`, with no list-byte read in that slice. Ghidra owns no
+decoded instructions for the window, so its direct-field query covered zero
+instructions; this does not rule out callees or other readers. No runtime list
+filter was observed. See the
+[`building completion-list reader frontier`](../../manifests/building-completion-list-menu-reader-frontier.json).
 Stored descriptions do not prove implemented effects. One bounded
 post-threshold branch for Hanging Gardens item 202 changes city population
 byte `+0x03` to `clamp(trunc((3*x+1)/2),0,31)` and calls two city helpers; no

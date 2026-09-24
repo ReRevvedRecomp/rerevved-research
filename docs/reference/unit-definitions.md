@@ -227,7 +227,13 @@ A separate [factor consumer](../../manifests/wonder-factor-array-accumulation.js
 reads wonder `+0x40` and adds a derived value to two indexed accumulators.
 The wonder claim-slot owner indexes one global and one stack-local accumulator.
 A later switch arm reads the stack-local accumulator at `0x82CB379C` after its
-collection loop; the output role and any effect on final cost remain unknown.
+collection loop. A bounded continuation finds that one arm converts the signed
+word to a float, divides by signed stack value `r25`, and writes a
+single-precision result at `0x830E8DD0` plus 64 bytes per loop iteration. Two
+other indexed paths read floats at that base plus 64-byte-scaled indices and
+four bytes; they do not prove a read of the writer's `+0` cell. The global's
+role, a same-cell consumer, and any effect on final cost remain unknown. See the
+[bounded output and reader frontier](../../manifests/wonder-factor-global-output-reader-frontier.json).
 A bounded [reader census](../../manifests/wonder-factor-accumulator-reader-frontier.json)
 found an eight-word copy from the global at `0x830ECCC8` to `0x831228E4`.
 Three indexed reads of the enclosing object could reach those words with

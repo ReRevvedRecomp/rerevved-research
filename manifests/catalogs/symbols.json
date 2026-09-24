@@ -5095,14 +5095,16 @@
       "kind": "function",
       "address": "0x82CB2E48",
       "image": "../image.json",
-      "claim": "Its local 0x82CB35A4 branch reads signed wonder factor +0x40 and adds a derived value to two indexed accumulators for a nonempty slot; the arrays' purpose is unresolved.",
+      "claim": "It reads signed wonder factor +0x40 into two indexed accumulators; one later arm reads the stack-local accumulator at 0x82CB379C, divides its float conversion by signed r25, and stores a single-precision result at 0x830E8DD0 plus 64 bytes per loop iteration.",
       "confidence": "strong",
       "evidence": [
         { "kind": "topic-manifest", "locator": "../wonder-factor-array-accumulation.json#/staticResult" },
+        { "kind": "topic-manifest", "locator": "../wonder-factor-global-output-reader-frontier.json#/staticResult" },
         { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CB35F8,0x82CB3608" },
-        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CB2E48:0x82CB35A4..0x82CB3660" }
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CB379C,0x82CB37BC" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82CB2E48:0x82CB2E74..0x82CB2EF4,0x82CB379C..0x82CB37BC" }
       ],
-      "qualification": { "alternatives": ["Ghidra has no containing body at the interior read, and neither final cost nor runtime behavior is established."] }
+      "qualification": { "alternatives": ["The global's purpose, same-cell consumers, final-cost connection, and runtime execution remain unresolved."] }
     },
     {
       "id": "RVA-SYM-0391",
@@ -5300,6 +5302,50 @@
         { "kind": "generated-code", "locator": "generated:rerevved/sub_82E8AEC8:0x82E8AEC8..0x82E8AF20" }
       ],
       "qualification": { "alternatives": ["The field meanings, role of pointer 0x8314F0A8, consumers, runtime invocation, and any building or wonder effect remain unknown."] }
+    },
+    {
+      "id": "RVA-SYM-0404",
+      "name": "global_830E8DD0",
+      "kind": "global",
+      "address": "0x830E8DD0",
+      "image": "../image.json",
+      "claim": "One path stores single-precision values at this base plus 64 bytes per loop iteration; two other paths read floats at this base plus 64-byte-scaled indices and four additional bytes. The global's role and any same-cell consumer are unresolved.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../wonder-factor-global-output-reader-frontier.json#/staticResult" },
+        { "kind": "ghidra-static", "locator": "ghidra/FindSplitConstantCandidates.java:0x830E8DD0" }
+      ],
+      "qualification": { "alternatives": ["The +0 writer and +4 readers are distinct addresses; computed aliases, global meaning, and runtime values remain unknown."] }
+    },
+    {
+      "id": "RVA-SYM-0405",
+      "name": "sub_82D0E340",
+      "kind": "function",
+      "address": "0x82D0E340",
+      "image": "../image.json",
+      "claim": "At 0x82D0E564, loads a single-precision value from 0x830E8DD0 plus a 64-byte-scaled r29 value and four bytes, then compares it with another float.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../wonder-factor-global-output-reader-frontier.json#/staticResult/readerCandidates" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82D0E54C" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82D0E340:0x82D0E548..0x82D0E56C" }
+      ],
+      "qualification": { "alternatives": ["The index range and read value's meaning are unknown; this read does not establish consumption of the writer's +0 cell."] }
+    },
+    {
+      "id": "RVA-SYM-0406",
+      "name": "sub_82D1B400",
+      "kind": "function",
+      "address": "0x82D1B400",
+      "image": "../image.json",
+      "claim": "At 0x82D1B644, loads a single-precision value from 0x830E8DD0 plus a 64-byte-scaled r18 value and four bytes, then compares it with another float.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../wonder-factor-global-output-reader-frontier.json#/staticResult/readerCandidates" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82D1B62C" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82D1B400:0x82D1B628..0x82D1B650" }
+      ],
+      "qualification": { "alternatives": ["The index range and read value's meaning are unknown; this read does not establish consumption of the writer's +0 cell."] }
     }
   ]
 }

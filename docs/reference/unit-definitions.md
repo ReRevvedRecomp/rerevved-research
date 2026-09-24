@@ -102,7 +102,7 @@ with a null auxiliary pointer passes it as the source to `BufferWriteU32`. The
 exact raw words match the generated-code paths, while Ghidra still has no decoded
 body for these addresses. The concrete buffer virtual targets, external format,
 policy meaning, runtime value, and visible effect remain unresolved. A separate
-reader at `0x82D25330` uses signed less-than-two as one guard before an
+reader at `0x82D25330` uses signed less-than-two as one guard before a
 slot `+0x80` call on receiver address `0x8314F76C` with arguments 13 and -1;
 an exact-address materializer scan for the receiver hit its 32-result cap, and
 the flat-image word at that address is zero, so the target and runtime value

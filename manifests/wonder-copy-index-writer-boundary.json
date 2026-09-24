@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0200",
+  "topic": "wonder-copy-index-writer-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does a bounded +0x434 store census identify the pointer producer for the index read by sub_82DD4948?",
+  "scope": {
+    "storeRange": "[0x82DD4000,0x82DD6000)",
+    "fieldOffset": "0x434",
+    "candidateWriter": "0x82DD55B8",
+    "reader": "0x82DD4948",
+    "directCallerCap": 32,
+    "stopCondition": "Inspect both in-range stores, the candidate writer's immediate value source, four static words at its stored pointer, and direct callers of writer and reader; stop without a proved shared object or a bounded reader entry path.",
+    "boundary": "The census is limited to one executable interval and one raw store encoding. Direct callers exclude indirect dispatch and do not establish object aliasing. Static pointee bytes do not establish runtime contents."
+  },
+  "dependencies": [
+    { "topic": "wonder-copy-index-sources", "use": "Identifies the reader's incoming-object +0x434 pointer load and first-word index source." }
+  ],
+  "staticResult": {
+    "storeCensus": "A raw aligned-word scan of 2048 words in [0x82DD4000,0x82DD6000) found two +0x434 stores below cap 32, without truncation: 0x82DD44D0 stores zero from r11 through r31, and 0x82DD5634 stores r7 through r31. Ghidra has no decoded owner at 0x82DD44D0, so its receiver is unidentified.",
+    "candidateWriter": "In sub_82DD55B8, 0x82DD55E0 saves incoming r3 in r31. At 0x82DD5610..0x82DD5624 the function forms 0x8314F0A8 in r7, then 0x82DD5634 stores r7 to incoming object +0x434. The four image words at 0x8314F0A8..0x8314F0B4 are zero; their live contents and first-word meaning are unknown.",
+    "directCallerBoundary": "An aligned raw direct-call scan found one caller of sub_82DD55B8 at 0x82D80F9C and zero callers of sub_82DD4948, neither capped at 32. The writer call has no decoded owner in the configured listing. No common direct caller or shared receiver is established; indirect and other paths remain open.",
+    "readerJoin": "At 0x82DD4954, sub_82DD4948 saves its own incoming r3 in r25 and later reads +0x434 at 0x82DD5188. Neither candidate store is proved to target that same object. No value range for the first pointee word, copied-word read, or final cost effect follows."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No writer-to-reader object alias, live pointee value, indexed effective address, copied-word read, or production-cost effect was observed."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only canonical-project raw-store, word-window, direct-caller, and exact-data queries, with narrow generated-function corroboration for the candidate writer's incoming object and constant value. The configured listing lacks the constructor-like store's containing function and the direct writer caller's owner.",
+    "entries": [
+      { "role": "zero store", "address": "0x82DD44C4..0x82DD44D0", "result": "Sets r11 to zero and stores it at r31+0x434; r31's source is unproved." },
+      { "role": "candidate pointer store", "address": "0x82DD55E0..0x82DD5634", "result": "Saves incoming r3 in r31 and stores pointer 0x8314F0A8 at its +0x434 field." },
+      { "role": "static pointee", "address": "0x8314F0A8..0x8314F0B4", "result": "Four image words are zero, with no runtime-value inference." },
+      { "role": "direct callers", "address": "0x82D80F9C", "result": "One direct caller of candidate writer and no direct caller of reader, without truncation at cap 32." }
+    ],
+    "locators": [
+      "ghidra/FindRawFieldStores.java:[0x82DD4000,0x82DD6000) offset=0x434 cap=32",
+      "ghidra/DumpMemoryWords.java:0x82DD44D0,0x82DD5634 radius=8",
+      "ghidra/FindDirectCallers.java:0x82DD55B8,0x82DD4948 cap=32",
+      "ghidra/DumpMemoryWords.java:0x8314F0A8,0x8314F0AC,0x8314F0B0,0x8314F0B4 radius=0",
+      "generated:rerevved/sub_82DD55B8:0x82DD55E0..0x82DD5634",
+      "generated:rerevved/sub_82DD4948:0x82DD4954..0x82DD5194"
+    ],
+    "qualification": "The two stores have matching field displacement, not a proved common object. The direct-caller census is exact for aligned branch-and-link words to these entries, not for virtual or other indirect entry."
+  },
+  "guards": [
+    "Do not identify either store as the reader's pointer producer without a shared-object edge.",
+    "Do not treat four zero image words as a runtime index or valid-ID bound.",
+    "Do not infer a copied wonder-factor read or gameplay effect from candidate writer proximity."
+  ],
+  "conclusion": "One nearby function initializes its incoming object's +0x434 pointer to 0x8314F0A8, but no bounded path proves that object reaches the index reader. The pointer producer, live index range, and any copied-word use remain unresolved."
+}

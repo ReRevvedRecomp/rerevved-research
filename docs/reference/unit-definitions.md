@@ -142,6 +142,10 @@ copied-word read is proved. The stack-local accumulator's use and any effect
 on final production cost remain unknown. The [index-source boundary](../../manifests/wonder-copy-index-sources.json)
 traces one selector to an incoming object's `+0x434` pointee word and another
 to an unresolved virtual result; neither has a proved value range.
+The [bounded writer check](../../manifests/wonder-copy-index-writer-boundary.json)
+found a nearby function storing a pointer at its incoming object's `+0x434`,
+but no shared object with the index reader is established. Its pointee's zero
+image words do not establish a live index or a copied-word read.
 The next twelve complete stride positions
 are zero and the following position contains non-wonder data. Neither this
 boundary nor the cost helper proves a program-wide valid-ID rule. Identity

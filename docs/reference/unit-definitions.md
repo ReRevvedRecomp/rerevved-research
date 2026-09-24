@@ -143,9 +143,11 @@ on final production cost remain unknown. The [index-source boundary](../../manif
 traces one selector to an incoming object's `+0x434` pointee word and another
 to an unresolved virtual result; neither has a proved value range.
 The [bounded writer check](../../manifests/wonder-copy-index-writer-boundary.json)
-found a nearby function storing a pointer at its incoming object's `+0x434`,
-but no shared object with the index reader is established. Its pointee's zero
-image words do not establish a live index or a copied-word read.
+joins the index reader's function-pointer table to an initializer that clears
+its object's `+0x434`. A separate initializer stores a pointer at the same
+offset under a different table value; no shared object or later live pointer
+writer is established. Zero image words at that pointer establish no index or
+copied-word read.
 The next twelve complete stride positions
 are zero and the following position contains non-wonder data. Neither this
 boundary nor the cost helper proves a program-wide valid-ID rule. Identity

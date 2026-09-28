@@ -61,6 +61,28 @@ class CorrelateFxobjShadersTests(unittest.TestCase):
             ],
         )
 
+    def test_same_hash_across_stages_counts_each_shader(self) -> None:
+        shader = bytes(range(12))
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            shader_directory = root / "shaders"
+            shader_directory.mkdir()
+            self.write_shader(shader_directory, "0123456789ABCDEF", "vert", shader)
+            self.write_shader(shader_directory, "0123456789ABCDEF", "frag", shader)
+            fxobj = root / "water.fxobj"
+            fxobj.write_bytes(b"prefix" + shader + b"suffix")
+
+            result = correlate([fxobj], shader_directory, 16)
+
+        self.assertEqual(result["summary"]["matchedShaderCount"], 2)
+        self.assertEqual(
+            [shader_result["stage"] for shader_result in result["shaders"]],
+            ["frag", "vert"],
+        )
+        self.assertTrue(
+            all(shader_result["matches"] for shader_result in result["shaders"])
+        )
+
     def test_reports_unmatched_shader(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -139,7 +139,6 @@ def _load_civilizations(path: Path) -> tuple[Civilization, ...]:
 def _load_bonus_effects(path: Path) -> dict[int, str]:
     raw_rows = _read_csv(path, BONUS_HEADERS)
     effects: dict[int, str] = {}
-    ids: list[int] = []
     for row_number, row in enumerate(raw_rows, start=2):
         bonus_id = _parse_id(row["bonus_id"], f"{path.name}:{row_number}:bonus_id")
         if bonus_id == 0:
@@ -151,8 +150,7 @@ def _load_bonus_effects(path: Path) -> dict[int, str]:
                 f"{path.name}:{row_number}: duplicate bonus_id {bonus_id}"
             )
         effects[bonus_id] = row["effect"]
-        ids.append(bonus_id)
-    if ids != sorted(ids):
+    if list(effects) != sorted(effects):
         raise ReferenceDataError(
             "era-bonus-definitions.csv: bonus_id values must be numerically ordered"
         )
@@ -214,10 +212,6 @@ def load_reference_data(repo: Path) -> ReferenceData:
     )
 
     for civilization, manifest_row in zip(civilizations, manifest_rows, strict=True):
-        if civilization.civ_id != manifest_row.index:
-            raise ReferenceDataError(
-                f"civilization {civilization.civ_id}: manifest index mismatch"
-            )
         if civilization.internal_name != manifest_row.name:
             raise ReferenceDataError(
                 f"civilization {civilization.civ_id}: internal name "

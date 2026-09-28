@@ -49,12 +49,13 @@ public class FindCallConstantArgs extends GhidraScript {
                     continue;
                 }
                 Instruction call = listing.getInstructionAt(reference.getFromAddress());
-                Match match = findNearestWrite(listing, call, registerName, expected, lookback);
-                if (match == null) {
+                List<Instruction> window = findNearestWrite(
+                    listing, call, registerName, expected, lookback);
+                if (window == null) {
                     continue;
                 }
                 out.printf("%n=== call 0x%08X ===%n", call.getAddress().getOffset());
-                for (Instruction instruction : match.window) {
+                for (Instruction instruction : window) {
                     out.printf("0x%08X: %s%n", instruction.getAddress().getOffset(), instruction);
                 }
                 matches++;
@@ -67,8 +68,8 @@ public class FindCallConstantArgs extends GhidraScript {
         println("WROTE: " + outPath);
     }
 
-    private Match findNearestWrite(Listing listing, Instruction call, String registerName,
-                                   long expected, int lookback) {
+    private List<Instruction> findNearestWrite(Listing listing, Instruction call,
+                                               String registerName, long expected, int lookback) {
         List<Instruction> reverseWindow = new ArrayList<>();
         Instruction current = listing.getInstructionBefore(call.getAddress());
         for (int index = 0; current != null && index < lookback; index++) {
@@ -79,7 +80,7 @@ public class FindCallConstantArgs extends GhidraScript {
                 }
                 Collections.reverse(reverseWindow);
                 reverseWindow.add(call);
-                return new Match(reverseWindow);
+                return reverseWindow;
             }
             current = listing.getInstructionBefore(current.getAddress());
         }
@@ -129,11 +130,4 @@ public class FindCallConstantArgs extends GhidraScript {
         return value;
     }
 
-    private static final class Match {
-        private final List<Instruction> window;
-
-        private Match(List<Instruction> window) {
-            this.window = window;
-        }
-    }
 }

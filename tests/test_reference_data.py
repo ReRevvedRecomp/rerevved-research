@@ -99,6 +99,18 @@ class ReferenceDataTests(unittest.TestCase):
         ):
             reference_data.load_reference_data(self.repo)
 
+    def test_out_of_order_bonus_definitions_are_rejected(self) -> None:
+        self._replace(
+            "data/era-bonus-definitions.csv",
+            "1,Roads cost half as much\n2,Factories provide triple Production\n",
+            "2,Factories provide triple Production\n1,Roads cost half as much\n",
+        )
+        with self.assertRaisesRegex(
+            reference_data.ReferenceDataError,
+            "bonus_id values must be numerically ordered",
+        ):
+            reference_data.load_reference_data(self.repo)
+
     def test_missing_assigned_bonus_definition_is_rejected(self) -> None:
         self._replace(
             "data/era-bonus-definitions.csv",
@@ -154,6 +166,16 @@ class ReferenceDataTests(unittest.TestCase):
         path.write_text(json.dumps(document), encoding="utf-8")
         with self.assertRaisesRegex(
             reference_data.ReferenceDataError, "invalid row index"
+        ):
+            reference_data.load_reference_data(self.repo)
+
+    def test_manifest_row_order_is_rejected_by_loader(self) -> None:
+        path = self.repo / "manifests" / "civilization-bonus-storage.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+        document["storage"]["rows"][1]["index"] = 0
+        path.write_text(json.dumps(document), encoding="utf-8")
+        with self.assertRaisesRegex(
+            reference_data.ReferenceDataError, "row indexes must be unique and ordered"
         ):
             reference_data.load_reference_data(self.repo)
 

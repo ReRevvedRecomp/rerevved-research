@@ -325,9 +325,7 @@ def parse_actions(
             body_end = end + code_size
             if body_end > len(data):
                 raise ValueError(f"function body at 0x{base + end:X} exceeds its block")
-            function["body"] = parse_actions(
-                data[end:body_end], base + end, pool.copy()
-            )
+            function["body"] = parse_actions(data[end:body_end], base + end, pool)
             action.update(function)
         elif opcode == 0x94:
             if len(payload) != 2:
@@ -335,7 +333,7 @@ def parse_actions(
             body_end = end + u16(payload, 0)
             if body_end > len(data):
                 raise ValueError(f"With body at 0x{base + end:X} exceeds its block")
-            action["body"] = parse_actions(data[end:body_end], base + end, pool.copy())
+            action["body"] = parse_actions(data[end:body_end], base + end, pool)
         elif opcode == 0x8F:
             try_header, sizes = parse_try_header(payload)
             action.update(try_header)
@@ -345,9 +343,7 @@ def parse_actions(
             cursor = end
             for name, size in zip(("tryBody", "catchBody", "finallyBody"), sizes):
                 action[name] = (
-                    parse_actions(
-                        data[cursor : cursor + size], base + cursor, pool.copy()
-                    )
+                    parse_actions(data[cursor : cursor + size], base + cursor, pool)
                     if size
                     else []
                 )

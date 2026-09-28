@@ -220,10 +220,7 @@ def validate_local_references(repo: Path, documents: dict[str, Any]) -> None:
                             f"topic-manifest evidence leaves manifests/: {relative_path}"
                         )
                     evidence_path = (catalog_dir / relative_path).resolve()
-                    if (
-                        evidence_path.parent != manifests_dir
-                        or not evidence_path.is_relative_to(manifests_dir)
-                    ):
+                    if evidence_path.parent != manifests_dir:
                         raise CatalogValidationError(
                             f"topic-manifest evidence leaves manifests/: {relative_path}"
                         )

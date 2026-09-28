@@ -293,12 +293,6 @@ def _bounded_candidate_pool(
                 addresses = sorted(overflow, key=_address_key)
                 return [], addresses, reasons
 
-    if reasons:
-        addresses = sorted(
-            overflow,
-            key=lambda address: _address_key(address),
-        )[:MAX_HEURISTIC_CANDIDATES]
-        return [], addresses, reasons
     return sorted(pool.values(), key=_function_sort_key), [], []
 
 
@@ -508,7 +502,7 @@ def main(argv: list[str] | None = None) -> int:
         args.out.write_text(
             json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )
-    except (InputFormatError, OSError, TypeError, ValueError) as exc:
+    except (OSError, TypeError, ValueError) as exc:
         print(f"match-version-functions.py: error: {exc}", file=sys.stderr)
         return 2
     return 0

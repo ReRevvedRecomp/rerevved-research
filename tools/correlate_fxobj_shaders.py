@@ -86,7 +86,7 @@ def correlate(
         )
 
     results: list[dict[str, object]] = []
-    matched_identities: set[tuple[str, str]] = set()
+    matched_shader_count = 0
     for shader in shaders:
         raw = shader["data"]
         assert isinstance(raw, bytes)
@@ -109,7 +109,7 @@ def correlate(
                         }
                     )
         if matches:
-            matched_identities.add((str(shader["hash"]), str(shader["stage"])))
+            matched_shader_count += 1
         results.append(
             {
                 "shaderHash": shader["hash"],
@@ -134,7 +134,7 @@ def correlate(
         "summary": {
             "fxobjCount": len(assets),
             "shaderCount": len(shaders),
-            "matchedShaderCount": len(matched_identities),
+            "matchedShaderCount": matched_shader_count,
         },
     }
 

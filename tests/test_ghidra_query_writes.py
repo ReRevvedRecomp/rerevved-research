@@ -23,6 +23,7 @@ SCRIPTS = (
     "ExportFunctionFingerprints",
     "FindCallConstantArgs",
     "FindCallSplitConstantArgs",
+    "SummarizeRecordBytes",
     "FindFieldAccesses",
     "FindFieldRefs",
     "FindGlobalAddressAccesses",

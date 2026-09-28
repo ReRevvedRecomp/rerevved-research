@@ -73,8 +73,16 @@ def correlate(
     if maximum_matches < 1:
         raise ValueError("maximum_matches must be positive")
     shaders = load_shader_dumps(shader_directory)
+    ordered_paths = sorted(fxobj_paths, key=lambda item: item.name.lower())
+    names: set[str] = set()
+    for path in ordered_paths:
+        name_key = path.name.casefold()
+        if name_key in names:
+            raise ValueError(f"duplicate FX object basename: {path.name}")
+        names.add(name_key)
+
     assets: list[dict[str, object]] = []
-    for path in sorted(fxobj_paths, key=lambda item: item.name.lower()):
+    for path in ordered_paths:
         data = path.read_bytes()
         assets.append(
             {

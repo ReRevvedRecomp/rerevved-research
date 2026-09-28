@@ -41,13 +41,24 @@ public class RebuildTruncatedFunctions extends GhidraScript {
                 clearListing(entry, bodyMax);
                 disassemble(entry);
                 Function nf = createFunction(entry, nm);
-                if (nf != null && nm != null) nf.setName(nm, SourceType.USER_DEFINED);
-                rebuilt++;
+                if (nf == null) {
+                    err++;
+                } else {
+                    if (nm != null) nf.setName(nm, SourceType.USER_DEFINED);
+                    rebuilt++;
+                }
             } catch (Exception e) { err++; }
             if ((examined % 5000) == 0) println("[rebuild] ... examined " + examined);
         }
         println("[rebuild] examined " + examined + " functions; rebuilt " + rebuilt
             + " thunk-truncated (errors " + err + "). Split-constant recovery runs last.");
+        requireNoErrors(err);
+    }
+
+    static void requireNoErrors(int errors) {
+        if (errors != 0) {
+            throw new IllegalStateException("rebuild reported " + errors + " error(s)");
+        }
     }
 
     // Disable every boolean analyzer toggle whose name mentions "Non-Returning" (Discovered + Known),

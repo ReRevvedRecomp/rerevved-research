@@ -35,9 +35,16 @@ class RunHeadlessReadOnlyTests(unittest.TestCase):
     def tearDown(self):
         self.temporary.cleanup()
 
-    def run_driver(self, *extra_args: str) -> subprocess.CompletedProcess[str]:
+    def run_driver(
+        self,
+        *extra_args: str,
+        out_path: Path | None = None,
+        log_path: Path | None = None,
+        omit_log: bool = False,
+    ) -> subprocess.CompletedProcess[str]:
         environment = os.environ.copy()
         environment["FAKE_ARGS_PATH"] = str(self.capture)
+        out_path = out_path or (self.work / "query.out")
         arguments = [
             "pwsh",
             "-NoProfile",
@@ -53,12 +60,11 @@ class RunHeadlessReadOnlyTests(unittest.TestCase):
             str(self.project),
             "-ProjectName",
             "fixture",
-            "-Out",
-            str(self.work / "query.out"),
-            "-LogPath",
-            str(self.work / "query.log"),
-            *extra_args,
         ]
+        arguments.extend(("-Out", str(out_path)))
+        if not omit_log:
+            arguments.extend(("-LogPath", str(log_path or (self.work / "query.log"))))
+        arguments.extend(extra_args)
         return subprocess.run(
             arguments,
             cwd=REPO,
@@ -93,6 +99,47 @@ class RunHeadlessReadOnlyTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("cannot be false", result.stderr)
         self.assertFalse(self.capture.exists())
+
+    def test_equal_output_and_log_paths_are_rejected_before_invocation(self):
+        output = self.work / "same.out"
+        output.write_text("keep", encoding="ascii")
+        result = self.run_driver(out_path=output, log_path=output)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("distinct paths", result.stderr)
+        self.assertFalse(self.capture.exists())
+        self.assertEqual(output.read_text(encoding="ascii"), "keep")
+
+    def test_normalized_relative_and_absolute_collision_is_rejected(self):
+        output = self.work / "nested" / "same.out"
+        output.parent.mkdir()
+        output.write_text("keep", encoding="ascii")
+        relative = Path(os.path.relpath(output, REPO))
+        result = self.run_driver(out_path=relative, log_path=output.resolve())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("distinct paths", result.stderr)
+        self.assertFalse(self.capture.exists())
+        self.assertEqual(output.read_text(encoding="ascii"), "keep")
+
+    def test_case_variant_collision_is_rejected_on_windows(self):
+        output = self.work / "CaseVariant.out"
+        output.write_text("keep", encoding="ascii")
+        result = self.run_driver(
+            out_path=output,
+            log_path=Path(str(output).lower()),
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("distinct paths", result.stderr)
+        self.assertFalse(self.capture.exists())
+        self.assertEqual(output.read_text(encoding="ascii"), "keep")
+
+    def test_default_headless_log_derivation_remains_distinct(self):
+        output = self.work / "query.headless.log"
+        output.write_text("keep", encoding="ascii")
+        result = self.run_driver(out_path=output, omit_log=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(self.capture.exists())
+        self.assertTrue((self.work / "query.headless.headless.log").exists())
+        self.assertEqual(output.read_text(encoding="ascii"), "keep")
 
 
 if __name__ == "__main__":

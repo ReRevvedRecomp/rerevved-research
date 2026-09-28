@@ -235,11 +235,13 @@ public class FindVtableSlotCallsCfg extends GhidraScript {
     private int updateAliases(
             Instruction instruction, Set<String> aliases, int aliasCopies) {
         Copy copy = exactCopy(instruction);
+        boolean sourceLive = copy != null && aliases.contains(registerName(copy.source));
         Set<String> written = resultRegisterNames(instruction);
         aliases.removeAll(written);
-        if (copy != null && aliases.contains(registerName(copy.source))) {
+        if (copy != null && sourceLive) {
+            boolean identity = sameRegister(copy.destination, copy.source);
             if (aliases.add(registerName(copy.destination))) {
-                aliasCopies++;
+                if (!identity) aliasCopies++;
             }
         }
         return aliasCopies;

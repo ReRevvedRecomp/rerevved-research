@@ -47,7 +47,9 @@ public class FindFieldAccesses extends GhidraScript {
     @Override
     public void run() throws Exception {
         Set<Long> offsets = parseHexSet(requireEnv("REREVVED_FIELD_OFFSETS"));
-        Set<Long> seedVas = parseHexSet(System.getenv("REREVVED_SEED_VAS"));
+        String seedRaw = System.getenv("REREVVED_SEED_VAS");
+        Set<Long> seedVas = parseHexSet(seedRaw);
+        boolean explicitSeeds = seedRaw != null && !seedRaw.isBlank();
         Set<String> baseRegisters = parseUpperSet(System.getenv("REREVVED_BASE_REGS"));
         Set<String> accessTypes = parseUpperSet(System.getenv("REREVVED_ACCESS_TYPES"));
         int callerDepth = parseDepth(System.getenv("REREVVED_CALLER_DEPTH"));
@@ -62,7 +64,7 @@ public class FindFieldAccesses extends GhidraScript {
 
         FunctionManager functions = currentProgram.getFunctionManager();
         Map<Long, Integer> functionDepths = buildClosure(
-            functions, seedVas, callerDepth, calleeDepth);
+            functions, seedVas, callerDepth, calleeDepth, explicitSeeds);
         long scanned = 0;
         long hits = 0;
         boolean truncated = false;
@@ -139,10 +141,11 @@ public class FindFieldAccesses extends GhidraScript {
     }
 
     private Map<Long, Integer> buildClosure(
-            FunctionManager functions, Set<Long> seedVas, int callerDepth, int calleeDepth) {
-        Map<Long, Integer> depths = new TreeMap<>();
+            FunctionManager functions, Set<Long> seedVas, int callerDepth, int calleeDepth,
+            boolean explicitSeeds) {
         Set<Function> seeds = new HashSet<>();
         AddressSpace space = currentProgram.getAddressFactory().getDefaultAddressSpace();
+        boolean unresolved = false;
 
         for (long seedVa : seedVas) {
             Address address = space.getAddress(seedVa);
@@ -150,17 +153,31 @@ public class FindFieldAccesses extends GhidraScript {
             if (function == null) function = functions.getFunctionContaining(address);
             if (function == null) {
                 printerr(String.format("No function contains seed 0x%08X", seedVa));
+                unresolved = true;
                 continue;
             }
             long entry = function.getEntryPoint().getOffset();
-            if (!depths.containsKey(entry)) {
-                depths.put(entry, 0);
-                seeds.add(function);
-            }
+            if (seeds.stream().noneMatch(item ->
+                    item.getEntryPoint().getOffset() == entry)) seeds.add(function);
+        }
+        if (explicitSeeds && unresolved) {
+            throw new IllegalArgumentException("one or more requested seeds do not resolve");
         }
 
-        addDirectionalClosure(depths, seeds, callerDepth, true);
-        addDirectionalClosure(depths, seeds, calleeDepth, false);
+        Map<Long, Integer> callerDepths = new TreeMap<>();
+        Map<Long, Integer> calleeDepths = new TreeMap<>();
+        for (Function seed : seeds) {
+            long entry = seed.getEntryPoint().getOffset();
+            callerDepths.put(entry, 0);
+            calleeDepths.put(entry, 0);
+        }
+        addDirectionalClosure(callerDepths, seeds, callerDepth, true);
+        addDirectionalClosure(calleeDepths, seeds, calleeDepth, false);
+
+        Map<Long, Integer> depths = new TreeMap<>(callerDepths);
+        for (Map.Entry<Long, Integer> entry : calleeDepths.entrySet()) {
+            depths.merge(entry.getKey(), entry.getValue(), Math::min);
+        }
         return depths;
     }
 

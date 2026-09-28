@@ -112,6 +112,9 @@ if (-not $LogPath) {
     $LogPath = [System.IO.Path]::ChangeExtension($Out, '.headless.log')
 }
 $LogPath = Assert-OutsideSharedTemp $LogPath 'Headless log'
+if ($Out -and [System.StringComparer]::OrdinalIgnoreCase.Equals($Out, $LogPath)) {
+    throw "Query output and headless log must use distinct paths: $Out"
+}
 
 $saved = @{}
 $applied = @{

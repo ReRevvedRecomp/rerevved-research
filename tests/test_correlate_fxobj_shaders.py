@@ -113,6 +113,53 @@ class CorrelateFxobjShadersTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "smaller than 12 bytes"):
                 correlate([fxobj], shader_directory, 16)
 
+    def test_rejects_duplicate_fxobj_basenames(self) -> None:
+        shader = bytes(range(12))
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            shader_directory = root / "shaders"
+            shader_directory.mkdir()
+            self.write_shader(shader_directory, "0123456789ABCDEF", "vert", shader)
+            first = root / "one" / "shared.fxobj"
+            second = root / "two" / "shared.fxobj"
+            first.parent.mkdir()
+            second.parent.mkdir()
+            first.write_bytes(b"first" + shader)
+            second.write_bytes(b"second" + shader)
+
+            with self.assertRaisesRegex(ValueError, "duplicate FX object basename"):
+                correlate([first, second], shader_directory, 16)
+
+    def test_rejects_duplicate_fxobj_path_even_when_content_matches(self) -> None:
+        shader = bytes(range(12))
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            shader_directory = root / "shaders"
+            shader_directory.mkdir()
+            self.write_shader(shader_directory, "0123456789ABCDEF", "vert", shader)
+            fxobj = root / "shared.fxobj"
+            fxobj.write_bytes(b"prefix" + shader)
+
+            with self.assertRaisesRegex(ValueError, "duplicate FX object basename"):
+                correlate([fxobj, fxobj], shader_directory, 16)
+
+    def test_rejects_case_variant_fxobj_basenames(self) -> None:
+        shader = bytes(range(12))
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            shader_directory = root / "shaders"
+            shader_directory.mkdir()
+            self.write_shader(shader_directory, "0123456789ABCDEF", "vert", shader)
+            first = root / "one" / "Shared.fxobj"
+            second = root / "two" / "shared.fxobj"
+            first.parent.mkdir()
+            second.parent.mkdir()
+            first.write_bytes(b"first" + shader)
+            second.write_bytes(b"second" + shader)
+
+            with self.assertRaisesRegex(ValueError, "duplicate FX object basename"):
+                correlate([first, second], shader_directory, 16)
+
 
 if __name__ == "__main__":
     unittest.main()

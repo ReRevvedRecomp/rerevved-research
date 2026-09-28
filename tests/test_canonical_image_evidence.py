@@ -94,6 +94,50 @@ class CanonicalImageEvidenceTests(unittest.TestCase):
             "fail",
         )
 
+    def test_register_pairs_require_two_nonempty_strings(self):
+        pairs = (
+            ("fieldAccess", "field-access", "constantRegister", "sourceRegister"),
+            ("relation", "vtable-ownership", "highRegister", "lowBaseRegister"),
+            ("relation", "vtable-ownership", "lowTargetRegister", "sourceRegister"),
+        )
+        mutations = (
+            ("remove-left", "left", "remove"),
+            ("remove-right", "right", "remove"),
+            ("remove-both", "both", "remove"),
+            ("null-left", "left", None),
+            ("null-right", "right", None),
+            ("empty-left", "left", ""),
+            ("empty-right", "right", ""),
+            ("non-string-equal", "both", 7),
+            ("differing-valid", "right", "r99"),
+        )
+        for path, check_name, left_key, right_key in pairs:
+            for label, side, value in mutations:
+                with self.subTest(pair=(path, left_key, right_key), mutation=label):
+                    mutated = observations()
+                    target = mutated[path]
+                    if side in ("left", "both"):
+                        if value == "remove":
+                            target.pop(left_key, None)
+                        else:
+                            target[left_key] = value
+                    if side in ("right", "both"):
+                        if value == "remove":
+                            target.pop(right_key, None)
+                        else:
+                            target[right_key] = value
+                    attestation = build_attestation(mutated, self.contract)
+                    validate_attestation(attestation, REPO)
+                    self.assertEqual(attestation["result"]["status"], "fail")
+                    self.assertEqual(
+                        next(
+                            item
+                            for item in attestation["checks"]
+                            if item["name"] == check_name
+                        )["status"],
+                        "fail",
+                    )
+
     def test_missing_observations_produce_schema_valid_failure(self):
         attestation = build_attestation(None, self.contract)
         validate_attestation(attestation, REPO)

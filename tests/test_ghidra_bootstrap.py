@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -133,6 +134,83 @@ class GhidraBootstrapTests(unittest.TestCase):
         self.assertIn("Add-Content -LiteralPath $LogPath -Encoding UTF8", script)
         self.assertIn(".Replace([string][char]0, '')", script)
         self.assertNotIn(">> $LogPath", script)
+
+    def test_rebuild_error_helper_propagates_failure(self):
+        source_text = (REPO / "ghidra" / "RebuildTruncatedFunctions.java").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("requireNoErrors(err);", source_text)
+        ghidra_home = os.environ.get("REREVVED_GHIDRA_HOME")
+        javac = shutil.which("javac")
+        java = shutil.which("java")
+        if not ghidra_home or javac is None or java is None:
+            self.skipTest("Ghidra and JDK are required for repair failure proof")
+        jars = sorted(Path(ghidra_home).rglob("*.jar"))
+        if not jars:
+            self.skipTest("Ghidra jars are required for repair failure proof")
+        scratch = REPO / "docs" / "ai_agents" / "local" / ".tmp"
+        scratch.mkdir(parents=True, exist_ok=True)
+        fixture = Path(tempfile.mkdtemp(prefix="rebuild-errors-", dir=scratch))
+        try:
+            source = fixture / "RebuildFailureFixture.java"
+            source.write_text(
+                "public class RebuildFailureFixture {\n"
+                "  public static void main(String[] args) {\n"
+                "    try {\n"
+                "      RebuildTruncatedFunctions.requireNoErrors(Integer.parseInt(args[0]));\n"
+                '      System.out.println("accepted");\n'
+                "    } catch (IllegalStateException expected) {\n"
+                '      System.out.println("rejected");\n'
+                "    }\n"
+                "  }\n"
+                "}\n",
+                encoding="ascii",
+            )
+            classes = fixture / "classes"
+            classes.mkdir()
+            classpath = os.pathsep.join(str(path) for path in jars)
+            compile_result = subprocess.run(
+                [
+                    javac,
+                    "-proc:none",
+                    "-encoding",
+                    "UTF-8",
+                    "-cp",
+                    classpath,
+                    "-d",
+                    str(classes),
+                    str(REPO / "ghidra" / "RebuildTruncatedFunctions.java"),
+                    str(source),
+                ],
+                cwd=fixture,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(compile_result.returncode, 0, compile_result.stderr)
+            for errors, expected in (("0", "accepted"), ("1", "rejected")):
+                run_result = subprocess.run(
+                    [
+                        java,
+                        "-cp",
+                        os.pathsep.join((str(classes), classpath)),
+                        "RebuildFailureFixture",
+                        errors,
+                    ],
+                    cwd=fixture,
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                )
+                self.assertEqual(run_result.returncode, 0, run_result.stderr)
+                self.assertEqual(run_result.stdout.strip(), expected)
+        finally:
+            fixture_path = fixture.resolve()
+            if fixture_path.parent != scratch.resolve():
+                raise AssertionError(
+                    "refusing to remove fixture outside Ghidra scratch"
+                )
+            shutil.rmtree(fixture_path)
 
 
 if __name__ == "__main__":

@@ -120,6 +120,17 @@ def nested(document: Any, *keys: str) -> Any:
     return current
 
 
+def matching_registers(left: Any, right: Any) -> bool:
+    """Require both register observations before accepting equality."""
+    return (
+        isinstance(left, str)
+        and bool(left)
+        and isinstance(right, str)
+        and bool(right)
+        and left == right
+    )
+
+
 def build_attestation(observations: Any, contract: dict[str, Any]) -> dict[str, Any]:
     image = contract["image"]
     program = nested(observations, "program")
@@ -167,7 +178,9 @@ def build_attestation(observations: Any, contract: dict[str, Any]) -> dict[str, 
             and field.get("relationId") == FIELD_RELATION_ID
             and field.get("constantAddress") == FIELD_VALUE_SITE
             and field.get("constantMnemonic") == "li"
-            and field.get("constantRegister") == field.get("sourceRegister")
+            and matching_registers(
+                field.get("constantRegister"), field.get("sourceRegister")
+            )
             and field.get("value") == 5
             and field.get("storeAddress") == contract["field_store_site"]
             and field.get("storeMnemonic") == "stw"
@@ -188,10 +201,14 @@ def build_attestation(observations: Any, contract: dict[str, Any]) -> dict[str, 
             and relation.get("to") == VTABLE_ID
             and relation.get("highAddress") == VTABLE_HIGH_SITE
             and relation.get("highMnemonic") == "lis"
-            and relation.get("highRegister") == relation.get("lowBaseRegister")
+            and matching_registers(
+                relation.get("highRegister"), relation.get("lowBaseRegister")
+            )
             and relation.get("lowAddress") == VTABLE_LOW_SITE
             and relation.get("lowMnemonic") == "addi"
-            and relation.get("lowTargetRegister") == relation.get("sourceRegister")
+            and matching_registers(
+                relation.get("lowTargetRegister"), relation.get("sourceRegister")
+            )
             and relation.get("storeAddress") == contract["vtable_store_site"]
             and relation.get("storeMnemonic") == "stw"
             and relation.get("baseRegister") == "r3"

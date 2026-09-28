@@ -28,7 +28,7 @@ public class FindRawFieldStores extends GhidraScript {
         long end = Long.decode(requireEnv("REREVVED_SCAN_END_VA"));
         Set<Integer> offsets = parseOffsets(requireEnv("REREVVED_FIELD_OFFSETS"));
         int cap = parseCap(System.getenv("REREVVED_MAX_MATCHES"));
-        String path = requireEnv("REREVVED_DUMP_PATH");
+        String outPath = requireEnv("REREVVED_DUMP_PATH");
         if (start < 0 || end > 0x100000000L || start >= end ||
             (start & 3) != 0 || (end & 3) != 0 || end - start > 0x100000L) {
             throw new IllegalArgumentException("scan must be an aligned band of at most 0x100000 bytes");
@@ -38,7 +38,8 @@ public class FindRawFieldStores extends GhidraScript {
         Memory memory = currentProgram.getMemory();
         int scanned = 0;
         int matches = 0;
-        try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
+        PrintWriter out = new PrintWriter(new FileWriter(outPath));
+        try (out) {
             out.printf("Program: %s%nRange: [0x%08X,0x%08X)%nOffsets: %s%nCap: %d%n",
                 currentProgram.getName(), start, end, offsets, cap);
             for (long value = start; value < end && !monitor.isCancelled(); value += 4) {
@@ -73,11 +74,11 @@ public class FindRawFieldStores extends GhidraScript {
             }
             out.printf("Scanned: %d%nMatches: %d%nTruncated: %s%nCancelled: %s%n",
                 scanned, matches, matches > cap, monitor.isCancelled());
-            if (out.checkError()) {
-                throw new IOException("failed while writing output: " + path);
-            }
         }
-        println("WROTE: " + path);
+        if (out.checkError()) {
+            throw new IOException("failed while writing output: " + outPath);
+        }
+        println("WROTE: " + outPath);
     }
 
     private boolean isStore(int opcode) {

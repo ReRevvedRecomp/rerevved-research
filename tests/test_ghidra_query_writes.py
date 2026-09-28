@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import subprocess
@@ -25,6 +26,7 @@ SCRIPTS = (
     "FindCallSplitConstantArgs",
     "SummarizeRecordBytes",
     "FindFieldAccesses",
+    "FindRawFieldStores",
     "FindFieldRefs",
     "FindGlobalAddressAccesses",
     "FindRawVtableSlotCalls",
@@ -35,6 +37,308 @@ SCRIPTS = (
     "FindSplitConstantCandidates",
     "FindSplitConstantUses",
     "FindStrings",
+)
+
+
+def ghidra_classpath() -> str | None:
+    root = os.environ.get("REREVVED_GHIDRA_HOME")
+    if not root:
+        return None
+    jars = sorted(Path(root).rglob("*.jar"))
+    if not jars:
+        return None
+    return os.pathsep.join(str(path) for path in jars)
+
+
+OWNER_CALL_FIXTURE = textwrap.dedent(
+    """
+    import ghidra.program.flatapi.FlatProgramAPI;
+    import ghidra.app.script.GhidraScript;
+    import ghidra.program.model.address.Address;
+    import ghidra.program.model.address.AddressFactory;
+    import ghidra.program.model.address.AddressSpace;
+    import ghidra.program.model.lang.Register;
+    import ghidra.program.model.listing.Function;
+    import ghidra.program.model.listing.FunctionManager;
+    import ghidra.program.model.listing.Instruction;
+    import ghidra.program.model.listing.Program;
+    import ghidra.util.task.TaskMonitor;
+    import java.io.PrintWriter;
+    import java.lang.reflect.InvocationHandler;
+    import java.lang.reflect.InvocationTargetException;
+    import java.lang.reflect.Method;
+    import java.lang.reflect.Proxy;
+    import java.util.HashSet;
+    import java.util.LinkedHashSet;
+    import java.util.List;
+    import java.util.Map;
+    import java.util.Set;
+
+    public class OwnerCallGhidraFixture {
+        private static Object defaultValue(Class<?> type) {
+            if (!type.isPrimitive()) return null;
+            if (type == boolean.class) return false;
+            if (type == byte.class) return (byte) 0;
+            if (type == short.class) return (short) 0;
+            if (type == int.class) return 0;
+            if (type == long.class) return 0L;
+            if (type == float.class) return 0.0f;
+            if (type == double.class) return 0.0d;
+            if (type == char.class) return '\\0';
+            return null;
+        }
+
+        private static Address address(long offset) {
+            InvocationHandler handler = (proxy, method, args) -> {
+                switch (method.getName()) {
+                    case "getOffset":
+                    case "getUnsignedOffset":
+                    case "getAddressableWordOffset":
+                        return offset;
+                    case "toString":
+                        return String.format("0x%08X", offset);
+                    case "hashCode":
+                        return Long.hashCode(offset);
+                    case "equals":
+                        return args != null && args.length == 1
+                            && args[0] instanceof Address
+                            && ((Address) args[0]).getOffset() == offset;
+                    case "compareTo":
+                        return Long.compare(offset, ((Address) args[0]).getOffset());
+                    case "getSize":
+                        return 4;
+                    default:
+                        return defaultValue(method.getReturnType());
+                }
+            };
+            return (Address) Proxy.newProxyInstance(
+                OwnerCallGhidraFixture.class.getClassLoader(),
+                new Class<?>[] {Address.class}, handler);
+        }
+
+        private static AddressSpace addressSpace() {
+            InvocationHandler handler = (proxy, method, args) -> {
+                if (method.getName().equals("getAddress") && args != null && args.length == 1) {
+                    if (args[0] instanceof Long) return address((Long) args[0]);
+                    if (args[0] instanceof String) return address(Long.decode((String) args[0]));
+                }
+                if (method.getName().equals("getName")) return "ram";
+                return defaultValue(method.getReturnType());
+            };
+            return (AddressSpace) Proxy.newProxyInstance(
+                OwnerCallGhidraFixture.class.getClassLoader(),
+                new Class<?>[] {AddressSpace.class}, handler);
+        }
+
+        private static final class Node {
+            final long entry;
+            final Set<Node> callers = new LinkedHashSet<>();
+            final Set<Node> callees = new LinkedHashSet<>();
+            Function function;
+
+            Node(long entry) {
+                this.entry = entry;
+            }
+        }
+
+        private static Function function(Node node) {
+            InvocationHandler handler = (proxy, method, args) -> {
+                switch (method.getName()) {
+                    case "getEntryPoint":
+                        return address(node.entry);
+                    case "getCallingFunctions":
+                        return functions(node.callers);
+                    case "getCalledFunctions":
+                        return functions(node.callees);
+                    case "getName":
+                        return "f" + Long.toHexString(node.entry);
+                    case "hashCode":
+                        return System.identityHashCode(proxy);
+                    case "equals":
+                        return args != null && args.length == 1 && proxy == args[0];
+                    case "toString":
+                        return "f" + Long.toHexString(node.entry);
+                    default:
+                        return defaultValue(method.getReturnType());
+                }
+            };
+            node.function = (Function) Proxy.newProxyInstance(
+                OwnerCallGhidraFixture.class.getClassLoader(),
+                new Class<?>[] {Function.class}, handler);
+            return node.function;
+        }
+
+        private static Set<Function> functions(Set<Node> nodes) {
+            Set<Function> result = new LinkedHashSet<>();
+            for (Node node : nodes) result.add(node.function);
+            return result;
+        }
+
+        private static FunctionManager functionManager(List<Node> nodes) {
+            InvocationHandler handler = (proxy, method, args) -> {
+                if ((method.getName().equals("getFunctionAt")
+                        || method.getName().equals("getFunctionContaining"))
+                    && args != null && args.length == 1 && args[0] instanceof Address) {
+                    long value = ((Address) args[0]).getOffset();
+                    for (Node node : nodes) {
+                        if (value == node.entry
+                            || (method.getName().equals("getFunctionContaining")
+                                && value > node.entry && value < node.entry + 0x10)) {
+                            return node.function;
+                        }
+                    }
+                    return null;
+                }
+                return defaultValue(method.getReturnType());
+            };
+            return (FunctionManager) Proxy.newProxyInstance(
+                OwnerCallGhidraFixture.class.getClassLoader(),
+                new Class<?>[] {FunctionManager.class}, handler);
+        }
+
+        private static Program program(FunctionManager functions, AddressSpace space) {
+            AddressFactory factory = (AddressFactory) Proxy.newProxyInstance(
+                OwnerCallGhidraFixture.class.getClassLoader(),
+                new Class<?>[] {AddressFactory.class},
+                (proxy, method, args) -> method.getName().equals("getDefaultAddressSpace")
+                    ? space : defaultValue(method.getReturnType()));
+            return (Program) Proxy.newProxyInstance(
+                OwnerCallGhidraFixture.class.getClassLoader(),
+                new Class<?>[] {Program.class},
+                (proxy, method, args) -> method.getName().equals("getAddressFactory")
+                    ? factory
+                    : method.getName().equals("getFunctionManager")
+                        ? functions : defaultValue(method.getReturnType()));
+        }
+
+        private static void setField(Object target, Class<?> owner, String name, Object value)
+                throws Exception {
+            var field = owner.getDeclaredField(name);
+            field.setAccessible(true);
+            field.set(target, value);
+        }
+
+        @SuppressWarnings("unchecked")
+        private static Map<Long, Integer> closure(
+                FindFieldAccesses script, FunctionManager functions, Set<Long> seeds,
+                int callerDepth, int calleeDepth, boolean explicit) throws Exception {
+            Method method = FindFieldAccesses.class.getDeclaredMethod(
+                "buildClosure", FunctionManager.class, Set.class, int.class, int.class, boolean.class);
+            method.setAccessible(true);
+            try {
+                return (Map<Long, Integer>) method.invoke(
+                    script, functions, seeds, callerDepth, calleeDepth, explicit);
+            } catch (InvocationTargetException exception) {
+                Throwable cause = exception.getCause();
+                if (cause instanceof Exception) throw (Exception) cause;
+                throw exception;
+            }
+        }
+
+        private static Instruction copyInstruction(Register destination, Register source,
+                String mnemonic) {
+            return (Instruction) Proxy.newProxyInstance(
+                OwnerCallGhidraFixture.class.getClassLoader(),
+                new Class<?>[] {Instruction.class},
+                (proxy, method, args) -> {
+                    switch (method.getName()) {
+                        case "getMnemonicString":
+                            return mnemonic;
+                        case "getNumOperands":
+                            return 1;
+                        case "getOpObjects":
+                            return new Object[] {destination, source};
+                        case "getResultObjects":
+                            return new Object[] {destination};
+                        default:
+                            return defaultValue(method.getReturnType());
+                    }
+                });
+        }
+
+        private static int updateAliases(
+                FindVtableSlotCallsCfg script, Instruction instruction,
+                Set<String> aliases, int count) throws Exception {
+            Method method = FindVtableSlotCallsCfg.class.getDeclaredMethod(
+                "updateAliases", Instruction.class, Set.class, int.class);
+            method.setAccessible(true);
+            return (Integer) method.invoke(script, instruction, aliases, count);
+        }
+
+        private static Register register(String name) {
+            return new Register(name, "", Address.NO_ADDRESS, 4, true, 0);
+        }
+
+        private static void check(boolean condition, String message) {
+            if (!condition) throw new AssertionError(message);
+        }
+
+        private static void checkClosure() throws Exception {
+            Node s = new Node(0x100), x = new Node(0x110), y = new Node(0x120);
+            s.callees.add(x);
+            x.callers.add(s);
+            x.callees.add(s);
+            s.callers.add(x);
+            x.callees.add(y);
+            y.callers.add(x);
+            List<Node> nodes = List.of(s, x, y);
+            for (Node node : nodes) function(node);
+            FunctionManager functions = functionManager(nodes);
+            FindFieldAccesses script = new FindFieldAccesses();
+            AddressSpace space = addressSpace();
+            setField(script, FlatProgramAPI.class, "currentProgram", program(functions, space));
+            setField(script, FlatProgramAPI.class, "monitor", TaskMonitor.DUMMY);
+            setField(script, GhidraScript.class, "errorWriter", new PrintWriter(System.err, true));
+
+            Map<Long, Integer> result = closure(
+                script, functions, Set.of(0x100L), 1, 2, true);
+            check(result.get(0x120L) == 2, "callee traversal omitted Y");
+            Map<Long, Integer> limited = closure(
+                script, functions, Set.of(0x100L), 0, 1, true);
+            check(!limited.containsKey(0x120L), "callee depth limit admitted Y");
+            check(closure(script, functions, Set.of(), 0, 0, false).isEmpty(),
+                "omitted seeds did not preserve broad-mode sentinel");
+            boolean rejected = false;
+            try {
+                closure(script, functions, Set.of(0x999L), 0, 0, true);
+            } catch (IllegalArgumentException expected) {
+                rejected = true;
+            }
+            check(rejected, "unresolved explicit seed was accepted");
+            rejected = false;
+            try {
+                closure(script, functions, Set.of(0x100L, 0x999L), 0, 0, true);
+            } catch (IllegalArgumentException expected) {
+                rejected = true;
+            }
+            check(rejected, "partially unresolved explicit seeds were accepted");
+        }
+
+        private static void checkAliases() throws Exception {
+            FindVtableSlotCallsCfg script = new FindVtableSlotCallsCfg();
+            Register r3 = register("r3");
+            Register r4 = register("r4");
+            Set<String> aliases = new HashSet<>(Set.of("r3"));
+            int count = updateAliases(script, copyInstruction(r3, r3, "mr"), aliases, 0);
+            check(aliases.contains("r3") && count == 0, "live self-copy lost its alias");
+            aliases = new HashSet<>(Set.of("r3"));
+            count = updateAliases(script, copyInstruction(r4, r3, "mr"), aliases, 0);
+            check(aliases.contains("r4") && count == 1, "live distinct copy was not counted");
+            aliases = new HashSet<>(Set.of("r5"));
+            count = updateAliases(script, copyInstruction(r4, r3, "mr"), aliases, 0);
+            check(!aliases.contains("r4") && count == 0, "dead source created an alias");
+            aliases = new HashSet<>(Set.of("r3"));
+            count = updateAliases(script, copyInstruction(r3, r4, "add"), aliases, 0);
+            check(!aliases.contains("r3") && count == 0, "non-copy clobber preserved an alias");
+        }
+
+        public static void main(String[] args) throws Exception {
+            checkClosure();
+            checkAliases();
+            System.out.println("OK");
+        }
+    }
+    """
 )
 
 
@@ -338,6 +642,71 @@ class GhidraQueryWriteTests(unittest.TestCase):
             low_end,
         )
         self.assertGreater(overwrite_start, low_end)
+
+    def test_owner_call_graph_and_alias_helpers_execute_against_ghidra_apis(self):
+        closure_source = (GHIDRA / "FindFieldAccesses.java").read_text(encoding="utf-8")
+        self.assertIn("boolean explicitSeeds", closure_source)
+        self.assertIn("Map<Long, Integer> callerDepths", closure_source)
+        self.assertIn("Map<Long, Integer> calleeDepths", closure_source)
+        alias_source = (GHIDRA / "FindVtableSlotCallsCfg.java").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("boolean sourceLive", alias_source)
+        self.assertIn("if (!identity) aliasCopies++;", alias_source)
+        classpath = ghidra_classpath()
+        if classpath is None:
+            self.skipTest("REREVVED_GHIDRA_HOME is not configured")
+        javac = shutil.which("javac")
+        java = shutil.which("java")
+        if javac is None or java is None:
+            self.skipTest("JDK java and javac are required for Ghidra helper proof")
+        fixture = Path(tempfile.mkdtemp(prefix="owner-calls-", dir=SCRATCH))
+        try:
+            source_path = fixture / "OwnerCallGhidraFixture.java"
+            source_path.write_text(OWNER_CALL_FIXTURE, encoding="utf-8")
+            classes = fixture / "classes"
+            classes.mkdir()
+            compile_result = subprocess.run(
+                [
+                    javac,
+                    "-proc:none",
+                    "-encoding",
+                    "UTF-8",
+                    "-cp",
+                    classpath,
+                    "-d",
+                    str(classes),
+                    str(GHIDRA / "FindFieldAccesses.java"),
+                    str(GHIDRA / "FindVtableSlotCallsCfg.java"),
+                    str(source_path),
+                ],
+                cwd=fixture,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(compile_result.returncode, 0, compile_result.stderr)
+            run_result = subprocess.run(
+                [
+                    java,
+                    "-cp",
+                    os.pathsep.join((str(classes), classpath)),
+                    "OwnerCallGhidraFixture",
+                ],
+                cwd=fixture,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(run_result.returncode, 0, run_result.stderr)
+            self.assertEqual(run_result.stdout.strip(), "OK")
+        finally:
+            fixture_path = fixture.resolve()
+            if fixture_path.parent != SCRATCH.resolve():
+                raise AssertionError(
+                    "refusing to remove fixture outside Ghidra scratch"
+                )
+            shutil.rmtree(fixture_path)
 
 
 if __name__ == "__main__":

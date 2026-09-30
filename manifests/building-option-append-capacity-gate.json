@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0221",
+  "topic": "building-option-append-capacity-gate",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What local capacity gate and append writes does 0x822D10C0 implement for the production-choice descriptor, and to which exact uninspected edge does it delegate when that gate fails?",
+  "scope": {
+    "function": "0x822D10C0 through 0x822D114C",
+    "instructionCount": 36,
+    "receiver": "The accepted 0x82DFF360 caller supplies the descriptor at child+0x430 and a pointer to one four-byte input entry.",
+    "boundary": "Only the complete selected append-helper body is covered. The 0x822D1150 callee, descriptor reset/lifetime, allocators, source-buffer extent, and runtime behavior remain outside this result."
+  },
+  "dependencies": [
+    { "topic": "building-option-copy-capacity-boundary", "use": "Establishes the child descriptor and source-pointer arguments at 0x82DFF360, independently of the fixed-tail copy and visible count." },
+    { "topic": "city-production-option-source", "use": "Establishes the production-choice child, its initialized pointer fields, option-vector selection, and separate parent ownership." }
+  ],
+  "descriptorFields": {
+    "begin": "0x822D10CC loads descriptor+0x04, corresponding to child+0x434 for the accepted caller.",
+    "end": "0x822D10E4 and 0x822D110C load descriptor+0x08, corresponding to child+0x438.",
+    "capacityEnd": "0x822D10F8 loads descriptor+0x0C, corresponding to child+0x43C. The gate derives its capacity from this pointer minus begin.",
+    "qualification": "These are local pointer roles in this helper. Valid allocation, pointer order, alignment, and ownership invariants are not established by loading or comparing the fields."
+  },
+  "capacityGate": {
+    "size": "With a nonzero begin pointer, 0x822D10E4..0x822D10EC computes signed32(end-begin) shifted arithmetically right by two. With begin zero, 0x822D10DC sets this temporary result to zero.",
+    "capacity": "At 0x822D10F0..0x822D10F4 a zero begin pointer branches directly to 0x822D1130. Otherwise 0x822D10F8..0x822D1100 computes signed32(capacityEnd-begin) shifted arithmetically right by two.",
+    "comparison": "At 0x822D1104..0x822D1108 an unsigned 32-bit comparison branches to 0x822D1130 when computed size is at least computed capacity. The in-place branch requires begin nonzero and computed size strictly below computed capacity.",
+    "qualification": "The calculations describe stored-pointer arithmetic, not validation of malformed descriptors. For ordinary ordered four-byte pointer spans they compare element count with available element capacity."
+  },
+  "inPlaceAppend": {
+    "address": "0x822D110C through 0x822D112C",
+    "writes": "The helper loads one 32-bit value from the source pointer retained in r6, writes it at the current end pointer at 0x822D1118, and stores end+4 to descriptor+0x08 at 0x822D111C before returning.",
+    "localBoundary": "This branch makes no allocation call and contains no item-ID interpretation or fixed 100-entry limit. Its capacity predicate does not prove source validity, allocation extent, or a new Building definition."
+  },
+  "slowEdge": {
+    "entry": "0x822D1130, reached for begin zero or computed size at least computed capacity.",
+    "callsite": "0x822D113C",
+    "callee": "0x822D1150",
+    "arguments": "r3 = current stack pointer+0x50; r4 = descriptor; r5 = descriptor's current end pointer; r6 = the original source pointer. The stack-local address's callee semantics are unclassified.",
+    "localResultHandling": "After the direct call the selected helper executes only its stack/link-register epilogue and returns. There is no local conditional status test after the call.",
+    "unresolved": "The callee's growth policy, first allocation, allocator ownership, failure behavior, alias handling, and lifetime contract remain unestablished. Delegation and the absence of a local status test do not prove success or a runtime defect."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only DumpMemoryWords query emitted two radius-nine windows: 38 rows covering all 36 unique instruction words in the selected body. Every big-endian word matched the corresponding bytes of the complete SHA-256-verified image identified by image.json. The relative linked branch at 0x822D113C independently decoded to 0x822D1150. One narrow exact-function generated window corroborated operand flow.",
+    "entries": [
+      { "role": "pointer-derived capacity gate", "address": "0x822D10CC..0x822D1108", "result": "Begin, end, capacity-end loads; zero-begin slow branch; signed shifts and unsigned size/capacity comparison." },
+      { "role": "in-place append", "address": "0x822D110C..0x822D112C", "result": "One source-word load, current-end store, end-pointer increment, and return." },
+      { "role": "slow edge", "address": "0x822D1130..0x822D114C", "result": "Exact call arguments and direct target, followed by an epilogue without a local conditional result test." }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x822D10E4,0x822D1128 radius=9",
+      "generated:rerevved/sub_822D10C0:0x822D10C0..0x822D114C"
+    ],
+    "qualification": "Complete selected-body words support the bounded local claims. No callee was followed and no runtime append, allocation, failure, or new-content acceptance was observed."
+  },
+  "guards": [
+    "Do not equate the local capacity predicate with validated allocation, pointer, alignment, or ownership invariants.",
+    "Do not infer a growth policy or successful empty/full-vector append from the 0x822D1150 call.",
+    "Do not treat four-byte entry transport or the absence of a local 100 limit as a new semantic ID, definition, completed ownership slot, effect, or save contract.",
+    "Do not claim allocation failure handling, invalid-input behavior, descriptor lifetime, or runtime safety beyond the selected body's static facts."
+  ],
+  "conclusion": "The append helper has an explicit pointer-derived capacity gate. For begin nonzero and unsigned computed size below computed capacity, it writes one four-byte source entry at end and advances end by four. A zero begin or computed size at least capacity delegates to 0x822D1150 at 0x822D113C with the descriptor, current end, source pointer, and stack-local address. Growth, allocation, failure, and lifetime remain unresolved beyond that exact edge."
+}

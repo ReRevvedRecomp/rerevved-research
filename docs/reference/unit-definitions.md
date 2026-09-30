@@ -143,11 +143,18 @@ argument derives from `4 * (100 - k)` while its returned visible count is the
 generator count minus `k`. Parent setup supplies the Building destination at
 `+0x5DC` and records that return at `+0x43C`. Neither the complete selected
 wrapper nor the child input loop has a local 100-entry maximum check; this
-does not show that the native generator returns an excessive count. The child
-delegates append to `0x822D10C0`, whose allocation and failure contract remains
-unresolved. See the [option-copy capacity boundary](../../manifests/building-option-copy-capacity-boundary.json).
+does not show that the native generator returns an excessive count. See the
+[option-copy capacity boundary](../../manifests/building-option-copy-capacity-boundary.json).
 These static copy arguments do not establish a safe new definition or ownership
 slot.
+
+The child's append helper `0x822D10C0` derives size and capacity from its
+descriptor's begin, end, and capacity-end pointers. With a nonzero begin and
+computed size below capacity, it writes one four-byte input at end and advances
+end by four. A zero begin or computed size at least capacity delegates to
+`0x822D1150`; growth, allocation, and failure handling remain unresolved there.
+The local predicate does not validate the descriptor's allocation or pointer
+invariants. See the [append capacity gate](../../manifests/building-option-append-capacity-gate.json).
 
 After a sufficient-production building test, `0x82D02090` stores building-index
 bits in city state, including a bank selected by clamped player era, for

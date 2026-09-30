@@ -33,7 +33,8 @@
     "descriptor": "At 0x82DFF31C..0x82DFF338, r28 retains the child, r30 the supplied count, r31 the source pointer, and r29 = child+0x430 is passed to 0x821C6C28.",
     "appendCall": "At 0x82DFF33C..0x82DFF36C, a positive supplied count drives four-byte input iteration. A value greater than -1, or the distinct category-four case, passes r3 = child+0x430 and r4 = the current source pointer to 0x822D10C0 at 0x82DFF360. The local loop decrements the count and contains no 100-entry upper check.",
     "remainingBody": "The remaining selected body checks the resulting descriptor's begin/end difference, marks an empty child, stores category/city fields for a nonempty child, and can call 0x82DFE860 for presentation. It adds no local source-count or allocation-capacity guard.",
-    "unresolved": "Allocation, capacity growth, invalid input, and failure handling inside 0x822D10C0 and descriptor reset/lifetime inside 0x821C6C28 remain unestablished. The existence of an append call is not proof of safe growth."
+    "capacitySource": "building-option-append-capacity-gate owns the append helper's local pointer-derived capacity gate and its 0x822D1150 slow edge.",
+    "unresolved": "Delegated allocation/growth and failure behavior, invalid-input contracts, and descriptor reset/lifetime inside 0x821C6C28 remain unestablished. The local append gate does not prove complete capacity safety."
   },
   "currentEvidence": {
     "method": "One foreground read-only DumpMemoryWords query emitted ten radius-eight windows, 170 word rows covering 145 unique addresses across the three selected bodies. Every emitted big-endian word matched the corresponding bytes of the full SHA-256-verified flat image identified by image.json. Narrow exact-function generated windows corroborated operand flow; no helper body was followed.",
@@ -60,5 +61,5 @@
     "Do not infer safe vector growth, allocation failure handling, or descriptor lifetime from the child append/reset calls.",
     "Do not claim an out-of-bounds runtime defect, gameplay behavior, or new-content acceptance without the missing contracts and runtime observation."
   ],
-  "conclusion": "The Building bridge uses a fixed 100-word temporary tail: its copy-call byte count derives from 100 minus the leading-negative skip, while the parent records generator count minus that skip. The parent Building destination is +0x5DC and its count is +0x43C. The selected wrapper and child input loop contain no local 100-entry maximum guard. Child allocation/growth is delegated to an uninspected append helper, so complete option-capacity safety and a new-entry route remain unresolved."
+  "conclusion": "The Building bridge uses a fixed 100-word temporary tail: its copy-call byte count derives from 100 minus the leading-negative skip, while the parent records generator count minus that skip. The parent Building destination is +0x5DC and its count is +0x43C. The selected wrapper and child input loop contain no local 100-entry maximum guard. Child allocation/growth is outside these bodies; building-option-append-capacity-gate owns the local append gate and unresolved slow edge. Complete option-capacity safety and a new-entry route remain unresolved."
 }

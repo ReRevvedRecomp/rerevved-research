@@ -136,6 +136,19 @@ The shared Library/University three-quarter gate at `0x830E8FFE` has no
 identified writer or policy meaning; bounded address searches found no match,
 and its consumer lies in a Ghidra function gap. See the
 [gate source frontier](../../manifests/building-wonder-cost-gate-source-frontier.json).
+
+The Building option bridge in `0x82CED700` passes a fixed temporary-array tail
+to its copy helper. After skipping `k` leading negative words, the byte-count
+argument derives from `4 * (100 - k)` while its returned visible count is the
+generator count minus `k`. Parent setup supplies the Building destination at
+`+0x5DC` and records that return at `+0x43C`. Neither the complete selected
+wrapper nor the child input loop has a local 100-entry maximum check; this
+does not show that the native generator returns an excessive count. The child
+delegates append to `0x822D10C0`, whose allocation and failure contract remains
+unresolved. See the [option-copy capacity boundary](../../manifests/building-option-copy-capacity-boundary.json).
+These static copy arguments do not establish a safe new definition or ownership
+slot.
+
 After a sufficient-production building test, `0x82D02090` stores building-index
 bits in city state, including a bank selected by clamped player era, for
 ordinary indices. Spaceship-part items 119-122

@@ -82,14 +82,14 @@
   },
   "selectedStores": {
     "gateByte": "0x82D069A8 initializes retained r30 to zero; the selected 0x82D06A74..0x82D06A7C path copies it to r11 and stores its low byte at 0x8314F10B. In 0x82D89AF8, 0x82D89B30 dispatches an unresolved virtual +0x94 call on a registry lookup result; 0x82D89B48 stores returned r3 low byte at the same global. The byte meaning and complete virtual source remain unassigned.",
-    "turnDifferenceWord": "0x82CC6184..0x82CC618C stores retained r19 at 0x8312B8D8. 0x82D24F74 stores retained r8 at that word. 0x82D25200 loads zero into r10 and 0x82D25250 stores it at the word, with no selected intervening r10 destination write. Complete retained-r19/r8 provenance and scheduling meaning remain unresolved.",
+    "turnDifferenceWord": "0x82CC6184..0x82CC618C stores retained r19 at 0x8312B8D8. The exact generated destinations from 0x82CC4F14 through that store assign r19 only once, to zero at 0x82CC4F14; this selected fallback therefore stores zero under ordinary ABI preservation. 0x82D24EB8 loads current-turn word 0x8312B8DC into r8; the selected path can increment it at 0x82D24F40 and writes retained r8 to both that current-turn word at 0x82D24F58 and the scheduling word at 0x82D24F74. The intervening helper 0x82CEFA20 and broader path/retention remain unresolved. 0x82D25200/0x82D25250 supplies the separate accepted explicit zero store. No semantic name or complete producer/cadence is assigned.",
     "humanMask": "In 0x82CD59A8, 0x82CD59C4 clears 0x8312E608. If word 0x8314F1B0 read at 0x82CD59C0 is nonzero, 0x82CD59D0 copies it into the mask and returns. The alternative initializes r31 to zero and r29 to one, calls unresolved helper 0x82D8AB00 for the loop index, and on nonzero return ORs PowerPC slw(1,r31) into the mask at 0x82CD5A0C..0x82CD5A18. The loop bound uses word 0x82F700AC. Helper semantics, input range, current mask, and complete callers are not assigned.",
     "excludedPlayer": "0x82D22910 loads five into r10 and 0x82D2291C stores it at 0x82F700B0. A nonzero word loaded at 0x82D22920 from the selected retained pointer +0x04 reaches the alternate 0x82D22930..0x82D22938 store of retained r16 to the same global. The source object, retained value, lifecycle, and live excluded player remain unresolved."
   },
   "calendarTableJoin": {
     "setup": "0x82D1EC64 and 0x82D1EC88 form 0x830E9200 in r15. 0x82D1EC94 stores it at stack +0x78, supplying the selected stride-32 halfword reads accepted in city-yield-turn-scheduling-inputs.",
     "reuseBoundary": "The exact Calendar generated metadata has two explicit destination-displacement stores to stack +0x78: 0x82D1EC94 and 0x82D1FFB4. The latter lies after the accepted city-loop increment/backedge and reuses the slot for a separately formed value. Hidden aliases and unexpanded side effects remain outside this explicit audit.",
-    "qualification": "The selected pointer is a static base, not an allocation returned by a helper. Table semantics, extent, writers, and valid incoming-player/indirect indices remain unresolved."
+    "qualification": "The selected pointer is a static base. city-yield-ranking-table-boundary.json owns its local ordinal producer, null-auxiliary transfer span, and index limits. Complete table writers, column semantics, valid live incoming-player/indirect selectors, refresh timing, and credit cadence remain unresolved."
   },
   "conditionalMethodJoin": {
     "publicationInput": "native-renderer-alternate-resolve-provider.json#/rawUnresolvedOwnerFieldReceiverBoundary/managerSlot10WriterBoundary establishes its exact non-null manager +0x10 publication path through registry lookup and factory 0x82CB12F0 to vtable 0x8215FA78. This is reused conditionally for the matching Calendar receiver source.",
@@ -110,9 +110,13 @@
       "generated:rerevved/sub_82D25170:0x82D25200..0x82D25250",
       "generated:rerevved/sub_82D89AF8:0x82D89B18..0x82D89B48",
       "generated:rerevved/sub_82D1EAB0:0x82D1EC64..0x82D1EC94,0x82D1FFB4",
-      "generated:rerevved/sub_82A73340:0x82A73340..0x82A73344"
+      "generated:rerevved/sub_82A73340:0x82A73340..0x82A73344",
+      "ghidra/DumpMemoryWords.java:0x82CC6160,0x82D24EE0,0x82D24F68 radius=32",
+      "generated:rerevved/sub_82CC4040:0x82CC4F14,0x82CC6178..0x82CC618C",
+      "generated:rerevved/sub_82D217C8:0x82D24EB8,0x82D24F40..0x82D24F74"
     ],
-    "qualification": "All invocations exited successfully without a project mutation. No unchanged direct-call scan, global writer closure, broad discovery, scheduling observation, or runtime mutation was added; only the selected two-instruction +0x100 method was expanded."
+    "qualification": "All invocations exited successfully without a project mutation. No unchanged direct-call scan, global writer closure, broad discovery, scheduling observation, or runtime mutation was added; only the selected two-instruction +0x100 method was expanded.",
+    "additionalJoin": "The ranking-table read records the additional selected words at city-yield-ranking-table-boundary.json#/currentEvidence. The retained-register audit checks explicit generated destinations, not complete side effects or helper results."
   },
   "guards": [
     "Do not rename the gate byte, turn-difference word, state-three/state-four word, or halfword table from a selected store or address join.",

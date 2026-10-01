@@ -37,7 +37,7 @@
       "owner": "0x82CC4040",
       "address": "0x82CC4F14..0x82CC4FF0",
       "result": "At 0x82CC4F14 r19 is set to zero. A word comparison at 0x82CC4F18 selects the path at threshold ten. Its mode-one and mode-zero branches pass table base as r4 and literal 66 as r3 to 0x822DE4F0 and 0x822DE570 at 0x82CC4F3C and 0x82CC4F64. The other path passes literal 42 and stack +0xA0 instead. At 0x82CC4FAC..0x82CC4FC4 the table is filled with 0xFF over 0x108 bytes; the following loop copies paired words from stack +0xA0/+0xA4 to table +0/+4 using retained offset r19, stepping eight until offset 0xA8.",
-      "qualification": "The local reset and paired stores are explicit. The word threshold meaning, buffer helpers and their virtual destinations, input validation, restored values, and runtime save/load remain unresolved. The retained zero offset relies on ordinary nonvolatile-register preservation across the called helpers; their internals were not expanded."
+      "qualification": "The explicit generated destinations in 0x82CC4F14..0x82CC4FF0 contain no later r19 assignment before the paired stores; the retained offset is zero under ordinary nonvolatile-register preservation. The reset covers 33 slots and the paired-copy offset 0..0xA0 restores 21 slots, leaving the other twelve reset on that local path. The selected paired-copy loop performs no owner/city value validation before its stores. Direct-buffer paths use a separate 66-word transfer shape. Virtual buffer destinations, supplied values, format meaning, enclosing validation, and runtime save/load remain unresolved."
     },
     "cityMatchRewrite": [
       {
@@ -45,14 +45,14 @@
         "address": "0x82D1B008..0x82D1B02C",
         "store": "0x82D1B01C",
         "result": "The loop loads each slot +4, compares it to retained r17, and writes retained r21 to +0 only on equality. It steps eight bytes to table base +0x108. Entry 0x82D1AC88/0x82D1AC8C copies incoming r3/r4 into r17/r21.",
-        "qualification": "The entry copies and selected loop are checked separately; complete intervening retention, caller policy, and execution phase are not established."
+        "qualification": "The exact generated function contains no explicit r17 or r21 destination after the two entry copies through the selected claim loop. Under ordinary nonvolatile-register preservation, the matching city word is incoming r3 and the new claim-owner word is incoming r4. This is a city-match owner rewrite; caller policy, incoming validity, execution phase, hidden aliases, and runtime timing remain unresolved."
       },
       {
         "owner": "0x82D1B400",
         "address": "0x82D1C8D8..0x82D1C904",
         "store": "0x82D1C8F4",
         "result": "The loop loads each slot +4, compares it to the word at stack +0x154, and writes retained r29 to +0 only on equality. It steps eight bytes to table base +0x108. Entry 0x82D1B41C saves incoming city argument r3 at stack +0x154.",
-        "qualification": "The selected owner-store source r29 and complete stack-slot lifetime are not assigned a new-owner meaning. The entry path separately writes the city owner byte at 0x82D1B45C; the intervening join and runtime transfer remain unresolved."
+        "qualification": "0x82D1B424 retains incoming r4 as r18 and 0x82D1B42C saves it at stack +0x15C. 0x82D1B458/0x82D1B45C converts that supplied owner to a signed byte and writes it into city +0. 0x82D1C79C reloads stack +0x15C into r29, supplying the selected claim-owner stores. The exact generated destinations contain no explicit r29 reassignment from that reload through 0x82D1C8F4, and the only explicit stores to stack +0x154/+0x15C through the loop are their entry saves. This binds a local city-owner transfer and matching claim-owner rewrite, not construction. Hidden aliases, helper side effects beyond ordinary ABI preservation, validation, caller policy, and runtime transfer remain unresolved."
       }
     ],
     "calendarSynchronization": {
@@ -64,7 +64,7 @@
         "0x82D1F62C"
       ],
       "result": "The local loop processes three eight-byte slots per iteration and steps 0x18 until table base +0x108. Each lane requires slot owner != -1, positive signed city +3, and signed city owner != -1. It indexes the city table at 0x8314FE28 by slot +4 times 0xBC and rewrites slot +0 with that signed city owner. Separate indexed and +0x20 counters are incremented after each retained lane.",
-      "qualification": "These are claim-owner synchronization stores, not construction stores or culture/gold credits. Complete preconditions, city-index validation, aggregate meanings, invalid-city cleanup, and runtime execution remain unresolved."
+      "qualification": "Each selected lane reads slot city and multiplies it by 0xBC before its live-city tests; it has no local 0..127 city-index guard before that read. Owner -1, nonpositive signed city +3, or signed city owner -1 skips that lane without clearing its claim words. Otherwise only the claim-owner word is replaced; the claimed-city word is retained. This closes the local skip behavior, not global invalid-city cleanup, index validation, lifecycle timing, aggregate meanings, or runtime execution."
     }
   },
   "selectedConsumers": {
@@ -98,9 +98,13 @@
       "generated:rerevved/sub_82D1B400:0x82D1B400..0x82D1B45C,0x82D1C8D8..0x82D1C904",
       "generated:rerevved/sub_82D1EAB0:0x82D1F528..0x82D1F654",
       "generated:rerevved/sub_82CF7D88:0x82CF7D88..0x82CF7DD8",
-      "generated:rerevved/sub_82D7B6A0:0x82D7B7B4..0x82D7B7FC"
+      "generated:rerevved/sub_82D7B6A0:0x82D7B7B4..0x82D7B7FC",
+      "ghidra/DumpMemoryWords.java:0x82D1AC88,0x82D1AFD0,0x82D1B41C,0x82D1C8B0,0x82CC4F90 radius=32",
+      "ghidra/DumpMemoryWords.java:0x82D1C79C,0x82D1F550,0x82D1F600 radius=32",
+      "generated:rerevved/sub_82D1B400:0x82D1B41C..0x82D1B45C,0x82D1C79C..0x82D1C904"
     ],
-    "qualification": "Undefined listing interiors use exact raw words and narrow generated corroboration. Entries and separate loop spans do not prove intervening retention or whole-function reachability. Adjacent words receive no selected-owner semantics."
+    "qualification": "Undefined listing interiors use exact raw words and narrow generated corroboration. Entries and separate loop spans do not prove intervening retention or whole-function reachability. Adjacent words receive no selected-owner semantics.",
+    "retentionAudit": "The additional selected words are part of the four-invocation read recorded in city-yield-ranking-table-boundary.json#/currentEvidence. Exact-function generated destination audits bind the specified retained registers and explicit stack stores, not hidden memory aliases or arbitrary callee behavior."
   },
   "guards": [
     "Do not infer new completion from first observation of an owned slot or any owner-word change.",
@@ -108,5 +112,11 @@
     "Do not equate the local serializer helper shapes with verified save/load or an external format.",
     "Do not claim complete computed/aliased consumer or writer coverage from syntactic base pairs."
   ],
-  "conclusion": "Selected table-base paths expose reset/buffer stores, two city-match owner rewrites, and Calendar claim-owner synchronization beyond the accepted construction helper. Generic city-word counts remain ordinary claim semantics. Completion detection must discriminate those paths; complete effect coverage, lifecycle, cadence, and runtime acceptance remain open."
+  "conclusion": "Selected serializer/reset paths, retained city-transfer inputs, and Calendar skip/synchronization paths are distinct from the accepted construction helper. Local copied values and unvalidated indices are bounded; complete effect coverage, lifecycle timing, event deduplication, and runtime acceptance remain open.",
+  "completionDiscriminator": {
+    "constructionCandidate": "Reuse wonder-post-threshold-helper-boundary.json#/callsite and wonder-claim-slot-state.json#/claimWrite: caller 0x82D16340 after sufficient production and nonzero eligibility, normalized index 3, helper 0x82D16BA0 with bit zero set, city r4, and paired stores 0x82D16C08/0x82D16C10. The helper entry guards normalized Wonder range but the selected prefix does not check an unclaimed slot before overwriting it.",
+    "excludedOrigins": "First observation of an owned slot, initializer 0x82D060D4, serializer transfers/reset/paired stores, city-match stores 0x82D1B01C/0x82D1C8F4, and Calendar stores 0x82D1F57C/0x82D1F5D4/0x82D1F62C cannot independently classify new construction.",
+    "runtimeRequirement": "Correlate a supported construction caller and threshold/eligibility event with before/after paired slot words, valid city index and signed current owner, helper flags, phase and invocation identity. Repeated helper calls and all restore/transfer/reset/synchronization controls must produce no extra Religion grant. A validated event/deduplication contract, not an owner-word transition alone, is required.",
+    "qualification": "No new completion, grant, restore, transfer, reset timing, or Calendar invocation was observed. Complete aliases/writers and caller/lifecycle coverage remain unresolved."
+  }
 }

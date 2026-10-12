@@ -734,8 +734,10 @@ normalization rewrites the later defender input, invalidating the original-r6
 sentinel derivation for a valid participant path. The null local-player return
 also blocks the countdown alternative. The [local-player input boundary](frontend-frame-and-input.md)
 binds a guarded owner `+0x10` writer, the child's dispatch, and initial result
-allocation and word production. A later `+0xC` assignment and retained pointer
-identity remain required for a different current result.
+allocation and word production. Two bounded displacement scans, selected store
+owners, a class-owned reader and a child-field initializer do not bind a later
+result `+0xC` writer. A new caller/alias or result-vptr replacement edge is needed
+before recovering that assignment and retaining its pointer identity.
 A compatible nonzero producer and resolver entry, full transfer and participant
 persistence remain unclosed; no naturally reachable ordinary outcome path is proved.
 

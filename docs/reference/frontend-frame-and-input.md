@@ -72,8 +72,16 @@ successful allocation, registry production and lookup, normal ABI returns and
 stable nonalias ownership, the resolver reads that same initialized word.
 Its low 32 bits represent -1. The nonnull load zero-extends the word, while the
 null arm uses a full-register -1. Allocation failure can leave child `+0x20`
-null and reach the unchecked result read. A later live `+0xC` assignment, value
-meaning, compatible range and object lifetime remain unresolved. The initialized
+null and reach the unchecked result read. A bounded store scan and three
+exact candidate owners did not establish a later assignment to this consumed word. The
+accepted child method also passes the result to a reader that returns a node
+payload, without a direct consumed-word store or address-to-writer edge.
+A second bounded scan finds only initialization of the child's own `+0xC`
+field, which is distinct from the separate result allocation.
+The selected stores use loaded node/payload pointers or adjusted subobject
+bases. The payload float store can overwrite a word, but its receiver identity
+and scalar-producing dispatch remain unresolved. A later native assignment,
+value meaning, compatible range and object lifetime remain unresolved. The initialized
 word establishes no newly proved compatible inputs for a nonzero combat gate. Multiplayer or network
 semantics remain unresolved.
 See the [resolver boundary](../../manifests/playable-game-state-gates.json)

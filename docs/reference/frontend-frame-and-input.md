@@ -65,12 +65,17 @@ input from `0x8314EFE0`. The accepted owner initializer stores zero to that
 owner's `+0x10` field. The selected setup path later stores the matching
 registry lookup return there at `0x82D8C600`. The accepted successful registry
 producer installs vptr `0x8215FA78`; slot `+0x100` selects `0x82A73340`, which
-returns the pointer stored at child `+0x20`. The resolver reads that pointer's
-`+0xC` word. The `+0x20` pointer producer, readable result and value meaning
-remain unresolved. This path requires successful registry production and lookup,
-normal ABI returns and no intervening aliasing mutation or alternate insertion.
-Initial null construction does not establish lifetime nullness. Multiplayer or
-network semantics remain unresolved.
+returns the pointer stored at child `+0x20`. The accepted conditional factory origin
+allocates a 108-byte result object, initializes its `+0xC` word to
+`0xFFFFFFFF` and publishes the constructor return at child `+0x20`. Under
+successful allocation, registry production and lookup, normal ABI returns and
+stable nonalias ownership, the resolver reads that same initialized word.
+Its low 32 bits represent -1. The nonnull load zero-extends the word, while the
+null arm uses a full-register -1. Allocation failure can leave child `+0x20`
+null and reach the unchecked result read. A later live `+0xC` assignment, value
+meaning, compatible range and object lifetime remain unresolved. The initialized
+word establishes no newly proved compatible inputs for a nonzero combat gate. Multiplayer or network
+semantics remain unresolved.
 See the [resolver boundary](../../manifests/playable-game-state-gates.json)
 for the exact production and return qualifications.
 

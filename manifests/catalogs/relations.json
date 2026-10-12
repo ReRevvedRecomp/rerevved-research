@@ -6106,6 +6106,78 @@
           "The edge requires the accepted matching factory/publication path, readable current pointers, retained vptr and normal native ABI returns. Alternate child values and natural runtime reachability are unresolved."
         ]
       }
+    },
+    {
+      "id": "RVA-REL-0542",
+      "kind": "produces",
+      "from": "RVA-SYM-0409",
+      "to": "RVA-STR-0057",
+      "image": "../image.json",
+      "claim": "On successful allocation, sub_82CA5E80 calls the result constructor and publishes its returned allocation at retained child +0x20.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction"
+        },
+        {
+          "kind": "ghidra-static",
+          "locator": "ghidra/DumpMemoryWords.java:0x82CA5F54"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "Allocation failure publishes zero. The edge requires normal allocator/constructor returns and valid distinct storage; later retention and live values are conditional."
+        ]
+      }
+    },
+    {
+      "id": "RVA-REL-0543",
+      "kind": "writes-field",
+      "from": "RVA-SYM-0410",
+      "to": "RVA-FLD-0193",
+      "image": "../image.json",
+      "claim": "At 0x82CAA14C, the result constructor stores the retained low32 0xFFFFFFFF value at original allocation +0xC.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction"
+        },
+        {
+          "kind": "ghidra-static",
+          "locator": "ghidra/DumpMemoryWords.java:0x82CAA14C"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "This is the construction-time value, not a complete writer inventory or proof of a later current word."
+        ]
+      }
+    },
+    {
+      "id": "RVA-REL-0544",
+      "kind": "reads-field",
+      "from": "RVA-SYM-0272",
+      "to": "RVA-FLD-0193",
+      "image": "../image.json",
+      "claim": "At 0x82D8A3CC, LocalPlayerIdResolve reads returned-pointer +0xC. Under the accepted construction/publication and unchanged-field guards, this is the constructed result's consumed word.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction"
+        },
+        {
+          "kind": "ghidra-static",
+          "locator": "ghidra/DumpMemoryWords.java:0x82D8A3CC"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The join requires successful matching production, valid pointers, retained vptr, normal ABI returns and no replacement or aliasing mutation. The unguarded native load guarantees neither readable memory nor a current player identity."
+        ]
+      }
     }
   ]
 }

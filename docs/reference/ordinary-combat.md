@@ -134,6 +134,31 @@ at `0x82CDD8BC` or call at `0x82CDD930`, despite retaining resolver mode
 zero. Normal ABI returns and native/external nonalias effects remain
 conditions. A compatible first-store route into presentation remains unproved.
 
+The field at frame offset 148 is produced upstream as a zero/one Boolean.
+It is initialized to zero and can become one through participant/local-player
+equality, guarded countdown bit tests, later human classification or a separate
+table-bit arm. Later global-byte and classifier tests can clear it. A zero
+preparation return preserves an existing one through the nonzero field arm;
+it does not universally clear the field.
+
+One separate conditional case derives one at `0x82CDBAA8` when the tested
+participant byte differs from -1, original incoming `r6` is -1, and
+`LocalPlayerIdResolve` returns -1 from its null manager `+0x10` arm.
+Zero classifier-enable and global byte inputs bypass later
+overrides and clears. The field survives a normal zero preparation return.
+Original `r6=-1` alone does not identify the eventual actual defender.
+If control reaches the same-frame consumer and the stated nonalias conditions
+hold, `0x82CDD398` loads that one and `0x82CDD618` selects `0x82CDD734`.
+The field gate alone does not establish the later presentation call.
+
+This case requires equality at `0x82CDB9BC`, contradicting the earlier
+unequal-manager guard, and takes the nonzero field arms that the accepted
+stat route excluded. Preparation return zero can remain unchanged. The
+earlier stat and first-store proof therefore cannot be transferred to this
+case. A compatible continuing route with its actual selected contents remains
+unproved. The local-player resolver's nonnull indirect target and object
+meanings also remain unresolved.
+
 Independently, the accepted installed vtable conditionally identifies
 presentation target `0x82D7F838`. A zero manager `+0x18` word bypasses its
 consumer call. The nonzero arm retains incoming `r8=P` in nonvolatile

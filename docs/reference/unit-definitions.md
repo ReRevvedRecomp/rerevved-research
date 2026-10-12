@@ -723,6 +723,11 @@ evaluation thresholds. This is one resolver-backed prediction path, not
 general role parity for the other AI evaluators, early returns, or every
 resolver outcome.
 
+The [ordinary combat boundary](ordinary-combat.md) records separate local
+weighting and checkpoint-selection blocks with conditional generator-word stores.
+Core-pair retention, the selection-store pointer, presentation argument retention
+and participant persistence remain unclosed; no ordinary outcome path is proved.
+
 ## Evidence sources
 
 - [Unique Unit identity selection](../../manifests/unique-unit-identity-selection.json)

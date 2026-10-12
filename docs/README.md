@@ -9,7 +9,7 @@ contribution needs repository-level rules, see
 - [Catalog mining method](catalog-mining.md) - bounded packets, stops, and promotion.
 - [Catalog contract](catalogs.md) - canonical inventory formats and checks.
 - [Style guide](style-guide.md) - scripts, records, and evidence-facing prose.
-- [Recovered game reference](reference/README.md) - readable gameplay, system, and enum findings.
+- [Recovered game reference](reference/README.md) - readable gameplay mechanics, systems, and enum findings.
 - [Headless workflow](workflow.md) - read-only queries and disposable repairs.
 - [Automated and AI-assisted contributions](ai_agents/README.md) - conditional contribution policy.
 - [Comments and prose](ai_agents/comments-and-prose.md) - tracked writing policy.

@@ -7,6 +7,8 @@ source of evidence.
 - [Unit definitions](unit-definitions.md) - unit type IDs, base combat stats,
   normal production-cost ownership, civilization-specific identities, and
   bounded combat and AI consumers.
+- [Ordinary combat boundary](ordinary-combat.md) - independent local weighting
+  and selection blocks, conditional state stores, and unclosed continuation edges.
 - [Civilization Unique Abilities](civilization-bonuses.md) - leaders, Unique
   Abilities, the 16 by 4 cumulative Unique Era Ability table, and its
   shared activation lookup.

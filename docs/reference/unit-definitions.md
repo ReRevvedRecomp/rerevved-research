@@ -726,10 +726,10 @@ resolver outcome.
 The [ordinary combat boundary](ordinary-combat.md) records separate local
 weighting and checkpoint-selection blocks with conditional generator-word stores.
 The guarded frame-value calculations and local stack-store pointer are closed.
-A guarded core-to-first-comparison trace depends on its stated ABI and nonalias
-conditions. Override and ordinal joins, presentation argument retention and
-participant persistence remain unclosed; no naturally reachable ordinary
-outcome path is proved.
+A guarded core-to-first-store trace depends on its stated ABI, nonalias and
+finite ordinal conditions. Stored-content and presentation argument retention,
+later exits and participant persistence remain unclosed; no naturally reachable
+ordinary outcome path is proved.
 
 ## Evidence sources
 

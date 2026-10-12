@@ -173,9 +173,18 @@ to a writer that exchanges word `+0xC` between two searched ordinals. The
 initial inner probe is not bounded by the later retry test against 8. Under
 stable count, nonnegative ordinals without overflow and the ownership/ABI/nonalias
 guards, the initialized -1 word matches neither argument and remains unchanged.
-Actual invocation and a compatible current consumed word are unproved. Other
-nonzero producers remain possible, but a compatible stat and selected-array
-continuation requires a separately established value producer and retention.
+A separate conditional ordinal producer and its three exact callers now have
+proved source loads and stores. The accepted registry/insertion
+guards conditionally bind two caller getter returns to constructed results.
+Equality to the current owner key/child, the result `+0x4` internal lookup and
+unresolved `+0x148` gate, actual scalar values and retention remain required.
+The separate wrapper still needs incoming-result identity and its `+0x190`
+gate. Four tested setup bodies supply no child `+0x88` invocation. The
+[prior-word invocation boundary](../../manifests/playable-game-state-gates.json)
+requires those exact key/value joins or a new scoped `+0x88` callsite. No compatible current consumed word or execution order follows. A
+compatible stat and selected-array continuation still requires that value
+producer, retention and compatibility before its changed nonzero arms can be
+selected.
 The prior zero-route arrays and independent presenter input chain remain
 conditional results.
 

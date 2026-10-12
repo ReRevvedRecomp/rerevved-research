@@ -92,8 +92,20 @@ The initial inner probe precedes its retry test against 8, so that test does
 not establish a universal ordinal range. With stable ownership and count,
 normal ABI returns, nonalias effects and nonnegative ordinals without overflow,
 the initialized `0xFFFFFFFF` word matches neither argument and remains unchanged.
-Actual invocation, ordered current value, legal scalar range and meaning,
-compatible nonzero combat return and lifetime remain unresolved. Multiplayer
+A separate conditional producer retains its incoming receiver and stores an
+ordinal at `+0xC` when `low32(r4)==0`. Its ordinal comes directly from
+`low32(r6)` when `signed32(r6)>=0`, or from a finite vacancy search over 0..7
+when `signed32(r6)<0`. An exact wrapper separately stores the producer return, including
+its -1 failure value. Two exact callers look up the accepted registry and pass its child getter
+return to the producer. Under the accepted insertion and stability guards,
+this is the constructed result. Their lookup keys still need equality to the
+current owner key/child. The result `+0x4` internal relookup and its `+0x148`
+dispatch gate, actual scalar values and retention remain unresolved. The
+separate wrapper also needs its incoming-result identity and `+0x190` gate.
+Four tested owner setup bodies contain no child `+0x88` invocation. These exact
+key/value joins, or a new scoped `+0x88` callsite, remain required before
+compatible nonzero consumption can be derived. Actual execution
+and order, legal range and meaning, and lifetime remain unresolved. Multiplayer
 or network semantics remain unresolved.
 See the [resolver boundary](../../manifests/playable-game-state-gates.json)
 for the exact production and return qualifications.

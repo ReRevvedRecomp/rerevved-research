@@ -739,8 +739,11 @@ owners, a class-owned reader and a child-field initializer did not bind a later
 result `+0xC` writer. The child `+0x88` method now conditionally carries the result
 to a writer that exchanges its current word between two searched ordinals.
 Initial -1 remains unchanged under nonnegative/no-overflow ordinal and
-ownership/ABI/nonalias guards. Actual invocation and an ordered compatible
-current-word producer remain required.
+ownership/ABI/nonalias guards. Registry lookup/getter paths conditionally reach
+a prior-word producer, but current-owner key equality, scalar values and its
+internal lookup/dispatch gate remain unproved. The tested setup/cleanup bodies
+contain no child `+0x88` invocation. Invocation and ordered compatible word
+retention remain required.
 A compatible nonzero producer and resolver entry, full transfer and participant
 persistence remain unclosed; no naturally reachable ordinary outcome path is proved.
 

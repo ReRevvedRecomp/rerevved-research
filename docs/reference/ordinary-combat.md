@@ -162,10 +162,11 @@ low six bits are 63. The first intersection is zero even with participant
 halfword `+24` equal to `0xFFFF`, so the branch bypasses the one store.
 The [local-player resolver boundary](../../manifests/playable-game-state-gates.json)
 binds the selected input and its initial null field. That initial value adds no
-compatible nonzero producer. A different result requires a later nonnull writer,
-its installed vptr and the returned-object producer through slot `+0x100`.
-These remain unresolved. Other nonzero producers remain possible, but a
-compatible stat and selected-array continuation requires a separately
+compatible nonzero producer. The accepted successful registry-child path now
+binds its later writer and slot `+0x100` target. That target returns child
+`+0x20`; the pointer producer and a compatible readable `+0xC` result remain
+unresolved in the resolver boundary. Other nonzero producers remain possible,
+but a compatible stat and selected-array continuation requires a separately
 established producer. The prior zero-route arrays and independent
 presenter input chain remain conditional results.
 

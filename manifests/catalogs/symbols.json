@@ -3172,7 +3172,7 @@
       "kind": "function",
       "address": "0x82D8A3A0",
       "image": "../image.json",
-      "claim": "Returns -1 when input offset 0x10 is null; otherwise dispatches vtable offset 0x100 and returns word 0xC from the result object in the bounded local-player selection path.",
+      "claim": "Returns -1 when input offset 0x10 is null; otherwise dispatches vtable offset 0x100 and reads returned-pointer word 0xC. The guarded registry-produced child with vptr 0x8215FA78 selects accessor 0x82A73340, which returns child +0x20.",
       "confidence": "strong",
       "evidence": [
         { "kind": "topic-manifest", "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary" },
@@ -3180,7 +3180,7 @@
         { "kind": "generated-code", "locator": "generated:rerevved/sub_82D8A3A0" }
       ],
       "qualification": {
-        "falsificationCondition": "Current-image evidence does not show the recorded null path, indirect dispatch, and result-word load; the original name, input and result types, field ownership, indirect target, fallback meaning, runtime value, and multiplayer or network semantics remain unresolved."
+        "falsificationCondition": "Changed null-path, slot or result-word operands invalidate the claim. The target identity is conditional on the accepted factory/publication path and retained vptr. The child +0x20 pointee producer, readable result, word meaning, other vptrs, original types, natural combat reachability and multiplayer/network semantics remain unresolved."
       }
     },
     {
@@ -5350,6 +5350,62 @@
         { "kind": "generated-code", "locator": "generated:rerevved/sub_82D1B400:0x82D1B628..0x82D1B650" }
       ],
       "qualification": { "alternatives": ["The index range and read value's meaning are unknown; this read does not establish consumption of the writer's +0 cell."] }
+    },
+    {
+      "id": "RVA-SYM-0407",
+      "name": "sub_82A73340",
+      "kind": "function",
+      "address": "0x82A73340",
+      "image": "../image.json",
+      "claim": "Loads receiver +0x20 into r3 and returns. Vtable 0x8215FA78 places this pointer accessor at +0x100 on the guarded registry-produced child path.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary/nonnullChildProduction"
+        },
+        {
+          "kind": "ghidra-static",
+          "locator": "ghidra/DumpMemoryWords.java:0x82A73340"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/sub_82A73340"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The +0x20 pointee producer, type, lifetime and readable extent are unresolved. The accessor does not guarantee a nonnull result or the meaning of its +0xC word."
+        ]
+      }
+    },
+    {
+      "id": "RVA-SYM-0408",
+      "name": "sub_82D8C570",
+      "kind": "function",
+      "address": "0x82D8C570",
+      "image": "../image.json",
+      "claim": "At 0x82D8C600, stores the registry lookup return into retained owner +0x10. The selected caller chain binds this owner to the pointer loaded from 0x8314EFE0.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary/nonnullChildProduction"
+        },
+        {
+          "kind": "ghidra-static",
+          "locator": "ghidra/DumpMemoryWords.java:0x82D8C600"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/sub_82D8C570"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The nonnull child/vptr identity requires the accepted successful factory, insertion and matching lookup path, normal ABI returns, and no relevant aliasing mutation or alternate insertion. Other callers and natural combat reachability remain unresolved."
+        ]
+      }
     }
   ]
 }

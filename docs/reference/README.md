@@ -20,7 +20,7 @@ source of evidence.
   internal filenames, and pre-load/post-save sidecar edges.
 - [Frontend, frame, and input ownership](frontend-frame-and-input.md) -
   frontend states, timing, application callbacks, availability, local-player
-  input production, and controller dispatch boundaries.
+  resolution, and controller dispatch boundaries.
 - [GFx state and MovieClipLoader requests](gfx-state-and-loadclip.md) - state
   providers, native loadClip requests, attachment, and fulfillment.
 - [GFx external-image rendering](gfx-image-rendering.md) - decoded images,

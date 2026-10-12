@@ -733,7 +733,8 @@ input. The frame `+148` Boolean producer is recovered separately. Participant
 normalization rewrites the later defender input, invalidating the original-r6
 sentinel derivation for a valid participant path. The null local-player return
 also blocks the countdown alternative. The [local-player input boundary](frontend-frame-and-input.md)
-requires a later nonnull owner `+0x10` writer before binding the child's dispatch.
+binds a guarded owner `+0x10` writer and the child's dispatch. The returned
+child `+0x20` pointee and its consumed `+0xC` word still require their producers.
 A compatible nonzero producer and resolver entry, full transfer and participant
 persistence remain unclosed; no naturally reachable ordinary outcome path is proved.
 

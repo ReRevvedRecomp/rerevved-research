@@ -62,10 +62,15 @@ It returns `-1` when input offset `+0x10` is null. Otherwise it dispatches the
 object's vtable slot `+0x100` and returns word `+0xC` from the returned pointer,
 without checking that pointer for null. The selected combat caller loads its
 input from `0x8314EFE0`. The accepted owner initializer stores zero to that
-owner's `+0x10` field. A later nonnull writer, its installed vptr, the indirect
-target and the returned-object producer remain unresolved. Initial null
-construction does not establish that the field stays null. The input and result
-types, value meaning, and multiplayer or network semantics remain unresolved.
+owner's `+0x10` field. The selected setup path later stores the matching
+registry lookup return there at `0x82D8C600`. The accepted successful registry
+producer installs vptr `0x8215FA78`; slot `+0x100` selects `0x82A73340`, which
+returns the pointer stored at child `+0x20`. The resolver reads that pointer's
+`+0xC` word. The `+0x20` pointer producer, readable result and value meaning
+remain unresolved. This path requires successful registry production and lookup,
+normal ABI returns and no intervening aliasing mutation or alternate insertion.
+Initial null construction does not establish lifetime nullness. Multiplayer or
+network semantics remain unresolved.
 See the [resolver boundary](../../manifests/playable-game-state-gates.json)
 for the exact production and return qualifications.
 

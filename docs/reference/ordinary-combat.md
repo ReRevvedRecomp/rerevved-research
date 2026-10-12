@@ -1,18 +1,30 @@
 # Ordinary combat boundary
 
-Separate local blocks in `CombatResolve` establish stat-weighting operations,
-conditional selection arithmetic, local stack writes and exact generator-word
-stores. The two definition-byte fallthroughs preserve their current weighted
-words. The wider continuations remain unjoined. The result does not establish
-an ordinary path from the accepted stat pair to an outcome or persistent
-participant changes.
+One guarded static route in `CombatResolve` retains the accepted core stat
+pair through weighting into frame words 156 and 160, then reloads those words
+at `0x82CDBDE8` and `0x82CDBDF4`. Separate local blocks establish conditional
+selection arithmetic, local stack writes and exact generator-word stores.
+Continuity onward into selection remains unjoined. Natural reachability, an
+ordinary combat outcome and persistent participant changes are unproved.
 
 ## Independent local blocks
 
 The accepted pair obtains attacker attack at `0x82CDA214` and defender defense
-at `0x82CDA234`, retaining them separately. Later weighting instructions have
-the corresponding operand orientation under explicit register-retention
-assumptions. Resolver mode and a separate local flag remain distinct inputs.
+at `0x82CDA234`, retaining them separately. The guarded route excludes the
+literal-25 replacement, tripling and local-flag replacement, and preserves
+those register roles until weighting. Current composed scalars multiply the
+two stat words, keeping each product's low 32 bits. Resolver mode and a
+separate local flag remain distinct inputs.
+
+This route requires both participants to have UnitType 16, zero additive
+inputs, zero ownership-query returns, positive weighted words and the stated
+byte, flag and player guards. It also requires normal native ABI returns and
+external memory effects that do not alias the protected frame or live inputs.
+The preparation call takes a narrow helper bypass and returns zero under a
+comparison against an existing local float word. That word's initialization
+is unproved. These explicit conditions establish conditional dataflow, not
+observed ordinary values or a naturally reachable path. Other resolver arms
+can replace, triple, halve, add to or zero the stat words.
 
 UnitType 16, Catapult, has definition byte `+0x48` equal to 1 in the supported
 image. Local mask construction and selection examples assume valid frame and
@@ -38,8 +50,9 @@ participant halfword `+0x52`, multiplies that count by the current weighted
 word, and divides the low product word signed by the definition count. It
 subtracts the quotient into a separate register, `r29` or `r30`. The current
 weighted words in `r23`/`r15` and frame offsets 156/160 survive these blocks.
-A zero participant halfword gives quotient zero. These local joins leave
-core-pair retention and control flow into selection unproved.
+A zero participant halfword gives quotient zero. Core-pair retention into
+these frame loads is established only under the guarded route above. Control
+and value retention onward into selection remain unproved.
 
 ## Unclosed continuations
 

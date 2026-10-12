@@ -224,14 +224,9 @@ and remains unresolved. See
 
 UEA 8 has a bounded shared owner in `CityGrowthThresholdLookup` at
 `0x82CF1060`. It reads the player byte at city `+0x00` for the cumulative
-UEA 8 query at `0x82CF10F8` and the population byte at `+0x03` for its
-baseline. When active, it returns `max(20, baseline - 10)` instead of the
-retained baseline.
-The city-update path in `0x82D13978` compares signed city halfword `+0x34`
-against this threshold, subtracts the threshold when growth occurs, and
-increments `+0x03`. The complete formula boundary and
-consumer evidence are in
-[`city-growth-threshold.json`](../../manifests/city-growth-threshold.json).
+UEA 8 query at `0x82CF10F8`. The [city growth threshold](city-growth.md) page
+owns the baseline arithmetic, exact bonus adjustment, and stored-progress
+carry-over boundary.
 
 UEA 13 has a bounded shared owner in `EffectiveUnitAttackLookup` at
 `0x82CF2230`. The accessor compares the base `UnitType` with Cannon type 17 at

@@ -10,6 +10,8 @@ source of evidence.
 - [Civilization Unique Abilities](civilization-bonuses.md) - leaders, Unique
   Abilities, the 16 by 4 cumulative Unique Era Ability table, and its
   shared activation lookup.
+- [City growth threshold](city-growth.md) - population baseline, ordered
+  integer reductions, civilization bonus, and stored-progress carry-over.
 - [Save storage and slot identity](save-storage.md) - selected record layout,
   internal filenames, and pre-load/post-save sidecar edges.
 - [Frontend, frame, and input ownership](frontend-frame-and-input.md) -

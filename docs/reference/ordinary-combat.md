@@ -141,23 +141,30 @@ table-bit arm. Later global-byte and classifier tests can clear it. A zero
 preparation return preserves an existing one through the nonzero field arm;
 it does not universally clear the field.
 
-One separate conditional case derives one at `0x82CDBAA8` when the tested
-participant byte differs from -1, original incoming `r6` is -1, and
-`LocalPlayerIdResolve` returns -1 from its null manager `+0x10` arm.
-Zero classifier-enable and global byte inputs bypass later
-overrides and clears. The field survives a normal zero preparation return.
-Original `r6=-1` alone does not identify the eventual actual defender.
-If control reaches the same-frame consumer and the stated nonalias conditions
-hold, `0x82CDD398` loads that one and `0x82CDD618` selects `0x82CDD734`.
-The field gate alone does not establish the later presentation call.
+The equality producer compares the current defender word at frame +1596,
+which can differ from original incoming `r6`. The resolver initially stores
+that argument, then passes the same frame word as an output to
+`0x82CFE450`. One finite matching-entry route writes player index zero
+there before the defender core call. The core call reloads that normalized
+player at `0x82CDA224`. Original `r6=-1` therefore does not by itself
+establish a later equality with a null local-player return of -1.
 
-This case requires equality at `0x82CDB9BC`, contradicting the earlier
-unequal-manager guard, and takes the nonzero field arms that the accepted
-stat route excluded. Preparation return zero can remain unchanged. The
-earlier stat and first-store proof therefore cannot be transferred to this
-case. A compatible continuing route with its actual selected contents remains
-unproved. The local-player resolver's nonnull indirect target and object
-meanings also remain unresolved.
+For that valid normalized defender, the null-return equality is unequal at
+`0x82CDB9BC`. A no-output helper route preserves -1, but establishes no
+valid normalized player. A current defender unit of -1 separately selects
+an early return. These cases cannot supply the missing continuing stat and
+array route.
+
+The countdown producer provides another precise boundary. A current countdown
+of 1 decrements to zero and enters the participant bit tests. With the same
+null local-player return -1, native `slw` produces zero because the shift's
+low six bits are 63. The first intersection is zero even with participant
+halfword `+24` equal to `0xFFFF`, so the branch bypasses the one store.
+A different local-player result requires the unresolved nonnull indirect
+call through vtable `+0x100` in this helper. Other nonzero producers remain
+possible, but a compatible stat and selected-array continuation requires a
+separately established producer. The prior zero-route arrays and independent
+presenter input chain remain conditional results.
 
 Independently, the accepted installed vtable conditionally identifies
 presentation target `0x82D7F838`. A zero manager `+0x18` word bypasses its

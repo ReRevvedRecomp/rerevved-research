@@ -9,7 +9,8 @@ source of evidence.
   bounded combat and AI consumers.
 - [Ordinary combat boundary](ordinary-combat.md) - conditional stat, mask and
   ordinal dataflow into first stack stores, the presentation-gate producer,
-  reset boundaries, and unclosed outcome and persistence edges.
+  participant normalization, reset boundaries, and unclosed outcome and
+  persistence edges.
 - [Civilization Unique Abilities](civilization-bonuses.md) - leaders, Unique
   Abilities, the 16 by 4 cumulative Unique Era Ability table, and its
   shared activation lookup.

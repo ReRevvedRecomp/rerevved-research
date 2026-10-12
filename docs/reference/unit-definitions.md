@@ -729,9 +729,11 @@ The guarded frame-value calculations and local stack-store pointer are closed.
 A guarded core-to-first-store trace depends on its stated ABI, nonalias and
 finite ordinal conditions. Checked post-store subcases reset the array or bypass
 presentation. A separate conditional presenter input chain reaches transfer-call
-input. The frame `+148` Boolean producer is recovered separately; its nonzero
-condition does not inherit the earlier stat trace. A compatible resolver entry,
-full transfer and participant persistence remain unclosed; no naturally reachable
+input. The frame `+148` Boolean producer is recovered separately. Participant
+normalization rewrites the later defender input, invalidating the original-r6
+sentinel derivation for a valid participant path. The null local-player return
+also blocks the countdown alternative. A compatible nonzero producer and resolver
+entry, full transfer and participant persistence remain unclosed; no naturally reachable
 ordinary outcome path is proved.
 
 ## Evidence sources

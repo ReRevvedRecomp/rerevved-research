@@ -5,9 +5,11 @@ pair through weighting into frame words 156 and 160, then reloads those words
 at `0x82CDBDE8` and `0x82CDBDF4`. A guarded asymmetric continuation carries
 them through tripling and mask construction into the actual selection reads
 and first signed comparison, then through override and ordinal selection into
-the first stack stores. Separate local blocks establish exact generator-word
-stores under independent exit conditions. Natural reachability, an ordinary
-combat outcome and persistent participant changes are unproved.
+the first stack stores. Later control distinguishes a retry that overwrites
+those contents from a no-reset subcase that retains the array but bypasses
+presentation. A separate conditional presenter path retains an incoming
+array to transfer-call input. Natural reachability, an ordinary combat
+outcome and persistent participant changes are unproved.
 
 ## Guarded stat and selection flow
 
@@ -30,8 +32,8 @@ can replace, triple, halve, add to or zero the stat words.
 
 UnitType 16, Catapult, has definition byte `+0x48` equal to 1 in the supported
 image. Let `WA=low32(A*X)` and `WD=low32(D*Y)` be the retained weighted words.
-One continuation requires `0 < WA`, `2*WA <= WD < 2^29`, four predicate returns
-with low byte zero, the current tested word equal to 13, and the stated zero
+One continuation requires `0 < WA`, `2*WA <= WD < 2^29`, four
+`IsHumanPlayer` returns with low byte zero, the current tested word equal to 13, and the stated zero
 participant byte guards. These conditions leave local flags `r20=0` and
 `r25=1`, bypassing the optional float adjustment. The definition byte selects
 tripling into frame words `low32(3*WA)` and `low32(3*WD)`. The same zero
@@ -70,10 +72,10 @@ four-byte writes use stack offsets 848 and 920, then the pointer advances
 by four. Every conversion requires finite intermediates and a defined
 signed 64-bit result. A finite successful attempt is an explicit condition;
 termination for arbitrary generator inputs is unproved. The guarded route
-joins the earlier stat pair to these first stores. Later publication of the
-stack contents is unproved. The independent local exit and generator-store
-example has `r25=0`; the continuing stat route retains `r25=1` and does not
-establish that later exit.
+joins the earlier stat pair to these first stores. The continuing route
+retains `r25=1`; its later retry and control flow require the distinctions
+below. The independent local exit example retains its separate `r25=0`
+condition.
 
 For a conditional asymmetric example, core words 10 and 25 with composed
 scalars 10 and 10 give `WA=100` and `WD=250`. The continuation derives frame
@@ -104,18 +106,47 @@ these frame loads is established only under the guarded route above. The
 asymmetric continuation establishes onward retention into the first selected
 stack stores under its additional conditions.
 
-## Unclosed continuations
+## Stored contents and presentation
 
-The accepted installed vtable conditionally identifies presentation target
-`0x82D7F838`. Its incoming argument copy and later call arguments are separate
-endpoint facts. A zero manager `+0x18` word bypasses the call; the nonzero arm
-crosses an unread retention interval. No incoming selection array is proved
-to reach the consumer.
+The `WA=100` example cannot retain its first pair. Value 1 removes the
+single defender mask bit, and the retained `r25=1` arm increments `r29`
+to 101. The signed test against 1000 falls through to another array
+initialization. Eighteen eight-byte writes fill stack offsets `[848,992)`
+with `0xFF`, replacing both first words with `0xFFFFFFFF`. With this value-1 first store, the same first
+retry occurs for `WA<=998`; larger permitted inputs require a separate
+control check.
 
-A separate consumer checkpoint calls `0x827F8550` with destination
-`0x83024E58`, its current source pointer and length 144. The transfer prefix
-stops before `0x827F8688`. Complete publication and the persistent participant
-`+0x52` writer remain unresolved.
+A new conditional upstream example keeps core words 10 and 25 but uses
+composed scalars 100 and 100, deriving `WA=1000`, `WD=2500` and selection
+frame words 3000 and 7500. The same generator inputs give decision word
+7, less than 3000, and ordinal 0. After the first value 1/ordinal 0 stores,
+`r29=1001` bypasses the retry. The selected 144-byte array survives, with
+`0xFF` in its other initialized bytes. The native exit publishes third
+state 2756632324 and counter `low32(C+3)`.
+
+This no-reset subcase additionally requires a nonzero human-player mask
+with both participant bits clear. The repeated `IsHumanPlayer` results
+are consistently zero. The retained frame-148-zero guard at `0x82CDD618`
+excludes the presentation-side arm at `0x82CDD734`. Both later participant
+byte arms converge on the same continuation, even if native stores change
+those bytes. The route reaches the resolver end block without the argument
+at `0x82CDD8BC` or call at `0x82CDD930`, despite retaining resolver mode
+zero. Normal ABI returns and native/external nonalias effects remain
+conditions. A compatible first-store route into presentation remains unproved.
+
+Independently, the accepted installed vtable conditionally identifies
+presentation target `0x82D7F838`. A zero manager `+0x18` word bypasses its
+consumer call. The nonzero arm retains incoming `r8=P` in nonvolatile
+`r24` across both calls to `0x82D7DEE8`, then supplies `r7=P` to
+`0x82D66B20`. The native compiler prologue save thunks preserve incoming argument registers.
+Normal ABI returns and nonalias memory effects are required.
+The consumer's finite text loops retain that pointer and, under explicit
+frame, save-area and write-disjointness conditions, its original 144 bytes.
+Its transfer call input has source `P`, destination `0x83024E58` and length
+144. This independent input chain is not reached by the resolver subcase above.
+
+The transfer prefix stops before `0x827F8688`. Complete publication and the
+persistent participant `+0x52` writer remain unresolved.
 
 The native presentation, pump and completion must be preserved. The accepted
 [combat lifecycle](../../manifests/combat-resolution-lifecycle.json) observed

@@ -727,9 +727,10 @@ The [ordinary combat boundary](ordinary-combat.md) records separate local
 weighting and checkpoint-selection blocks with conditional generator-word stores.
 The guarded frame-value calculations and local stack-store pointer are closed.
 A guarded core-to-first-store trace depends on its stated ABI, nonalias and
-finite ordinal conditions. Stored-content and presentation argument retention,
-later exits and participant persistence remain unclosed; no naturally reachable
-ordinary outcome path is proved.
+finite ordinal conditions. Checked post-store subcases reset the array or bypass
+presentation. A separate conditional presenter input chain reaches transfer-call
+input. A compatible resolver entry, full transfer and participant persistence
+remain unclosed; no naturally reachable ordinary outcome path is proved.
 
 ## Evidence sources
 

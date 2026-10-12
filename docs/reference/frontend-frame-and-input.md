@@ -59,9 +59,15 @@ gate role. Exact limits are in
 
 `LocalPlayerIdResolve` at `0x82D8A3A0` bounds one local-player selection path.
 It returns `-1` when input offset `+0x10` is null. Otherwise it dispatches the
-object's vtable slot `+0x100` and returns word `+0xC` from the dispatched
-result. The input and result types, concrete fields, indirect target, fallback
-meaning, and multiplayer or network semantics remain unresolved.
+object's vtable slot `+0x100` and returns word `+0xC` from the returned pointer,
+without checking that pointer for null. The selected combat caller loads its
+input from `0x8314EFE0`. The accepted owner initializer stores zero to that
+owner's `+0x10` field. A later nonnull writer, its installed vptr, the indirect
+target and the returned-object producer remain unresolved. Initial null
+construction does not establish that the field stays null. The input and result
+types, value meaning, and multiplayer or network semantics remain unresolved.
+See the [resolver boundary](../../manifests/playable-game-state-gates.json)
+for the exact production and return qualifications.
 
 ## Shared frame-timing owner
 

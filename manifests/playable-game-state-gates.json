@@ -20,6 +20,14 @@
     {
       "topic": "gameplay-main-frame-boundary",
       "use": "proved guest-main-thread frame boundary for the default-off observer"
+    },
+    {
+      "topic": "save-profile-storage",
+      "use": "accepted initial 0x78-byte owner construction and publication at the selected resolver input global"
+    },
+    {
+      "topic": "save-profile-owner-lifetime-boundary",
+      "use": "historical bounded exact-global reference inventory and unresolved lifetime, kept separate from the selected +0x10 producer question"
     }
   ],
   "currentEvidence": {
@@ -122,8 +130,111 @@
       "dispatchSlotOffset": "0x100",
       "resultWordOffset": "0xC",
       "nullResult": -1,
-      "result": "The resolver returns -1 when the input pointer at offset 0x10 is null. Otherwise it dispatches vtable offset 0x100 on that pointer and returns word 0xC from the dispatched result object.",
-      "boundary": "The input and result object types, concrete field identities, indirect target, fallback meaning, and multiplayer or network semantics remain unresolved."
+      "result": "The resolver returns -1 when the input pointer at offset 0x10 is null. Otherwise it passes that pointer as r3, loads its vptr at +0x0, calls the word at vtable +0x100, and loads word +0xC from the returned r3 pointer. There is no result-pointer null check before the +0xC read.",
+      "inputProduction": {
+        "caller": "0x82CD9970",
+        "inputGlobal": "0x8314EFE0",
+        "load": "0x82CDB954",
+        "call": "0x82CDB958",
+        "acceptedConstruction": "save-profile-storage.json#/signInStateOwner",
+        "initializer": "0x82D8D548",
+        "baseInitializer": "0x82D8D430",
+        "baseCall": "0x82D8D650",
+        "initialNullStore": "0x82D8D4F0",
+        "result": "The selected CombatResolve call loads r3 from 0x8314EFE0. The accepted 0x78-byte owner constructor retains the incoming pointer in r31 and passes it to 0x82D8D430. That base initializer sets r30=0 at 0x82D8D458 and stores it to the same owner +0x10 at 0x82D8D4F0. The outer constructor restores r3=r31 at 0x82D8D654 before the publication store at 0x82E2E55C.",
+        "qualification": "This proves the initial null store and selected call input, under valid allocation and normal native ABI returns. Retaining null through later calls requires their effects not to alias owner +0x10. The alternative publisher store at 0x82E2E56C uses current r29 and does not identify a nonnull object producer. Same-address sign-in/network catalog aliases do not establish runtime object or field-role equivalence. No original concrete owner or +0x10 object type is assigned."
+      },
+      "dispatchReturnContract": {
+        "inputLoad": "0x82D8A3AC",
+        "nullBranch": "0x82D8A3B4",
+        "receiverCopy": "0x82D8A3B8",
+        "vptrLoad": "0x82D8A3BC",
+        "slotLoad": "0x82D8A3C0",
+        "indirectCall": "0x82D8A3C8",
+        "resultWordLoad": "0x82D8A3CC",
+        "qualification": "The nonnull arm requires a readable input object, readable vptr and slot cell, executable target, ABI-normal return, and a returned pointer with readable +0xC. These are operand requirements, not evidence that a native-produced nonnull object reaches this dispatch. The target, result-object producer, stored word meaning and valid returned range remain unresolved."
+      },
+      "boundedProducerSupport": {
+        "method": "Foreground read-only ghidra/DumpMemoryWords.java and ghidra/FindRawGlobalStoreCandidates.java, exact native-word interpretation, and narrow generated windows with label-anchored mnemonic mapping. A separate custom exact-reference query capped the exact-global inventory at 32 rows.",
+        "functions": [
+          "0x82CD9970",
+          "0x82D8A3A0",
+          "0x82E2E3B8",
+          "0x82D8D548",
+          "0x82D8D430",
+          "0x82D8CC28"
+        ],
+        "functionCap": 8,
+        "rawQueries": 4,
+        "queriedDistinctWords": 273,
+        "previouslyAcceptedDistinctWords": 39,
+        "freshDistinctWords": 234,
+        "repeatedWithinQueries": 4,
+        "distinctWordCap": 3072,
+        "priorAcceptedCombatUnionWords": 2739,
+        "acceptedUnionIncludingFreshWords": 2973,
+        "readWindows": [
+          {
+            "start": "0x82CDB948",
+            "endExclusive": "0x82CDB95C",
+            "words": 5
+          },
+          {
+            "start": "0x82CDB990",
+            "endExclusive": "0x82CDB9C4",
+            "words": 13
+          },
+          {
+            "start": "0x82D8A3A0",
+            "endExclusive": "0x82D8A3F4",
+            "words": 21
+          },
+          {
+            "start": "0x82D8CC28",
+            "endExclusive": "0x82D8CD28",
+            "words": 64
+          },
+          {
+            "start": "0x82D8D430",
+            "endExclusive": "0x82D8D660",
+            "words": 140
+          },
+          {
+            "start": "0x82E2E3B8",
+            "endExclusive": "0x82E2E400",
+            "words": 18
+          },
+          {
+            "start": "0x82E2E540",
+            "endExclusive": "0x82E2E570",
+            "words": 12
+          }
+        ],
+        "excludedDataCells": [
+          "0x82D8D544"
+        ],
+        "globalStoreCandidates": {
+          "global": "0x8314EFE0",
+          "cap": 32,
+          "candidates": 2,
+          "truncated": false,
+          "stores": [
+            "0x82E2E55C",
+            "0x82E2E56C"
+          ],
+          "qualification": "The eight-word same-block lis/D-form search covers only its declared syntactic store forms. Its four emitted words are repeated in the raw windows and add no distinct words. It is not a complete publisher or object-field writer inventory."
+        },
+        "globalReferenceBoundary": {
+          "global": "0x8314EFE0",
+          "cap": 32,
+          "emitted": 32,
+          "truncated": true,
+          "result": "No sampled reference owner was expanded. Truncation stops selection of a later nonnull +0x10 writer. The historical complete reference inventory in save-profile-owner-lifetime-boundary.json remains a separate closed read set; neither inventory establishes absence of field writers."
+        },
+        "checks": "All 273 words match image.json size and SHA-256. The 272 instruction words map to exact generated mnemonic windows; zero padding 0x82D8D544 is excluded from code claims. Independent native operand checks bind the caller global, constructor/base call and zero store. Native resolver control/memory execution returns -1 from that zero field without dispatch. A synthetic nonnull dispatch fixture checks receiver/vptr/slot/CTR/result-pointer operands with adverse volatile clobbers; it supplies no object-production evidence. Five mutations detect a wrong initialization offset, vptr offset, dispatch slot, CTR source and result-word offset. Finite readable memory, normal ABI returns and nonalias effects remain conditions.",
+        "qualification": "The bounded read set contains six native-supported functions and eight generated entries. The incidental generated prologue fragments [0x82D990E0,0x82D990F0) and [0x82D98918,0x82D98934) support no claims. The native read set includes the unrelated 64-word 0x82D8CC28 prefix, which establishes no +0x10 object producer. No complete CombatResolve, publisher, unselected helper arm or runtime execution is claimed. The unknown required nonnull writer and truncated exact-global reference inventory close this read set before any vtable cell or target can be selected."
+      },
+      "boundary": "The required later writer of a nonnull owner +0x10 object, its installed vptr, matching +0x100 cell, concrete dispatch target and exact returned-object producer remain unresolved. Initial null construction cannot prove that the field stays null for its lifetime. A new exact nonnull writer edge must bind this selected input before target or +0xC result semantics can be assigned. Fallback meaning and multiplayer/network semantics remain unresolved."
     },
     "result": "When the human-player mask is nonzero, 0x82CD5A70 classifies a player by testing its bit. The bounded turn-selection path writes selected player IDs to 0x8312B8E8 and can replace a human selection with the local player ID. Runtime observed player 0 as human, players 1-5 as AI, and restoration to player 0.",
     "unknownRule": "Mask zero, active player outside 0-31, or an unreadable scalar makes turn ownership unknown and the read API unavailable.",

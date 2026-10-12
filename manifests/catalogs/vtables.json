@@ -1156,12 +1156,16 @@
       "name": "vtable_8215FA78",
       "address": "0x8215FA78",
       "image": "../image.json",
-      "claim": "The accepted registry factory path installs this table on the child later published to the selected owner's +0x10. Its +0x100 cell contains pointer accessor sub_82A73340.",
+      "claim": "The accepted registry factory installs this table on the child later published to owner +0x10. Its +0x100 cell selects the pointer accessor; its +0x88 cell selects the conditional result-word writer caller.",
       "confidence": "strong",
       "evidence": [
         {
           "kind": "topic-manifest",
           "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary/nonnullChildProduction"
+        },
+        {
+          "kind": "topic-manifest",
+          "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/laterWordWriterBoundary"
         }
       ],
       "qualification": {
@@ -1188,7 +1192,29 @@
           ],
           "qualification": {
             "alternatives": [
-              "Live dispatch requires this vptr to remain installed. Successful initialization supplies the constructed 108-byte pointee; allocation failure can publish zero. Its later assignments, lifetime, replacement and readability at any later use remain unresolved."
+              "Live dispatch requires this vptr to remain installed. Successful initialization supplies the constructed 108-byte pointee; allocation failure can publish zero. Complete writer coverage, current word, lifetime, replacement and readability remain unresolved."
+            ]
+          }
+        },
+        {
+          "id": "RVA-SLOT-0071",
+          "offset": "0x88",
+          "target": "RVA-SYM-0411",
+          "claim": "Cell 0x8215FB00 contains 0x82CA61F0. With this table still installed on the accepted child, the method conditionally carries child +0x20 into the ordinal caller and +0xC writer.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/laterWordWriterBoundary"
+            },
+            {
+              "kind": "ghidra-static",
+              "locator": "ghidra/DumpMemoryWords.java:0x8215FB00"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The first getter check does not guarantee a nonzero or identical second return. Stable vptr, child +0x20, normal ABI, nonalias calls and valid lifetimes are required; actual invocation and complete table extent are unproved."
             ]
           }
         }

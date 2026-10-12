@@ -735,9 +735,12 @@ sentinel derivation for a valid participant path. The null local-player return
 also blocks the countdown alternative. The [local-player input boundary](frontend-frame-and-input.md)
 binds a guarded owner `+0x10` writer, the child's dispatch, and initial result
 allocation and word production. Two bounded displacement scans, selected store
-owners, a class-owned reader and a child-field initializer do not bind a later
-result `+0xC` writer. A new caller/alias or result-vptr replacement edge is needed
-before recovering that assignment and retaining its pointer identity.
+owners, a class-owned reader and a child-field initializer did not bind a later
+result `+0xC` writer. The child `+0x88` method now conditionally carries the result
+to a writer that exchanges its current word between two searched ordinals.
+Initial -1 remains unchanged under nonnegative/no-overflow ordinal and
+ownership/ABI/nonalias guards. Actual invocation and an ordered compatible
+current-word producer remain required.
 A compatible nonzero producer and resolver entry, full transfer and participant
 persistence remain unclosed; no naturally reachable ordinary outcome path is proved.
 

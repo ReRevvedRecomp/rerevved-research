@@ -80,10 +80,21 @@ A second bounded scan finds only initialization of the child's own `+0xC`
 field, which is distinct from the separate result allocation.
 The selected stores use loaded node/payload pointers or adjusted subobject
 bases. The payload float store can overwrite a word, but its receiver identity
-and scalar-producing dispatch remain unresolved. A later native assignment,
-value meaning, compatible range and object lifetime remain unresolved. The initialized
-word establishes no newly proved compatible inputs for a nonzero combat gate. Multiplayer or network
-semantics remain unresolved.
+and scalar-producing dispatch remain unresolved.
+
+The child's exact slot `+0x88` selects a method that conditionally passes
+the same child `+0x20` result through an ordinal-search caller to a native
+word-exchange writer. If the current result `+0xC` equals the outer ordinal,
+the writer stores the searched ordinal. Otherwise, if it equals the searched
+ordinal, the writer stores the outer ordinal. Otherwise the consumed word
+retains its value.
+The initial inner probe precedes its retry test against 8, so that test does
+not establish a universal ordinal range. With stable ownership and count,
+normal ABI returns, nonalias effects and nonnegative ordinals without overflow,
+the initialized `0xFFFFFFFF` word matches neither argument and remains unchanged.
+Actual invocation, ordered current value, legal scalar range and meaning,
+compatible nonzero combat return and lifetime remain unresolved. Multiplayer
+or network semantics remain unresolved.
 See the [resolver boundary](../../manifests/playable-game-state-gates.json)
 for the exact production and return qualifications.
 

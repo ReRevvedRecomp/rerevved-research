@@ -166,14 +166,18 @@ compatible nonzero producer. The accepted successful registry-child path
 binds its later writer and slot `+0x100` target. That target returns child
 `+0x20`. The resolver boundary joins its accepted conditional 108-byte allocation
 and initialized low word `0xFFFFFFFF` to the `+0xC` read. This initial -1 establishes
-no newly proved compatible inputs for the frame `+148` nonzero route. A later native assignment, its scalar producer,
-a compatible consumed word and stable lifetime remain unresolved. The resolver
-boundary bounds three selected store owners and a class-owned reader without
-proving that writer or scalar edge; matching `+0xC` operands alone do not identify the consumed result. Other nonzero
-producers remain possible,
-but a compatible stat and selected-array continuation requires a separately
-established producer. The prior zero-route arrays and independent
-presenter input chain remain conditional results.
+no newly proved compatible inputs for the frame `+148` nonzero route.
+
+A class-bound child `+0x88` method conditionally carries the same result
+to a writer that exchanges word `+0xC` between two searched ordinals. The
+initial inner probe is not bounded by the later retry test against 8. Under
+stable count, nonnegative ordinals without overflow and the ownership/ABI/nonalias
+guards, the initialized -1 word matches neither argument and remains unchanged.
+Actual invocation and a compatible current consumed word are unproved. Other
+nonzero producers remain possible, but a compatible stat and selected-array
+continuation requires a separately established value producer and retention.
+The prior zero-route arrays and independent presenter input chain remain
+conditional results.
 
 Independently, the accepted installed vtable conditionally identifies
 presentation target `0x82D7F838`. A zero manager `+0x18` word bypasses its

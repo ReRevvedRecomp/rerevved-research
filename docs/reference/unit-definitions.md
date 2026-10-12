@@ -725,8 +725,9 @@ resolver outcome.
 
 The [ordinary combat boundary](ordinary-combat.md) records separate local
 weighting and checkpoint-selection blocks with conditional generator-word stores.
-Core-pair retention, the selection-store pointer, presentation argument retention
-and participant persistence remain unclosed; no ordinary outcome path is proved.
+The guarded frame-value calculations and local stack-store pointer are closed.
+Core-pair continuity, presentation argument retention and participant persistence
+remain unclosed; no ordinary outcome path is proved.
 
 ## Evidence sources
 

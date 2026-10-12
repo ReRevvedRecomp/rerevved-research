@@ -1,9 +1,11 @@
 # Ordinary combat boundary
 
 Separate local blocks in `CombatResolve` establish stat-weighting operations,
-conditional selection arithmetic and exact generator-word stores. Their
-continuations are unjoined. The result does not establish an ordinary path
-from the accepted stat pair to an outcome or persistent participant changes.
+conditional selection arithmetic, local stack writes and exact generator-word
+stores. The two definition-byte fallthroughs preserve their current weighted
+words. The wider continuations remain unjoined. The result does not establish
+an ordinary path from the accepted stat pair to an outcome or persistent
+participant changes.
 
 ## Independent local blocks
 
@@ -22,17 +24,24 @@ The selection block advances a state word by a low-word multiply-add and
 optional unsigned modulus reduction, then uses scaled arithmetic in a signed
 comparison. On the synthetic single-bit case, a successful ordinal-zero
 selection clears the defender-corresponding local bit. Two four-byte stores
-write selection value 1 and ordinal 0 through current `r7`, at offsets 0
-and `+0x48`. The pointer's origin and memory class are unknown. The same local
-checkpoint and exit assumptions support exact generator state/counter stores;
-they do not join the checkpoint to the earlier combat-stat pair.
+write selection value 1 and ordinal 0. Entry through `0x82CDC640` forms
+`r7 = r1+848`, so the first writes use stack offsets 848 and 920. The pointer
+survives the comparison and ordinal retry, then advances by four bytes for
+another entry. The same local checkpoint and exit assumptions support exact
+generator state/counter stores. They do not join the checkpoint to the earlier
+combat-stat pair or establish later publication of the stack contents.
+
+The branches at `0x82CDBE58` and `0x82CDBF38` bypass reduction when the
+respective definition byte has no set bits among bits 0, 1 and 2. Definition
+byte 1 enters both fallthroughs. Each counts the same three bits of its
+participant halfword `+0x52`, multiplies that count by the current weighted
+word, and divides the low product word signed by the definition count. It
+subtracts the quotient into a separate register, `r29` or `r30`. The current
+weighted words in `r23`/`r15` and frame offsets 156/160 survive these blocks.
+A zero participant halfword gives quotient zero. These local joins leave
+core-pair retention and control flow into selection unproved.
 
 ## Unclosed continuations
-
-The selected definition value makes two branches fall through unread ranges
-`0x82CDBE60..0x82CDBEE0` and `0x82CDBF40..0x82CDBFC0`. Core-pair retention
-into selection is unproved. The missing instruction at `0x82CDC640` also
-leaves the selection-store pointer unbound.
 
 The accepted installed vtable conditionally identifies presentation target
 `0x82D7F838`. Its incoming argument copy and later call arguments are separate

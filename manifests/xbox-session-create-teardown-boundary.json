@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0141",
+  "topic": "xbox-session-create-teardown-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does every version 1.3 path through session-create wrapper 0x82A1EB38 reach delete, dereference, close, and a -1 handle reset across its bounded exits and direct owner chain?",
+  "scope": {
+    "createWrapper": "0x82A1EB38",
+    "soleDirectCaller": "0x82C9B820",
+    "sessionHandleField": "0x4C",
+    "vtable": "0x82160630",
+    "vtableSlot": "0x0",
+    "vtableTarget": "0x822E5520",
+    "destructorBody": "0x82C9BB38",
+    "teardownWrapper": "0x82C9ACC0",
+    "teardownRequestProducer": "0x82A1EDA0",
+    "boundary": "This packet enumerates the modeled exits of 0x82A1EB38, its sole bounded raw direct caller, and one conditional vtable-to-teardown-request chain for caller field +0x4C. It does not prove that message 0x000B0011 is a delete operation, that every created handle reaches the destructor, assign host or client semantics to the r9 branch, cover indirect or asynchronous ownership, or establish runtime cleanup behavior."
+  },
+  "dependencies": [
+    {
+      "topic": "xbox-system-link-qos-root",
+      "use": "Provides the accepted host-flow observation that records a later platform session-delete event while explicitly leaving title-session teardown unproved."
+    },
+    {
+      "topic": "xbox-kernel-handle-close-boundary",
+      "use": "Provides the accepted NtClose identity and signed-status behavior of wrapper 0x8280DA78."
+    }
+  ],
+  "createWrapper": {
+    "outputSlot": "Incoming r10 is preserved in r22. The function writes -1 through it at 0x82A1EB8C only after the initial argument gates pass.",
+    "requestPath": "After neutral helpers 0x82E93224 and 0x82E93214 succeed, the function submits message 0x000B0010 through 0x82E926F4 at 0x82A1EC80.",
+    "closePath": "Only failure groups G5 and G8 join at 0x82A1ECC4, call 0x8280DA78 at 0x82A1ECC8 on the output-slot value, and then write zero through the slot at 0x82A1ECCC.",
+    "qualification": "No path in this function calls teardown-request producer 0x82A1EDA0 or dereference import 0x82E92314. The two local close paths reset the slot to zero rather than -1."
+  },
+  "exitGroups": [
+    {
+      "id": "G1",
+      "condition": "r4 is at least 4, r8 is zero, r7 is zero, or r10 is null; branches at 0x82A1EB68, 0x82A1EB70, 0x82A1EB78, or 0x82A1EB80 reach 0x82A1ECD4",
+      "return": "0x57",
+      "slotState": "No local write; the prior caller value remains, or the slot pointer is null.",
+      "cleanup": "No close, delete, dereference, or reset."
+    },
+    {
+      "id": "G2",
+      "condition": "A post-initialization flag gate at 0x82A1EB94, 0x82A1EBA4, 0x82A1EBB4, 0x82A1EBC4, 0x82A1EBD8, 0x82A1EBEC, 0x82A1EC08, or 0x82A1EC18 fails",
+      "return": "0x57",
+      "slotState": "-1 from 0x82A1EB8C.",
+      "cleanup": "No close, delete, or dereference."
+    },
+    {
+      "id": "G3",
+      "condition": "Helper 0x82E93224 called at 0x82A1EC20 returns nonzero",
+      "return": "The helper status.",
+      "slotState": "-1 from 0x82A1EB8C.",
+      "cleanup": "No close, delete, or dereference."
+    },
+    {
+      "id": "G4",
+      "condition": "Helper 0x82E93214 called at 0x82A1EC3C returns nonzero",
+      "return": "The helper status.",
+      "slotState": "-1 from 0x82A1EB8C.",
+      "cleanup": "No close, delete, or dereference."
+    },
+    {
+      "id": "G5",
+      "condition": "The 0x000B0010 request at 0x82A1EC80 returns a negative status",
+      "return": "0x65B",
+      "slotState": "The value is closed at 0x82A1ECC8 and replaced with zero at 0x82A1ECCC.",
+      "cleanup": "Close only; no delete or dereference."
+    },
+    {
+      "id": "G6",
+      "condition": "The request returns nonnegative and r9 is nonzero; 0x82A1EC98 branches to 0x82A1ECB0",
+      "return": "0x3E5",
+      "slotState": "The created handle remains without a local overwrite.",
+      "cleanup": "No close, delete, dereference, or reset."
+    },
+    {
+      "id": "G7",
+      "condition": "The request returns nonnegative, r9 is zero, and helper 0x8281B4D0 returns zero",
+      "return": "0",
+      "slotState": "The created handle remains.",
+      "cleanup": "No close, delete, dereference, or reset."
+    },
+    {
+      "id": "G8",
+      "condition": "The request returns nonnegative, r9 is zero, and helper 0x8281B4D0 returns nonzero",
+      "return": "0x65B",
+      "slotState": "The value is closed at 0x82A1ECC8 and replaced with zero at 0x82A1ECCC.",
+      "cleanup": "Close only; no delete or dereference."
+    }
+  ],
+  "directCaller": {
+    "edge": "The bounded raw direct-call scan found one caller: 0x82C9B820 calls 0x82A1EB38 at 0x82C9B8C8 and supplies this +0x4C as the output slot.",
+    "temporaryHandleCleanup": "After every wrapper return, the caller closes only its temporary helper handle: through 0x82CB1430 at 0x82C9B8DC when the result is 0x3E5, or through 0x8280DA78 at 0x82C9B8F8 otherwise.",
+    "qualification": "After the create-wrapper return, the caller does not call 0x82A1EDA0 or 0x82E92314 and does not close or reset session field +0x4C."
+  },
+  "conditionalTeardown": {
+    "dispatch": "Vtable 0x82160630 slot +0x00 contains 0x822E5520. That target calls destructor-shaped body 0x82C9BB38 at 0x822E553C, which calls teardown wrapper 0x82C9ACC0 at 0x82C9BBAC.",
+    "guard": "0x82C9ACC0 reads field +0x4C at 0x82C9ACD4. Values zero and -1 bypass the request and close sequence.",
+    "requestAndDereference": "For another field value, 0x82C9ACC0 calls 0x82A1EDA0 at 0x82C9ACF8. The producer calls 0x82E93214 at 0x82A1EDBC; a nonzero result returns before any request or dereference. A zero result submits message 0x000B0011 through 0x82E926F4 at 0x82A1EDF4 and then dereferences through 0x82E92314 at 0x82A1EE2C. Static title evidence does not identify the message as delete.",
+    "closeAndReset": "The teardown wrapper closes a temporary handle at 0x82C9AD08 or 0x82C9AD14, closes field +0x4C at 0x82C9AD1C, and writes -1 to that field at 0x82C9AD24.",
+    "qualification": "The teardown-wrapper call is conditional on the field guard. Within 0x82A1EDA0, both the request and dereference are conditional on reference-helper success. No accepted static edge proves that every handle retained by G6 or G7 reaches this vtable path."
+  },
+  "boundedNegative": {
+    "result": "The all-path four-operation teardown claim is not supported inside the accepted static closure. Six create-wrapper exit groups perform no close and call neither 0x82A1EDA0 nor 0x82E92314; two groups close and reset to zero but call neither function. The sole direct caller cleans up a separate temporary handle only.",
+    "effect": "A distinct destructor chain can submit message 0x000B0011, dereference, close, and reset field +0x4C to -1, but the request's delete identity and lifecycle reachability from retained create results are unresolved.",
+    "remainingGate": "Independently identify message 0x000B0011 and prove whether every retained result from G6 and G7 reaches vtable target 0x822E5520 without bypassing the guarded request, dereference, close, and reset chain."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only DumpFunctions.java, FindDirectCallers.java, and DumpMemoryWords.java queries against the canonical version 1.3 project, with narrow exact-function generated-code corroboration.",
+    "entries": [
+      {
+        "role": "create-wrapper exits",
+        "address": "0x82A1EB38 through 0x82A1ECE0",
+        "result": "Eight return groups distinguish precondition, helper, request, local-control, and post-request-helper exits; only G5 and G8 reach close, and neither performs delete or dereference.",
+        "confidence": "strong"
+      },
+      {
+        "role": "sole bounded direct caller",
+        "address": "0x82C9B820, 0x82C9B8C8, 0x82C9B8DC, 0x82C9B8F8",
+        "result": "The caller supplies field +0x4C and closes only a separate temporary helper handle after the call.",
+        "confidence": "strong"
+      },
+      {
+        "role": "conditional destructor chain",
+        "address": "0x82160630, 0x822E5520, 0x82C9BB38, 0x82C9ACC0, 0x82A1EDA0",
+        "result": "The chain conditionally reaches request 0x000B0011, dereference, session-handle close, and a -1 field reset, but the request semantic, chain invocation, and reference success are not universal.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpFunctions.java:0x82A1EB38,0x82C9B820,0x822E5520,0x82C9BB38,0x82C9ACC0,0x82A1EDA0",
+      "ghidra/FindDirectCallers.java:0x82A1EB38",
+      "ghidra/DumpMemoryWords.java:0x82160630",
+      "generated:rerevved/sub_82A1EB38",
+      "generated:rerevved/sub_82C9B820",
+      "generated:rerevved/sub_822E5520",
+      "generated:rerevved/sub_82C9BB38",
+      "generated:rerevved/sub_82C9ACC0",
+      "generated:rerevved/sub_82A1EDA0"
+    ],
+    "qualification": "Static control flow proves the bounded path shapes and writes, not host or client meaning, destructor reachability, asynchronous ownership, runtime ordering, or successful platform cleanup."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "result": "No reusable semantic identity or unconditional ownership relation is established, so the catalog delta is zero."
+  },
+  "guards": [
+    "Do not call the r9 control split host versus client without independent evidence.",
+    "Do not treat a nonnegative request status, return zero, 0x3E5, or 0x65B as a universal platform success or failure contract.",
+    "Do not treat the sole raw direct caller as proof that no indirect or asynchronous owner exists.",
+    "Do not infer universal destructor reachability from the vtable slot or destructor-shaped local body.",
+    "Do not identify message 0x000B0011 as a delete operation from call order, neighboring create code, or a later platform log event.",
+    "Do not infer runtime cleanup, release count, transport behavior, discovery behavior, or Internet play from this static boundary."
+  ],
+  "conclusion": "Version 1.3 function 0x82A1EB38 does not perform delete, dereference, close, and -1 reset on every bounded exit. Its eight modeled return groups include six with no close, delete, or dereference and two that close the output-slot value before resetting it to zero. Sole bounded direct caller 0x82C9B820 supplies object field +0x4C but cleans up only a separate temporary helper handle after the call. A distinct vtable-to-destructor chain can conditionally issue request 0x000B0011, dereference, close field +0x4C, and reset it to -1, but static evidence does not identify that request as delete or prove that every retained create result reaches the chain or that its reference helper succeeds. Host/client meaning, indirect or asynchronous ownership, and runtime teardown remain unresolved."
+}

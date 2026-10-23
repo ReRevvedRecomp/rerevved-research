@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0243",
+  "topic": "xbox-live-session-search-contract",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which XGI session requests does the session-mode-2 path of the version 1.3 image issue for browse, search by identifier, join, details, and teardown, and which request fields, result-buffer fields, QoS fields, and advertised session data does the guest read or produce?",
+  "scope": {
+    "modeTwoTable": "Session table 0x82160450 installed by factory 0x82CA28F0 for modes other than 1, and its methods between 0x82C9C5F8 and 0x82C9D678.",
+    "sessionWrapper": "XSession wrapper class with vtable 0x82160630 and methods between 0x82C99018 and 0x82C9C5F8, used by both session modes.",
+    "requestWrappers": "Guest XGI and XLiveBase request wrappers between 0x82A1E770 and 0x82A1FAD8 that call XMsgStartIORequest 0x82E926F4 or XMsgInProcessCall 0x82E92714.",
+    "boundary": "Static request shapes, buffer reads and writes, and completion handling. Runtime delivery, the visible UI that selects mode 2, gameplay transport after a mode-2 join, ranked arbitration and statistics, and the runtime values of game-setup globals remain outside this record."
+  },
+  "dependencies": [
+    {
+      "topic": "xbox-gamespy-surface-inventory",
+      "use": "Supplies the mode split between tables 0x82160348 and 0x82160450, the mode-2 manager entries, and the first identification of the 0x000B0016 and 0x000B001B producers."
+    },
+    {
+      "topic": "xbox-system-link-qos-root",
+      "use": "Supplies the earlier closure of state function 0x82C9D338, QoS producer 0x82C99628, and request-buffer producer 0x82C9CF70, which this record places inside the mode-2 table."
+    },
+    {
+      "topic": "xbox-session-create-teardown-boundary",
+      "use": "Supplies the create wrapper 0x82A1EB38 exit groups and the destructor chain to delete request 0x000B0011 that this record reuses for teardown."
+    }
+  ],
+  "modeTwoTable": {
+    "slots": "Table 0x82160450: +0x00 0x822E5360, +0x0C 0x82C9D338 (state step), +0x10 0x82C9CC68 (release), +0x2C 0x82C9C980 (host), +0x30 0x82C9D080 (browse), +0x34 0x82C9CF70 (search by identifier), +0x38 0x82C9C968 (cancel), +0x3C 0x821B1690 (returns 1), +0x5C 0x82C9C950 (result count), +0x60 0x82C9C928 (index check), +0x64 0x82C9D288 (host name), +0x6C 0x82C9C8E0 (QoS round-trip time), +0x70 0x82C9C8A0, +0x74 0x82C9C828, +0x78 0x82C9C7E8, +0x7C 0x82C9C9F8, +0x80 0x82C9CBC0, +0x8C 0x82C9CC10, +0xA0 0x82C9D560, +0xF8 0x82C9C6A8 (record pointer), and +0xFC 0x82C9C680 (returns 60).",
+    "comparison": "Table 0x82160348 holds 0x82C9F320 (QR2 host), 0x82C9DA48 (LAN browse), 0x822DF8A0 (returns 0), and 0x82C9D978 at +0x2C, +0x30, +0x34, and +0x3C.",
+    "host": "Mode-2 host slot 0x82C9C980 only dispatches slot +0x38 and returns 1. Slot +0x38 target 0x82C9C968 calls XMsgCancelIORequest 0x82E92B24 on the request at +0x28 when state +0x1C is 1. Session creation for a host therefore runs through the shared XSession wrapper, not this table.",
+    "objectFields": "The 128-byte object built by 0x82C9CD68 keeps the user index at +0x44, a byte at +0x48 that selects the search-by-identifier path, the request state at +0x1C, the result-buffer size at +0x20, the result buffer at +0x24, an XOVERLAPPED at +0x28 whose first word is polled for 997, the context count at +0x4C, the context array at +0x50, and the QoS lookup object at +0x7C. Reset helper 0x82C9CB18 first calls listener slot +0x1C with event 1 and its own slot +0x10, then clears these fields and sets +0x44 to -1."
+  },
+  "browse": {
+    "gate": "0x82C9D080 requires network-readiness gate 0x82E476B0, then 0x82CB1140(user, 1), which returns true only when XamUserGetSigninState 0x82E92A74 reports 2. On a sign-in failure it calls XamShowSigninUI 0x82E929A4 with (1, 2) and returns 2.",
+    "sizeProbe": "0x82C9C5F8 calls 0x82A1F310(0, user, 200, 0, 0, null, null, &object+0x20) with null results and null overlapped; it accepts return 122 with a nonzero size.",
+    "contexts": "0x82C9CE10 copies a caller vector of pointers at +0x14 through +0x18, each to a 12-byte {id, value, string} record built by 0x82E47C20, into an 8-byte-per-entry array at +0x50 and stores the entry count at +0x4C.",
+    "request": "0x82C9D080 calls 0x82A1F310 at 0x82C9D16C with procedure index 0, the user index, 200 results, zero properties, a 16-bit context count equal to the stored count minus one, a null property pointer, the context array, &object+0x20, the buffer at +0x24, and the XOVERLAPPED at +0x28. It sets state +0x1C to 1 on return 0 or 997.",
+    "wrapper": "0x82A1F310 requires the size word to be at least 8 + 1326 * results; otherwise, or when the buffer pointer is null, it writes that requirement and returns 122. It zeroes the first two buffer words and submits XMsgStartIORequest app 0xFB message 0x000B0016 with a 32-byte request: +0x00 procedure index, +0x04 user index, +0x08 result count, +0x0C 16-bit property count, +0x0E 16-bit context count, +0x10 property pointer, +0x14 context pointer, +0x18 buffer size, +0x1C buffer pointer. With an overlapped it returns 997; status 0x80155207 returns 122 with the size written, and any other negative status returns 1627.",
+    "stateStep": "0x82C9D338 waits until the XOVERLAPPED first word is not 997, allocates the 2448-byte QoS lookup object with vtable 0x82160700 and the result buffer at +0x04, calls 0x82C99628, and sets state 2. When the lookup result at +0x98C is null or its second word is zero it sets state 3, then calls the listener at +0x14 through slot +0x1C with event 2 and the index for every result, followed by event 5."
+  },
+  "searchById": {
+    "source": "0x82C9CF70 sets +0x48 to 1 and applies the same 0x82CB1140(user, 1) check, but on failure returns 0 without the sign-in UI; it then calls 0x82A1E8D0(user, stack buffer). That wrapper issues XMsgInProcessCall app 0xFC message 0x00058023, which the maintained SDK labels XMessageGameInviteGetAcceptedInfo and fails.",
+    "identifier": "The 64-bit identifier passed to the search is loaded from offset 0x14 of the 0x00058023 output buffer.",
+    "request": "0x82A1F3F0 requires at least 1334 bytes, zeroes the first two buffer words, and submits XMsgStartIORequest app 0xFB message 0x000B001B with a 20-byte request: +0x00 user index, +0x04 64-bit identifier, +0x0C buffer size, +0x10 buffer pointer. 0x82C9CF70 probes the size, allocates the returned size at +0x24, and submits with the XOVERLAPPED at +0x28.",
+    "completion": "When state 3 is reached on this path, a result count of exactly 1 first calls self slot +0x40 and then listener slot +0x0C with 3 and 0; any other count calls listener slot +0x0C with 3 and 9.",
+    "qualification": "The guest reaches this path only after the 0x00058023 request succeeds. Browse-list joins use the stored search records and do not issue 0x000B001B."
+  },
+  "resultLayout": {
+    "header": "Buffer word +0x00 is the record count and word +0x04 is the record-array pointer; 0x82C9C6A8 returns pointer + index * 0x5C.",
+    "record": "Record offsets read by the guest: +0x00 eight-byte session identifier, +0x08 36-byte host address, +0x2C 16-byte key, +0x3C, +0x40, +0x44, and +0x48 slot counts, +0x4C property count, +0x50 context count, +0x54 property-array pointer, +0x58 context-array pointer. 0x82C9C680 reports 60 bytes as the session-information size.",
+    "slotReaders": "0x82C9C8A0 returns +0x48 plus +0x44. 0x82C9C7E8 returns +0x48 plus +0x40. 0x82C9C828 returns slot +0x70 plus +0x40 plus +0x3C.",
+    "properties": "Property entries are 24 bytes with the identifier at +0x00. 0x82C9C760 returns the 32-bit word at entry +0x10 for property 0x1000003B. 0x82C9C6D8 returns the 64-bit value at entry +0x10 of property 0x20000039. 0x82C9D1B8 skips property 0x20000039 and converts the pointer at entry +0x14 of property 0x40008109 into a title string for host-name slot +0x64.",
+    "contexts": "Context entries are 8 bytes, identifier then value. Without the +0x48 path, 0x82C9CA08 searches the record's context array for the requested identifier.",
+    "interpretation": "These offsets agree with the public Xbox 360 XSESSION_SEARCHRESULT shape: XSESSION_INFO of 60 bytes, open public, open private, filled public, and filled private slots, then property and context counts and pointers, with XUSER_PROPERTY and XUSER_CONTEXT entries. Property 0x40008109 has the public X_PROPERTY_GAMER_HOSTNAME value."
+  },
+  "qosLookup": {
+    "call": "0x82C99628 is the only direct caller of the NetDll_XNetQosLookup wrapper 0x827F10F0 (call at 0x82C996F4). For each record it stores pointers to record +0x08, +0x00, and +0x2C in three 200-entry arrays at lookup +0x0C, +0x32C, and +0x64C, then requests all records with 8 probes, no bits-per-second limit, no flags, no event, and output at +0x98C.",
+    "readers": "0x82C9C8E0 returns the 16-bit word at +0x16 of entry index * 24 in the lookup result, or 2500 when no lookup object exists. 0x82C997F0 and 0x82C99790 treat entry +0x0E as a byte count and entry +0x10 as a pointer to 12-byte records, returning record word 0 and word 1.",
+    "use": "On the +0x48 path, 0x82C9CA08 reads context values from those 12-byte QoS records instead of the search record. Slot +0x80 target 0x82C9CBC0 returns context 55 from the QoS records on that path and property 0x1000003B from the search record otherwise.",
+    "interpretation": "Under the public XNQOS layout the reads are the per-host median round-trip time, data length, and data pointer. The guest waits for the second header word, the pending count, to reach zero before completing the list."
+  },
+  "hostAdvertisement": {
+    "contexts": "Game-setup builder 0x82D8CDA8 fills the settings object passed to the XSession wrapper from the game-setup object whose pointer is stored at global 0x8314EFC8. It sets context 0x800A to 0 when that object's word +0x04 equals 5 and to 1 otherwise, context 0x800B to 0, 1, 2, or 3 from word +0x118, contexts 7, 4, 5, and 11 from words +0xFC through +0x108 when nonnegative, and context 55 from global 0x8312B8D4.",
+    "settingsBytes": "The same builder sets byte +0x04 when word +0x04 is 5, byte +0x05 when it is 2, 4, or 5, byte +0x06 and byte +0x07 from game-object queries, and stores public and private slot counts at +0x08 and +0x0C.",
+    "properties": "0x82D8F398 sets property 0x2000003A to zero and property 0x1000003B to the 32-bit value of global 0x8312B8D4 through XGIUserSetPropertyEx wrapper 0x8280E230. Host create method 0x82C9B668 sets property 0x20000039 to the user's XUID from XamUserGetXUID.",
+    "setters": "0x8280E110 issues message 0x000B0006 with a 24-byte request and 0x8280E1A0 issues 0x000B0007 with a 32-byte request. Both create methods issue 0x000B0006 once for each settings context.",
+    "qosListen": "0x82C99120 copies the settings contexts into 12-byte records of id, value, and a guest pointer. 0x82C99018 calls NetDll_XNetQosListen through 0x827F10D0 with the session identifier at session +0x0C, those records, their byte length, zero bits per second, and flags 5. 0x82C9C360 invokes them after a successful create only when registry slot +0x130 returns nonzero; migrate method 0x82C9BF98 also calls both at 0x82C9C0D8 and 0x82C9C0E8.",
+    "qualification": "Global 0x8312B8D4 is zero in the static image and has one modeled reader; its runtime writer is not established. The 72-byte QoS payload of an earlier System Link capture corresponds to six such records; which conditional context was absent is not established."
+  },
+  "sessionLifecycle": {
+    "table": "Vtable 0x82160630: +0x00 0x822E5520 (destructor), +0x04 0x82C9B668 (host create), +0x08 0x82C9B4B8 (join create), +0x0C 0x82C9C278 (message 0x000B0018), +0x10 0x82C9B408 (0x000B0014), +0x14 0x82C9C468 (0x000B0015, 0x000B001D, 0x000B0018), +0x1C 0x82C9B2E0 (0x000B001D), +0x20 0x82C9B0D0 (0x000B0012), +0x24 0x82C9AF78 (0x000B0013), +0x28 0x82C9BF98 and +0x2C 0x82C9AE68 (0x000B001E), +0x58 0x82C9ADC8 (0x000B001D), +0x74 0x82C9C360 (create and QoS listen), +0x78 0x82C99368, +0x80 0x82C9B918 (create flags). Constructor 0x82C9BC38 stores the vtable and sets handle +0x4C to -1.",
+    "createFlags": "0x82C9B918 returns 0x2E, or 0x43E when settings context 0x800A is 0, when registry slot +0x94 returns true and settings byte +0x05 is set; 0x20 when that slot returns true and the byte is clear; 0x706 when the slot returns false and the byte is set; otherwise 0. When the slot returns true and settings byte +0x07 is clear it adds 0x100. Host create ORs in 1.",
+    "create": "0x82C9B820 proceeds only while handle +0x4C is -1 and, when registry slot +0x94 returns true, only when its second argument is 1000; it then calls create wrapper 0x82A1EB38 with flags +0x50, user +0x48, public and private slot counts, nonce +0x58, session information +0x0C, a waited overlapped, and handle +0x4C. Join create 0x82C9B4B8 first copies a 60-byte session information argument to +0x0C and rejects any other length.",
+    "join": "0x82C9B0D0 compares the first 36 bytes of a member record with the local member at +0x04. A match issues 0x000B0012 through 0x82A1EE50 with the count and user indices (+0x24, +0x48) from the local record and private-slot bytes from the argument record +0x58; otherwise 0x82A1EEF8 sends the XUIDs at +0x28. Leave 0x82C9AF78 uses the same comparison for 0x000B0013 through 0x82A1EFA0 or 0x82A1F048.",
+    "details": "0x82C9B2E0 and 0x82C9ADC8 call 0x82A1F908 (message 0x000B001D, 24-byte request) with a 128-byte output. 0x82C9B2E0 returns true when output +0x0C lacks bit 0x08, and otherwise only when output +0x18 is at least the number of members needing a public slot. 0x82C9ADC8 returns false only when output +0x0C has bit 0x100.",
+    "teardown": "Destructor chain 0x822E5520, 0x82C9BB38, 0x82C9ACC0 issues 0x000B0011 through 0x82A1EDA0 when handle +0x4C is not 0 or -1, closes the handle, and writes -1. Mode-2 table release 0x82C9CC68 cancels a pending search, frees the context array at +0x50 and the result buffer at +0x24, and destroys the QoS lookup object at +0x7C.",
+    "shared": "Every direct caller of the 0x000B0010 through 0x000B0015, 0x000B0018, 0x000B001A, 0x000B001D, and 0x000B001E wrappers lies between 0x82C9ACC0 and 0x82C9C5F8; 0x000B0025 is issued from 0x82CA8750. Table 0x82160450 issues only XGI messages 0x000B0016 and 0x000B001B, plus XLiveBase message 0x00058023 at 0x82C9CFC4."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra queries against a disposable copy of the version 1.3 project repaired for the 0x827F7C50 thunk block (40 slots patched, 15 noreturn flags cleared, zero rebuild errors), exact-function generated-code reads where Ghidra cannot decode inline 64-bit stores, and comparison with the maintained SDK XGI and XLiveBase handlers.",
+    "entries": [
+      {
+        "role": "mode-2 table",
+        "address": "0x82160450, 0x82C9D080, 0x82C9CF70, 0x82C9D338",
+        "result": "Browse, search by identifier, and the state step that drives QoS lookup and listener events.",
+        "confidence": "strong"
+      },
+      {
+        "role": "search request",
+        "address": "0x82A1F310 (call site 0x82A1F398)",
+        "result": "Message 0x000B0016, 32-byte request, 8 + 1326 bytes per result.",
+        "confidence": "strong"
+      },
+      {
+        "role": "search-by-identifier request",
+        "address": "0x82A1E8D0, 0x82A1F3F0",
+        "result": "Message 0x00058023 supplies the identifier for message 0x000B001B, 20-byte request, 1334-byte minimum.",
+        "confidence": "strong"
+      },
+      {
+        "role": "result readers",
+        "address": "0x82C9C6A8, 0x82C9C7E8, 0x82C9C828, 0x82C9C8A0, 0x82C9C760, 0x82C9C6D8, 0x82C9D1B8, 0x82C9CA08",
+        "result": "92-byte records with slot counts, 24-byte properties, and 8-byte contexts.",
+        "confidence": "strong"
+      },
+      {
+        "role": "QoS",
+        "address": "0x82C99628, 0x82C9C8E0, 0x82C997F0, 0x82C99790, 0x82C99120, 0x82C99018",
+        "result": "One lookup caller; round-trip time and 12-byte context records; host listen with the same records.",
+        "confidence": "strong"
+      },
+      {
+        "role": "XSession wrapper",
+        "address": "0x82160630, 0x82C9B918, 0x82C9B820, 0x82C9B0D0, 0x82C9AF78, 0x82C9B2E0, 0x82C9ACC0",
+        "result": "Shared create, join, leave, details, and delete with mode-dependent create flags.",
+        "confidence": "strong"
+      },
+      {
+        "role": "advertised data",
+        "address": "0x82D8CDA8, 0x82D8F398, 0x82C9B668",
+        "result": "Contexts 0x800A, 0x800B, 7, 4, 5, 11, and 55; properties 0x20000039, 0x2000003A, and 0x1000003B.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82160490,0x82160510,0x82160390,0x82160690,0x82160700,0x8312B8D4",
+      "ghidra/DumpFunctions.java:0x82C9C680,0x82C9C6A8,0x82C9C7E8,0x82C9C8A0,0x82C9C8E0,0x82C9C928,0x82C9C950,0x82C9C968,0x82C9C980,0x82C9D080",
+      "ghidra/FindDirectCallers.java:0x82E926F4,0x82E92714,0x827F10F0,0x82A1EB38,0x82A1EDA0,0x82A1EE50,0x82A1EEF8,0x82A1EFA0,0x82A1F048,0x82A1F1C8,0x82A1F260,0x82A1ECE8,0x82A1F908,0x82A1FA38,0x82A1F310,0x82A1F3F0,0x82A1E8D0,0x8280E230,0x8280E198,0x82C99120,0x82C99018,0x82CA0258,0x82C9C360",
+      "ghidra/DumpReferences.java:0x8312B8D4",
+      "ghidra/FindPointerValues.java:0x82CA0258",
+      "generated:rerevved/sub_82C9C5F8",
+      "generated:rerevved/sub_82C9CE10",
+      "generated:rerevved/sub_82C9D080",
+      "generated:rerevved/sub_82C9CF70",
+      "generated:rerevved/sub_82C9D338",
+      "generated:rerevved/sub_82C9C760",
+      "generated:rerevved/sub_82C9C828",
+      "generated:rerevved/sub_82C9CA08",
+      "generated:rerevved/sub_82C9CBC0",
+      "generated:rerevved/sub_82C9D1B8",
+      "generated:rerevved/sub_82C99628",
+      "generated:rerevved/sub_82C997F0",
+      "generated:rerevved/sub_82C99790",
+      "generated:rerevved/sub_82C99120",
+      "generated:rerevved/sub_82C99018",
+      "generated:rerevved/sub_82A1F310",
+      "generated:rerevved/sub_82A1F3F0",
+      "generated:rerevved/sub_82A1E8D0",
+      "generated:rerevved/sub_82C9B918",
+      "generated:rerevved/sub_82C9B820",
+      "generated:rerevved/sub_82C9B668",
+      "generated:rerevved/sub_82C9B4B8",
+      "generated:rerevved/sub_82C9B0D0",
+      "generated:rerevved/sub_82C9AF78",
+      "generated:rerevved/sub_82C9B2E0",
+      "generated:rerevved/sub_82C9ADC8",
+      "generated:rerevved/sub_82C9ACC0",
+      "generated:rerevved/sub_82C9C360",
+      "generated:rerevved/sub_82C9CC68",
+      "generated:rerevved/sub_82D8CDA8",
+      "generated:rerevved/sub_82D8F398",
+      "generated:rerevved/sub_82CB1140",
+      "generated:rerevved/sub_82E476B0",
+      "generated:rerevved/sub_82E47AB0"
+    ],
+    "qualification": "Generated windows supply instruction text where the 32-bit decoder truncates; they corroborate the static control flow but are not runtime proof. XGI message names and structure field names are public-SDK and maintained-SDK interpretation; the guest facts are the offsets, sizes, and constants recorded here."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "result": "Catalog delta is zero. Tables 0x82160450 and 0x82160630 are candidates for vtable catalog entries when an implementation consumes them."
+  },
+  "guards": [
+    "Do not infer that ReRevved or any emulator has run session mode 2; no runtime observation of this path is recorded.",
+    "Do not assume mode-2 gameplay uses GT2 on VDP port 1000; GT2 connect method 0x82CA0258 has no direct caller and three table references, and the transport object chosen after a mode-2 join is not established.",
+    "Do not treat the context count passed to 0x000B0016 as the full array; the guest passes the stored count minus one.",
+    "Do not write result properties or contexts outside the caller buffer on the strength of this record; the guest frees only its buffer, and ownership of any other allocation is not established.",
+    "Do not identify the game-setup values that select create flags 0x2E, 0x20, 0x43E, or 0x706 with visible menu entries.",
+    "Do not record the runtime value of global 0x8312B8D4 from the static zero.",
+    "Do not equate registry slot +0x94 with session mode or with Xbox LIVE versus System Link; the record ties create flags only to that slot and settings byte +0x05."
+  ],
+  "conclusion": "Session mode 2 browses by calling XGI message 0x000B0016 with procedure 0, 200 results, the settings contexts, and a buffer of 8 + 1326 bytes per result, after requiring sign-in state 2 (signed in to Live). It reads 92-byte records for session identifier, host address, key, four slot counts, 24-byte properties (0x1000003B, 0x20000039, 0x40008109), and 8-byte contexts, then runs one QoS lookup over every record and completes the list when no probe is pending, using median round-trip time. Search by identifier (0x000B001B, 20-byte request, 1334-byte buffer) serves only the accepted-invite path through XLiveBase message 0x00058023, and on that path reads contexts from 12-byte records in the host QoS data. Create, join, leave, details, start, end, modify, migrate, and delete are shared with System Link in the XSession wrapper class at vtable 0x82160630; its create flags are selected by settings byte +0x05 and registry slot +0x94: 0x2E, 0x43E when context 0x800A is 0, 0x20, or 0x706, plus 0x100 when invites are off and 1 for a host. Which session mode reaches which branch is not tied statically to slot +0x94. Both creates publish up to seven contexts, host create also sets the XUID property 0x20000039, and a QoS listen payload carries of the same context records; 0x82D8F398 also sets properties 0x2000003A and 0x1000003B, on a path not attributed to host or client."
+}

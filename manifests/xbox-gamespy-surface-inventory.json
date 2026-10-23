@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0235",
+  "topic": "xbox-gamespy-surface-inventory",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which GameSpy components, identifiers, and network paths does the version 1.3 image contain, how does the System Link game list reach a GameSpy LAN query, and which Internet discovery path does the title implement?",
+  "scope": {
+    "gameSpyFunctions": "Observed GameSpy SDK bodies between 0x82A07338 and 0x82A1B4A0; the band edges are not established.",
+    "titleSessionLayer": "Manager entry 0x82D8D170 on manager global 0x8314EFE0, factory 0x82CA28F0, GameSpy session table 0x82160348, XGI session table 0x82160450, and registry global 0x8314F204.",
+    "boundary": "Static inventory of components, identifier strings, title-to-SDK calls, the LAN query and QR2 host arguments, and the mode split between the two session tables. Runtime packets, delivery, join completion, NAT behavior, visible UI ownership of the System Link Refresh action, and the runtime values of the QR2 public and NAT-negotiation flags remain outside this packet."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-alternate-resolve-provider",
+      "use": "Supplies the accepted Server Browsing source equivalence for 0x82A0C598, 0x82A187A0, and the update wrappers, and the table-0x82160348 parent, factory, and +0x54 child publication facts."
+    },
+    {
+      "topic": "xbox-system-link-qos-root",
+      "use": "Owns the open System Link discovery question, its bounded general XGI search negative, and the closed Refresh and OnPressX runtime traces that this packet does not repeat."
+    }
+  ],
+  "components": {
+    "present": [
+      {
+        "component": "Query and Reporting 2",
+        "evidence": "qr2_initA 0x82A09988, qr2_init_socketA 0x82A09368, qr2_create_socket 0x82A09820, qr2_think 0x82A09C20, heartbeat sender 0x82A0C2B8 with the publicport, publicip, statechanged, natneg, localport, and localip%d keys at 0x820C5EAC through 0x820C5EF4, and registered-key table 0x82F32958 whose entries 1, 4, 8, 10, and 30 point to hostname, hostport, numplayers, maxplayers, and nn_groupid.",
+        "confidence": "strong"
+      },
+      {
+        "component": "Server Browsing",
+        "evidence": "ServerBrowserNewA 0x82A0C598, ServerBrowserLANUpdate 0x82A0CE08, ServerBrowserThink 0x82A0D3D8, ServerBrowserHalt 0x82A0D410, ServerBrowserClear 0x82A0D448, SBServerListGetLANList 0x82A1A978, and master-list connect 0x82A1A340 with %s.ms%d.gamespy.com.",
+        "confidence": "strong"
+      },
+      {
+        "component": "GameSpy Transport 2",
+        "evidence": "Title function 0x82CA0258 reports its destination through the diagnostic at 0x821600E4 (16 recorded UTF-8 bytes excluding terminator; SHA-256 F4A7A5944CC087EB1FCF138F2408CA88378E4BC54A34B883E1E5A0185578E14E; original encoding unverified), calls 0x82A085E0 at 0x82CA02A8 with the eight-argument gt2Connect shape (socket, connection out, address string, message, length, 10000 ms timeout, callbacks at object +0x80, nonblocking), and reports failure through the diagnostic at 0x821600F8 (17 recorded UTF-8 bytes excluding terminator; SHA-256 6F74013DF637BF09FA356B70076CDC218F362C5038E744503CACEF8BB8AF0D9E; original encoding unverified) on failure.",
+        "confidence": "strong"
+      },
+      {
+        "component": "Availability check",
+        "evidence": "GSIStartAvailableCheckA 0x82A07350 formats %s.available.gamespy.com at 0x82A073B4 and resolves UDP port 27900 (0x6CFC). It has no raw direct caller, no generated branch, and only a .pdata word, so it is present but unreached in the tested forms.",
+        "confidence": "strong"
+      }
+    ],
+    "absent": {
+      "result": "NAT Negotiation, Presence (GP), GameStats, SAKE, Peer and Chat, CD-key, and MOTD clients are absent by hostname evidence.",
+      "evidence": "A case-insensitive scan of every byte of the pinned flat image finds exactly five gamespy substrings: the three hostname formats below and the asset names GFX_PoweredByGameSpy.gfx and PoweredByGameSpy.dds. The scan finds no natneg1, natneg2, natneg3, gpcm, gpsp, gamestats, peerchat, sake, motd, or openspy host. The only natneg string is the QR2 heartbeat key at 0x820C5EE0.",
+      "qualification": "Hostname absence bounds the clients that resolve standard hosts. It does not exclude a component compiled with an override host or a runtime-built name."
+    }
+  },
+  "identifiers": {
+    "registry": "Initializer 0x82D8D430 calls 0x82D8CC28 at 0x82D8D514. That function assigns string members of registry 0x8314F204 through 0x82D3B798.",
+    "gamename": {
+      "value": "civconps3",
+      "string": "0x821370CC",
+      "writer": "0x82D8CC9C assigns it to registry +0x78.",
+      "consumers": "Registry +0x78 supplies both gamename arguments of ServerBrowserNewA at 0x82C9DAA0 and the gamename argument of qr2_initA at 0x82C9F438."
+    },
+    "secretKey": {
+      "present": true,
+      "length": 6,
+      "location": "Six li/stb immediate pairs in 0x82D8CC28 between 0x82D8CC3C and 0x82D8CC74 build the key at stack +0x54 through +0x59 with a NUL at +0x5A; 0x82D8CCF8 assigns it to registry +0x7C.",
+      "consumers": "Registry +0x7C supplies the queryFromKey argument of ServerBrowserNewA at 0x82C9DAA0 and the secret_key argument of qr2_initA at 0x82C9F438.",
+      "dataCopy": "The key bytes do not occur as a contiguous sequence anywhere in the flat image.",
+      "policy": "The value is retail-derived and deliberately not recorded."
+    },
+    "neighbors": {
+      "fields": "The same function assigns 1.00 (0x821370D8) to registry +0xA0, NPWR00195_00 (0x821370E0) to +0x80, and UP1001-BLUS30130_00 (0x821370F0) to +0x84, and stores 1616, 11000, 28, 2, and 0 to +0x88 through +0x98.",
+      "qualification": "BLUS30130 and the NPWR identifier pattern match PlayStation 3 release identifiers, which indicates a configuration shared with that platform. Field semantics and consumers are not established."
+    },
+    "hostnames": [
+      {
+        "format": "%s.available.gamespy.com",
+        "string": "0x820C5DE4",
+        "user": "GSIStartAvailableCheckA 0x82A07350, UDP 27900",
+        "titleReach": "None in the tested direct, tail-branch, or pointer forms."
+      },
+      {
+        "format": "%s.master.gamespy.com",
+        "string": "0x820C5E2C",
+        "user": "qr2_init_socketA 0x82A09368 formats it at 0x82A09688 only when its ispublic argument is nonzero and override buffer 0x83157EA0 is empty, then resolves UDP 27900 at 0x82A096C4.",
+        "titleReach": "Reached through the title qr2_initA call at 0x82C9F438, conditional on the runtime ispublic value."
+      },
+      {
+        "format": "%s.ms%d.gamespy.com",
+        "string": "0x820C6110",
+        "user": "Master-list connect 0x82A1A340, whose only caller is 0x82A1A0A8.",
+        "titleReach": "None; see internetPath.gameSpyMaster."
+      }
+    ]
+  },
+  "lanQuery": {
+    "browserCreate": "Session-table slot +0x30 target 0x82C9DA48 calls ServerBrowserNewA at 0x82C9DAA0 only when parent +0x54 is null, with queryVersion 1 (QR2), maxConcUpdates 10, lanBrowse 1, callback 0x82C9D760, and the parent as instance. It stores the browser at parent +0x54 and then dispatches parent slot +0x3C at 0x82C9DAC4.",
+    "caller": "Slot +0x3C target 0x82C9D978 calls ServerBrowserClear at 0x82C9D99C, dispatches slot +0x1C of parent +0x14 at 0x82C9D9C8, and calls ServerBrowserLANUpdate at 0x82C9D9DC with async 1, startSearchPort 26900, and endSearchPort 27000.",
+    "wire": "SBServerListGetLANList 0x82A1A978 creates socket(2, 2, 17) at 0x82A1AA30, sets SOL_SOCKET 0xFFFF option 0x20 (SO_BROADCAST) to 1 at 0x82A1AA78, binds only when adapter override list +0x7D4 is nonzero (0x82A1AADC), targets 0x82A08340, which returns 0xFFFFFFFF (255.255.255.255), caps the span at start plus 500, and sends one datagram per port in 26900 through 27000 at 0x82A1AB70.",
+    "requestFraming": "For query version 1 the request is 16 bytes: FE FD 02 00 00 00 00 followed by eight bytes copied from list +0x7DC with the final byte zeroed. Version 0 would send the 10-byte \\echo\\test request (0x820C6124) at 0x82A1AB98.",
+    "sourceDifference": "UniSpySDK bbac5ff sends an 8-byte QR2 echo request from this function, so the guest LAN request is not source-identical to that pin.",
+    "hypothesis": "The static arguments confirm a UDP broadcast query over ports 26900 through 27000, not XSessionSearch, for the GameSpy session table."
+  },
+  "hostSide": {
+    "dispatch": "Manager host helper 0x82D8E1F8 dispatches session slot +0x2C at 0x82D8E408. For table 0x82160348 that slot is 0x82C9F320.",
+    "qr2InitCall": "0x82C9F320 calls qr2_initA at 0x82C9F438 with qrec null, ip null, baseport 26900, registry gamename and secret key, r8 from slot +0x188 at 0x82C9F3F0, and r9 from slot +0x18C at 0x82C9F3D8 of the object returned by registry lookup 0x82CAAAA8 at 0x82C9F360 for session key +0x0C. It passes six code pointers 0x82C9E790, 0x82C9E648, 0x82C9E500, 0x82C9D7F8, 0x82C9DBC8, and 0x82C9E218 and the session as userdata. On success it stores byte 1 at session +0x58.",
+    "parameterShape": "The guest qr2_initA and qr2_init_socketA take sixteen argument slots. The 8th register argument and the first stack argument are zero at this call and have no positional counterpart in the 14-parameter bbac5ff qr2_initA. By the bbac5ff order, r8 is ispublic and r9 is natnegotiate.",
+    "socket": "qr2_create_socket 0x82A09820 creates socket(2, 2, 17) at 0x82A0985C and binds INADDR_ANY (a resolved 127.0.0.1 is cleared) from the base port for at most 100 ports at 0x82A098D0, so the host query socket uses the first free UDP port in 26900 through 26999.",
+    "service": "Slot +0x0C target 0x82C9DB78 calls qr2_think 0x82A09C20 and ServerBrowserThink 0x82A0D3D8. Slot +0x10 target 0x82C9DB20 calls heartbeat-sending QR2 helper 0x82A09F40, whose source identity is not established.",
+    "socketStartup": "Registry initializer call 0x82D8D494 passes a configuration bit to 0x82A07338, which stores it at 0x82F32D50; GameSpy SocketStartUp 0x82A0F460 skips XNetStartup when that word is nonzero."
+  },
+  "refreshJoin": {
+    "staticChain": "Title method 0x82D6C398 (table word 0x8213B8F8) tail-calls 0x82D8D920 with manager 0x8314EFE0. When manager +0x10 is null, 0x82D8D920 creates a mode-1 session through 0x82D8D170 and calls 0x82D8D030, which dispatches session slot +0x30 at 0x82D8D09C. For the GameSpy table this reaches 0x82C9DA48, slot +0x3C, 0x82C9D978, and the LAN update.",
+    "secondRoute": "Dispatcher 0x82D8E848, called from 0x82D89FD8, calls 0x82D8D030 when its r4 argument is zero, helper 0x82D8AA60 returns zero, and manager +0x1C is negative.",
+    "repeat": "Because 0x82C9DA48 reuses an existing browser and still dispatches slot +0x3C, a repeated browse request reissues the LAN query.",
+    "yPressBoundary": "The closed OnPressY runtime target 0x82D76350 directly calls only 0x82D39138, 0x82D6F300, 0x82D6F5D8, and 0x82D6F858; none is 0x82D6C398, 0x82D8D920, 0x82D8D030, 0x82C9DA48, or 0x82C9D978. Its slot +0x3C dispatch uses its second UI object, not a session table. Manager-level slot +0x3C dispatches in 0x82D8A508, 0x82D8C9B8, and 0x82D8DB48 use manager +0x10, not the session at +0x14.",
+    "qualification": "The visible Refresh action is not joined to this chain statically. The UI class owning 0x82D6C398 and the event that invokes it are unresolved, and the closed OnPressY helper continuations were not followed."
+  },
+  "internetPath": {
+    "selection": "0x82D8D170(manager, mode) tears down an existing session whose +0x08 mode differs (0x82D8D1A0), then creates one through 0x82CABB68 and factory 0x82CA28F0 (call 0x82CABB84). Mode 1 allocates 92 bytes with table 0x82160348; any other mode allocates 128 bytes through 0x82C9CD68 with table 0x82160450 and stores the mode at +0x08. The new session receives (mode == 1) through slot +0x04 at 0x82D8D274.",
+    "modeCallers": "Mode 1: browse 0x82D8D920 and host 0x82D8E4D0. Mode 2: browse 0x82D8D898, host 0x82D8E430, and join-by-ID 0x82D8ECC0. Manager tail-call wrappers: 0x82D6C398 to 0x82D8D920, 0x82D6C5F8 to 0x82D8E4D0, 0x82D6DF80 to 0x82D8D898, and 0x82E4F778 and 0x82E4E9F8 to 0x82D8E430; 0x82D6D748, 0x82E76110, and 0x82E6CB88 call 0x82D8D898 directly, and 0x82D8ED68 calls 0x82D8ECC0.",
+    "tableSlots": "Slot +0x2C host: 0x82C9F320 (QR2) versus 0x82C9C980, which makes no GameSpy call. Slot +0x30 browse: 0x82C9DA48 (Server Browsing LAN) versus 0x82C9D080. Slot +0x34: 0x822DF8A0, which returns 0, versus 0x82C9CF70. Slot +0x3C refresh: 0x82C9D978 versus 0x821B1690, which returns 1.",
+    "xgiSearch": "0x82C9D080 calls 0x82A1F310 at 0x82C9D16C with procedure index 0, at most 200 results, and no properties. 0x82A1F310 submits XMsgStartIORequest app 0xFB message 0x000B0016 with a 32-byte request at 0x82A1F398, requires 8 + 1326 bytes per result, and returns 122, 997, or 1627. 0x82C9C5F8 also calls it. 0x82C9CF70 calls 0x82A1F3F0 at 0x82C9CFF0 and 0x82C9D03C; that wrapper submits message 0x000B001B with a 20-byte request carrying a 64-bit identifier at 0x82A1F45C and requires at least 1334 bytes.",
+    "xgiLabels": "The maintained SDK handler labels 0x000B0016 as XSessionSearch with a 32-byte request and 0x000B001B as XSessionSearchByID with a 20-byte request. The guest request sizes and fields agree; the labels remain SDK interpretation.",
+    "gameSpyMaster": "No title path reaches the master server list in the tested forms. ServerBrowserUpdateA 0x82A0CD50, ServerBrowserLimitUpdateA 0x82A0CDA8, ServerBrowserAuxUpdateIPA 0x82A0CF78, ServerBrowserAuxUpdateServer 0x82A0D1D0, 0x82A0CEB8, 0x82A0CF10, and GSIStartAvailableCheckA 0x82A07350 have no raw direct caller, no generated b or bl branch, and only .pdata words. All 18 generated branches into 0x82A0CB80, 0x82A1A0A8, 0x82A1A340, 0x82A1AE18, 0x82A1AEE8, 0x82A1B100, 0x82A1B230, 0x82A1B390, and 0x82A1B4A0 originate inside that closure or those roots.",
+    "qr2Public": "QR2 heartbeats to civconps3.master.gamespy.com UDP 27900 occur only if the runtime r8 value at 0x82C9F438 is nonzero; QR2 is called only from the mode-1 table.",
+    "priorSearchQualification": "The configured project truncates 0x82A1F310 and 0x82C9D080 at save thunk 0x827F7C84 and 0x82A1F3F0 at bad instruction data, which is why the bounded modeled-reference searches for 0x000B0016 found no producer. That negative remains correct only for its tested form.",
+    "result": "The title implements both paths. Mode 1 uses GameSpy Server Browsing in LAN mode plus QR2 hosting. Mode 2 uses XGI session search, search by identifier, and no GameSpy browsing or QR2. No GameSpy master list lookup is reachable."
+  },
+  "titleGameSpyCalls": {
+    "result": "Generated title code outside the SDK band calls QR2 (0x82A09988, 0x82A09C20, 0x82A09F40, and key-buffer helpers 0x82A0A010, 0x82A0A088, and 0x82A0A0D0), Server Browsing (0x82A0C598, 0x82A0D448, 0x82A0CE08, 0x82A0CB40, 0x82A0D3D8, accessors 0x82A0D600 and 0x82A0D6C0, and server-value helpers 0x82A0DC40 through 0x82A0EC28), helper 0x82A0F130, GT2-band functions 0x82A082A8 through 0x82A090A0, address formatter 0x82A07908, and flag setter 0x82A07338.",
+    "qualification": "Names beyond the SDK functions identified above are band placement and call shape only."
+  },
+  "runtimeObservation": {
+    "source": "One owner-operated 2026-10-12 System Link capture between two Xenia Canary Netplay instances, emulator SHA-256 5EBC1583E1DB5EE50FDA028461CAAF03CEE79D91B62FD0B1A3C9A08E1C67E8F9 (netplay_canary_experimental@b5f6f6ed6), running base default.xex SHA-256 B59B8957A3ED9DD90E9296C96D5C7AB1B16078D3F08B015582714A06C7D6A7BD with no title update, on two interfaces of one PC. Only structural facts were retained.",
+    "discovery": "Every discovery datagram was addressed to 255.255.255.255. The client sent one 16-byte FE FD 02 echo to each port 26900 through 27000 (101 datagrams); host QR2 port 26900 answered with an 86-byte type 0x05 echo response, then the client sent a 23-byte FE FD 09 prequery and a 27-byte FE FD 00 query from a second OS-assigned port, answered with 15-byte and 201-byte replies. Each reply carries request bytes 3-6 at bytes 1-4.",
+    "differencesFromPin": "Against UniSpySDK bbac5ff, the echo request is 16 bytes rather than 8, the echo response is 86 bytes, and replies and follow-up queries go to the limited broadcast address rather than to the sender.",
+    "join": "Each instance opened one VDP (protocol 0xFE) socket on guest port 1000. Its datagrams carried a 2-byte big-endian length prefix, then GT2 magic FE FE; the handshake ran ClientChallenge, ServerChallenge, ClientResponse, Accept in 92 ms, and all play traffic used AppReliable and Ack on that port only.",
+    "negatives": "Neither the capture nor either emulator log showed UDP to ports 53, 27900, or 27901, an XNetDnsLookup call, or XSessionSearch. That run sent no QR2 master heartbeat.",
+    "unboundSockets": "The client's discovery sockets were never bound, so the host operating system chose the broadcast route; a lower-metric virtual adapter captured the first four sweeps until it was disabled.",
+    "qualification": "This corroborates the mode-1 LAN query, QR2 host port, and GT2 join of the static result. It ran the base title version, not the pinned version 1.3 image, under Netplay's XNet emulation, whose broadcast and VDP handling is emulator behavior rather than console proof. It does not identify the runtime ispublic source or the UI owner of 0x82D6C398, and ReRevved was not run."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra queries against the canonical version 1.3 project, a byte scan of the pinned flat image (SHA-256 5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680), exact-function generated-code reads, and comparison with the UniSpySDK pin and the maintained SDK XGI handler, with external emulator runtime corroboration in runtimeObservation.",
+    "entries": [
+      {
+        "role": "identifier writer",
+        "address": "0x82D8CC28, 0x82D8CC9C, 0x82D8CCF8, 0x821370CC",
+        "result": "Gamename civconps3 and a six-byte immediate secret key populate registry +0x78 and +0x7C.",
+        "confidence": "strong"
+      },
+      {
+        "role": "LAN query",
+        "address": "0x82C9DAA0, 0x82C9D9DC, 0x82A1A978",
+        "result": "LAN-only QR2 browser and broadcast echo to UDP 26900 through 27000.",
+        "confidence": "strong"
+      },
+      {
+        "role": "QR2 host",
+        "address": "0x82C9F438, 0x82A09820",
+        "result": "QR2 query socket on the first free UDP port from 26900 within 100 ports.",
+        "confidence": "strong"
+      },
+      {
+        "role": "mode split",
+        "address": "0x82D8D170, 0x82CA28F0, 0x82160348, 0x82160450",
+        "result": "Mode 1 selects GameSpy LAN; other modes select XGI search.",
+        "confidence": "strong"
+      },
+      {
+        "role": "XGI search producers",
+        "address": "0x82A1F398, 0x82A1F45C",
+        "result": "Messages 0x000B0016 and 0x000B001B from the mode-2 table.",
+        "confidence": "strong"
+      },
+      {
+        "role": "master path",
+        "address": "0x82A0CD50, 0x82A0CDA8, 0x82A0CF78, 0x82A0D1D0, 0x82A07350",
+        "result": "No title entry in direct, tail-branch, or pointer forms.",
+        "confidence": "strong"
+      },
+      {
+        "role": "external runtime corroboration",
+        "address": "0x82C9D9DC, 0x82C9F438, 0x82CA02A8",
+        "result": "Xenia Netplay observed the QR2 limited-broadcast exchange on UDP 26900-27000, host QR2 port 26900, a GT2 join on guest port 1000, and no master traffic.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/FindStrings.java:gamespy,natneg,gpcm,gpsp,gamestats,sake,peerchat,qr2,openspy",
+      "ghidra/DumpStringsInRange.java:0x820C5A00-0x820C6400,0x8215FA00-0x82160800",
+      "ghidra/DumpReferences.java:0x820C5DE4,0x820C5E2C,0x820C6110,0x820C5EE0,0x821602FC,0x821600E4",
+      "ghidra/DumpFunctions.java:0x82A09368,0x82A09820,0x82A09988,0x82A09A88,0x82A0CE08,0x82A0C598,0x82A07350,0x82A1F310,0x82A1F3F0,0x82C9D080",
+      "ghidra/FindDirectCallers.java:0x82A0C598,0x82A0CE08,0x82A09988,0x82A07350,0x82A0CD50,0x82A0CDA8,0x82A0CF78,0x82A1A0A8,0x82A1B4A0",
+      "ghidra/FindPointerValues.java:0x82C9D978,0x82C9DA48,0x82C9F320,0x82A0CD50,0x82A0CDA8,0x82A0CF78,0x82A07350",
+      "generated:rerevved/sub_82D8CC28",
+      "generated:rerevved/sub_82C9DA48",
+      "generated:rerevved/sub_82C9D978",
+      "generated:rerevved/sub_82C9F320",
+      "generated:rerevved/sub_82A1A978",
+      "generated:rerevved/sub_82A09368",
+      "generated:rerevved/sub_82D8D170",
+      "generated:rerevved/sub_82CA28F0",
+      "generated:rerevved/sub_82C9CD68",
+      "generated:rerevved/sub_82D8D030",
+      "generated:rerevved/sub_82D8E1F8",
+      "generated:rerevved/sub_82C9D080",
+      "generated:rerevved/sub_82A1F310",
+      "generated:rerevved/sub_82A1F3F0",
+      "generated:rerevved/sub_82CA0258",
+      "external:UniSpySDK@bbac5fffce5ef5fb2a1ed9f4721911a04e30d989/qr2/qr2.c",
+      "external:UniSpySDK@bbac5fffce5ef5fb2a1ed9f4721911a04e30d989/serverbrowsing/sb_serverlist.c",
+      "external:UniSpySDK@bbac5fffce5ef5fb2a1ed9f4721911a04e30d989/common/gsAvailable.c",
+      "sdk:41bb7e9c51438b17ae2443838dd68641babd4573/src/kernel/xam/apps/xgi_app.cpp"
+    ],
+    "qualification": "Static control flow and arguments establish code paths and constants, not runtime delivery, the values of runtime flags, successful binds, or reply handling. The guest GameSpy SDK differs from the UniSpySDK pin in the qr2_initA parameter count and the LAN echo request, so source names outside the accepted Server Browsing equivalence rest on body shape, strings, and call order."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "result": "Catalog delta is zero; this packet records an inventory and path split for the online-play plan without a reusable semantic catalog edge beyond the existing GameSpy anchor."
+  },
+  "guards": [
+    "Do not record or reproduce the secret key value.",
+    "Do not treat mode 1 as System Link or mode 2 as Xbox LIVE from UI labels alone; the split is proved by the session tables, not by visible strings.",
+    "Do not assume QR2 contacts the GameSpy master in System Link play; it depends on the runtime value at 0x82C9F438, and the one emulator run sent no master traffic.",
+    "Do not infer that the visible Refresh action reaches 0x82C9D978 from this static chain.",
+    "Do not treat the SDK XGI message labels as guest proof beyond the matching request sizes and fields.",
+    "Do not infer runtime discovery, reply parsing, join completion, NAT traversal, or Internet play from this static inventory."
+  ],
+  "conclusion": "Version 1.3 embeds GameSpy QR2, Server Browsing, GT2, and an unreached availability check, and carries no NAT Negotiation, GP, GameStats, SAKE, Peer/Chat, CD-key, or MOTD host. Its gamename is the PlayStation 3 identifier civconps3, and a six-byte secret key is built from immediates in 0x82D8CC28. Session mode 1 installs table 0x82160348: browsing creates a LAN-only QR2 Server Browser and broadcasts a 16-byte QR2 echo to UDP ports 26900 through 27000, and hosting calls qr2_initA with base port 26900, binding the first free port up to 26999. Other modes install table 0x82160450, which searches through XGI messages 0x000B0016 and 0x000B001B and makes no GameSpy call. No title path reaches the GameSpy master list; a QR2 master heartbeat depends on a runtime flag. One emulator capture of the base title corroborated the mode-1 exchange, QR2 port 26900, a GT2 join on guest port 1000, and no master traffic. The visible Refresh action and the static source of the runtime flags remain unjoined."
+}

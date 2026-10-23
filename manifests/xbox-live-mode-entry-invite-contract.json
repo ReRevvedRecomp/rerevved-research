@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0247",
+  "topic": "xbox-live-mode-entry-invite-contract",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "In the version 1.3 image, which front-end path selects session mode 2 (table 0x82160450) and writes game-setup mode words 4 and 5, how does an accepted Xbox LIVE invite reach XLiveBase message 0x00058023, search by identifier 0x000B001B, and join, which transport object a mode-2 join builds, and what value context 55 and property 0x1000003B carry?",
+  "scope": {
+    "frontEnd": "Front-end controller registry at [0x8314F2CC]+0x04, controllers 9, 12, 13, 15, 26, 27, 41, 43, and 45, their constructors, handler tables, and view label setup.",
+    "manager": "Multiplayer manager at global 0x8314EFE0: entries 0x82D8D898, 0x82D8E430, 0x82D8ECC0, 0x82D8ED68, 0x82D8EEE8, 0x82D8EFF0, 0x82D8C900, 0x82D8EB00, initializer 0x82D8D430, and its listener tables 0x82137280 and 0x821372F0.",
+    "notifications": "Notification pump class with table 0x821347C8 (listener create 0x82DA8B08, drain 0x82DA8B60) and invitation dialog class with table 0x82126AEC.",
+    "transport": "Network service class with table 0x8215FA78 (constructor 0x82CB12F0), its join method 0x82CA73D8, network object table 0x8215FC0C over FNetAccess base 0x82CA0798, GT2 socket creation 0x82CA0350, GT2 connect method 0x82CA0258, and XSession wrapper address formatter 0x82C99490.",
+    "scenario": "Context-name descriptor at [0x8314EFCC] built by 0x82DABB20, global 0x8312B8D4, and scenario selector 0x82DAEFD8.",
+    "boundary": "Static control flow, constants, table slots, and guest-side reads. Runtime delivery of notifications, the GFx event that maps a visible menu item to a handler slot, the visible text of any message, the runtime value of global 0x8312B8D4 in a hosted game, and the call edge that carries a joined host address into GT2 connect remain outside this record."
+  },
+  "dependencies": [
+    {
+      "topic": "xbox-live-session-search-contract",
+      "use": "Supplies the mode-2 table slots, the 0x00058023 and 0x000B001B request shapes, search-record layout, listener events 3 with status 0 or 9, and create-flag selection that this record connects to the front end."
+    },
+    {
+      "topic": "xbox-gamespy-surface-inventory",
+      "use": "Supplies the factory 0x82CA28F0 mode split, the mode-2 manager entries, the GT2 connect identity of 0x82CA0258, and the System Link capture that used GT2 on guest port 1000."
+    },
+    {
+      "topic": "game-of-the-week-local-generation",
+      "use": "Supplies the account object at manager +0x18 with sign-in gate slot +0x8C and privilege slot +0x90, and the active-screen event sender 0x82C56478."
+    }
+  ],
+  "menuEntry": {
+    "registry": "Static registrars store controller factories in the map at [0x8314F2CC]+0x04: ID 9 factory 0x821DBE48 (registrar 0x82E89E88), 10 0x821DCA90, 12 0x821DBB70 (0x82E89CA8), 13 0x821DB9A0, 15 0x821DC228, 26 0x821DBA18, 27 0x821DC0D0, 37 0x821DAB80, 41 0x821DB798, 43 0x821DB7E8, and 45 0x821DB678. Their views bind GFX_MatchType.gfx (9), GFX_GameSelector.gfx (10), GFX_InternetGameType.gfx (12), GFX_MPGameType.gfx (13), GFX_WaitingOverlay.gfx (15), GFX_StagingScreen.gfx (26 and 27), GFX_BuddyManagement.gfx (37), GFX_LeaderboardMenu.gfx (41), GFX_RankedMPMenu.gfx (43), and GFX_Leaderboards.gfx (45).",
+    "matchType": "Controller 9 constructor 0x82E6C3C0 installs table 0x8213B198. View label setup 0x82E52068 adds item 0 Player Match, item 1 Ranked Match, and item 2 System Link. 0x82D72C50 maps mode word 4 to Player Match, 5 to Ranked Match, and 6 to System Link.",
+    "handlers": "Table 0x8213B198: +0x24 0x82E6C0E8 writes mode word 4 at 0x82E6C180 and requests controller 12; +0x28 0x82E6BE10 writes mode word 5 at 0x82E6BEA8 and requests controller 12; +0x2C 0x82E6BAB8 writes mode word 6 at 0x82E6BAE8 and requests controller 10; +0x30 0x82E6BB60 requests controller 37 without a mode write. A changed mode word is followed by 0x82D8ACB0 on the manager. A controller request goes directly through 0x82D704F0 or is deferred through 0x82C4E858 with the ID stored at controller +0x10.",
+    "gates": "Handlers 0x82E6C0E8, 0x82E6BE10, and every controller-12 handler call account slot +0x8C with 0 and require 1, then slot +0x90 with privilege kind 1 and require 1. On a slot +0x8C failure they show a connect or sign-in message chosen by account +0x58 and then call slot +0x8C with 1; on a privilege failure they show a permission message. Both messages go through application object 0x8314F76C slot +0x22C.",
+    "internetGameType": "Controller 12 constructor 0x82E6CE70 installs table 0x8213B038; label setup 0x82E524B0 adds item 0 Quick Match, item 1 Custom Match, and item 2 Create Private Match. Slot +0x24 0x82E6CB88 fills setup words +0xFC through +0x108 from descriptor +0x234, calls 0x82DAD8B0 with 3, calls mode-2 browse 0x82D8D898 at 0x82E6CC58, and on 1 requests controller 15. Slot +0x28 0x82E6C970 requests controller 13. Slot +0x2C 0x82E6C748 sets setup byte +0x130, calls 0x82DAD478, and requests controller 13.",
+    "modeTwoCalls": "Browse 0x82D8D898 calls 0x82D8D170 with mode 2 at 0x82D8D8C4. Host 0x82D8E430 calls it with mode 2 at 0x82D8E470 and is reached by tail calls from staging slot +0x2C targets 0x82E4F778 (controller 26, table 0x8213AFE0) and 0x82E4E9F8 (controller 27, table 0x8213B348). 0x82D8D170 reaches factory 0x82CA28F0 through 0x82CABB68, which installs table 0x82160450 for any mode other than 1.",
+    "searchContexts": "After a mode-2 create, 0x82D8D170 passes eight descriptor-name and context-ID pairs through session slot +0xA0: +0x23C with 0x800A, +0x244 with -1, +0x250 with 0x800B, +0x19C with 7, +0x1FC with 5, +0x1CC with 4, +0x22C with 11, and +0x248 with 55. Descriptor builder 0x82DABB20 stores the names ranked at +0x23C, skill at +0x244, scenario at +0x248, gametype at +0x250, and turntime at +0x22C.",
+    "rankedEntries": "The only play entry that writes mode word 5 is Ranked Match (table 0x8213B198 +0x28, 0x82E6BE10); it reaches the same controller 12 and table 0x82160450 as Player Match. Controller 43 (GFX_RankedMPMenu.gfx, labels Head to Head, Teams, and Free for All) is requested only from leaderboard controllers 41 (0x82E6D5E0) and 45 (0x82E4FB30).",
+    "inviteJoinMode": "0x82D8C900 writes mode word 4 at 0x82D8C994 after a successful search by identifier, so an accepted invite always enters as unranked Live."
+  },
+  "inviteDelivery": {
+    "pump": "Pump table 0x821347C8: slot +0x04 0x82DA8B08 creates the listener through 0x8280E048, which calls XamNotifyCreateListener with area mask 0x2F and 3, and stores the handle at +0x04. Slot +0x0C 0x82DA8B60 calls XNotifyGetNext 0x82E926D4 at 0x82DA8BC4 and again at 0x82DA974C until it returns 0, with filter 0, or 0x0A000001 when its byte argument is set. The pump object is stored at global 0x8314F2D0 by 0x82E2E530; slot +0x0C is dispatched from 0x82C7DF58 and 0x82D83B38 with argument 0, 0x82D83888 with argument 1, and 0x82E55070.",
+    "notification": "The pump dispatches ID 0x02000002 at 0x82DA94E8 to 0x82D8ED68 at 0x82DA9598 with the manager and the notification parameter as the user index. The ID matches the public XN_LIVE_INVITE_ACCEPTED value. ID 0x02000003 with parameter 0 while mode word 6 is set shows a disconnect message.",
+    "pending": "Manager initializer 0x82D8D430 sets manager +0x1C to -1 at 0x82D8D4EC. 0x82D8ED68 returns 0 when manager byte +0x5D is set, stores a nonnegative argument at +0x1C, and while +0x1C is nonnegative switches at 0x82D8EDE8 on word +0x04 of object [[0x82FFD624]+0x70]: 1 calls 0x82D8ECC0, 0 and 5 set byte +0x0C of that object, 2 and 3 call application slot +0xD4 with 0, and 4 does nothing, which leaves the invite pending.",
+    "coldStart": "Front-end state entry 0x82E7F820 (table 0x82131088 slot +0x04) calls 0x82D8ED68 with -1 at 0x82E7FA00, which services an invite already stored at +0x1C; on success it calls 0x82E2C890 with 1 and sets state +0x08 to 24. 0x82A1E8D0 has the single direct caller 0x82C9CF70, so no boot path queries 0x00058023 without a stored user index.",
+    "join": "0x82D8ECC0 requires +0x1C nonnegative, calls teardown helper 0x82D8E798, creates a mode-2 session through 0x82D8D170 at 0x82D8ED08, and when table slot +0x24 (0x821B1690, returns 1) succeeds calls 0x82D8C900. 0x82D8C900 rebuilds the account object through 0x82D8B668 and 0x82D8C6C8 when +0x1C differs from manager +0x00, then calls table slot +0x34 (0x82C9CF70) with the user from +0x1C at 0x82D8C964.",
+    "inviteRecord": "0x82C9CF70 passes a stack buffer at sp+0x50 of its 0xD0-byte frame to 0x82A1E8D0, which marshals two arguments (user index, output pointer) through 0x82A1E740 and issues XMsgInProcessCall app 0xFC message 0x00058023 at 0x82A1E9C0. The guest reads only the 64-bit word at +0x14 (0x82C9CFE4) and passes it to 0x000B001B. Under the public XINVITE_INFO layout +0x00 is the invitee XUID, +0x08 the inviter XUID, +0x10 the title ID, +0x14 the 60-byte XSESSION_INFO (session ID +0x14, host XNADDR +0x1C, key +0x40), and +0x50 fFromGameInvite, 0x54 bytes in all. The host address and key used for the join come from the 0x000B001B result record, not from this buffer.",
+    "completion": "Session listener table 0x821372F0 (stored at manager +0x40 by 0x82D8D1F0) slot +0x0C 0x82D8A088 handles event 3: status 0 reads table slot +0x44 (0x82219D30, record index at +0x18) and calls join 0x82D8EFF0 unless 0x82D8AA60 is true; status 1 sends active-screen event 17 and other statuses event 16 through 0x82C56478.",
+    "joinChecks": "0x82D8EFF0 calls 0x82D8EB00, which copies the record contexts into the game setup and passes table slot +0x80 (scenario) to 0x82DADE48. A false result shows a missing-content message and calls 0x82D8E798; success calls service slot +0x1C with manager +0x70, the record index, the setup buffer, the user, and a flag that is true when +0x1C is nonnegative. 0x82D8EFF0 then writes -1 to +0x1C at 0x82D8F1E8.",
+    "receivedInvite": "Account listener table 0x82137280 (manager +0x48, created by 0x82D8C6C8) slot +0x18 0x82D8A180 calls 0x82D8EEE8 with a record whose +0x04 is a user index or key and +0x0C a name. In state 1 it sends active-screen event 25, and common handler 0x82D70880 builds the invitation dialog (constructor 0x82E835D0, table 0x82126AEC, title Invitation with Accept and Reject); state 2 uses application slot +0x244 and state 3 0x82DD24B8. Accept slot +0x0C 0x82E83628 checks privilege kind 1 and calls 0x82D8ED68 with dialog +0x0C at 0x82E83688, otherwise shows the permission message. The producer that calls account listener slot +0x18 is not identified.",
+    "systemUi": "XamShowMessageBoxUIEx 0x82E92AE4 is reached only through 0x8280E5E8, 0x8280E728, and 0x827FDE20, none of which is on the invite path; invite failures use title messages and active-screen events. XamShowGameInviteUI 0x82E929E4 is reached through 0x8280DE08 from 0x82E4C988 (called by 0x82D72CF8) and 0x82E4B718."
+  },
+  "transport": {
+    "service": "0x82D8C570 creates the network service at manager +0x10 through 0x82CABC78 and 0x82CB12F0, which installs table 0x8215FA78 for every session mode. Manager +0x70 is set to 1000 at 0x82D8D520, the only constant writer found in 0x82D88000 through 0x82D90000.",
+    "join": "Service slot +0x1C 0x82CA73D8 reads session slots +0x74, +0x70, +0xFC, and +0xF8 (mode-2 targets 0x82C9C828, 0x82C9C8A0, 0x82C9C680, 0x82C9C6A8), allocates a 144-byte network object with table 0x8215FC0C over FNetAccess base 0x82CA0798, and calls its slot +0x04 0x82E87AB8. That calls 0x82CA0350, which creates the GT2 socket through GT2-band function 0x82A08348 (gt2CreateSocket shape) at 0x82CA03DC with the address string :<port> and tries up to 100 consecutive ports. 0x82CA6018 then issues the XSession join create through XSession slot +0x08 with the 16-bit local port returned by GT2-band function 0x82A08BE0 and the 60-byte record.",
+    "connect": "Table 0x8215FC0C slot +0x08 is GT2 connect 0x82CA0258. Service slot +0xD0 0x82CA6B48 calls it at 0x82CA6C60; slot +0xD0 is called from service slot +0x140 0x82CA46F0 at 0x82CA47DC and from 0x82E46C78 at 0x82E46CCC.",
+    "address": "XSession wrapper slot +0x4C 0x82C99490 converts a host XNADDR with the session key at +0x0C through XNetXnAddrToInAddr wrapper 0x827F1068 and formats %s:%d with port 1000. Service slot +0x150 0x82CA6738 returns that string.",
+    "result": "The join method, network object, GT2 socket, and port 1000 are shared by both session modes; nothing on the traced mode-2 join path selects another transport. The call that carries the joined host address string into slot +0xD0 was not traced, so GT2 connect after a mode-2 join is plausible rather than closed."
+  },
+  "scenarioContext": {
+    "identity": "Context 55 is paired with descriptor name scenario (0x8213433C, stored at descriptor +0x248 by 0x82DABB20 at 0x82DAD104). Builder 0x82D8CDA8 and property setter 0x82D8F398 read global 0x8312B8D4 for context 55 and property 0x1000003B, and table slot +0x80 0x82C9CBC0 reads them back on join.",
+    "writers": "Global 0x8312B8D4 is stored only by 0x82DAEFD8 (-1 at 0x82DAF06C, the selected scenario identifier at 0x82DAF4D0) and 0x82CC4040 (-1 at 0x82CC6188). Teardown 0x82D8E798 and setup entry 0x82D6D4D0 call 0x82DAEFD8 with -1; 0x82DADE48 and 0x82D6D4D0 copy the global to setup +0x10C.",
+    "join": "0x82DADE48 returns true when the scenario is -1 or 0x82DAEFD8 finds it in the local list; otherwise 0x82D8EFF0 shows the missing-content message.",
+    "result": "Context 55 and property 0x1000003B carry the selected scenario identifier, and -1 (0xFFFFFFFF) means no scenario. A normal hosted game is expected to advertise -1 because every traced reset writes -1, but no runtime value is recorded."
+  },
+  "runtimeProbes": {
+    "menuEntry": "0x82E6C180 and 0x82E6BEA8 (mode word 4 and 5 stores), 0x82E6CC58 (Quick Match browse call), 0x82D8D8C4 and 0x82D8E470 (0x82D8D170 with mode 2), and 0x82CA28F0 (factory mode argument).",
+    "inviteDelivery": "0x82DA8BC4 and 0x82DA974C (XNotifyGetNext returns; record ID 0x02000002 and parameter), 0x82DA9598 (call into 0x82D8ED68), 0x82D8EDE8 (state word dispatched), 0x82E7FA00 (cold-start check), 0x82D8ED08 (mode-2 create), 0x82A1E9C0 (0x00058023 status), 0x82C9CFE4 (identifier read), 0x82C9CFF0 and 0x82C9D03C (0x000B001B submits), 0x82D8A094 (listener event and status), 0x82D8F1E8 (pending cleared after join).",
+    "transport": "0x82CA03DC (GT2 socket create and port string), 0x82C994C8 (XNADDR conversion), 0x82CA6C60 (GT2 connect call), and 0x82CA02A8 (gt2Connect inside 0x82CA0258)."
+  },
+  "currentEvidence": {
+    "method": "Exact-function reads of generated code in the rerevved checkout, read-only reads of the pinned flat image for data words and strings, and one foreground read-only Ghidra DumpMemoryWords query against the configured version 1.3 project that reproduced the handler-table, listener-table, pump-table, and GT2 slot words recorded here.",
+    "entries": [
+      {
+        "role": "menu entry",
+        "address": "0x8213B198, 0x82E6C0E8, 0x82E6BE10, 0x82E6BAB8, 0x8213B038, 0x82E6CB88, 0x82D8D898, 0x82D8E430",
+        "result": "Player Match and Ranked Match write mode words 4 and 5, open controller 12, and reach mode-2 browse and host.",
+        "confidence": "strong"
+      },
+      {
+        "role": "invite notification",
+        "address": "0x82DA8B60, 0x82DA9598, 0x82D8ED68, 0x82E7FA00",
+        "result": "Notification 0x02000002 stores the user index at manager +0x1C; the front-end entry services a stored invite.",
+        "confidence": "strong"
+      },
+      {
+        "role": "invite join",
+        "address": "0x82D8ECC0, 0x82D8C900, 0x82C9CF70, 0x82A1E8D0, 0x82D8A088, 0x82D8EFF0",
+        "result": "Mode-2 create, 0x00058023 identifier at +0x14, 0x000B001B, listener event 3, and a join that writes mode word 4.",
+        "confidence": "strong"
+      },
+      {
+        "role": "transport",
+        "address": "0x82CA73D8, 0x8215FC0C, 0x82CA0350, 0x82CA6B48, 0x82C99490, 0x82D8D520",
+        "result": "One GT2 network object on port 1000 for both modes; the address-to-connect edge is open.",
+        "confidence": "candidate"
+      },
+      {
+        "role": "scenario context",
+        "address": "0x82DABB20, 0x8312B8D4, 0x82DAEFD8, 0x82DADE48, 0x82D8EB00",
+        "result": "Context 55 and property 0x1000003B carry the scenario identifier, with -1 for none.",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82126AEC,0x8213B1BC,0x8213B05C,0x82137298,0x821372FC,0x8215FB48,0x8215FC14,0x821347D4,0x82160450",
+      "generated:rerevved/sub_82E89E88",
+      "generated:rerevved/sub_82E6C3C0",
+      "generated:rerevved/sub_82E52068",
+      "generated:rerevved/sub_82D72C50",
+      "generated:rerevved/sub_82E6C0E8",
+      "generated:rerevved/sub_82E6BE10",
+      "generated:rerevved/sub_82E6BAB8",
+      "generated:rerevved/sub_82E6CE70",
+      "generated:rerevved/sub_82E524B0",
+      "generated:rerevved/sub_82E6CB88",
+      "generated:rerevved/sub_82E6C970",
+      "generated:rerevved/sub_82E6C748",
+      "generated:rerevved/sub_82D8D898",
+      "generated:rerevved/sub_82D8E430",
+      "generated:rerevved/sub_82D8D170",
+      "generated:rerevved/sub_82D6D4D0",
+      "generated:rerevved/sub_82E6D5E0",
+      "generated:rerevved/sub_82DA8B08",
+      "generated:rerevved/sub_82DA8B60",
+      "generated:rerevved/sub_82D8D430",
+      "generated:rerevved/sub_82D8ED68",
+      "generated:rerevved/sub_82D8ECC0",
+      "generated:rerevved/sub_82D8C900",
+      "generated:rerevved/sub_82C9CF70",
+      "generated:rerevved/sub_82A1E8D0",
+      "generated:rerevved/sub_82E7F820",
+      "generated:rerevved/sub_82D8A088",
+      "generated:rerevved/sub_82D8EFF0",
+      "generated:rerevved/sub_82D8EB00",
+      "generated:rerevved/sub_82D8EEE8",
+      "generated:rerevved/sub_82D70880",
+      "generated:rerevved/sub_82E834E8",
+      "generated:rerevved/sub_82E83628",
+      "generated:rerevved/sub_82D8C570",
+      "generated:rerevved/sub_82CB12F0",
+      "generated:rerevved/sub_82CA73D8",
+      "generated:rerevved/sub_82E87AB8",
+      "generated:rerevved/sub_82CA0350",
+      "generated:rerevved/sub_82CA6018",
+      "generated:rerevved/sub_82CA6B48",
+      "generated:rerevved/sub_82CA46F0",
+      "generated:rerevved/sub_82C99490",
+      "generated:rerevved/sub_82CA6738",
+      "generated:rerevved/sub_82DABB20",
+      "generated:rerevved/sub_82DAEFD8",
+      "generated:rerevved/sub_82DADE48",
+      "generated:rerevved/sub_82CC4040"
+    ],
+    "qualification": "Generated windows supply instruction text and jump-table targets; they corroborate static control flow but are not runtime proof. The handler-slot-to-item mapping rests on label order and the mode-to-label map in 0x82D72C50, not on a traced GFx event. Notification and XINVITE_INFO names are public-SDK interpretation; the guest facts are the IDs, offsets, and reads recorded here."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "result": "Catalog delta is zero. Tables 0x8213B198, 0x8213B038, 0x82126AEC, 0x821347C8, 0x82137280, 0x821372F0, 0x8215FA78, and 0x8215FC0C are candidates for vtable catalog entries when an implementation consumes them."
+  },
+  "guards": [
+    "Do not infer that ReRevved or any emulator has delivered notification 0x02000002 or run the invite join; no runtime observation is recorded.",
+    "Do not assume a running game joins immediately on an accepted invite; 0x82D8ED68 defers or ignores it in states other than 1, and the state names behind object [[0x82FFD624]+0x70] word +0x04 are not established.",
+    "Do not supply only the session identifier and expect a join; the guest reads +0x14 from 0x00058023 and needs 0x000B001B to return exactly one record with host address, key, slots, and contexts.",
+    "Do not treat GT2 connect on port 1000 as closed for mode 2; the address string and call edge into service slot +0xD0 after a mode-2 join were not traced.",
+    "Do not record the scenario global 0x8312B8D4 as -1 at host create from static evidence alone.",
+    "Do not equate controller 43 (GFX_RankedMPMenu.gfx) with a play entry; its traced requesters are leaderboard controllers.",
+    "Do not attribute the received-invite dialog to notification 0x02000002; its record producer is not identified."
+  ],
+  "conclusion": "Player Match and Ranked Match in GFX_MatchType.gfx (controller 9 handlers 0x82E6C0E8 and 0x82E6BE10) gate on Live sign-in and multiplayer privilege, write game-setup mode words 4 and 5, and open GFX_InternetGameType.gfx (controller 12). Its Quick Match calls mode-2 browse 0x82D8D898, Custom Match and Create Private Match lead through game-type controller 13, and staging controllers 26 and 27 host through 0x82D8E430; both reach factory 0x82CA28F0 with mode 2 and table 0x82160450. Ranked Match is the only visible ranked play entry. An accepted invite arrives as XNotify ID 0x02000002 from the pump at 0x82DA8B60, whose user index 0x82D8ED68 stores at manager +0x1C; a front-end state joins at once, other states defer, and front-end entry 0x82E7F820 services a stored invite after a cold start. The join creates a mode-2 session, reads the 64-bit session identifier at +0x14 of the 0x00058023 result, searches by identifier, joins through 0x82D8EFF0 on listener event 3 with status 0, and writes mode word 4; failures surface as title messages or active-screen events 16 and 17, not system message boxes. The join builds the same GT2 network object on port 1000 for both modes, and the host address string comes from XNetXnAddrToInAddr with port 1000, but the edge into GT2 connect after a mode-2 join remains open. Context 55 and property 0x1000003B carry the selected scenario identifier, with -1 for none, and a joiner rejects a scenario it lacks."
+}

@@ -1,0 +1,465 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0077",
+  "topic": "xbox-network-message-root",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What are the version 1.3 Xbox internal command record, queue owner, and exact dispatcher root before any wire or cross-platform interpretation?",
+  "scope": {
+    "functions": ["0x82CE1950", "0x82CE16C8", "0x82CDDF08", "0x82D90A18"],
+    "globals": ["0x8314EFE0", "0x8314F1F4", "0x8314F1F8", "0x83155C28"],
+    "dispatchTable": "0x82CDE014..0x82CDE118",
+    "boundary": "This packet closes the Xbox internal representation and static queue/dispatch root. It does not establish wire serialization, platform transport, delivery, runtime ordering, lockstep, or semantic names beyond independently accepted Xbox topics."
+  },
+  "dependencies": [
+    { "topic": "combat-resolution-lifecycle", "use": "accepted Xbox command 0 Combat case" },
+    { "topic": "rush-cost-producer", "use": "accepted Xbox command 6 Rush case" },
+    { "topic": "unit-movement-lifecycle", "use": "accepted Xbox command 17 Move case and existing submit/consumer identities" }
+  ],
+  "currentEvidence": {
+    "method": "foreground read-only Ghidra string, pointer, function, raw-word, and dispatch-table queries against the pinned image, with narrow generated-code corroboration only after exact function identification",
+    "qualification": "The configured project truncates 0x82CE16C8, 0x82CE1950, and 0x82CDDF08 at the known second Xenon thunk block. Exact raw words establish their decisive field, ring, call, bound, and table operations. Ghidra fully decompiles 0x82D90A18."
+  },
+  "internalRepresentation": {
+    "recordSize": "0x14",
+    "fields": [
+      { "offset": "0x0", "name": "type", "width": 4 },
+      { "offset": "0x4", "name": "arg1", "width": 4 },
+      { "offset": "0x8", "name": "arg2", "width": 4 },
+      { "offset": "0xC", "name": "arg3", "width": 4 },
+      { "offset": "0x10", "name": "arg4", "width": 4 }
+    ],
+    "submit": {
+      "function": "0x82CE1950",
+      "stagingStores": ["0x82CE19CC", "0x82CE19D0", "0x82CE19D4", "0x82CE19D8", "0x82CE19DC"],
+      "target": "The sixth incoming argument remains separate from the five-word staging record."
+    },
+    "ring": {
+      "drain": "0x82CE16C8",
+      "base": "0x83155C28",
+      "producerCounter": "0x8314F1F4",
+      "consumerCounter": "0x8314F1F8",
+      "slots": 32,
+      "stride": "0x14",
+      "result": "The append and drain loops each copy exactly five words. A five-bit index mask and 20-byte index arithmetic select one of 32 modulo slots."
+    },
+    "consumerView": {
+      "function": "0x82CDDF08",
+      "reads": ["0x82CDDF18:+0x0", "0x82CDDF1C:+0x4", "0x82CDDF20:+0x8", "0x82CDDF24:+0xC"],
+      "qualification": "The dispatcher reads type and the first three arguments directly. Arg4 is preserved by submit, ring, and constructed-object copies, but its consumer meaning is not established by this packet."
+    }
+  },
+  "queueAndDispatch": {
+    "managerPointer": "0x8314EFE0",
+    "managerChildOffset": "0x10",
+    "targetRouting": {
+      "minusOneSlot": "0x44",
+      "otherTargetSlot": "0x3C",
+      "result": "0x82CE1950 passes the constructed object through one of two child-object virtual slots based on equality with -1; the non--1 path passes the target separately.",
+      "qualification": "The original slot names and the meaning of -1 remain unresolved."
+    },
+    "constructedObject": {
+      "constructor": "0x82D90A18",
+      "vtable": "0x821368E0",
+      "copiedRecordOffset": "0x34",
+      "copiedRecordWords": 5,
+      "touchedExtent": "0x48",
+      "qualification": "0x48 is the constructor's proved touched extent, not a complete allocation-size guarantee. The embedded record's object-layer serialization is recorded separately and does not make the entire object a wire record."
+    },
+    "localDrain": {
+      "function": "0x82CE16C8",
+      "managerSlot": "0x10",
+      "dispatcherCall": "0x82CE17B0",
+      "dispatcher": "0x82CDDF08"
+    },
+    "dispatch": {
+      "typeMinimum": 0,
+      "typeMaximum": 65,
+      "boundCheck": "0x82CDDFF4",
+      "outOfRangeBranch": "0x82CDDFF8",
+      "table": "0x82CDE014",
+      "indirectBranch": "0x82CDE010",
+      "entries": [
+        { "type": 0, "target": "0x82CDF74C", "label": "Combat", "semanticEvidence": "combat-resolution-lifecycle" },
+        { "type": 1, "target": "0x82CDFA74" },
+        { "type": 2, "target": "0x82CDFDF8" },
+        { "type": 3, "target": "0x82CE16AC" },
+        { "type": 4, "target": "0x82CDFFA0" },
+        { "type": 5, "target": "0x82CDFFF8" },
+        { "type": 6, "target": "0x82CE0028", "label": "Rush", "semanticEvidence": "rush-cost-producer" },
+        { "type": 7, "target": "0x82CE003C" },
+        { "type": 8, "target": "0x82CE0094" },
+        { "type": 9, "target": "0x82CE16AC" },
+        { "type": 10, "target": "0x82CE026C" },
+        { "type": 11, "target": "0x82CE02A0" },
+        { "type": 12, "target": "0x82CE02D4" },
+        { "type": 13, "target": "0x82CE04E8" },
+        { "type": 14, "target": "0x82CE06B0" },
+        { "type": 15, "target": "0x82CE090C" },
+        { "type": 16, "target": "0x82CE1354" },
+        { "type": 17, "target": "0x82CDEDFC", "label": "Move", "semanticEvidence": "unit-movement-lifecycle" },
+        { "type": 18, "target": "0x82CE06E0" },
+        { "type": 19, "target": "0x82CDFD94" },
+        { "type": 20, "target": "0x82CE0190" },
+        { "type": 21, "target": "0x82CE0224" },
+        { "type": 22, "target": "0x82CE0710" },
+        { "type": 23, "target": "0x82CE0848" },
+        { "type": 24, "target": "0x82CE1368" },
+        {
+          "type": 25,
+          "target": "0x82CE14D8",
+          "staticRole": "Creates special unit type 30 for arg1 and stores arg2 in its Great General carrier-link field.",
+          "semanticEvidence": "great-general-attachment-lifecycle and exact Xbox words at 0x82CE14F0, 0x82CE14F4, 0x82CE1520, and 0x82CE1560"
+        },
+        { "type": 26, "target": "0x82CDF484" },
+        { "type": 27, "target": "0x82CDF4C0" },
+        { "type": 28, "target": "0x82CDF4D0" },
+        { "type": 29, "target": "0x82CDFF78" },
+        { "type": 30, "target": "0x82CDFF8C" },
+        { "type": 31, "target": "0x82CDF478" },
+        { "type": 32, "target": "0x82CE1568" },
+        { "type": 33, "target": "0x82CDF4E4" },
+        { "type": 34, "target": "0x82CDF684" },
+        { "type": 35, "target": "0x82CDF6DC" },
+        { "type": 36, "target": "0x82CDF724" },
+        { "type": 37, "target": "0x82CDF578" },
+        { "type": 38, "target": "0x82CE0054" },
+        { "type": 39, "target": "0x82CE0068" },
+        { "type": 40, "target": "0x82CE12C4" },
+        { "type": 41, "target": "0x82CE1338" },
+        { "type": 42, "target": "0x82CDFA74" },
+        { "type": 43, "target": "0x82CE1648" },
+        {
+          "type": 44,
+          "target": "0x82CE14D8",
+          "staticRole": "Creates special unit type 30 for arg1 and stores arg2 in its Great General carrier-link field.",
+          "semanticEvidence": "great-general-attachment-lifecycle and exact Xbox words at 0x82CE14F0, 0x82CE14F4, 0x82CE1520, and 0x82CE1560"
+        },
+        { "type": 45, "target": "0x82CE166C" },
+        {
+          "type": 46,
+          "target": "0x82CDE1AC",
+          "staticRole": "Enters CalendarTurnAdvance, submits numeric type 49, and invokes the shared per-player follow-up.",
+          "semanticEvidence": "game-calendar-state and exact Xbox words at 0x82CDE254, 0x82CDE27C, 0x82CDE280, and 0x82CDE288"
+        },
+        {
+          "type": 47,
+          "target": "0x82CDE424",
+          "staticRole": "Enters CalendarTurnAdvance, submits numeric type 49, and invokes the shared per-player follow-up.",
+          "semanticEvidence": "game-calendar-state and exact Xbox words at 0x82CDE4FC, 0x82CDE524, 0x82CDE528, and 0x82CDE530"
+        },
+        {
+          "type": 48,
+          "target": "0x82CDE79C",
+          "staticRole": "Sets state bit 0x4000 and, on a guarded path, submits numeric type 53 with arg1 forwarded as the new arg2.",
+          "semanticEvidence": "Exact Xbox words at 0x82CDE7AC, 0x82CDE7B4, 0x82CDE8E4, 0x82CDE8E8, and 0x82CDE8EC"
+        },
+        {
+          "type": 49,
+          "target": "0x82CDE60C",
+          "staticRole": "Forms a PowerPC slw mask from arg1 and ORs it into state word 0x83157E44.",
+          "semanticEvidence": "Exact Xbox words at 0x82CDE60C..0x82CDE620; slw produces zero when the shift operand has bit 0x20 set"
+        },
+        {
+          "type": 50,
+          "target": "0x82CDE628",
+          "staticRole": "Sets one per-player mask bit and gates a one-shot internal type-48 submission when that mask equals the human-player mask.",
+          "semanticEvidence": "Exact Xbox case words at 0x82CDE6E8..0x82CDE760"
+        },
+        {
+          "type": 51,
+          "target": "0x82CDE768",
+          "staticRole": "Conditionally clears one per-player bit in 0x830EE7E0 when IsHumanPlayer returns true for the value at 0x8312B8E4.",
+          "semanticEvidence": "Exact Xbox case words at 0x82CDE768..0x82CDE794 and playable-game-state-gates"
+        },
+        {
+          "type": 52,
+          "target": "0x82CDE8F4",
+          "staticRole": "Unconditionally sets one per-player bit in 0x830EE7E0.",
+          "semanticEvidence": "Exact Xbox case words at 0x82CDE8F4..0x82CDE908"
+        },
+        {
+          "type": 53,
+          "target": "0x82CDE910",
+          "staticRole": "Stores arg2 in a player-indexed state array and sets the corresponding bit in a distinct receipt mask.",
+          "semanticEvidence": "Exact Xbox case words at 0x82CDE910..0x82CDE938"
+        },
+        {
+          "type": 54,
+          "target": "0x82CDED8C",
+          "staticRole": "Clears sync-mismatch bit 0x10 and enters turn/calendar advancement.",
+          "semanticEvidence": "Exact Xbox case words at 0x82CDED90..0x82CDED9C and helper words at 0x82D0C400, 0x82D0C470, and 0x82D0C490"
+        },
+        {
+          "type": 55,
+          "target": "0x82CDEC48",
+          "staticRole": "Compares record arg1 with a current data value and arg2 with a stored seed, reporting distinct sync mismatches.",
+          "semanticEvidence": "Exact Xbox case words and strings at 0x82CDEC64..0x82CDECA8"
+        },
+        { "type": 56, "target": "0x82CDE11C" },
+        { "type": 57, "target": "0x82CDE174" },
+        { "type": 58, "target": "0x82CDE12C" },
+        { "type": 59, "target": "0x82CDE14C" },
+        { "type": 60, "target": "0x82CDED60" },
+        { "type": 61, "target": "0x82CDEDA4" },
+        { "type": 62, "target": "0x82CDEDC0" },
+        { "type": 63, "target": "0x82CDEDDC" },
+        { "type": 64, "target": "0x82CDFD88" },
+        { "type": 65, "target": "0x82CDE188" }
+      ]
+    }
+  },
+  "turnAndSyncAnchors": {
+    "cases46And47": {
+      "types": [46, 47],
+      "sharedRole": "Each enters CalendarTurnAdvance at 0x82D1EAB0, directly submits numeric type 49, and calls shared follow-up 0x82D1D1C0.",
+      "type49Submits": {
+        "case46Callsites": ["0x82CDE280", "0x82CDE36C"],
+        "case47Callsite": "0x82CDE528",
+        "arguments": "All three static sites pass the LocalPlayerIdResolve result as arg1, -1 as arg2, -1 as arg3, the stored word rooted at 0x82F7AD00 as arg4, and -1 as the separate target.",
+        "qualification": "Exact words prove all three literal-49 direct calls. Their completeness inside the dispatcher is narrow generated-code corroboration because the canonical Ghidra listing truncates before the callsites; static sites do not prove runtime call multiplicity or delivery."
+      },
+      "type49MaskState": {
+        "address": "0x83157E44",
+        "case46": "Clears the mask before its type-49 submit sites, then later compares the accumulated value with human-player mask 0x8312E608 and branches back while they differ.",
+        "case47": "When gate word 0x8314F1B0 is nonzero, clears the mask before its type-49 submit site. When the gate is zero, seeds the mask from human-player mask 0x8312E608 on the short path.",
+        "qualification": "These are static initialization, submission, comparison, and branch relations. They do not prove a readiness barrier, completion, successful receipt, authority, runtime ordering, delivery, lockstep, resynchronization, or checksum coverage."
+      },
+      "qualification": "Entering CalendarTurnAdvance does not prove its increment branch runs on every call. The exact evidence does not distinguish BeginTurn, EndTurn, ImDoneAI, readiness, or completion names between these cases."
+    },
+    "case49": {
+      "type": 49,
+      "target": "0x82CDE60C",
+      "argument": "arg1 is the accepted LocalPlayerIdResolve result at all three static producer sites.",
+      "state": "0x82CDE60C..0x82CDE620 forms a PowerPC slw mask from arg1 and ORs it into 0x83157E44.",
+      "qualification": "PowerPC slw produces zero when the shift operand has bit 0x20 set. No original semantic name, readiness, completion, authority, runtime ordering, delivery, lockstep, resynchronization, or checksum meaning is assigned."
+    },
+    "storedWordProvenance": {
+      "address": "0x82F7AD00",
+      "boundedDirectWriters": [
+        { "function": "0x82E2C010", "store": "0x82E2C2A0", "source": "The +0x134 word of the object referenced by neutral pointer global 0x8314EFC8." },
+        { "function": "0x82D86400", "store": "0x82D86854", "source": "Local record field +0x0C at r1+0xAC." },
+        { "function": "0x82E2A638", "store": "0x82E2A658", "source": "ABI parameter 2; at the bounded direct caller, parameter 2 is the +0x134 word of the object referenced by neutral pointer global 0x8314EFC8." },
+        { "function": "0x82E2E078", "store": "0x82E2E2CC", "source": "The +0x134 word of the object referenced by neutral pointer global 0x8314EFC8." }
+      ],
+      "localRecordTransition": "Caller 0x82D86400 passes a local record at r1+0xA0 with mode 1 to 0x82CC29B8. On a flag-guarded path, the builder seeds a temporary from 0x82F7AD00, applies helper 0x822DE438, and writes the result to record +0x0C; the caller later copies that field to 0x82F7AD00.",
+      "qualification": "This is the bounded generated candidate-writer set, not an executable-wide reference closure. The builder's outer flag branch can skip its field write. The pointer, object, helper, local record, and stored word remain semantically unnamed; no checksum, seed-generation, readiness, authority, synchronization, runtime-ordering, delivery, lockstep, resynchronization, framing, transport, or coverage claim follows."
+    },
+    "case48": {
+      "type": 48,
+      "state": "Sets bit 0x4000 in 0x82FFE7C4.",
+      "internalSubmit": "On a guarded path, directly submits numeric type 53 with case-48 arg1 forwarded as the new record's arg2."
+    },
+    "case55": {
+      "type": 55,
+      "target": "0x82CDEC48",
+      "case53Producers": {
+        "callsites": ["0x82CDEAD0", "0x82CDEC18"],
+        "arguments": "Both static sites pass current-data helper 0x82CD4CF0's return as arg1 and the stored word rooted at 0x82F7AD00 as arg2.",
+        "alternatePathGate": "Halfword 0x82F77454 selects the second site when zero.",
+        "predicate": "A neutral case-local predicate starts at zero and can become one in a compound per-player scan. Within one entered iteration, the sequential set path requires the loop index to differ from a neutral 0x82D8A3A0 result; the low byte of 0x82CD5A70(index) and 0x82D8AB00(manager,index) to be nonzero; bit 0x100 in a neutral word at byte index 4 * (8 * a later 0x82D8A3A0 result + index) to be zero; 0x82D8F700(pointer loaded from 0x8314EFDC,index) not to return one; 0x8312E5C0 + 4*i to differ from the current-data result; and the selected low-byte flag to be zero. The selected flag is zero exactly when at least one of two preceding player-indexed words is nonzero and neutral global byte 0x8314EF9F is zero; both indexed words zero or a nonzero global byte select one. Helper semantics and runtime reachability remain unresolved.",
+        "scanStructure": "The predicate scan starts index i at zero and enters only when the signed word at 0x82F700AC is positive. It advances i by one, a neutral displacement by 0x80, and the 0x8312E5C0 pointer by 4, repeating while incremented i is signed-less-than the reloaded bound. Its neutral constant data bases are 0x830ED0D8, 0x830E5650, and 0x830E5AD0. A second scan takes a fresh 0x82CD4CF0 snapshot, starts i at zero, uses the same positive signed bound, advances i and its neutral pointer by one and 4, and repeats while i remains signed-less-than that reloaded bound.",
+        "secondScanBody": "Within one entered second-scan iteration, the guarded body requires index inequality with neutral 0x82D8A3A0's result, a nonzero low byte from 0x82CD5A70(index), and inequality between the current iteration word and the fresh 0x82CD4CF0 snapshot. Passing all three guards initializes a neutral stack object at r1+0xA0. Its leading word is 0x82136930 before the call window and 0x8211EC1C afterward or when the call is skipped. If manager +0x10 is nonnull, the body passes that child, the stack object, and literal one as args 1 through 3 to the child's unresolved virtual slot +0x44. The bounded window has a complete initialization-store map over object-relative [+0,+0x38), not a declared allocation extent, recovered type, serialization layout, or complete lifetime model. The child, indirect call, literal-one role, array extent, element and helper semantics, ownership, delivery, and runtime behavior remain unresolved.",
+        "stackObjectTable": {
+          "address": "0x82136930",
+          "extent": "[0x82136930,0x82136944)",
+          "slots": [
+            { "offset": "0x0", "target": "0x821D3D30", "role": "Preserves opaque arg1, installs companion table 0x8211EC1C at offset zero, conditionally calls 0x82D3D9F0 when arg2 bit zero is set, and returns arg1." },
+            { "offset": "0x4", "target": "0x821D5678", "role": "No-op return." },
+            { "offset": "0x8", "target": "0x82D90EC8", "role": "Calls the accepted base-envelope writer, then passes object +0x34 to the accepted 32-bit writer." },
+            { "offset": "0xC", "target": "0x82D90E80", "role": "Calls the accepted base-envelope reader, then passes object +0x34 to the accepted 32-bit reader." },
+            { "offset": "0x10", "target": "0x82D91BD0", "role": "Passes manager pointer 0x8314EFDC and object +0x34 to neutral helper 0x82D8FCC8, then returns one." }
+          ],
+          "allocatorPath": "Function 0x821D3A98 requests 0x38 bytes, installs this table, initializes the same observed offsets as the guarded stack path, and stores zero at +0x34 where the guarded stack path stores its loop index.",
+          "companionTransition": "Initializer 0x82CB1B80 installs 0x8211EC1C in a caller-provided object and writes overlapping neutral base fields. Functions 0x82CCE708 and 0x82CEDF90 construct a command object through 0x82D90A18, route it through manager child +0x44 when nonnull, and then install 0x8211EC1C.",
+          "companionTable": {
+            "address": "0x8211EC1C",
+            "extent": "[0x8211EC1C,0x8211EC34)",
+            "slots": [
+              { "offset": "0x0", "target": "0x821D3D30", "role": "Preserves opaque arg1, installs this companion table at offset zero, conditionally calls 0x82D3D9F0 when arg2 bit zero is set, and returns arg1." },
+              { "offset": "0x4", "target": "0x821D5678", "role": "No-op return." },
+              { "offset": "0x8", "target": "0x82CB1F78", "role": "Accepted base-envelope writer." },
+              { "offset": "0xC", "target": "0x82CB1EC8", "role": "Accepted base-envelope reader." },
+              { "offset": "0x10", "target": "0x822DF8A0", "role": "Shared return-zero stub." },
+              { "offset": "0x14", "target": "0x821B14B0", "role": "Preserves opaque arg1 across one unconditional helper call and a second call gated by arg2 bit zero, then returns arg1." }
+            ],
+            "successorBoundary": "Zero word 0x8211EC34 separates the six consecutive pointers from a distinct five-pointer sequence at 0x8211EC38. The current reference model records one data reference to 0x8211EC38, and exact initializer 0x82E2EBD8 stores that address at caller-provided object offset zero.",
+            "qualification": "The successor evidence closes a structural boundary only. It is not an executable-wide installation or lifetime inventory, and the successor table is not cataloged here. The sixth target's helper, destructor, release, ownership, and lifetime semantics remain unresolved."
+          },
+          "sharedLeadingHelper": {
+            "address": "0x82D3D9F0",
+            "dataflow": "Preserves its incoming pointer, calls 0x82D3DA78, and, when that returns a nonnull base pointer, queries base-relative address +0x1080 through 0x82D2E3D0. A nonzero low byte passes the base pointer, original pointer, and returned local word through 0x82D2E960; otherwise the original pointer goes to fallback 0x827F5780.",
+            "fallback": {
+              "address": "0x827F5780",
+              "dataflow": "Returns immediately for a null incoming pointer. Otherwise it preserves that pointer, calls 0x82812B20, and passes the returned value, zero, and the original pointer to return gate 0x82811F48. A nonzero gate return ends the helper. A zero return instead calls 0x827F6910, 0x8280DD30, and 0x827F68A8 in order, then stores the last return value at offset zero of the pointer returned by 0x827F6910.",
+              "valueSource": {
+                "address": "0x82812B20",
+                "dataflow": "Fully decompiles as a leaf that reads and returns the 32-bit value at neutral global address 0x831580F8.",
+                "global": {
+                  "address": "0x831580F8",
+                  "canonicalImageValue": "0x00000000",
+                  "referenceModel": "The configured Ghidra model records one read at 0x82812B24 inside 0x82812B20 and no writer or data reference. The exact leaf renders as lis r11,-0x7CEA; lwz r3,-0x7F08(r11); blr. A whole-listing search for the 32-bit scalar form 0xFFFF80F8 finds only that known load; 16-bit unsigned and signed-long forms both miss it. An exact canonical-flat-image search of aligned initialized memory finds zero stored 0x831580F8 values. The model omits an independently proven caller of 0x82812B20, and these searches exclude unaligned, indirect, indexed, runtime, and other address-materialization forms, so this is not read uniqueness or a complete reference or writer inventory."
+                },
+                "qualification": "The canonical-image zero is not a runtime-value or initialization-code claim. Owner, singleton, allocator, deallocator, context, heap, manager, structure, lifetime, writer, and return-value meanings remain unresolved."
+              },
+              "returnGate": {
+                "address": "0x82811F48",
+                "dataflow": "Returns one when incoming arg3 is null. For nonnull arg3 it reads and writes values at arg1- and arg3-relative addresses through paths selected by arg1 values, arg2 bit zero, and arg3-relative values, including bit tests, paired-pointer stores, and counter updates. One selected path calls NtFreeVirtualMemory with a pointer value derived from arg3 and changes the default-one result to zero only when that import returns a negative value.",
+                "qualification": "Ghidra reaches only the known save/restore thunk and misclassifies it as nonreturning in the configured unrepaired project. Narrow exact generated corroboration supports this local body only; reported targets are not independently classified here."
+              },
+              "secondarySequence": {
+                "pointerSelector": {
+                  "address": "0x827F6910",
+                  "dataflow": "Calls 0x827FE4E8, returns static address 0x82F2E9A8 when that call returns zero, and otherwise returns that call's return value plus eight."
+                },
+                "selectorSource": {
+                  "address": "0x827FE4E8",
+                  "dataflow": "Preserves the return from 0x8280DD30 for a final 0x82819F18 call, loads the word at 0x82F2EE28, obtains an indirect target from 0x827FE3F0, and calls it with the loaded word. An initial nonzero result other than one is returned unchanged; one becomes zero. Initial zero enters guarded indirect calls through the pointer at 0x82FA1644 and may pass one and 0xC4 to 0x827F9628. A returned pointer is conditionally passed through the same indirect gate. A zero result from that second indirect call passes the pointer to 0x827F5780 and returns zero; a nonzero result stores one at +0x14, address 0x82F2F080 at +0x5C, the return from 0x8280DA68 at +0, and -1 at +4, then returns the pointer. Other zero-result guarded paths return zero.",
+                  "qualification": "Ghidra truncates at bad instruction data. Narrow exact generated corroboration supports only this local control and dataflow. Initial-result, literal-one, indirect-call, argument, returned-pointer, stored-field, allocator, owner, object, structure, singleton, and lifetime meanings remain unresolved."
+                },
+                "intermediateSelector": {
+                  "address": "0x8280DD30",
+                  "dataflow": "Returns the word at *(r13+0x100)+0x160 when the word at r13+0x150 is zero; otherwise returns zero.",
+                  "qualification": "The configured caller model omits the independently proven 0x827F5780 call. Register-base, nested-pointer, offset, zero-gate, storage, lock, scheduler, owner, object, structure, singleton, and lifetime meanings remain unresolved."
+                },
+                "finalLookup": {
+                  "address": "0x827F68A8",
+                  "dataflow": "Scans 45 key/value entries with stride eight beginning at 0x82F2E840, compares incoming arg1 with each leading word, and returns the paired +4 word on a match. A miss returns 0xD for inputs 0x13 through 0x24, 8 for inputs 0xBC through 0xCA, and 0x16 otherwise.",
+                  "qualification": "Static evidence proves that incoming arg1 is the immediately preceding return from 0x8280DD30 and that this return is stored at offset zero of the pointer from 0x827F6910. Key, value, table, range, stored-result, code, error, owner, object, structure, and runtime meanings remain unresolved."
+                },
+                "qualification": "This closes only local function, return, call-order, and final-store dataflow on the zero-return branch. It does not establish allocator, deallocator, constructor/destructor, release, ownership, lifetime, object, class, storage, runtime, or Xbox synchronization semantics."
+              },
+              "qualification": "Ghidra truncates the fallback at bad instruction data and reports callers outside the one-function closure. Narrow exact generated corroboration supports only this local control and dataflow. Allocator, deallocator, constructor/destructor, release, ownership, lifetime, object, class, structure, return-value, and runtime semantics remain unresolved."
+            },
+            "qualification": "Ghidra truncates the helper at bad instruction data and reports callers outside the one-function closure. Narrow exact generated corroboration supports only this local routing. Allocator, deallocator, destructor, release, ownership, lifetime, class, and runtime semantics remain unresolved."
+          },
+          "qualification": "The 0x38 value is a request argument on one exact allocator path, not an exact usable heap extent or general stack extent. Original class and function names, field meanings, ownership, lifetime, runtime delivery, and transport remain unresolved. The 0x82136930 slot at +0x10 is not the accepted command-object consume target at 0x82D91C58."
+        },
+        "boundReferenceModel": "For neutral word 0x82F700AC, Ghidra records four reads at 0x82CF0454, 0x821BD7FC, 0x82D25268, and 0x82CEFC5C. Three are signed-positive guards; 0x821BD7F8 instead bounds incoming arg1 before a following mask path. The model records no writer and omits four independently identified dispatcher reads at 0x82CDE984, 0x82CDEA70, 0x82CDEB18, and 0x82CDEBE0, so this is not a complete access inventory and does not establish scan array extent or fixed runtime cardinality.",
+        "selectedFlagByte": "Function 0x82D05D50 writes constant zero to 0x8314EF9F on its straight-line entry path, and 0x82D217C8 directly calls that writer at 0x82D217E0. A corrected 32-bit displacement scan finds that writer as the only matching displacement access in the defined instruction listing, and initialized memory contains no aligned pointer value to the byte. The current reference model omits independently proven read and call references, so this is not a complete access inventory and other writers remain unresolved."
+      },
+      "dataComparison": "0x82CDEC64 calls 0x82CD4CF0 and 0x82CDEC68 compares its return with record arg1. Mismatch emits the exact Xbox string 'Synch Err: Data'.",
+      "seedComparison": "0x82CDEC90 loads the stored word rooted at 0x82F7AD00 and 0x82CDEC94 compares it with record arg2. Mismatch emits the exact Xbox string 'Synch Err: Seed'.",
+      "mismatchState": "Either mismatch sets bit 0x10 in 0x82FFE7C4.",
+      "qualification": "The two producer sites and predicate are static bounded relations. They do not establish runtime reachability, multiplicity, ordering, delivery, a Checksum name, checksum coverage, readiness, completion, authority, lockstep, resynchronization, framing, or transport."
+    },
+    "case54": {
+      "type": 54,
+      "target": "0x82CDED8C",
+      "case53Submit": "Case 53's no-type-55 path and both type-55 paths converge at 0x82CDEC1C before one direct numeric type-54 submit at 0x82CDEC40.",
+      "mismatchState": "0x82CDED90..0x82CDED98 clears bit 0x10 in 0x82FFE7C4 before 0x82CDED9C directly calls 0x82D0C3E8.",
+      "calendarDataflow": "Within 0x82D0C3E8, 0x82D0C400 loads current turn 0x8312B8DC, 0x82D0C470 directly calls TurnToYear at 0x82CEFA20, and 0x82D0C490 stores the result at current year 0x8312B8E0."
+    },
+    "qualification": "These are static numeric-case roles, not recovered original opcode names. They do not identify case 54 as the unverified PS3 comparison Checksum message, distinguish BeginTurn, EndTurn, ImDoneAI, readiness, or completion among cases 46 through 49, reveal checksum coverage, or prove runtime lockstep, ordering, resynchronization, delivery, outer wire framing, or transport."
+  },
+  "setupStateAnchors": {
+    "sharedPlayerMask": {
+      "address": "0x830EE7E0",
+      "case50": "Sets 1 << record.arg1 before testing completion.",
+      "case51": "Clears 1 << record.arg1 only when IsHumanPlayer returns true for the value at 0x8312B8E4.",
+      "case52": "Sets 1 << record.arg1 without a predicate in the exact case body."
+    },
+    "case50CompletionGate": {
+      "humanPlayerMask": "0x8312E608",
+      "oneShotFlag": "0x83157E4C",
+      "relation": "After a nonzero return from 0x82D8AA60, equality between 0x830EE7E0 and the human-player mask gates the zero-to-one flag transition, a call to 0x82D038E8, and direct submission of numeric type 48 through 0x82CE1950."
+    },
+    "case53PlayerState": {
+      "receiptMask": "0x83157E48",
+      "array": "0x8312E5C0 + 4 * record.arg1",
+      "relation": "Case 53 stores record.arg2 in the indexed word and sets 1 << record.arg1 in the distinct receipt mask."
+    },
+    "qualification": "These neutral static roles do not recover the unverified PS3 comparison Handicap, WorldType, or TurnTime names. They do not establish readiness, setup order, host/client direction, broadcast, authority, runtime completion or delivery, EndTurn, lockstep, wire packing, or transport."
+  },
+  "greatGeneralAttachmentAnchor": {
+    "types": [25, 44],
+    "sharedTarget": "0x82CE14D8",
+    "creatorType": 30,
+    "creator": "0x82D11750",
+    "carrierLink": "created unit record +0x50",
+    "relation": "The shared branch creates special unit type 30 for record.arg1 and stores record.arg2 as the created record's carrier link. The independent great-general-attachment-lifecycle topic establishes this as Great General attachment.",
+    "qualification": "This role is Xbox-native semantic evidence, but neither numeric case is assigned the unverified comparison AddGeneral opcode name. The reason for two cases, their higher-level distinction, award timing, runtime delivery, wire packing, transport, and checksum coverage remain unresolved."
+  },
+  "wireSerialization": {
+    "status": "object-layer-closed",
+    "objectVtable": {
+      "address": "0x821368E0",
+      "extent": "0x14",
+      "writeSlot": { "offset": "0x8", "target": "0x82D910C0" },
+      "readSlot": { "offset": "0xC", "target": "0x82D91078" },
+      "consumeSlot": { "offset": "0x10", "target": "0x82D91C58" },
+      "qualification": "The next table begins at 0x821368F4. The common leading slots at 0x0 and 0x4 remain unnamed."
+    },
+    "baseEnvelope": {
+      "writeHelper": "0x82CB1F78",
+      "writeSequence": ["object+0x10", "literal 4", "object+0x2C", "object+0x1C", "object+0x18", "object+0x14", "object+0x24", "object+0x28"],
+      "leadingValue": 77,
+      "leadingValueProducer": "0x82D90A24 loads 77 and 0x82D90A64 stores it at constructed object +0x10.",
+      "writeBytes": 32,
+      "readHelper": "0x82CB1EC8",
+      "readSequence": ["validate literal 4", "object+0x2C", "object+0x1C", "object+0x18", "object+0x14", "object+0x24", "object+0x28"],
+      "readBytes": 28,
+      "objectWriteContributionBytes": 52,
+      "objectReadContributionBytes": 48,
+      "qualification": "The bounded read helper does not read object +0x10. Literal 77's meaning and any external consumer remain unresolved; it is not named as a class, opcode, channel, packet, or transport type. The asymmetric contributions are not complete packet sizes and do not identify metadata meanings, target encoding, batching, headers, or platform transport."
+    },
+    "outerFactory": {
+      "function": "0x821D3778",
+      "allocationBytes": 72,
+      "vtable": "0x821368E0",
+      "defaultLeadingField": 1000,
+      "embeddedRecordInitialization": "Zeros object +0x34 through +0x44.",
+      "functionMetadataRow": {
+        "factoryPointer": "0x8216CC08",
+        "descriptorAddress": "0x8216CC0C",
+        "descriptor": "0x40002C03",
+        "stride": 8
+      },
+      "functionMetadataTable": {
+        "extent": "0x8216B800..0x8218A050",
+        "extentConvention": "half-open",
+        "rows": 15626,
+        "firstTarget": "0x821B0000",
+        "lastTarget": "0x827F7860",
+        "descriptorTopBits01Rows": 15590,
+        "descriptorTopBits11Rows": 36,
+        "guestReferences": {
+          "root": 0,
+          "factoryRow": 0,
+          "halfOpenEnd": 0
+        }
+      },
+      "result": "The unique non-constructor vtable reference is a default object factory. Its unique initialized pointer is one row in a 15,626-row executable-wide ordered function-pointer/descriptor metadata table, not a network-object registration table.",
+      "qualification": "Literal 77 is absent from the factory row and neighboring window, and Ghidra reports no guest references to the table root, factory row, or half-open end. The precise platform owner, descriptor bit meanings, runtime use, any overwrite of default 1000, and consumption of outbound leading value 77 remain unresolved. No supported static consumer maps 77 to this factory."
+    },
+    "embeddedRecord": {
+      "objectOffset": "0x34",
+      "writeHelper": "0x821D2F98",
+      "readHelper": "0x821D2F28",
+      "orderedFields": ["type", "arg1", "arg2", "arg3", "arg4"],
+      "fieldWidth": 4,
+      "payloadBytes": 20,
+      "writePrimitive": "0x821D3EA0",
+      "readPrimitive": "0x822D93E8",
+      "byteOrder": "Each primitive conditionally reverses its four bytes when buffer byte-order state +0x08 differs from state at 0x82F78854. No unconditional wire endian is asserted."
+    },
+    "result": "The Xbox network object serializes and deserializes its embedded command record as five ordered 32-bit primitives, for an exact 20-byte object-layer payload. This is not the comparison guide's PS3/iOS opcode-dependent compact packing.",
+    "qualification": "The object-layer base envelope is qualified separately. Complete packet framing, headers outside these helpers, batching, target encoding, Xbox session/platform transport, delivery, and runtime ordering remain unresolved. None of the recorded byte contributions is asserted to be the complete platform packet size."
+  },
+  "crossPlatformHypotheses": {
+    "acceptedXboxNamedTypes": [0, 6, 17],
+    "acceptedXboxStaticRoleTypes": [25, 44, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55],
+    "unaccepted": "All other PS3/iOS names, framing, broadcast names, GameSpy/Game Center envelopes, platform transport, and deterministic-lockstep statements remain search hypotheses.",
+    "superseded": "The Xbox internal queue has 66 accepted type values 0..65 and stores five words per slot. The target argument is separate from that record. The Xbox network object's embedded payload serializes all five words as ordered 32-bit primitives rather than the comparison guide's opcode-dependent compact packing."
+  },
+  "guards": [
+    "Do not assign semantic names to numeric cases from PS3/iOS agreement alone.",
+    "Do not conflate the five-word internal ring record, its proved 20-byte object-layer serialization, outer packet framing, or platform UDP/session transport.",
+    "Do not infer runtime queue ordering, thread safety, overflow behavior, successful delivery, deterministic lockstep, checksum coverage, or resynchronization from static structure.",
+    "Do not treat the constructed object's 0x48 touched extent as a proved allocation size or wire size.",
+    "Do not treat the executable-wide function metadata row as a network registration record or infer descriptor semantics from its packed value.",
+    "Do not add a title enum, generated header, code-generation authority, internal API, or public API until an identified maintained host consumer requires it; research remains outside the runtime build dependency graph."
+  ],
+  "conclusion": "Version 1.3 uses a five-word, 0x14-byte internal command record in a 32-slot modulo ring at 0x83155C28. Drain function 0x82CE16C8 copies one record and directly calls dispatcher 0x82CDDF08. The dispatcher reads type plus three arguments, accepts unsigned types 0 through 65, and branches through the exact 66-entry table at 0x82CDE014. Submit function 0x82CE1950 keeps its target argument separate, copies the five-word record into a distinct vtable-bearing object through 0x82D90A18, and routes it through a network-manager child. Numeric type 49 has the neutral static role of ORing a LocalPlayerIdResolve-derived slw mask into 0x83157E44; cases 46 and 47 initialize that mask and contain three exact type-49 submit sites, while case 46 later compares it with the human-player mask. Numeric type 57 has the separately accepted neutral role of storing arg2 as a halfword at 0x830E9050 + arg1*2. No original turn/synchronization or type-57 policy name follows. The command object's paired methods serialize and deserialize the embedded record as five ordered 32-bit primitives for an exact 20-byte object-layer payload with conditional byte-order conversion. The factory pointer's initialized row belongs to executable-wide function metadata, not a network registry, and no supported static consumer maps outbound leading value 77 to the factory. Outer framing, target encoding, platform transport, runtime delivery, and unsupported cross-platform semantics remain unresolved."
+}

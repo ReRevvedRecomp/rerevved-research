@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0133",
+  "topic": "xbox-kernel-handle-close-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which exact leaf does version 1.3 wrapper 0x8280DA78 select when closing a handle, and how is the returned status observed?",
+  "scope": {
+    "wrapper": "0x8280DA78",
+    "dispatchCell": "0x82F2FAC8",
+    "dispatchTable": "0x82F2FA9C",
+    "selectedSlot": "0x4",
+    "selectedLeaf": "0x82E92BD4",
+    "boundedDirectAdapters": ["0x82A1D678", "0x82A1D720"],
+    "boundary": "This packet resolves one exact handle-close leaf and the wrapper's signed-status conversion. It does not classify every caller, prove handle ownership, cover session teardown paths, or establish runtime close behavior."
+  },
+  "dependencies": [
+    {
+      "topic": "registered-source-delivery-boundary",
+      "use": "accepted 0x8280DA78 enumerator-handle close boundary"
+    }
+  ],
+  "currentEvidence": {
+    "method": "foreground read-only Ghidra function, instruction, and initialized-word queries against the pinned version 1.3 project, with exact ordinal comparison against the maintained ReXGlue xboxkrnl export table",
+    "imageVerification": {
+      "program": "rerevved_image.bin",
+      "size": 18939904,
+      "sha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680"
+    },
+    "maintainedReference": {
+      "repository": "https://github.com/ReRevvedRecomp/rerevved-rexglue-sdk",
+      "revision": "f1b81fbfb3aa9fb59de66cbfc5dc5d2a935d8c4c",
+      "files": [
+        "src/kernel/xboxkrnl/export_table.inc",
+        "src/kernel/xboxkrnl/xboxkrnl_ob.cpp"
+      ],
+      "result": "xboxkrnl ordinal 0xCF is NtClose, whose maintained implementation returns the handle-release status."
+    },
+    "qualification": "The import thunk body is encoded as Xbox import metadata and truncates in the configured PowerPC decompiler. Exact initialized words identify ordinal 0xCF; the maintained export table supplies the semantic name."
+  },
+  "leafResolution": {
+    "pointerLoad": "0x8280DA88 loads pointer cell 0x82F2FAC8, whose initialized word is 0x82F2FA9C.",
+    "slotLoad": "0x8280DA8C loads table slot +0x04, whose initialized word at 0x82F2FAA0 is 0x82E92BD4.",
+    "dispatch": "0x8280DA90 moves the selected leaf to CTR and 0x8280DA94 calls it indirectly without replacing incoming handle argument r3.",
+    "thunkWords": [
+      { "address": "0x82E92BD4", "word": "0x010000CF" },
+      { "address": "0x82E92BD8", "word": "0x020000CF" },
+      { "address": "0x82E92BDC", "word": "0x7D6903A6" },
+      { "address": "0x82E92BE0", "word": "0x4E800420" }
+    ],
+    "result": "The selected indirect leaf is import thunk 0x82E92BD4 for xboxkrnl ordinal 0xCF, NtClose."
+  },
+  "statusObservation": {
+    "comparison": "0x8280DA98 compares returned r3 with zero as a signed value.",
+    "failurePath": "A negative status branches at 0x8280DA9C to 0x8280DAA8, calls 0x8281B498 with the returned status still in r3, and then returns Boolean zero.",
+    "successPath": "A nonnegative status returns Boolean one through 0x8280DAA0..0x8280DAA4.",
+    "boundedCallerResult": "Direct adapters 0x82A1D678 and 0x82A1D720 call 0x8280DA78 with their incoming handle and discard its Boolean return. The wrapper is the observed status boundary for those two adapters.",
+    "qualification": "The complete direct-caller set and every session ownership or teardown path remain outside this packet. No runtime status was observed."
+  },
+  "staticQuery": {
+    "scripts": ["ghidra/DumpFunctions.java", "ghidra/DumpInstructions.java", "ghidra/DumpMemoryWords.java"],
+    "mode": "foreground-read-only",
+    "addresses": ["0x8280DA78", "0x82F2FAC8", "0x82F2FA9C", "0x82E92BD4", "0x82A1D678", "0x82A1D720"]
+  },
+  "guards": [
+    "Do not treat Boolean one as the raw NTSTATUS; the wrapper discards every nonnegative status value.",
+    "Do not infer that the two bounded adapters are the complete handle-close or session-close caller set.",
+    "Do not infer handle type, ownership, release count, teardown completeness, discovery behavior, or runtime success from this static leaf identity.",
+    "Do not widen this result into the all-path 0x82A1EB38 teardown question."
+  ],
+  "conclusion": "Version 1.3 wrapper 0x8280DA78 loads table 0x82F2FA9C through pointer cell 0x82F2FAC8 and selects slot +0x04, import thunk 0x82E92BD4 for xboxkrnl ordinal 0xCF NtClose. The wrapper observes the returned NTSTATUS by signed comparison: negative values reach helper 0x8281B498 and become Boolean zero, while nonnegative values become Boolean one. Bounded direct adapters 0x82A1D678 and 0x82A1D720 discard that Boolean."
+}

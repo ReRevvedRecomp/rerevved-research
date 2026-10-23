@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0117",
+  "topic": "audio-stream-handle-lifecycle-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What is the first exact consumer or release path for the handle stored at audio stream-slot +0x4?",
+  "scope": {
+    "slotSize": "0x38",
+    "handleField": "+0x4",
+    "streamOpenWriter": "0x82D461E8",
+    "setupDispatcher": "0x82D46380",
+    "slotArrays": ["low-level owner +0x54", "low-level owner +0x58"],
+    "candidateCap": 6,
+    "functionCap": 8,
+    "boundary": "The search is limited to the writer, dispatcher, their exact references, and depth-zero +0x4 READ classification in those two functions. It does not sweep generic +0x4 fields or unanchored release wrappers."
+  },
+  "dependencies": [{ "topic": "audio-initialization-stream-ownership", "use": "Provides the accepted 0x38-byte slot, +0x4 handle writer, dispatcher, and type-2/type-3 slot arrays." }],
+  "ownerBodies": [
+    { "function": "0x82D461E8", "role": "accepted stream-open writer", "result": "The exact body reduces to a non-returning call to thunk helper 0x827F7C80." },
+    { "function": "0x82D46380", "role": "accepted setup dispatcher", "result": "The complete body selects 0x82D461E8 only for input types 2 and 3 and otherwise selects a separate helper or returns -1." }
+  ],
+  "referenceResults": {
+    "writer": { "target": "0x82D461E8", "references": 1, "rows": [{ "type": "UNCONDITIONAL_CALL", "source": "0x82D463C0", "function": "0x82D46380" }] },
+    "dispatcher": { "target": "0x82D46380", "references": 1, "rows": [{ "type": "DATA", "source": "0x82147C4C", "function": null }] },
+    "candidateConsumers": [],
+    "result": "No modeled function beyond the accepted dispatcher calls the writer, and no code reference calls the dispatcher."
+  },
+  "fieldReadResult": {
+    "functions": ["0x82D461E8", "0x82D46380"],
+    "offset": "+0x4",
+    "access": "READ",
+    "scannedInstructions": 36,
+    "matches": 0
+  },
+  "boundedNegative": {
+    "result": "No exact first consumer, validity check, close, or release path is promoted. The writer body is thunk-only, the dispatcher has no code caller, and depth-zero classification finds zero +0x4 reads in the two accepted functions.",
+    "effect": "The accepted handle store and type-2/type-3 dispatch remain valid, while handle consumption and lifetime remain unresolved.",
+    "falsificationCondition": "An independently anchored consumer or release wrapper is tied to the same 0x38-byte slot carrier and directly reads +0x4."
+  },
+  "catalogPromotion": { "newEntities": [], "updatedEntities": ["RVA-FLD-0048"], "result": "The existing handle field gains the bounded lifecycle qualification; no first-use or release relation is added." },
+  "currentEvidence": {
+    "method": "Three sequential foreground read-only Ghidra queries: exact bodies for writer and dispatcher, exact references to both entries, and depth-zero +0x4 READ classification in both functions.",
+    "locators": ["ghidra/DumpFunctions.java:0x82D461E8,0x82D46380", "ghidra/DumpReferences.java:0x82D461E8,0x82D46380", "ghidra/FindFieldAccesses.java:0x82D461E8,0x82D46380:+0x4:READ"],
+    "qualification": "No generic +0x4 sweep or unanchored release-wrapper search was performed. Split-address, indirect, and unrecovered consumers remain possible."
+  },
+  "guards": ["Do not infer successful stream opening from the stored result.", "Do not infer playback, platform, thread, or runtime lifetime behavior.", "Do not treat unrelated +0x4 fields as stream handles."],
+  "conclusion": "The bounded writer/dispatcher reference graph and direct field scan expose no stream-handle consumer or release path. The +0x4 handle store remains accepted, but its first use and lifetime are unresolved."
+}

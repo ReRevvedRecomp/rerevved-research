@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0091",
+  "topic": "new-warrior-veteran",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which current-image unit-creation path implements UEA 50 New Warriors are Veterans, and what exact runtime-unit field update does it perform?",
+  "scope": {
+    "functions": ["0x82CF0CB0", "0x82D13978"],
+    "fields": ["runtime unit record +0x01", "runtime unit record +0x05", "creation record +0x3C bit 0x20"],
+    "boundary": "This packet retains the new-unit Warrior UEA 50 route, an identity-gated creation-time grant hook, and the bounded owner-observed Jaguar Veteran acceptance. It does not recover every rank writer or consumer, combat promotion, AI, save, scenario, multiplayer, or persistence behavior, or establish broader presentation and runtime coverage."
+  },
+  "dependencies": [
+    { "topic": "unit-definitions-ai-evaluation", "use": "Provides the accepted Warrior UnitType 6, Legion UnitType 8, and runtime unit-type byte +0x01 identities." },
+    { "topic": "civilization-bonus-storage", "use": "Provides the accepted cumulative lookup and German Ancient placement of UEA 50." }
+  ],
+  "activation": {
+    "ueaId": 50,
+    "effect": "New Warriors are Veterans",
+    "retailPlacement": { "civilization": "German", "era": "Ancient" }
+  },
+  "owner": {
+    "function": "0x82D13978",
+    "recordSize": "0x54",
+    "rankField": { "offset": "0x05", "width": "byte", "initialStore": "0x82D15B48" },
+    "unitTypePredicate": { "address": "0x82D15B5C", "value": 6, "acceptedInternalName": "Warrior" },
+    "lookupArguments": {
+      "mode": { "address": "0x82D15B6C", "value": 0 },
+      "player": { "address": "0x82D15B70", "source": "retained r26" },
+      "ueaId": { "address": "0x82D15B74", "value": 50 }
+    },
+    "lookupCallsite": "0x82D15B78",
+    "resultTest": "0x82D15B7C",
+    "alternateGate": {
+      "address": "0x82D15B84",
+      "source": "creation record +0x3C",
+      "mask": "0x20",
+      "setTarget": "0x82D15B9C",
+      "clearTarget": "0x82D15BA8",
+      "result": "The non-UEA route increments the same runtime rank byte only when the creation record halfword has bit 0x20 set."
+    },
+    "activeTarget": "0x82D15B9C",
+    "increment": { "load": "0x82D15B9C", "add": "0x82D15BA0", "store": "0x82D15BA4" },
+    "saturation": { "load": "0x82D15BE8", "compareMaximum": "0x82D15BF4", "maximum": 2, "clampStore": "0x82D15C00" },
+    "result": "For a newly initialized Warrior record, active cumulative UEA 50 increments byte +0x05. The same routine later clamps values above two back to two, so the UEA path raises a lower initial level to the accepted veteran level without exceeding it.",
+    "qualification": "A separate local flag can reach the same increment block when UEA 50 is inactive. This packet proves UEA 50's direct route and saturation, not exclusive ownership of every veteran grant."
+  },
+  "ghidraListingBoundary": {
+    "cityUpdateEntry": {
+      "address": "0x82D13978",
+      "definedBody": "0x82D13978..0x82D1397F",
+      "bodyBytes": "0x8",
+      "instructions": ["0x82D13978: mfspr r12,LR", "0x82D1397C: bl 0x827F7C50"],
+      "nextDefinedFunction": "0x82D16BA0"
+    },
+    "alternateGate": {
+      "address": "0x82D15B84",
+      "containingFunction": null,
+      "decodedInstructionCount": 0,
+      "queriedWindow": "0x82D15B44..0x82D15BC4",
+      "nextDefinedFunction": "0x82D16BA0"
+    },
+    "qualification": "These results describe the canonical Ghidra function and instruction listing only. They do not mean the bytes or behavior are absent; the existing raw current-image words and generated code continue to support the separately mapped city-update and veteran paths. The connection from Barracks 101 state to the creation-record +0x3C bit remains unresolved."
+  },
+  "uniqueUnitCreationGrant": {
+    "hook": "0x82D15B84",
+    "player": "Resolve civilization from 0x830ECD28[player_index].",
+    "baseType": "Read the new 0x54-byte runtime unit record +0x01.",
+    "identity": "Resolve the accepted Unique Unit identity from civilization plus base UnitType before matching a rule.",
+    "identityLocator": "https://github.com/ReRevvedRecomp/rerevved/blob/335425de9da44e10beeb01c788cbc4ef34a684d0/src/unit_catalog_api.cpp#L70-L72",
+    "identityQualification": "The title's semantic identity table maps Aztec plus Warrior to Jaguar Warrior; this is not a claim that the native guest identity selector was recovered for Jaguar.",
+    "firstTarget": "Aztec civilization plus Warrior UnitType plus Jaguar Warrior identity.",
+    "grant": "For a newly created unit satisfying all three identity gates, raise runtime unit byte +0x05 to veteran level two while the native creation flow continues.",
+    "nativeWarriorBypass": "When the native German UEA 50 lookup succeeds, the branch bypasses 0x82D15B84 and performs the native increment. Rank was initialized to one or two, so that route already satisfies the same minimum-level-two Veteran grant.",
+    "unsupportedSuppression": "Leave the rank unchanged when the unit is not on this creation path or its accepted civilization, base type, and Unique Unit identity do not match a registered rule."
+  },
+  "nativePreservation": {
+    "warriorUea50": "Retain the UnitType 6 predicate, cumulative UEA 50 lookup, and existing route into 0x82D15B9C.",
+    "alternateGate": "Retain the native 0x82D15B84 +0x3C bit-0x20 gate and its clear path to 0x82D15BA8.",
+    "saturation": "Retain the existing maximum-two comparison at 0x82D15BF4 and clamp store at 0x82D15C00."
+  },
+  "rankBoundary": {
+    "targetLevel": 2,
+    "behavior": "The accepted creation-time grant raises a lower rank to level two through the existing +1 step at 0x82D15BA0; values above two are saturated back to two."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only 69-word current-image query centered at 0x82D15B78, exact verification of 20 selected words and branch targets including the alternate gate at 0x82D15B84, narrow generated-code corroboration of the retained player and unit-record addressing in 0x82D13978, and two foreground read-only function-neighborhood queries bounding the canonical Ghidra listing at 0x82D13978 and 0x82D15B84.",
+    "entries": [
+      { "role": "Warrior predicate", "address": "0x82D15B5C", "confidence": "strong" },
+      { "role": "UEA 50 lookup", "address": "0x82D15B78", "confidence": "strong" },
+      { "role": "alternate +0x3C bit-0x20 gate", "address": "0x82D15B84", "confidence": "strong" },
+      { "role": "veteran-level increment", "address": "0x82D15B9C", "confidence": "strong" },
+      { "role": "level-two saturation", "address": "0x82D15BF4", "confidence": "strong" },
+      { "role": "Ghidra city-update entry boundary", "address": "0x82D13978..0x82D1397F", "result": "The defined body contains two instructions and the next defined function begins at 0x82D16BA0.", "confidence": "strong" },
+      { "role": "Ghidra alternate-gate listing boundary", "address": "0x82D15B84", "result": "No containing function or decoded instructions were returned for 0x82D15B44..0x82D15BC4.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82D15AF0..0x82D15C00", "ghidra/DumpFunctionNeighborhood.java:0x82D13978,0x82D15B84", "generated:rerevved/sub_82D13978", "civilization-bonus-storage#/storage/rows/0", "civilization-bonus-storage#/lookup/playerCivilizationArray", "unit-definitions-ai-evaluation#/unitDefinitions/records/6", "unit-definitions-ai-evaluation#/unitDefinitions/records/8"],
+    "qualification": "The static queries performed no runtime action. The current-image window contains the initialization, UEA gate, increment, alternate route, and final saturation. Ghidra's defined bodies do not cover the city-update code or alternate gate, so they cannot supply the missing Barracks-to-creation-bit link. The separate owner-observed result is recorded in runtimeAcceptance."
+  },
+  "runtimeAcceptance": {
+    "date": "2026-09-05",
+    "platform": "Windows x64",
+    "method": "Owner-observed enabled-mod test followed by disabling both Jaguar mods and restarting the title.",
+    "titleCommit": "335425de9da44e10beeb01c788cbc4ef34a684d0",
+    "modsCommit": "399c8e2333322649e39ffb460e7b9f5eaaf0a5e3",
+    "mod": "aztec-jaguar-veterans",
+    "enabledResult": "A newly created Aztec Jaguar displayed Veteran and used the Veteran combat modifier.",
+    "disabledRestartResult": "With both Jaguar mods disabled and the title restarted, a newly created Jaguar had no Veteran grant.",
+    "qualification": "This records the owner's bounded gameplay acceptance, not a captured runtime probe or an independent replay. It does not establish save/load persistence or behavior for other identities."
+  },
+  "runtimeBoundary": {
+    "status": "owner-observed",
+    "result": "The dated runtimeAcceptance records the Jaguar grant, visible Veteran state, combat modifier, and disabled-mod restart result. Behavior outside that bounded observation remains unverified."
+  },
+  "persistence": {
+    "status": "unresolved",
+    "result": "No serializer or save/load evidence was inspected for runtime unit byte +0x05 or the identity-targeted grant source; the creation-time and gameplay observations do not establish persistence."
+  },
+  "guards": [
+    "Do not treat runtime unit byte +0x05 as an unbounded experience counter; this creation path saturates it at two.",
+    "Do not claim UEA 50 is the only route to veteran level; a separate local flag reaches the same increment block.",
+    "Do not generalize the bounded Jaguar acceptance to combat promotion, other identities, AI, save, scenario, multiplayer, or broader presentation and runtime behavior.",
+    "Do not treat the native +0x3C bit-0x20 gate as proof of any unit identity; require explicit civilization, runtime base-type, and accepted Unique Unit identity checks."
+  ],
+  "conclusion": "The bounded creation path in 0x82D13978 retains the native UEA 50 Warrior route and the alternate +0x3C bit-0x20 gate at 0x82D15B84, both feeding the +0x05 increment and maximum-two saturation. The extension at 0x82D15B84 gates the Veteran grant on owner civilization, runtime base UnitType, and the title's semantic Unique Unit identity. On 2026-09-05 the owner accepted the Jaguar's displayed Veteran state and combat modifier, with no grant after disabling both Jaguar mods and restarting. Persistence and broader runtime coverage remain unverified."
+}

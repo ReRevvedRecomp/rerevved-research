@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0272",
+  "topic": "native-renderer-presentation-setup-input",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What concrete incoming r9 input reaches direct setup method 0x8250F2B0 before the accepted template +0x34 intermediate store, and does its supported direct caller provide an exact selector value?",
+  "scope": {
+    "setupMethod": "0x8250F2B0",
+    "acceptedSetterCallSite": "0x8250F66C",
+    "directCallInventory": {
+      "targetMethod": "0x8250F2B0",
+      "matchCap": 8,
+      "emittedCallSites": ["0x82C98EF0"],
+      "truncated": false,
+      "scope": "Initialized executable memory and aligned raw direct PowerPC branch-and-link words only."
+    },
+    "upstreamDirectCallInventory": {
+      "targetMethod": "0x82C98DF8",
+      "matchCap": 8,
+      "emittedCallSites": ["0x82C72200"],
+      "truncated": false,
+      "scope": "Initialized executable memory and aligned raw direct PowerPC branch-and-link words only."
+    },
+    "boundary": "The bounded result identifies one direct setup caller and one bounded upstream direct caller. The upstream caller writes literal byte 1 to the setup caller-frame location before 0x82C72200. The setup caller's earlier unexpanded helper calls precede lbz r9,0xFF(r1), so retention of that byte through the load and the resulting r9=1 path remains conditional; the exact direct scan remains limited to initialized executable raw branch-and-link words. Existing F0263 evidence carries the resulting r9 through stack +0x54 and 0x82508598 to the intermediate template +0x34 store; later helper mutation and final retention remain unresolved. No selector default, vsync, FPS, frequency, interval, or cadence meaning is assigned."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-presentation-selector-ownership",
+      "use": "Accepted 0x8250F2B0 setup method, setter callsite 0x8250F66C, and unresolved final template +0x34 boundary."
+    },
+    {
+      "topic": "native-renderer-presentation-selector-remainder",
+      "use": "The separate accepted remainder caller packet and its body/query accounting."
+    },
+    {
+      "topic": "native-renderer-guest-frame-pacing",
+      "use": "Presentation selector context and interval/default qualification."
+    }
+  ],
+  "staticJoin": {
+    "directCaller": {
+      "callSite": "0x82C98EF0",
+      "function": "0x82C98DF8",
+      "generatedFile": "generated/default/rerevved_recomp.135.cpp",
+      "incomingR9": {
+        "stackLoad": "lbz r9,0xFF(r1) at 0x82C98EC0. After the function prologue stwu r1,-0xA0(r1), this aliases pre-prologue stack old_r1+0x5F.",
+        "mapping": {
+          "nonzeroByteLow32": "0x00000001",
+          "zeroByteLow32": "0x80000000"
+        },
+        "guard": "cmplwi r9,0 at 0x82C98EC4; li r9,1 is retained on the bne path at 0x82C98ECC with low 32 bits 0x00000001, while the zero path executes lis r9,-32768 at 0x82C98ED0 with low 32 bits 0x80000000. The lis result's possible 64-bit sign extension is outside the claim; the later word field consumes the low 32 bits."
+      },
+      "callArguments": "Immediately before the branch-and-link, r4 is copied from r30 at 0x82C98EE8 and r3 from r31 at 0x82C98EEC; the call at 0x82C98EF0 targets 0x8250F2B0 and returns through LR 0x82C98EF4.",
+      "preCallGuards": "The selected caller window includes prologue and frame setup before the local r9 mapping. This packet does not claim outcomes for preceding helper or status branches; the local r9 choice is controlled by the loaded stack byte.",
+      "upstreamProducer": {
+        "callSite": "0x82C72200",
+        "function": "0x82C72148",
+        "generatedFile": "generated/default/rerevved_recomp.200.cpp",
+        "stackStore": "The upstream caller executes li r24,1 at 0x82C721D0 and stb r24,0x5F(r1) at 0x82C721E8 before the direct call. The setup caller's stwu r1,-0xA0(r1) makes its current r1+0xFF alias the upstream caller's current r1+0x5F. This establishes a pre-call byte value 1; retention through the setup caller's earlier unexpanded helper calls before lbz r9,0xFF(r1), and therefore the loaded byte/r9=1 path, remains conditional.",
+        "preCallGuards": "After helper 0x821B26F8 returns through LR 0x82C721A4, local status arms select r10 values 256, 1024, or 512 and converge at 0x82C721CC before li r24,1 and the byte store. The helper body was not expanded; normal helper return and actual reaching control flow remain required.",
+        "callArguments": "Immediately before the branch-and-link, clrlwi r6,r26,24 is at 0x82C721F0, r5 is copied from r28 at 0x82C721F4, r4 from r29 at 0x82C721F8, and r3 from r30 at 0x82C721FC. The call at 0x82C72200 targets 0x82C98DF8 and returns through LR 0x82C72204.",
+        "normalReturn": "After LR 0x82C72204, cmpwi r3,0 branches the zero result to 0x82C72218; the nonzero result restores the frame and returns 0. This packet does not claim runtime execution or helper retention."
+      },
+      "normalReturn": "The generated caller has a postcall continuation beginning after LR 0x82C98EF4. The bounded window does not claim a complete caller return path or runtime execution."
+    },
+    "acceptedChain": "Existing F0263 evidence traces the incoming r9 through caller stack +0x54 to callee 0x82508598 stack +0xF4, then to the raw-confirmed intermediate stw r11,0x34 at 0x8250868C. The intermediate store proves a producer handoff, not the final retained template word because later nested helpers remain outside this packet.",
+    "valueBoundary": "The supported upstream direct caller writes literal byte 1 to the setup caller-frame location before the setup caller's earlier unexpanded helper calls. If the byte is retained through the later lbz, the setup caller maps the loaded byte to low 32-bit r9=0x00000001 for nonzero or 0x80000000 for zero. This is a concrete conditional input origin, not one unconditional final selector value before the accepted template +0x34 store."
+  },
+  "guards": [
+    "Do not treat the loaded byte at current-frame +0xFF or its pre-prologue alias old_r1+0x5F as a runtime configuration semantic or as retained byte 1 without closing the setup caller's earlier helper effects; RVA-F-0272 identifies one bounded local pre-call byte producer, while broader producer ownership remains outside the capped direct scan.",
+    "Do not treat low 32-bit r9 values 0x00000001 or 0x80000000 as vsync, default interval, FPS, frequency, or cadence labels.",
+    "Do not promote the intermediate 0x82508598 -> template +0x34 store to a final setter value; later nested helper mutation and retention remain unresolved.",
+    "Do not infer complete caller ownership from the capped direct scans; tail, indirect, dynamic, and other unscanned forms remain outside this packet.",
+    "Do not treat the generated postcall continuation or normal LR as proof of runtime execution."
+  ],
+  "observations": [
+    "FindDirectCallers.java emitted exactly one direct branch-and-link caller for 0x8250F2B0: 0x82C98EF0, with decoded=false, owner=<undefined>, Truncated=false, and Cancelled=false.",
+    "DumpFunctions.java returned No containing function for exact raw target 0x82C98EF0; the pinned generated source maps the callsite to sub_82C98DF8.",
+    "The setup caller window contains no direct write to the stack byte loaded at r1+0xFF before the r9 mapping; its one bounded upstream direct caller writes pre-call byte 1 at 0x82C721E8, while earlier unexpanded setup-caller helpers leave retention to the load conditional."
+  ],
+  "unknowns": [
+    "Retention of the upstream pre-call byte through the setup caller's earlier unexpanded helpers remains unresolved, as do additional producers, tail forms, indirect forms, and dynamic paths outside the capped direct scan.",
+    "The setup method's later helper mutation and final retention of template +0x34 remain unresolved beyond the accepted 0x82508598 intermediate store.",
+    "Tail, indirect, and additional setter/setup forms outside the bounded direct branch-and-link query remain unresolved.",
+    "The semantic identity of +0x351C and any runtime selector or timing meaning remain unresolved."
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only canonical Ghidra queries and narrow pinned generated-source and raw-word windows for the setup caller and its one emitted direct upstream caller. Existing F0263 evidence for 0x82508598 was reused without re-expansion. No helper body, runtime launch, source repair, or executable-wide heuristic scan was used.",
+    "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "queries": [
+      {
+        "script": "ghidra/FindDirectCallers.java",
+        "targets": ["0x8250F2B0"],
+        "matchCap": 8,
+        "mode": "foreground-read-only",
+        "result": "Status OK. One direct branch-and-link caller was emitted: 0x82C98EF0, decoded=false, owner=<undefined>; Matches=1, Truncated=false, Cancelled=false."
+      },
+      {
+        "script": "ghidra/DumpFunctions.java",
+        "targets": ["0x82C98EF0"],
+        "mode": "foreground-read-only",
+        "result": "Status OK. The exact caller target returned No containing function."
+      },
+      {
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": ["0x82C98EC0", "0x82C98EF0"],
+        "wordRadius": 8,
+        "mode": "foreground-read-only",
+        "result": "Status OK. The first window contains lbz r9,0xFF(r1), the compare, literal mapping, and branch; the second contains r4/r3 setup and the direct call word 0x4B8763C1 at 0x82C98EF0."
+      },
+      {
+        "script": "ghidra/FindDirectCallers.java",
+        "targets": ["0x82C98DF8"],
+        "matchCap": 8,
+        "mode": "foreground-read-only",
+        "result": "Status OK. One direct branch-and-link caller was emitted: 0x82C72200, decoded=false, owner=<undefined>; Matches=1, Truncated=false, Cancelled=false."
+      },
+      {
+        "script": "ghidra/DumpFunctions.java",
+        "targets": ["0x82C72200"],
+        "mode": "foreground-read-only",
+        "result": "Status OK. The exact upstream caller target returned No containing function; the pinned generated source maps it to sub_82C72148."
+      },
+      {
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": ["0x82C721D8", "0x82C721E8", "0x82C721F8", "0x82C72200"],
+        "wordRadius": 8,
+        "mode": "foreground-read-only",
+        "result": "Status OK. Raw words corroborate li r24,1 at 0x82C721D0, stb r24,0x5F(r1) at 0x82C721E8, r3-r6 setup at 0x82C721F0-0x82C721FC, and the direct call word 0x48026BF9 at 0x82C72200 with LR 0x82C72204."
+      }
+    ],
+    "generatedWindows": [
+      {
+        "function": "0x82C98DF8",
+        "file": "generated/default/rerevved_recomp.135.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "29944-29995",
+        "guestSites": ["0x82C98DF8"],
+        "claims": "Caller prologue and saved-register/frame setup preceding the local r9 mapping; no preceding guard outcome is claimed."
+      },
+      {
+        "function": "0x82C98DF8",
+        "file": "generated/default/rerevved_recomp.135.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "30047-30075",
+        "guestSites": ["0x82C98EC0", "0x82C98ED0"],
+        "claims": "Current-frame byte load, zero comparison, nonzero low 32-bit r9=0x00000001 arm, zero low 32-bit r9=0x80000000 arm, and mapping-to-call boundary."
+      },
+      {
+        "function": "0x82C98DF8",
+        "file": "generated/default/rerevved_recomp.135.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "30076-30092",
+        "guestSites": ["0x82C98EE8", "0x82C98EF0"],
+        "claims": "r4=r30 and r3=r31 setup, literal ancillary arguments, direct call to 0x8250F2B0, and LR 0x82C98EF4."
+      },
+      {
+        "function": "0x82C72148",
+        "file": "generated/default/rerevved_recomp.200.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "27727-27805",
+        "guestSites": ["0x82C72148", "0x82C721A4", "0x82C721CC"],
+        "claims": "Upstream caller prologue, helper return boundary, status-arm convergence, and common path before the literal byte producer; helper body 0x821B26F8 is not expanded."
+      },
+      {
+        "function": "0x82C72148",
+        "file": "generated/default/rerevved_recomp.200.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "27806-27819",
+        "guestSites": ["0x82C721D0", "0x82C721E8"],
+        "claims": "li r24,1 and common-path stb r24,0x5F(r1) byte producer."
+      },
+      {
+        "function": "0x82C72148",
+        "file": "generated/default/rerevved_recomp.200.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "27820-27843",
+        "guestSites": ["0x82C721F0", "0x82C72200", "0x82C72204", "0x82C72218"],
+        "claims": "Call argument register setup, direct branch-and-link to 0x82C98DF8, LR, and normal-return branch."
+      }
+    ],
+    "bodyInventory": {
+      "focusedCount": 2,
+      "focusedFunctions": ["0x82C98DF8", "0x82C72148"],
+      "reusedFunctions": ["0x8250F2B0"],
+      "helperBodies": [],
+      "bodyLimit": 8,
+      "unusedBodySlots": 5,
+      "qualification": "The setup caller body sub_82C98DF8 and its one emitted direct upstream caller body sub_82C72148 were each inspected once. The reused setup method 0x8250F2B0 counts as an existing body for the packet budget. Query attempts add no body; raw windows in the same bodies add no new unique body. Existing 0x82508598 evidence is carried from F0263 and was not re-expanded."
+    },
+    "qualification": "Both direct caller inventories are bounded to initialized executable raw direct branch-and-link words with cap 8 and returned one non-truncated result each. The exact raw callers have canonical listing gaps, so generated source and raw words provide selected callsite and byte-store corroboration. The upstream pre-call byte is literal 1 on the bounded normal path, but retention through the setup caller's earlier unexpanded helpers and the resulting loaded-byte/r9 path remain conditional; final template mutation, runtime execution, and timing semantics remain unresolved."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "newRelations": [],
+    "result": "No catalog change is proposed. The r9 mapping and stack relation are bounded evidence expressions with no new named entity."
+  },
+  "conclusion": "The bounded direct caller of setup method 0x8250F2B0 is raw callsite 0x82C98EF0 in generated sub_82C98DF8. Its one bounded upstream direct caller at 0x82C72200 in sub_82C72148 writes pre-call byte 1 at caller r1+0x5F. The setup caller's current r1+0xFF aliases that location after its frame setup, but earlier unexpanded helper calls precede the lbz, so retention through the load remains conditional. A retained nonzero byte maps to low 32-bit r9=0x00000001 and a retained zero byte to low 32-bit r9=0x80000000; the lis arm may sign-extend the 64-bit GPR, while the later word field consumes the low 32 bits. The setup caller then sets r4=r30 and r3=r31 and branches to 0x8250F2B0. Existing F0263 evidence carries this conditional r9 through stack +0x54 and 0x82508598 to the intermediate template +0x34 store at 0x8250868C. This is not one unconditional final selector value: helper mutation, final retention, runtime execution, additional producer forms, and +0x351C interval or default meaning remain unresolved."
+}

@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0309",
+  "topic": "native-renderer-sticky-dirty-observation",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which retained flush observations distinguish never-cleared dirty qwords, and under which guards is bit0x80000 locally idempotent?",
+  "scope": {
+    "fields": ["G+0x0", "G+0x8", "G+0x10", "G+0x18", "G+0x20"],
+    "invocationPolicy": "Six draw entries and commit0x826A2FF0 consume their descendant invocations. Clear, Resolve, capture, tiling and shared helpers reached elsewhere survive. Later Original draws are a separately stated policy.",
+    "qualification": "Bounded direct/API reader classification and conditional symbolic counterexamples. No observed runtime state or rendered-image difference is claimed."
+  },
+  "dependencies": [
+    {"topic": "native-renderer-draw-state-reader-boundary", "use": "Owns exact per-PC dirty provenance, retained families, local transfers and shared allocator/list readers."},
+    {"topic": "native-renderer-shader-fetch-patch-boundary", "use": "Owns later Original shader selection, persistent/inline patching and cache/stamp publication."},
+    {"topic": "native-renderer-d3d-runtime-surface", "use": "Owns accepted API and inline invocation identities."}
+  ],
+  "currentEvidence": {
+    "method": "Foreground serial read-only native-word and raw caller queries through tools/run-headless.ps1 plus narrow exact-function generated windows. Existing direct-qword pins were freshly checked; additional partial-width syntax leads do not close aliases.",
+    "generatedRevision": "3129fb65f656394b2fb93e6b206d6d1b60157ba5",
+    "inputQualification": "Supported flat SHA2565C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680; mapped SHA256389EB006B1DCDE90C5DE775C92D67C18542B8FD9BD39845574206D4B213E9B13 over [0x82000000,0x83210000).470 bytes/60 ranges differ only in [0x827F3F50,0x827F4280), outside cited semantic words. Checkout identity is not generated-byte provenance.",
+    "readerInventory": {
+      "counts": "319 direct non-SP ld candidates comprise277 G reads,9 non-G fields and33 unresolved aliases. Nine accepted inline owners add24 consumed G reads. The277 surviving G reads contain210 OR transfers,2 ANDC transfers and65 retained flush reads.",
+      "nonOrSetters": "SetVS0x82692C48 at0x82692D10 and SetPS0x82692948 at0x82692A00 ANDC shader metadata into G+0/+8. Old dirty values influence only the same dirty field in these local transfers.",
+      "flushFamilies": [
+        {"function": "0x8269E520", "firstReads": ["0x8269E968", "0x8269EA88", "0x8269EAD8"], "role": "Resolve"},
+        {"function": "0x826A22F8", "firstReads": ["0x826A2444", "0x826A2564", "0x826A25B4"], "role": "Clear helper"},
+        {"function": "0x826A8140", "firstReads": ["0x826A823C", "0x826A835C", "0x826A83AC"], "caller": "0x826A8B28"},
+        {"function": "0x826AA088", "firstReads": ["0x826AA150", "0x826AA270", "0x826AA2C0"], "caller": "0x826AAD8C"},
+        {"function": "0x826B1DA0", "firstReads": ["0x826B1DC8", "0x826B1EE8", "0x826B1F38"], "role": "conditional capture"}
+      ],
+      "masks": "Each family has9 G+0x10,2 G+0x18 and2 G+0x20 reads. ACC60 consumes G10 bits0..16,21..57; G18 mask0x007FFFFC00000000; G20 mask0x0000003FFFFFFFFF. G10&G28 gates AC8C8, whose semantic selections include bit8 and G28-intersected bits37/57. Emitted groups are cleared.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.163.cpp:13371; rerevved_recomp.143.cpp:13064; rerevved_recomp.118.cpp:13234; rerevved_recomp.148.cpp:13224; rerevved_recomp.102.cpp:12873; native-renderer-draw-state-reader-boundary.json#/currentEvidence/dirtyReaders"
+    },
+    "retainedCounterexamples": {
+      "guards": "At a retained flush gate compare dirty0 with one extra bit, keep all other fields equal, G28=0,G30=C,C+4<G34, and valid nonwrapping nonaliased ring/shadow addresses. Preexisting [C+4]=0 distinguishes the new header. These are symbolic states, not runtime observations.",
+      "cases": [
+        {"extra": "G10 bit11=0x800", "writes": "[C+4]=0x2200,[C+8]=word(G+0x2934),G30=C+8"},
+        {"extra": "G18 bit54=0x0040000000000000", "writes": "[C+4]=0x2280,[C+8]=word(G+0x2964),G30=C+8"},
+        {"extra": "G20 bit37=0x2000000000", "writes": "[C+4]=0x2300,[C+8]=word(G+0x29B8),G30=C+8"}
+      ],
+      "fastPath": "ACC60 stwu at0x826ACCF4/0x826ACD04 and cursor store0x826ACD14 establish ring/cursor divergence without an allocator/callback on this selected branch. The emitted dirty group then converges after clear.",
+      "slowPath": "Insufficient space calls AC610 at0x826ACCC8. Remaining payload calls C588 at0x826AC6B0, reloads the cursor and retries. Downstream allocation/wait/failure termination remains qualified.",
+      "tileRecordJoin": "C588's G+0x33B0!=0 arm reaches C400. With byte2ABD mask0x20 clear, byte2ABC mask0x80 clear, nonzero command length and enough list capacity, C400 at0x8269C4A0..0x8269C4F8 writes two words through L+8,L=G+0x3438:0x81000000|((C+4-S)>>2) and translated S,G+0x3A50. A cursor delta8 becomes a retained record-length delta2. List growth C170 and wrap C270 remain separate helper contracts.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.117.cpp:12696; rerevved_recomp.88.cpp:12835; rerevved_recomp.85.cpp:12987"
+    },
+    "bit80000": {
+      "guardedResult": "For deltaG10=0x80000 and G28&0x80000=0, retained AC8C8 invocation and all ACC60 masks are unchanged. An already entered AC8C8 has no semantic test of this bit. Inspected non-dirty effects, helper/callback paths and cursors are equal; extra0x80000 remains set.",
+      "writerBoundary": "Known G28 writers0x8268EE50/0x8269CE90 toggle0x100;0x8269D7D8 adds bits37/57 and0x8269DB20 clears them. They preserve the zero guard if initially true. Constructors, copied/indexed/bulk and arbitrary aliases are not closed.",
+      "unconstrainedResult": "If G28&0x80000!=0, extra0x80000 can newly enter AC8C8. With G30<=G38 and no special bits it emits nothing and preserves cursor. With G30>G38 it calls C588 at0x826AC8F0 before semantic tests. Unconditional idempotence is false.",
+      "laterOriginal": "A later Original ADD88 can now enter shader work. A compatible ADC48 hit refreshes G2E38/40; selected small emission with byte2ABC mask0x40 clear appends three words headed0xC0012700, advances G30 by12 and stamps Rv+0x40. A reusable miss can patch persistent C/update cache/allocate an ID; busy or forced inline can allocate/copy/patch ring storage. These differ from a baseline that skips the gate.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.40.cpp:12740; rerevved_recomp.17.cpp:13418; rerevved_recomp.17.cpp:14113; rerevved_recomp.77.cpp:13173"
+    },
+    "perQwordVerdict": [
+      {"field": "G+0x0", "verdict": "Equivalent after projecting out dirty in the classified fixed-cut direct/API model; local OR/ANDC only. Later Original constant flush and unresolved aliases remain outside this equivalence."},
+      {"field": "G+0x8", "verdict": "Same bounded dirty-projected equivalence as G+0x0, including PS metadata ANDC."},
+      {"field": "G+0x10 whole", "verdict": "Not ring/cursor-equivalent; bit11 counterexample. Bit0x80000 alone has the guarded result above."},
+      {"field": "G+0x18 whole", "verdict": "Not ring/cursor-equivalent; bit54 counterexample. Low32 alone remains a bounded fixed-cut omission candidate."},
+      {"field": "G+0x20 whole", "verdict": "Not ring/cursor-equivalent; bit37 counterexample. Bits outside low38 have only the local omission argument."}
+    ],
+    "aliasBoundary": {
+      "partialWidth": "4669 generated low-offset partial-width leads had zero exact function/base-register matches to the inherited retained G direct readers. Another register, copied/rebased/indexed/bulk pointer and raw-only words remain open; all33 inherited alias records remain unresolved.",
+      "constantFlushIngress": "ACFF8 has8 raw direct BL sites, all in four consumed draw bodies, and0 aligned raw LK0 entry branches across4,734,976 mapped words, uncancelled/untruncated. Literal pointer0x82185778 contains0x826ACFF8. Table/CTR, conditional/interior and computed-pointer ingress remain unknown.",
+      "scanQualification": "Whole-image raw field scan selected21,598 candidates; generated scan selected14,835 of3,436,498 instruction comments with matched base/displacement encoding checks. High-field overlaps were global; low0..0x70 only in [0x82680000,0x826D0000). Syntax counts are not G provenance or complete reader closure."
+    }
+  },
+  "nextDiscriminator": [
+    "Resolve the33 explicit aliases, partial/indexed/bulk/copy forms and the ACFF8 literal-pointer dispatch before claiming universal G0/G8 or low32-G18 omission.",
+    "Bind the initial G28 bit0x80000 guard and all writers before using its retained-flush projection.",
+    "Replace or preserve cursor, list-record, allocator and lifetime observations before discarding whole dirty-qword clears; model later Original ingress separately."
+  ],
+  "guards": [
+    "Do not call all surviving dirty readers OR-only, or call whole G10/G18/G20 never-clear idempotent merely because GPU register payload is redundant.",
+    "Do not equate a symbolic ring/list difference with an observed rendered or API-return difference.",
+    "Do not extend a fixed consumed-draw projection to later Original draws or unresolved indirect constant-flush ingress."
+  ],
+  "conclusion": "Whole G10/G18/G20 sticky policies have retained ring/cursor counterexamples and a conditional tile-record observation. Bit0x80000 is locally idempotent only under a stated G28/invocation guard; G0/G8 and low32-G18 retain bounded projection results with aliases and later Originals open."
+}

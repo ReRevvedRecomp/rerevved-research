@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0311",
+  "topic": "native-renderer-tiling-wrapper-exit-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which complete local tiling-wrapper exits, restoration writes and bounded helper effects must a replacement preserve?",
+  "scope": {
+    "mainFunctions": ["0x8269CE90", "0x8269D320", "0x8269D7D8", "0x8269DB20", "0x8269C400", "0x8269B118", "0x826AC0A8", "0x826AC218"],
+    "distinctReset": "0x8268CE90 is a separate reset/setup function, not the BeginTiling count/rectangle writer0x8269CE90.",
+    "qualification": "Complete direct store/call/return inventories for the eight main functions and selected helpers. Imported/transitive effects, aliases, backing lifetime and caller-live ABI remain qualified; no complete consume contract is established."
+  },
+  "dependencies": [
+    {"topic": "native-renderer-d3d-completion-contract", "use": "Owns issue/completion domains, callback, allocator and deferred-record qualifications."},
+    {"topic": "native-renderer-tiling-worker-store-boundary", "use": "Owns retained token/link/parser and external-write boundaries."},
+    {"topic": "native-renderer-draw-state-reader-boundary", "use": "Owns direct/alias reader limits, shared pools and payload-only mode readers."},
+    {"topic": "native-renderer-sticky-dirty-observation", "use": "Owns retained dirty-mask and ring/list observations."},
+    {"topic": "native-renderer-present-tail-reader-boundary", "use": "Owns selected reset/display, gamma, request and notification observations."}
+  ],
+  "currentEvidence": {
+    "method": "Serial foreground read-only queries through tools/run-headless.ps1; complete bounded raw-word ranges for the eight main bodies, narrow exact-function generated windows and selected handwritten reader windows. Native operands/branches/calls were compared with generated comments; no runtime or general execution oracle was used.",
+    "generatedRevision": "3129fb65f656394b2fb93e6b206d6d1b60157ba5",
+    "inputQualification": "Supported flat SHA2565C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680; mapped [0x82000000,0x83210000) SHA256389EB006B1DCDE90C5DE775C92D67C18542B8FD9BD39845574206D4B213E9B13.470 differing bytes/60 ranges stayed in [0x827F3F50,0x827F4280), outside cited semantic words. Checkout revision is not generated-byte provenance.",
+    "localCompleteness": "The eight main native ranges contained1234 words,159 direct stores,95 direct BL sites including ABI thunks and225 branch targets. Each matched its generated instruction/comment locator. Seventeen selected exact functions contained256 direct stores grouped into86 guarded families. Complete local writes do not close unexpanded callees or indirect ingress.",
+    "beginAndEnd": {
+      "begin": "BeginTiling0x8269CE90 writes count G+0x31CC and copies count16-byte rectangles to G+0x31D0, with zero count leaving old rectangle bytes. It also writes aligned origins/dimensions, parameters, saved surface/state, flags, dirty/predicate state and token records. AC0A8 and retained host ReadGuestTiling read count/rectangles. Other local fields remain subject to the reader boundary below.",
+      "end": "D320 performs its selected Resolve/surface/record work before AC218. D7D8/DB20 preserve alternate token, saved-state and dirty/mode effects; DB20 can call DA58. D320/DA58 translate nonzero AC218 into full64 FFFFFFFF8007000E after90040; success returns0. DB20 returns its selected DA58 result or0.",
+      "unknownFields": "G+0x3338,+0x3374,+0x31B0,+0x31A8,+0x319C,+0x31A0,+0x2AB4/+0x2AB8, selected G+0x2ABD bit0x80 and final G+0x31B4 clear still require exact surviving-reader/alias contracts. Changed G+0x2880 width bits have a retained rebased ACC60 payload reader, but payload-only copying does not establish their necessity after command replacement.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.122.cpp:13162; rerevved_recomp.96.cpp:12898; rerevved_recomp.115.cpp:12935; rerevved_recomp.41.cpp:12780; rerevved_recomp.43.cpp:12530; src/gpu/guest_d3d/guest_render_capture.h:61"
+    },
+    "publicationTail": {
+      "function": "0x8269C400",
+      "branches": "Failure bit2ABD&0x20 skips publication. Recording byte2ABC&0x80 can append the separate34E0 queue record. Nonrecording tiled G33B0!=0 emits a length/address pair; nontiled calls BCA8 then BD98 with r7=0, using its returned cursor. These effects precede the common tail.",
+      "nonrollover": "Let r28 be the actual post-submit cursor and a=U(r28+31)&0xFFFFFFE0. If a<=G38 unsigned,0x8269C574 writes G3A50=a and0x8269C578 writes G30=U(a-4). Entry cursor alone is not an oracle for every branch.",
+      "rollover": "Otherwise0x8269C55C writes G30=U(r28-4), then0x8269C564 calls C270(G,0). Prefailed C270 uses the4800-byte emergency buffer and returns0. Fresh success/failure updates cursor/limits/failure state and conditionally waits on then clears G3A5C. Preserve the exact selected exit or refuse rollover before mutation.",
+      "readers": "Subsequent C400 reads G30/G3A50; C588 returns G30; shared allocator, snapshot/restore and wait clients consume the resulting state. Recording decoder/reclaim and allocator/wait/import effects remain unknown.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.85.cpp:12897; rerevved_recomp.132.cpp:12304"
+    },
+    "savedPublication": {
+      "save": "B0E0 stores G30,G34,G3A50,G3A4C,G3A44,G3A48 to G3460/3464/3468/346C/3470/3474 at0x8269B0F8..0x8269B10C.",
+      "restore": "B118 independently reads all six words at0x8269B118..0x8269B130, restores the six values at0x8269B134..0x8269B148, and writes G38=U(saved G34-160 decimal) at0x8269B14C. It has no calls or stack stores and preserves full incoming r3.",
+      "survival": "AC0A8 calls B0E0 after C588. AC218 allocation failure calls B118 at0x826AC29C before clearing failurebit. The retained host EndTiling failure path also invokes B118. C400/C588/BCA8/B618/A6848/B818 and later B0E0 read restored pool/publication state. All six saved words remain needed while this path survives; there is no saved G38 in this set.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.165.cpp:12456; rerevved_recomp.29.cpp:12792; rerevved_recomp.189.cpp:12938; rerevved_recomp.222.cpp:12696; src/gpu/guest_d3d/ring_stub_hooks.cpp:378"
+    },
+    "internalBrackets": {
+      "begin": "AC0A8 snapshots five old G3438 descriptor words into G344C..345C, initializes seven descriptors through C3E0, updates G33B0/33B4, emits a252-byte0x80 record with flags/count/rebased rectangles and advances G3440. It does not validate an arbitrary rectangle count against that fixed reservation.",
+      "allocationOrder": "AC218 optionally calls BAE8, then always calls B818 with148/40/48 dwords and alignment32/32/4 before reloading the failure bit. B818's existing-failure path can return0 without another allocation. Prior successful side-buffer allocations are not rolled back by a later failure.",
+      "failure": "AC218 clears G33B0/G33B4, calls B118, clears byte2ABD bit0x20 and returns full r3=1, skipping all B508/BF40/BCA8/BD98 calls on this arm.",
+      "success": "Finalize seven lists via B508, emit BF40 callback AC020, finalize BCA8, then optional/middle/final BD98 with r7=0/1/0. Middle is bypassed only for G541C==0 and byte2ABD bit2 set. Return r3=0 independently of intermediate BD98 cursor results.",
+      "flags": "Known AC218 callers D320 and DA58 pass only high CPU-mask bits orzero; BF40 normalizes (flags&6)==0 with OR6. They cannot supply the generic low4/no2 callback-suppression case. Actual delivery, count conservation and indirect ingress remain separate obligations.",
+      "coherency": "BAE8 returns count11*(a+b), a=(G2E30!=0x00000000FFFFFFFF), b=(G2ABE>>2)&1. Zero count or allocation failure writes count0 and leaves its address output untouched. Its atomic old-range exchange has a separate local frame and sentinel effect.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.189.cpp:12938; rerevved_recomp.222.cpp:12696; rerevved_recomp.97.cpp:12715; rerevved_recomp.43.cpp:12530"
+    },
+    "distinctReset": {
+      "local": "0x8268CE90 has only stack/ABI direct stores. It calls C8E0(G,input+0x48); a nonzero result exits unchanged. On zero it calls C810,A60F8,A5EB8. A5EB8 success returns0; failure calls A60F8 again then returns full64 FFFFFFFF8007000E.",
+      "transitive": "A60F8 conditionally unbinds/drains, Releases and clears G39EC/39F0/39E8. A5EB8 writes video dimensions before later creation failures; successful partial surface pointers remain until cleanup. It copies124 bytes toG34E8, changes G3528 and on success writes G4144=FFFFFFFF after selected gamma/notification effects. C8E0 frees/reconfigures ring/pool/B/S2 and performs registration, issue/completed and worker-lifecycle effects. These are not consequences of a no-store wrapper alone.",
+      "qualification": "Preserve selected helper outputs/failures, resource lifetime and retained display/request readers or replace them coherently. Complete transitive creation/free/import/alias and nested-frame closure remains unproved.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.147.cpp:12357; rerevved_recomp.151.cpp:12836; rerevved_recomp.11.cpp:13128; rerevved_recomp.176.cpp:13184"
+    }
+  },
+  "nextDiscriminator": [
+    "Bind retained bit/field readers for the explicit unknown local fields; do not convert direct-reader negatives or payload-only copies into omission.",
+    "Inspect selected C3E0, surface/state/Resolve helpers and their pointed outputs in bounded exact-context packets before claiming transitive exit completeness.",
+    "Bind actual allocator target, generation, free/reuse, recording decoder/reclaim and rollover wait outcomes; preserve or refuse those paths.",
+    "Prove nested stack/output/physical disjointness, caller-live registers and ordered host observations before omitting spills, packets or helpers."
+  ],
+  "guards": [
+    "No selected nonstack write is proved omittable here. Needed is conditional on the named retained consumer, not permanent guest backing after complete reader replacement.",
+    "A local no-store wrapper, successful sampled exit or complete local instruction inventory does not establish transitive absence or consume admission.",
+    "Do not confuse0x8268CE90 reset with0x8269CE90 BeginTiling, saved G34 with G38, or dwords with bytes."
+  ],
+  "conclusion": "Complete local wrapper, saved-publication and selected helper exits are enumerated. Six saved words, cursor/limit tails, failure ordering, records and retained state have concrete observations; transitive helpers, aliases, allocator/lifetime and ABI still constrain replacement."
+}

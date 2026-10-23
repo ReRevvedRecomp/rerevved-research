@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0128",
+  "topic": "native-renderer-ring-span-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the bounded Resolve and VdSwap producer path prove one exact owned ring span, wrap rule, publication action, completion fence, and completed-span acknowledgement?",
+  "scope": {
+    "ringInitializer": "0x8269C8E0",
+    "reservationHelper": "0x8269C7A8",
+    "vdswapOwner": "0x826A4638",
+    "preSwap": "0x826A4150",
+    "callback": "0x826A3FB8",
+    "emitters": ["0x8269CD20", "0x8269BF40"],
+    "ordinaryCaller": "0x826ABEA8",
+    "vdswapCallsite": "0x826A4884",
+    "boundary": "The original eight-function read established a bounded negative. A separate exact reservation and publication trace distinguishes the command buffer from the primary ring and proves a conditional descriptor publication path. Neither read joins a sampled Resolve/VdSwap reservation to a complete same-operation ownership and retirement chain. Ownership is not inferred from adjacency, correlation, diagnostic presentation, or generic PM4 behavior."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-vdswap-boundary",
+      "use": "Provides the accepted VdSwap ABI, ordinary caller order, system-buffer handshake negative, and Resolve-to-first-swap correlation."
+    },
+    {
+      "topic": "native-renderer-resolve-resource-contract",
+      "use": "Provides the exact semantic Resolve boundary without a completion or lifetime claim."
+    },
+    {
+      "topic": "native-renderer-resource-lifetime-boundary",
+      "use": "Keeps persistent resource identity and allocation lifetime unresolved."
+    }
+  ],
+  "functionReadResult": {
+    "requestedBodies": 8,
+    "completeBodies": 0,
+    "saveThunkTruncations": ["0x8269C8E0", "0x8269C7A8", "0x826A4638", "0x826A3FB8", "0x8269BF40", "0x826ABEA8"],
+    "badInstructionTruncations": ["0x826A4150", "0x8269CD20"],
+    "result": "All eight exact bodies were incomplete in the original configured-project read, which stopped without callee expansion or generated-code discovery. This result describes that read; the separate reservation and publication trace below uses exact raw words and narrow generated corroboration."
+  },
+  "acceptedRingFacts": {
+    "reservation": "The VdSwap owner requests 64 dwords through 0x8269C7A8 and passes reservation + 0x4 as VdSwap r3.",
+    "pointerUpdate": "At 0x826A4858 the owner retains the reservation helper's r3 in r30. After VdSwap, 0x826A4888 computes r30 + 0x100 and 0x826A488C stores it at device +0x30. This is the retained reservation plus 256 bytes, not VdSwap's return value or proof of primary-ring membership.",
+    "preSwapOrder": "Ordinary caller 0x826ABEA8 invokes the pre-swap wrapper before the VdSwap owner; alternate caller 0x82517E38 has the same pre-swap-before-VdSwap order.",
+    "handshakeNegative": "The pre-swap waits use independent device +0x2A94 system-command-buffer state. Resolve 0x8269E520 does not access that field, so these waits are not a Resolve-specific completion fence.",
+    "correlationLimit": "The first observed VdSwap descriptor matched Resolve callsite 0x8250AFEC, while a later swap had no new Resolve after the preceding observed swap. Descriptor correlation does not delimit a same-operation ring span."
+  },
+  "reservationStorage": {
+    "helper": "0x8269C7A8 scales the requested dword count by four, checks device +0x30 against +0x34, and may call 0x8269C588 or 0x8269C270. Its successful return at 0x8269C804 loads device +0x30; failure can return zero.",
+    "initializer": "0x8269C8E0 stores the primary-ring base at device +0x3A30 and its mask at +0x3A34. It separately initializes command-buffer segment start +0x3A50 and cursor +0x30 to that start minus four, at 0x8269CB50 through 0x8269CB84. Distinct fields and initial values do not prove physical allocation non-overlap.",
+    "replacement": "The 0x8269C270 path likewise stores a command-buffer segment start at +0x3A50 and start minus four at +0x30, at 0x8269C370 through 0x8269C37C.",
+    "segmentAdvance": "Field +0x3A50 is a mutable segment start, not a fixed allocation base. Narrow generated corroboration at 0x8269C540 through 0x8269C578 shows that, when the aligned endpoint fits, 0x8269C400 stores that endpoint at +0x3A50 and endpoint minus four at +0x30. The other branch calls 0x8269C270.",
+    "classification": "The VdSwap r3 argument is reservation + 4 in this separate command buffer. The owner advances the retained cursor by 64 dwords; these stores do not classify the reservation as a primary-ring position."
+  },
+  "conditionalPublication": {
+    "producer": "0x8269C400 reads command-buffer segment start +0x3A50 and cursor +0x30. With device +0x2ABD bit 0x20 clear, +0x2ABC bit 0x80 clear, and +0x33B0 zero, its 0x8269C500 path calls 0x8269BCA8, uses the returned cursor plus four as the end, and calls 0x8269BD98 at 0x8269C538 with a GPU-encoded segment start and (end - start) / 4 dwords. Other branches record descriptors through +0x3438 or +0x34E0.",
+    "descriptor": "When 0x8269BD98 takes its immediate publication path, it builds a two-word descriptor containing 0x81000000 OR the low 24 bits of the dword length, followed by the encoded address, and calls 0x8269B900 with one descriptor at 0x8269BE5C. A separate queue path exists.",
+    "primaryPublisher": "With device +0x2ABD bit 0x02 clear, 0x8269B900 uses primary-ring base +0x3A30, mask +0x3A34, and write index +0x2AC8. At 0x8269BA40 through 0x8269BA90 it writes 0xC0013F00, the descriptor address, and the low-24-bit dword length at successive masked indices, stores the resulting index at +0x2AC8, and publishes it to MMIO 0x7FC80714 with synchronization instructions. The bit-set branch uses an alternate callback path.",
+    "limit": "This proves a conditional source path for publishing a separate command buffer through a primary-ring descriptor. It does not prove that a runtime-sampled VdSwap reservation reached that path, identify its parent primary-ring consumer span, exclude unrelated work, or establish buffer lifetime, completion, or acknowledgement. The descriptor's masked writes do not close the exact Resolve/VdSwap span's wrap contract."
+  },
+  "ringContract": {
+    "pointerUnits": "The VdSwap reservation request is expressed as 64 dwords; no complete general ring-pointer unit contract is proved.",
+    "startIndex": "unresolved",
+    "endIndex": "unresolved",
+    "wrapBehavior": "unresolved",
+    "publicationOrDoorbell": "unresolved for the exact Resolve/VdSwap span",
+    "completionFence": "unresolved; the accepted +0x2A94 waits are disproved as Resolve-specific completion",
+    "consumerAcknowledgement": "unresolved",
+    "completedSpanAdvance": "prohibited",
+    "unrelatedWork": "The bounded evidence does not exclude unrelated or unsupported PM4 between or around the correlated Resolve and VdSwap operations."
+  },
+  "vdswapOrdering": {
+    "provedTitleOrder": "The title's ordinary present path emits its pre-swap command work before calling VdSwap.",
+    "nativeSubmissionOrder": "No real native Resolve submission or fence exists in the evidence, so before, after, or independent native-submission ordering is not statically proved.",
+    "requiredBoundary": "Do not suppress or replace VdSwap, acknowledge ring work, or advance a guest pointer until a future exact contract proves equivalent native submission, completion, and presentation ordering for the same owned span."
+  },
+  "boundedNegative": {
+    "result": "The exact bounded read does not prove an owned Resolve/VdSwap ring start, end, wrap rule, publication action, completion fence, consumer acknowledgement, or retireable dword span.",
+    "limits": "This does not claim that the full title or SDK lacks those mechanisms. The original eight-function read did not join them to one same-operation span. The separate conditional publication proof still lacks the runtime reservation-to-consumer link and retirement contract for that span.",
+    "falsificationCondition": "An independent exact ring structure or producer field joins reservation start, post-emission end, wrap state, hardware or service publication, completion value, and acknowledgement for the same operation without traversing unrelated PM4."
+  },
+  "currentEvidence": {
+    "method": "The original foreground read-only eight-function DumpFunctions.java query in the canonical version-1.3 project and accepted dependencies, followed by a separately bounded foreground read-only trace of eight exact reservation and publication functions in the supported image. DumpMemoryWords.java supplied exact instruction words where function decoding was incomplete; narrow generated-code windows corroborated register flow and branch conditions.",
+    "locators": [
+      "ghidra/DumpFunctions.java:0x8269C8E0,0x8269C7A8,0x826A4638,0x826A4150,0x826A3FB8,0x8269CD20,0x8269BF40,0x826ABEA8",
+      "ghidra/DumpFunctions.java:0x8269C7A8,0x826A4638,0x8269C8E0,0x8269C588,0x8269C270,0x8269C400,0x8269BD98,0x8269B900",
+      "ghidra/DumpMemoryWords.java:0x8269C7D8,0x826A4868,0x8269C394 word radius 12; ranges 0x8269C7A8-0x8269C808,0x826A4838-0x826A4898,0x8269C364-0x8269C3C4",
+      "ghidra/DumpMemoryWords.java:0x8269C4C0,0x8269BDFC,0x8269BA24,0x8269CB60 word radius 32; ranges 0x8269C440-0x8269C540,0x8269BD7C-0x8269BE7C,0x8269B9A4-0x8269BAA4,0x8269CAE0-0x8269CBE0",
+      "rerevved generated/default/rerevved_recomp.211.cpp:sub_826A4638, guest 0x826A4840-0x826A488C",
+      "rerevved generated/default/rerevved_recomp.85.cpp:sub_8269C400, guest 0x8269C400-0x8269C578",
+      "rerevved generated/default/rerevved_recomp.159.cpp:sub_8269BD98, guest 0x8269BD98-0x8269BE60",
+      "rerevved generated/default/rerevved_recomp.160.cpp:sub_8269B900, guest 0x8269B900-0x8269BA98"
+    ],
+    "qualification": "The original stop and incomplete-body results remain intact. The separate exact trace also encountered save-thunk truncations and an undecoded 0x8269C588 entry; no incomplete body proves absence. DumpInstructions.java output that skipped undecoded requested sites was not used. The promoted facts rely on exact raw words with narrow generated corroboration, not runtime execution or a complete engine-wide call graph."
+  },
+  "missingContracts": {
+    "typedExactResource": "unresolved",
+    "generationAndLifetime": "unresolved",
+    "exactOwnedSpanAndWrap": "unresolved",
+    "vdswapSemanticOrdering": "unresolved",
+    "realNativeSubmission": "unresolved",
+    "realCompletionFence": "unresolved",
+    "completedSpanAcknowledgement": "unresolved"
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "result": "The bounded field and publication facts remain in this topic; no catalog entities or relations are promoted."
+  },
+  "guards": [
+    "Do not retire, acknowledge, or advance any guest ring span from this evidence.",
+    "Do not suppress VdSwap or claim native presentation equivalence.",
+    "Do not reuse the diagnostic clear or present path as ring-ownership evidence.",
+    "Do not infer a fence from the system-command-buffer handshake."
+  ],
+  "conclusion": "The proved ordinary and alternate title paths order pre-swap command emission before VdSwap. The owner requests 64 dwords from the separate command-buffer cursor and stores the retained reservation plus 256 bytes at device +0x30 after the call. A conditional 0x8269C400-to-0x8269BD98-to-0x8269B900 path publishes a descriptor through the primary ring and MMIO, but it is not joined to the runtime-sampled reservation or an exact owned Resolve/VdSwap consumer span. Same-operation start, end, wrap, publication, lifetime, completion, acknowledgement, and exclusion of unrelated PM4 remain unproved. No exact ring span can be retired, and every listed missing contract remains unresolved."
+}

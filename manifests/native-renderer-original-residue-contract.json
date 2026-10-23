@@ -1,0 +1,602 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0316",
+  "topic": "native-renderer-original-residue-contract",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which guest bodies and effects remain behind the Submit and Publish Original counters, and what would consuming them require?",
+  "scope": {
+    "entries": ["0x8269BD98", "0x8269C400"],
+    "notation": "G is the retained device; N=word(G+0x2B00), P=incoming BD98 r4, L=incoming r8, U=modulo2^32. Address offsets are hexadecimal; counts/frame sizes are decimal.",
+    "publisher": "0x8269B900 is a separate body/counter, reached transitively by direct Submit.",
+    "qualification": "Static counter/caller/effect and retained-reader contracts. nativeRingReaderBoundary owns the current host-owned replacement policy and selected source revision; earlier exact replay tables retain their local qualifications. No measured frequency or all-alias reader closure."
+  },
+  "dependencies": [
+    {"topic": "native-renderer-d3d-completion-contract", "use": "Owns fence, recording queue, import and allocator frontiers."},
+    {"topic": "native-renderer-tiling-wrapper-exit-boundary", "use": "Owns the reused complete C400/AC218 exits and transitive effect ledgers."},
+    {"topic": "native-renderer-worker-state-reader-boundary", "use": "Owns N, continuation, participation and exact root retirement qualifications."},
+    {"topic": "native-renderer-lowerer-scratch-contract", "use": "Owns ordered allocator pressure and backing-generation/reclaim boundaries."}
+  ],
+  "currentEvidence": {
+    "method": "Serial foreground tools/run-headless.ps1 -ReadOnly native words, raw aligned opcode18 LK0/LK1 executable-transfer census, and independently pinned exact-function generated windows of at most200 lines. The full53-word BD98 body and selected publisher/ABI words were checked against the supported flat; C400/AC218 instruction sequences matched the accepted wrapper audit.",
+    "identity": "Supported flat SHA2565C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680; mapped SHA256389EB006B1DCDE90C5DE775C92D67C18542B8FD9BD39845574206D4B213E9B13.470 differing bytes in60 ranges stayed within [0x827F3F50,0x827F4280), outside cited semantic words. Handwritten title source was pinned to0a6cad692418431dd8bbf0b0804e8883bd4ccb7f; generated-window hashes do not establish generation provenance.",
+    "counterGates": {
+      "locators": "rerevved:src/gpu/guest_d3d/ring_stub_hooks.cpp:140-173,510-604,626-659; ring_stubs.cpp:108-226,246-257,325-345; ring_stubs.h:93-139; src/app.cpp:2786-2843.",
+      "submit": "stub_submit_original names BD98. Active readiness failure or publisher classification Original refuses. Kick/Silent still refuses unreadable/nonzero G2B00 or a failed nonzero-r7 Write32. N==0,r7==0 needs no N store; successful nonzero raise writes low32(r7), records direct submission, optionally kicks and returns zero-extended r4. Inactive calls execute Original without these per-hook counts.",
+      "publish": "stub_publish_original names C400. After readiness, unreadable high/low/tiling fields, Recording or Tiling count Original; Submit/Starved count served. Every C400 hook invocation still calls Original. Priority is unreadable, highG2ABD&20 Starved, lowG2ABC&80 Recording, G33B0!=0 Tiling, else Submit. Served BeginTiling also calls Original; served EndTiling can skip its body.",
+      "publisher": "B900 has stub_publisher_original. Unreadable G541C/G5B0C/high or nonzeroG541C selects Original. With readable zeroG541C, high&2 selects Silent even if G5B0C is nonzero; otherwise zeroG5B0C selects Kick and nonzero selects Original.",
+      "readinessAndCounts": "Cached validatedDevice==G skips layout reread. Uncached Ok caches G; NotReady retries later; Mismatch disables the service session. Counts increment per classification and exchange independently to0; timing output prints raw counts. Per-swap normalization supplied externally is not an exact event ledger or a static invocation theorem.",
+      "finalDrainBoundary": "At the pinned title revision, the only production TakeRingStubCounts invocation under src/ is app.cpp:2808 in timing reporting. OnGuestThreadExit:1718-1723 and OnShutdown:1725-1809 do not exchange these counters. The completion final report drains another family. A whole-run legacy receipt must include every timing exchange plus one final legacy exchange at a defined stopped-producer boundary; otherwise calls after the last timing line are absent."
+    },
+    "directCallers": {
+      "submitSites": ["0x8269C538", "0x8269C610", "0x826AC364", "0x826AC3B0", "0x826AC3E4"],
+      "publishSite": "0x8269C618",
+      "predicates": "C400@C538 submits after BCA8 on nonfailed/nonrecording/nontiled publication, even with zero incoming payload. C588@C610 submits only for nontiled/nonrecording nonzero BAE8 count and successful B818(4,4), then always calls C400@C618. Successful Original AC218 has guarded BAE8 submit@AC364, callback submit@AC3B0 when G541C!=0 or high&2 clear, and final fence submit@AC3E4. Only AC3B0 passes r7=1; others pass0. AC218 failure skips all three. C538 and the first two AC218 returns feed later cursors; C610/final AC218 discard returned r3.",
+      "frequencyAndBounds": "One C400 per reached Original C588; up to one extra coherency Submit there and up to three per successful Original AC218. Flush/space/wait/bracket pressure drives these edges; no fixed per-swap or per-Resolve rate follows. Census BD98=5,C400=1,B900=4 was uncancelled/untruncated with cap256; conditional/indirect/interior/copied aliases remain outside the encoding model.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.117.cpp:12549-12695; rerevved_recomp.222.cpp:12696-12973; accepted complete C400/AC218 audit."
+    },
+    "submitEffects": {
+      "localStores": "Eight: frame backchain@BDA0; deferred [P+4]=count OR81000000@BDF0,[P+8]=address@BDF8,[P+0xC]=C0000000@BE00,N=reloadedN+r7@BE1C; direct SP84=address@BE3C,N=reloadedN+r7@BE4C,SP80=(count&00FFFFFF) OR81000000@BE54. Deferred count is not low24-masked. Direct return is full64 incoming P; deferred return is full64 P+0x10. No direct fence/timestamp/flag/MMIO store occurs in BD98.",
+      "lockAndList": "Initial nonzeroN acquires G2B04, rereads N and releases with saved IRQL even when reread0 selects direct. Deferred B550(L,P,P+0x10) writes [P]=enc(P+0x10),L+4=P,L+8=P+0xC,encodedP through oldL+8, with two cache operations; BE1C follows it before unlock. Imported lock/cache effects and aliases are real frontiers.",
+      "publisherEffects": "Direct BE5C calls B900(G,&SP80,1). Its six local stores are frame@B908, ring words C0013F00/address/low24count@BA68/BA6C/BA7C,G2AC8@BA84,MMIO7FC80714@BA90. NonCPU mode calls B1F0, may call sinks/G5B0C and publishes with barriers. CPU bit2 suppresses ring/index/MMIO writes; nonzeroG541C selects descriptor sink+18/+1C. Six indirect sites B97C/B990/BA0C/BA3C/BAB4/BAD8 and imported effects remain target/lifetime frontiers. CPU/null sink does not call G5B0C.",
+      "abiAndClasses": "Token/list/N/descriptor/index and progression have retained readers. Ring aliases, sink/import/cache effects and omission of frame/save writes remain UNKNOWN. Save/restore preserves full64 r23..31, low32 spilled LR and r1; exact volatile/CR/XER/caller-live parity remains separate. No selected nonstack write was proved omittable. Existing host Kick/Silent convention does not prove all-reader equivalence."
+    },
+    "reusedPublishEffects": "C400 has ten local stores: frame@C408; recording token/address@C488/C490 and next reservation G34E0@C494; tiled address/token/cursor@C4EC/C4F4/C4F8; common tail computes a=U(actual post-submit r28+0x1F)&FFFFFFE0. If a<=G38, G3A50=a@C574 then G30=a-4@C578. Else G30=r28-4@C55C precedes C270(G,0); it is not the same formula. Cursors/list/fence families are NEEDED; recording decoder/reclaim, frame/aliases, allocator/import/sink outcomes remain UNKNOWN. BCA8 snapshots/emits fence state and advances P; C170/B818/A6A08/C270 can allocate, account, restore, wait or alter failure/cursor state under their accepted guards.",
+    "bookkeeping": "Generated RecordDeferredKick/RecordDirectSubmit and RecordTiledSegment are instrumentation, not native BLs. Hook scopes and host submission records must remain exactly once and in native order when guest bodies are replaced. Served classifications do not prove body removal.",
+    "serviceBoundary": "rerevved:src/gpu/guest_d3d/ring_stubs.cpp:43-189 and ring_stubs.h:203-268: lease acquire counts before testing active; withdrawal clears active, waits only for other threads' leases, then resets published services. The wait returns after a five-second deadline; own-thread leases are not waited for. RingStubsReady checks nonzeroG, active and cached equality. CurrentRingStubServices retains a shared_ptr. These source contracts do not acquire the guest G+0x2B04 lock or serialize retained Original N/W/Q producers. guest_gpu_service.cpp:704-821 stops its completion/vblank producers and checks their native joins; its bool alone is not a whole-guest ownership-transfer barrier.",
+    "selectedPublicationSemantics": {
+      "sourceRevision": "36ddf07be23ef76591e8d51783ff7af87606c9c4",
+      "sourceWindows": [
+        {
+          "entry": "0x8269C400",
+          "artifact": "rerevved:generated/default/rerevved_recomp.85.cpp",
+          "firstLine": 12897,
+          "lastLine": 13119,
+          "functionSha256": "087E9617D73FAFCE08043AC8EB0BC6BA276E5BBE129EB614B021C5DF56980CDA"
+        },
+        {
+          "entry": "0x8269BCA8",
+          "artifact": "rerevved:generated/default/rerevved_recomp.222.cpp",
+          "firstLine": 12551,
+          "lastLine": 12695,
+          "functionSha256": "C4128141869A3FAA83AFDF50244977FB624C3CE652EC17DA67656A6988121C64"
+        },
+        {
+          "entry": "0x8269BD98",
+          "artifact": "rerevved:generated/default/rerevved_recomp.159.cpp",
+          "firstLine": 12779,
+          "lastLine": 12902,
+          "functionSha256": "70A9EC95503A8C6787B89014716D4B67002DCFA30A2C6A604A7948A19F16C859"
+        },
+        {
+          "entry": "0x8269B550",
+          "artifact": "rerevved:generated/default/rerevved_recomp.39.cpp",
+          "firstLine": 12801,
+          "lastLine": 12889,
+          "functionSha256": "15555993E70145650264ABA3D79A0A60FF534E2D63A941E86939B00B15BDE147"
+        },
+        {
+          "entry": "0x826A72F8",
+          "artifact": "rerevved:generated/default/rerevved_recomp.219.cpp",
+          "firstLine": 13098,
+          "lastLine": 13184,
+          "functionSha256": "A756600F2AF5FDBD67832F72CD25EF9D9B17D2769081C9749C05B49BE86D3973"
+        },
+        {
+          "entry": "0x8269B900",
+          "artifact": "rerevved:generated/default/rerevved_recomp.160.cpp",
+          "firstLine": 12930,
+          "lastLine": 13200,
+          "functionSha256": "8E87DCF47AA495370F37A5F1F6479A8093DAE32108D4E1E54473BB5AF3E4B012"
+        },
+        {
+          "entry": "0x826AC218",
+          "artifact": "rerevved:generated/default/rerevved_recomp.222.cpp",
+          "firstLine": 12696,
+          "lastLine": 12973,
+          "functionSha256": "2C28DBF47F86037C8A5B65EB298305269EBBD0B236A90E3E13805949CB1B1A06"
+        }
+      ],
+      "tiledNoHelper": {
+        "entryGuards": [
+          "(byte(g+2ABD)&20)==0",
+          "(byte(g+2ABC)&80)==0",
+          "word(g+33B0)!=0",
+          "full64 LR==000000008269C61C"
+        ],
+        "notation": "Offsets and constants hexadecimal; U32/U64 reduce modulo width; Z32 zero-extends32; S32 interprets signed32; G64=incoming full64 r3; g=U32(G64); P64=incoming full64 r1.",
+        "definitions": {
+          "C": "word(g+30)",
+          "S": "word(g+3A50)",
+          "R": "Z32(C)+4 full64",
+          "D": "U64(R-Z32(S))",
+          "q": "sign_extend64(S32(U32(D)) arithmetic_shift_right 2)",
+          "physicalStart": "A=(S&1FFFFFFF)+(((rotl32(S,12)&FFF)+200)&1000)",
+          "E_if_q_nonzero": "word(g+3440)",
+          "L_if_q_nonzero": "word(g+3444)",
+          "alignedTail": "a=U32(R+1F)&FFFFFFE0",
+          "M": "word(g+38), read after optional pair/cursor stores",
+          "nextPair_if_q_nonzero": "Z32(E)+8 full64"
+        },
+        "nativeBranchBounds": [
+          "q==0 OR unsigned U32(E+8)<=L",
+          "unsigned a<=M"
+        ],
+        "additionalReplayPremises": [
+          "supported nonwrapping canonical intervals",
+          "intact full64 register/LR saves",
+          "no unsupported physical partial/complete aliases",
+          "canonical allocation generations retained",
+          "actual producer exclusion through derive/replay and final restore",
+          "existing record adapter/callback context contract retained"
+        ],
+        "qzero": "C4C4->C540 skips all G3440/G3444 reads, descriptor assignment, reservation, record and pair/cursor effects; common-tail stores still execute. Do not add list-read preconditions.",
+        "orderedEffects": [
+          {
+            "pc": "0x8269C404",
+            "effect": "save28 thunk stores full64 r28,r29,r30,r31 then low32 incomingLR"
+          },
+          {
+            "pc": "0x8269C408",
+            "effect": "BE32(U32(P64-80))=U32(P64); r1.low32=U32(P64-80),high32 retained"
+          },
+          {
+            "pc": "0x8269C4E8",
+            "guard": "q!=0",
+            "effect": "existing RecordTiledSegment adapter takes A,U32(q); current ledger receives A,U32(q)&00FFFFFF if present; instrumentation before native ORIS/store sequence"
+          },
+          {
+            "pc": "0x8269C4EC",
+            "guard": "q!=0",
+            "effect": "BE32(E+4)=U32(A)"
+          },
+          {
+            "pc": "0x8269C4F4",
+            "guard": "q!=0",
+            "effect": "BE32(E)=U32(U64(q) OR81000000); no native low24 mask"
+          },
+          {
+            "pc": "0x8269C4F8",
+            "guard": "q!=0",
+            "effect": "BE32(g+3440)=U32(E+8)"
+          },
+          {
+            "pc": "0x8269C574",
+            "effect": "BE32(g+3A50)=a"
+          },
+          {
+            "pc": "0x8269C578",
+            "effect": "BE32(g+30)=U32(a-4)"
+          },
+          {
+            "pc": "0x8269C57C",
+            "effect": "r1=U64(r1+80); restore28 loads full64 r28-r31 and saved32 LR into r12,then LR"
+          }
+        ],
+        "semanticExit": {
+          "r0_r2_r4_r8_r13_r27": "incoming full64; ranges r4-r8 and r13-r27 inclusive",
+          "r1": "U64(((P64&FFFFFFFF00000000)|U32(P64-80))+80); equals P64 when U32(P64)>=80",
+          "r3": "q==0 ? G64 : U64(G64+3438)",
+          "r9": "Z32(a)",
+          "r10": "U64(Z32(a)-4), including FFFFFFFFFFFFFFFC for a==0",
+          "r11": "Z32(a)",
+          "r12_LR": "Z32(incomingLR)==000000008269C61C",
+          "r28_r31": "full64 incoming r28-r31 through actual saved bytes",
+          "CR0": "signed compare(q,0) with incoming XER.SO",
+          "CR6": "unsigned compare(a,M) with incoming XER.SO",
+          "XER_CA": "(S32(U32(D))<0) AND ((U32(D)&3)!=0)",
+          "preserved": "CR1-CR5/CR7; XER except CA; CTR; FPR/FPSCR; VMX/vector status; MSR and unmentioned fields (no selected native instruction changes them)"
+        },
+        "frame": {
+          "saveEntry": "0x827F7C88",
+          "saveWords": 6,
+          "restoreEntry": "0x827F7CD8",
+          "restoreWords": 7,
+          "saveOrder": [
+            "P-28:8 bytes r28",
+            "P-20:8 bytes r29",
+            "P-18:8 bytes r30",
+            "P-10:8 bytes r31",
+            "P-8:4 bytes low32 LR"
+          ],
+          "backchain": "P-80:4 bytes low32 P",
+          "untouched": "P-4..P and unused frame bytes are not newly written",
+          "restoreOrder": "r28,r29,r30,r31 full64; r12=Z32(savedLRword); LR=r12; return",
+          "aliasPremise": "Validate canonical physical identities/generations of exact written/read saves and all later operands/outputs; replaying saves alone does not prevent tail-store corruption."
+        },
+        "growthFrontier": "0x8269C4E0 ->C170 when unsigned U32(E+8)>L; actual manager/allocator/cache extent/generation remains a separate selected expansion",
+        "rolloverFrontier": "0x8269C55C stores G30=U32(R-4), then0x8269C564 ->C270(G,0) when a>M; selected descendants/wait/BE70/generation separate",
+        "qualification": "V: Selected instruction projection under intact nonfaulting disjoint mappings and supported stack arithmetic. I/UNKNOWN: runtime canonical identities, generations and common producer exclusion are still required. No consume admission follows.",
+        "callerBoundary": "Native C588 and host flush differ despite C61C. The command-pressure contract owns their distinct context, read and frame continuations."
+      },
+      "ordinary": {
+        "helperCall": {
+          "callSite": "0x8269C508",
+          "returnLR": "0x8269C50C",
+          "mandatoryForInitiallyEmptyPayload": true,
+          "ordinaryEntry": {
+            "r3": "full64 G",
+            "r4": "zero-extended entry G30",
+            "r5_r9": "retained C400 entry values",
+            "r10_r11": "zero",
+            "r12": "full64 C400 entry LR",
+            "cr0_cr6": "EQ with current XER.SO",
+            "xer": "unchanged by ordinary prefix"
+          },
+          "saveSlots": [
+            {
+              "gpr": 30,
+              "offset": -16,
+              "bytes": 8
+            },
+            {
+              "gpr": 31,
+              "offset": -8,
+              "bytes": 8
+            }
+          ],
+          "wordValues": [
+            "C0003B00",
+            "00007FFF",
+            "C0025800",
+            "3",
+            "A(B+4)|2",
+            "Cb|(Kb&3)",
+            "C0025800",
+            "3",
+            "A(B)|2",
+            "f"
+          ],
+          "returnR3": "(entry r4 & FFFFFFFF00000000) | U(entry r4+0x28)",
+          "qualification": "V: Mandatory C508 call even for an initially empty payload; leaf save/restore and exact helper return remain effects. Native call state differs from callGuest defaults; source, destination and save aliases need retained canonical identities.",
+          "notation": "V: Cb=word(G+0x30),Kb=word(G+0x3A48),B=word(G+0x2A90),f=word(G+0x2A9C),t=Cb|(Kb&3). A(x) is the physical transform in tiledNoHelper.definitions.physicalStart with S replaced by low32 x. Cursor advances0x28/0x24 mean40/36 bytes; save-slot offsets are signed byte counts."
+        },
+        "tailBound": "I: Before any effect, a protected ordinary call must support every permitted actual helper return. Under disjoint nonwrapping native helper arithmetic BCA8 returns U(C+0x28),then P=actual return+4,and BD98 returns P or P+0x10. A protected upper bound may select nonrollover; running helpers and refusing afterward duplicates effects. Stable direct-only N needs real exclusion across both helpers; preserving the complete native split avoids predicting it from a wrapper sample.",
+        "rolloverFrontier": "UNKNOWN: Selected C270/B818/manager/BE70 expansion needs current G34CC,manager+0x98/+0xA4/+0xA8/+0xAC,actual target/context/minimum/mutable bytes/result/backing generation and reached wait/predicate/clock/thread/G347C callback through return. Stop at that actual target/argument/generation before querying it."
+      },
+      "pendingSubmit": {
+        "arms": [
+          {
+            "decision": "entry N==0",
+            "acquire": false,
+            "release": false,
+            "direct": true,
+            "return": "full64 P",
+            "addZeroStore": true
+          },
+          {
+            "decision": "entry N!=0 and locked reread==0",
+            "acquire": true,
+            "release": true,
+            "releaseBeforeDirect": true,
+            "direct": true,
+            "return": "full64 P",
+            "addZeroStore": true
+          },
+          {
+            "decision": "entry N!=0 and locked reread!=0",
+            "acquire": true,
+            "release": true,
+            "direct": false,
+            "return": "full64 P+0x10",
+            "postB550Reload": true,
+            "addZeroStore": true,
+            "immediateKick": false
+          }
+        ],
+        "acquire": {
+          "site": "0x8269BDD4",
+          "returnLR": "0x8269BDD8",
+          "argument": "full64 G+2B04",
+          "savedResult": "entire r3 into r23 at BDDC"
+        },
+        "release": {
+          "site": "0x8269BE28",
+          "returnLR": "0x8269BE2C",
+          "r3": "full64 G+2B04",
+          "r4": "entire saved acquire r3"
+        },
+        "b550Call": {
+          "site": "0x8269BE0C",
+          "returnLR": "0x8269BE10",
+          "r3": "L",
+          "r4": "full64 P",
+          "r5": "full64 P+0x10"
+        },
+        "publisherCall": {
+          "site": "0x8269BE5C",
+          "returnLR": "0x8269BE60",
+          "r3": "G",
+          "r4": "frameSP+50",
+          "r5": 1
+        },
+        "recordWidth": "adapters use low32 address/count, host ledger masks count low24; deferred guest token does not mask count",
+        "orderedRereads": "V: Entry N read at0x8269BDB8; locked reread0 releases before direct. Locked nonzero records deferred once before token/list/cache, then reloads N at0x8269BE10 and stores reloadedN+incoming raise at0x8269BE1C. Direct reloads at0x8269BE34 and physically stores the add-zero case at0x8269BE4C before B900. Full64 P and P+0x10 remain distinct.",
+        "sourceBoundSilentExit": "V: B900 CPU bit2 with null G541C reads G3A34/G3A30 and returns without B1F0/ring/index/MMIO/callback even when G5B0C is nonzero. On this direct companion, BD98 returns full64 P; r4=frameSP+0x50,r5=1,r6=count,r7=raise,r8=L,r9=entryr9,r10=(low32count&0x00FFFFFF)|0x81000000,r11=0; CR0GT,CR6EQ,XER retained, saved nonvolatiles and low32LR restored. Valid frames/import premises remain.",
+        "callerContinuations": [
+          {
+            "pc": "0x8269C53C",
+            "r3Use": "full64 r28; alignment/tail",
+            "retainedLocally": "r4-r8,CR0,XER,CTR,floating/vector on nonrollover; full outer continuation at native-renderer-command-pressure-contract currentEvidence.publicationCallerBoundary"
+          },
+          {
+            "pc": "0x826AC3B4",
+            "r3Use": "full64 r29; final token P",
+            "retainedLocally": "CR0/CR6/CTR/r12 until later calls; subsequent native setup rebuilds r3-r11 and XER.CA"
+          },
+          {
+            "pc": "0x826AC3E8",
+            "r3Use": "discarded; returns successful r24=0",
+            "retainedLocally": "r4-r11,CR0/CR6/XER/CTR,floating/vector survive local epilogue"
+          }
+        ],
+        "hostBoundary": "V: Current Submit hook returns zero-extended low32 P. Host EndTiling keeps uint32 local tokens and callGuest narrows/zeros r3-r8, restores prior full64 LR and supplies no native AC218 frame/epilogue. C53C,AC3B4 and AC3E8 do not prove unused volatile/CR/XER outputs dead or that native AC218 ran.",
+        "qualification": "I: An ordered storage-preserving port retains actual guest lock/list/cache/N protocol and all guest consumers. Any precomputed replay additionally needs protected operand generations and writer exclusion. Root/continuation/retirement joins belong to the separate worker transfer; no early storage release is admitted."
+      }
+    },
+    "selectedSpinLockAndCache": {
+      "imports": {
+        "metadataNotNormalPPC": true,
+        "mappedArguments": "low32 r3 lock pointer; low32 r4 release oldIRQL",
+        "return": "Acquire u32 zero-extended into r3; Release void preserves PPC fields in pinned wrapper source",
+        "irqlDispatch": 2,
+        "pcrIrqlOffset": 24,
+        "lockBytes": 4,
+        "owner": "big-endian low32 r13 PCR address; raw atomic CAS uses byte_swap(PCR)",
+        "release": "atomic owner clear; lower IRQL iff oldIRQL<2, otherwise leaves current2",
+        "finitePremises": [
+          "actual loaded export/wrapper binding",
+          "current_ppc_context()==&ctx",
+          "matching base/memory and valid same-generation PCR/lock",
+          "non-self-owned ultimately acquirable lock and scheduling/progress",
+          "correct release owner and supported atomic memory"
+        ],
+        "unconditionalFiniteReturn": false,
+        "sourceRevision": "1f03b7bd45e92d21c4198e5d6caadf46118a3d89",
+        "bindings": "V: Import metadata at0x82E923A4 maps ordinal0xB4 to Release and0x82E923B4 maps0xB1 to Acquire. SDK exports use REX_EXPORT/HostToGuestFunction; the title lock names this SDK revision. This is source binding, not loaded-module identity.",
+        "locators": "rerevved-sdk:src/kernel/xboxkrnl/xboxkrnl_threading.cpp:948,967,978,1049,1054,1482; export_table.inc:191,194; include/rex/hook.h:72; include/rex/ppc/function.h:103,301,457; include/rex/system/xthread.h:39,174; src/system/thread_state.cpp:20; src/core/atomic_win.cpp:31; src/core/threading_win.cpp:87."
+      },
+      "listPublication": {
+        "oldLinkSource": "word(L+8) at8269B560 before descriptor stores",
+        "ordered": [
+          "word(P)=U(D(P+0x10)) at B5A8",
+          "word(L+4)=U(P) at B5AC",
+          "word(L+8)=U(P+0xC) at B5B4",
+          "eieio at B5BC",
+          "A72F8(D(P),D(P+0x10),0) at B5CC",
+          "word(oldL8)=U(D(P)) at B5D0",
+          "eieio at B5D4",
+          "A72F8(D(oldL8),D(oldL8)+0x10,0) at B5E4"
+        ],
+        "free": false,
+        "completion": false,
+        "frameBytes": 112,
+        "saveFirstGpr": 29
+      },
+      "cache": {
+        "entry": "0x826A72F8",
+        "words": 40,
+        "early": "V: r10=U64(r3-0x7F100000),r11=0x07EFFFFF; unsigned low32(r10)<=0x07EFFFFF returns before loops/sync, changing only r10/r11/CR6.",
+        "normal": "V: start=U32(r3)&0xFFFFFF80,end=U32(r4+0x7F)&0xFFFFFF80,d=U32(end-start),n=sign_extend32(d)>>7. Aligned d makes srawi carry0 before addze. q=U32(n)>>3,t=U32(n)&7; q groups of8 dcbf then t residual dcbf then sync.",
+        "finitePremise": "Each memory/cache operation returns without fault; malformed spans can be huge despite local counter termination",
+        "admission": "protected nonwrapping canonical ranges and bounded count before effects",
+        "normalOutputs": "r9=r10=0;r11=U64(Z32(start)+128*U32(n));r8=0x380 if initial q>0 else retained;CR6=(initial t==0?EQ:GT),CR0=EQ,compare SO=current XER.SO;XER.CA=(U32(n)>0?1:0),other XER bits retained."
+      },
+      "qualification": "V/I: Native cache/barrier instructions and exact source-bound outputs are retained; generated comment-only cache/barrier sites are not host cache/ordering proof. Each cache operation must return without fault; malformed spans may be huge. Actual loaded binding, finite lock progress, canonical ranges and source/context generation remain required.",
+      "notation": "Offsets/constants with0x are hexadecimal; sizes/counts are decimal. A(x)=U32((U32(x)&0x1FFFFFFF)+((((rotl32(U32(x),12)&0xFFF)+0x200)&0x1000)));D(x)=U64(Z32(A(x))-0x40000000). P,L and oldL8 retain the actual source identities; D is an encoded link/cache alias, not host virtual identity."
+    },
+    "nativeRingReaderBoundary": {
+      "sourceRevision": "31e2c591345a84980b29ec347ece8f4c43344ea6",
+      "method": "Serial foreground read-only native queries checked704 selected words against the supported flat, including254 memory operands,99 branch targets and75 immediates. Ten generated owners supplied14 primary windows;58 additional bounded reader windows and14 handwritten Git objects were pinned. Ten project-file hashes were unchanged across the query interval. BCA8 has no exact Ghidra function metadata; accepted native identity, its exact generated declaration and raw words bind the leaf without repair. Nine other exact entries often have truncated save-thunk bodies. Generated text is corroboration, not generation provenance.",
+      "identity": "Supported flat SHA2565C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680; mapped SHA256389EB006B1DCDE90C5DE775C92D67C18542B8FD9BD39845574206D4B213E9B13.470 differing bytes in60 ranges are confined to [0x827F3F50,0x827F4280), outside selected semantic words.",
+      "classification": "V identifies inspected bytes/source or a reused accepted native contract; I identifies the retained-reader replacement obligation. MUST is conditional on the named source-reachable reader surviving, not observed execution. MAY applies only to GPU PM4 interpretation under host ownership, excluding unresolved CPU aliases. UNKNOWN is a finite missing target/address/generation/reader join. An effect absent from an arm is not an omission proof.",
+      "nativePolicy": "Host-owned native Publish/Submit replacement may consume the whole roots without Original and omit GPU PM4 interpretation because draws are consumed at native hooks. Reproduce retained CPU-visible metadata and logical submission/retirement protocols, or replace their readers coherently. Producer-exclusion proof is not an admission gate for that architecture. Runtime acceptance uses counters, comparison against the Xenos picture and owner play; static evidence supplies no execution frequency.",
+      "currentRoute": "At the pinned revision Publish still always runs Original at ring_stub_hooks.cpp603; direct N0 Kick/Silent Submit can be served, deferred remains Original. EndTiling377-429 retains B818/B508/B118/BF40/BCA8 and selected Submit calls; BeginTiling683-691, AB740715-722 and delivered AC020464-468 retain guest bodies. Readiness/configuration proves source reachability, not actual root or worker occurrence.",
+      "syntaxCoverage": "An instruction-comment scan of3436498 comments for76 selected field starts found20711 syntax sites,12013 reads and11448 outside [0x82690000,0x826C0000) reads;149 outside high-offset read leads occupy37 owners. All selected opcodes, target registers, bases and displacements matched FILE. Most outside low30/34/38 hits have unrelated namespaces. This is neither G/B/S2 provenance nor complete indexed/computed/bulk/partial/physical alias or liveness closure; zero hits never establish MAY.",
+      "effects": [
+        {
+          "effect": "Common cursor/limits/pool/failure and saved publication",
+          "producer": "C574 G3A50=a then C578 G30=a-4 where a=U(actual post-Submit r28+1F)&FFFFFFE0; rollover instead C55C G30=r28-4 then C270. B0E0 saves six BE32 words toG3460..3474; B118 restores and recomputesG38. C270/B818/B618/A6848 retain selected mutable allocation/accounting/failure outcomes.",
+          "readers": "C414/C418/C66C; B0E0/B118; B618 B634/B644/B658/B678/B684/B6B4/B6F8/B71C/B774/B780/B7B4/B7F4; B818 B888/B8A4/B8B0/B8B4; A6848 A685C/A6880/A68A8/A68AC/A68D0; C7A8 C7C0/C7C4/C7D8/C7DC/C804; BAE8 BB24. EndTiling retains allocator/failure readers.",
+          "class": "MUST selected retained arm; actual manager target/mutable result/backing generation UNKNOWN."
+        },
+        {
+          "effect": "Tiled pair, descriptor and bracket",
+          "producer": "q0 skips all list reads/record/stores. q!=0 C4EC address=A(S),C4F4 header=U(q OR81000000),C4F8G3440=E+8 after optionalC170. C170 and B508 publish/finalize encoded links; keep16896-byte allocation,4224-byte cache span,H+4220 limit distinct. BCE0/E4 snapshotG33B8/BC; AC0DC/EC setG33B4=Kb+1,G33B0=Cb; AC288/290 clears after three side takes.",
+          "readers": "AB740 AB75C/AB874/AB878; C170 C184/C190/C1FC; B508 B508/B514/B538; AC0A8 AC0CC/AC0E8/AC0F4/AC15C/AC160; AC218 AC2EC; ABB90 ABD0C/ABDE4; B618 bracket collision guards; BE70 BEC0. G3454 alone among five copied previous-descriptor words has a bound later load at B550 B560.",
+          "class": "MUST retained list controls/snapshots/brackets/savedG3454; other four saved descriptor words and first overlap/generation UNKNOWN."
+        },
+        {
+          "effect": "Submit N, lock, node and ABI",
+          "producer": "Direct BE34 rereadsN,BE4C storesU(N+raise) even add-zero,BE60 returns full64P. Entry nonzero acquires then locked reread0 releases into direct. Deferred BDF0/BDF8/BE00 writes unmasked header/address/exactC0000000; B550 caches new node, publishes old-tail link, caches old interval; BE10 rereadsN after helper,BE1C adds before unlock; return full64P+10.",
+          "readers": "BD98 arm/reload sites; B550 B560; B508 B508/B514/B538; AB740 token decoder; ABB90 ABD0C/ABDC4/ABDE4; ABA68 ABA94/ABB2C/ABB34; C810 C868/C870; callerC53C/C614/AC368/AC3B4/AC3E8. G2B04=W44 is shared withABA68; source-bound imports CAS owner and change PCR+18 IRQL.",
+          "class": "MUST logicalN/control publication/retained lock/live cursor and restored registers. InitialB550[P] value, same-value store omission, physical stack/spills, later volatile/CR/XER/CTR outputs, loaded import/cache progress UNKNOWN."
+        },
+        {
+          "effect": "Ticket, completed fence, storage cursor and RPTR",
+          "producer": "BCA8 oldf=G2A9C,t=G30|(G3A48&3); BD84 issue=f+2. GPU packets orderB+4=t beforeB+0=f; CPU BD74 writesB+0 thenBD7C B+4. RPTR is distinct B+3C writeback.",
+          "readers": "BE70/C6C0 unsigned pending f!=0 && U(Pissue-f)<U(Pissue-C); C738 resource+8; B158 B174/B1BC storage generation; B1F0 B218/B264 RPTR; engine8251BDA0 busy,8252DE4C/8252E054/8252E4E0/82531ABC tests,82535298 deferred free. Lock97CA0 and Release981D8->97AA8 retain fence-before-reuse/free.",
+          "class": "MUST while retained allocator/resource/worker readers survive. Host draws preceding the logical event retire before C/t; RPTR or N or callback acknowledgement is not C."
+        },
+        {
+          "effect": "Callbacks, workers, present and lifecycle",
+          "producer": "BF40/event tuple S2+10/+14/+0; handler clears participant mask then retired marker. AC020 slot->Q38 producer->event; ABB90/ABA68 W/Q participation,continuation and finalN retirement. A3FB8/A3EB8 present queue/ack/counters; CAA8/CBB8/CAD8 wait/timing state.",
+          "readers": "B450 callback/ack; A4150 S2+4 waits; ABEA8 queue/event; ABB90/ABA68 parser/group; C8E0 W28==W2C; AC578 stop/wake/join; outside8268CF60 CFA8 drain,CFD0 Qselected+34,CFD8 G2A88; outside8268 wait/timing helpers and A9DA8 A9E38/A9E3C timing reads.",
+          "class": "MUST retained protocols. W10/W14 indirect dispatch, optional G409C/G40A0/G347C callbacks, nondefault mask and loaded thread/import outputs UNKNOWN."
+        },
+        {
+          "effect": "GPU payload, ring transport and recording qualification",
+          "producer": "B900 BA68/BA6C/BA7C ring words,BA84 index,BA90 MMIO kick; logical descriptor payload. Silent null-sink/high2 has none of these effects. RecordingC488/C490/C494 andA6A08 use a separate chunk queue.",
+          "readers": "GPU interpretation is replaced by native draws; retained B900/hostkick readsG2AC8. Recording next-call cursor/chunk readers are positive; actual decoder/manager74/reclaim is unbound.",
+          "class": "MAY omit GPU PM4 interpretation under host ownership, not CPU tokens/list controls. Logical Kick/order MUST; hardware index/MMIO aliases UNKNOWN. Recording is a separate UNKNOWN variant with conditionally required scalar continuation."
+        }
+      ],
+      "hangPredicates": [
+        "C810 C868/C870 pollsN!=0 without timeout; host drain also yields without deadline. NormalN decrement requires finalW3C0 andW480, not descriptor/CPU count or watchdog reset.",
+        "BE70 pending iff f!=0 && U(Pissue-f)<U(Pissue-C); specialtiling/stop exits do not prove completion. B158 delta=U(entrygeneration-word(B+4))&3 exits delta0 or delta1 && U(end)<=U(word(B+4)&~3), otherwise polls.",
+        "B1F0 blocks (o<n && o<p<=n) OR (o>=n && (p>o || p<=n)); n=(o+requested)&G3A34,p=RPTR. CBB8zero is a separate stop escape.",
+        "Callback flags4 waits S2mask0; A4150 waits presentack1 then0. W0/W44 acquisition,W60 barrier,Qevent waits,C8E0 W28/W2C equality andAC578 infinite thread join can strand progress independently of completedC."
+      ],
+      "hostOrdering": "completion_ledger.cpp745/773/431 binds admitted draw marks;1616 holds unsealed/pending/unowned/missing-writeback spans;1638/1667 gates apply on actual host fence.1510-1517 publishesB+4 thenB+0;1540-1578 callbacktuple,event,ack0,marker;1677 ordinaryRPTR last. Replaypointer1608 andRequestFence1339 are not completion. DirectSubmit1320 only records pending identity;Kick1075-1091 matches/seals.",
+      "lostObservers": "Whole consume must replace BCA8 entry fence, C4E8 TiledSegment, BE5C DirectSubmit and BDE8 DeferredKick exactly once in source order and join later worker submission. A wider callback replacement must also replace BF40 with exact tuple/predicate/mask/buffer identity. guest_progress_hooks.cpp248 currently rejects cpu_fence_mode: future consume needs an explicit logical fence record and retirement-gated completion, or must wait before native-order CPU writes. Silent needs a host-only seal/disposition without inventing a guest Kick or poisoning a later record.",
+      "outsideUnknowns": "82ABE630 reads+3A50 at82ABE718 from entryR3+84*entryR4;82AA1FC8 reads+3A50 at82AA1FE0 from entryreceiver and can pass multiplied result at82AA2130. Neither base is bound toGPU G. Observe actual receiver/effective address and incarnation versusG; these are candidates, not positiveGPU readers. Unresolved computed/copied/physical/frame/payload aliases need one actual readerPC,canonical interval,width,order and generation through overlap. Actual manager/sink/import/0x8C/callback target with args/readbacks selects its finite next query.",
+      "minimalKinds": {
+        "Starved": "Common actual-return tail and selected rollover/allocation/wait/liveABI only; no invented fence,Submit or segment.",
+        "Tiling": "q0 common tail only; qnonzero additionally one segment association and retained pair/list/growth/finalization controls,bracket continuity and backing through worker plus host draw retirement.",
+        "PublishSubmit": "Captureoldf/B/Cb/Kb,snapshots,one fence record,issue+2,actual nestedSubmit disposition/fullreturn,common tail/pressure. Empty payload still issues;CPUmode needs explicit retirement handling.",
+        "DirectKick": "N reread/add,selected fullP/liveABI,lock release if acquired,oneDirectSubmit then logicalKick/rightspan seal; coherent retained index/RPTR and actual prior-draw retirement.",
+        "DirectSilent": "SameN/ABI/record identity and selected lock release; no native ring/index/MMIO/B1F0/G5B0C event. Define host-only seal/disposition.",
+        "Deferred": "FullP+10,unmaskedtoken/address/terminator,orderedlist/link/N/lock/PCR,one deferredrecord and laterworker match; preserve or coherently replaceQ/W/root/continuation/finalN/lifecycle/backing.",
+        "Recording": "Separate UNKNOWN manager/decoder/occurrence/reclaim variant; positive next-call scalar continuation is not complete decoder closure."
+      },
+      "sourceWindows": [
+        {
+          "entry": "0x8269C400",
+          "artifact": "rerevved:generated/default/rerevved_recomp.85.cpp",
+          "firstLine": 12897,
+          "lastLine": 13076,
+          "sha256": "A43A7B6A6164190132C1B7178B836721EE6C594AE5EEFC52A0D6775AB3FBC007"
+        },
+        {
+          "entry": "0x8269C400",
+          "artifact": "rerevved:generated/default/rerevved_recomp.85.cpp",
+          "firstLine": 13077,
+          "lastLine": 13119,
+          "sha256": "CC2BA899A90AB91168B292091467680F0EDE8A0B76A8E95D76B3F0DA39C6BCB2"
+        },
+        {
+          "entry": "0x8269BD98",
+          "artifact": "rerevved:generated/default/rerevved_recomp.159.cpp",
+          "firstLine": 12779,
+          "lastLine": 12902,
+          "sha256": "70A9EC95503A8C6787B89014716D4B67002DCFA30A2C6A604A7948A19F16C859"
+        },
+        {
+          "entry": "0x8269BCA8",
+          "artifact": "rerevved:generated/default/rerevved_recomp.222.cpp",
+          "firstLine": 12551,
+          "lastLine": 12695,
+          "sha256": "C4128141869A3FAA83AFDF50244977FB624C3CE652EC17DA67656A6988121C64"
+        },
+        {
+          "entry": "0x8269B550",
+          "artifact": "rerevved:generated/default/rerevved_recomp.39.cpp",
+          "firstLine": 12801,
+          "lastLine": 12889,
+          "sha256": "15555993E70145650264ABA3D79A0A60FF534E2D63A941E86939B00B15BDE147"
+        },
+        {
+          "entry": "0x8269B900",
+          "artifact": "rerevved:generated/default/rerevved_recomp.160.cpp",
+          "firstLine": 12930,
+          "lastLine": 13109,
+          "sha256": "39F3DEEE5A5B98B231F3FE5925BB64C886AF5BC92AA0AE1B96FE74110713F938"
+        },
+        {
+          "entry": "0x8269B900",
+          "artifact": "rerevved:generated/default/rerevved_recomp.160.cpp",
+          "firstLine": 13110,
+          "lastLine": 13200,
+          "sha256": "3688450C95BACE2CB925AA498E3846DB840CFB4B0BEBEE26C09AD18A2BC28334"
+        },
+        {
+          "entry": "0x8269B1F0",
+          "artifact": "rerevved:generated/default/rerevved_recomp.17.cpp",
+          "firstLine": 12805,
+          "lastLine": 12910,
+          "sha256": "64B77BB291EEF1990361B4D1F299B4B6EE5FDFF13C975C004BCA3C79F23D98B5"
+        },
+        {
+          "entry": "0x8269C810",
+          "artifact": "rerevved:generated/default/rerevved_recomp.75.cpp",
+          "firstLine": 12677,
+          "lastLine": 12751,
+          "sha256": "4FE3CB38444F8829CCA0EAB52F2C74F8947EDBEA1D7D0E92CCAB283F2D8FA9C5"
+        },
+        {
+          "entry": "0x826AC0A8",
+          "artifact": "rerevved:generated/default/rerevved_recomp.189.cpp",
+          "firstLine": 12938,
+          "lastLine": 13117,
+          "sha256": "C2F0D808C0AF5E1B501D748AE9990B0B8EF103EE8D2EF8653C3E364BE0B09A3B"
+        },
+        {
+          "entry": "0x826AC0A8",
+          "artifact": "rerevved:generated/default/rerevved_recomp.189.cpp",
+          "firstLine": 13118,
+          "lastLine": 13144,
+          "sha256": "10BB45325A32788777511747A1C758B8AEA7A43BF5A32B522E242C5296E8A8C4"
+        },
+        {
+          "entry": "0x82AA1FC8",
+          "artifact": "rerevved:generated/default/rerevved_recomp.225.cpp",
+          "firstLine": 23941,
+          "lastLine": 24120,
+          "sha256": "AB08A8BD8573BFF46F35B5F00E5036A6684D1EAFDB7151970CECBEA34B7EE22F"
+        },
+        {
+          "entry": "0x82AA1FC8",
+          "artifact": "rerevved:generated/default/rerevved_recomp.225.cpp",
+          "firstLine": 24121,
+          "lastLine": 24150,
+          "sha256": "3CDB52A3CA327CF405D60167E06EB6FF558465A2DDCFA6EA1BB8F29563628BED"
+        },
+        {
+          "entry": "0x82ABE630",
+          "artifact": "rerevved:generated/default/rerevved_recomp.164.cpp",
+          "firstLine": 23947,
+          "lastLine": 24097,
+          "sha256": "E1B7A3A7EC735E43471F4695D939D3588CBCC86823224D62D109CDA06B6CC129"
+        }
+      ],
+      "handwrittenSources": [
+        {
+          "artifact": "rerevved:src/gpu/guest_d3d/ring_stub_hooks.cpp",
+          "gitBlobSha256": "7E06344CE39CC43ABC0EB9AF13CAB6C83FCA2258E5F5B45051FDFFA47A738A8F"
+        },
+        {
+          "artifact": "rerevved:src/gpu/guest_d3d/ring_stubs.cpp",
+          "gitBlobSha256": "E8ECEE224D9EFDD4B7065661FD5A81BBF1B9DB3819A6271AF76F2785AC7D6E45"
+        },
+        {
+          "artifact": "rerevved:src/gpu/completion/completion_ledger.cpp",
+          "gitBlobSha256": "FB5A3FC9096FDFCEFA51A56B1E57294B4A3698E322BAA2C095502C2EBFED2C06"
+        },
+        {
+          "artifact": "rerevved:src/gpu/completion/guest_progress_hooks.cpp",
+          "gitBlobSha256": "1F70D9ED11BD87F783FCA76746D9E26C55B481FCB6D9F53D665AF51D213F0448"
+        }
+      ]
+    },
+    "selectedReplayOwnership": {
+      "qualification": "No common producer capability is supplied by the inspected interfaces. This is not a proof that no runtime capability or other writer exists.",
+      "capability": "UNKNOWN",
+      "serviceBoundary": "Reuse currentEvidence.serviceBoundary for the lease/readiness/drain contract; it supplies no common guest-writer capability.",
+      "recordCallback": {
+        "classification": "V source counterpart; actual instance/generation runtime-only",
+        "route": "RecordTiledSegment adapter narrows r29/r30 to u32; detail uses current shared ledger and low24 dwords, catch-all/noexcept. TiledSegment protects ledger list state under mutex then notifies outside that lock. Configured failed/census callbacks may run before guest pair stores.",
+        "productionInstaller": "guest_gpu_service.cpp579-614 installs census logging and a failed callback that invokes copied options.reportFailure outside failureMutex.",
+        "productionOwner": "src/app.cpp2065-2081 holds dispatchMutex/checks alive and queues a UI failure-flag/title/presentation-event callback; no direct DisableRingStubs/withdrawal/guest callback in that body.",
+        "limit": "No transitive UI/presentation target exclusion, actual failure/reentry/withdrawal or actual service/options generation is proved. Ledger mutex is not a guest cursor/list producer lock."
+      },
+      "selectedWriters": "V: C400 pair/tail, C170 descriptor, B118 restoration, AC0A8/AC218 activation, C588 mode-byte update, B818/C270 cursor/limit/failure and C8E0 backing reconfiguration are retained competing interfaces. BD98/host Raise and worker/watchdog N writes are distinct. This finite positive set is not an all-alias writer census; entry interfaces do not imply unrecorded store PCs.",
+      "canonicalIdentity": "I: Retain each reached frame/save/backchain,G field and device incarnation, optional descriptor/E-pair/chunk, signed-count source/segment, P/L/old-link/N/lock, thread/PCR and mapping/allocation generation with rights and partial physical aliases. q==0 adds no list read/reservation. Reproduced stores still need safe ordered aliases.",
+      "discriminator": "I: One exact native-or-host C61C occurrence must carry full PPC/frame identity,G incarnation,selected canonical mappings/generations,producer activation/thread/callback nesting and an actual capability held from derivation through final effect. If unbound, record the first selected writer PC,effective canonical interval,width,old/new value including same-value writes,generation,thread/PCR/parent,held capability and sequence relative to record/replay/withdrawal; query only that writer next. A no-write interval is not universal exclusion.",
+      "admission": "These are premises for exact replay of the inspected local body, not producer-exclusion admission for whole host-owned native ring replacement. That replacement follows nativeRingReaderBoundary: reproduce or coherently replace retained readers and retire prior host work before progress. Lease/readiness/equal snapshots do not establish common guest exclusion; a committed replay fault cannot restart Original."
+    }
+  },
+  "replacementObligations": [
+    "Whole host-owned native Publish/Submit may omit GPU PM4 interpretation without Original; preserve or coherently replace the named CPU metadata/readers and exactly-once logical records in nativeRingReaderBoundary. Static unknowns select finite observations rather than reinstating producer-exclusion admission.",
+    "C400 needs actual post-Submit cursor, exact common or rollover tail, selected allocator/failure/wait effects and snapshots. Starved and tiledq0 skip their nonproduced prefix events; qnonzero retains CPU pair/list controls while workers remain.",
+    "BD98 needs selected lock/reread/release, direct or deferred token/list/N order, full cursor ABI and exactly one record. Deferred retirement follows actual root/participation/continuation protocol; replacing only PM4 does not remove Q/W/lifecycle readers.",
+    "N_end=U(N_start+sum(committed raises)-normal retirements) is conditional on actual G/W/root identity and selected writer order. ABA68 finalactive0 withW48null is distinct from descriptor count,B+0,B+4,RPTR,S2 acknowledgement and watchdog reset.",
+    "Completed fence/storage cursor/callback events follow actual prior host draw retirement. Existing CPU-fence observer refusal and Silent pending-record sealing require explicit host-owned handling. Preserve reached nonnull target semantics and backing through last reader/overlap; unresolved aliases/targets remain finite UNKNOWNs."
+  ],
+  "guards": [
+    "Counter identity and structural multiplicity do not reproduce a runtime census or prove selected occurrence/frequency.",
+    "MUST is relative to retained source-reachable readers. MAY covers only replaced GPU interpretation; no global frame,ring,record or transitive all-alias omission theorem follows.",
+    "Exact local replay prerequisites remain scoped to those tables; nativeRingReaderBoundary owns whole native ring replacement semantics and runtime acceptance."
+  ],
+  "conclusion": "At the current pinned source Publish still runs Original and deferred Submit retains list/lock/accounting. Host-owned whole replacement may omit GPU PM4 while preserving the selected CPU metadata, live cursor ABI, logical records and host-retirement order. Reader/target/generation unknowns remain explicit; no every-reader or runtime-frequency proof is claimed."
+}

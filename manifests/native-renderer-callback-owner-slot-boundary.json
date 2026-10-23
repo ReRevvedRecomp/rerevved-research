@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0269",
+  "topic": "native-renderer-callback-owner-slot-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the derived application-owner vtable +0x28 target reach the registered frame callback vector, or is it a distinct service edge?",
+  "scope": {
+    "ownerVtable": "0x82121100",
+    "ownerGlobal": "0x82FFD624",
+    "ownerSlot": "0x28",
+    "slotWord": "0x82121128",
+    "sourceCallsite": "0x82D83B38:0x82D83C7C",
+    "target": "0x821D5678",
+    "callbackObjectVtable": "0x82120D2C",
+    "callbackSlot": "0x0",
+    "boundary": "The exact derived owner-table word at +0x28 resolves to a no-op body. This is a distinct owner service edge and does not reach callback-object slot 0 or produce callback r5. The owner-vector invoker, callback-object retention, and incoming r5 producer remain unresolved."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-frame-callback-scheduling",
+      "use": "Existing callback registration, owner-vector layout, and unresolved invoker/r5 boundary."
+    },
+    {
+      "topic": "native-renderer-frame-pass-boundary",
+      "use": "Accepted callback registration and driver-to-render continuation boundary."
+    }
+  ],
+  "staticJoin": {
+    "slotResolution": "The source callsite loads the owner pointer from global 0x82FFD624 at 0x82D83C6C. Under the conditional retention of the object whose vptr was installed as 0x82121100, the exact table word at 0x82121128 is 0x821D5678; the neighboring words at +0x2C, +0x30, and +0x34 also contain 0x821D5678.",
+    "targetBody": "The target 0x821D5678 has no callees and returns immediately. Its generated body is an exact blr, so it has no field loads, callback-vector reads, register setup, or callback-argument producer.",
+    "callbackBoundary": "The registered callback remains at callback-object vtable 0x82120D2C slot 0 = 0x82E87D18. The +0x28 target does not reach that table or the owner vector at +0x84/+0x88/+0x8C.",
+    "schedulingResult": "The selected owner +0x28 edge is therefore a distinct no-op service. It does not explain callback r5 before 0x82E87D2C, and it does not establish invocation timing, cadence, or presentation count."
+  },
+  "guards": [
+    "Do not conflate application-owner vtable +0x28 at 0x82121128 with the separate timing-owner scalar field +0x28 used by the timing method.",
+    "Repeated 0x821D5678 words at adjacent owner-table cells do not establish a callback vector or invocation order.",
+    "The exact no-op body establishes static target behavior only; it does not establish whether this owner slot executes at runtime.",
+    "Do not infer callback frequency, frame cadence, fixed simulation ticks, or presentation count from this owner-table edge."
+  ],
+  "observations": [
+    "The canonical read-only table query returned 0x82121128 = 0x821D5678 with word radius 4 and Status OK / ReadOnly true.",
+    "The canonical read-only function query identified 0x821D5678 with no callees; its decompilation is a void immediate return.",
+    "The generated title body at revision 75df5c52ca90a5ea77690a90cf965ff8d79bac92 contains only the REX function prologue and blr return."
+  ],
+  "unknowns": [
+    "The exact owner method that reads vector pointer words +0x84/+0x88/+0x8C and invokes callback-object slot 0 remains unresolved.",
+    "The incoming caller and producer of callback r5 remain unresolved.",
+    "Callback-object lifetime, vector retention, reserve-helper effects, and dynamic invocation frequency remain unresolved."
+  ],
+  "nextDiscriminator": {
+    "site": "A concrete owner-vector read of +0x84/+0x88/+0x8C followed by callback-object vptr slot 0 and register setup for r4/r5.",
+    "question": "Which exact owner method or indirect caller invokes the registered callback object, and what producer supplies callback r5?",
+    "limits": "Use one exact owner-vector producer edge and a bounded selected body set. Do not repeat capped executable-wide vector scans, adjacent-table inference, or timing claims from the no-op +0x28 service."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra DumpMemoryWords.java and DumpFunctions.java queries against the verified flat image, followed by one narrow generated-code window for the exact target. No runtime launch, executable-wide scan, or image repair was used.",
+    "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "queries": [
+      {
+        "question": "Read the derived owner-table +0x28 word",
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": ["0x82121128"],
+        "wordRadius": 4,
+        "mode": "foreground-read-only",
+        "result": "Status OK and ReadOnly true. 0x82121128 contains 0x821D5678; the radius window also records 0x8212112C, 0x82121130, and 0x82121134 as 0x821D5678."
+      },
+      {
+        "question": "Expand the exact +0x28 target body",
+        "script": "ghidra/DumpFunctions.java",
+        "targets": ["0x821D5678"],
+        "mode": "foreground-read-only",
+        "result": "Status OK and ReadOnly true. The target has no callees and decompiles as a void immediate return. No callback-vector or callback-argument path is present in the target body."
+      }
+    ],
+    "generatedWindows": [
+      {
+        "function": "0x821D5678",
+        "file": "generated/default/rerevved_recomp.132.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "280-284",
+        "guestSites": ["0x821D5678"],
+        "claims": "Exact REX function prologue followed by blr; no field access or call."
+      }
+    ],
+    "bodyInventory": {
+      "focusedCount": 1,
+      "focusedFunctions": ["0x821D5678"],
+      "reusedFunctions": ["0x82D83B38"],
+      "bodyLimit": 8,
+      "qualification": "The reused 0x82D83B38 caller is carried from RVA-F-0266. One new target body was intentionally inspected; no successor was selected because the target has no callees."
+    },
+    "qualification": "The table word and target body are exact current-image static evidence. The result distinguishes this owner service from callback registration but does not close the separate owner-vector invoker, callback r5 producer, object lifetime, or runtime cadence."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "newRelations": [],
+    "result": "Existing symbol RVA-SYM-0299 already records the exact no-op target 0x821D5678; no new catalog record is required for this bounded owner-slot result."
+  },
+  "conclusion": "Under the conditional retention of the published owner with derived vtable 0x82121100, the application-owner table word at 0x82121128 resolves to 0x821D5678, whose exact body is a no-op blr. The selected +0x28 edge is a distinct owner service and does not reach the registered callback-object vtable 0x82120D2C slot 0 or produce callback r5 before 0x82E87D2C. The owner-vector invoker, callback r5 producer, object/vptr retention, and runtime cadence remain unresolved."
+}

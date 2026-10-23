@@ -1,0 +1,512 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0261",
+  "topic": "native-renderer-guest-frame-pacing",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which static timing, wait, limiter, and presentation interval controls lie between the accepted playable callback and VdSwap?",
+  "scope": {
+    "callback": "0x82E87D18",
+    "driver": "0x82C7DF58",
+    "timingOwner": "0x8314F280",
+    "timingAdvance": "0x82C7EB68",
+    "ordinaryPresentWorker": "0x826ABEA8",
+    "alternatePresentCaller": "0x82517E38",
+    "preSwapFlush": "0x826A4150",
+    "selectorCallback": "0x826A3FB8",
+    "clockFrequencyWrapper": "0x8280F0C8",
+    "clockCounterWrapper": "0x8280F100",
+    "swapOwner": "0x826A4638",
+    "boundary": "The bounded evidence covers the accepted callback and driver, the shared timing owner and clock wrappers, the ordinary and alternate presentation paths, the pre-swap selector and packet waits, the resource fence wait, and the conditional VdSwap call. RVA-F-0266 closes the callback entry r5-to-driver-r4 handoff and its registered callback-object slot, while the owner-vector invoker and incoming r5 producer remain unresolved. RVA-F-0269 resolves the separate derived application-owner vtable +0x28 edge at 0x82D83C7C to exact no-op target 0x821D5678; it does not reach the callback vector or produce r5. The callback registration path is conditional: a null callback exits without insertion; a nonnull callback with a nonnull vector start and available capacity takes the direct store/advance path; null-start or full cases branch to reserve helper 0x821B4450 with insertion unresolved. RVA-F-0271 closes static receiver and value origins for the five accepted remaining selector-setter callsites, while their source-local case arm remains conditional on actual entry, control flow, and retention. RVA-F-0272 traces the one bounded direct setup caller and one bounded upstream direct byte producer before the existing intermediate template +0x34 store; retention through earlier setup-caller helper calls and later mutation remain unresolved. Runtime frequency, event cadence, fixed-tick simulation, selector default, interval meaning, and complete indirect-call closure remain unresolved."
+  },
+  "dependencies": [
+    {
+      "topic": "gameplay-main-frame-boundary",
+      "use": "accepted playable callback and broad driver boundary"
+    },
+    {
+      "topic": "gameplay-frame-timing-owner",
+      "use": "shared 0x48-byte timing owner and prior field qualifications"
+    },
+    {
+      "topic": "native-renderer-frame-pass-boundary",
+      "use": "bounded callback-to-render continuation"
+    },
+    {
+      "topic": "native-renderer-vdswap-boundary",
+      "use": "ordinary and alternate pre-swap-to-VdSwap order"
+    },
+    {
+      "topic": "native-renderer-d3d-lock-fill-contract",
+      "use": "resource fence wait and its bounded callsite set"
+    },
+    {
+      "topic": "native-renderer-presentation-selector-ownership",
+      "use": "setter operation, first-three direct callers, and the accepted remainder-call baseline"
+    },
+    {
+      "topic": "native-renderer-presentation-selector-remainder",
+      "use": "static receiver, saved-entry value origins, local case-336 producer gates, and conditional source-local control qualification for the five accepted remainder callsites"
+    },
+    {
+      "topic": "native-renderer-presentation-setup-input",
+      "use": "bounded direct setup caller and conditional r9 input before the intermediate template +0x34 store"
+    },
+    {
+      "topic": "native-renderer-frame-callback-scheduling",
+      "use": "callback r5-to-driver-r4 handoff, registered callback slot, and unresolved owner-vector invocation boundary"
+    },
+    {
+      "topic": "native-renderer-callback-owner-slot-boundary",
+      "use": "Exact derived owner-table +0x28 target, which is a distinct no-op service and not the callback-vector invoker."
+    }
+  ],
+  "catalogPromotion": {
+    "newEntities": [
+      "RVA-SYM-0478",
+      "RVA-SYM-0479",
+      "RVA-SYM-0480",
+      "RVA-SYM-0481",
+      "RVA-SYM-0482",
+      "RVA-SYM-0483",
+      "RVA-SYM-0484",
+      "RVA-SYM-0485",
+      "RVA-SYM-0486",
+      "RVA-SYM-0487",
+      "RVA-SYM-0488"
+    ],
+    "updatedEntities": [],
+    "newRelations": [
+      "RVA-REL-0588",
+      "RVA-REL-0589",
+      "RVA-REL-0590",
+      "RVA-REL-0591",
+      "RVA-REL-0592",
+      "RVA-REL-0593",
+      "RVA-REL-0594",
+      "RVA-REL-0595",
+      "RVA-REL-0596"
+    ],
+    "result": "Reusable timing dispatch, clock, presentation path, selector, wait, callback, and VdSwap function entities and their exact bounded edges were promoted; no timing field semantics, selector caller/default, runtime producer, or presentation-interval meaning was promoted."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only DumpFunctions.java, DumpMemoryWords.java, FindRawFieldStores.java, FindDirectCallers.java, DumpFunctionNeighborhoodBatch.java, and selected DumpInstructions.java queries for the accepted callback, driver, timing methods, timing vtable and constants, presentation worker and caller, VdSwap owner, pre-swap flush, resource fence wait, Resolve packet wait, clock wrappers, selector callback, the bounded +0x351C store band, and the exact setter callers and helper spans, with narrow generated-code corroboration.",
+    "boundedQueries": {
+      "dumpFunctions": {
+        "script": "ghidra/DumpFunctions.java",
+        "existingAddresses": [
+          "0x82E87D18",
+          "0x82C7DF58",
+          "0x82C71A00",
+          "0x82C7EB68",
+          "0x82C7EBF8",
+          "0x82E293E8",
+          "0x826ABEA8",
+          "0x82517E38",
+          "0x826A4638",
+          "0x826A4150",
+          "0x8269BE70",
+          "0x8269BF40",
+          "0x8269E520",
+          "0x8269C7A8",
+          "0x82C7EB20",
+          "0x82C7EAD8",
+          "0x82C5F790"
+        ],
+        "newAddresses": [
+          "0x8280F0C8",
+          "0x8280F100",
+          "0x826A3FB8"
+        ],
+        "mode": "foreground-read-only",
+        "limit": "The report decompiler truncates the clock wrappers and selector callback at bad instructions or save-thunk boundaries; generated windows below supply the bounded body evidence."
+      },
+      "dumpMemoryWords": {
+        "script": "ghidra/DumpMemoryWords.java",
+        "windows": [
+          "0x8216A4E0, 0x8216A510, 0x8216A518, 0x82164E14 radius 2",
+          "0x82164E14 and 0x8314F280 radius 12"
+        ],
+        "mode": "foreground-read-only"
+      },
+      "findRawFieldStores": {
+        "script": "ghidra/FindRawFieldStores.java",
+        "range": "[0x8268C000,0x826B8000)",
+        "offsets": ["0x351C"],
+        "matchCap": 8,
+        "result": "One match at 0x8268EF68, stw r4,0x351C(r3); scanned 45056 aligned four-byte words across a 180224-byte band, Matches 1, Truncated false, Cancelled false."
+      },
+      "selectorRawCallsites": {
+        "script": "ghidra/DumpFunctionNeighborhoodBatch.java",
+        "targets": [
+          "0x8250A720",
+          "0x8250A730",
+          "0x8250A7EC",
+          "0x8250F314",
+          "0x8250F3C8",
+          "0x8250F408",
+          "0x8250F4A0",
+          "0x8250F66C",
+          "0x826A5D90"
+        ],
+        "mode": "foreground-read-only",
+        "result": "Raw guest words corroborate C1 setup 0x8250A714 addi r4,r30,0x14, 0x8250A718 addi r3,r1,0x60, 0x8250A71C li r5,0x7C, copy call 0x8250A720, object helper call 0x8250A730, C2 allocation call 0x8250F314 with LR location 0x8250F318, its guard calls, and all three setter call-site setup words. Post-thunk setter bodies have no complete listing in this database, so raw words establish only the selected instruction sites."
+      },
+      "selectorRawWords": {
+        "script": "ghidra/DumpMemoryWords.java",
+        "windows": [
+          "0x8250868C,0x8250F370,0x8250F384,0x8250F3C8,0x8250F408,0x8250F4A0,0x8250F650,0x8250F66C,0x826A5D90,0x8268CEB0 radius 8",
+          "0x826A5C50,0x826A5D80,0x826A5D90,0x8268D378,0x8268D388,0x82508718 radius 12"
+        ],
+        "mode": "foreground-read-only",
+        "result": "Raw words corroborate C2 zeroing through template +0x34, caller stack +0x54/+0x5C aliases, the 0x82508598 direct writer, C2 setter setup, C3 entry lwz r25,+0x351C and r4/r3 setup, 0x8268D2C8 forwarding r4=r28 to 0x826A63E8, and 0x82508718 replacing incoming r4 with receiver +0xC0."
+      },
+      "selectorR9SetupWords": {
+        "script": "ghidra/DumpMemoryWords.java",
+        "windows": ["0x8250F2F0,0x825085A0,0x825085F0 radius 4"],
+        "mode": "foreground-read-only",
+        "result": "Raw words are 0x8250F2F0=0x7D384B78 (mr r24,r9), 0x825085A0=0x9421FF60 (stwu r1,-0xA0(r1)), and 0x825085F0=0x83E100FC (lwz r31,0xFC(r1)); the exact entry-r9 retention and caller stack alias setup are corroborated."
+      },
+      "selectorSetupInput": {
+        "manifest": "RVA-F-0272#/currentEvidence",
+        "result": "RVA-F-0272 records one bounded direct caller of setup method 0x8250F2B0 and a conditional r9 input before the accepted intermediate template +0x34 store; the exact stack relation and numeric mapping remain canonical in that manifest."
+      },
+      "selectorHelperStoreScans": {
+        "script": "ghidra/FindRawFieldStores.java",
+        "ranges": [
+          "[0x8268CE90,0x8268CF00)",
+          "[0x82508598,0x82508718)",
+          "[0x8268D2C8,0x8268D3A0)",
+          "[0x82508718,0x82508800)"
+        ],
+        "offset": "0x34",
+        "matchCap": 8,
+        "result": "The bounded helper scans found one direct +0x34 store in 0x82508598 at 0x8250868C (word 0x917F0034, r11 to r31+0x34) and no direct +0x34 store in 0x8268CE90, 0x8268D2C8, or 0x82508718. These spans do not inspect nested callees."
+      },
+      "selectorInstructionListings": {
+        "script": "ghidra/DumpInstructions.java",
+        "targets": ["0x8268CE90", "0x82508598", "0x8268D2C8", "0x82508718"],
+        "mode": "foreground-read-only",
+        "limit": "Selected helper listings start with save/prologue material and skip at known listing gaps; raw words and bounded +0x34 store scans supply selected body corroboration without claiming complete function decompilations."
+      },
+      "generatedWindows": [
+        {
+          "function": "0x82C7DF58",
+          "file": "generated/default/rerevved_recomp.12.cpp",
+          "lines": "28432-28554",
+          "guestSites": ["0x82C7E0FC", "0x82C7E104", "0x82C7E118"],
+          "claims": "Entry r4 low-byte render guard and shared return path."
+        },
+        {
+          "function": "0x82C7EB68",
+          "file": "generated/default/rerevved_recomp.88.cpp",
+          "lines": "28148-28234",
+          "guestSites": ["0x82C7EB88"],
+          "claims": "Timing bctrl, zero common path, delta arithmetic, clamp, count, and owner stores."
+        },
+        {
+          "function": "0x826ABEA8",
+          "file": "generated/default/rerevved_recomp.175.cpp",
+          "lines": "13290-13510",
+          "guestSites": ["0x826ABF38", "0x826ABFCC", "0x826ABFEC"],
+          "claims": "Event equality, timeout-pointer selection, counter, status 258 loop, and device +0x2ABE gate."
+        },
+        {
+          "function": "0x826A4150",
+          "file": "generated/default/rerevved_recomp.45.cpp",
+          "lines": "13177-13296",
+          "guestSites": ["0x826A4298", "0x826A3FB8"],
+          "claims": "Selector +0x351C mapping, r7 encoding, packet call at 0x826A4298 with LR 0x826A429C, and exact callback pointer in r6."
+        },
+        {
+          "function": "0x826A4638",
+          "file": "generated/default/rerevved_recomp.211.cpp",
+          "lines": "12918-12978",
+          "guestSites": ["0x826A4820", "0x826A4824", "0x826A4828", "0x826A4884"],
+          "claims": "+0x541C alternate command-buffer branch and zero-path VdSwap import."
+        },
+        {
+          "function": "0x82517E38",
+          "file": "generated/default/rerevved_recomp.155.cpp",
+          "lines": "8748-8799",
+          "guestSites": ["0x82517E58", "0x82517E88"],
+          "claims": "Alternate flush then VdSwap-owner call order."
+        },
+        {
+          "function": "0x82C5F790",
+          "file": "generated/default/rerevved_recomp.178.cpp",
+          "lines": "28287-28358",
+          "guestSites": ["0x8280F0C8", "0x8280F100"],
+          "claims": "Clock method frequency/counter lazy initialization and signed sample-minus-baseline ratio."
+        },
+        {
+          "function": "0x8280F0C8",
+          "file": "generated/default/rerevved_recomp.26.cpp",
+          "lines": "16933-16953",
+          "guestSites": ["0x8280F0C8"],
+          "claims": "KeQueryPerformanceFrequency wrapper."
+        },
+        {
+          "function": "0x8280F100",
+          "file": "generated/default/rerevved_recomp.97.cpp",
+          "lines": "16449-16470",
+          "guestSites": ["0x8280F100"],
+          "claims": "Timebase counter wrapper."
+        },
+        {
+          "function": "0x826A3FB8",
+          "file": "generated/default/rerevved_recomp.196.cpp",
+          "lines": "13120-13228; 13259-13337",
+          "guestSites": ["0x826A3FB8"],
+          "claims": "Exact callback body with input low-byte and bits 8..11 extraction, +0x5434-or-60 divisor, literal percentage arithmetic and guards, guarded counter/state updates, and no observer-name inference."
+        },
+        {
+          "function": "0x8268EF68",
+          "file": "generated/default/rerevved_recomp.7.cpp",
+          "lines": "12791-12795",
+          "guestSites": ["0x8268EF68"],
+          "claims": "Exact stw r4,0x351C(r3) selector-field writer."
+        },
+        {
+          "function": "0x8250A688",
+          "file": "generated/default/rerevved_recomp.148.cpp",
+          "lines": "8998-9019,9084-9106,9192-9207",
+          "guestSites": ["0x8250A7EC"],
+          "claims": "First expanded setter caller: a 124-byte copy at 0x8250A720 moves source r30+0x14 (including source word r30+0x48) to stack +0x60, placing the setter slot at copied-object +0x34 = stack +0x94; helper calls may process the copied object before the setter."
+        },
+        {
+          "function": "0x8250F2B0",
+          "file": "generated/default/rerevved_recomp.76.cpp",
+          "lines": "8956-9028,9070-9119,9126-9157,9175-9181,9236-9248,9425-9437,9468-9507",
+          "guestSites": ["0x8250F66C"],
+          "claims": "Second expanded setter caller: the stack template is zeroed through inclusive sp+0xA0..sp+0x11B (half-open [sp+0xA0,sp+0x11C)), 0x82508598 writes incoming r9 to template +0x34 = stack +0xD4, and later helper effects remain unresolved before the setter."
+        },
+        {
+          "function": "0x826A5C50",
+          "file": "generated/default/rerevved_recomp.131.cpp",
+          "lines": "13246-13271,13320-13393,13394-13422",
+          "guestSites": ["0x826A5D90"],
+          "claims": "Third expanded setter caller: loads receiver +0x351C into r25 and writes that existing word back after fixed loops and setup stores."
+        },
+        {
+          "function": "0x8268CE90",
+          "file": "generated/default/rerevved_recomp.147.cpp",
+          "lines": "12357-12419",
+          "guestSites": ["0x8250A734"],
+          "claims": "The copied-object helper retains the caller object pointer, calls 0x8269C8E0 with object +0x48, and calls 0x826A5EB8 with the object pointer; the generated body and bounded raw scan show no direct copied-object +0x34 store in this helper, while nested effects remain outside this source window."
+        },
+        {
+          "function": "0x82508598",
+          "file": "generated/default/rerevved_recomp.93.cpp",
+          "lines": "7729-7783,7854-7865",
+          "guestSites": ["0x8250F3C8"],
+          "claims": "The template pointer arrives through caller stack +0x5C and aliases callee +0xFC after frame setup; incoming r9 arrives through caller stack +0x54 and aliases callee +0xF4. Raw words 0x8250F2F0, 0x825085A0, and 0x825085F0 corroborate entry r9 retention, callee frame setup, and +0xFC recovery; raw words 0x82508678 and 0x8250868C corroborate the +0xF4 load and direct store of incoming r9 to template +0x34."
+        },
+        {
+          "function": "0x8268D2C8",
+          "file": "generated/default/rerevved_recomp.81.cpp",
+          "lines": "12650-12767",
+          "guestSites": ["0x8250F408", "0x8268D384"],
+          "claims": "The template pointer arrives in r7, is retained in r28, and is passed as r4 to 0x826A63E8 at 0x8268D384 (LR 0x8268D388); the generated body and bounded raw scan show no direct template +0x34 store, so nested mutation remains a bounded unknown."
+        },
+        {
+          "function": "0x82508718",
+          "file": "generated/default/rerevved_recomp.186.cpp",
+          "lines": "8440-8461",
+          "guestSites": ["0x8250F4A0"],
+          "claims": "The incoming template pointer is received in r4 but immediately replaced with receiver +0xC0 before the first nested call; the generated body and bounded raw scan show no direct template +0x34 write in this function span."
+        }
+      ],
+      "directCallers": {
+        "script": "ghidra/FindDirectCallers.java",
+        "targets": ["0x8268EF68"],
+        "matchCap": 8,
+        "scope": "Initialized executable memory, aligned raw words; direct PowerPC branch-and-link encoding only.",
+        "result": "Eight emitted matches reached the cap and Truncated true: 0x8250A7EC, 0x8250F66C, 0x826A5D90, 0x82C15DB0, 0x82C16974, 0x82C17538, 0x82C180FC, and 0x82C18CC0. All emitted owners were <undefined>; the first three were undecoded and the latter five decoded.",
+        "limits": "No caller inspection was performed after the cap; tail branches, indirect calls, and un-emitted matches remain outside this scan."
+      },
+      "callbackScheduling": {
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": [
+          "0x82E87D28",
+          "0x82E87D2C",
+          "0x82121100",
+          "0x82120D2C",
+          "0x82E2AF70",
+          "0x82E2B0F0",
+          "0x82E294E4",
+          "0x82E83EF4",
+          "0x82E83F18"
+        ],
+        "mode": "foreground-read-only",
+        "result": "The bounded callback-entry and registration windows are raw-confirmed in RVA-F-0266. Entry r5 is copied to r28 and moved to driver r4 at 0x82E87D78 before 0x82E87D80; table slot 0 is 0x82E87D18. The registration window raw-confirms the fast-path vector field loads and callback/end stores; a null callback exits, while null-start/full paths branch to reserve helper 0x821B4450, whose insertion and return/retention effects remain unresolved. The owner publication PCs and guards are qualified in RVA-F-0266. The owner-vector invoker and incoming r5 producer remain unresolved.",
+        "ownerSlot28": "Under conditional retention of the derived owner vtable 0x82121100, RVA-F-0269 reads the owner-table word 0x82121128 as 0x821D5678 and expands that target as an exact no-op return. The owner +0x28 service is distinct from the callback vector at +0x84/+0x88/+0x8C and supplies no callback r5."
+      }
+    },
+    "timingConstants": [
+      {
+        "address": "0x8216A4E0",
+        "bits": "0x0000000000000000",
+        "decoded": "IEEE-754 double 0.0",
+        "meaning": "Comparison and reset initializer constant; guest units are unresolved."
+      },
+      {
+        "address": "0x8216A510",
+        "bits": "0x3FF0000000000000",
+        "decoded": "IEEE-754 double 1.0",
+        "meaning": "Publisher initializer constant; guest units are unresolved."
+      },
+      {
+        "address": "0x8216A518",
+        "bits": "0x3FC999999999999A",
+        "decoded": "IEEE-754 double 0.2",
+        "meaning": "Upper clamp value for the post-multiplier +0x10 timing value; its caller meaning remains unresolved."
+      }
+    ],
+    "simulationRenderSplit": {
+      "simulationBoundary": "The callback at 0x82E87D18 calls 0x82C7DF58 at 0x82E87D80. The driver dispatches the shared timing owner through its slot at 0x82C7DF84, then consumes owner +0x10 in bounded manager calls.",
+      "timingAdvance": "0x82C7EB68 calls the timing vtable bctrl at 0x82C7EB88 through loaded slot +0x14, whose retained target is 0x82C5F790. It compares owner +0x18 with 0x8216A4E0; when nonzero it computes f1 - f0, while the zero path skips subtraction and retains the zero constant in f13. Both selected values then take the common multiplier/store/clamp/count/accumulation/+0x18-store path: multiply by owner +0x28, store +0x10, clamp +0x10 when it exceeds 0x8216A518, increment +0x30, accumulate +0x08, and store f1 at +0x18. The pinned SDK identifies the pre-multiplier quotient as guest seconds; owner +0x28 and post-multiplier timing-state meaning remain unresolved.",
+      "renderBoundary": "The driver retains its entry r4 low byte in r29. After the frame-service indirect call returns at 0x82C7E0FC, only a nonzero retained low byte reaches 0x82C71A00 at 0x82C7E104; the zero path branches to 0x82C7E118. The final return 1 is shared after this guard, so timing/manager work and return do not require the render continuation.",
+      "callbackInput": "RVA-F-0266 establishes that callback entry r4 and r5 are distinct: r4 drives the callback-local manager-byte store, whose base is loaded from global 0x8314F28C and whose stored byte is 1 for r4 low byte zero and 0 otherwise, while r5 becomes driver r4 before 0x82C7DF58. The callback object is registered at 0x82120D2C slot 0 through a conditional owner-vector null/fast/reserve handoff: a null callback exits, a nonnull callback with nonnull start and available capacity takes the direct store/advance path, and null-start/full cases branch to reserve helper 0x821B4450 with insertion unresolved. The owner-vector invoker and incoming r5 producer remain unresolved. This does not bind r5 to a fixed tick, simulation step, render cadence, or presentation decision.",
+      "result": "Static order places timing-owner and manager work before a conditional render continuation. It does not prove simulation ownership, a fixed simulation tick, one render per timing update, or a frame-rate unit."
+    },
+    "waits": [
+      {
+        "address": "0x826ABF38",
+        "function": "0x826ABEA8",
+        "condition": "The worker reaches the first event wait only when [r26+0x3C] equals [r26+0x38] at 0x826ABEF0. r27 points to stack +0x50 when [r25+0x178] equals [r26+0x4], otherwise r27 is null. The wait result is later compared with status 258 to select the critical-section block.",
+        "intervalOrDefault": "KeWaitForSingleObject receives r3 = r26 + 0x20, r4 = 3, r5 = 1, r6 = 0, and r7 = r27. The selected guest timeout is -300000 ticks, which pinned SDK source converts to 30 guest milliseconds before ScaleGuestDurationMillis; a null timeout pointer is unbounded. Actual host duration and event cadence remain unknown.",
+        "cpuGpu": "CPU",
+        "role": "Asynchronous device-worker event coordination before the critical-section presentation sequence.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "generated-code", "locator": "generated:rerevved/sub_826ABEA8" },
+          { "kind": "topic-manifest", "locator": "native-renderer-vdswap-boundary.json#/currentEvidence/sourceCompletionBoundary/ordinaryCaller" },
+          { "kind": "external-reference", "locator": "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/kernel/xboxkrnl/xboxkrnl_threading.cpp#L839-L848" },
+          { "kind": "external-reference", "locator": "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/system/xobject.cpp#L189-L213" }
+        ]
+      },
+      {
+        "address": "0x826ABFCC",
+        "function": "0x826ABEA8",
+        "condition": "After the status-258 critical-section block, the worker reaches the second wait at call address 0x826ABFCC with LR 0x826ABFD0, even when the device-byte gate skips the flush/VdSwap pair. A second status 258 branches back to repeat the critical block; the same event-state and r27 selection precede the loop.",
+        "intervalOrDefault": "KeWaitForSingleObject receives the same r3/r4/r5/r6/r7 pattern as 0x826ABF38. The pinned SDK maps the selected -300000 guest ticks to 30 guest milliseconds before clock scaling, while null r7 is unbounded; actual host duration and event cadence remain unknown.",
+        "cpuGpu": "CPU",
+        "role": "Asynchronous device-worker event coordination after the presentation sequence.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "generated-code", "locator": "generated:rerevved/sub_826ABEA8" },
+          { "kind": "external-reference", "locator": "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/kernel/xboxkrnl/xboxkrnl_threading.cpp#L839-L848" },
+          { "kind": "external-reference", "locator": "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/system/xobject.cpp#L189-L213" }
+        ]
+      },
+      {
+        "address": "0x826A4150",
+        "condition": "The pre-swap flush is called through wrapper 0x826A4630, which passes r4 = 0. The body emits the two waits only under that zero argument path.",
+        "intervalOrDefault": "GPU PM4 WAIT_REG_MEM packets poll device +0x2A94 + 4 with full mask 0xFFFFFFFF, reference 1 then 0, and packet interval 0x100. This is a command-stream handshake; it is not a guest sleep or millisecond interval.",
+        "cpuGpu": "GPU",
+        "role": "System command-buffer handshake before VdSwap.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "generated-code", "locator": "generated:rerevved/sub_826A4150" },
+          { "kind": "topic-manifest", "locator": "native-renderer-vdswap-boundary.json#/currentEvidence/waitPayloadDiscriminator" }
+        ]
+      },
+      {
+        "address": "0x8269E520",
+        "condition": "The late Resolve command path reaches its own PM4 wait packet.",
+        "intervalOrDefault": "The bounded packet uses register 0xA31, reference r28, mask 0x80000000, and interval 8. This is a Resolve packet polling interval, not a guest frame cap or time unit.",
+        "cpuGpu": "GPU",
+        "role": "Resolve command synchronization distinct from the ordinary pre-swap system-buffer handshake.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "topic-manifest", "locator": "native-renderer-vdswap-boundary.json#/currentEvidence/waitPayloadDiscriminator" },
+          { "kind": "generated-code", "locator": "generated:rerevved/sub_8269E520" }
+        ]
+      },
+      {
+        "address": "0x8269BE70",
+        "condition": "The lock core selects resource +0x0C only when lock flags & 0x1010; other lock, destroy, deferred-release, and present callers pass their own scalar fence in r4. The helper returns immediately for a zero fence, compares the scalar against device ring state, and retains the G+0x33B0 early-exit guard.",
+        "intervalOrDefault": "No fixed interval literal is established. The helper polls through bounded ring/fence helpers; +0x0C is a lock-core caller choice, not a common field rule performed by 0x8269BE70.",
+        "cpuGpu": "CPU/GPU coordination",
+        "role": "Resource-fence wait for resource lifetime and present-related ownership, not a guest frame limiter.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "topic-manifest", "locator": "native-renderer-d3d-lock-fill-contract.json#/currentEvidence/entries/5" },
+          { "kind": "generated-code", "locator": "generated:rerevved/sub_8269BE70" }
+        ]
+      }
+    ],
+    "workerGuards": {
+      "eventAndCounter": "The worker loops from 0x826ABEC8, atomically increments and decrements the counter at r25 + 0x2C, selects the timeout pointer from [r25+0x178] == [r26+0x4], and enters the first wait only when [r26+0x3C] == [r26+0x38].",
+      "status": "The first and second KeWait results are compared with 258 at 0x826ABFEC; status 258 enters or repeats the critical block, while other results proceed to event reset and loop handling.",
+      "deviceGate": "Within the critical block, byte device +0x2ABE is tested with mask 0x2 before the flush/VdSwap pair. The second wait follows the block even when this gate skips the pair.",
+      "cadence": "These static guards do not establish event signal cadence, worker frequency, or one worker iteration per guest callback."
+    },
+    "presentation": {
+      "ordinaryPath": "When status 258 selects the critical block and device byte +0x2ABE & 2 is nonzero, worker 0x826ABEA8 calls 0x826A4630 at 0x826ABF80 and then 0x826A4638 at 0x826ABF90 while holding its device critical section.",
+      "alternatePath": "Caller 0x82517E38 calls 0x826A4630 at 0x82517E58 and then 0x826A4638 at 0x82517E88.",
+      "swapCall": "On its local reservation path, 0x826A4638 calls VdSwap import 0x82E92454 at 0x826A4884 after preparing descriptor and stack arguments. No presentation interval argument is identified in the bounded call.",
+      "swapGuard": "After the VdGetSystemCommandBuffer call at 0x826A4820, which returns at LR 0x826A4824, device +0x541C is tested at 0x826A4828. A nonzero value copies stack +0x74 into [device +0x2A90] + 8 and jumps to 0x826A4890, bypassing the local 64-dword reservation and VdSwap import; the zero path reserves and imports.",
+      "reservation": "The local path requests 64 dwords and publishes the retained reservation plus 0x100 at device +0x30. Those values describe command-buffer reservation state, not a frame interval."
+    },
+    "selectorEncoding": {
+      "field": "device +0x351C",
+      "producer": "Generated map and bounded raw queries identify 0x8268EF68 as the exact one-instruction setter: stw r4,0x351C(r3), within executable range [0x8268C000,0x826B8000). A direct-LK caller scan targeting this entry with cap 8 emitted eight matches and Truncated true. The first three expanded callers now bind receiver and input storage: 0x8250A688 copies a 124-byte object whose +0x34 aliases stack +0x94 before helper processing; 0x8250F2B0 zeroes a template whose +0x34 aliases stack +0xD4, and generated source traces incoming r9 through 0x82508598 to the raw-confirmed intermediate store at 0x8250868C. RVA-F-0272 adds one bounded direct setup caller and a conditional r9 input before the accepted intermediate template +0x34 store; its exact stack relation and numeric mapping remain canonical in that manifest. Raw setup words 0x8250F2F0=0x7D384B78, 0x825085A0=0x9421FF60, and 0x825085F0=0x83E100FC confirm entry r9 retention, callee frame setup, and +0xFC recovery. 0x826A5C50 loads its existing +0x351C word and passes it back to the same receiver. RVA-F-0271 adds the five accepted remainder callsites: all reload receiver origin [0x8314F300], and pass U8(entry +0x0), U8(entry +0x1), U32(entry +0x4), U32(entry +0x8), or U32(entry +0xC), respectively. Their family prologues compute fixed indices 0, 8, 4, 16, and 168 before a visible unsigned compare against 360, while each setter is in a case 336 arm. This is static producer and control qualification only; the source-local arm remains conditional on actual entry, control flow, and retention. The selected helper spans contain no additional direct +0x34 stores, but 0x8268D2C8 forwards the template to nested 0x826A63E8 and the copied-object chain has nested calls, so later mutation remains unresolved. Selector defaults, runtime activation, indirect paths, and interval meaning remain unresolved.",
+      "mapping": "The pre-swap selector maps 0 and 1 to encoded value 1, 2 to 2, 4 to 3, and 0x80000000 to 0; other values use stack +0x50.",
+      "packetEncoding": "The mapped value shifts left by 8 and combines with selected device +0x2E4C bits and incoming r4-derived state into r7 for 0x8269BF40 at call instruction 0x826A4298 (LR 0x826A429C). The callback target carried in r6 is exact address 0x826A3FB8; no observer-name inference is assigned.",
+      "callback": "0x826A3FB8 is passed as the packet callback target. Its bounded body extracts input low 8 bits and input bits 8..11, selects divisor [device +0x5434] when nonzero or literal 60 otherwise, computes r11 = (timebase_delta * 100) / (frequency / divisor), sets r7 = r11 + 1, caps r7 to 100, and traps on the literal twllei r29,0 or twllei r11,0 guards. Later literal guards branch to 0x826A4078 when r8+r30 > r10, r30 == 0, or r7 <= input low 8 bits; branch to 0x826A40BC when r9 == 0; and branch to 0x826A4100 when the subsequent r10 == 1. These are literal arithmetic/state guards, not FPS labels. RVA-F-0271 bounds static producer origins for the five accepted remainder selector calls, but runtime activation, divisor values, and interval meaning remain unresolved; no observer-name inference is assigned."
+    },
+    "timingClockPath": {
+      "vtableDispatch": "The timing owner vtable slot +0x14 dispatches to 0x82C5F790 from the bctrl at 0x82C7EB88.",
+      "frequency": "0x82C5F790 lazily fills owner +0x38 through 0x8280F0C8, which calls KeQueryPerformanceFrequency and stores a 64-bit result.",
+      "counter": "0x82C5F790 lazily fills owner +0x40 through 0x8280F100, which stores a 64-bit timebase sample; the advance path samples 0x8280F100 into stack +0x50.",
+      "arithmetic": "The clock method returns the signed-64 sample-minus-baseline divided by signed-64 owner +0x38. Under the pinned SDK clock basis, this pre-multiplier quotient is elapsed guest seconds. Publisher 0x82E293E8 initializes owner +0x38 and +0x40 to zero and multiplier +0x28 to the exact double 1.0.",
+      "units": "The pinned SDK identifies the counter/frequency quotient as guest seconds before owner +0x28; active multiplier/scaling values, runtime samples, cadence, and retail-kernel equivalence remain unresolved."
+    },
+    "sdkTimeoutSemantics": {
+      "sdkRevision": "05e9bc372a66b651f05e2444f74bd5b31a90fc02",
+      "timeoutPointer": "Pinned SDK xboxkrnl_threading.cpp reads the guest timeout and passes a host timeout pointer only when the guest pointer is nonnull.",
+      "negativeTicks": "Pinned SDK xobject.cpp converts a negative timeout with -timeout_ticks / 10000; -300000 therefore becomes 30 guest milliseconds before ScaleGuestDurationMillis, while a null timeout pointer selects an unbounded duration.",
+      "clockScaling": "Pinned SDK clock.cpp leaves the duration unchanged when clock_no_scaling is true; otherwise guest_time_scalar_ scales and saturates it.",
+      "references": [
+        "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/kernel/xboxkrnl/xboxkrnl_threading.cpp#L839-L848",
+        "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/system/xobject.cpp#L189-L213",
+        "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/core/clock.cpp#L188-L203"
+      ],
+      "qualification": "These are pinned SDK source semantics, not retail kernel behavior, observed settings, observed duration, event cadence, or a frame cap."
+    },
+    "sdkClockBasis": {
+      "sdkRevision": "05e9bc372a66b651f05e2444f74bd5b31a90fc02",
+      "titleMacro": "generated/default/rerevved_pch.h:293 maps REX_QUERY_TIMEBASE to rex::chrono::Clock::QueryGuestTickCount; the pinned SDK template emits the same macro.",
+      "frequency": "The pinned SDK KeQueryPerformanceFrequency path returns Clock::guest_tick_frequency, and clock.h identifies that value as guest ticks per second.",
+      "counter": "The callback and clock wrapper use REX_QUERY_TIMEBASE/mftb under the pinned SDK mapping; the counter/frequency quotient is elapsed guest seconds before owner +0x28.",
+      "sourceIntent": "runtime.cpp initializes frequency 50000000 and scalar 1.0, but these are source initialization intent rather than observed runtime settings.",
+      "references": [
+        "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/resources/templates/codegen/pch_h.inja#L263",
+        "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/kernel/xboxkrnl/xboxkrnl_threading.cpp#L371-L374",
+        "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/include/rex/chrono/clock.h#L61-L73",
+        "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/core/clock.cpp#L141-L160",
+        "https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/system/runtime.cpp#L150-L152"
+      ],
+      "qualification": "This closes only the pre-multiplier quotient units under the pinned SDK. Owner +0x28 meaning and active values, observed scaling, runtime samples, cadence, retail-kernel equivalence, and frame-cap interpretation remain unresolved."
+    },
+    "boundedNegative": {
+      "driverWaitScan": "The selected generated body for 0x82C7DF58 contains no direct KeWaitForSingleObject, NtWait, Sleep, or VdSwap call text; it does contain indirect timing dispatch, manager calls, the 0x82C7E104 -> 0x82C71A00 continuation, and return 1.",
+      "intervalSetter": "A bounded selector-field setter is identified at 0x8268EF68 and stores r4 to +0x351C. The first three direct callers have receiver and partial input provenance corroborated by raw image words: 0x8250A688 uses copied-object +0x34 = stack +0x94 after a 124-byte copy and helper chain; 0x8250F2B0 zeroes template +0x34 = stack +0xD4, and RVA-F-0272 traces its setup input as a conditional r9 value before the existing intermediate store; the exact source relation and mapping remain canonical in that manifest. Raw words confirm entry r9 retention at 0x8250F2F0, callee frame setup at 0x825085A0, +0xFC recovery at 0x825085F0, the 0x82508598 +0xF4 load, and +0x34 store; 0x826A5C50 performs a same-receiver +0x351C read-modify-rewrite. RVA-F-0271 closes static receiver and value origins for the five accepted remainder calls: shared receiver [0x8314F300] and saved-entry fields at +0x0, +0x1, +0x4, +0x8, and +0xC. Their source-local fixed indices do not equal case 336, so arm selection remains conditional on actual entry, control flow, and retention. The direct-LK caller scan reached cap 8 with Truncated true; indirect paths, later helper mutation, selector default, runtime invocation, callback activation, and interval interpretation remain open.",
+      "below60GuestCapVerdict": "unresolved",
+      "reason": "The timing method has a 0.2 bit-pattern clamp in guest-owned timing state, but that clamp does not establish an FPS limiter; its caller semantics remain unresolved. The pre-multiplier clock quotient is guest seconds under the pinned SDK, while owner +0x28, active scaling, runtime samples, and cadence remain unknown. The CPU waits have a pinned SDK conversion of -300000 guest ticks to 30 guest milliseconds before optional clock scaling, but actual wait duration and event cadence remain unknown. GPU waits belong to command packets, the VdSwap import is conditional on +0x541C, and the bounded indirect callees do not close guest cadence."
+    },
+    "qualification": "Exact addresses, guards, packet fields, decoded floating-point bit patterns, pinned SDK timeout conversion and clock basis, and bounded store/caller scan results are static evidence. Most foreground decompilations and selected helper instruction listings truncate at save thunks or bad instructions; generated windows and bounded raw words supply only selected body corroboration. A no-store result is limited to its named function span and does not prove preservation across nested callees. The packet does not infer an observed wait duration, event cadence, milliseconds beyond the pinned conversion, frames per second, vsync, or a fixed simulation step, and it does not infer absence from incomplete caller listings."
+  },
+  "guards": [
+    "Do not treat the pinned SDK conversion of -300000 guest ticks to 30 guest milliseconds as an observed host wait duration or frame period; runtime scaling, signaling, and cadence remain unresolved.",
+    "Do not treat PM4 intervals 0x100 or 8 as time intervals or guest FPS caps.",
+    "Do not treat the timing +0x10 clamp or the 0.2 constant as a frame-rate cap without field units, writer context, and runtime cadence.",
+    "Do not infer that the asynchronous worker runs once per guest callback, that status 258 always reaches VdSwap, or that its VdSwap path is the only presentation path.",
+    "Do not assign a default interval to selector values from device +0x351C or infer callback activation from the exact 0x826A3FB8 pointer; raw evidence confirms the 0x82508598 intermediate template writer, the conditional r9 input in RVA-F-0272, and the five remainder producer aliases, but nested helper mutation, source-local case-arm entry, and the prior-field initial writer remain unresolved.",
+    "Do not infer a no-cap conclusion from the bounded driver scan; indirect callees and unscanned dispatch remain outside this packet."
+  ],
+  "conclusion": "The accepted callback reaches a timing-owner advance before a render continuation guarded by the driver's incoming low byte. RVA-F-0266 establishes that callback entry r4 drives a callback-local manager-byte gate, while callback entry r5 is moved to driver r4 before 0x82C7DF58; the callback object is registered at 0x82120D2C slot 0 through a conditional owner-vector null/fast/reserve handoff, with reserve insertion and return/retention effects unresolved. RVA-F-0269 resolves the separate derived application-owner vtable +0x28 edge at 0x82D83C7C to exact no-op target 0x821D5678, which does not reach the callback vector or produce r5. The owner-vector invoker and incoming r5 producer remain unresolved. The timing method dispatches 0x82C5F790 at 0x82C7EB88 and applies a 0.2 clamp to post-multiplier timing state. This does not establish an FPS limiter. Under the pinned SDK, the clock path's pre-multiplier frequency quotient is elapsed guest seconds; timing-owner +0x28 meaning, active scaling, runtime samples, and cadence remain unresolved. Presentation has worker waits guarded by event equality, status 258, counter state, and device +0x2ABE & 2; its selected -300000 guest timeout maps to 30 guest milliseconds before optional pinned-SDK scaling, while actual host duration remains unknown. The pre-swap selector at +0x351C has a known setter and eight bounded direct caller paths: 0x8250A688 supplies a copied-object +0x34 alias from stack +0x94 after helper calls; 0x8250F2B0 zeroes template +0x34 and generated source traces entry r9 through 0x82508598 to the raw-confirmed intermediate store at 0x8250868C, while RVA-F-0272 identifies a bounded direct setup caller that supplies a conditional r9 input before that intermediate store; its exact stack relation and numeric mapping remain canonical in that manifest; 0x826A5C50 performs a same-receiver read-modify-rewrite; and RVA-F-0271 bounds the five accepted remainder calls to shared receiver [0x8314F300] plus saved-entry fields +0x0, +0x1, +0x4, +0x8, and +0xC. Their source-local fixed indices 0, 8, 4, 16, and 168 differ from case 336, so arm selection remains conditional on actual entry, control flow, and retention. VdSwap import is conditional on device +0x541C. A below-60 guest cap remains unresolved; no evidence establishes a default FPS, vsync mode, fixed tick, or per-callback presentation count."
+}

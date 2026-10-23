@@ -1,0 +1,315 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0271",
+  "topic": "native-renderer-presentation-selector-remainder",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What receiver and value origins reach the five accepted remaining direct callers of selector setter 0x8268EF68, and which local producer gates are visible?",
+  "scope": {
+    "setter": "0x8268EF68",
+    "field": "receiver +0x351C",
+    "acceptedCallSites": [
+      "0x82C15DB0",
+      "0x82C16974",
+      "0x82C17538",
+      "0x82C180FC",
+      "0x82C18CC0"
+    ],
+    "generatedContainingBody": {
+      "address": "0x82C15240",
+      "file": "generated/default/rerevved_recomp.22.cpp",
+      "lines": "26721-35136"
+    },
+    "entryPointer": "The containing body saves its entry r3 at r1+0xB4. Each family loads its receiver from the same absolute global word [0x8314F300] before the selector switch.",
+    "switchBoundary": "Each family computes a fixed index by subtracting 40, then uses a visible unsigned compare against 360 and a case 336 arm containing the accepted setter call.",
+    "boundary": "The result closes static receiver and value origins for the five accepted generated callsites. The canonical function query returned no containing function for these target addresses, so the generated body and narrow raw windows provide corroboration. The source-local indices do not select case 336 in a straight-line reading; their arm result remains conditional on actual entry, control flow, and retention. Runtime activation, indirect or tail setter forms, selector semantics, default, and interval meaning remain unresolved."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-presentation-selector-ownership",
+      "use": "Known setter operation and the first-three caller baseline."
+    },
+    {
+      "topic": "native-renderer-guest-frame-pacing",
+      "use": "Presentation selector context and the unresolved runtime interval boundary."
+    }
+  ],
+  "staticJoin": {
+    "setter": "0x8268EF68 performs stw r4,0x351C(r3); blr. The five callsites therefore supply the receiver and word written to the same field through their call registers.",
+    "callerSummary": [
+      {
+        "address": "0x82C15DB0",
+        "meaning": "receiver [0x8314F300]; r4 = U8([entry +0x0]) via stack +0x54; local switch index 0; case 336 continuation at loc_82C15DA8; normal continuation loc_82C15E14.",
+        "confidence": "strong",
+        "catalogId": null
+      },
+      {
+        "address": "0x82C16974",
+        "meaning": "receiver [0x8314F300]; r4 = U8([entry +0x1]) via stack +0x5C; local switch index 8; case 336 continuation at loc_82C1696C; normal continuation loc_82C169D8.",
+        "confidence": "strong",
+        "catalogId": null
+      },
+      {
+        "address": "0x82C17538",
+        "meaning": "receiver [0x8314F300]; r4 = U32([entry +0x4]) via stack +0x64; local switch index 4; case 336 continuation at loc_82C17530; normal continuation loc_82C1759C.",
+        "confidence": "strong",
+        "catalogId": null
+      },
+      {
+        "address": "0x82C180FC",
+        "meaning": "receiver [0x8314F300]; r4 = U32([entry +0x8]) via stack +0x6C; local switch index 16; case 336 continuation at loc_82C180F4; normal continuation loc_82C18160.",
+        "confidence": "strong",
+        "catalogId": null
+      },
+      {
+        "address": "0x82C18CC0",
+        "meaning": "receiver [0x8314F300]; r4 = U32([entry +0xC]) via stack +0x74; local switch index 168; case 336 continuation at loc_82C18CB8; normal continuation loc_82C18D24.",
+        "confidence": "strong",
+        "catalogId": null
+      }
+    ],
+    "receiverOrigin": "All five callsites reload r3 from stack slots populated by the same global word [0x8314F300]. This is a shared receiver origin, not a catalog promotion or a semantic device-type assignment.",
+    "valueOrigins": "The first two calls use byte fields at entry +0x0 and +0x1; the remaining three use word fields at entry +0x4, +0x8, and +0xC. These are producer aliases and do not establish selector enum names or timing units.",
+    "producerGate": "The family prologues load the saved entry fields, form fixed indices 0, 8, 4, 16, and 168 from constants minus 40, and compare each index as unsigned against 360. The accepted calls are in the case 336 arm of each switch.",
+    "controlQualification": "Because each visible fixed index differs from 336, the generated source does not show a straight-line route from that prologue into the selected arm. This is a local static qualification only; it does not prove runtime non-execution, executable-wide deadness, absence of another entry, or value retention after an unexpanded path.",
+    "normalReturn": "Each setter call is followed by a generated branch to the family continuation, and sub_82C15240 reaches its generated normal return at lines 35128-35136. No setter helper body was expanded."
+  },
+  "guards": [
+    "Do not treat [0x8314F300] as a named device or timing owner without an exact catalog identity; this packet records only the receiver word origin.",
+    "Do not convert entry byte or word fields into selector enum names, defaults, interval units, FPS, vsync, or cadence semantics.",
+    "Do not turn the fixed-index versus case-336 mismatch into a runtime no-execution or executable-wide deadness claim; retain the result as conditional on actual entry, control flow, and retention.",
+    "Do not infer complete setter ownership from the capped direct-LK scan; indirect, tail, and unscanned forms remain outside this packet.",
+    "Do not treat the generated normal-return continuation as proof that any callsite executes at runtime."
+  ],
+  "observations": [
+    "The canonical foreground read-only DumpFunctions.java query returned Status OK but no containing function for each exact target 0x82C15DB0, 0x82C16974, 0x82C17538, 0x82C180FC, and 0x82C18CC0.",
+    "The generated body contains all five accepted calls in case 336 arms of bounded switches after visible unsigned comparisons against 360.",
+    "The bounded raw-word query confirmed the five fixed-index prologues and the r4/r3 reloads immediately before each exact setter branch-link."
+  ],
+  "unknowns": [
+    "The canonical function listing gap prevents assigning a complete Ghidra function body to any of the five exact target addresses.",
+    "Indirect or tail setter forms and any additional callers outside the accepted capped set remain unresolved.",
+    "Runtime entry, branch selection, value retention, and invocation frequency remain unresolved.",
+    "The semantic identity of +0x351C, any selector default, and any interval or frequency meaning remain unresolved."
+  ],
+  "nextDiscriminator": {
+    "site": "A bounded runtime or named consumer edge that reads receiver +0x351C after one of these producer paths.",
+    "question": "Which retained selector value reaches a named presentation consumer at runtime, and what field or configuration gives it timing meaning?",
+    "limits": "Use one exact consumer or runtime evidence path. Do not repeat the capped caller scan or infer cadence from the selector word alone."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only canonical Ghidra queries plus narrow generated-source and raw-word windows. No runtime launch, executable-wide scan, helper expansion, or source repair was used.",
+    "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "queries": [
+      {
+        "script": "ghidra/DumpFunctions.java",
+        "targets": [
+          "0x82C15DB0",
+          "0x82C16974",
+          "0x82C17538",
+          "0x82C180FC",
+          "0x82C18CC0"
+        ],
+        "mode": "foreground-read-only",
+        "result": "Status OK. Each exact target returned No containing function because of the canonical listing gap."
+      },
+      {
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": [
+          "0x82C15288",
+          "0x82C15DA8",
+          "0x82C15E4C",
+          "0x82C1696C",
+          "0x82C16A10",
+          "0x82C17530",
+          "0x82C175D4",
+          "0x82C180F4",
+          "0x82C18198",
+          "0x82C18CB8"
+        ],
+        "wordRadius": 8,
+        "mode": "foreground-read-only",
+        "result": "Status OK. The five prologues contain fixed constants 40, 48, 44, 56, and 208, which become indices 0, 8, 4, 16, and 168 after subtracting 40; all show the unsigned compare value 360. The five callsite windows show stack reloads for r4/r3 and the exact setter branch-link words."
+      }
+    ],
+    "generatedWindows": [
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "26732-26745",
+        "guestSites": ["0x82C15240"],
+        "claims": "Entry r3 is saved at r1+0xB4, entry byte +0x0 is saved at r1+0x54, and [0x8314F300] is saved at r1+0x50."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "26748-26765",
+        "guestSites": ["0x82C15288"],
+        "claims": "The first family forms index 0 from 40 minus 40 and compares it unsigned against 360."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "27451-27452",
+        "guestSites": ["0x82C15DA8"],
+        "claims": "Case 336 branches to the first accepted setter-call label."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "28344-28353",
+        "guestSites": ["0x82C15DB0"],
+        "claims": "The first accepted call reloads r4 from r1+0x54 and r3 from r1+0x50, calls the setter, and branches to the next family."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "28412-28445",
+        "guestSites": ["0x82C15E14", "0x82C15E4C"],
+        "claims": "The second family saves entry byte +0x1 at r1+0x5C, reloads [0x8314F300] at r1+0x58, forms index 8, and compares it unsigned against 360."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "29130-29131",
+        "guestSites": ["0x82C1696C"],
+        "claims": "Case 336 branches to the second accepted setter-call label."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "30023-30032",
+        "guestSites": ["0x82C16974"],
+        "claims": "The second accepted call reloads r4 from r1+0x5C and r3 from r1+0x58, calls the setter, and branches to the next family."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "30091-30122",
+        "guestSites": ["0x82C169D8", "0x82C16A10"],
+        "claims": "The third family saves entry word +0x4 at r1+0x64, reloads [0x8314F300] at r1+0x60, forms index 4, and compares it unsigned against 360."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "30809-30810",
+        "guestSites": ["0x82C17530"],
+        "claims": "Case 336 branches to the third accepted setter-call label."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "31702-31711",
+        "guestSites": ["0x82C17538"],
+        "claims": "The third accepted call reloads r4 from r1+0x64 and r3 from r1+0x60, calls the setter, and branches to the next family."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "31770-31801",
+        "guestSites": ["0x82C1759C", "0x82C175D4"],
+        "claims": "The fourth family saves entry word +0x8 at r1+0x6C, reloads [0x8314F300] at r1+0x68, forms index 16, and compares it unsigned against 360."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "32488-32489",
+        "guestSites": ["0x82C180F4"],
+        "claims": "Case 336 branches to the fourth accepted setter-call label."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "33381-33390",
+        "guestSites": ["0x82C180FC"],
+        "claims": "The fourth accepted call reloads r4 from r1+0x6C and r3 from r1+0x68, calls the setter, and branches to the next family."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "33449-33480",
+        "guestSites": ["0x82C18160", "0x82C18198"],
+        "claims": "The fifth family saves entry word +0xC at r1+0x74, reloads [0x8314F300] at r1+0x70, forms index 168, and compares it unsigned against 360."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "34167-34168",
+        "guestSites": ["0x82C18CB8"],
+        "claims": "Case 336 branches to the fifth accepted setter-call label."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "35060-35069",
+        "guestSites": ["0x82C18CC0"],
+        "claims": "The fifth accepted call reloads r4 from r1+0x74 and r3 from r1+0x70, calls the setter, and branches to the common continuation."
+      },
+      {
+        "function": "0x82C15240",
+        "file": "generated/default/rerevved_recomp.22.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "35128-35136",
+        "guestSites": ["0x82C18D24"],
+        "claims": "The containing body restores its link register, advances the stack, and reaches blr normal return."
+      }
+    ],
+    "bodyInventory": {
+      "focusedCount": 1,
+      "focusedFunctions": ["0x82C15240"],
+      "canonicalTargetAttempts": [
+        "0x82C15DB0",
+        "0x82C16974",
+        "0x82C17538",
+        "0x82C180FC",
+        "0x82C18CC0"
+      ],
+      "helperBodies": [],
+      "bodyLimit": 8,
+      "unusedBodySlots": 7,
+      "qualification": "The five canonical targets were query attempts that returned no containing function; they are not five additional inspected bodies. One generated containing body was used, no helper body was expanded, and seven body slots remain unused."
+    },
+    "qualification": "The generated and raw windows corroborate the static register and switch setup for the accepted five callsites. The canonical listing gap, source-local control mismatch, and lack of runtime evidence require conditional wording. No cadence, default, interval, or frequency meaning is assigned."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "newRelations": [],
+    "result": "No catalog change is proposed. The shared receiver word and five entry-field origins are retained as evidence expressions with catalogId null."
+  },
+  "conclusion": "For the five accepted remaining direct callers of 0x8268EF68, all five generated callsites reload the same receiver origin [0x8314F300] and pass distinct saved-entry fields: U8(entry +0x0), U8(entry +0x1), U32(entry +0x4), U32(entry +0x8), and U32(entry +0xC). Each appears in a case 336 arm after a visible unsigned bound of 360; its family prologue computes a different fixed index 0, 8, 4, 16, or 168, so the source-local arm remains conditional on actual entry, control flow, and retention. The five canonical target queries returned no containing function, while one generated body and one bounded raw-word batch corroborate the register setup and normal-return continuations. This closes static producer origins only. It does not establish selector defaults, interval or frequency units, FPS, vsync, cadence, runtime execution, or complete setter ownership."
+}

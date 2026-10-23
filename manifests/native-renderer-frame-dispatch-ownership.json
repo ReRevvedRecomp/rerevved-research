@@ -1,0 +1,265 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0262",
+  "topic": "native-renderer-frame-dispatch-ownership",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which receiver and vtable installation carry the accepted frame path to renderer methods 0x8250F988 or 0x8250AC90?",
+  "scope": {
+    "frameCallback": "0x82E87D18",
+    "frameDriver": "0x82C7DF58",
+    "frameFunction": "0x82C71A00",
+    "dispatchHelper": "0x821D6C40",
+    "rendererVtable": "0x82047050",
+    "rendererPass": "0x8250AC90",
+    "rendererSiblingPass": "0x8250F988",
+    "globalReceiver": "0x82F8E270"
+  },
+  "dependencies": [
+    {
+      "topic": "gameplay-main-frame-boundary",
+      "use": "Accepted callback registration, frame driver, and direct continuation into 0x82C71A00."
+    },
+    {
+      "topic": "native-renderer-vdswap-boundary",
+      "use": "Accepted renderer table entries and the paired 0x8250F988 and 0x8250AC90 identities."
+    },
+    {
+      "topic": "native-renderer-alternate-resolve-provider",
+      "use": "Accepted NiXenonRenderer vtable materializer context and separate receiver vtable exclusions."
+    },
+    {
+      "topic": "native-renderer-resolve-destination-lifecycle-discriminator",
+      "use": "Accepted dispatch and receiver guards around the renderer resolve operation; this packet only closes the receiver edge."
+    }
+  ],
+  "staticJoin": {
+    "entry": "0x82E87D18 -> 0x82C7DF58 -> 0x82C71A00",
+    "frameLoad": "0x82C71A00 loads [0x82F8E270] at 0x82C71D0C and passes it to 0x821D6C40 at 0x82C71D10; the frame receiver byte at +0x98 is nonzero on this call path.",
+    "constructor": "0x82352500 initializes the incoming r31 object with vtable 0x8200AB60, byte +0x9C=0, and +0xA0=0, then stores the same r31 object at 0x82F8E270 at 0x823525A0.",
+    "rendererInitializer": "0x8250F0E8 preserves the constructor receiver in r31, calls 0x82352500 at 0x8250F0F8, then overwrites [r31+0] with 0x82047050 at 0x8250F118.",
+    "dispatch": "0x821D6C40 preserves the global receiver and admits ((+0xA0 == 1 or 2) and byte +0x9C == 1) or (+0xA0 == 4), then loads [receiver+0] and slot +0x160 at 0x821D6CCC and calls it at 0x821D6CD4.",
+    "slotResolution": "After the 0x8250F0E8 installation, 0x820471B0 is the +0x160 word of 0x82047050 and contains 0x8250AC90.",
+    "result": "Conditional current-image relation: if 0x82F8E270 still retains the same object initialized by 0x8250F0E8, its first word is still 0x82047050, and 0x821D6C40's actual guard ((+0xA0 in {1,2} and byte +0x9C == 1) or +0xA0 == 4) passes when the dispatch executes, slot +0x160 resolves to 0x8250AC90.",
+    "evidence": [
+      "generated:rerevved/generated/default/rerevved_recomp.80.cpp:29170-29173,29352-29380,29455-29468,29694-29699",
+      "generated:rerevved/generated/default/rerevved_recomp.170.cpp:4172-4194,4240-4257",
+      "generated:rerevved/generated/default/rerevved_recomp.152.cpp:9187-9207",
+      "generated:rerevved/generated/default/rerevved_recomp.196.cpp:281-395",
+      "generated:rerevved/generated/default/rerevved_recomp.106.cpp:4067,4080-4093",
+      "generated:rerevved/generated/default/rerevved_recomp.119.cpp:4143-4152",
+      "generated:rerevved/generated/default/rerevved_recomp.168.cpp:291-397",
+      "generated:rerevved/generated/default/rerevved_recomp.136.cpp:283-424",
+      "ghidra:FindRawVtableSlotCalls.java:0x821D6CCC-0x821D6CD4",
+      "ghidra:FindRawVtableSlotCalls.java:0x821D6E80-0x821D6E88",
+      "ghidra:FindRawVtableSlotCalls.java:0x821D6D9C-0x821D6DA4",
+      "ghidra:FindRawFieldStores.java:0x821D6EA0",
+      "ghidra:DumpFunctionNeighborhoodBatch.java:0x82C71C64,0x82C71C70,0x82C71D10,0x82C71EA8,0x821D6DD0,0x821D6E80",
+      "ghidra:FindRawGlobalStoreCandidates.java:0x82F8E270",
+      "ghidra:DumpMemoryWords.java:0x820471AC,0x820471B0"
+    ]
+  },
+  "siblingDispatch": {
+    "frameBranch": "After the helper returns at 0x82C71C48, the frame byte +0x98 branch is the beq at 0x82C71C58: nonzero reaches 0x82C71C64 -> 0x821D6DD0 with r3=[0x82F8E270], r4=r20, r5=7; zero reaches 0x82C71C70 -> 0x821D6D10 with r3=[0x82F8E270], r4=7.",
+    "intermediate": "The zero-byte wrapper arm at 0x82C71C70 calls 0x821D6D10, which requires +0xA0 in {1,2,4} and (byte +0x9C == 0 or +0xA0 == 4), matching 0x821D6DD0 rather than the preceding 0x821D6C40 predicate. When this predicate passes, its +0x74 vcall at 0x821D6D9C-0x821D6DA4 supplies r4, then it restores the receiver in r3 and passes literal r5=7 to 0x821D6DD0; the latter still requires nonnull r4. The direct nonzero arm at 0x82C71C64 supplies r4=r20 to 0x821D6DD0 and does not execute 0x821D6D10.",
+    "helperGuard": "0x821D6DD0 requires +0xA0 in {1,2,4} and (byte +0x9C == 0 or +0xA0 == 4), then requires r4 nonnull before calling 0x821B3AD8 and loading the receiver slot.",
+    "slotDispatch": "0x821D6E80 loads +0x15C, 0x821D6E84 executes mtctr, and 0x821D6E88 executes bctrl. On the direct nonzero arm, DD0 receives r4=r20 and requires nonnull r20 plus its explicit predicate; on the zero-byte wrapper arm, D10's explicit predicate and nonnull +0x74 return are required before DD0 rechecks its explicit predicate and nonnull r4. For either arm, if the global still retains the same 0x8250F0E8-initialized object with vptr 0x82047050 at this later slot load, table word 0x820471AC resolves this slot to 0x8250F988.",
+    "effects": "The +0x15C result is saved in full: a nonzero low byte stores byte +0x9C=1 at 0x821D6EA0 and returns the saved full result; a zero low byte calls 0x821B3A70 and, if that helper returns, returns the saved full result. Null r4 calls 0x823522E8 and, if that helper returns, follows with an explicit zero return. Effects and return contracts of 0x821B3AD8, 0x823522E8, and 0x821B3A70 remain unexpanded."
+  },
+  "localOrder": {
+    "beforeFirst160": "Either frame branch reaches the conditional +0x15C helper before 0x82C71D10 calls 0x821D6C40 through +0x160.",
+    "second160": "After later frame work, 0x82C71EA8 loads the global receiver and 0x82C71EAC calls 0x821D6C40 again; the call returns at 0x82C71EB0.",
+    "qualification": "This is a bounded local callsite order and conditional bracket. The frame rereads +0x98 before the first C40 site, and branch/helper returns are required to reach later sites; the order does not assert that both sibling and C40 calls execute. It does not prove pass naming, completion, or total order with the other renderer fragments."
+  },
+  "receiverLifetime": {
+    "publication": "0x82352500 writes the receiver pointer to 0x82F8E270 after initializing its base vtable and dispatch fields; 0x8250F0E8 upgrades that same incoming receiver to vtable 0x82047050.",
+    "resetSites": [
+      "0x823522F8 clears 0x82F8E270 at 0x82352300; generated:rerevved/generated/default/rerevved_recomp.119.cpp:4143-4152.",
+      "0x82352348 writes base vtable 0x8200AB60 to its incoming receiver, then clears 0x82F8E270 at 0x82352370; generated:rerevved/generated/default/rerevved_recomp.106.cpp:4067,4080-4093."
+    ],
+    "qualification": "These are the bounded global clear sites found by the raw store scan. They show that current retention and vtable state at dispatch are conditions, not established invariants; object destruction, allocator ownership, unique global type, and every possible first-word overwrite outside the exact constructor and initializer bodies were not followed."
+  },
+  "rendererTable": {
+    "vtable": "0x82047050",
+    "slot15C": {
+      "address": "0x820471AC",
+      "target": "0x8250F988",
+      "relation": "Conditional sibling renderer-table entry reached by 0x821D6DD0 at +0x15C when the same receiver-retention and vptr conditions hold at the later slot load, DD0's explicit predicate passes, and its r4 is nonnull: direct C64 supplies r4=r20 and requires nonnull r20, while wrapper C70 requires D10's explicit predicate and a nonnull +0x74 return before passing r4 to DD0."
+    },
+    "slot160": {
+      "address": "0x820471B0",
+      "target": "0x8250AC90",
+      "relation": "Exact slot loaded by 0x821D6C40 at +0x160 when its explicit field guard passes."
+    }
+  },
+  "runtimeObservation": {
+    "status": "historical-corroboration",
+    "records": [
+      {
+        "artifactPath": "rerevved:out/diagnostics/native-route-trace-20261011-0001/route-gameplay.toml:102-109",
+        "sha256": "0185cad615ab23b8901e1dced970aa7b50e012000c919258bc19d67ee819a5f1",
+        "observation": "Function 0x8250AC90 was recorded with caller LR 0x821D6CD8; the bounded trace metadata reports count 8403 and segment_first_frame 1031."
+      },
+      {
+        "artifactPath": "rerevved:out/diagnostics/native-scene-resources-20261011-0001/events.toml:1470368-1470377",
+        "sha256": "e65c06f2b85dfef4bb2a07c896b2976baea2ac0b6cca268be2189caf470fe089",
+        "observation": "The retained scene capture recorded 14 exact 0x8250AC90 events, all with LR 0x821D6CD8, across frames 1748 and 1749."
+      },
+      {
+        "artifactPath": "rerevved:out/diagnostics/native-scene-resources-20261012-0001/events.toml",
+        "sha256": "06835b73d8748ed472b68d3a39a3b15fad9b5f62a94bf3391d64edf1dd881755",
+        "observation": "The second retained scene capture recorded 14 exact 0x8250AC90 events, all with LR 0x821D6CD8, across frames 1073 and 1074."
+      }
+    ],
+    "qualification": "The captures corroborate the exact 0x821D6C40 indirect-call return address and target shape. Their metadata does not pin the current image digest, so they are separate historical runtime evidence and do not establish current runtime cadence, receiver lifetime, or heap-address identity."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra queries against image.json, bounded raw instruction and data scans, and exact generated-code windows. No runtime launch was used.",
+    "queries": [
+      {
+        "question": "Resolve the frame call into the dispatch helper",
+        "script": "ghidra/FindDirectCallers.java",
+        "targets": [
+          "0x821D6C40"
+        ],
+        "result": "23 raw direct callers; 0x82C71D10 and 0x82C71EAC are exact callers in the generated 0x82C71A00 frame function."
+      },
+      {
+        "question": "Recover the guarded virtual call",
+        "script": "ghidra/FindRawVtableSlotCalls.java",
+        "targets": [
+          "+0x15C",
+          "+0x160"
+        ],
+        "result": "The bounded raw scan recovered 0x821D6CCC load +0x160, 0x821D6CD0 mtctr, and 0x821D6CD4 bctrl; the canonical listing has an undefined or truncated owner at this address."
+      },
+      {
+        "question": "Recover receiver publication and reset stores",
+        "script": "ghidra/FindRawGlobalStoreCandidates.java",
+        "targets": [
+          "0x82F8E270"
+        ],
+        "result": "Three raw stores were recovered: clears at 0x82352300 and 0x82352370, and the constructor receiver store at 0x823525A0."
+      },
+      {
+        "question": "Recover the renderer vtable materializer",
+        "script": "ghidra/FindSplitConstantUses.java",
+        "targets": [
+          "0x82047050"
+        ],
+        "result": "The split-constant report found one match: function 0x8250F0E8 forms 0x82047050 at 0x8250F0FC and 0x8250F104; the report was not truncated."
+      },
+      {
+        "question": "Verify the renderer vtable installation words",
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": [
+          "0x8250F0FC",
+          "0x8250F118"
+        ],
+        "result": "The raw installation window records the split-constant instructions at 0x8250F0FC-0x8250F104 and the store word 0x917F0000 at 0x8250F118, which writes the constructed vtable value at receiver offset zero."
+      },
+      {
+        "question": "Read the renderer table words",
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": [
+          "0x8200ACE0",
+          "0x8200AE40",
+          "0x82047050",
+          "0x820471AC",
+          "0x820471B0"
+        ],
+        "result": "The retained memory window records 0x820471AC = 0x8250F988 and 0x820471B0 = 0x8250AC90; it also records 0x82047050 as the table base word 0x82514898."
+      },
+      {
+        "question": "Expand the exact bounded functions",
+        "script": "ghidra/DumpFunctions.java",
+        "targets": [
+          "0x821D6C40",
+          "0x823522F8",
+          "0x82352364",
+          "0x8235259C",
+          "0x8250F0E8"
+        ],
+        "bound": "Exact requested target expansion; the canonical listing returns a containing function only when one is defined for the requested address.",
+        "result": "The requested 0x82352364 address had no containing function in the canonical listing. Requested 0x8235259C resolved to containing function 0x82352500; the helper, constructor, and initializer listings are bad-data/truncated or stop at an incorrect noreturn boundary, so generated sub_823522F8, sub_82352348, sub_82352500, and sub_8250F0E8 bodies supply the detailed receiver/reset behavior. The query did not request or expand 0x82352348. Separate table-word evidence shows the base +0x160 target 0x827F16E0, distinct from the renderer target, so the renderer overwrite is required for the conditional pass relation."
+      },
+      {
+        "question": "Expand the exact sibling helper entries",
+        "script": "ghidra/DumpFunctions.java",
+        "targets": [
+          "0x821D6DD0",
+          "0x821D6D10"
+        ],
+        "bound": "Two additional exact target expansions followed the retained five-target function query; this evidence records seven requested function targets and remains within the eight-target cap.",
+        "result": "The canonical listing returns 8-byte bad-data shells and truncated decompilations for both entries; generated exact bodies provide the guard, +0x74 forwarding, +0x15C call, and return-effect semantics."
+      },
+      {
+        "question": "Verify frame branch and local callsite words",
+        "script": "ghidra/DumpFunctionNeighborhoodBatch.java",
+        "targets": [
+          "0x82C71C64",
+          "0x82C71C70",
+          "0x82C71D10",
+          "0x82C71EA8",
+          "0x821D6DD0",
+          "0x821D6E80"
+        ],
+        "bound": "Fixed word radius 4 and instruction window -0x20..+0x40 per target; canonical frame listing gaps emitted raw words but no decoded instructions at those sites.",
+        "result": "Raw words identify 0x82C71C64 -> 0x821D6DD0, 0x82C71C70 -> 0x821D6D10, and 0x82C71D10 -> 0x821D6C40. The requested 0x82C71EA8 neighborhood is the global lwz r3; its adjacent 0x82C71EAC word is the bl 0x821D6C40. The same six-input query also centered 0x821D6DD0 and 0x821D6E80."
+      },
+      {
+        "question": "Verify the sibling +0x15C dispatch",
+        "script": "ghidra/FindRawVtableSlotCalls.java",
+        "targets": [
+          "+0x15C"
+        ],
+        "bound": "Initialized executable raw words, 256 callsite cap; 4,734,976 words scanned, 34 decoded loads, 251 raw loads, 20 raw-only callsites, truncated false.",
+        "result": "Exact raw-only site 0x821D6E80 loads r10,+0x15C(r11), followed by mtctr 0x821D6E84 and bctrl 0x821D6E88; owner is undefined in the canonical listing."
+      },
+      {
+        "question": "Verify the D10 +0x74 forwarding dispatch",
+        "script": "ghidra/FindRawVtableSlotCalls.java",
+        "targets": [
+          "+0x74"
+        ],
+        "bound": "Initialized executable raw words, 256 callsite cap; 4,734,976 words scanned, 187 decoded loads, 868 raw loads, 111 raw-only callsites, truncated false.",
+        "result": "Exact raw-only site 0x821D6D9C loads r10,+0x74(r11), followed by mtctr 0x821D6DA0 and bctrl 0x821D6DA4; owner is undefined in the canonical listing."
+      },
+      {
+        "question": "Verify the helper success write",
+        "script": "ghidra/FindRawFieldStores.java",
+        "targets": [
+          "[0x821D6DD0,0x821D6EC0)",
+          "+0x9C"
+        ],
+        "bound": "Aligned initialized executable band, 32 match cap; 60 words scanned, one match, truncated false.",
+        "result": "0x821D6EA0 is the only bounded +0x9C store: raw word 0x997F009C writes r11 to +0x9C(r31); canonical decode and owner are unavailable."
+      }
+    ]
+  },
+  "observations": [
+    "0x82C71A00 loads the same global receiver that 0x82352500 publishes and 0x8250F0E8 upgrades to the renderer vtable.",
+    "0x821D6C40's bctrl return address is 0x821D6CD8, matching the historical runtime caller LR for exact 0x8250AC90 events.",
+    "The initial constructor vtable 0x8200AB60 has +0x160 target 0x827F16E0, while the post-constructor renderer vtable 0x82047050 has +0x160 target 0x8250AC90.",
+    "After the helper returns at 0x82C71C48, the byte +0x98 branch at 0x82C71C58 reaches 0x821D6DD0 at 0x82C71C64 or 0x821D6D10 at 0x82C71C70; the frame then calls 0x821D6C40 at 0x82C71D10 and again at 0x82C71EAC after loading the global at 0x82C71EA8.",
+    "0x821D6DD0's raw +0x15C dispatch at 0x821D6E80-0x821D6E88 and table word 0x820471AC support the conditional 0x8250F988 relation."
+  ],
+  "inferences": [
+    "If the frame call observes the same object after 0x8250F0E8's overwrite, its vptr remains 0x82047050, and 0x821D6C40's field guard ((+0xA0 in {1,2} and byte +0x9C == 1) or +0xA0 == 4) passes, it dispatches to 0x8250AC90 through slot +0x160.",
+    "If the nonzero +0x98 arm observes the retained object and vptr 0x82047050, 0x821D6DD0's explicit predicate passes, and r20 is nonnull at direct call 0x82C71C64, DD0 can reach +0x15C; if the zero-byte arm instead calls 0x821D6D10 at 0x82C71C70, D10's explicit predicate passes, its +0x74 vcall returns nonnull r4, and DD0's explicit predicate also passes. Both arms require the receiver and vptr to remain valid at DD0's later slot load, and the opaque helper returns remain qualified, so under those branch-specific conditions +0x15C resolves to 0x8250F988.",
+    "The static receiver provenance, slot contents, and callsite order support conditional frame-to-pass relations without relying on table adjacency or pass names; bounded clears do not prove retention at execution."
+  ],
+  "unknowns": [
+    "The complete object lifetime, allocator ownership, and all alternate first-word vtable writers remain unresolved.",
+    "The intermediate helpers 0x821B3AD8, 0x823522E8, and 0x821B3A70 remain semantically unresolved beyond their guarded call positions.",
+    "The concrete +0x74 callee and returned r4 identity remain unresolved; no current runtime +0x15C observation was made.",
+    "Historical capture counts do not establish current-image retention, execution frequency, pass semantic name, target or depth identity, EDRAM base, or visible output."
+  ],
+  "nextDiscriminator": {
+    "site": "Frame global receiver at 0x82C71C64/0x82C71C70, +0x15C dispatch 0x821D6E80, and +0x160 dispatch 0x821D6CCC",
+    "question": "Can runtime or a new accepted producer discriminator establish the current receiver/vptr and field/helper predicates across the conditional local sibling-before-group order?",
+    "limits": "Static evidence closes both conditional slot relations and their local callsite order. Do not promote retention, pass names, runtime cadence, or total frame order without independent evidence."
+  },
+  "conclusion": "The accepted frame path has conditional static relations to both renderer entries under receiver, vptr, field-guard, and helper-input qualifications. After the helper returns at 0x82C71C48, the byte +0x98 branch at 0x82C71C58 sends the nonzero arm directly to 0x821D6DD0 at 0x82C71C64 with r4=r20, while the zero-byte arm enters 0x821D6D10 at 0x82C71C70 and must obtain a nonnull +0x74 result before DD0. In either arm DD0's predicate, nonnull r4, opaque helper return, and later receiver/vptr load remain required before +0x15C resolves to 0x8250F988. The same frame calls 0x821D6C40 at 0x82C71D10, then loads the global at 0x82C71EA8 and calls it again at 0x82C71EAC; its +0x160 slot resolves to 0x8250AC90 only when its own C40 guard passes. This establishes only a conditional local sibling-before-group order. The bounded clear/reset evidence and historical captures do not prove current retention, unique global type, execution frequency, pass names, or total frame order."
+}

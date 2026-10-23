@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0317",
+  "topic": "native-renderer-mode-fold-contract",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What does the dirty-mode refusal protect, and can the ADD88 mode/color fold be consumed without allocating or dropping retained state?",
+  "scope": {
+    "entry": "0x826ADD88",
+    "control": "C=word(G+0x2954), distinct from color-info F=word(G+0x2884) and encoder base G+0x2880.",
+    "metadata": "Pbase=PS+word(PS+0x40); selected PS metadata MP=Pbase+0x28. Bare object offsets and masks are hexadecimal; counts and stack/frame sizes are decimal.",
+    "dirty": "D is the full64 returned dirty register, not an ADD88 store to G+0x10; M=1<<56.",
+    "qualification": "Known writers and complete direct guarded store order, with named transitive frontiers; no exhaustive alias closure or additional consume admission."
+  },
+  "dependencies": [
+    {"topic": "native-renderer-shader-fetch-patch-boundary", "use": "Owns shared entry/variant, metadata, dirty-producer and fetch/cache boundaries."},
+    {"topic": "native-renderer-draw-state-reader-boundary", "use": "Owns retained control/color/dirty readers and pointer-alias qualifications."},
+    {"topic": "native-renderer-shader-readback-activation", "use": "Owns persistent bytes, ordered generation history and later Original coherence."},
+    {"topic": "native-renderer-lowerer-scratch-contract", "use": "Owns metadata/command pressure, allocator and ordered later dirty-group effects."}
+  ],
+  "currentEvidence": {
+    "method": "Serial foreground tools/run-headless.ps1 -ReadOnly native fold/exit words, maintained ghidra/FindPointerValues.java fixed-encoding queries and independently hashed single-function generated windows of at most200 lines. Scalar masks and unsigned sticky-byte comparison were checked separately.",
+    "identity": "Supported flat SHA2565C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680; mapped SHA256389EB006B1DCDE90C5DE775C92D67C18542B8FD9BD39845574206D4B213E9B13, with470 differences in60 ranges confined to [0x827F3F50,0x827F4280), outside cited words. Title handwritten revision0a6cad692418431dd8bbf0b0804e8883bd4ccb7f is not provenance for ignored generated artifacts.",
+    "hostGate": "rerevved:src/gpu/guest_d3d/indexed_buffer_consume.cpp:159-187,247-282, indexed_buffer_consume.h:65-117: inside dirtyLow&1E0000, Recorded is tested first and nullVS holds. With liveVS/nullPS, C&7!=5 refuses ModeToggle regardless of dirty100000; with livePS, dirty100000 and C&7!=4 refuses. ZPrepass and fetch checks follow. Dirty100000 is the pixel-shader dirty bit, not the sole nullPS refusal trigger; F's bits16..19 are a separately affected color shadow.",
+    "knownWriters": {
+      "color": "E908@E998 replaces F bits16..19 for selected RT0 types0x2/0x3/0xA/0xC and adds M; indexed904D0@90524 copies the whole surface+1C word and @90604 replaces its nibble when index0 selects F. ADD88@ADE6C clears the nibble; @ADFB4 restores the whole RT0+1C word under the fold guards below. D278's whole-device zero fill also covers F.",
+      "control": "ADD88@ADE4C/ADF98 replaces low3 with5/4 preserving bits3..31. AE5C8@AE68C resets the whole word to4, then @AE6AC writes all-ones dirtyG10. D278 bulk initialization covers both words; reset is a separate owner.",
+      "dirty100000": "SetPixelShader92948 also adds20000;904D0@9065C/90660;922D0@92360/9236C;98720@98A24/98A30;ClearA22F8@A2800/A2808, with their accepted object/type/initialization guards. Dirty80000 producers additionally include strideFB08,985C8,Resolve,VS/declaration/FVF and UP temporary stride.",
+      "syntaxBounds": "Fixed stw-displacement queries found F atE998/ADE6C/ADFB4 and C atADE4C/ADF98/AE68C. Four selected overlapping std forms and seven byte/halfword/update forms found0. Indexed904D0 and bulk zero fill are actual writers outside that model. Rebased/computed/escaped aliases, other overlaps, imported/callback/runtime writes and inherited unresolved producer candidates remain open.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.50.cpp:12946; rerevved_recomp.32.cpp:12934,13051; rerevved_recomp.17.cpp:13023-13605; rerevved_recomp.56.cpp:13276; accepted dirty-producer records."
+    },
+    "orderedFold": [
+      "Prologue/frame and stack+92/+88/+84=-1 precede optional AC6C8 for D&20000. That helper can alter G2940 lowbits,G2ABD04, command bytes/G30 and flush through C588; its returned D OR100 becomes D0. NullVS then returns D0 without shader work.",
+      "LiveVS/nullPS with C&7!=5: D adds80000@ADE44; C=(C&~7) OR5@ADE4C; D adds8@ADE50; if G2ABF&8, D addsM@ADE68 then F=F&FFF0FFFF@ADE6C. Already5 skips all those effects. The new80000 forces the later fetch group even if initially clean.",
+      "LivePS always stores G2ABE sticky08@ADEE4: old08 OR8 iff unsigned(load32(Pbase+0x30)&70000000)>10000000. The same input is MP+0x8; zero and10000000 do not set it. If D0&100000, first ADB98@ADEF8, possible C588@ADF10, add4000@ADF18, three PS command words@ADF1C/ADF4C/ADF60,G30@ADF6C,G2928@ADF78. Only then, if C&7!=4, add80000/8@ADF88/ADF90,C low3=4@ADF98, and under G2ABF&8 addM@ADFAC and F=wholewordRT0+1C@ADFB4. Without dirty100000, mode4 is not forced.",
+      "Selected flags can call KeBugCheck245 before normal tail work. Z/local control may cache L in G319C@AE060 and derive temporary colorQ with zero nibble when L&7==5; neither replaces persistent C/F. Stack+80@AE00C is a separate metadata intermediate.",
+      "The shared fetch path can call ADB98 and clear G2ABE40@AE0D0 orAE1B8, ADC48 persistent or ADA38 allocated-copy routes, and a possible second variant1@AE168 which can set G2ABE40@AE180. Cache hits still copy G30F0/+30F8 to G2E38/+2E40. Persistent patch/history, copy/allocator/cache and metadata boundaries remain real effects.",
+      "If resulting D&180000, add10000, store G2924@AE20C, add8000, store G2920@AE21C from selected metadata. These retained words feed Clear/Resolve and later register runs. Ordinary tail can C588, writes three VS command words@AE55C/AE594/AE5A8, stamps record+40@AE5B0 and publishes G30@AE5B4, then returns full64D.",
+      "Z tail can C588; base packet stores@AE288/AE29C/AE2A0/AE2A8; D&8 packet@AE2B8/AE2C4 and clear8@AE2C0; changed-L packet@AE2E0/E4/E8; D&M packet@AE308/AE318 and clearM@AE314; temporary-Q packet@AE334/338/33C; D&10000 packet@AE35C/368/370 and clear18000@AE364; alternate derived packet@AE38C/390/394/398. Alternate/primary code packets and stamps follow@AE3BC..AE508 under selected variant guards. Final four words@AE510/520/524/52C precede G30@AE530. Returned dirty transforms do not store to G10."
+    ],
+    "metadataFrontier": "ADB98 emits four words then G30@ADC14/ADC28/ADC2C/ADC30/ADC34 per nonempty metadata record and may C588@ADC00 first. Empty metadata removes only that encoder's writes. Command capacity, record bounds/termination, later dirty groups, C588/C270 allocation/wait and all transitive effects still need a model.",
+    "resolveReader": "ResolveE520@E8C4 tests flags100, supplies r5=selected local r30&7@E8CC, calls E448@E8DC. Only r5==0 selects G2884@E460; E474/E47C reads/extracts bits16..19. Zero/nonnull r4 arms use nibble/table inputs before E020; G2A30/G2A34@E504/E508 and dirtyG20 ORC0@E514 are retained CPU shadows. flags100 alone and mode4/5 alone do not select or exclude this reader. Locators: rerevved:generated/default/rerevved_recomp.163.cpp:13245-13334; rerevved_recomp.216.cpp:13459-13461."
+  },
+  "replacementObligations": [
+    "Scalar C/F/full64D arithmetic requires no allocation: preserve upperC, exact nibble-clear versus wholeword-copy guards, sticky08 unsigned predicate and ordered additions. It is not an exact ADD88 replacement by itself.",
+    "A no-allocation consume needs every reached metadata/command/stamp/dirty/ABI effect proved equivalent, a compatible fetch hit or proved no-patch path, exact G2928/G2924/G2920 and local-control flags, command capacity and later caller clearing. Earlier PS metadata/command effects precede C/F stores and cannot be moved across unknown aliases.",
+    "Refuse before writes on recorded/unsupported Z or alternate paths, bugcheck/import/metadata or pointer bounds, fetch miss/busy/inline without complete history and allocator model, command pressure/unmodeled C588/C270, unknown alias/frame/caller-live parity, state races or service/root lifetime. Current key equality alone does not establish retained C*(t) or future Original coherence."
+  ],
+  "guards": [
+    "Known writer syntax is not an exhaustive all-alias store proof; direct-reader absence does not license dropping C, F or G319C.",
+    "Returned dirty masks are not ADD88 writes to G10. Z-tail clears, local mode and temporary color are separate from persistent control/color stores.",
+    "No additional dirty-mode consume is admitted; runtime state/frequency was not observed."
+  ],
+  "conclusion": "The mode/control and color fold is exactly computable, but it triggers shared metadata/fetch and retained command/shadow effects. A scalar replay alone cannot remove dirty-mode Original work; the complete selected path and its reader/allocator/history frontiers remain the consume contract."
+}

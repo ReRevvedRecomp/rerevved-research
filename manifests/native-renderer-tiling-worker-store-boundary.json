@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0303",
+  "topic": "native-renderer-tiling-worker-store-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which CPU-visible stores and unresolved readers prevent an unconditional tiling replay-worker bypass?",
+  "scope": {
+    "seedFunctions": [
+      "0x826ABEA8",
+      "0x826ABB90",
+      "0x826AB740",
+      "0x826ABA68",
+      "0x8269BD98",
+      "0x8269B550",
+      "0x826AC020",
+      "0x826A5B48"
+    ],
+    "directExpansionLimitPerReadSet": 8,
+    "workerBase": "G+0x2AC0",
+    "queueBase": "G+0x2C3C+80*i",
+    "boundary": "Bounded static store and reader classification. No exhaustive alias analysis, actual callback binding, host implementation or runtime safety result."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-shader-fetch-patch-boundary",
+      "use": "Owns the mapped-program versus supported-flat input qualification; cited semantic native windows avoid every mismatch range."
+    },
+    {
+      "topic": "native-renderer-d3d-lock-fill-contract",
+      "use": "Owns the separate allocation, fence and EndTiling reservation contracts."
+    },
+    {
+      "topic": "native-renderer-guest-frame-pacing",
+      "use": "Owns qualified worker event waits and conditional presentation order."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only no-analysis queries through tools/run-headless.ps1 using ghidra/DumpFunctions.java, ghidra/DumpMemoryWords.java, ghidra/FindPointerValues.java, ghidra/DumpReferences.java and ghidra/FindDirectCallers.java; narrow exact-function generated corroboration.",
+    "decompilerLimit": "Canonical function bodies truncate at Xenon save thunks or undecoded instructions. Native word windows support the listed instruction sites; sparse decoded-reference absence is not a reader-absence proof.",
+    "generatedRevision": "e69f8e597ad634103fdf1719a0ec9cc517ca5043",
+    "inputQualification": "native-renderer-shader-fetch-patch-boundary.json#/currentEvidence/inputQualification applies. Broad raw scan counts describe that mapped program, not an exhaustive reader census of an unmodified image.",
+    "objectIdentity": {
+      "function": "0x826AC3F8",
+      "sites": ["0x826AC4D0", "0x826AC4D4", "0x826AC4E0", "0x826AC514"],
+      "claim": "The selected constructor arm stores W=G+0x2AC0 and CPU ordinal i into Q_i+0 and Q_i+4, where Q_i=G+0x2C3C+80*i, and supplies Q_i to the materialized 0x826ABEA8 thread entry.",
+      "corroboration": "generated:rerevved/sub_826AC3F8; generated/default/rerevved_recomp.193.cpp:13346-13398",
+      "qualification": "Current object identity, successful initialization, CPU selection and lifetime remain conditional."
+    },
+    "storeFamilies": [
+      {
+        "function": "0x826ABEA8",
+        "sites": ["0x826ABF14", "0x826ABF4C", "0x826ABFAC", "0x826ABFE0"],
+        "destination": "W+0x2C",
+        "width": 4,
+        "claim": "Reservation loops increment the word before each event wait and decrement it afterward.",
+        "readerBoundary": "The same reservation loops read the word. Other aliases and imported-kernel effects are not closed."
+      },
+      {
+        "function": "0x826ABB90",
+        "sites": ["0x826ABBF8", "0x826ABC08", "0x826ABC40", "0x826ABD64", "0x826ABE18", "0x826ABE44", "0x826ABE54"],
+        "destination": "W+0x0",
+        "width": 4,
+        "claim": "Reservation loops acquire the worker lock, can rewrite its old word on a failed comparison, and release it with zero.",
+        "readerBoundary": "Worker lock loops read the word; all external aliases remain unknown."
+      },
+      {
+        "function": "0x826ABB90",
+        "sites": ["0x826ABC58", "0x826ABC74", "0x826ABCB8", "0x826ABCC4", "0x826ABCD0", "0x826ABCDC", "0x826ABD00", "0x826ABD44", "0x826ABD48", "0x826ABD4C", "0x826ABD50", "0x826ABE10"],
+        "destination": "W+0x18,+0x1C,+0x20,+0x24,+0x38,+0x3C,+0x48,+0x4C,+0x68 and Q_i+0x3C",
+        "width": 4,
+        "claim": "The interpreter updates loop ordinals, payload and continuation pointers, CPU participation, pending/current lists and the per-CPU queue consumer.",
+        "readerBoundary": "The interpreter, end-of-list handler and thread queue comparisons read these fields. This does not classify every image reader."
+      },
+      {
+        "function": "0x826ABB90",
+        "sites": ["0x826ABDA4", "0x826ABDB0", "0x826ABD5C", "0x826ABD6C"],
+        "destination": "W+0x10 and W+0x14",
+        "width": 4,
+        "claim": "Token 0x8C000000 installs a function pointer and context from the following two words. The interpreter later loads the pointer and calls it indirectly.",
+        "readerBoundary": "The actual installed target, transitive writes and their nonworker readers are unresolved."
+      },
+      {
+        "function": "0x826ABB90",
+        "sites": ["0x826ABD8C", "0x826ABDF8", "0x826ABE04", "0x826ABE84", "0x826ABE98"],
+        "destination": "W+0x60,+0x64,+0x168",
+        "width": 4,
+        "claim": "The interpreter updates phase/barrier words and a token-supplied mask. It spins on W+0x60 at 0x826ABE24 and compares the barrier count against W+0x3C.",
+        "readerBoundary": "Same-worker readers are identified; exhaustive nonworker readers remain unknown."
+      },
+      {
+        "function": "0x826AB740",
+        "sites": ["0x826AB7D8", "0x826AB7EC", "0x826AB804", "0x826AB824", "0x826AB840", "0x826AB84C", "0x826AB864", "0x826AB8A8", "0x826AB8BC", "0x826AB8C4", "0x826AB8C8", "0x826AB8E8", "0x826AB8F0", "0x826AB99C", "0x826ABA44"],
+        "destination": "W+0x30,+0x34,+0x48,+0x164,+0x168,+0x16C,+0x170,+0x174 and copied prefix W+0x6C..W+0x163",
+        "claim": "Token arms store flags, nesting, masks, list checkpoints and pending work. The call at 0x826AB8A8 requests a 248-byte copy into W+0x6C.",
+        "readerBoundary": "Token/interpreter and mask-builder readers are identified. The copy effect uses the separate memcpy interpretation; aliases and transitive helpers are qualified."
+      },
+      {
+        "function": "0x826ABA68",
+        "sites": ["0x826ABAAC", "0x826ABAC0", "0x826ABACC", "0x826ABB00", "0x826ABB0C", "0x826ABB34", "0x826ABB68"],
+        "destination": "W+0x0,+0x24,+0x38,+0x3C,+0x40 and G+0x2C78+80*i",
+        "width": 4,
+        "claim": "End-of-list processing updates continuation and CPU masks, decrements active participation, advances selected queue consumers and conditionally decrements W+0x40=G+0x2B00 when participation reaches zero and W+0x48 is null.",
+        "readerBoundary": "Submit and drain read G+0x2B00. Queue consumers alias Q_i+0x3C and are read by the thread/interpreter. Other readers are not closed."
+      },
+      {
+        "function": "0x8269BD98",
+        "sites": ["0x8269BDF0", "0x8269BDF8", "0x8269BE00", "0x8269BE1C", "0x8269BE4C"],
+        "destination": "incoming r4+0x4,+0x8,+0xC and G+0x2B00",
+        "width": 4,
+        "claim": "The deferred arm appends submit, address and terminator words, links them through 0x8269B550, then adds incoming r7 to G+0x2B00. The direct arm also adds incoming r7 before submit.",
+        "readerBoundary": "The replay token parser reads the appended words. Keeping the counter zero requires handling the direct-arm add as well as the deferred arm."
+      },
+      {
+        "function": "0x8269B550",
+        "sites": ["0x8269B5A8", "0x8269B5AC", "0x8269B5B4", "0x8269B5D0"],
+        "destination": "first word, descriptor+0x4/+0x8 and old tail word",
+        "width": 4,
+        "claim": "The helper publishes translated list links and updates descriptor first/tail pointers, with two cache-coherency calls.",
+        "readerBoundary": "Worker list traversal is identified. Arbitrary descriptor and tail aliases are not closed."
+      },
+      {
+        "function": "0x826AC020",
+        "sites": ["0x826AC068", "0x826AC074", "0x826AC090"],
+        "destination": "Q_cpu+0x40+4*([Q_cpu+0x38]&3), Q_cpu+0x38 and event Q_cpu+0x20",
+        "claim": "Queue push stores incoming r3 in a four-slot ring, increments its producer and signals its event.",
+        "readerBoundary": "Worker queue and event-wait readers are identified; kernel effects and all aliases remain qualified."
+      }
+    ],
+    "externalWriteFrontiers": [
+      {
+        "function": "0x826AB448",
+        "site": "0x826AB4C8",
+        "inputForm": "Generated parser corroboration at0x826AB9D0 supplies P from record+4 of the0x8A000000 form; record+8/+12/+16 are companion payload words. The bounded producer packet did not identify that record's constructor or P allocation/readers.",
+        "claim": "Stores a computed word through a destination loaded from the input list. It is not statically bounded to the device or a proved ring allocation."
+      },
+      {
+        "function": "0x826AB510",
+        "site": "0x826AB60C",
+        "claim": "Stores a computed word through another list-selected destination. Current destination and reader identity remain unknown."
+      },
+      {
+        "function": "0x826AB648",
+        "site": "0x826AB6FC",
+        "claim": "Writes a computed overlap mask through a list-selected destination; all CPU aliases are not enumerated."
+      },
+      {
+        "function": "0x826AB058",
+        "site": "0x826AB120",
+        "claim": "Writes computed mask OR 0x80000000 at a record-selected pointer+0x8. Intended command-placeholder use does not prove absence of CPU readers."
+      },
+      {
+        "function": "0x826AB1C0",
+        "sites": ["0x826AB218", "0x826AB254", "0x826AB25C", "0x826AB264", "0x826AB270", "0x826AB274", "0x826AB278", "0x826AB280", "0x826AB290"],
+        "claim": "Updates W+0x38, selected CPU descriptor words at G+0x2C44/+0x2C48/+0x2C4C/+0x2C50+80*i and commands rooted at [G+0x2E1C]. Per-CPU pointer waits remain at 0x826AB31C..0x826AB338 and 0x826AB3C0:0x826AB408..0x826AB424."
+      },
+      {
+        "function": "0x826AAF38",
+        "sites": ["0x826AAF54", "0x826AAF88", "0x826AAFC0"],
+        "claim": "Sets W+0x68 and, after KeLockL2, runs cache-line zero operations over scratch rooted at 0x7F100000 with input-selected length 0x20000 or 0x40000. Mapping, imported effects and external readers remain qualified."
+      },
+      {
+        "function": "0x826AAEC0",
+        "sites": ["0x826AAEEC", "0x826AAEFC", "0x826AAF24", "0x826AAF28"],
+        "claim": "Updates index word 0x82FA0540 and CPU/log-value pairs rooted at 0x82F9C540. These are CPU-visible diagnostic writes; their reader set is not closed."
+      },
+      {
+        "function": "0x8269B900",
+        "sites": ["0x8269B97C", "0x8269B990", "0x8269BA0C", "0x8269BA3C", "0x8269BAB4", "0x8269BAD8"],
+        "claim": "Conditional vtable+0x18/+0x1C calls through G+0x541C and callback G+0x5B0C remain unresolved. The direct path also owns command-ring, G+0x2AC8 and MMIO writes."
+      }
+    ],
+    "replayProducerBoundary": {
+      "functions": ["0x826AC218", "0x8269CE90", "0x8269D320", "0x8269D7D8", "0x8269C400", "0x8269BD98", "0x8269B550", "0x8269C170"],
+      "literalHeaders": [
+        { "word": "0x83000000", "function": "0x8269D7D8", "site": "0x8269D834" },
+        { "word": "0x85000000", "function": "0x8269D7D8", "site": "0x8269DAA4" },
+        { "word": "0x86000000", "function": "0x8269CE90", "site": "0x8269D2A8" },
+        { "word": "0x87000000", "function": "0x8269D320", "site": "0x8269D664" },
+        { "word": "0x88000000", "function": "0x8269D320", "site": "0x8269D5A0" },
+        { "word": "0x89000000", "function": "0x8269D320", "site": "0x8269D5C8" }
+      ],
+      "submitForm": "Deferred0x8269BD98 writes0x81000000|incoming_r6 at descriptor+4, incoming_r5 at+8 and0xC0000000 at+12, then links through0x8269B550. The direct arm masks r6 to24 bits before ORing0x81000000 into a local two-word record. The deferred form's class requires a bound r6; do not infer an unrestricted high byte is always0x81.",
+      "sites": ["0x8269BDF0", "0x8269BDF8", "0x8269BE00", "0x8269BE08", "0x8269BE38", "0x8269BE48", "0x8269B5A8", "0x8269B5AC", "0x8269B5B4", "0x8269B5D0"],
+      "pointerFrontier": "D320 uses context L=G+0x3438 and can obtain storage through0x8269C170 at0x8269D590/0x8269D5C0/0x8269D654. Sites0x8269D5A4/0x8269D630/0x8269D674 store the updated cursor to G+0x3440=L+8; they are not helper calls. Separately C400 calls0x8269BCA8 at0x8269C508 after argument setup at0x8269C500..0x8269C504. The eighth function bounds the storage cursor below; BCA8 finalization, allocator/fallback ownership and a concrete retained title list remain unbound.",
+      "storageCursor": {
+        "function": "0x8269C170",
+        "sites": ["0x8269C1B0", "0x8269C1BC", "0x8269C1CC", "0x8269C1D4", "0x8269C1F8", "0x8269C220", "0x8269C228", "0x8269C24C", "0x8269C250", "0x8269C254", "0x8269C25C", "0x8269C260"],
+        "claim": "For context L, calls0x8269B818([L+16],r4=4224,r5=128). Success selects returned H, writes encoded alias links and calls0x826A72F8 over a4224-byte span. On a zero return it selects H=[[L+16]+0x4158] and clears L+0 instead. Both returning paths set L+4=H,L+8=H+4,L+12=H+4220 and return H+4.",
+        "qualification": "This identifies caller-managed linked command storage and a fallback, not allocator units, allocation generation, extent validity, imported/cache effects or all readers. B818, fallback ownership and BCA8 remain the stop frontier at the eight-function cap."
+      },
+      "emitterNegative": "No literal0x8A000000..0x8E000000 constructor was identified in these seven exact bodies. The nonparser lis0x8C00 candidates were numeric/text data contexts, not compatible emitter evidence. This is not an all-producer census or proof that0x8C cannot be copied/computed/emitted elsewhere.",
+      "corroboration": "Canonical rerevved generated/default exact functions named above, observed HEAD81798450751cfb75460269f82c2eb4df02754e80; native words confirmed the listed header/store/call sites.",
+      "qualification": "These are conditional static construction paths, not runtime token observations. Parser recognition, descriptor shape and literal scans do not bind actual0x8C function/context or list-selected result allocations/readers. The bounded packet stopped at the retained allocator/fallback/publication frontier."
+    },
+    "endTilingSubmitBoundary": {
+      "function": "0x826AC218",
+      "sites": ["0x826AC364", "0x826AC3B0", "0x826AC3E4"],
+      "claim": "There is an optional earlier submit guarded by a stack word from 0x8269BAE8 in addition to two later submits. The middle submit passes r7=1; the final submit passes r7=0.",
+      "optionalCount": {
+        "function": "0x8269BAE8",
+        "condition": "a=(load64(G+0x2E30)!=0x00000000FFFFFFFF); b=(load8(G+0x2ABE)>>2)&1; n=11*(a+b).",
+        "sites": ["0x8269BB00", "0x8269BB10", "0x8269BB24", "0x8269BB30", "0x8269BB3C", "0x8269BB50", "0x8269BB58", "0x8269BC98", "0x8269BC9C"],
+        "outputs": "When n is zero or 0x8269B818 returns zero, incoming r5 receives zero. Otherwise incoming r5 receives n (11 or22), and incoming r4 receives the encoded allocated buffer address. AC218 supplies outer stack+0x50 as incoming r5, so this command count gates 0x826AC364.",
+        "localDistinction": "Atomic helper 0x8269B3F8 returns the old G+0x2E30 low/high words to 9BAE8's local frame and replaces the qword with the sentinel. Those local words are not AC218's outer count output.",
+        "corroboration": "Canonical rerevved generated/default/rerevved_recomp.97.cpp:12715-13006 and rerevved_recomp.98.cpp:12772-12846 at observed HEAD81798450751cfb75460269f82c2eb4df02754e80.",
+        "qualification": "This is the normal returning branch condition, not observed input values, allocation success, synchronization or activation frequency. Allocator and emitted-command effects remain part of the boundary."
+      },
+      "qualification": "Changing only the two later submits does not cover the optional arm. Direct routing alone does not suppress the counter add."
+    },
+    "sinkWriterBoundary": {
+      "function": "0x826A9810",
+      "sites": ["0x826A9820", "0x826A9824", "0x826A9830", "0x826A9838", "0x826A9844", "0x826A9874", "0x826A987C"],
+      "claim": "The selector34 arm stores incoming r4 to G+0x5B0C after following *(*0x820009F0), the accepted published-device chain, and testing the object, object+0x3C and qword+0x2A80 guards.",
+      "registration": "An aligned literal at 0x82185668 contains 0x826A9810 followed by descriptor0x40007603. A raw initialized-executable direct-LK scan found zero callers, cap32 not truncated; this does not prove the registered function unused.",
+      "writerSearch": "Exact-displacement scalar forms found no G+0x541C or G+0x3478 writer. The maintained bounded store scan in [0x82680000,0x826C0000) examined65536 words for offsets0x5418/0x541C/0x5B08/0x5B0C/0x3474/0x3478, cap64, two matches: this setter and a nonoverlapping stw at0x8269B10C with displacement0x3474.",
+      "corroboration": "Canonical rerevved generated/default/rerevved_recomp.83.cpp:12796-12857 at observed HEAD81798450751cfb75460269f82c2eb4df02754e80; native-renderer-d3d-runtime-surface.json identifies the same published-device chain at0x82698258.",
+      "qualification": "No actual selector34 dispatch, installed function value, nonnull shipped-title sink or vtable target was established. Different-base, indexed, bulk and runtime writers remain possible. Retain or model the indirect calls."
+    },
+    "watchdogBoundary": {
+      "function": "0x826A5B48",
+      "readSites": ["0x826A5B70", "0x826A5B7C"],
+      "writeSites": ["0x826A5BBC", "0x826A5BC4", "0x826A5BC8"],
+      "claim": "The watchdog reads G+0x3478 before and after 0x826A57B8. A zero reread reaches diagnostics and a trap at 0x826A5BEC. On the selected nonzero/global-zero arm it sets device flags, writes [G+0x2A9C]-2 to *[G+0x2A90], zeroes G+0x2B00 and calls 0x826A7BE8.",
+      "defaultCallbacks": "A5B48 supplies zero callback arguments, selecting0x826A53B0 and0x826A53C0 in A57B8. Their native bodies read a word or write incoming r4 plus eieio at address U(0x7FC80000+4*incoming_r3), respectively. They are MMIO accessors, not unspecified logging callbacks.",
+      "defaultSites": ["0x826A53B0", "0x826A53B4", "0x826A53B8", "0x826A53C0", "0x826A53C4", "0x826A53C8", "0x826A53CC"],
+      "defaultMmioSequence": "A57B8 reads register ordinals0x5D0,0xF26(discarded),0x1C0,0x57B,0x57C,0x57D,0x57A; writes12 to0xC80 at call0x826A5874; then reads0xC81 five times. Address translation is the defaultCallbacks formula. The shown sequence does not restore0xC80.",
+      "localStores": "A57B8 directly stores stack+0xA0..+0xAC at0x826A5894/0x826A58A4/0x826A58B4/0x826A58C4 and stack+0x90..+0x98 at0x826A58CC/0x826A58D0/0x826A58D8, in addition to frame/save stores. No direct G store was identified in its body; direct diagnostic-helper and MMIO effects are separate.",
+      "qualification": "The actual G+0x3478 writer/value, complete helper/MMIO effects, timing units and activation remain qualified. A raw direct-LK scan found call0x8268CC68; this is not runtime activation proof. Nonzero custom callback arguments require their own target/effect binding."
+    },
+    "readerSearchBoundary": {
+      "method": "ghidra/FindPointerValues.java",
+      "parameters": "Aligned initialized-memory words of the qualified mapped program, mask 0xFC00FFFF, cap 256 per pattern.",
+      "lwzDisplacement2B00Candidates": ["0x82063130", "0x821864B8", "0x8269BDB8", "0x8269BDD8", "0x8269BE10", "0x8269BE34", "0x8269C868", "0x82C3255C"],
+      "ldDisplacement2B00Candidates": 0,
+      "claim": "Five candidates are the known submit/drain reads. The other three match pointer values in data tables rather than additional G-relative load sites; their bounded classifications follow.",
+      "dataCandidates": [
+        { "address": "0x82063130", "word": "0x82062B00", "classification": "Pointer/count/flag table interpretation from neighboring records; not a proved extra device load." },
+        { "address": "0x821864B8", "word": "0x826E2B00", "classification": "Function-pointer/descriptor table interpretation from neighboring pairs; not a proved extra device load." },
+        { "address": "0x82C3255C", "word": "0x82C32B00", "classification": "Jump-table entry252 at base0x82C3216C. Native materialization/indexed load/dispatch at 0x82C32154..0x82C32168 establishes the table role." }
+      ],
+      "dataCorroboration": "Canonical rerevved generated/default/rerevved_recomp.106.cpp:44115-44160,45513-45524 at observed HEAD81798450751cfb75460269f82c2eb4df02754e80. Sparse decoded exact references and containing-function queries were empty for the three candidates; those negatives alone do not establish data identity.",
+      "qualification": "This is not exhaustive reader analysis. Worker-relative, indexed, overlapping, byte/halfword, bulk-copy, indirect and dynamic accesses remain possible. A zero result for one encoding does not prove absence of aliases."
+    }
+  },
+  "guards": [
+    "Do not call a list-selected destination ring-only without binding its allocation and every relevant CPU reader.",
+    "Do not infer an installed callback from a token opcode or address proximity.",
+    "Do not replace the entire 0x826ABEA8 thread when only replay queue work is under consideration; it retains a conditional presentation path.",
+    "Do not infer runtime progress, GPU completion, release ordering or host-model parity from this static result.",
+    "No exhaustive main-thread, callback or interrupt reader inventory was established."
+  ],
+  "nextDiscriminators": [
+    "Bind the actual token stream, 0x8C payload and W+0x10/+0x14 before the 0x826ABD6C call, then inspect the actual target within a bounded native read set.",
+    "Bind allocations and readers for each list-selected result and mask destination at 0x826AB4C8,0x826AB60C,0x826AB6FC,0x826AB120.",
+    "Bind actual W/Q pointer publications and indirect or overlapping aliases before claiming a reader closure; the three raw data-word hits do not add G-relative readers.",
+    "Bind G+0x3478's producer and the retained 0x826A57B8 effects; verify the optional submit and both counter-add sites.",
+    "A separately authorized default-off bracket probe must compare all predicted non-ring writes and record later alias reads, callbacks, waits and release ordering."
+  ],
+  "conclusion": "The worker chain writes CPU-visible device, queue, list-selected, diagnostic and scratch state and contains unresolved indirect calls. The proposed broad replay bypass has no static safety proof. No concrete runtime blocking reader or safe refusal set is claimed."
+}

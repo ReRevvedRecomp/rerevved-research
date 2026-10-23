@@ -1,0 +1,279 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0270",
+  "topic": "native-renderer-sampler-shadow-write-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact bytes do the selected post-constant sampler setters write, and can those writes overlap the device float shadows or staged stack blocks under the retained index and receiver conditions?",
+  "scope": {
+    "parent": "0x82C2A8E8",
+    "selectedCallSites": [
+      {
+        "site": "0x82C2F360",
+        "setter": "0x8268F140",
+        "arguments": {
+          "r3": "loaded from stack slot r1+0x14D8 (r1+5336); the slot was filled from [0x8314F300] at 0x82C2EEE8",
+          "r4": "loaded value from [r1+0x12CC] (r1+4812), current record index",
+          "r5": "loaded value from [r1+0x14DC] (r1+5340), sourced from [r1+0x8B0 + 4*i]"
+        },
+        "normalReturn": "0x82C2F370 -> 0x82C2F87C"
+      },
+      {
+        "site": "0x82C2FD08",
+        "setter": "0x8268EF98",
+        "arguments": {
+          "r3": "loaded from stack slot r1+0x1530 (r1+5424); the slot was filled from [0x8314F300] at 0x82C2F87C",
+          "r4": "loaded value from [r1+0x12CC] (r1+4812), current record index",
+          "r5": "loaded value from [r1+0x1534] (r1+5428), sourced from [r1+0x11F0 + 4*i]"
+        },
+        "normalReturn": "0x82C2FD18 -> 0x82C30210"
+      }
+    ],
+    "loopIndex": {
+      "slot": "r1+0x12CC",
+      "initialization": "The retained parent path initializes the index to zero before the selected dispatch chain.",
+      "increment": "0x82C2D1FC loads the index, adds one, and stores it back at r1+0x12CC.",
+      "bound": "0x82C2D208 loads the incoming object from r1+0x16F4, reads its unsigned +0x420C field, and selects bound 4 when that field is <=2 or bound 8 otherwise.",
+      "retentionGate": "The domain applies only when each setter returns normally and the selected dispatch chain retains the current index through the 0x82C31538 -> 0x82C2D1FC loopback."
+    },
+    "receiverBase": "Both selected caller paths fill a stack argument slot from [0x8314F300], and each selected BL reloads that slot into r3; call the loaded receiver R. The accepted world staging source uses that same symbolic base for +0x780 and +0x1780, while its semantic device identity remains qualified.",
+    "stagedRanges": [
+      "S+0x80..S+0x67F inclusive, where S=r1",
+      "S+0x900..S+0x97F inclusive, where S=r1"
+    ],
+    "deviceFloatShadowRanges": [
+      "D+0x780..D+0xD7F inclusive, where D=[0x8314F300]",
+      "D+0x1780..D+0x17FF inclusive, where D=[0x8314F300]"
+    ],
+    "boundary": "This packet expands only the explicit interior stores in the two selected sampler setter windows and the exact parent argument/index windows. It compares those computed stores with the accepted device float-shadow and staged stack intervals. ABI save/restore helpers and the shared callee remain unexpanded, so their frame or memory effects are outside this comparison. The packet does not prove draw consumption, pass order, runtime cadence, mutation-free restore, lifetime, or safe per-frame constant reuse."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-world-constant-dataflow",
+      "use": "Provides the shared-pointer source base, staged stack extents, and the guarded parent path."
+    },
+    {
+      "topic": "native-renderer-world-constant-consumption",
+      "use": "Provides the selected F140/EF98 caller arms, normal-return joins, loopback boundary, and the separate earlier draw frontier."
+    },
+    {
+      "topic": "native-renderer-world-constant-ownership",
+      "use": "Provides the accepted world writer and the qualified device float-shadow field ranges."
+    },
+    {
+      "topic": "native-renderer-draw-object-fields",
+      "use": "Provides sampler_shadow identity, EF98 catalog identity RVA-SYM-0449, and the accepted dirty-field qualification."
+    },
+    {
+      "topic": "native-renderer-d3d-runtime-surface",
+      "use": "Provides the accepted D3D sampler-state setter identities and their runtime-surface qualification."
+    }
+  ],
+  "setterBody": {
+    "receiverFormula": "record = R + 24*(i+48) = R+0x480+0x18*i",
+    "stores": [
+      {
+        "operation": "stw",
+        "address": "record+0x10 = R+0x490+0x18*i",
+        "bytes": 4,
+        "multiplicity": "once before the word-0 update and once after it"
+      },
+      {
+        "operation": "stw",
+        "address": "record+0x0C = R+0x48C+0x18*i",
+        "bytes": 4,
+        "multiplicity": "once"
+      },
+      {
+        "operation": "std",
+        "address": "R+0x18",
+        "bytes": 8,
+        "multiplicity": "once; ORs the computed dirty mask with the old 64-bit word"
+      }
+    ],
+    "reads": [
+      "record+0x10 and record+0x0C before the corresponding updates",
+      "R+i+0x2E94 and R+i+0x2EE2 as byte-derived table selectors",
+      "R+0x18 before the dirty-mask OR"
+    ],
+    "bodyParity": "The generated interior windows for F140 and EF98 have the same receiver/index formulas and explicit store offsets. Their bit masks and shifts differ, so this packet joins that explicit interior footprint but does not equate their resulting sampler values. ABI save/restore helpers (__savegprlr_29 and __restgprlr_29) and the canonical shared callee 0x827F7C8C were not expanded, so possible helper or frame effects remain outside this footprint.",
+    "coverage": "The listed writes and reads are explicit generated interior instructions. The canonical wrappers, ABI save/restore helpers, and shared callee 0x827F7C8C were not expanded; this packet does not claim that those unexpanded paths have no memory or frame effects."
+  },
+  "argumentFlow": {
+    "f140": "At 0x82C2EEE8, r5 carries i for the indexed load; the payload value is loaded into r11 from [r1+0x8B0 + 4*i] and stored to [r1+0x14DC]. The receiver value loaded from [0x8314F300] is stored to [r1+0x14D8]. 0x82C2F360 later reloads the payload into r5 from [r1+0x14DC], the index into r4 from [r1+0x12CC], and the receiver into r3 from [r1+0x14D8].",
+    "ef98": "At 0x82C2F87C, r11 carries i for the indexed load; the payload value is loaded into r8 from [r1+0x11F0 + 4*i] and stored to [r1+0x1534]. The receiver value loaded from [0x8314F300] is stored to [r1+0x1530]. 0x82C2FD08 later reloads the payload into r5 from [r1+0x1534], the index into r4 from [r1+0x12CC], and the receiver into r3 from [r1+0x1530].",
+    "receiverJoin": "The selected r3 arguments and the world copy source both materialize [0x8314F300]. This supports a same-base comparison to D+0x780 and D+0x1780, but does not independently prove the runtime object's semantic device identity or nonaliasing with S=r1."
+  },
+  "rangeComparison": {
+    "sameBaseDevice": {
+      "selectedIndexDomain": {
+        "bound4": {
+          "indices": "0..3",
+          "recordStoreOuterSpan": "D+0x48C..D+0x4DB inclusive",
+          "floatShadowOverlap": "none for the listed explicit interior stores"
+        },
+        "bound8": {
+          "indices": "0..7",
+          "recordStoreOuterSpan": "D+0x48C..D+0x53B inclusive",
+          "floatShadowOverlap": "none for the listed explicit interior stores"
+        }
+      },
+      "floatShadowIntervals": {
+        "vertex": "D+0x780..D+0xD7F",
+        "pixel": "D+0x1780..D+0x17FF",
+        "dirtyWord": "The listed explicit dirty store D+0x18..D+0x1F is disjoint from both"
+      },
+      "outOfDomainExamples": {
+        "vertex": "For ordinary nonnegative computed indices, the +0x0C lane intersects D+0x780..D+0xD7F at i=32..95; the +0x10 lane has the same index interval.",
+        "pixel": "For ordinary nonnegative computed indices, the +0x0C lane intersects D+0x1780..D+0x17FF at i=203..207; the +0x10 lane intersects it at i=202..207.",
+        "qualification": "These are generic computed-address examples outside the retained 0..3/0..7 domain. No helper range check was assumed."
+      }
+    },
+    "stagedStack": {
+      "directAccess": "The selected generated interior windows contain no explicit r1-based data store; the observed data stores are through R. ABI save/restore helpers (__savegprlr_29 and __restgprlr_29) and unexpanded callee 0x827F7C8C remain outside this audit, so their frame effects are unresolved.",
+      "noAliasCondition": "For every selected i, each explicit interior store interval R+0x48C+0x18*i..R+0x48F+0x18*i, R+0x490+0x18*i..R+0x493+0x18*i, and R+0x18..R+0x1F must be disjoint from S+0x80..S+0x67F and S+0x900..S+0x97F.",
+      "consequence": "The explicit interior stores cannot be excluded from altering the staged stack bytes unless that interval condition is checked for every selected i, including when R and S are distinct symbolic bases. If any R/S relation makes a listed interval intersect a staged range, those stores can alter the staged bytes. ABI save/restore and unexpanded callee frame effects remain unresolved. The selected argument flow does not prove the required disjointness."
+    },
+    "conditionalResult": "For the listed explicit interior stores, the selected 0..3/0..7 index domain is statically noninterfering with the same-base device float-shadow ranges. That result is conditional on the retained loop bound, normal returns, and receiver identity; unexpanded ABI or shared-callee effects remain unresolved, so this is not a general noninterference or reuse proof."
+  },
+  "consumerSummary": [
+    {
+      "address": "0x8268F140",
+      "meaning": "Selected sampler shadow setter; explicit interior stores write record +0x0C/+0x10 lanes and OR dirty R+0x18.",
+      "confidence": "strong",
+      "catalogId": null
+    },
+    {
+      "address": "0x8268EF98",
+      "meaning": "Selected sampler shadow setter; same explicit interior write footprint as F140 with different value masks.",
+      "confidence": "strong",
+      "catalogId": "RVA-SYM-0449"
+    },
+    {
+      "address": "0x82C2F360",
+      "meaning": "Selected F140 callsite; supplies current index, shared receiver, and per-index r5 value.",
+      "confidence": "strong",
+      "catalogId": null
+    },
+    {
+      "address": "0x82C2FD08",
+      "meaning": "Selected EF98 callsite; supplies current index, shared receiver, and per-index r5 value.",
+      "confidence": "strong",
+      "catalogId": null
+    },
+    {
+      "address": "0x82C2D1FC",
+      "meaning": "Post-chain index increment feeding the next selected iteration.",
+      "confidence": "strong",
+      "catalogId": null
+    },
+    {
+      "address": "0x82C2D208",
+      "meaning": "Unsigned incoming-object field gate selecting loop bounds 4 or 8.",
+      "confidence": "strong",
+      "catalogId": null
+    },
+    {
+      "address": "0x8314F300",
+      "meaning": "Shared receiver/source base used by the selected setter arguments and float-shadow staging source.",
+      "confidence": "strong",
+      "catalogId": null
+    }
+  ],
+  "observations": [
+    "The canonical DumpFunctions query resolves both requested entries but decompiles each as an undefined-void wrapper to 0x827F7C8C; the generated title source supplies the explicit interior stores. ABI save/restore helpers and the shared callee remain unexpanded.",
+    "The generated F140 and EF98 interior windows both compute R+0x480+0x18*i, read record words, store +0x10, store +0x0C, store +0x10 again, and OR a computed mask into R+0x18.",
+    "The selected F140 and EF98 caller windows reload the same current index at r1+0x12CC and materialize their r3 receivers from [0x8314F300].",
+    "The raw D1FC/D208 windows corroborate the increment slot and the unsigned +0x420C incoming-object bound test."
+  ],
+  "inferences": [
+    "With the retained normal-return loop and bound gate, the listed explicit interior stores land below +0x53C relative to the shared receiver and cannot overlap the same-base +0x780 or +0x1780 float-shadow ranges.",
+    "A receiver/frame alias satisfying the listed interval intersections would let the listed explicit interior stores or dirty OR overwrite staged stack bytes; no static nonaliasing assumption is promoted. ABI save/restore and shared-callee frame effects remain unresolved.",
+    "The explicit interior footprint narrows the post-constant alias frontier but does not establish a later draw read, a backwards ordered edge to 0x82C2BDE4, cadence, restore behavior, lifetime, or safe constant reuse."
+  ],
+  "unknowns": [
+    "Whether the selected global receiver is nonaliased with the current r1 frame at runtime.",
+    "Whether the normal-return loopback and the incoming-object field retain the stated index domain on every execution.",
+    "Which later state or draw consumer observes the sampler records and dirty word, if any, and whether it is ordered after the staged float writes.",
+    "Runtime frequency, pass identity, byte retention, save/restore behavior, lifetime, and upload-reuse safety."
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only canonical-project Ghidra queries against the pinned image, followed by narrow generated-code windows for the exact selected callers, producers, loop bound, and setter interiors. No runtime launch or image repair was used.",
+    "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "queries": [
+      {
+        "question": "Confirm the selected sampler setter entries and canonical body results",
+        "script": "ghidra/DumpFunctions.java",
+        "targets": ["0x8268F140", "0x8268EF98"],
+        "readOnly": true,
+        "scriptEnv": {
+          "REREVVED_TARGET_VAS": "0x8268F140,0x8268EF98"
+        },
+        "mode": "foreground-read-only",
+        "result": "Both entries returned status OK. Ghidra named FUN_8268f140 and FUN_8268ef98, each with caller FUN_82302a50 and callee FUN_827f7c8c; canonical decompilation showed an undefined-void wrapper with a nonreturn warning. Generated title source was used to decode the explicit interior stores without expanding the ABI helpers or shared callee."
+      },
+      {
+        "question": "Confirm selected parent argument producers and the index increment/bound windows",
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": ["0x82C2EEE8", "0x82C2F360", "0x82C2F87C", "0x82C2FD08", "0x82C2D1FC", "0x82C2D208"],
+        "radius": 16,
+        "readOnly": true,
+        "scriptEnv": {
+          "REREVVED_TARGET_VAS": "0x82C2EEE8,0x82C2F360,0x82C2F87C,0x82C2FD08,0x82C2D1FC,0x82C2D208",
+          "REREVVED_WORD_RADIUS": "16"
+        },
+        "mode": "foreground-read-only",
+        "result": "All six exact radius-16 windows returned status OK. The raw words show F140 argument materialization at 0x82C2EEE8 and call at 0x82C2F360, EF98 argument materialization at 0x82C2F87C and call at 0x82C2FD08, index increment at 0x82C2D1FC, and the incoming-object +0x420C bound test at 0x82C2D208."
+      },
+      {
+        "question": "Confirm provisional manifest ID uniqueness",
+        "script": "rg",
+        "parameters": "-n 'RVA-F-0270' manifests -g '*.json' -g '*.md'",
+        "mode": "repository-read-only before this manifest was written",
+        "result": "No match. The highest existing RVA-F identifier at the check was RVA-F-0269."
+      }
+    ],
+    "generatedWindows": [
+      "generated:rerevved/generated/default/rerevved_recomp.140.cpp:12857-12960",
+      "generated:rerevved/generated/default/rerevved_recomp.200.cpp:12638-12741",
+      "generated:rerevved/generated/default/rerevved_recomp.106.cpp:37334-37363",
+      "generated:rerevved/generated/default/rerevved_recomp.106.cpp:37911-37922",
+      "generated:rerevved/generated/default/rerevved_recomp.106.cpp:38609-38638",
+      "generated:rerevved/generated/default/rerevved_recomp.106.cpp:39198-39209",
+      "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33481-33527"
+    ],
+    "generatedSource": {
+      "repository": "rerevved",
+      "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92"
+    },
+    "bodyInventory": {
+      "count": 3,
+      "limit": 8,
+      "reusedBodies": ["0x82C2A8E8"],
+      "newBodies": ["0x8268F140", "0x8268EF98"],
+      "notExpandedCallees": ["0x827F7C8C"],
+      "qualification": "The count includes the already inspected parent body and the two newly inspected setter bodies. The canonical Ghidra wrappers' shared callee 0x827F7C8C and ABI save/restore helpers were not expanded, and no sibling dispatch body, draw body, or helper was added."
+    },
+    "qualification": "The explicit interior stores and argument flow are supported by the generated windows and corroborating raw instruction centers. The index domain depends on the retained normal-return loop and incoming-object field; ABI helper/frame effects, receiver/frame nonaliasing, later consumers, runtime execution, and temporal reuse are not proved."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": [],
+    "result": "No catalog file is changed. EF98 retains RVA-SYM-0449; F140 is reported by address and remains without a new symbol ID."
+  },
+  "guards": [
+    "Treat the selected 0x82C2F360 and 0x82C2FD08 paths as normal-return conditional edges; do not infer the index domain if the loopback, counter retention, or incoming-object field is not retained.",
+    "Do not treat the selected-domain same-base nonoverlap as a general bound check. For arbitrary computed indices, the record lanes can overlap the device float-shadow intervals at the listed out-of-domain indices.",
+    "Do not assume the global receiver and r1 frame are nonaliased. Apply the explicit interval condition before excluding writes to staged stack blocks.",
+    "Do not send the setter footprint backwards into the earlier 0x82C2BDE4 -> 0x82C29628 draw without a real ordered-state edge; do not expand 0x82C29628 solely because it is nearby.",
+    "A matched static footprint of the listed explicit interior stores is conditional noninterference only. It does not bound unexpanded ABI or shared-callee frame effects, or prove mutation-free restore, lifetime, cadence, pass order, or safe per-frame constant reuse.",
+    "The earlier F0267 SetTexture loop and its separate seven-arm U32 audit remain outside this footprint packet."
+  ],
+  "nextDiscriminator": {
+    "site": "0x82C31538 -> 0x82C2D1FC and the earlier 0x82C2BDE4 -> 0x82C29628 ordered draw frontier",
+    "question": "Which concrete ordered state or draw consumer follows the sampler setter chain, and does it preserve the receiver/index conditions needed to use the static noninterference result?",
+    "limits": "The explicit interior setter stores close the selected generated data-store windows and parent argument flow, but unexpanded ABI/shared-callee effects, runtime cadence, draw consumption, frame alias, save/restore, and reuse remain unresolved. Any new query must add a real argument or ordered-state discriminator rather than re-expanding these bodies."
+  },
+  "conclusion": "The generated F140 and EF98 interior windows have the same explicit write footprint: for receiver R=r3 and index i=r4, they write 4 bytes at R+0x48C+0x18*i, 4 bytes at R+0x490+0x18*i, write the +0x10 word a second time, and OR an 8-byte dirty mask at R+0x18. The selected callers materialize R from [0x8314F300] and i from [r1+0x12CC]. Under the retained normal-return loop and the incoming-object +0x420C test, i is 0..3 or 0..7, so these explicit stores are outside same-base device float shadows D+0x780..D+0xD7F and D+0x1780..D+0x17FF; arbitrary computed indices can overlap those ranges at VS i=32..95 or PS i=202..207. The generated interior windows contain no explicit r1-based data store, so excluding staged-stack alteration by those stores requires the explicit interval condition for R and S=r1; a receiver/frame alias could overwrite them. ABI save/restore helpers and unexpanded callee 0x827F7C8C may have additional frame or memory effects and remain unresolved. This is a conditional explicit-store footprint and noninterference result, not a complete-body, draw, cadence, lifetime, restore, or safe constant-reuse proof."
+}

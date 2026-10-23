@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0118",
+  "topic": "native-renderer-vdswap-boundary",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact ReRevved guest values reach VdSwap, and which of them identify the frontbuffer presented by the supported SDK?",
+  "scope": {
+    "owner": "0x826A4638",
+    "callsite": "0x826A4884",
+    "import": "0x82E92454",
+    "sdkCommit": "e89618afbe9c6b5e178797b1ee5e7d03ec3d77e6",
+    "boundary": "This packet establishes the exact static ReRevved VdSwap call, the maintained SDK ABI, one exact Xenos runtime correlation from a title Resolve destination to the first VdSwap source, and one native runtime observation of the explicit-buffer factory and both retained slots. It does not prove native-mode execution of the per-item provider, Resolve, or VdSwap, guest-memory lifetime, CPU or GPU completion, a host upload path, color correctness, or native visible output."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-d3d-inventory",
+      "use": "open resolve, swap, and presentation frontiers"
+    },
+    {
+      "topic": "native-renderer-d3d-device-publication",
+      "use": "bounded device-publication and post-publication setup limits"
+    }
+  ],
+  "currentEvidence": {
+    "method": "foreground read-only DumpFunctions.java, FindFieldRefs.java, DumpMemoryWords.java, DumpDataValues.java, FindPointerValues.java, and DumpStringsInRange.java queries for the VdSwap owner, its pre-swap command path and wait field, the display-descriptor cache producer, the nearby diagnostic capture cluster, the exact D3D resolve entry, and the resolve-destination RTTI and vtables; narrow generated-code corroboration; maintained SDK e89618a VdSwap, packet, and Xenos register inspection; one bounded read-only Xenos resolve-to-swap correlation run; and one bounded native identity run with read-only factory and provider observers",
+    "ghidraResult": "The canonical project identified the exact function entry but truncated at save thunk 0x827F7C78. It supplied no usable body or complete caller result.",
+    "generatedCall": {
+      "owner": "0x826A4638",
+      "site": "0x826A4884",
+      "target": "0x82E92454",
+      "continuation": "0x826A4888",
+      "result": "The owner prepares all VdSwap register and stack arguments and calls the exact import. It then stores the retained reservation helper result plus 256 bytes in device field +0x30, not VdSwap's return value."
+    },
+    "generatedCorroboration": {
+      "definition": "generated/default/rerevved_recomp.65.cpp:12613",
+      "descriptorAndScalarProducers": "generated/default/rerevved_recomp.65.cpp:12691",
+      "systemCommandBuffer": "generated/default/rerevved_recomp.65.cpp:12869",
+      "swapCall": "generated/default/rerevved_recomp.65.cpp:12905"
+    },
+    "reservationDataflow": {
+      "proof": "0x826A4840 requests 64 dwords, 0x826A4848 calls 0x8269C7A8, and 0x826A4858 retains its r3 in r30. The helper's successful return at 0x8269C804 loads device +0x30. At 0x826A4880, VdSwap r3 becomes r30 + 4. After the import call, 0x826A4888 computes r11 = r30 + 0x100 and 0x826A488C stores r11 at device +0x30. No VdSwap return-value dependency supplies that store.",
+      "storage": "Initializer 0x8269C8E0 separates primary-ring base +0x3A30 and mask +0x3A34 from command-buffer segment start +0x3A50 and cursor +0x30. The reservation argument establishes neither primary-ring membership nor physical allocation non-overlap.",
+      "locators": [
+        "ghidra/DumpFunctions.java:0x8269C7A8,0x826A4638,0x8269C8E0",
+        "ghidra/DumpMemoryWords.java:0x8269C7D8,0x826A4868 word radius 12; ranges 0x8269C7A8-0x8269C808,0x826A4838-0x826A4898",
+        "ghidra/DumpMemoryWords.java:0x8269CB60 word radius 32; range 0x8269CAE0-0x8269CBE0",
+        "rerevved generated/default/rerevved_recomp.211.cpp:sub_826A4638, guest 0x826A4840-0x826A488C"
+      ],
+      "qualification": "Exact instruction words and narrow generated corroboration establish this static register flow despite save-thunk truncation. They do not prove runtime reservation publication, ownership, lifetime, or completion. Earlier generated-file locators above retain their original provenance."
+    },
+    "sdkAuthority": "rerevved-rexglue-sdk e89618a src/kernel/xboxkrnl/xboxkrnl_video.cpp:440-521",
+    "sourceCompletionBoundary": {
+      "ordinaryCaller": "The generated 0x826ABEA8 worker holds the device critical section, calls 0x826A4630 at 0x826ABF80, then calls the VdSwap owner at 0x826ABF90. The alternate 0x82517E38 caller has the same 0x826A4630-before-0x826A4638 order at 0x82517E58 and 0x82517E88.",
+      "flushEntry": "0x826A4630 is only a tail wrapper that passes literal zero as r4 to 0x826A4150.",
+      "flushBody": "One read-only DumpFunctions.java query identifies 0x826A4150 and its direct callees. Narrow generated corroboration shows that it emits command words through 0x8269CD20 and 0x8269BF40, passes 0x826A3FB8 as a packet callback target, advances the device +0x30 command-buffer cursor, and sets device byte +0x2ABD bit 0x10. The exact body contains no frontbuffer read and no source-specific CPU completion wait.",
+      "packetCallback": "A second read-only DumpFunctions.java query identifies 0x8269BF40, 0x826A3FB8, and 0x826A9C30. Ghidra truncates the first two at save thunks and the third at bad instruction data. Narrow generated corroboration shows 0x8269BF40 writing command words and 0x826A3FB8 updating pacing, writeback, and MMIO-related device state when invoked; it does not establish CPU-side frontbuffer freshness at the later VdSwap call.",
+      "result": "The pre-swap chain establishes command-stream order, not a CPU-readable producer-completion gate for the frontbuffer virtual address. A native hook at 0x826A4884 therefore cannot treat page readability as proof that the source contains the completed frame."
+    },
+    "displayDescriptorCache": {
+      "producer": "0x82ABE328 copies the six VdSwap fetch dwords to device offsets +0x3A18 through +0x3A2C from device offsets +0xBC, +0xC8, +0x9C, +0xA0, +0xB8, and +0xC4. Generated corroboration is at generated/default/rerevved_recomp.79.cpp:23651-23678.",
+      "caller": "0x82AB9538 calls 0x82ABE328 at 0x82AB9728; 0x82ABBCA0 calls 0x82AB9538 at 0x82ABBDCC after updating device configuration fields, and reset or recreation paths call 0x82ABBCA0.",
+      "result": "This is configuration-time display-descriptor cache population, not a per-frame resolve or a completion signal. It explains the descriptor consumed by 0x826A4638 but does not identify the operation that makes its base address current."
+    },
+    "resolveIdentity": {
+      "entry": "0x8269E520",
+      "extent": "The generated function occupies 0xE50 bytes through the next entry at 0x8269F370.",
+      "ghidra": "A foreground read-only query identified the exact entry and one recognized screenshot caller at 0x8250B350, then truncated at save thunk 0x827F7C50. The generated call graph independently contains nine direct callsites across seven callers, so the incomplete Ghidra caller list is not used as reachability closure.",
+      "abi": "The function retains r3 as the device, r4 as flags, r5 as a source rectangle, r6 as the destination texture, r7 as a destination point, r8 and r9 as destination subresource selectors, r10 as clear-color data, and f1 plus stack arguments as clear values or parameters. It reads the destination texture fetch descriptor from r6 + 0x1C through +0x30.",
+      "registerProof": "The function emits Xenos resolve state and explicitly writes register indices 0x2318 and 0x231B, decimal 8984 and 8987, before returning. Maintained SDK e89618a names these RB_COPY_CONTROL and RB_COPY_DEST_INFO. Generated corroboration is at generated/default/rerevved_recomp.163.cpp:12758-14889.",
+      "negativeCluster": "The nearby 0x826B1978, 0x826B1DA0, 0x826B26A8, and 0x826B2A48 cluster is conditional diagnostic frame-capture and reporting work immediately before swap. It is not D3DDevice_Resolve and supplies no production or completion gate.",
+      "result": "0x8269E520 is the exact ReRevved D3DDevice_Resolve semantic boundary. Runtime evidence now selects one exact destination produced at callsite 0x8250AFEC, while completion for a title-owned renderer remains unproved."
+    },
+    "runtimeCorrelation": {
+      "runId": "NATIVE-CORR-20260830-0001",
+      "titleCommit": "1ad60ba98b9a43a1684c2bd27b2824ff36265378",
+      "sdkCommit": "e89618afbe9c6b5e178797b1ee5e7d03ec3d77e6",
+      "sdkVersion": "0.10.0.16-dev.ge89618a",
+      "renderer": "xenos/rov",
+      "executableSha256": "d7359c02154186eebf10c90db985db5f3b7e64e9c0119cd3a72b90e379217865",
+      "logSha256": "75d0670eca18b53129230ca05e41d8f8a07a5f2fc9ec87a7c5437a0df47c9b50",
+      "exactMatch": "The first VdSwap epoch exactly matched all six fetch-descriptor dwords from Resolve callsite 0x8250AFEC, return 0x8250AFF0, with flags 0, mip 0, slice 0, resolve sequence 3, swap sequence 1, and source base 0xFF6F7000.",
+      "laterNegative": "Swap sequence 492 had no resolve after the preceding observed swap. This is retained as evidence that an older descriptor must not be reused as a same-epoch producer match.",
+      "session": "The interactive session ran from 2026-08-30 16:58:18 through title termination at 17:17:33, exited zero, left no process, and had no owner-visible problem. The isolated evidence root contained no reparse point.",
+      "classification": "Promoted as exact Xenos producer correlation only. It proves descriptor identity and the producing callsite and subresource for that swap epoch; it does not prove resolve completion, CPU-readable freshness, lifetime, layout conversion, or native presentation."
+    },
+    "runtimeFactoryIdentity": {
+      "runId": "NATIVE-ID-20260830-0001",
+      "titleCommit": "61e96e719199851658347fed5dbedeba187d877f",
+      "sdkCommit": "e89618afbe9c6b5e178797b1ee5e7d03ec3d77e6",
+      "sdkVersion": "0.10.0.16-dev.ge89618a",
+      "renderer": "native",
+      "executableSha256": "63a3a044edc124f5c6b8c88b9ecfd82fd3dc63af3c6b72399b0b5f2d9d8064a7",
+      "logSha256": "11a48b1d23234463ab6bc078274a373ffaeff372f955fa88c777175a49cfe64c",
+      "exactStores": "Factory 0x825184D0 produced container 0x4014C000 with exact vptr 0x8204767C. The observer verified completed slot stores at +0x90 and +0x94: slot 0 returned 0x40102034 and slot 1 returned 0x40102068. The active selector was zero for both observations, and the bounded two-record budget was exhausted exactly.",
+      "providerReachability": "No record occurred at the selected per-item provider observer 0x8250AE84. The same log reports that VdSetGraphicsInterruptCallback, VdInitializeRingBuffer, and VdEnableRingBufferRPtrWriteBack were ignored because no GPU emulation was loaded. This run therefore does not close the concrete vptr dispatched before Resolve callsite 0x8250AFEC.",
+      "session": "The interactive native session ran from 2026-08-30 19:04:27 through title termination at 19:06:22. The window was repeatedly OS-responsive, the owner reported no visible error or dialog, and the title closed normally with no remaining process. The isolated evidence root contained no reparse point.",
+      "classification": "Promoted as exact native factory identity only. It proves execution of the NiXenonExplicitBuffersData factory, its concrete container vptr, two distinct retained slot values, and initial selector state. It does not prove provider dispatch, Resolve, VdSwap, GPU completion, resource layout, or native frame output. Repeating the same native boot is not a useful discriminator."
+    },
+    "waitPayloadDiscriminator": {
+      "query": "A foreground read-only FindFieldRefs.java query bounded to device field +0x2A94 and functions 0x8269C8E0, 0x8269E520, 0x826A3EB8, 0x826A3FB8, and 0x826A4150 found the two exact 0x826A4150 loads at 0x826A41CC and 0x826A42D8. The configured project truncates the save-thunk functions, so absence elsewhere is not used as closure; generated code supplies the complete bounded corroboration.",
+      "preSwapPackets": "With r4 zero, 0x826A4150 emits two PM4_WAIT_REG_MEM packets with wait_info 0x13, the GPU encoding of device[+0x2A94] + 4 with endian bits 2, a full 0xFFFFFFFF mask, and wait interval 0x100. The first compares equal to 1; after callback-packet construction through 0x8269BF40, the second compares equal to 0.",
+      "fieldLifecycle": "Ring initialization at 0x8269C8E0 allocates the independent 32-byte device[+0x2A94] block, embeds its base in the PM4_ME_INIT payload, and initializes related system-command-buffer state. Queue and interrupt handlers 0x826A3EB8 and 0x826A3FB8 clear block offset +4 to zero while maintaining pacing and callback state. This is general command-processor/system-buffer handshake state.",
+      "resolvePacket": "The exact Resolve entry 0x8269E520 has no device +0x2A94 access. Its late PM4_WAIT_REG_MEM is a different register wait: wait_info 3, register 2609 (0xA31), reference r28, mask 0x80000000, and interval 8. The function separately reads device +0x2A9C and publishes that value to destination fields +8 and +12.",
+      "sdkSemantics": "Maintained SDK e89618a decodes PM4_WAIT_REG_MEM as wait_info, poll address or register, reference, mask, and wait interval. Bit 0x10 selects memory and condition 3 selects equality. PM4_ME_INIT is separate micro-engine initialization, not a source-specific Resolve fence.",
+      "result": "The 0x826A4150 wait address and compare payload do not alias state produced by the exact 0x8250AFEC Resolve path. They order a general system-command-buffer handshake inside the GPU command stream and do not create a CPU-side completion point before the later title-owned VdSwap hook. This closes the proposed pre-swap wait as a native CPU-upload freshness gate."
+    },
+    "destinationLifetime": {
+      "rendererEntry": "0x8250AC90 is reached through the NiXenonRenderer table at 0x820471B0. For the exact 0x8250AFEC Resolve, r6 is loaded from stack offset 116 immediately before the call.",
+      "providerType": "Runtime-initialized NiRTTI objects at 0x82F8FB9C and 0x82F8FBC4 name NiXenon2DBufferData and NiXenonAdditionalDepthStencilBufferData. The exact per-iteration path filters for NiXenon2DBufferData before invoking virtual slot +0x0C. The default onscreen subclass candidate is NiXenonExplicitBuffersData, whose vtable starts at 0x8204767C and whose +0x0C slot is 0x82517860. Static code does not prove that the particular object dispatched at 0x8250AFEC has that vptr.",
+      "providerOutput": "0x82517860 reads the 0/1 selector at object +0x98, selects object +0x90 or +0x94, writes that retained buffer pointer to the first output, writes zero to the second output, and returns true. The exact call then loads that first output from stack offset 116 as Resolve r6.",
+      "defaultGroupChain": "0x825184D0 allocates the 0x9C-byte NiXenonExplicitBuffersData object, copies its configuration, creates two buffer objects through the renderer device virtual +0x08, stores them at +0x90 and +0x94, and initializes +0x98 to zero. Native run NATIVE-ID-20260830-0001 proves execution of that factory with exact vptr 0x8204767C and distinct returned slot values 0x40102034 and 0x40102068. Its callers add the object to the default render-target group through group virtual +0x64. Initialization assigns renderer +0x550 from the group pointer held at renderer +0x54C; static code shows 0x8250AC90 enumerating that current group, but the native run did not reach its provider observer.",
+      "rendererDeviceCreator": "The renderer initializer constructs the 0x248-byte device object through 0x82534F48 and publishes it at renderer +0x574. Constructor 0x82534F48 installs vtable 0x8204A1B0. A read-only DumpMemoryWords.java query proves that vtable slot +0x08 is exactly 0x82533DB8; this is the virtual called twice by factory 0x825184D0. A foreground read-only DumpFunctions.java query identifies the exact function but truncates after its save thunk, so generated/default/rerevved_recomp.39.cpp supplies the bounded body corroboration. Creator 0x82533DB8 allocates an exact 0x34-byte guest resource header, passes width, height, depth, format or usage values and output-size pointers through helpers 0x826B6FE8 and 0x826B6D68, allocates the reported primary and optional secondary backing regions through 0x82E29168, then helper 0x826B7140 patches their page-aligned bases into header fields +0x20 and, when applicable, +0x30. The header builder copies an exact 0x34-byte template. This closes the concrete creator, header size, size derivation, backing-allocation count, and base-field population path without assigning unsupported public API names or host layout semantics.",
+      "presentAndGeneration": "NiXenonExplicitBuffersData virtual +0x14 is 0x82517E38. It selects +0x90 or +0x94 using +0x98, calls the pre-swap path and VdSwap with that exact entry, then flips +0x98 between zero and one. Run NATIVE-CORR-20260830-0001 separately proves that the first VdSwap descriptor exactly equals the descriptor from the 0x8250AFEC Resolve epoch. Together these facts make 0x82517860 the strongest concrete provider candidate, but they do not exclude a second wrapper carrying the same descriptor. The active selector is frame state, not an allocation-generation counter.",
+      "retentionAndDestruction": "0x82518678 releases both +0x90/+0x94 buffer objects through their atomic reference count at +4, invokes the device destruction path when a count reaches zero, and clears both fields. 0x82518E88 runs that cleanup and frees the 0x9C-byte container. This proves container ownership and alternating-buffer reuse, but not the lower device allocator's generation policy.",
+      "callerLifetime": "The caller performs no visible AddRef, Release, or persistent store for the returned destination. After Resolve returns at 0x8250AFF0, it advances the iteration and reacquires subsequent outputs. Later cleanup walks the provider outputs through another virtual slot before clearing the transient renderer pointer at +0x550. Static code proves reacquisition and delegated lifetime, not stable pointer identity or absence of recycling.",
+      "descriptorUse": "Resolve retains r6 locally and consumes its fetch-descriptor fields at +0x1C through +0x30. A separately proved 0x34-byte backend template producer writes the same descriptor region, but no static edge ties that producer to this exact r6, so it is not promoted as this destination's allocator or populator.",
+      "safeKey": "The smallest non-pointer correlation key is an immutable snapshot of all six fetch dwords plus mip and slice, scoped to callsite 0x8250AFEC. Flags and resolve/swap epoch remain validation and provenance. This key identifies an observed operation but is not an allocation-generation or lifetime proof.",
+      "unresolved": "The concrete vptr of the particular per-item object dispatched at 0x8250AFEC remains unproved because native run NATIVE-ID-20260830-0001 did not reach the provider observer after its GPU-emulation and ring-buffer calls were ignored. The exact runtime width, height, format or usage values passed to creator 0x82533DB8, the allocation-generation identity supplied by allocator 0x82E29168, and the lower overwrite or recycling policy remain unresolved. Static evidence does not prove that no second wrapper can carry a duplicate six-dword descriptor.",
+      "result": "The explicit onscreen factory identity, concrete container vptr, two stored slot values, alternating selection, container ownership, refcount release boundary, exact renderer-device creator, 0x34-byte resource-header construction, backing-size derivation, and base-field population path are closed. Exact per-item dispatch identity and allocation generation are not. The callsite and descriptor snapshot are strong operation provenance, but still forbid a persistent host mirror keyed by a raw guest pointer or descriptor alone."
+    }
+  },
+  "abi": {
+    "r3": "command-buffer reservation + 0x4, produced from device +0x30 by helper 0x8269C7A8 with requested size 64 dwords; primary-ring membership is not established",
+    "r4": "pointer to the six-dword frontbuffer texture-fetch descriptor copied from incoming argument r28 + 0x1C and adjusted by the owner",
+    "r5": "system writeback pointer derived from device field +0x2A90 + 0x8",
+    "r6": "buffer returned through VdGetSystemCommandBuffer",
+    "r7": "second VdGetSystemCommandBuffer result",
+    "r8": "pointer to the frontbuffer virtual address derived from descriptor dword 1 base-address bits",
+    "r9": "pointer to the numeric texture format derived from descriptor dword 1 low six bits",
+    "r10": "pointer to the color-space value loaded from device field +0x352C",
+    "stackArgument9": "pointer to width derived from descriptor dword 2 and the device scaling value",
+    "stackArgument10": "pointer to height derived from descriptor dword 2 and the device scaling value",
+    "sdkUse": "The SDK byte-swaps the six descriptor dwords, requires every named pointer, requires the supplied virtual address to equal descriptor base_address << 12, translates it to physical memory, accepts only k_8_8_8_8 or k_2_10_10_10_AS_16_16_16_16, requires RGB color space zero and descriptor-matching width and height, then emits the swap packet."
+  },
+  "nextDiscriminator": {
+    "site": "The native GPU-emulation and ring-buffer reachability boundary before per-item provider dispatch, then semantic Resolve 0x8269E520 and present callsite 0x826A4884",
+    "question": "What minimum title-owned command and vblank service allows the title to advance from the proved explicit-buffer factory to provider and Resolve execution, and what typed Resolve and present work must the sole native renderer own so no Xenos packet work is silently discarded?",
+    "limits": "Do not repeat the same native boot as a discriminator and do not add a native VdSwap CPU-upload hook: the provider was unreachable in this configuration and the proposed title wait is disproved as a Resolve-specific CPU completion gate. Follow the ReBlue architecture at the semantic Resolve boundary, where native queue submission and retirement can own completion explicitly. Do not persist raw guest pointers, reuse ReXGlue texture-cache or presenter state, or claim parity from page readability."
+  },
+  "guards": [
+    "Do not infer native provider, Resolve, VdSwap, or visible-frame execution from the native factory observation.",
+    "Do not treat the command-buffer reservation, system writeback, or system-command-buffer values as the frontbuffer source.",
+    "Do not copy ReBlue surface fields, formats, offsets, or present policy.",
+    "Do not bypass guest-memory lifetime and synchronization requirements merely because the ABI exposes a virtual address or a pre-swap command-stream flush.",
+    "Do not make the research manifest a title runtime dependency."
+  ],
+  "conclusion": "ReRevved function 0x826A4638 directly calls VdSwap at 0x826A4884 with an exact frontbuffer fetch descriptor and separately derived virtual address, numeric format, RGB color space, width, and height pointers. Maintained SDK e89618a defines how those values identify the guest frontbuffer. Run NATIVE-CORR-20260830-0001 proves that the first VdSwap source exactly matches the six fetch dwords produced by D3DDevice_Resolve callsite 0x8250AFEC with flags zero, mip zero, and slice zero. The ordinary pre-swap 0x826A4150 memory waits instead use independent device +0x2A94 system-command-buffer state; the exact Resolve uses a separate register wait and never accesses that field. The strongest concrete provider candidate is NiXenonExplicitBuffersData virtual +0x0C at 0x82517860: it selects one of two retained buffers, while virtual +0x14 passes the active entry to VdSwap and then flips the selector. Native run NATIVE-ID-20260830-0001 proves that factory 0x825184D0 created the exact 0x8204767C container and stored two distinct returned buffers at +0x90 and +0x94 with initial selector zero. Static closure now proves that renderer-device vtable 0x8204A1B0 slot +0x08 is creator 0x82533DB8, which builds an exact 0x34-byte resource header, derives one or two backing sizes, allocates those regions, and patches their page-aligned bases into header fields +0x20 and optionally +0x30. The run did not reach the provider observer after native GPU-emulation and ring-buffer calls were ignored, so exact per-item dispatch, runtime descriptor values, allocation generation, recycling policy, and native frame execution remain unresolved. An immutable six-dword, mip, slice, callsite, and epoch snapshot is safe operation provenance but not a resource-generation key. A native VdSwap CPU-upload hook and a persistent host mirror remain inadmissible. The next bounded discriminator is the native command/ring reachability boundary followed by semantic Resolve and present ownership; repeating the same native boot is not useful."
+}

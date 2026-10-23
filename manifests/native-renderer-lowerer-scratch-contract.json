@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0315",
+  "topic": "native-renderer-lowerer-scratch-contract",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What connects lowerer scratch allocation, CPU writes, commit and selected tiled replay destinations, and where does safe reclaim remain unproved?",
+  "scope": {
+    "roots": ["0x826A2B58", "0x826A3048", "0x826A2FF0"],
+    "directSinkReturns": ["0x8250E94C", "0x825128E0", "0x825129C4"],
+    "selectedList": "L=G+0x33C0; cursor=word(G+0x33C8)",
+    "qualification": "Static conditional masks/strides and selected producer/decoder join; no actual runtime allocator row, root delivery, physical extent or safe reclamation proof."
+  },
+  "dependencies": [
+    {"topic": "native-renderer-d3d-completion-contract", "use": "Owns scratch units, completion domains and allocator ownership qualifications."},
+    {"topic": "native-renderer-shader-fetch-patch-boundary", "use": "Owns dirty, mode, cache/code and persistent helper boundaries."},
+    {"topic": "native-renderer-draw-state-reader-boundary", "use": "Owns retained dirty/allocator readers and alias limitations."},
+    {"topic": "native-renderer-tiling-wrapper-exit-boundary", "use": "Owns saved restoration, list finalization, failure and command-segment exits."},
+    {"topic": "native-renderer-worker-state-reader-boundary", "use": "Owns worker participation, lifecycle observers and retirement qualifications."}
+  ],
+  "currentEvidence": {
+    "method": "Serial foreground tools/run-headless.ps1 -ReadOnly native words and narrow exact-function generated windows. Three continuation ranges covered60 scalar geometry stores and3 actual BL commits. A separate7-function helper packet contained328 native words; selected pointer stores were corroborated independently. No runtime, build or program save supplied evidence.",
+    "identity": "Supported flat SHA2565C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680; mapped SHA256389EB006B1DCDE90C5DE775C92D67C18542B8FD9BD39845574206D4B213E9B13.470 differences in60 ranges stayed inside [0x827F3F50,0x827F4280), outside semantic words. Generated windows had individual SHA256 pins; handwritten title source was pinned to3129fb65f656394b2fb93e6b206d6d1b60157ba5, not a generation claim.",
+    "scratchContinuations": [
+      {"caller": "0x8250E718", "beginReturn": "0x8250E94C", "commitCall": "0x8250EA18", "writes": "20 BE float words at H+0..+76 step4; count4,stride20,mode6. Intervening indirect calls atE968/E994 through owner+1360 vtable+72/+76 remained unbound.", "corroboration": "rerevved:generated/default/rerevved_recomp.1.cpp:9044-9186"},
+      {"caller": "0x82512608", "beginReturn": "0x825128E0", "commitCall": "0x8251298C", "writes": "Same complete80-byte quad; no intervening call before commit on this reached conditional preliminary-quad arm.", "corroboration": "rerevved:generated/default/rerevved_recomp.114.cpp:9158-9283"},
+      {"caller": "0x82512608", "beginReturn": "0x825129C4", "commitCall": "0x82512B54", "writes": "Same complete80-byte quad after AF10; optional rectangle inputs changed values, with no intervening call before commit.", "corroboration": "rerevved:generated/default/rerevved_recomp.114.cpp:9313-9544"}
+    ],
+    "beginAndCommit": "A2B58 requested q=low32(count*stride)>>2 dwords, alignment16, from B818. Known q20 meant80 bytes, not20. Success staged G3484 pending command end,G3488=H,G3490=q, preserved G348C/G3494 and restored entry G30F0; final G18 OR1. A2FF0 only loaded G3484 to zero-extendedr11 and stored G30, preserving full incomingr3. It neither copied geometry nor freed storage. Other count/stride forms and caller aliases remained separate. Locators: rerevved:generated/default/rerevved_recomp.79.cpp:12994,13352,13657; rerevved_recomp.196.cpp:13107.",
+    "orderedDirtyEffects": {
+      "stride": "Sink used entryr6, indexed used entryr9; temporary stride was low8(stride>>2). Difference from G2E38 with nonzeroG3198 added G10 bit80000. Sink cleared G18 bit0 before its snapshot. Saved G30F0 was restored before the root takes.",
+      "groups": "In order: G00/G08 -> ACFF8; G10 low1E0000 -> ADD88 then resulting mask&G28 -> AC8C8; remaining G10 -> ACC60 groups FFF,1F000,03FFFC0000000000,000003FFFFE00000; G18 low32 -> ACEA0 then007FFFFC00000000 -> ACC60; G20 groups0000003FFFFFFFFF,00003FC000000000,007E000000000000,0100000000000000 -> ACC60,ACC60,ACD20,ACC60. Each processed qword was cleared; returned masks governed later calls. Numbers here were hexadecimal masks.",
+      "pressure": "Run encoders could enter AC610/C588 between groups. AC610 published G30, flushed and reloaded it before continuing. ADD88 metadata ADB98 could append4 words per entry and flush. ADA38 requested codeQ+5 through C7A8; C7A8 could flush then C270. Persistent ADC48 hit/reject/patch remained a distinct arm. AC6C8 G2ABD bit04 and G2940 were separate from allocation-failure bit20.",
+      "takes": "After restoring stride, G30>G38 selected C588. Sink took B818(q,16) atA2E00. Indexed always took vertex then index B818 atA3308/A331C, each seeing preceding effects; a failed second take did not roll back the first. Successful tiled paths could then grow the list with C170/B818(4224,128). Entry arithmetic alone did not predict these post-helper inputs.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.79.cpp:12994-13360; rerevved_recomp.150.cpp:12577-12971; rerevved_recomp.88.cpp:12835; rerevved_recomp.22.cpp:13100; rerevved_recomp.77.cpp:13173; rerevved_recomp.175.cpp:13117; rerevved_recomp.188.cpp:13128"
+    },
+    "allocatorAndLifetime": {
+      "ordering": "Prefailed G2ABD&20 returned0 without taking/accounting. Otherwise B818 converted q to modulo32 bytes, selected B618/null manager, A6848/nonzero manager98, or A6AB8/dynamic target. Post-helper mutable bytes updated G3A54 even on null result; threshold logic preceded setting failurebit20. Threshold U(used+bytes)>G3A58 with G33B0==0 wrote G34=G30+160,G38=G30 and, if G3A4C!=G3A38,G3A44=G3A3C. Byte counts160/164 and alignments were decimal.",
+      "routes": "B618 mode1 allocated upward with wrap/generation guards; success updated a pool cursor before B158. B158 compared endpoint/modulo4 generation with B+4, B=word(G2A90), and could stop through CBB8 independently of progress. A6848 allocated downward and rejected below G30+164. A6AB8 raised bytes to managerA8 minimum and called managerAC(contextA4,1,&bytes,alignment) under G3A7C. Installed target, actual generation and imported/reentrant effects remained unbound.",
+      "reuse": "Commit had no free edge. Subsequent pool takes, segment C400/C270, B118 restoration and C8E0 reconfiguration could change/reuse backing; the latter drained/waited and released owned G39F4/G39F8/B/S2 through82E29160 while configured storage had distinct ownership. None identified first safe overlap/free for an actual H. Default2MB, C170's16896-byte request and an externally supplied6MB extent were not allocation-generation joins.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.93.cpp:11808; rerevved_recomp.50.cpp:13017; rerevved_recomp.42.cpp:13240; rerevved_recomp.47.cpp:12616; rerevved_recomp.152.cpp:13280; rerevved_recomp.151.cpp:12853"
+    },
+    "selectedTileDestination": {
+      "descriptor": "C3E0 zeroed L+0/+4/+8/+0xC, stored ownerG atL+0x10 and tail-called C170. Thus G33C8's low offset was a device descriptor field, initialized to real backing rather than an arbitrary low-memory cursor.",
+      "storage": "V: C170 first writes A(oldCursor) through nonnull old L+4 tail at0x8269C1AC, then B818(owner,4224,128) at0x8269C1BC:4224 dwords=16896 bytes. Success H writes H[0]=A(H+4), then A(H) through current L+8 if nonzero, otherwise L+0=H; A72F8(A(H),U(A(H)+4224),0) follows. Failure chooses owner+0x4158 fallback, clears L+0 and skips those success stores/cache. Both returning arms set L+4=H,L+8=H+4,L+0xC=H+4220 and return H+4, with no local owner-field store or fallback-H nonzero validation. Old-tail closure precedes even a later allocation failure. The16896-byte allocation,4224-byte cache span and H+4220 limit are distinct; aliases, mutable allocator inputs and physical generation remain premises.",
+      "producer": "V: Tiled A3048 at0x826A3470 stores working command cursor D in16-byte entry E+0;0x826A3480 advances L+8 by16. D is the preceding cursor after13 common command words, not the address of the next word. Tiled suffix first writes C0006000 at D+4, then FFFFFFFF at D+8, followed by the indexed packet and extent-report/init packets. There is no direct sth/sthu in the complete local A3048 body; rectangle payload production is packet-defined below. Accepted A2B58 entry+0 remains a separate reused producer.",
+      "decoder": "V/I: The accepted D320/DB20 Lhead->0x89->AB740/AB160/AB058 interface loads E+0 as D and rectangle halfwords at E+4/+6/+8/+0xA, storing overlapMask|80000000 at D+8. The packet-defined producer above narrows rectangle construction. Actual constructor/bracket/root/queue/worker occurrence, predicate/payload visibility, physical command/chunk generation, outside readers and first safe overlap/release remain unjoined. Other0x89/0x8A families require their own positive exclusion or actual constructor discriminator.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.82.cpp:12852; rerevved_recomp.227.cpp:12596; rerevved_recomp.79.cpp:13546; rerevved_recomp.150.cpp:13187; rerevved_recomp.173.cpp:13216; rerevved_recomp.144.cpp:12523",
+      "localEmission": "V: At A3048 entry, qV=U(r6*r9)>>2 and qI=r7 when r8&4, otherwise U(r7+1)>>1. At caller BF8,k=retained caller r24,r8=1 and r7=6*k, so qI=3*k dwords=12*k bytes; indexed J carries0x40000000 and R gains no0x0800. Primitive r4 is independent. Vertex B818(qV,16) at0x826A3308 precedes index B818(qI,16) at0x826A331C even when the first returns0. Either null takes the3544 failure path:publish current cursor, zero output cells, return FFFFFFFF8007000E without rollback. Success emits13 common words ending D=C+0x34, then14 tiled words or5 untiled words:27/18 new words and pending end C+0x6C/C+0x48. Tiled growth occurs exactly when U(E+16)>word(L+0xC); C170 return is used without a root failure-bit/null recheck. Success stages G+0x3484/+0x3488/+0x348C/+0x3490/+0x3494 and returned pointers, reloads G+0x18 then ORs1, and returns0. It does not locally publish the pending suffix cursor to G+0x30; earlier helper/allocator publications remain real.",
+      "rectangleProducer": {
+        "guestPackets": "V: Stores0x826A34F8/34FC/3500 emit C0015A01,decimal26,encoded(E+4)|1;0x826A3504/350C emit C0004601,decimal25. The encoded operand is U(((E+4)&0x1FFFFFFE)+(((((U(E+4)>>20)&0xFFF)+0x200)&0x1000)))|1. These are the ordered producer/reset event packets, not CPU halfword stores.",
+        "sdkRevision": "1f03b7bd45e92d21c4198e5d6caadf46118a3d89",
+        "sdkCounterpart": "V: SDK xenos.h identifies opcode0x5A as EVENT_WRITE_EXT,initiator26 SCREEN_EXT_RPT,opcode0x46 EVENT_WRITE and initiator25 SCREEN_EXT_INIT. Both emitted headers are predicated:dispatcher skips payload when(bin_select&bin_mask)==0. A reached EXT handler writes the event register and six swapped u16 values to TranslatePhysical(address&~3), requiring lowbits1/k8in16. Field order is minX,maxX,minY,maxY,minZ,maxZ at E+0x4/+0x6/+0x8/+0xA/+0xC/+0xE if the physical alias is valid. The pinned SDK deliberately writes fixed[0,1024,0,1024,0,1], not draw-measured hardware extents. Six elements use the x86-64 ascending scalar residual copy. The subsequent reached count1 EVENT_WRITE writes the initiator register and no memory payload locally.",
+        "qualification": "I: Guest packet identity/order and this SDK source counterpart do not prove execution on the selected native/drop route, actual predicate, E physical alias, completed payload visibility, retail hardware values or same-generation worker consumption. Source statement order is not atomic visibility. An exact rectangle observer must join executed packet/predicate/translated destination/completed bytes to L/E/D/chunk generation.",
+        "locators": "rerevved:generated/default/rerevved_recomp.150.cpp:13164; rerevved-sdk:include/rex/graphics/xenos.h:1523,188,1124; rerevved-sdk:src/graphics/command_processor.cpp:895,1365,1405; rerevved-sdk:src/core/memory.cpp:79"
+      }
+    },
+    "callerActivation": {
+      "qualification": "V/I: The complete local825107A0 body and selected fill leaves establish a conditional instrumentable association. Natural runtime coverage, arbitrary alias/live-out closure, nonlocal continuation handling, guest allocation generation and host/GPU retirement are separate.",
+      "sourceRevision": "e4e5e064bb8d8cf95b382fb2f7df090f30b5584b",
+      "sourceWindows": [
+        {
+          "entry": "0x825107A0",
+          "artifact": "rerevved:generated/default/rerevved_recomp.74.cpp",
+          "firstLine": 8896,
+          "lastLine": 9760,
+          "functionSha256": "8BEFC70339F77A8CAAF5775FFC1488DB7AD5C9E675E24D4FC100326C4470091B"
+        },
+        {
+          "entry": "0x82508BC8",
+          "artifact": "rerevved:generated/default/rerevved_recomp.14.cpp",
+          "firstLine": 8966,
+          "lastLine": 10347,
+          "functionSha256": "C95BF192B675FB6B2B3A1FF2263D0337C87EE9E9F44AB280843E4C9A815EF725"
+        },
+        {
+          "entry": "0x824FF278",
+          "artifact": "rerevved:generated/default/rerevved_recomp.159.cpp",
+          "firstLine": 8771,
+          "lastLine": 8819,
+          "functionSha256": "452DD4378EAB217EF4A1350D6923A39958562CC04D86939940587F5CE508E5E3"
+        }
+      ],
+      "frameAndExit": "V: Entry0x825107A0 captures LR in r12;save14 at0x827F7C50 saves full64 r14..31 and low32 r12. Frame allocation is384 bytes at0x825107A8. Sole local exit0x82510DD0 adds384 then0x82510DD4 tails to restore14 at0x827F7CA0, which restores r14..31 and zero-extended low32 LR before blr0x827F7CF0. Protected saved bytes are F+0xE8..0x177 and F+0x178..0x17B with F=entrySP-384. There is no full64 LR-preservation claim.",
+      "selectedPath": "V: Lowerer BL0x82510BF8 returns0x82510BFC; exactly low32r3==0 retains r28=1 and selects the successful deferred arm. Five interval calls0x82510C24/38/44/68/88 are fallback-only. Both arms reach vertex fill0x82510CBC->82508BC8; success additionally index-fills0x82510CD8->824FF278 then commits0x82510CE0->826A2FF0, returning0x82510CE4. No local success-arm branch abandons that commit between fills, but descendants can fail to return/unwind/reenter or modify aliases. Later indirect callbacks at0x82510D80/94 can loop0x82510D9C->0x82510A90, reusing the same frame for another begin.",
+      "argumentsAndWrites": "V/I: BF8 r3=G=word(owner+0xBC),r4/r5=word(record+0x38)/word(record+0x30),r6=word(record+0x10),r7=6*r24,r8=1,r9=36,r10=F+0x68,stack F+0x54=F+0x64. Earlier record+0x10=4*r24 requires retention; actual r6 must cover vertex fill. Output cells F+0x64/F+0x68 are cleared before begin and are not locally null-checked on zero result. Vertex helper writes144*low16(F+0x60) bytes; count/source/output/ABI retention is required. Index leaf writes12*r24 bytes:for j,u=U(0x20000+j*0x40004),BE32[u-0x1FFFF,u,u+3]. The usual six-u16 pattern requires4*j+3<=65535; arbitrary counts retain packed32 carry behavior. Vertex r9-nonzero paths call opaque math leaves; no transitive no-reentry/return/alias theorem follows.",
+      "tokenRoute": "I: Scope an exact host activation at825107A0, but allocate a fresh never-reused nonzero occurrence token for every actual BF8 invocation. Carry that explicit record through BFC and successful CE0, claim once before staging reads/copy, verify/close at CE4, and explicitly abandon unmatched records on proved return/unwind. Preserve suspended occurrences across nested activations and guest-context migration. A tokenless/latest G/SP/PC/staging lookup is unsound both after frame reuse and after another iteration in one activation. An asynchronous event must carry its origin token or reject; lost/nonlocal context association cannot borrow a newer scope.",
+      "otherSinks": "V/I: Accepted E94C continuation retains unbound E968/E994 dispatches. The two82512608 no-call fill intervals are locally smaller, but accepted windows do not establish complete outer entry/exit/repetition/unwind association. All three remain legacy for history recycling until their own activation contracts close; no fresh sink census was performed.",
+      "nativeSupport": "398 complete caller words,868 words in its seven interval callees,41 original save14/restore14 words including the final blr. Caller decompilation stops at its save thunk; native words and exact generated windows supplied complete control-flow interpretation."
+    },
+    "observerBoundary": {
+      "sourceRevision": "e4e5e064bb8d8cf95b382fb2f7df090f30b5584b",
+      "currentSource": "V: lowerer_scratch_probe.cpp:1325 constructs commit identity with device,thread,frame,LR only; ScratchIdentity defaults epoch/generation/drawGeneration to0 at lowerer_scratch_probe.h:131. native_draw_dispatch.cpp:899 matches its held root by device/stack and staging, not by origin of a delayed event. These source observations do not implement the explicit occurrence route. lowerer_scratch_probe.cpp:1263-1264 records flags=r8 and mode=r4;:1424 prints abi.mode. Thus the supplied logged mode4 is primitive r4, not index-format r8=1 or the independent shader-control word G+0x2954 low3.",
+      "qualification": "I: Conditional caller association permits observer-history retirement only after exact terminal handling. It supplies no allocation/GPU retirement, durable copy/submission, actual hook/unwind API, full architectural equivalence or consume admission."
+    },
+    "selectedConsumerBoundary": {
+      "qualification": "Conditional static contracts; no natural occurrence, complete dirty-entry equivalence or runtime consume admission established.",
+      "commitLeaf": "A2FF0 loads BE32[G+3484] into zero-extended full64 r11, stores that value to BE32[G+30], preserves full incoming r3, and returns. It copies/frees no geometry.",
+      "occurrenceBoundary": "The successful BF8/BFC fill/CE0/CE4 route requires a fresh occurrence within its enclosing activation, including loop reuse; explicit origin association closes observer history only, not allocation or GPU retirement.",
+      "consumerBoundary": "The existing native particle path copies owned geometry into recipes and retains uploads through an actual host queue fence, but its held root is not joined to the observer occurrence as a durable reservation.",
+      "smallestConsumeCut": "Conditional exact-token substitution of the A2FF0 leaf can preserve Original lowerer/helper/fill execution. It does not admit dirty A3048 or BeginVertices. Broader omission requires independent complete entry effects and durable occurrence-to-copy/submission/fence ownership.",
+      "rectangleBoundary": "Local E+0 and packet emission do not prove actual predicated extent production, translated physical alias, completed halfwords, same-generation worker use or safe reclaim.",
+      "titleRevision": "b8991c7ea6b0a3e645f9de29b4e4038510ee50ad",
+      "sdkRevision": "1f03b7bd45e92d21c4198e5d6caadf46118a3d89",
+      "generatedLeaf": {
+        "artifact": "rerevved:generated/default/rerevved_recomp.196.cpp",
+        "function": "sub_826A2FF0",
+        "lines": "13107-13120",
+        "captureSha256": "55011A65EA5207B70F430D55B9B208A03311AD110C0319BE1E1569D032884AAE"
+      },
+      "independentEntry": "The current observer freezes Entry prediction before Original and compares PreTake separately. Its clean tiled CPU projection has27words/108bytes, while completeEntryExact and consumeEligible remain false. Positive scratch projection does not prove dirty-helper architectural effects, rectangle execution, allocation generations or consume authority.",
+      "deviceProvenance": "The occurrence initializes incarnation0 with incarnationKnown=false. The incarnationAuthority section bounds the examined device, allocator, registration and observer candidates; native held-root device/SP/staging association is separate from backing authority.",
+      "durableReceipt": "A broader consumed begin requires pre-effect reservation of exact occurrence, canonical backing generations, immutable copy/submission capacity and strong service/dispatcher/ledger ownership; commit must join the actual retained recipe, upload lease/submission and last-use host fence. Observer evidence vectors do not supply that transfer.",
+      "conditionalLeaf": "Only a successfully CE0-claimed BF8/BFC occurrence may substitute the raw A2FF0 leaf after preserving exactly-one native commit callback and existing copy/build order. Revalidate actual pending-word read and cursor-word write mappings before mutation; load pending first, zero-extend fullr11, store its low32, preserve full incomingr3 and all remaining context/LR. Refused or unknown leaf-only calls execute Original once. This does not recover a failed broader consumed begin.",
+      "remainingGate": "Actual token association/device incarnation, independent complete dirty entry/helper result, all-reader/physical alias lifetime, selected rectangle event/worker identity and first overlap/release remain qualified. No probe class-starvation or zero-comparison result selects a guest row.",
+      "locators": [
+        "rerevved:src/gpu/guest_d3d/lowerer_consume.cpp:134",
+        "rerevved:src/gpu/guest_d3d/lowerer_derive.cpp:152-225",
+        "rerevved:src/gpu/guest_d3d/lowerer_scratch_probe.cpp:975,1033-1034,1801-1847,2017-2085",
+        "rerevved:src/gpu/guest_d3d/native_draw_dispatch.cpp:873-934",
+        "rerevved:src/gpu/guest_d3d/indexed_buffer_draw_inputs.cpp:924-979",
+        "rerevved:src/gpu/d3d12/native_renderer_d3d12.cpp:7059-7156,7369-7394,8470-8498"
+      ]
+    },
+    "incarnationAuthority": {
+      "qualification": "Bounded static rejection of the named proxies, not a complete allocator-writer census or observed recycling. No inspected value supplies authoritative device-allocation or scratch-reservation incarnation at activation construction and both commit checkpoints. Unknown remains distinct from a match.",
+      "titleRevision": "cec0874615164d61e4d4e850a7c665c39742f89a",
+      "sdkRevision": "1f03b7bd45e92d21c4198e5d6caadf46118a3d89",
+      "method": "Serial foreground tools/run-headless.ps1 -ReadOnly identified eight exact entries and read731 selected words. All matched the supported flat image;197 memory operands,134 branch destinations and73 immediate operands matched narrow generated interpretation. Mapped SHA256 remained389EB006B1DCDE90C5DE775C92D67C18542B8FD9BD39845574206D4B213E9B13, with470 differing bytes in60 ranges confined to [0x827F3F50,0x827F4280), outside selected words. Thunk-truncated analyzed bodies were not repaired. Reproduce exact words with ghidra/DumpMemoryWords.java and REREVVED_WORD_RADIUS=0; use ghidra/DumpFunctionNeighborhoodBatch.java for exact-entry metadata.",
+      "nativeReadSet": [
+        "0x8269B818..0x8269B8FC",
+        "0x8269B618..0x8269B814",
+        "0x8269B158..0x8269B1EC",
+        "0x826A6848..0x826A68F0",
+        "0x826A6AB8..0x826A6B30",
+        "0x8269B118..0x8269B150",
+        "0x8269C270..0x8269C3D8",
+        "0x826A3048..0x826A3560"
+      ],
+      "leafAndOrigin": "A2FF0 writes only BE32[G+0x30] from the prior BE32[G+0x3484] load; G allocation lifetime is distinct from the pending command and H_v/H_i backing. At825107A0 entry r3 is owner O, not G. A checked BE32[O+0xBC] can select G, but the actual BF8 and CE0 calls reload that field; CE0 reload is82510CDC. A0 opens an activation; the current observer constructs each occurrence at BF8, not A0. Preserve the full owner/context and explicit occurrence; compare actual CE0 r3 to carried G and carry that identity through CE4. Repeated frame/owner/G equality is not incarnation.",
+      "poolPositionAndWrap": {
+        "fields": "BE32 G+0x3A44 cursor, G+0x3A48 pool epoch/protocol value, G+0x3A4C second cursor; B=BE32[G+0x2A90], with BE32[B+4] progress.",
+        "operands": "B618 mode1 loads G+3A48 into r5 at8269B658. Its primary arm stores end r4 to G+3A44 atB6AC. Its wrapped arm increments transient r5 atB704 and stores end to G+3A4C atB708, without storing that increment to G+3A48. B70C passes (G,end,r5) to B158. Mode2 rollover stores incremented G+3A48 atB790 and resets G+3A4C atB79C. B158 B170..B194 compares (r5-BE32[B+4])&3 and aligned progress; its wait can stop independently of progress.",
+        "counterexample": "The masked comparison repeats every four protocol values. Full32 G+3A48 also has no checked exhaustion here, and B118 B134..B14C restores G+30/+34/+38/+3A44/+3A48/+3A4C/+3A50 from saved G+3460..3474 rather than preserving monotonicity. C270 C374..C39C rebinds command limits/cursor state and clears G+3A44 without advancing a unique allocation ID. Position plus sampled epoch therefore has no proved no-ABA contract. Taking a fresh observer number does not repair that missing producer contract.",
+        "corroboration": "rerevved:generated/default/rerevved_recomp.50.cpp:13017; rerevved_recomp.42.cpp:13240; rerevved_recomp.29.cpp:12792; rerevved_recomp.132.cpp:12304"
+      },
+      "otherAllocatorRoutes": "B818 selects by G+34CC and manager+98 atB844/B86C. The A6848 downward arm writes G+3A44 at826A68B4 and adjusts G+34/+38 at68C4/68C8; it exposes no generation in that body. A6AB8 6ADC..6B18 applies manager+A8 minimum and invokes BE32[manager+AC] with (BE32[manager+A4],mode,&bytes,alignment), under the selected global-device+3A7C lock. Actual installed target, return/allocation identity, external backing and recycle semantics remain unbound; do not query a guessed target. Root vertex/index grants occur later atA3308/A331C, after helper/pressure effects, so an A0 sample cannot itself identify those future reservations.",
+      "deviceAndConfigurationProxies": "Accepted C8E0 teardown releases owned G+39F4/G+39F8/S2/B and can allocate equal numeric B/S2 addresses again. Pool/segment/restore reuse can occur within an unchanged configuration lifetime. B+0 completed ticket, B+4 pool progress, B+3C RPTR and S2 callback/acknowledgement words are distinct protocols. G+3C is a reference count initialized to1; G+2A88 is thread ownership. A6380 copies a global64 to G+2A80 atA63A4 and zeros G+2A8C atA63B8; no exact-change-on-recycle semantics is established for either. Publication storeA645C and final-reference CE38/CE64 heap release do not themselves supply a readable generation or successful-free/participant-quiescence proof.",
+      "hostProxies": {
+        "observer": "lowerer_scratch_probe.cpp:975 assigns incarnation0; the token's incarnationKnown defaults false. Domain/activation/occurrence sequences identify observed calls, with observer epoch literal1. Draw generation, dispatcher frame/sequence and execution context also name different domains.",
+        "ringStub": "ring_stubs.cpp:74-90,151-186 and ring_stubs.h:218-226 provide publication/readiness and a bounded consume-lease drain, not a ring-stub epoch or allocation identity. Validated G remains a numeric address cache.",
+        "registration": "guest_gpu_service.cpp:898,954 increments uint32_t ring/writeback generations on accepted registrations; locked getters are1122-1131. They are native C++ values, not guest BE words. They do not increment on each scratch recycle, can repeat on32-bit wrap or a new service object, and need their own object-domain/lifetime qualification.",
+        "completion": "completion_probe.cpp:230,374 advances a private device-address observer epoch on init or explicit construction observation. Hook8268D2AC observes r31.u32 with r30.u32==0x5E00, not a proved allocation-return/free generation. The selected hook source/config has no matching G-free producer binding. Extent records and physical mappings are sampled base/size identities, not allocation serials."
+      },
+      "safeReadBoundary": "Use checked nonwrapping BE32 owner/G/B/S2 reads, BE64 only for the copied G+2A80 qword, and full raw register identities without guest normalization or stores. lowerer_scratch_probe.cpp:155-189 checks access and physical contiguity, but does not retain allocation lifetime through later reads. The inspected SDK HeapAllocationInfo/PageEntry and QueryRangeAccess/QueryBaseAndSize APIs expose base, size, protection and state, not an allocation/reservation generation. Their internal metadata locks end on return; equal readable snapshots cannot exclude free/reallocate ABA. This negative is bounded to those result shapes, not the entire SDK.",
+      "smallestDiscriminator": "For the literal leaf, select the actual allocation containing G+30 and G+3484: observe its successful allocation/birth, canonical owner/physical mapping, and same-owner free/replacement result, then bind a readable nonrepeating producer identity under lifetime protection at A0, CE0 and CE4. The existing D2AC/r31 sample selects a construction observation only; it needs the actual heap target/return and generation before deeper analysis. If payload/command reservation authority is required too, additionally select B818's actual route/grants atA3308/330C andA331C/3320, with canonical ranges and the first overlapping pool/segment/restore/release event. One observed value change does not prove complete recycling coverage; one equal candidate across proved reuse falsifies it. A0 also needs an explicit producer reservation or later grant binding for backing that does not exist yet.",
+      "locators": [
+        "rerevved:generated/default/rerevved_recomp.74.cpp:8896,9484,9620",
+        "rerevved:generated/default/rerevved_recomp.196.cpp:13107-13120",
+        "rerevved:generated/default/rerevved_recomp.93.cpp:11808",
+        "rerevved:generated/default/rerevved_recomp.47.cpp:12616",
+        "rerevved:generated/default/rerevved_recomp.152.cpp:13280",
+        "rerevved:generated/default/rerevved_recomp.150.cpp:12564",
+        "rerevved:src/gpu/guest_d3d/lowerer_scratch_probe.cpp:855-1000,1838-1862,2192-2212",
+        "rerevved:src/gpu/guest_d3d/completion_probe.cpp:230,374,621-629,978-988",
+        "rerevved:src/gpu/guest_d3d/completion_probe_hooks.cpp:11-18",
+        "rerevved:config/native_completion_probe_hooks.toml:4-6",
+        "rerevved-sdk:include/rex/system/xmemory.h:92-129",
+        "rerevved-sdk:src/system/xmemory.cpp:1853-1977,2596"
+      ]
+    }
+  },
+  "replacementObligations": [
+    "An owned BeginVertices returns a writable aligned guest address covering q*4 bytes, never a host-only pointer. Reserve durable device/thread/frame/generation ownership and commit/copy capacity before consumption; preserve indexed staging words and restored stride. A separate host-owned guest mapping still requires an explicit contract for every retained guest pool/list/cursor observer.",
+    "At matching EndVertices copy all geometry synchronously into immutable host-owned storage before guest backing reuse, then retain host/upload resources through real host/GPU retirement. A short decide-and-write lease is not a durable begin-to-commit token.",
+    "After consumed begin, withdrawal, wrong owner/staging, missing commit or copy/submission failure requires explicit terminal handling; Original EndVertices only publishes a cursor and cannot recover missing geometry.",
+    "Admission still requires exact dirty/stride/allocator rows, helper/alias/caller-live closure, natural paired sink/native draw coverage, full architectural parity and lifecycle/failure checks. Tiled admission additionally requires complete list/worker delivery and safe reclaim. Static samples and counters do not supply these gates."
+  ],
+  "guards": [
+    "No blanket dirty-state idempotence, manager-null invariant, output omission, safe allocator reuse or runtime consume admission follows.",
+    "Keep B+4 pool progress distinct from S2+4 present acknowledgement, B+0 completed ticket, B+0x3C RPTR and N participation.",
+    "A selected entry+0 writer does not close rectangle construction, all0x89 entries,0x8A output objects, actual root activation or outside readers/free."
+  ],
+  "conclusion": "Three selected direct sink continuations wrote complete80-byte quads through their actual commits. Ordered helper/allocation effects and a selected tiled command-placeholder destination were joined; actual owner generations, first safe reuse, dynamic helper effects and complete reader/delivery contracts remained the blockers to broader consumption."
+}

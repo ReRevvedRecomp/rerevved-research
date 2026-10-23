@@ -1,0 +1,353 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0263",
+  "topic": "native-renderer-presentation-selector-ownership",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which receivers and inputs reach selector setter 0x8268EF68, and does the bounded caller set establish a default or interval meaning?",
+  "scope": {
+    "setter": "0x8268EF68",
+    "field": "receiver +0x351C",
+    "directCallerScan": {
+      "matchCap": 8,
+      "selectedCallers": [
+        "0x8250A7EC",
+        "0x8250F66C",
+        "0x826A5D90"
+      ],
+      "expandedRemainder": "RVA-F-0271 expands the accepted five generated callsites 0x82C15DB0, 0x82C16974, 0x82C17538, 0x82C180FC, and 0x82C18CC0 for static receiver, value-origin, switch-gate, and normal-return evidence. Runtime activation, indirect or tail forms, and final retention remain unresolved."
+    },
+    "boundary": "The first three direct-LK callers have receiver and initial object or field dataflow corroborated by raw image words. The first caller's input object is copied before helper calls that may process it; the second caller's zeroed template has a direct +0x34 producer from incoming r9, with RVA-F-0272 tracing that input to a conditional producer in its one bounded direct setup caller before the intermediate template store. The selected second-caller path now has a bounded initialization handoff: 0x8268D2C8 passes r4 to 0x826A63E8, which preserves full r4, passes r30+0x48 to 0x8269C8E0, then passes full r30 to 0x826A5EB8; that callee requests a 124-byte 0x827F8550 copy from source r31 to receiver r29+0x34E8. The requested range places source +0x34 at receiver +0x351C if the unexpanded copy helper performs its normal full copy. Preceding helper gates, source retention, copy-helper behavior, normal return, and later setter retention remain unresolved. The third caller reads and rewrites its existing field. RVA-F-0271 now closes static receiver and value origins for the five accepted remaining generated callsites, while their source-local case arm remains conditional on actual entry, control flow, and retention. Indirect or tail setter calls and runtime invocation remain unresolved."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only DumpFunctions.java, DumpInstructions.java, DumpFunctionNeighborhoodBatch.java, DumpMemoryWords.java, and FindRawFieldStores.java queries for the first three direct callers and selected helper spans, plus the bounded 0x826A63E8/0x826A5EB8 initialization readset and the five accepted remainder callsites in RVA-F-0271, with narrow generated-code windows. No runtime launch was used.",
+    "queries": [
+      {
+        "script": "ghidra/DumpFunctions.java",
+        "targets": [
+          "0x8250A688",
+          "0x8250F2B0",
+          "0x826A5C50"
+        ],
+        "mode": "foreground-read-only",
+        "result": "The canonical listing identifies all three functions but truncates each decompilation at a save-thunk or bad-instruction boundary. Generated definitions provide the bounded bodies below."
+      },
+      {
+        "script": "ghidra/DumpFunctions.java",
+        "targets": [
+          "0x826A63E8",
+          "0x826A5EB8"
+        ],
+        "mode": "foreground-read-only",
+        "result": "0x826A63E8 halts at entry on bad instruction data, and 0x826A5EB8 stops at the no-return save thunk 0x827F7C70 before its body instructions. Both outputs are treated as truncated; generated source and bounded raw words supply the selected evidence."
+      },
+      {
+        "script": "ghidra/FindDirectCallers.java",
+        "targets": ["0x8268EF68"],
+        "matchCap": 8,
+        "result": "The accepted scan emitted the eight direct-LK sites listed in scope and reported Truncated true; this follow-up expands only the first three."
+      },
+      {
+        "script": "ghidra/FindRawFieldStores.java",
+        "range": "[0x8268C000,0x826B8000)",
+        "offset": "0x351C",
+        "result": "The accepted bounded scan found one raw store, 0x8268EF68: stw r4,0x351C(r3). This is not an executable-wide writer census."
+      },
+      {
+        "script": "ghidra/DumpFunctionNeighborhoodBatch.java",
+        "targets": [
+          "0x8250A720",
+          "0x8250A730",
+          "0x8250A7EC",
+          "0x8250F314",
+          "0x8250F3C8",
+          "0x8250F408",
+          "0x8250F4A0",
+          "0x8250F66C",
+          "0x826A5D90"
+        ],
+        "mode": "foreground-read-only",
+        "result": "Raw guest words corroborate C1 setup 0x8250A714 addi r4,r30,0x14, 0x8250A718 addi r3,r1,0x60, 0x8250A71C li r5,0x7C, copy call 0x8250A720, object helper call 0x8250A730, C2 allocation call 0x8250F314 with LR location 0x8250F318, its guard calls, and all three setter call-site setup words. The listing iterator emits no body for the post-thunk setter regions, so raw words supply instruction identity there without claiming a complete decompilation."
+      },
+      {
+        "script": "ghidra/DumpMemoryWords.java",
+        "windows": [
+          "0x8250868C,0x8250F370,0x8250F384,0x8250F3C8,0x8250F408,0x8250F4A0,0x8250F650,0x8250F66C,0x826A5D90,0x8268CEB0 radius 8",
+          "0x826A5C50,0x826A5D80,0x826A5D90,0x8268D378,0x8268D388,0x82508718 radius 12"
+        ],
+        "mode": "foreground-read-only",
+        "result": "Raw words corroborate C2 zeroing through template +0x34, caller stack +0x54/+0x5C aliases, C2 setter setup, C3 entry lwz r25,+0x351C and r4/r3 setup, 0x8268D2C8 forwarding r4=r28 to 0x826A63E8, and 0x82508718 replacing incoming r4 with receiver +0xC0."
+      },
+      {
+        "script": "ghidra/DumpMemoryWords.java",
+        "windows": [
+          "0x8250F2F0,0x825085A0,0x825085F0 radius 4"
+        ],
+        "mode": "foreground-read-only",
+        "result": "The exact raw setup words are 0x8250F2F0=0x7D384B78 (mr r24,r9), 0x825085A0=0x9421FF60 (stwu r1,-0xA0(r1)), and 0x825085F0=0x83E100FC (lwz r31,0xFC(r1)); these corroborate the entry-r9 retention and caller stack alias chain."
+      },
+      {
+        "script": "ghidra/DumpMemoryWords.java",
+        "windows": [
+          "0x826A6400,0x826A6474,0x826A64CC,0x826A607C radius 4"
+        ],
+        "mode": "foreground-read-only",
+        "result": "The raw windows returned 0x826A63FC=0x7C7F1B78 and 0x826A6400=0x7C9E2378 (r31=r3 and r30=r4), 0x826A646C=0x389E0048, 0x826A6470=0x7FE3FB78, and 0x826A6474=0x4BFF646D (r4=r30+0x48, r3=r31, call 0x8269C8E0), 0x826A64C4=0x7FC4F378, 0x826A64C8=0x7FE3FB78, and 0x826A64CC=0x4BFFF9ED (r4=r30, r3=r31, call 0x826A5EB8), and 0x826A606C=0x387D34E8, 0x826A6070=0x38A0007C, 0x826A6074=0x7FE4FB78, and 0x826A6078=0x481524D9 (r3=r29+0x34E8, r5=124, r4=r31, call 0x827F8550). The queried post-call center word 0x826A607C is 0x66EB2828."
+      },
+      {
+        "script": "ghidra/DumpMemoryWords.java",
+        "windows": [
+          "0x826A5EC0 radius 4"
+        ],
+        "mode": "foreground-read-only",
+        "result": "The raw entry window returned 0x826A5EBC=0x48151DB5 (save thunk), 0x826A5EC0=0x9421F920 (stwu r1,-0x6E0(r1)), 0x826A5EC4=0x7C9F2378 (mr r31,r4), and 0x826A5EC8=0x7C7D1B78 (mr r29,r3)."
+      },
+      {
+        "script": "ghidra/DumpInstructions.java",
+        "targets": [
+          "0x8268CE90",
+          "0x82508598",
+          "0x8268D2C8",
+          "0x82508718"
+        ],
+        "mode": "foreground-read-only",
+        "result": "The selected helper listings start with save/prologue material and then skip at the known listing gaps; they do not provide a complete body. The bounded raw-word and +0x34 store results below are the source corroboration for selected aliases and writer presence."
+      },
+      {
+        "script": "ghidra/FindRawFieldStores.java",
+        "ranges": [
+          "[0x8268CE90,0x8268CF00)",
+          "[0x82508598,0x82508718)",
+          "[0x8268D2C8,0x8268D3A0)",
+          "[0x82508718,0x82508800)"
+        ],
+        "offset": "0x34",
+        "matchCap": 8,
+        "result": "The bounded helper scans found one direct +0x34 store in 0x82508598 at 0x8250868C (word 0x917F0034, r11 to r31+0x34) and no direct +0x34 store in 0x8268CE90, 0x8268D2C8, or 0x82508718. These spans do not inspect nested callees."
+      },
+      {
+        "script": "ghidra/DumpFunctions.java",
+        "targets": [
+          "0x82C15DB0",
+          "0x82C16974",
+          "0x82C17538",
+          "0x82C180FC",
+          "0x82C18CC0"
+        ],
+        "mode": "foreground-read-only",
+        "result": "Status OK, but each exact target returned No containing function at the canonical listing gap. The generated source identifies all five calls in one containing body, sub_82C15240."
+      },
+      {
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": [
+          "0x82C15288",
+          "0x82C15DA8",
+          "0x82C15E4C",
+          "0x82C1696C",
+          "0x82C16A10",
+          "0x82C17530",
+          "0x82C175D4",
+          "0x82C180F4",
+          "0x82C18198",
+          "0x82C18CB8"
+        ],
+        "wordRadius": 8,
+        "mode": "foreground-read-only",
+        "result": "Status OK. The five family prologues form fixed indices 0, 8, 4, 16, and 168 from constants minus 40 before the common unsigned compare against 360. The five callsite windows show the r4/r3 stack reloads and exact setter branch-link words."
+      }
+    ],
+    "generatedWindows": [
+      {
+        "function": "0x8268D2C8",
+        "file": "generated/default/rerevved_recomp.81.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "12650-12767",
+        "guestSites": ["0x8268D378", "0x8268D388"],
+        "claims": "Reused caller setup stores the selected input in r28, then sets r4=r28 and branches to 0x826A63E8; this body is reused and not expanded here."
+      },
+      {
+        "function": "0x826A63E8",
+        "file": "generated/default/rerevved_recomp.94.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "12929-13072",
+        "guestSites": ["0x826A6400", "0x826A6474", "0x826A64CC", "0x826A64E0"],
+        "claims": "The selected initialization body retains r3 in r31 and r4 in r30, passes r30+0x48 to 0x8269C8E0, passes full r30 to 0x826A5EB8, and checks its result before 0x826A5C50; canonical decompilation is truncated."
+      },
+      {
+        "function": "0x826A5EB8",
+        "file": "generated/default/rerevved_recomp.176.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "13184-13456",
+        "guestSites": ["0x826A5EC4", "0x826A5EC8", "0x826A606C", "0x826A6078"],
+        "claims": "The selected callee maps r31=r4 and r29=r3, directly reads source offsets +0x00, +0x04, +0x08, +0x10, +0x24, +0x28, +0x38, +0x3C, and +0x40, passes a source +0x60 address to a later helper, executes intervening helper calls and gates, and requests 0x827F8550 with destination r29+0x34E8, source r31, and size 124; the copy-helper body is not expanded."
+      }
+    ],
+    "bodyInventory": {
+      "focusedCount": 2,
+      "focusedFunctions": ["0x826A63E8", "0x826A5EB8"],
+      "reusedFunctions": ["0x8250F2B0", "0x8268D2C8"],
+      "helperBodies": [],
+      "bodyLimit": 4,
+      "unusedBodySlots": 0,
+      "cumulativeReadset": ["0x8250F2B0", "0x8268D2C8", "0x826A63E8", "0x826A5EB8"],
+      "qualification": "This bounded follow-up readset contains exactly four unique bodies: the two new initialization bodies and the two reused accepted bodies. 0x8269C8E0, 0x827F8550, the save/restore thunks, intervening callees, and all other helpers remain unexpanded."
+    },
+    "remainingCallers": {
+      "manifest": "RVA-F-0271#/staticJoin",
+      "result": "RVA-F-0271 owns the five remaining callsites' receiver/value origins, exact generated and raw windows, and source-local unselected-arm qualification. Those static origins do not establish runtime activation, a selector default, interval meaning, or complete setter ownership."
+    },
+    "setupInput": {
+      "manifest": "RVA-F-0272#/staticJoin/directCaller",
+      "result": "RVA-F-0272 traces one bounded direct setup caller and one bounded upstream direct byte producer before the existing entry-r9-to-template +0x34 intermediate store; its exact stack relation, numeric mapping, and conditional retention through earlier helper calls remain canonical in that manifest, while later mutation remains unresolved."
+    },
+    "setter": {
+      "address": "0x8268EF68",
+      "operation": "stw r4,0x351C(r3); blr",
+      "receiver": "The setter writes the caller-supplied r4 to offset +0x351C of caller-supplied r3 and has no local guard.",
+      "evidence": [
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/generated/default/rerevved_recomp.7.cpp:12791-12795"
+        },
+        {
+          "kind": "topic-manifest",
+          "locator": "native-renderer-guest-frame-pacing.json#/currentEvidence/boundedQueries/findRawFieldStores"
+        }
+      ]
+    },
+    "callers": [
+      {
+        "callSite": "0x8250A7EC",
+        "function": "0x8250A688",
+        "receiver": "r31 retains the function-entry r3. After 0x82516D70, r11 loads [r31+0x564] and r3 loads [r11+0xF54].",
+        "selectorInput": "r4 loads from stack +0x94 immediately before the setter. That word aliases offset +0x34 of the 124-byte object copied by 0x827F8550 at 0x8250A720: destination stack +0x60, source r30+0x14, size 124, so the copied source word is r30+0x48. The raw helper scan finds no direct +0x34 store in 0x8268CE90; that helper still forwards the object through nested calls after receiving [r31+0xBC] and stack +0x60, so possible nested writes and final retention remain unresolved.",
+        "guards": "The function reaches this region only when [r31+0xA0] is zero and 0x8268CE90([r31+0xBC], stack+0x60) returns nonnegative. The copied object supplies the setter word at stack +0x94 = copied-object +0x34. No null or range guard is visible for the nested [r31+0x564] pointer or its +0xF54 load at the setter site.",
+        "evidence": [
+          {
+            "kind": "generated-code",
+            "locator": "generated:rerevved/generated/default/rerevved_recomp.148.cpp:8998-9019,9084-9106,9192-9207"
+          },
+          {
+            "kind": "generated-code",
+            "locator": "generated:rerevved/generated/default/rerevved_recomp.147.cpp:12357-12419"
+          },
+          {
+            "kind": "ghidra-static",
+            "locator": "ghidra/DumpFunctionNeighborhoodBatch.java:0x8250A720,0x8250A730,0x8250A7EC"
+          },
+          {
+            "kind": "ghidra-static",
+            "locator": "ghidra/FindRawFieldStores.java:0x8268CE90..0x8268CF00 offset=0x34"
+          }
+        ]
+      },
+      {
+        "callSite": "0x8250F66C",
+        "function": "0x8250F2B0",
+        "receiver": "r31 is the object returned by 0x8250F0E8 when the 1920-byte allocation call at 0x8250F314 returns nonzero (the link return is 0x8250F318); the setter path later reloads [r31+0x564] and then [that pointer+0xF54].",
+          "selectorInput": "The template at stack +0xA0 is initially zeroed across inclusive sp+0xA0..sp+0x11B (half-open [sp+0xA0,sp+0x11C)); the qword at +0xD0 includes the setter slot at +0xD4 = template +0x34. The caller stores entry r9 in stack +0x54; 0x82508598 recovers that word through its +0xF4 alias and the raw image confirms a direct store at 0x8250868C (stw r11,0x34(r31)) to template +0x34. RVA-F-0272 traces the setup method's one bounded direct caller and conditional r9 input before this intermediate store; its exact stack relation and numeric mapping remain canonical in that manifest. The raw setup query also confirms 0x8250F2F0=0x7D384B78 (mr r24,r9), 0x825085A0=0x9421FF60 (stwu r1,-0xA0(r1)), and 0x825085F0=0x83E100FC (lwz r31,0xFC(r1)). The template pointer is passed through caller stack +0x5C, which aliases callee +0xFC in 0x82508598, then in r7 to 0x8268D2C8 and in r4 to 0x82508718. Bounded raw scans find no direct +0x34 store in 0x8268D2C8 or 0x82508718. The selected initialization path forwards r4 from 0x8268D2C8 to 0x826A63E8; that body retains full r4 in r30, passes r30+0x48 to 0x8269C8E0, then passes full r30 to 0x826A5EB8. At 0x826A5EB8, r31=r4 is the template source and r29=r3 is the receiver; direct generated loads read source offsets +0x00, +0x04, +0x08, +0x10, +0x24, +0x28, +0x38, +0x3C, and +0x40, while a source +0x60 address is passed to a later helper. After conditional nested helpers and gates, the generated and raw windows show a 0x827F8550 request with r3=r29+0x34E8, r4=r31, and r5=124 (0x7C). The requested range places source +0x34 at receiver +0x351C if the unexpanded copy helper performs its normal full copy. Source retention through prior helpers and these gates, copy-helper contents and normal return, final setter retention, and runtime activation remain unresolved.",
+        "guards": "The setter is reached through the nonzero low-byte result of 0x8250AAF8 at 0x8250F5EC-0x8250F62C. The allocation guard is the nonzero result of 0x82465C58 at 0x8250F314, followed by 0x8250F0E8. The template path requires a nonzero result from 0x82508598 at 0x8250F3CC, a nonnegative result from 0x8268D2C8 at 0x8250F40C, a nonzero [r31+0xBC] at 0x8250F430, a nonzero result from 0x82508718 at 0x8250F4A4, and a nonzero low byte from 0x8250AAF8 at 0x8250F5EC. On the successful arm, 0x82517518(r31,1) writes [r31+0x564] before 0x8252D620 and the nested receiver reload.",
+        "evidence": [
+          {
+            "kind": "generated-code",
+            "locator": "generated:rerevved/generated/default/rerevved_recomp.76.cpp:8956-9028,9070-9119,9126-9157,9175-9181,9236-9248,9425-9437,9468-9507"
+          },
+          {
+            "kind": "generated-code",
+            "locator": "generated:rerevved/generated/default/rerevved_recomp.93.cpp:7729-7783,7854-7865"
+          },
+          {
+            "kind": "generated-code",
+            "locator": "generated:rerevved/generated/default/rerevved_recomp.81.cpp:12650-12767"
+          },
+          {
+            "kind": "generated-code",
+            "locator": "generated:rerevved/generated/default/rerevved_recomp.186.cpp:8440-8461"
+          },
+          {
+            "kind": "ghidra-static",
+            "locator": "ghidra/DumpFunctionNeighborhoodBatch.java:0x8250F314,0x8250F3C8,0x8250F408,0x8250F4A0,0x8250F66C"
+          },
+          {
+            "kind": "ghidra-static",
+            "locator": "ghidra/DumpMemoryWords.java:0x8250868C,0x8250F370,0x8250F384,0x8250F3C8,0x8250F408,0x8250F4A0,0x8250F650,0x8250F66C radius=8"
+          },
+          {
+            "kind": "ghidra-static",
+            "locator": "ghidra/DumpMemoryWords.java:0x8250F2F0,0x825085A0,0x825085F0 radius=4"
+          },
+          {
+            "kind": "ghidra-static",
+            "locator": "ghidra/DumpMemoryWords.java:0x8268D378,0x8268D388,0x82508718 radius=12"
+          },
+          {
+            "kind": "ghidra-static",
+            "locator": "ghidra/FindRawFieldStores.java:0x82508598..0x82508718,0x8268D2C8..0x8268D3A0,0x82508718..0x82508800 offset=0x34"
+          },
+          {
+            "kind": "generated-code",
+            "locator": "generated:rerevved/generated/default/rerevved_recomp.94.cpp:12929-13072"
+          },
+          {
+            "kind": "generated-code",
+            "locator": "generated:rerevved/generated/default/rerevved_recomp.176.cpp:13184-13456"
+          },
+          {
+            "kind": "ghidra-static",
+            "locator": "ghidra/DumpFunctions.java:0x826A63E8,0x826A5EB8"
+          },
+          {
+            "kind": "ghidra-static",
+            "locator": "ghidra/DumpMemoryWords.java:0x826A6400,0x826A6474,0x826A64CC,0x826A607C radius=4"
+          },
+          {
+            "kind": "ghidra-static",
+            "locator": "ghidra/DumpMemoryWords.java:0x826A5EC0 radius=4"
+          }
+        ]
+      },
+      {
+        "callSite": "0x826A5D90",
+        "function": "0x826A5C50",
+        "receiver": "r31 retains the function-entry r3. At function entry, r25 loads [r31+0x351C].",
+        "selectorInput": "r4 is copied from r25, so this call writes the receiver's preexisting +0x351C word back to the same receiver field. No literal default is supplied at this call.",
+        "guards": "The call follows fixed loops bounded by r30 < 404 and r28 < 26, then unconditional stores of 5 and 1 to receiver offsets +0x2FA0 and +0x2FA4 and helper calls with r4=2. No branch tests r25 before the setter.",
+        "evidence": [
+          {
+            "kind": "generated-code",
+            "locator": "generated:rerevved/generated/default/rerevved_recomp.131.cpp:13246-13271,13320-13393,13394-13422"
+          },
+          {
+            "kind": "ghidra-static",
+            "locator": "ghidra/DumpMemoryWords.java:0x826A5C50,0x826A5D80,0x826A5D90 radius=12"
+          }
+        ]
+      }
+    ],
+    "reconciliation": {
+      "supportedOwnership": "The setter's receiver is always the r3 value at its call site. The first two expanded callers select a nested receiver through their +0x564 field and +0xF54 word. The first input is a copied-object slot; the second has a traced conditional r9 producer feeding the intermediate template +0x34 store through the setup caller documented in RVA-F-0272 and a newly bounded initialization handoff through 0x826A63E8 and 0x826A5EB8. That handoff requests a 124-byte copy whose source +0x34 would map to receiver +0x351C under normal copy-helper behavior, subject to preceding gates and source retention. The third uses its own receiver and rewrites its existing +0x351C field. The five accepted remainder calls all reload a shared receiver origin [0x8314F300] and use distinct saved-entry byte or word fields documented in RVA-F-0271.",
+      "defaultBoundary": "None of the eight accepted direct calls supplies a supported literal selector default. Caller 0x8250A688 copies its input object from r30+0x14, caller 0x8250F2B0 initially zeros a template and then receives a conditional r9 input before 0x82508598 stores it into template +0x34, and the five remainder calls load saved-entry fields. The selected second-caller path adds only a conditional copy-request offset relation; copy-helper contents, source retention, later mutation, source-local unselected-arm results, runtime entry, and final value retention remain unresolved.",
+      "intervalBoundary": "The setter only copies r4 into +0x351C. These callers do not establish FPS, vsync, milliseconds, frame period, or presentation interval semantics for that word."
+    },
+    "qualification": "Generated code is corroboration for exact identified functions because canonical decompilation and selected instruction listings truncate at save-thunk or bad-instruction boundaries. The new 0x826A63E8 output halts at bad data and the new 0x826A5EB8 output stops at save thunk 0x827F7C70; neither is treated as a complete body. Bounded raw words corroborate the selected aliases, calls, and 0x827F8550 copy setup; the unexpanded copy helper and intervening callees leave the requested source +0x34 to receiver +0x351C relation conditional. Existing helper +0x34 scans corroborate the selected direct-writer sites, while the remainder batch corroborates only the named generated windows. A no-store result is limited to the named function span and does not prove preservation across nested callees. The direct-LK scan is capped and does not cover tail branches, indirect calls, or unscanned callers."
+  },
+  "guards": [
+    "Do not treat copied or zero-initialized stack slots as final selector values across an unexpanded callee; preserve the exact alias and guard chain until all possible field writers are checked.",
+    "Do not treat the 0x827F8550 call setup in 0x826A5EB8 as proof of unconditional copy contents, source retention, helper normal return, or final setter value; the callee and intervening helper bodies remain outside this packet.",
+    "Do not treat the third caller's +0x351C read as an initialized value; it only proves a read-modify-rewrite of an existing field word.",
+    "Do not infer selector enum names, interval units, runtime activation, cadence, FPS, or vsync from the +0x351C store or nearby literals.",
+    "Do not infer complete setter ownership from the cap-8 direct-LK scan; indirect or tail call forms remain outside this packet even though the five accepted emitted calls now have bounded static origins."
+  ],
+  "unknowns": [
+    "The first caller's copied-object slot +0x34 remains subject to the unexpanded 0x82520510/0x8268CE90 helper chain; the second caller's later template mutation after the traced 0x82508598 store remains unresolved.",
+    "The second caller's intermediate selector producer is source- and raw-traced as a conditional r9 input from RVA-F-0272 -> caller stack +0x54 -> 0x82508598 stack +0xF4 -> template +0x34; the exact input mapping and bounded upstream byte producer remain canonical in RVA-F-0272. The new handoff narrows the next boundary to retention through 0x826A63E8's earlier helpers, 0x826A5EB8's intervening gates, 0x827F8550 copy contents and normal return, final setter retention, and runtime execution.",
+    "The initialization or first writer of the +0x351C word consumed by 0x826A5C50 remains unresolved outside the accepted bounded store range.",
+    "Indirect or tail setter paths, source-local unselected-arm results under actual entry and control flow, and runtime invocation remain unresolved.",
+    "The semantic name and interval meaning of +0x351C remain unresolved."
+  ],
+  "conclusion": "The known setter 0x8268EF68 is a one-instruction field writer: it stores caller r4 to caller receiver +0x351C. The first expanded caller, 0x8250A688 at 0x8250A7EC, and the second, 0x8250F2B0 at 0x8250F66C, load their receiver through [r31+0x564] then +0xF54. The first passes copied-object +0x34 at +0x94 through helper calls; the second zeroes a template, and generated source traces entry r9 through caller +0x54 and callee +0xF4 to the template +0x34 store at 0x8250868C. RVA-F-0272 identifies a bounded direct setup caller that supplies a conditional r9 input before this intermediate store; its exact stack relation and numeric mapping remain canonical in that manifest. Raw image evidence confirms the setup entry move at 0x8250F2F0, callee frame setup at 0x825085A0, callee +0xFC recovery at 0x825085F0, the intermediate +0xF4 load, and the +0x34 store. New bounded evidence extends the selected second-caller path from 0x8268D2C8 through 0x826A63E8: raw words confirm r30=r4, r4=r30+0x48 and r3=r31 into 0x8269C8E0, then r4=r30 and r3=r31 into 0x826A5EB8. Its entry window confirms r31=r4 and r29=r3. After intervening conditional helpers and gates, 0x826A5EB8 requests 0x827F8550 with destination r29+0x34E8, source r31, and size 124; the requested range places source +0x34 at receiver +0x351C if the unexpanded helper performs its normal full copy. Copy-helper contents, source retention, normal return, final setter retention, runtime activation, and interval meaning remain unresolved. No direct +0x34 store appears in the selected 0x8268D2C8 or 0x82508718 spans, but nested callees keep the final template word unresolved. The third, 0x826A5C50 at 0x826A5D90, passes its receiver's preexisting +0x351C word back to that same field after fixed loops and unconditional setup stores. The five accepted remainder calls now have static receiver origin [0x8314F300] and distinct saved-entry byte or word origins in RVA-F-0271; each is located in a case 336 arm after a visible unsigned bound of 360, with fixed local indices 0, 8, 4, 16, and 168. This bounds selector ownership and rules out a supported default or interval interpretation from the accepted static calls; source-local arm selection, indirect paths, and runtime meaning remain unresolved."
+}

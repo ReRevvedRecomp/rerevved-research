@@ -1,0 +1,258 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0266",
+  "topic": "native-renderer-frame-callback-scheduling",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which registered callback input supplies the accepted driver's render-continuation byte, and does its bounded source identify a fixed tick or frame decision?",
+  "scope": {
+    "callback": "0x82E87D18",
+    "driver": "0x82C7DF58",
+    "callbackVtable": "0x82120D2C",
+    "callbackSlot": "0x0",
+    "ownerGlobal": "0x82FFD624",
+    "ownerRegistration": "0x82E2AF20",
+    "ownerConstructor": "0x82E2AFD0",
+    "derivedConstructor": "0x82E294D0",
+    "globalInitializer": "0x82E83EA8",
+    "boundary": "The bounded evidence closes the callback entry split, callback-object table slot, conditional owner-vector fast/reserve handoff, and constructor publication route. The direct store path is supported, while the fresh-constructor path can reach unexpanded reserve helper 0x821B4450; its insertion and return/retention effects remain unresolved. It does not recover the owner-vector invoker or the incoming caller that sets callback r5, so r5 remains a symbolic scheduling input. No fixed tick, frame decision, cadence, simulation rate, render rate, or per-callback presentation count is proved."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-frame-pass-boundary",
+      "use": "Accepted callback-to-driver edge and conditional driver-to-render continuation."
+    },
+    {
+      "topic": "native-renderer-guest-frame-pacing",
+      "use": "Accepted timing-owner work, driver low-byte guard, and unresolved cadence boundary."
+    },
+    {
+      "topic": "native-renderer-frame-dispatch-ownership",
+      "use": "Accepted frame receiver and vtable qualifications; this topic keeps callback registration distinct from renderer dispatch."
+    }
+  ],
+  "staticJoin": {
+    "callbackEntry": "At 0x82E87D28 the callback copies incoming r4 to r30, and at 0x82E87D2C it copies incoming r5 to r28. It loads the manager base from global address 0x8314F28C at 0x82E87D54 and stores manager +4 at 0x82E87D60: r30 low byte zero produces stored byte 1, while a nonzero low byte produces stored byte 0. r28 is moved back to r4 at 0x82E87D78, then 0x82E87D80 calls 0x82C7DF58. Therefore driver entry r4 is callback entry r5, while callback entry r4 separately controls the explicit inverse manager-byte gate.",
+    "registeredSlot": "The callback-object table at 0x82120D2C has slot 0 = 0x82E87D18. 0x82E2AFD0 allocates the callback object, writes that table address as its first word, and calls 0x82E2AF20 with r3 = owner and r4 = callback object. In 0x82E2AF20 the embedded vector is at owner +0x80; its pointer words are start +0x84, end +0x88, and capacity +0x8C. A nonnull callback with a nonnull start and count below capacity stores r4 through the current end and advances the end. A null callback exits without insertion; a null start or full vector takes the reserve/helper path at 0x821B4450 with the existing end and saved callback. That helper's insertion and return/retention effects remain unexpanded. This proves conditional registration ownership and slot identity, not invocation timing.",
+    "ownerPublication": "0x82E2AFD0 initially writes base vtable 0x82120D68 and zeros owner +0x84, +0x88, and +0x8C. 0x82E294D0 calls that constructor and then installs derived vtable 0x82121100. In 0x82E83EA8, the allocation at 0x82E83EE4 is followed by the nonnull constructor BL at 0x82E83EF0 with LR 0x82E83EF4, while the null arm sets r3 to zero at 0x82E83EF8. The result is published at 0x82E83F04 to 0x82FFD624; the code then loads the vptr at 0x82E83F08, loads slot +0x8 at 0x82E83F0C, sets the count register at 0x82E83F10, and calls indirectly at 0x82E83F14 with LR 0x82E83F18. The selected window has no null guard before that vptr load, so the zero-allocation arm's subsequent indirect behavior is unresolved. The constructor itself does not publish the global.",
+    "invokerFrontier": "The selected owner methods 0x82E2E3B8, 0x82E2B138, and 0x82D83B38 do not expose an iteration over the owner pointer words +0x84/+0x88/+0x8C that reaches callback slot 0. Their indirect calls use other owner fields or owner-vtable slots. The bounded field scans therefore leave the vector invoker and callback caller unresolved; this is a dynamic/indirect closure boundary, not proof that no invoker exists.",
+    "schedulingSplit": "The accepted callback has two separate static inputs: entry r4 controls the callback-local manager-byte store, and entry r5 becomes driver r4 and is later tested by the driver's low-byte render guard. No selected producer binds r5 to a fixed tick, simulation step, frame counter, or presentation decision.",
+    "ownerSlot28": "The separate owner edge at 0x82D83C7C loads the global owner and, under conditional retention of the derived vtable 0x82121100, dispatches its +0x28 word at 0x82121128. RVA-F-0269 resolves that word to 0x821D5678, an exact no-op return with no callback-vector or argument setup. This is a distinct owner service and does not identify the vector invoker or callback r5 producer."
+  },
+  "guards": [
+    "Keep callback entry r4 and r5 distinct: r4 maps to the callback-local manager-byte gate, while r5 maps to driver r4.",
+    "The callback table slot and conditional owner-vector null/fast/reserve handoff establish registration only; they do not establish the caller, invocation frequency, or callback argument values.",
+    "Treat owner +0x80 as the embedded vector, with pointer words +0x84/start, +0x88/end, and +0x8C/capacity. Do not treat its zero initialization, owner-vtable adjacency, or field offsets as an invocation or default-value proof.",
+    "Do not conflate 0x82D83B38's accepted direct 0x82C71A00 route (manager +0x5C call at 0x82D83C4C, direct BL at 0x82D83C58, later owner +0x28 call at 0x82D83C7C) with an invocation of 0x82C7DF58 or 0x82E87D18; RVA-F-0269 resolves that owner slot to the distinct no-op 0x821D5678.",
+    "The all-image vector-field scan reached its cap and the bounded range scans are not complete indirect-call closure; no no-invoker conclusion follows.",
+    "Do not infer a fixed simulation tick, render cadence, frame cap, or per-callback presentation count from the low-byte guard or static call order."
+  ],
+  "observations": [
+    "The callback raw entry words are 0x7C9E2378 at 0x82E87D28 (mr r30,r4) and 0x7CBC2B78 at 0x82E87D2C (mr r28,r5); the handoff word at 0x82E87D78 is 0x7F84E378 (mr r4,r28), followed by the branch-and-link at 0x82E87D80.",
+    "The raw callback table window records 0x82120D2C = 0x82E87D18 at slot 0. The owner vtable window records the derived table 0x82121100 and the callback table 0x82120D2C separately.",
+    "The raw registration window records 0x82E2B0FC = 0x3D608212, 0x82E2B100 = 0x7C641B78, 0x82E2B104 = 0x394B0D2C, 0x82E2B108 = 0x91430000, and 0x82E2B110 = 0x4BFFFE11, matching callback-table materialization, callback-object vtable store, and the registration call. The AF70 radius-12 window also covers the fast-path start/end/capacity loads and callback/end stores through 0x82E2AF98; the reserve BL at 0x82E2AFB8 is outside that raw center window and is supported by the exact generated registration source only.",
+    "The raw publication window records the constructor BL at 0x82E83EF0 with LR 0x82E83EF4, post-call branch at 0x82E83EF4, global store 0x82E83F04 = 0x906BD624, vptr load 0x82E83F08, slot +0x8 load 0x82E83F0C, mtctr 0x82E83F10, indirect call 0x82E83F14, and returned-byte site 0x82E83F18. The selected window does not show a null guard before the vptr load.",
+    "The callback-driver raw query targets 0x82E87D38, 0x82E87D78, and 0x82E87D80 with radius 8. Its first window ends at 0x82E87D58 and covers the manager-base load at 0x82E87D54; the overlapping D78/D80 windows cover the manager +4 store at 0x82E87D60, r5-to-r4 handoff, and driver call.",
+    "The owner-global materializer query scanned 654329 decoded instructions for 0x82FFD624 with lookahead 8, use-window 32, and max 64; it returned 0 materializers with Truncated false and Cancelled false. This is a bounded materializer negative, not a proof that no global use exists."
+  ],
+  "unknowns": [
+    "The exact function that iterates owner pointer words +0x84..+0x8C to invoke callback-object slot 0 is unresolved within the selected body set; the separate owner +0x28 edge is an exact no-op service per RVA-F-0269.",
+    "The incoming caller and producer of callback r5 are unresolved; no static guard or source value ties it to a fixed tick, frame counter, simulation step, or render decision.",
+    "Callback object lifetime, vector retention, reserve-helper effects, and dynamic dispatch fanout remain unresolved.",
+    "The driver low-byte gate is conditional and does not establish runtime callback frequency, event cadence, render FPS, vsync, or a fixed simulation/render split."
+  ],
+    "nextDiscriminator": {
+      "site": "The owner-vector dispatch boundary after 0x82E2AF20 conditionally inserts the callback object: reads of owner pointer words +0x84/+0x88/+0x8C followed by callback-object vptr slot 0 and register setup for r4/r5. The separate owner-table +0x28 edge is resolved as a no-op in RVA-F-0269.",
+      "question": "Which exact owner method or indirect caller loads the registered object, and what concrete producer supplies its callback r5 at the callsite?",
+      "limits": "Use one concrete owner-vector producer edge and a bounded selected body set. Do not repeat the capped executable-wide vector scan, infer a caller from table adjacency, or assign cadence semantics before the r5 setup is recovered."
+    },
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra DumpMemoryWords.java, FindGlobalAddressAccesses.java, and FindFieldAccesses.java queries against the verified flat image, with retained generated-code windows for the exact callback, registration, constructors, global publication, and selected owner methods. Generated locators use title repository rerevved at revision 75df5c52ca90a5ea77690a90cf965ff8d79bac92; the image identity is maintained by image.json. No runtime launch or image repair was used.",
+    "queries": [
+      {
+        "question": "Corroborate callback input retention and driver handoff",
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": [
+          "0x82E87D28",
+          "0x82E87D2C"
+        ],
+        "radius": 4,
+        "mode": "foreground-read-only",
+        "result": "Status OK and ReadOnly true. The raw words recover mr r30,r4, mr r28,r5, and the surrounding callback entry instructions."
+      },
+      {
+        "question": "Corroborate callback and owner table identity",
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": [
+          "0x82121100",
+          "0x82120D2C"
+        ],
+        "radius": 64,
+        "mode": "foreground-read-only",
+        "result": "Status OK and ReadOnly true. Slot 0 of 0x82120D2C is 0x82E87D18; the derived owner table is 0x82121100. The table window establishes identity, not a complete invoker closure."
+      },
+      {
+        "question": "Corroborate registration, constructor publication, and owner slot dispatch",
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": [
+          "0x82E2AF70",
+          "0x82E2B0F0",
+          "0x82E294E4",
+          "0x82E83EF4",
+          "0x82E83F18"
+        ],
+        "radius": 12,
+        "mode": "foreground-read-only",
+        "result": "Status OK and ReadOnly true. The windows recover the conditional registration fast-path stores, callback vtable materialization and registration call, derived-vtable store, global publication, vtable slot load, indirect call, and return address."
+      },
+      {
+        "question": "Corroborate callback manager load/store and driver handoff",
+        "script": "ghidra/DumpMemoryWords.java",
+        "targets": [
+          "0x82E87D38",
+          "0x82E87D78",
+          "0x82E87D80"
+        ],
+        "radius": 8,
+        "mode": "foreground-read-only",
+        "result": "Status OK and ReadOnly true. The 0x82E87D38 window ends at 0x82E87D58 and covers the manager-base load at 0x82E87D54; the overlapping 0x82E87D78 and 0x82E87D80 windows cover the manager +4 store at 0x82E87D60, r5-to-r4 handoff, and driver call."
+      },
+      {
+        "question": "Bound owner-global materializer references",
+        "script": "ghidra/FindGlobalAddressAccesses.java",
+        "targets": ["0x82FFD624"],
+        "lookahead": 8,
+        "useWindow": 32,
+        "maxResults": 64,
+        "mode": "foreground-read-only",
+        "result": "Status OK and ReadOnly true. The query scanned 654329 decoded instructions and returned 0 materializers with Truncated false and Cancelled false. This is a bounded materializer negative, not a no-global-use proof."
+      },
+      {
+        "question": "Bound owner-vector field references",
+        "script": "ghidra/FindFieldAccesses.java",
+        "fieldOffsets": [
+          "0x80",
+          "0x84",
+          "0x88",
+          "0x8C"
+        ],
+        "baseRegisters": ["R3", "R28", "R29", "R30", "R31"],
+        "access": "READ",
+        "range": "[0x82D00000,0x82E00000)",
+        "matchCap": 256,
+        "mode": "foreground-read-only",
+        "result": "The retained D-range query scanned 32470 decoded instructions and found 63 reads with Truncated false. It used base registers R3, R28, R29, R30, and R31 with READ access. The earlier all-image query reached cap 256 and was truncated. An earlier E-range screen was summarized as complete for [0x82E00000,0x82F00000), but its report/output is not independently retained in this correction pass, so no emitted or scanned count is claimed for it. These scans are screening qualifiers, not complete indirect-call closure or absence proofs."
+      },
+      {
+        "question": "Resolve the concrete owner-table +0x28 service edge",
+        "scripts": ["ghidra/DumpMemoryWords.java", "ghidra/DumpFunctions.java"],
+        "targets": ["0x82121128", "0x821D5678"],
+        "mode": "foreground-read-only",
+        "result": "RVA-F-0269 reads 0x82121128 = 0x821D5678 in the derived owner table and expands the exact target as a no-op return with no callees. The edge is distinct from owner-vector callback invocation and supplies no callback r5."
+      }
+    ],
+    "generatedWindows": [
+      {
+        "function": "0x82E87D18",
+        "file": "generated/default/rerevved_recomp.193.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "33261-33329",
+        "guestSites": ["0x82E87D28", "0x82E87D2C", "0x82E87D60", "0x82E87D78", "0x82E87D80"],
+        "claims": "Entry r4/r5 retention, manager-byte guard, r5-to-driver-r4 handoff, and driver call."
+      },
+      {
+        "function": "0x82E2AF20",
+        "file": "generated/default/rerevved_recomp.157.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "32828-32934",
+        "guestSites": ["0x82E2AF4C", "0x82E2AF84", "0x82E2AF94", "0x82E2AF98", "0x82E2AFA4", "0x82E2AFAC"],
+        "claims": "Conditional owner-vector registration: a null callback exits without insertion; a nonnull callback with nonnull start and below-capacity count stores through end and advances end; null-start/full paths branch to reserve helper 0x821B4450, whose insertion and return/retention effects remain unexpanded."
+      },
+      {
+        "function": "0x82E2AFD0",
+        "file": "generated/default/rerevved_recomp.220.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "29461-29660",
+        "guestSites": ["0x82E2AFD0", "0x82E2B0A0", "0x82E2B0F4", "0x82E2B108", "0x82E2B114", "0x82E2B12C"],
+        "claims": "Base vtable, vector-field zero initialization, callback object allocation and vtable store, and registration call."
+      },
+      {
+        "function": "0x82E294D0",
+        "file": "generated/default/rerevved_recomp.73.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "30757-30848",
+        "guestSites": ["0x82E294E4", "0x82E294EC", "0x82E294F4"],
+        "claims": "Derived owner vtable installation after base construction."
+      },
+      {
+        "function": "0x82E83EA8",
+        "file": "generated/default/rerevved_recomp.158.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "33153-33235",
+        "guestSites": ["0x82E83EE4", "0x82E83EF0", "0x82E83EF4", "0x82E83EF8", "0x82E83F04", "0x82E83F08", "0x82E83F0C", "0x82E83F10", "0x82E83F14", "0x82E83F18"],
+        "claims": "Owner allocation, constructor guard, global publication, owner slot +0x8 indirect call, and returned-byte check."
+      },
+      {
+        "function": "0x82E2E3B8",
+        "file": "generated/default/rerevved_recomp.171.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "32551-33530",
+        "guestSites": ["0x82E2E484", "0x82E2E508", "0x82E2E678"],
+        "claims": "Selected derived-owner initialization calls; no owner +0x84/+0x88/+0x8C callback-vector iteration in the selected windows."
+      },
+      {
+        "function": "0x82E2B138",
+        "file": "generated/default/rerevved_recomp.107.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "33564-33769",
+        "guestSites": ["0x82E2B168", "0x82E2B1C0", "0x82E2B228"],
+        "claims": "Selected owner state dispatch uses +0x70/+0x74/+0x78 fields and does not expose the registered callback vector."
+      },
+      {
+        "function": "0x82D83B38",
+        "file": "generated/default/rerevved_recomp.40.cpp",
+        "repository": "rerevved",
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "lines": "29823-30032",
+        "guestSites": ["0x82D83C4C", "0x82D83C50", "0x82D83C58", "0x82D83C5C", "0x82D83C68", "0x82D83C6C", "0x82D83C7C", "0x82D83C80"],
+        "claims": "Separate accepted direct caller of 0x82C71A00: manager object +0x5C bctrl at 0x82D83C4C with LR 0x82D83C50 supplies the result copied to r4, and the direct BL is at 0x82D83C58 with LR 0x82D83C5C. Address materialization for the later global-owner path starts at 0x82D83C68; the global owner 0x82FFD624 pointer is loaded at 0x82D83C6C, followed by a separate owner +0x28 bctrl at 0x82D83C7C with LR 0x82D83C80. This route is not the callback or driver caller."
+      }
+    ],
+    "bodyInventory": {
+      "focusedCount": 8,
+      "focusedFunctions": [
+        "0x82E87D18",
+        "0x82E2AF20",
+        "0x82E2AFD0",
+        "0x82E294D0",
+        "0x82E83EA8",
+        "0x82E2E3B8",
+        "0x82E2B138",
+        "0x82D83B38"
+      ],
+      "screeningCounts": {
+        "namedSummaryBodies": 27,
+        "callWindowExcerptBodies": 19,
+        "heuristicCandidateOutputs": {
+          "dispatcherCandidates": 14,
+          "globalOrVectorCandidates": 27,
+          "sameBaseRegisterFunctionHeaders": 90,
+          "invokerHeaders": 43,
+          "twoOffsetCandidateRows": 108
+        }
+      },
+      "screeningQualification": "The screening outputs used textual, offset, and indirect-call heuristics rather than recovered dispatch proof. The all-image owner-vector field scan used cap 256 and was truncated; the retained D-range field scan used cap 256 and found 63 reads without truncation; the owner-global materializer query used cap 64 and returned zero without truncation. The named summary and call-window counts are retained output counts, not complete body inventories.",
+      "qualification": "Eight focused generated body windows support the exact body-level claims above. Retained screening also named 27 summary bodies and 19 distinct other call-window excerpt bodies, plus the listed heuristic candidate outputs. Those screening outputs are candidate filters and source-window excerpts, not recovered invokers; actual full reads for every excerpt are not independently recorded. Canonical Ghidra listings for several large functions are truncated or shell-like, and capped field scans are not absence proofs."
+    },
+    "qualification": "The image queries were read-only against the verified flat image. Generated source is corroboration for selected exact instruction windows at the stated title revision; canonical decompiler truncation or bad-data shells and capped field scans are not absence proofs. The retained screening counts are not a complete caller or invoker inventory."
+  },
+  "conclusion": "The accepted callback's incoming r4 and r5 have distinct roles: r4 is retained in r30 for the callback-local manager-byte gate, while r5 is retained in r28 and moved to driver r4 immediately before 0x82C7DF58. The callback object is registered at vtable 0x82120D2C slot 0 = 0x82E87D18. 0x82E2AF20 conditionally takes the owner-vector route: a null callback exits, a nonnull callback with nonnull start and below-capacity range takes the fast path, and null-start/full cases branch to reserve helper 0x821B4450, whose insertion and return/retention effects remain unexpanded. The separate owner-table +0x28 edge at 0x82D83C7C resolves to 0x821D5678, an exact no-op service that does not reach callback slot 0 or produce r5. Constructors initialize the pointer words, and 0x82E83EA8 conditionally constructs, publishes the owner at 0x82FFD624, then performs its selected slot +0x8 call without a shown null guard before the vptr load. The bounded owner-method set still does not recover the vector invoker or the incoming r5 producer. Thus r5 is a symbolic scheduling input at this frontier, and no static evidence binds it to a fixed tick, simulation frame, render cadence, frame cap, or unconditional presentation decision."
+}

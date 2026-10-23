@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "family": "guest-entrypoints",
+  "findings": {
+    "RVA-F-0038": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0038",
+      "topic": "guest-entrypoint-8289e9e0",
+      "status": "closed",
+      "confidence": "confirmed",
+      "image": "image.json",
+      "question": "What current evidence supports the adjusted-pointer thunk at 0x8289E9E0?",
+      "currentEvidence": {
+        "address": "0x8289E9E0",
+        "method": "Exact two-instruction body, identified tail target, and bounded runtime reachability.",
+        "confidence": "confirmed"
+      },
+      "staticResult": {
+        "result": "Entry 0x8289E9E0 contains addi r3,r3,0x14 followed by a tail branch to lookup 0x828680B8. The next function begins at 0x8289E9E8, fixing the thunk size at 0x8. Neighboring thunks 0x8289E9D0 and 0x8289E9D8 target different functions and remain rejected.",
+        "boundary": "The exact thunk identity and indirect-entry reachability are confirmed; its higher-level callback semantics remain unclassified."
+      },
+      "runtimeEvidence": {
+        "status": "confirmed",
+        "session": "city worker reassignment parity",
+        "date": "2026-08-15",
+        "observedTarget": "0x8289E9E0",
+        "result": "ReXGlue reached the target through an indirect call while exercising the city worker path.",
+        "qualification": "The observation confirms entrypoint reachability, not the callback's semantic role."
+      },
+      "generatedCoverage": {
+        "result": "The maintained generated function map registers 0x8289E9E0."
+      },
+      "guards": [
+        "Do not select a local thunk by address delta alone.",
+        "Keep the neighboring non-matching thunks rejected."
+      ],
+      "conclusion": "The adjusted-pointer thunk at 0x8289E9E0 is an exact current-image entrypoint reached by the runtime."
+    },
+    "RVA-F-0039": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0039",
+      "topic": "guest-entrypoint-828ac400",
+      "status": "closed",
+      "confidence": "confirmed",
+      "image": "image.json",
+      "question": "What is the exact current-image function at 0x828AC400?",
+      "currentEvidence": {
+        "address": "0x828AC400",
+        "method": "Unique whole-image three-instruction shape scan.",
+        "confidence": "confirmed"
+      },
+      "guestFunction": {
+        "entry": "0x828AC400",
+        "size": "0xC",
+        "endExclusive": "0x828AC40C",
+        "instructions": ["stw r4,0x24(r3)", "stw r4,0x8(r3)", "blr"],
+        "result": "Stores the incoming word at object offsets 0x24 and 0x8."
+      },
+      "generatedCoverage": {
+        "result": "The maintained generated function map registers 0x828AC400."
+      },
+      "guards": ["Do not assign a containing type or value meaning."],
+      "conclusion": "The current image contains the unique 0xC-byte dual-field setter at 0x828AC400."
+    },
+    "RVA-F-0040": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0040",
+      "topic": "guest-entrypoint-829bc188",
+      "status": "closed",
+      "confidence": "confirmed",
+      "image": "image.json",
+      "question": "What is the exact current-image thunk at 0x829BC188?",
+      "currentEvidence": {
+        "address": "0x829BC188",
+        "method": "Exact load-at-0x38 tail-thunk shape and stable local sequence.",
+        "confidence": "confirmed"
+      },
+      "guestFunction": {
+        "entry": "0x829BC188",
+        "size": "0x8",
+        "endExclusive": "0x829BC190",
+        "tailTarget": "0x829C8C38",
+        "result": "Loads r3 from r3+0x38 and tail-dispatches."
+      },
+      "generatedCoverage": {
+        "result": "The maintained generated function map registers 0x829BC188."
+      },
+      "guards": ["Do not merge the adjacent thunk at 0x829BC190."],
+      "conclusion": "The current image contains the exact 0x8-byte tail thunk at 0x829BC188."
+    },
+    "RVA-F-0042": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0042",
+      "topic": "guest-entrypoint-821b1cb8",
+      "status": "closed",
+      "confidence": "confirmed",
+      "image": "image.json",
+      "question": "What is the exact current-image function at 0x821B1CB8?",
+      "currentEvidence": {
+        "address": "0x821B1CB8",
+        "method": "Exact three-instruction fixed-address accessor plus bounded neighborhood confirmation.",
+        "confidence": "confirmed"
+      },
+      "guestFunction": {
+        "entry": "0x821B1CB8",
+        "size": "0xC",
+        "endExclusive": "0x821B1CC4",
+        "instructions": ["lis r11,-0x7CEB", "subi r3,r11,0xC70", "blr"],
+        "result": "Returns fixed address 0x8314F390."
+      },
+      "generatedCoverage": {
+        "result": "The maintained generated declarations, initialization, registration, and body cover 0x821B1CB8."
+      },
+      "guards": ["Do not include following alignment padding in the body."],
+      "conclusion": "The current image contains the exact 0xC-byte fixed-address accessor at 0x821B1CB8."
+    },
+    "RVA-F-0043": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0043",
+      "topic": "guest-entrypoint-828f3f10",
+      "status": "closed",
+      "confidence": "confirmed",
+      "image": "image.json",
+      "question": "What current evidence supports the float-copy leaf at 0x828F3F10?",
+      "currentEvidence": {
+        "address": "0x828F3F10",
+        "method": "Exact five-instruction body plus bounded runtime reachability.",
+        "confidence": "confirmed"
+      },
+      "staticResult": {
+        "result": "Entry 0x828F3F10 loads floats from r3+0x30 and r3+0x34, stores them through r4 and r5, and returns. Padding begins at 0x828F3F24 and the next function begins at 0x828F3F28, fixing the leaf size at 0x14.",
+        "boundary": "The exact leaf identity and indirect-entry reachability are confirmed; no higher-level callback semantics are inferred."
+      },
+      "runtimeEvidence": {
+        "status": "confirmed",
+        "session": "city worker reassignment parity",
+        "date": "2026-08-15",
+        "observedTarget": "0x828F3F10",
+        "result": "ReXGlue reached the target through an indirect call while exercising the city worker path.",
+        "qualification": "The observation confirms entrypoint reachability, not the callback's semantic role."
+      },
+      "generatedCoverage": {
+        "result": "The maintained generated function map registers 0x828F3F10."
+      },
+      "guards": ["Do not select a nearby float accessor by address delta alone."],
+      "conclusion": "The five-instruction float-copy leaf at 0x828F3F10 is an exact current-image entrypoint reached by the runtime."
+    },
+    "RVA-F-0044": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0044",
+      "topic": "guest-entrypoint-828f4950",
+      "status": "closed",
+      "confidence": "confirmed",
+      "image": "image.json",
+      "question": "What current evidence supports the bitfield leaf at 0x828F4950?",
+      "currentEvidence": {
+        "address": "0x828F4950",
+        "method": "Exact eight-instruction body plus bounded runtime reachability.",
+        "confidence": "confirmed"
+      },
+      "staticResult": {
+        "result": "Address 0x828F4950 contains a load at offset 0x20, paired rlwinm bit extraction, a conditional return, a masked result, and a final return.",
+        "boundary": "The exact 0x20-byte leaf ends at 0x828F496C before the next function at 0x828F4970."
+      },
+      "runtimeResult": {
+        "result": "The maintained runtime reached 0x828F4950 through an indirect callback while exercising the city worker path."
+      },
+      "generatedCoverage": {
+        "result": "The maintained generated function map registers 0x828F4950."
+      },
+      "guards": [
+        "Do not identify adjacent targets without independent evidence.",
+        "Do not assign a semantic type beyond the observed bitfield-result behavior."
+      ],
+      "conclusion": "The bitfield-result leaf at 0x828F4950 is an exact current-image entrypoint reached by the runtime."
+    },
+    "RVA-F-0045": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0045",
+      "topic": "guest-entrypoint-829bc190",
+      "status": "closed",
+      "confidence": "confirmed",
+      "image": "image.json",
+      "question": "What is the exact current-image thunk at 0x829BC190?",
+      "currentEvidence": {
+        "address": "0x829BC190",
+        "method": "Exact load-at-0x38 tail-thunk shape and adjacency to the distinct entry at 0x829BC188.",
+        "confidence": "confirmed"
+      },
+      "guestFunction": {
+        "entry": "0x829BC190",
+        "size": "0x8",
+        "endExclusive": "0x829BC198",
+        "tailTarget": "0x829C8D70",
+        "result": "Loads r3 from r3+0x38 and tail-dispatches."
+      },
+      "generatedCoverage": {
+        "result": "The maintained generated function map registers 0x829BC190."
+      },
+      "guards": ["Do not merge either adjacent thunk."],
+      "conclusion": "The current image contains the exact 0x8-byte tail thunk at 0x829BC190."
+    },
+    "RVA-F-0046": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0046",
+      "topic": "guest-entrypoint-frontier",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Which current-image guest entrypoints in the bounded 0x8223, 0x828F, and 0x829B frontiers have supported identities?",
+      "entries": [
+        {"address": "0x8223CB18", "confidence": "confirmed", "result": "Exact byte-flag update leaf."},
+        {"address": "0x822451E0", "confidence": "strong", "result": "Exact fingerprint anchor; no semantic name is assigned."},
+        {"address": "0x8225CEF0", "confidence": "strong", "result": "Exact fingerprint anchor; no semantic name is assigned."},
+        {"address": "0x828F3EF8", "confidence": "strong", "result": "Exact fingerprint anchor; no semantic name is assigned."},
+        {"address": "0x828F3F10", "confidence": "confirmed", "result": "Exact five-instruction float-copy leaf reached by the runtime."},
+        {"address": "0x828F4508", "confidence": "strong", "result": "Strong fingerprint anchor; no semantic name is assigned."},
+        {"address": "0x828F4950", "confidence": "confirmed", "result": "Exact bitfield-result leaf reached by the runtime."},
+        {"address": "0x828F5760", "confidence": "strong", "result": "Strong fingerprint anchor; no semantic name is assigned."},
+        {"address": "0x829BC0A8", "confidence": "strong", "result": "Exact fingerprint anchor; no semantic name is assigned."},
+        {"address": "0x829BC180", "confidence": "rejected", "result": "No independent identity edge supports this adjacent entry."},
+        {"address": "0x829BC188", "confidence": "confirmed", "result": "Exact load-at-0x38 tail thunk."},
+        {"address": "0x829BC190", "confidence": "confirmed", "result": "Distinct exact load-at-0x38 tail thunk."}
+      ],
+      "guards": [
+        "Do not identify pointer-table neighbors by address delta.",
+        "Do not treat a changed bit mask as the same leaf.",
+        "Do not manufacture semantic names for fingerprint-only anchors.",
+        "Do not promote an ambiguous candidate without a current-image endpoint."
+      ],
+      "conclusion": "The current frontier contains five fingerprint-only anchors, three exact semantic leaves, two exact tail thunks, and one rejected adjacent entry."
+    },
+    "RVA-F-0047": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0047",
+      "topic": "guest-entrypoint-8223cb18",
+      "status": "closed",
+      "confidence": "confirmed",
+      "image": "image.json",
+      "question": "What is the exact current-image function at 0x8223CB18?",
+      "currentEvidence": {
+        "address": "0x8223CB18",
+        "method": "Exact nine-instruction byte-flag update shape between independently identified neighborhood anchors.",
+        "confidence": "confirmed"
+      },
+      "guestFunction": {
+        "entry": "0x8223CB18",
+        "size": "0x24",
+        "endExclusive": "0x8223CB3C",
+        "field": "0x138",
+        "result": "Conditionally sets or clears bit 1 of byte field 0x138 and returns."
+      },
+      "generatedCoverage": {
+        "result": "The maintained generated function map registers 0x8223CB18."
+      },
+      "guards": ["Do not infer the containing type or flag name."],
+      "conclusion": "The current image contains the exact byte-flag update leaf at 0x8223CB18."
+    }
+  }
+}

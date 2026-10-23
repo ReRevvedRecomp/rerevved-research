@@ -1,0 +1,3905 @@
+{
+  "schemaVersion": 1,
+  "catalog": "structs",
+  "records": [
+    {
+      "id": "RVA-STR-0006",
+      "name": "GfxFileDataResource",
+      "image": "../image.json",
+      "claim": "0x18-byte numeric type-11 resource whose normalized key is stored at +0x4 and retained payload-data pointer at +0x14.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-main-menu-filedata-handoff.json#/fileDataResource" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82C91E38" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82C92C38" }
+      ],
+      "qualification": {
+        "alternatives": ["Fields other than the key and payload-data pointer remain minimally interpreted."]
+      },
+      "size": "0x18",
+      "fields": [
+        {
+          "id": "RVA-FLD-0009",
+          "name": "resource_key",
+          "offset": "0x4",
+          "claim": "Normalized resource key stored by the registration path before initializer dispatch.",
+          "confidence": "confirmed",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-main-menu-filedata-handoff.json#/fileDataResource/keyField" }],
+          "qualification": { "alternatives": ["The key interning implementation remains outside this packet."] }
+        },
+        {
+          "id": "RVA-FLD-0010",
+          "name": "payload_data",
+          "offset": "0x14",
+          "claim": "Retained payload-data pointer assigned by initialization and returned by export.",
+          "confidence": "confirmed",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-main-menu-filedata-handoff.json#/fileDataResource/payloadField" }],
+          "qualification": { "alternatives": ["The four-byte length prefix precedes this pointer and is not part of the field value."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0007",
+      "name": "GfxTextureResource",
+      "image": "../image.json",
+      "claim": "0x1C-byte numeric type-7 resource whose normalized key is stored at +0x4 and retained texture pointer at +0x18.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-texture-resource-export.json#/objectLayout" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82C91E38" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82C92C38" }
+      ],
+      "qualification": {
+        "alternatives": ["Fields other than the key and retained texture pointer remain minimally interpreted."]
+      },
+      "size": "0x1C",
+      "fields": [
+        {
+          "id": "RVA-FLD-0011",
+          "name": "resource_key",
+          "offset": "0x4",
+          "claim": "Normalized resource key stored by the registration path before initializer dispatch.",
+          "confidence": "confirmed",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-texture-resource-export.json#/objectLayout/fields/0" }],
+          "qualification": { "alternatives": ["The key interning implementation remains outside this packet."] }
+        },
+        {
+          "id": "RVA-FLD-0012",
+          "name": "texture_object",
+          "offset": "0x18",
+          "claim": "Retained texture pointer cleared by construction, assigned by initialization, and read by export.",
+          "confidence": "confirmed",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-texture-resource-export.json#/objectLayout/fields/1" }],
+          "qualification": { "alternatives": ["The concrete retained-pointer wrapper type remains unresolved."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0008",
+      "name": "GfxRendererTexture",
+      "image": "../image.json",
+      "claim": "0x30-byte renderer texture object created by the version 1.3 external-image path, with renderer owner, dimensions, and backend texture fields.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/rendererTextureHandoff" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82302DC8" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82304CF0" }
+      ],
+      "qualification": {
+        "alternatives": ["Fields outside the recorded renderer, dimensions, and backend slots remain unresolved."]
+      },
+      "size": "0x30",
+      "fields": [
+        {
+          "id": "RVA-FLD-0013",
+          "name": "renderer_owner",
+          "offset": "0x1C",
+          "claim": "Stores the renderer object supplied by the texture factory.",
+          "confidence": "confirmed",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/currentEvidence/textureFactory" }],
+          "qualification": { "alternatives": ["The renderer ownership policy remains unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0014",
+          "name": "dimensions",
+          "offset": "0x20",
+          "claim": "Stores width at +0x20 and height at +0x24 selected by the upload method.",
+          "confidence": "confirmed",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/currentEvidence/uploadTarget" }],
+          "qualification": { "alternatives": ["The two-word field is represented by its first offset."] }
+        },
+        {
+          "id": "RVA-FLD-0015",
+          "name": "backend_texture",
+          "offset": "0x28",
+          "claim": "Stores the 0x34-byte backend texture created by the upload method; its six-dword template at +0x1C through +0x30 feeds the selected guest fetch shadow entry.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/currentEvidence/uploadTarget" },
+            { "kind": "topic-manifest", "locator": "../gfx-backend-fetch-descriptor.json#/objectPath" }
+          ],
+          "qualification": { "alternatives": ["No runtime asset identity or visual result is inferred."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0029",
+      "name": "GfxSourceTableView",
+      "image": "../image.json",
+      "claim": "Temporary view built inline by 0x821F3F48 whose source records reside in pointer-backed arrays.",
+      "confidence": "strong",
+      "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-source-count-contract.json#/sourceContainer/temporaryView" }],
+      "qualification": { "alternatives": ["Only fields required by the bounded source contract are named."] },
+      "fields": [
+        {
+          "id": "RVA-FLD-0082",
+          "name": "primary_source_base",
+          "offset": "0x4",
+          "claim": "Pointer to the first 0x28-byte primary source entry.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-source-count-contract.json#/sourceContainer/temporaryView/primaryBaseField" }],
+          "qualification": { "alternatives": ["The concrete entry type remains unnamed."] }
+        },
+        {
+          "id": "RVA-FLD-0083",
+          "name": "secondary_source_base",
+          "offset": "0x8",
+          "claim": "Pointer to the secondary source array produced with the primary view.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-source-count-contract.json#/sourceContainer/temporaryView/secondaryBaseField" }],
+          "qualification": { "alternatives": ["The secondary entry layout is outside this packet."] }
+        },
+        {
+          "id": "RVA-FLD-0084",
+          "name": "primary_source_count",
+          "offset": "0x48",
+          "claim": "Authoritative number of 0x28-byte entries reachable from primary_source_base.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-source-count-contract.json#/sourceContainer/temporaryView/primaryCountField" }],
+          "qualification": { "alternatives": ["No runtime count is asserted."] }
+        },
+        {
+          "id": "RVA-FLD-0085",
+          "name": "secondary_source_count",
+          "offset": "0x4C",
+          "claim": "Count paired with secondary_source_base by the source-provider callback.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-source-count-contract.json#/sourceContainer/temporaryView/secondaryCountField" }],
+          "qualification": { "alternatives": ["The secondary array does not authorize primary selectors."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0030",
+      "name": "GfxResourceSourceEntry",
+      "image": "../image.json",
+      "claim": "Pointer-backed 0x28-byte source entry resolved by 0x8225BC48.",
+      "confidence": "strong",
+      "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-source-count-contract.json#/sourceEntryLayout" }],
+      "qualification": { "alternatives": ["Fields are named by observed use only; no public source type is assigned."] },
+      "size": "0x28",
+      "fields": [
+        {
+          "id": "RVA-FLD-0086",
+          "name": "raw_selector_type",
+          "offset": "0x0",
+          "claim": "Raw byte tested by the resource resolver.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-source-count-contract.json#/sourceEntryLayout/fields/0" }],
+          "qualification": { "alternatives": ["Its public semantics remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0087",
+          "name": "raw_resource_lookup_input",
+          "offset": "0x4",
+          "claim": "Raw word supplied to the bit-0x10 resource lookup path.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-source-count-contract.json#/sourceEntryLayout/fields/1" }],
+          "qualification": { "alternatives": ["No public resource-field name is assigned."] }
+        },
+        {
+          "id": "RVA-FLD-0088",
+          "name": "raw_lookup_record",
+          "offset": "0x8",
+          "claim": "Two-word lookup/cache record consumed by the resolver.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-source-count-contract.json#/sourceEntryLayout/fields/2" }],
+          "qualification": { "alternatives": ["The nested record type remains unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0089",
+          "name": "source_transform",
+          "offset": "0x10",
+          "claim": "Six raw transform floats occupying the final 0x18 bytes of the entry.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-source-count-contract.json#/sourceEntryLayout/fields/3" }],
+          "qualification": { "alternatives": ["Matrix convention and semantic coordinate space remain unresolved."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0032",
+      "name": "GfxFillDescriptor",
+      "image": "../image.json",
+      "claim": "0x28-byte fill descriptor whose leading mapping tuple is initialized together and rewritten coherently by the complex fill writer.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-coupled-fill-producer.json#/descriptorProduction" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82269590" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_822CA718" }
+      ],
+      "qualification": {
+        "alternatives": ["Fields after offset 0x10 remain outside this packet."]
+      },
+      "size": "0x28",
+      "fields": [
+        {
+          "id": "RVA-FLD-0097",
+          "name": "mapping_count",
+          "offset": "0x0",
+          "claim": "Number of valid source selectors in the following three words.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-coupled-fill-producer.json#/descriptorProduction/complexWriter" }],
+          "qualification": { "alternatives": ["Only values 0, 1, and 2 are established in this writer."] }
+        },
+        {
+          "id": "RVA-FLD-0098",
+          "name": "source_selectors",
+          "offset": "0x4",
+          "claim": "Three source selector words at offsets 0x4, 0x8, and 0xC; unused positions contain 0xFFFFFFFF.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-coupled-fill-producer.json#/descriptorProduction/layout" }],
+          "qualification": { "alternatives": ["Selectors are bounded source ordinals, not resource or renderer-slot IDs."] }
+        },
+        {
+          "id": "RVA-FLD-0099",
+          "name": "fill_subtype",
+          "offset": "0x10",
+          "claim": "Coupled fill subtype: 0 for no resource, 2 for one resource, and 3 for two distinct resources in the complex writer.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-coupled-fill-producer.json#/descriptorProduction/complexWriter" }],
+          "qualification": { "alternatives": ["No renderer variant is assigned by this structure record."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0031",
+      "name": "GfxDecodedImageRecord",
+      "image": "../image.json",
+      "claim": "Seven-word vptr-less decoded-image record consumed by the version 1.3 mip selector.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../gfx-mip-source-selection.json#/recordLayout"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/sub_821E0568"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The concrete owning container type remains unresolved."
+        ]
+      },
+      "size": "0x1C",
+      "fields": [
+        {
+          "id": "RVA-FLD-0090",
+          "name": "numeric_format",
+          "offset": "0x0",
+          "claim": "Numeric format selector used by the extent and pitch rules.",
+          "confidence": "confirmed",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-mip-source-selection.json#/recordLayout/fields/0" }],
+          "qualification": { "alternatives": ["The public format name remains unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0091",
+          "name": "width",
+          "offset": "0x4",
+          "claim": "Decoded width used as the level-zero width.",
+          "confidence": "confirmed",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-mip-source-selection.json#/recordLayout/fields/1" }],
+          "qualification": { "alternatives": ["The owning container type remains unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0092",
+          "name": "height",
+          "offset": "0x8",
+          "claim": "Decoded height used as the level-zero height.",
+          "confidence": "confirmed",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-mip-source-selection.json#/recordLayout/fields/2" }],
+          "qualification": { "alternatives": ["The owning container type remains unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0093",
+          "name": "pitch",
+          "offset": "0xC",
+          "claim": "Level-zero row pitch or row stride.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-mip-source-selection.json#/recordLayout/fields/3" }],
+          "qualification": { "alternatives": ["The unit remains bounded to the selector's returned value."] }
+        },
+        {
+          "id": "RVA-FLD-0094",
+          "name": "base_data",
+          "offset": "0x10",
+          "claim": "Base data pointer returned for level zero and used as the later-level accumulation origin.",
+          "confidence": "confirmed",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-mip-source-selection.json#/recordLayout/fields/4" }],
+          "qualification": { "alternatives": ["No pixel-layout interpretation is assigned."] }
+        },
+        {
+          "id": "RVA-FLD-0095",
+          "name": "byte_extent",
+          "offset": "0x14",
+          "claim": "Byte extent added to base_data for the exclusive derived-pointer bound.",
+          "confidence": "confirmed",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-mip-source-selection.json#/recordLayout/fields/5" }],
+          "qualification": { "alternatives": ["The allocator that establishes the extent remains outside this packet."] }
+        },
+        {
+          "id": "RVA-FLD-0096",
+          "name": "level_bound",
+          "offset": "0x18",
+          "claim": "Upper bound checked before selecting a requested level.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-mip-source-selection.json#/recordLayout/fields/6" }],
+          "qualification": { "alternatives": ["Whether producers encode a count or maximum index remains unresolved."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0028",
+      "name": "BackendTextureFetchTemplate",
+      "image": "../image.json",
+      "claim": "0x34-byte backend texture object whose contiguous dwords at offsets +0x1C through +0x30 supply the template merged into a selected guest fetch shadow entry.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-backend-fetch-descriptor.json#/backendTexture" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_8269A378" }
+      ],
+      "qualification": {
+        "alternatives": ["The original backend class name and fields before +0x1C remain unresolved."]
+      },
+      "size": "0x34",
+      "fields": [
+        {
+          "id": "RVA-FLD-0076",
+          "name": "fetch_template_dword_0",
+          "offset": "0x1C",
+          "claim": "Supplies template dword 0 while the selected shadow entry supplies bounded middle bits.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-backend-fetch-descriptor.json#/descriptorMerge/dwords/0" }],
+          "qualification": { "alternatives": ["The selected result is not always byte-identical to this template word."] }
+        },
+        {
+          "id": "RVA-FLD-0077",
+          "name": "fetch_template_dword_1",
+          "offset": "0x20",
+          "claim": "Supplies template dword 1 after BackendTextureCreate patches its allocation-derived high address portion.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-backend-fetch-descriptor.json#/backendTexture" }],
+          "qualification": { "alternatives": ["One selected shadow bit is preserved during the merge."] }
+        },
+        {
+          "id": "RVA-FLD-0078",
+          "name": "fetch_template_dword_2",
+          "offset": "0x24",
+          "claim": "Copies unchanged to selected fetch-shadow dword 2.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-backend-fetch-descriptor.json#/descriptorMerge/dwords/2" }],
+          "qualification": { "alternatives": ["No public hardware-field name is assigned."] }
+        },
+        {
+          "id": "RVA-FLD-0079",
+          "name": "fetch_template_dword_3",
+          "offset": "0x28",
+          "claim": "Supplies template dword 3 while preserving the selected shadow entry's bounded middle bits.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-backend-fetch-descriptor.json#/descriptorMerge/dwords/3" }],
+          "qualification": { "alternatives": ["This backend-relative offset is distinct from renderer texture +0x28, which holds the backend pointer."] }
+        },
+        {
+          "id": "RVA-FLD-0080",
+          "name": "fetch_template_dword_4",
+          "offset": "0x2C",
+          "claim": "Supplies template dword 4 before two slot-local bounded nibbles are merged.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-backend-fetch-descriptor.json#/descriptorMerge/dwords/4" }],
+          "qualification": { "alternatives": ["The original semantic names of the two merged nibbles remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0081",
+          "name": "fetch_template_dword_5",
+          "offset": "0x30",
+          "claim": "Supplies template dword 5 after BackendTextureCreate patches its allocation-derived high address portion.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../gfx-backend-fetch-descriptor.json#/backendTexture" }],
+          "qualification": { "alternatives": ["Selected shadow low bits are preserved during the merge."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0002",
+      "name": "object_82214450",
+      "image": "../image.json",
+      "claim": "Object constructed by 0x82214450 with vtable 0x8213F088 and two directly constructed child pointers.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-vtable-ownership.json#/ownership" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82214450" }
+      ],
+      "qualification": {
+        "alternatives": ["The object's semantic class name, complete layout, destruction path, and exclusive-lifetime semantics remain unresolved."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0002",
+          "name": "contained_child_0",
+          "offset": "0x90",
+          "claim": "Receives the first child allocated as 0x3C bytes and initialized with vtable 0x8213D2B8.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-vtable-ownership.json#/ownership/fields/0" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82214564" },
+            { "kind": "topic-manifest", "locator": "../gfx-child-slot-consumer-boundary.json#/boundedNegative" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The store at 0x82214564 does not place the first initialized child pointer at parent offset +0x90.",
+            "alternatives": ["Common slot-0x2C target 0x821FBC38 does not directly access this field; other consumers, destruction, release order, aliasing, and exclusive lifetime remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0003",
+          "name": "contained_child_1",
+          "offset": "0x94",
+          "claim": "Receives the second child allocated as 0x3C bytes and initialized with vtable 0x8213D2B8.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-vtable-ownership.json#/ownership/fields/1" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x822145CC" },
+            { "kind": "topic-manifest", "locator": "../gfx-child-slot-consumer-boundary.json#/boundedNegative" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The store at 0x822145CC does not place the second initialized child pointer at parent offset +0x94.",
+            "alternatives": ["Common slot-0x2C target 0x821FBC38 does not directly access this field; other consumers, destruction, release order, aliasing, and exclusive lifetime remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0003",
+      "name": "object_8213D2B8",
+      "image": "../image.json",
+      "claim": "Child object allocated as 0x3C bytes and initialized with vtable 0x8213D2B8.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-vtable-ownership.json#/ownership" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x8221454C" }
+      ],
+      "qualification": {
+        "alternatives": ["The child object's semantic class name and fields beyond its vptr remain unresolved."]
+      },
+      "size": "0x3C",
+      "fields": [
+        {
+          "id": "RVA-FLD-0004",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Points to vtable 0x8213D2B8 after construction.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-vtable-ownership.json#/vtables/3" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x822145BC" }
+          ],
+          "qualification": {
+            "falsificationCondition": "Either child initialization path does not store 0x8213D2B8 at object offset +0x0."
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0001",
+      "name": "GfxMovieViewTransformContext",
+      "image": "../image.json",
+      "claim": "Display context containing a six-float movie-view transform at offsets +0x24 through +0x38.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82298A64" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82298898" }
+      ],
+      "qualification": {
+        "alternatives": ["The full context size and fields outside the bounded transform copy remain unresolved."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0001",
+          "name": "movie_view_transform_element_1",
+          "offset": "0x28",
+          "claim": "Second single-precision word copied from source transform offset +0x4.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82298A70" }
+          ],
+          "qualification": {
+            "alternatives": ["The field's consumers outside the bounded copy remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0026",
+      "name": "scene_render_tree",
+      "image": "../image.json",
+      "claim": "0x2C-byte vptr-less scene render tree published through 0x8314F08C and protected by an embedded critical section.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../scene-render-tree-publication.json#/publication" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82D4BF58" }
+      ],
+      "qualification": {
+        "alternatives": ["The original concrete class name and fields outside the bounded render path remain unresolved."]
+      },
+      "size": "0x2C",
+      "fields": [
+        {
+          "id": "RVA-FLD-0062",
+          "name": "render_parameter_f1",
+          "offset": "0x8",
+          "claim": "Receives SceneTreeRender's incoming f1 value after the render gates pass.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-render-tree-publication.json#/renderEdge" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D4C348" }
+          ],
+          "qualification": {
+            "alternatives": ["The exact time unit and runtime value remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0063",
+          "name": "render_argument_r4",
+          "offset": "0xC",
+          "claim": "Receives SceneTreeRender's incoming r4 value after the render gates pass.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-render-tree-publication.json#/renderEdge" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D4C348" }
+          ],
+          "qualification": {
+            "alternatives": ["The pointed-to or numeric value's concrete type remains unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0064",
+          "name": "critical_section",
+          "offset": "0x10",
+          "claim": "Embedded critical section initialized by SceneTreeCtor and entered by SceneTreeRender.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-render-tree-publication.json#/layout" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D4BF58" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D4C348" }
+          ],
+          "qualification": {
+            "falsificationCondition": "SceneTreeCtor does not initialize object-plus-0x10 or SceneTreeRender does not pass object-plus-0x10 to RtlEnterCriticalSection."
+          }
+        },
+        {
+          "id": "RVA-FLD-0065",
+          "name": "root_walk_state",
+          "offset": "0x2",
+          "claim": "Stores the byte state passed to RenderRoot4156Walk and tested during its conditional root work.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-render-tree-update.json#/updateEdge" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D4C4B8" }
+          ],
+          "qualification": {
+            "alternatives": ["The original field name and the full meaning of its zero and nonzero states remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0066",
+          "name": "root_content",
+          "offset": "0x4",
+          "claim": "Stores the non-null object returned by SceneTreeWalkRecurse and supplied to SceneRootSetContent.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-render-root-content.json#/producer" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D4C2A8" }
+          ],
+          "qualification": {
+            "alternatives": ["The pointed-to object's original class name, complete lifetime, and child graph remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0027",
+      "name": "scene_root_content_82147EF8",
+      "image": "../image.json",
+      "claim": "0xA8-byte scene-root content pool entry constructed with vtable 0x82147EF8 and returned by SceneRootContentAcquire.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../scene-root-content-construction.json#/constructionIdentity" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java:0x822D1708" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_822D1708" }
+      ],
+      "qualification": {
+        "alternatives": ["The original concrete class name, fields outside the bounded scene-root packets, and complete pool lifetime remain unresolved."]
+      },
+      "size": "0xA8",
+      "fields": [
+        {
+          "id": "RVA-FLD-0067",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Contains scene-root content vtable 0x82147EF8.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-root-content-construction.json#/constructionIdentity" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82147EF8" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_822D1708" }
+          ],
+          "qualification": {
+            "falsificationCondition": "0x822D1708 does not store 0x82147EF8 at entry offset 0x0."
+          }
+        },
+        {
+          "id": "RVA-FLD-0071",
+          "name": "byte_17",
+          "offset": "0x17",
+          "claim": "Anonymous scene-root content byte read by the slot-0x14 target before it dispatches vtable slot 0x40.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-node-render-entry.json#/nodeDispatchGate" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpInstructions.java:0x82E49B58" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E49B58" }
+          ],
+          "qualification": {
+            "alternatives": ["The original field name, semantic role, and runtime value remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0072",
+          "name": "byte_38",
+          "offset": "0x38",
+          "claim": "Receives prepared-record byte 0x1C; SceneNodeRenderVisit uses it as the gate for its first bounded local-value selection.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-root-content-field-roles.json#/boundedProducer" },
+            { "kind": "topic-manifest", "locator": "../scene-root-content-field-roles.json#/firstConsumerRoles" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D548B8" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D55C68" }
+          ],
+          "qualification": {
+            "alternatives": ["The original field name and semantic role remain unresolved; it is not classified as a collection handle."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0073",
+          "name": "word_1c",
+          "offset": "0x1C",
+          "claim": "Receives prepared-record word 0x0; SceneNodeRenderVisit passes it to unresolved callee 0x82D50820 only on the null-r4, byte-0x38-zero path.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-root-content-field-roles.json#/boundedProducer" },
+            { "kind": "topic-manifest", "locator": "../scene-root-content-field-roles.json#/firstConsumerRoles" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D548B8" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D55C68" }
+          ],
+          "qualification": {
+            "alternatives": ["The original field name, scalar meaning, and role of unresolved callee 0x82D50820 remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0068",
+          "name": "slot0_state",
+          "offset": "0x8",
+          "claim": "Receives constant 4 after SceneRootContentSlot0Body completes the bounded record copy.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-root-prepared-record-dispatch.json#/recordConsumption" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D548B8" }
+          ],
+          "qualification": {
+            "alternatives": ["The original field name and meaning of numeric state 4 remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0069",
+          "name": "slot0_copy_guard",
+          "offset": "0x14",
+          "claim": "Zero permits SceneRootContentSlot0Body to copy the prepared record; completion stores one and a nonzero value blocks a repeated copy.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-root-prepared-record-dispatch.json#/recordConsumption" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D548B8" }
+          ],
+          "qualification": {
+            "alternatives": ["This is a static one-shot gate; successful runtime initialization remains unconfirmed."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0070",
+          "name": "prepared_record_ref",
+          "offset": "0x44",
+          "claim": "Receives the refcounted pointer supplied at prepared-record offset 0x28.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-root-prepared-record-dispatch.json#/refcountedAssignment" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_821B2440" },
+            { "kind": "topic-manifest", "locator": "../scene-root-references.json#/findings/RVA-F-0094/boundedNegative" },
+            { "kind": "topic-manifest", "locator": "../scene-root-references.json#/findings/RVA-F-0104/boundedNegative" }
+          ],
+          "qualification": {
+            "alternatives": ["SceneNodeRenderWrap and SceneNodeRenderVisit do not directly access this field. A decoded scan of eight selected unrecorded vtable targets found no +0x44 operand, but every exact body truncated; indirect and other direct consumers, concrete type, ownership, and lifetime remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0024",
+      "name": "application_owner_82121100",
+      "image": "../image.json",
+      "claim": "Application owner initialized with vtable 0x82121100, callback-registration state, and an embedded scene-active gate at offset 0xC0; its identity with the constructor result published through frontend-root global 0x82FFD624 requires return and retention contracts.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../scene-active-gate-publication.json#/publication" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82E294D0" },
+        { "kind": "topic-manifest", "locator": "../gameplay-main-frame-boundary.json#/callbackRegistration" },
+        { "kind": "topic-manifest", "locator": "../frontend-root-publication-mask-init.json#/staticResult/constructorJoin" },
+        { "kind": "topic-manifest", "locator": "../game-of-the-week-local-generation.json#/configurationPublisherBoundary/constructorRetentionBoundary" }
+      ],
+      "qualification": {
+        "alternatives": ["The startup allocation requests 0xD4 bytes. The original class name and fields outside the bounded scene-gate, callback-registration, and frontend-root paths remain unresolved."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0058",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Contains application-owner vtable 0x82121100.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-active-gate-publication.json#/vtableBoundary" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E294D0" }
+          ],
+          "qualification": {
+            "falsificationCondition": "ScenePublishStore does not store 0x82121100 at owner offset 0x0."
+          }
+        },
+        {
+          "id": "RVA-FLD-0059",
+          "name": "scene_active_gate",
+          "offset": "0xC0",
+          "claim": "Embeds the 8-byte scene-active gate published through 0x8314F094.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-active-gate-publication.json#/publication" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E294D0" }
+          ],
+          "qualification": {
+            "falsificationCondition": "ScenePublishStore does not construct the gate at owner offset 0xC0 and publish that address."
+        }
+      },
+      {
+        "id": "RVA-FLD-0128",
+        "name": "callback_vector",
+        "offset": "0x80",
+        "claim": "Begins the callback vector to which ApplicationCallbackRegister appends registered callback pointers.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "topic-manifest", "locator": "../gameplay-main-frame-boundary.json#/callbackRegistration" }
+        ],
+        "qualification": {
+          "alternatives": ["The vector header layout, element type beyond callback pointers, and full registration fan-out remain unresolved."]
+        }
+      },
+      {
+        "id": "RVA-FLD-0129",
+        "name": "callback_critical_section",
+        "offset": "0x90",
+        "claim": "Synchronization object locked while ApplicationCallbackRegister appends a callback pointer.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "topic-manifest", "locator": "../gameplay-main-frame-boundary.json#/callbackRegistration" }
+        ],
+        "qualification": {
+          "alternatives": ["The concrete synchronization type, initialization site, and relation to thread identity remain unresolved."]
+        }
+      }
+    ]
+    },
+    {
+      "id": "RVA-STR-0025",
+      "name": "scene_active_gate",
+      "image": "../image.json",
+      "claim": "8-byte vptr-less scene-active gate embedded in the application owner and published through 0x8314F094.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../scene-active-gate-publication.json#/publication" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82D3D930" }
+      ],
+      "qualification": {
+        "alternatives": ["The meaning of gate byte 0x0 and the registered callback's wider lifecycle remain unresolved."]
+      },
+      "size": "0x8",
+      "fields": [
+        {
+          "id": "RVA-FLD-0060",
+          "name": "active",
+          "offset": "0x1",
+          "claim": "Stores the boolean value requested through SceneFlagToggle.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-active-gate-publication.json#/downstreamUpdate" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D3D890" }
+          ],
+          "qualification": {
+            "falsificationCondition": "SceneFlagToggle does not store its requested byte at gate offset 0x1."
+          }
+        },
+        {
+          "id": "RVA-FLD-0061",
+          "name": "callback_state",
+          "offset": "0x4",
+          "claim": "Stores state passed to the callback registration performed by SceneActiveGateCtor.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../scene-active-gate-publication.json#/gateConstruction" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D3D930" }
+          ],
+          "qualification": {
+            "alternatives": ["The registered callback API's concrete handle type remains unresolved."]
+          }
+        }
+      ]
+    },
+    {"id":"RVA-STR-0014","name":"signin_state_owner_8314EFE0","image":"../image.json","claim":"0x78-byte sign-in state owner published through 0x8314EFE0.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../save-profile-storage.json#/signInStateOwner"},{"kind":"topic-manifest","locator":"../save-profile-owner-lifetime-boundary.json#/boundedNegative"}],"qualification":{"alternatives":["The concrete class name remains unresolved.","The bounded exact-body and global-reference set proves no teardown, republication, or profile-service lifetime edge."]},"size":"0x78","fields":[{"id":"RVA-FLD-0032","name":"selected_user_index","offset":"0x0","claim":"Stores the selected user index.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../save-profile-storage.json#/signInStateOwner"}],"qualification":{"falsificationCondition":"The constructor does not initialize or consumers do not read this field."}},{"id":"RVA-FLD-0033","name":"profile_service","offset":"0x18","claim":"Holds the optional profile-service object.","confidence":"strong","evidence":[{"kind":"topic-manifest","locator":"../save-profile-storage.json#/signInStateOwner"}],"qualification":{"alternatives":["The pointed object's concrete type remains unresolved.","Teardown and service lifetime are not proved by the bounded lifetime packet."]}},{"id":"RVA-FLD-0034","name":"profile_notification_guard","offset":"0x5C","claim":"Guards profile-status notification handling.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../save-profile-storage.json#/signInStateOwner"}],"qualification":{"alternatives":["Only the observed guard role is named."]}}]},
+    {"id":"RVA-STR-0019","name":"localization_owner_8314F2C8","image":"../image.json","claim":"0x14C-byte localization owner published through 0x8314F2C8.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../platform-timing-locale-wrappers.json#/localizationOwner"}],"qualification":{"alternatives":["Fields outside the recorded locale boundary remain unresolved."]},"size":"0x14C","fields":[{"id":"RVA-FLD-0043","name":"vptr","offset":"0x0","claim":"Contains localization vtable 0x82120FC0.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../platform-timing-locale-wrappers.json#/localizationOwner"}],"qualification":{"falsificationCondition":"The constructor does not install the recorded table."}},{"id":"RVA-FLD-0044","name":"selected_locale_id","offset":"0x7C","claim":"Stores the validated internal locale ID.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../platform-timing-locale-wrappers.json#/localizationOwner"}],"qualification":{"alternatives":["The numeric ID is not assigned a language name."]}}]},
+    {"id":"RVA-STR-0020","name":"platform_timing_state_8314F160","image":"../image.json","claim":"0x18-byte static timing state lazily initialized by PlatformElapsedSeconds.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../platform-timing-locale-wrappers.json#/timingState"}],"qualification":{"alternatives":["Runtime precision remains unconfirmed."]},"size":"0x18","fields":[{"id":"RVA-FLD-0045","name":"baseline_timebase","offset":"0x0","claim":"Stores the fallback timebase baseline.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../platform-timing-locale-wrappers.json#/timingState"}],"qualification":{"falsificationCondition":"The elapsed-seconds function does not initialize and read this field."}},{"id":"RVA-FLD-0046","name":"performance_frequency","offset":"0x8","claim":"Stores the queried performance frequency.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../platform-timing-locale-wrappers.json#/timingState"}],"qualification":{"falsificationCondition":"The frequency wrapper does not write this field."}},{"id":"RVA-FLD-0047","name":"seconds_per_tick","offset":"0x10","claim":"Stores the frequency-derived seconds-per-tick scale.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../platform-timing-locale-wrappers.json#/timingState"}],"qualification":{"alternatives":["Runtime precision remains unconfirmed."]}}]},
+    {"id":"RVA-STR-0016","name":"audio_manager_8314F084","image":"../image.json","claim":"0x4C8-byte audio manager published through 0x8314F084.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../audio-initialization-stream-ownership.json#/managerCreation"}],"qualification":{"alternatives":["The original class name remains unresolved."]},"size":"0x4C8","fields":[{"id":"RVA-FLD-0037","name":"low_level_audio_system","offset":"0x1C","claim":"Owns the 0x6C-byte low-level audio object.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../audio-initialization-stream-ownership.json#/lowLevelAudioSystem"}],"qualification":{"falsificationCondition":"The manager constructor does not store the low-level object here."}},{"id":"RVA-FLD-0038","name":"script_2d_table","offset":"0x350","claim":"Stores the bounded pointer table.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../audio-2d-script-table-ownership.json#/collectionProduction"}],"qualification":{"alternatives":["Entry ownership remains unresolved."]}},{"id":"RVA-FLD-0039","name":"script_2d_count","offset":"0x358","claim":"Stores the pointer-table bound.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../audio-2d-script-table-ownership.json#/collectionProduction"}],"qualification":{"falsificationCondition":"The producer and lookup do not write and read this bound."}}]},
+    {"id":"RVA-STR-0017","name":"faudio_system_miles_82147C38","image":"../image.json","claim":"0x6C-byte low-level audio object using vtable 0x82147C38.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../audio-initialization-stream-ownership.json#/lowLevelAudioSystem"}],"qualification":{"alternatives":["Unrecorded fields remain unnamed."]},"size":"0x6C","fields":[{"id":"RVA-FLD-0040","name":"miles_driver","offset":"0x30","claim":"Stores the low-level driver handle.","confidence":"strong","evidence":[{"kind":"topic-manifest","locator":"../audio-initialization-stream-ownership.json#/lowLevelAudioSystem"}],"qualification":{"alternatives":["Runtime driver success remains unconfirmed."]}},{"id":"RVA-FLD-0041","name":"type2_stream_slots","offset":"0x54","claim":"Stores the type-2 stream-slot array.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../audio-initialization-stream-ownership.json#/streamOpen"}],"qualification":{"alternatives":["No 2D semantic name is inferred."]}},{"id":"RVA-FLD-0042","name":"type3_stream_slots","offset":"0x58","claim":"Stores the type-3 stream-slot array.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../audio-initialization-stream-ownership.json#/streamOpen"}],"qualification":{"alternatives":["No 3D semantic name is inferred."]}}]},
+    {"id":"RVA-STR-0018","name":"faudio_stream_slot","image":"../image.json","claim":"0x38-byte stream slot whose handle is stored at offset 0x4.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../audio-initialization-stream-ownership.json#/streamOpen"}],"qualification":{"alternatives":["Fields outside the handle boundary remain unresolved."]},"size":"0x38","fields":[{"id":"RVA-FLD-0048","name":"stream_handle","offset":"0x4","claim":"Stores the Miles open-stream result.","confidence":"confirmed","evidence":[{"kind":"topic-manifest","locator":"../audio-initialization-stream-ownership.json#/streamOpen"},{"kind":"topic-manifest","locator":"../audio-stream-handle-lifecycle-boundary.json#/boundedNegative"}],"qualification":{"alternatives":["Successful stream opening is not claimed.","The bounded writer/dispatcher set proves no direct first use, validity check, close, or release path."]}}]},
+    {
+      "id": "RVA-STR-0033",
+      "name": "frontend_state_identity_prefix",
+      "image": "../image.json",
+      "claim": "Two-word prefix shared by the bounded frontend state objects, with a vtable pointer followed by the numeric state key.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../frontend-gameplay-transition.json#/receivingState" },
+        { "kind": "topic-manifest", "locator": "../playable-game-state-gates.json#/frontendLifecycle" }
+      ],
+      "qualification": {
+        "alternatives": ["Concrete state implementations may extend beyond this prefix."]
+      },
+      "size": "0x8",
+      "fields": [
+        {
+          "id": "RVA-FLD-0100",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Stores the concrete frontend state's vtable pointer.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../frontend-gameplay-transition.json#/receivingState" }
+          ],
+          "qualification": {
+            "alternatives": ["Only the key-2 concrete vtable is identified in the dependency topic."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0101",
+          "name": "state_key",
+          "offset": "0x4",
+          "claim": "Stores the numeric frontend state key; key 2 identifies the gameplay state.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../playable-game-state-gates.json#/frontendLifecycle" }
+          ],
+          "qualification": {
+            "alternatives": ["Only runtime-observed keys 1 and 2 are assigned meanings here."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0034",
+      "name": "unit_record",
+      "image": "../image.json",
+      "claim": "0x54-byte per-player unit record used by ordinary movement and the observed combat lifecycle.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/unitRecord" },
+        { "kind": "topic-manifest", "locator": "../combat-resolution-lifecycle.json#/participants" }
+      ],
+      "qualification": {
+        "alternatives": ["Combat-observed offsets remain unnamed until a producer and semantic consumer are both accepted."]
+      },
+      "size": "0x54",
+      "fields": [
+        {
+          "id": "RVA-FLD-0109",
+          "name": "unit_type",
+          "offset": "0x1",
+          "claim": "Stores the zero-based unit type that indexes the unit-definition table.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-definitions-ai-evaluation.json#/unitRecordLink" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CF2230" }
+          ],
+          "qualification": {
+            "alternatives": ["The numeric values are semantic analysis labels, not recovered original enum identifiers."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0102",
+          "name": "movement_budget",
+          "offset": "0x2",
+          "claim": "Stores the movement budget decremented by the ordinary movement executor before presentation.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/unitRecord" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CD69B8" }
+          ],
+          "qualification": {
+            "alternatives": ["The byte uses title-specific movement units; no player-facing unit conversion is asserted."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0103",
+          "name": "movement_lifecycle_flags",
+          "offset": "0xC",
+          "claim": "Stores movement lifecycle and post-completion availability flags.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/unitRecord" }
+          ],
+          "qualification": {
+            "alternatives": ["Individual flag bits remain unnamed."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0175",
+          "name": "special_upgrades",
+          "offset": "0x10",
+          "claim": "Stores the nine supported unit special upgrades as bits zero through eight in supported-image string order.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-special-upgrades.json#/storage" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CDDF08" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CEFF98" }
+          ],
+          "qualification": {
+            "alternatives": ["Direct gameplay consumers, presentation enumeration, persistence transfer, and runtime behavior are not established by the field identity alone."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0104",
+          "name": "position_x",
+          "offset": "0x1C",
+          "claim": "Stores the unit's current map X coordinate.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/unitRecord" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The field does not advance to the observed destination before presentation."
+          }
+        },
+        {
+          "id": "RVA-FLD-0105",
+          "name": "position_y",
+          "offset": "0x1E",
+          "claim": "Stores the unit's current map Y coordinate.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/unitRecord" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The field does not advance to the observed destination before presentation."
+          }
+        },
+        {
+          "id": "RVA-FLD-0106",
+          "name": "queued_destination_x",
+          "offset": "0x22",
+          "claim": "Stores the queued destination X coordinate, using -1 when no destination remains queued.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/unitRecord" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CD69B8" }
+          ],
+          "qualification": {
+            "alternatives": ["Full multi-turn route ownership remains unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0107",
+          "name": "queued_destination_y",
+          "offset": "0x24",
+          "claim": "Stores the queued destination Y coordinate paired with offset 0x22.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/unitRecord" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CD69B8" }
+          ],
+          "qualification": {
+            "alternatives": ["Full multi-turn route ownership remains unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0108",
+          "name": "move_step",
+          "offset": "0x4E",
+          "claim": "Stores the bounded Move command step argument used by the ordinary executor.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-movement-lifecycle.json#/unitRecord" }
+          ],
+          "qualification": {
+            "alternatives": ["The numeric direction-to-map-delta table remains unnamed."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0035",
+      "name": "unit_definition",
+      "image": "../image.json",
+      "claim": "0x94-byte image-backed unit-definition record indexed by the runtime unit type.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../unit-definitions-ai-evaluation.json#/unitDefinitions" }
+      ],
+      "qualification": {
+        "alternatives": ["Fields other than the accepted name, base combat stats, base movement, and production-cost factor remain unresolved."]
+      },
+      "size": "0x94",
+      "fields": [
+        {
+          "id": "RVA-FLD-0110",
+          "name": "internal_name",
+          "offset": "0x0",
+          "claim": "Begins the NUL-terminated internal unit name when the record provides one.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-definitions-ai-evaluation.json#/unitDefinitions" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpDataValues.java:0x82F700D8" }
+          ],
+          "qualification": {
+            "alternatives": ["Barbarian records 3 through 5 begin empty and expose record-local labels at offset 0x20."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0111",
+          "name": "base_attack",
+          "offset": "0x40",
+          "claim": "Stores the signed base attack consumed by EffectiveUnitAttackLookup.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-definitions-ai-evaluation.json#/statAccessors/attack" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CF2230" },
+            { "kind": "runtime-probe", "locator": "runtime:unit_stats_probe" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The accessor does not load the signed byte at definition offset 0x40."
+          }
+        },
+        {
+          "id": "RVA-FLD-0112",
+          "name": "base_defense",
+          "offset": "0x41",
+          "claim": "Stores the signed base defense consumed by EffectiveUnitDefenseLookup.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-definitions-ai-evaluation.json#/statAccessors/defense" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CF21A0" },
+            { "kind": "runtime-probe", "locator": "runtime:unit_stats_probe" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The accessor does not load the signed byte at definition offset 0x41."
+          }
+        },
+        {
+          "id": "RVA-FLD-0165",
+          "name": "base_movement",
+          "offset": "0x42",
+          "claim": "Stores the signed base movement consumed by EffectiveUnitMovementLookup.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../unit-movement-stat.json#/baseMovement" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CF1F70" }
+          ],
+          "qualification": {
+            "alternatives": ["The effective accessor applies additional local and civilization modifiers, and one special return bypasses the composed movement register."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0164",
+          "name": "production_cost_factor",
+          "offset": "0x44",
+          "claim": "Stores the signed normal unit production factor multiplied by EffectiveUnitProductionCostScalar and divided by two.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../production-cost-ownership.json#/baseCostField" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE28D8" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CE27F0" }
+          ],
+          "qualification": {
+            "alternatives": ["The byte is a factor rather than the final production cost; adjacent bytes remain unresolved, and non-unit item ranges use separate storage."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0036",
+      "name": "selected_save_content_record",
+      "image": "../image.json",
+      "claim": "0x13C-byte payload copied from an accepted save/load picker record and consumed by manual game storage owners.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../save-slot-ruleset-identity.json#/slotIdentity" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82DDBFF8" }
+      ],
+      "qualification": {
+        "alternatives": ["The picker-owned UI array uses a larger 0x164-byte stride with presentation metadata outside this copied payload."]
+      },
+      "size": "0x13C",
+      "fields": [
+        {
+          "id": "RVA-FLD-0113",
+          "name": "internal_slot_filename",
+          "offset": "0x108",
+          "claim": "Begins the normalized NUL-terminated internal filename consumed by both manual save and load owners.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../save-slot-ruleset-identity.json#/slotIdentity" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D82510" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82D84238" },
+            { "kind": "runtime-probe", "locator": "runtime:save_slot_probe" }
+          ],
+          "qualification": {
+            "alternatives": ["The filename must remain scoped by the selected user/device content namespace."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0037",
+      "name": "frame_timing_owner",
+      "image": "../image.json",
+      "claim": "Shared 0x48-byte frame-timing owner allocated and initialized by FrameTimingOwnerPublish.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/ownerPublication" }
+      ],
+      "qualification": {
+        "alternatives": ["The original concrete class name, offset 0x18, and unlisted fields remain unresolved."]
+      },
+      "size": "0x48",
+      "fields": [
+        {
+          "id": "RVA-FLD-0114",
+          "name": "value_10",
+          "offset": "0x10",
+          "claim": "64-bit owner field written during publication initialization and by FrameTimingReset.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/publisherField10" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E2943C" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E293E8" },
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/resetFieldWrites" },
+            { "kind": "topic-manifest", "locator": "../frame-timing-field10-reader-boundary.json#/boundedNegative" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82C7EC08" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82C7EBF8" }
+          ],
+          "qualification": {
+            "alternatives": ["The value's semantic meaning, units, cadence, and later consumers remain unresolved.", "The dual owner globals expose 28 distinct reader functions, above the bounded six-candidate cap; no first reader is classified."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0115",
+          "name": "value_08",
+          "offset": "0x8",
+          "claim": "64-bit owner field written during publication initialization and by FrameTimingReset.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/publisherRemainingFields" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E29444" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E293E8" },
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/resetFieldWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82C7EC0C" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82C7EBF8" }
+          ],
+          "qualification": {
+            "alternatives": ["The value's semantic meaning, units, cadence, and later consumers remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0116",
+          "name": "value_20",
+          "offset": "0x20",
+          "claim": "64-bit owner field written during publication initialization and by FrameTimingReset.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/publisherRemainingFields" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E2944C" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E293E8" },
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/resetFieldWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82C7EC10" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82C7EBF8" }
+          ],
+          "qualification": {
+            "alternatives": ["The value's semantic meaning, units, cadence, and later consumers remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0117",
+          "name": "initialized_value_28",
+          "offset": "0x28",
+          "claim": "Receives the 64-bit f13 value written by FrameTimingOwnerPublish during owner initialization.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/publisherRemainingFields" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E29434" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E293E8" }
+          ],
+          "qualification": {
+            "alternatives": ["The value's semantic meaning, units, cadence, and later consumers remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0118",
+          "name": "word_30",
+          "offset": "0x30",
+          "claim": "32-bit owner field written during publication initialization and by FrameTimingReset.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/publisherRemainingFields" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E29440" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E293E8" },
+            { "kind": "topic-manifest", "locator": "../gameplay-frame-timing-owner.json#/resetFieldWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82C7EC00" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82C7EBF8" }
+          ],
+          "qualification": {
+            "alternatives": ["The value's semantic meaning and later consumers remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0038",
+      "name": "frontend_root",
+      "image": "../image.json",
+      "claim": "Partial field view of the frontend-root receiver loaded through global 0x82FFD624; its identity with the constructed application owner requires constructor return and retention contracts.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../playable-game-state-gates.json#/frontendLifecycle" },
+        { "kind": "topic-manifest", "locator": "../frontend-root-publication-mask-init.json#/staticResult/constructorJoin" },
+        { "kind": "topic-manifest", "locator": "../game-of-the-week-local-generation.json#/configurationPublisherBoundary/constructorRetentionBoundary" }
+      ],
+      "qualification": {
+        "alternatives": ["The startup allocation requests 0xD4 bytes. The original class name, nonzero +8 writer and meaning, and fields other than offsets 0x8 and 0x70 remain unresolved in this partial view."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0183",
+          "name": "unclassified_mask_source",
+          "offset": "0x8",
+          "claim": "Initialized to zero by the application-owner base constructor, conditionally cleared to zero by its vtable slot +0x80, and returned by the observed wonder-gate receiver's slot +0x1DC getter unless context state code 4 through 6 forces zero.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../wonder-eligibility.json#/findings/RVA-F-0171/staticResult" },
+            { "kind": "topic-manifest", "locator": "../frontend-root-publication-mask-init.json#/staticResult/initialMaskWord" },
+            { "kind": "topic-manifest", "locator": "../frontend-root-vtable-offset8-clear.json#/staticResult/conditionalClear" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java:0x82D7D2A8" }
+          ],
+          "qualification": { "alternatives": ["The word is used as an Xbox handle by the conditional close path; its nonzero writer, handle kind, runtime transitions, and gameplay meaning remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0119",
+          "name": "current_state",
+          "offset": "0x70",
+          "claim": "Holds the current frontend-state pointer consumed by FrontendInGameStateCheck.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../playable-game-state-gates.json#/frontendRootCurrentStateRead" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x82E17268" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82E17238" }
+          ],
+          "qualification": {
+            "alternatives": ["The pointed state's complete layout and lifetime remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0039",
+      "name": "attract_movie_frontend_state",
+      "image": "../image.json",
+      "claim": "0x10-byte concrete key-5 frontend state initialized by AttractMovieStateFactory.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateFactoryWrites" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_821B3BB8" }
+      ],
+      "qualification": {
+        "alternatives": ["The first two fields match the shared frontend-state identity prefix, but formal inheritance is not established."]
+      },
+      "size": "0x10",
+      "fields": [
+        {
+          "id": "RVA-FLD-0120",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Stores attract-movie state vtable 0x82121320.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateFactoryWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x821B3BF8" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_821B3BB8" }
+          ],
+          "qualification": { "falsificationCondition": "The factory does not store 0x82121320 at object offset 0x0." }
+        },
+        {
+          "id": "RVA-FLD-0121",
+          "name": "state_key",
+          "offset": "0x4",
+          "claim": "Stores numeric frontend state key 5.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateFactoryWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x821B3BF4" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_821B3BB8" }
+          ],
+          "qualification": { "alternatives": ["Key 5 identifies this bounded frontend state only; no global enum meaning is inferred."] }
+        },
+        {
+          "id": "RVA-FLD-0122",
+          "name": "word_08",
+          "offset": "0x8",
+          "claim": "Anonymous 32-bit field cleared during state construction.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateFactoryWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x821B3BF0" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_821B3BB8" }
+          ],
+          "qualification": { "alternatives": ["The field's semantic role and later consumers remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0123",
+          "name": "byte_0C",
+          "offset": "0xC",
+          "claim": "Anonymous byte field cleared during state construction.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../attract-movie-frame-driver.json#/stateFactoryWrites" },
+            { "kind": "ghidra-static", "locator": "ghidra/FindFieldAccesses.java:0x821B3BFC" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_821B3BB8" }
+          ],
+          "qualification": { "alternatives": ["The field's semantic role and later consumers remain unresolved."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0040",
+      "name": "gfx_movie_clip_loader_owner",
+      "image": "../image.json",
+      "claim": "Partial MovieClipLoader owner layout containing the state-provider interface and bounded request/result fields.",
+      "confidence": "confirmed",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/ownerStateInterface" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_821EF610" },
+        { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/attachmentBoundary" },
+        { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/downstreamBoundary" }
+      ],
+      "qualification": {
+        "alternatives": ["The complete owner layout, resolved provider, field representations, element ownership, and runtime contents remain unknown."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0124",
+          "name": "state_provider_interface_vptr",
+          "offset": "0x10",
+          "claim": "Stores owner state-provider interface table 0x8213CF34.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-loadclip-state-provider.json#/ownerStateInterface" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_821EF610" }
+          ],
+          "qualification": {
+            "falsificationCondition": "The store at 0x821EF650 does not write 0x8213CF34 to the incoming object at offset 0x10."
+        }
+      },
+      {
+        "id": "RVA-FLD-0136",
+        "name": "fallback_request_field",
+        "offset": "0x220",
+        "claim": "Receives a request when the owner state-provider lookup returns null.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/attachmentBoundary" }
+        ],
+        "qualification": {
+          "alternatives": ["The field representation, element ownership, lifetime, and runtime contents remain unresolved."]
+        }
+      },
+      {
+        "id": "RVA-FLD-0137",
+        "name": "fulfilled_result_field",
+        "offset": "0x224",
+        "claim": "Receives a non-null result constructed by MovieClipLoaderFulfilledRequestHandler.",
+        "confidence": "strong",
+        "evidence": [
+          { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/downstreamBoundary" }
+        ],
+        "qualification": {
+          "alternatives": ["The field representation, element type, ownership, lifetime, and runtime contents remain unresolved."]
+        }
+      }
+    ]
+    },
+    {
+      "id": "RVA-STR-0041",
+      "name": "hall_of_achievements_resource_owner",
+      "image": "../image.json",
+      "claim": "0xD0-byte Hall of Achievements resource owner constructed by HallOfAchievementsEnvironmentCtor.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../ingame-screen-hoa-resource-owner.json#/ownerConstruction" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82DCE090" }
+      ],
+      "qualification": {
+        "alternatives": ["The enclosing InGameScreenRun receiver retains this object at its own offset 0x8; that offset is not part of this structure."]
+      },
+      "size": "0xD0",
+      "fields": [
+        {
+          "id": "RVA-FLD-0125",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Stores Hall of Achievements owner vtable 0x8212FBE8.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../ingame-screen-hoa-resource-owner.json#/ownerConstruction" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82DCE090" }
+          ],
+          "qualification": {
+            "alternatives": ["The bounded Ghidra field query did not independently recover the generated-code vptr store."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0126",
+          "name": "hoa_01main_resource",
+          "offset": "0x14",
+          "claim": "Receives the first type-1 HOA_01Main.xml resource lookup output.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../ingame-screen-hoa-resource-owner.json#/firstAreaResource" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82DCE090" }
+          ],
+          "qualification": {
+            "alternatives": ["Static evidence does not prove a cache hit, successful parsing, or runtime display."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0042",
+      "name": "ingame_screen_run_receiver",
+      "image": "../image.json",
+      "claim": "Partial receiver layout used by InGameScreenRun.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../ingame-screen-hoa-resource-owner.json#/ownerConstruction" }
+      ],
+      "qualification": {
+        "alternatives": ["The receiver's concrete class, allocation size, vtable, remaining fields, and lifetime semantics remain unresolved."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0127",
+          "name": "hall_of_achievements_owner",
+          "offset": "0x8",
+          "claim": "Retains the 0xD0-byte Hall of Achievements resource-owner pointer produced by InGameScreenRun.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../ingame-screen-hoa-resource-owner.json#/ownerConstruction" }
+          ],
+          "qualification": {
+            "alternatives": ["Retention does not prove exclusive ownership, destruction order, or the receiver's complete type."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0043",
+      "name": "application_frame_callback_object_82120D2C",
+      "image": "../image.json",
+      "claim": "0x4-byte application frame callback object allocated and registered by ApplicationCallbackContainerCtor.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gameplay-main-frame-boundary.json#/callbackRegistration" }
+      ],
+      "qualification": {
+        "alternatives": ["The address-derived role name does not establish an original concrete class, lifetime, or playable-state gate."]
+      },
+      "size": "0x4",
+      "fields": [
+        {
+          "id": "RVA-FLD-0130",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Stores application frame callback vtable 0x82120D2C.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gameplay-main-frame-boundary.json#/callbackRegistration" }
+          ],
+          "qualification": {
+            "falsificationCondition": "ApplicationCallbackContainerCtor does not install 0x82120D2C at offset 0x0 before registration."
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0044",
+      "name": "movie_clip_loader_load_clip_packet",
+      "image": "../image.json",
+      "claim": "Partial incoming packet layout consumed by MovieClipLoaderLoadClipHandler.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/handlerPacket" }
+      ],
+      "qualification": {
+        "alternatives": ["The packet allocation size, omitted fields, pointer target types, and runtime ownership remain unresolved."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0131",
+          "name": "handler_state",
+          "offset": "0x4",
+          "claim": "State object initialized when the handler enters and finalized when it exits.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/handlerPacket/fields/+0x4" }
+          ],
+          "qualification": {
+            "alternatives": ["The state object's concrete type and internal semantics remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0132",
+          "name": "receiver",
+          "offset": "0x8",
+          "claim": "Receiver pointer used for the handler's first request-dependent virtual dispatch.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/handlerPacket/fields/+0x8" }
+          ],
+          "qualification": {
+            "alternatives": ["The receiver type, vtable identity, slot target, and runtime object remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0133",
+          "name": "argument_context",
+          "offset": "0x18",
+          "claim": "Argument context passed to the handler's extraction helpers for indices zero and one.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/handlerPacket/fields/+0x18" }
+          ],
+          "qualification": {
+            "alternatives": ["The argument context's complete layout and concrete type remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0134",
+          "name": "argument_count",
+          "offset": "0x1C",
+          "claim": "Argument count tested against the minimum loadClip arity of two.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/handlerPacket/fields/+0x1C" }
+          ],
+          "qualification": {
+            "falsificationCondition": "MovieClipLoaderLoadClipHandler does not gate processing on packet offset 0x1C being at least two."
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0045",
+      "name": "movie_clip_loader_request",
+      "image": "../image.json",
+      "claim": "Partial 0x38-byte request object produced by both MovieClipLoader request builders.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/requestConstruction" },
+        { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/attachmentBoundary" }
+      ],
+      "qualification": {
+        "alternatives": ["The concrete type, vptr, ownership, lifetime, representation of the request string, and all other fields remain unresolved."]
+      },
+      "size": "0x38",
+      "fields": [
+        {
+          "id": "RVA-FLD-0135",
+          "name": "request_string",
+          "offset": "0xC",
+          "claim": "Request-string field consumed by MovieClipLoaderAttachRequest.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-ui-moviecliploader-request-boundary.json#/attachmentBoundary/requestStringField" }
+          ],
+          "qualification": {
+            "alternatives": ["The string representation, allocation ownership, and later content resolution remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0046",
+      "name": "gfx_image_movie_shape_90",
+      "image": "../image.json",
+      "claim": "Partial 0x90-byte image-file movie shape initialized from a decoded GFx image.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/currentEvidence/entries/0" },
+        { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout" }
+      ],
+      "qualification": {
+        "alternatives": ["The original class name, complete layout, bounds/path storage, fill-entry internals, ownership, and runtime display remain unresolved here."]
+      },
+      "size": "0x90",
+      "fields": [
+        {
+          "id": "RVA-FLD-0138",
+          "name": "vptr",
+          "offset": "0x0",
+          "claim": "Stores shape vtable 0x8213D408 installed by the existing base initializer.",
+          "confidence": "confirmed",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/vtable" },
+            { "kind": "topic-manifest", "locator": "../gfx-vtable-ownership.json#/baseReplacement" }
+          ],
+          "qualification": {
+            "falsificationCondition": "GfxComplexFillBaseInitialize does not install 0x8213D408 at object offset 0x0."
+          }
+        },
+        {
+          "id": "RVA-FLD-0139",
+          "name": "flags",
+          "offset": "0x34",
+          "claim": "Shape flags field identified by the closed image-movie shape layout.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/flags" }
+          ],
+          "qualification": {
+            "alternatives": ["Individual flag bits and the exact initializer store responsible for each bit remain unresolved in this packet."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0140",
+          "name": "fill_style_data",
+          "offset": "0x64",
+          "claim": "Data pointer for the shape's fill-style array.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/fillStyleArray/data" }
+          ],
+          "qualification": {
+            "alternatives": ["The separate 0x28-byte fill-entry layout is outside this field record."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0141",
+          "name": "fill_style_count",
+          "offset": "0x68",
+          "claim": "Element count for the shape's fill-style array.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/fillStyleArray/count" }
+          ],
+          "qualification": {
+            "alternatives": ["Runtime count values outside the one-entry image initialization remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0142",
+          "name": "fill_style_capacity",
+          "offset": "0x6C",
+          "claim": "Capacity value for the shape's fill-style array.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/fillStyleArray/capacity" }
+          ],
+          "qualification": {
+            "alternatives": ["Growth policy and runtime capacity values outside initialization remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0047",
+      "name": "gfx_image_fill_entry_28",
+      "image": "../image.json",
+      "claim": "Partial 0x28-byte direct image-fill entry referenced by the synthetic image-movie shape.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/fillStyleArray" },
+        { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/imageFill" }
+      ],
+      "qualification": {
+        "alternatives": ["This is one direct image fill; allocation, lifetime, inline storage, other shape variants, and renderer texture/backend identities remain unresolved."]
+      },
+      "size": "0x28",
+      "fields": [
+        {
+          "id": "RVA-FLD-0143",
+          "name": "type",
+          "offset": "0x0",
+          "claim": "Fill type byte for the direct image fill.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/imageFill/type" }
+          ],
+          "qualification": {
+            "alternatives": ["The complete type enumeration and meanings for other fill variants remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0144",
+          "name": "flags",
+          "offset": "0x1",
+          "claim": "Fill flags byte for the direct image fill.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/imageFill/flags" }
+          ],
+          "qualification": {
+            "alternatives": ["Individual flag-bit meanings remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0145",
+          "name": "resource_handle_kind",
+          "offset": "0x8",
+          "claim": "Resource-handle kind field observed as zero for this direct image fill.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/imageFill/resourceHandleKind" },
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/result" }
+          ],
+          "qualification": {
+            "alternatives": ["The public meaning of kind zero and values used by other fill variants remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0146",
+          "name": "resource_pointer",
+          "offset": "0xC",
+          "claim": "Stores the decoded GFx image-resource pointer for this direct image fill.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/imageFill/resourcePointer" },
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/shapeLayout/result" }
+          ],
+          "qualification": {
+            "alternatives": ["This pointer is not a renderer texture or backend texture; ownership and lifetime remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0048",
+      "name": "gfx_fill_texture_output",
+      "image": "../image.json",
+      "claim": "Partial output container populated by GfxImageFillTextureResolve on its bounded successful path.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/currentEvidence/entries/4" }
+      ],
+      "qualification": {
+        "alternatives": ["The provisional role name does not establish an original type, size, padding, allocation, ownership, lifetime, or failure-path contents."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0147",
+          "name": "renderer_texture",
+          "offset": "0x0",
+          "claim": "Receives the resolved renderer-texture pointer on the bounded successful resolver path.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-image-movie-shape-display.json#/currentEvidence/entries/4" }
+          ],
+          "qualification": {
+            "alternatives": ["The result is a renderer texture, not the source GFx image resource or backend texture; ownership and lifetime remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0049",
+      "name": "gfx_state_snapshot_partial",
+      "image": "../image.json",
+      "claim": "Partial GFx state snapshot exposing ten consecutive retained state-kind outputs; only kind 10 and kind 12 have bounded downstream roles.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/currentEvidence/stateSnapshotBuilder" },
+        { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState" }
+      ],
+      "qualification": {
+        "alternatives": ["The original type name, allocation size, complete layout, concrete field types, ownership, lifetime, runtime values, and roles beyond state kinds 10 and 12 remain unresolved."]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0148",
+          "name": "state_kind_10_opener",
+          "offset": "0x10",
+          "claim": "Holds the snapshotted state-kind-10 opener used by the bounded external-file decode branch.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/openerSnapshotField" },
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/fileDecodeHandoff" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete field type, ownership, lifetime, and runtime opener identity remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0149",
+          "name": "state_kind_12_creator",
+          "offset": "0x18",
+          "claim": "Holds the snapshotted state-kind-12 creator used by the bounded external-image request branch.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/creatorSnapshotField" },
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/currentEvidence/resourceCreator" },
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/fileDecodeHandoff" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete field type, ownership, lifetime, and runtime creator identity remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0151",
+          "name": "state_kind_11_output",
+          "offset": "0x14",
+          "claim": "Holds the retained output requested for numeric GFx state kind 11.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/snapshotFields/1" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete type, state role, ownership, lifetime, and runtime value remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0152",
+          "name": "state_kind_15_output",
+          "offset": "0x1C",
+          "claim": "Holds the retained output requested for numeric GFx state kind 15.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/snapshotFields/3" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete type, state role, ownership, lifetime, and runtime value remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0153",
+          "name": "state_kind_21_output",
+          "offset": "0x20",
+          "claim": "Holds the retained output requested for numeric GFx state kind 21.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/snapshotFields/4" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete type, state role, ownership, lifetime, and runtime value remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0154",
+          "name": "state_kind_16_output",
+          "offset": "0x24",
+          "claim": "Holds the retained output requested for numeric GFx state kind 16.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/snapshotFields/5" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete type, state role, ownership, lifetime, and runtime value remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0155",
+          "name": "state_kind_19_output",
+          "offset": "0x28",
+          "claim": "Holds the retained output requested for numeric GFx state kind 19.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/snapshotFields/6" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete type, state role, ownership, lifetime, and runtime value remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0156",
+          "name": "state_kind_18_output",
+          "offset": "0x2C",
+          "claim": "Holds the retained output requested for numeric GFx state kind 18.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/snapshotFields/7" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete type, state role, ownership, lifetime, and runtime value remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0157",
+          "name": "state_kind_20_output",
+          "offset": "0x30",
+          "claim": "Holds the retained output requested for numeric GFx state kind 20.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/snapshotFields/8" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete type, state role, ownership, lifetime, and runtime value remain unresolved."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0158",
+          "name": "state_kind_25_output",
+          "offset": "0x34",
+          "claim": "Holds the retained output requested for numeric GFx state kind 25.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-scaleform-image-creation.json#/imageCreatorState/snapshotFields/9" }
+          ],
+          "qualification": {
+            "alternatives": ["The concrete type, state role, ownership, lifetime, and runtime value remain unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0050",
+      "name": "gfx_temporary_decoded_image_object",
+      "image": "../image.json",
+      "claim": "0x38-byte temporary conversion object with a decoded-image record embedded at offset 0x10.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../gfx-decoded-image-upload.json#/sourceSelection/temporaryPath" }
+      ],
+      "qualification": {
+        "alternatives": ["The original type name, fields outside the embedded record boundary, ownership, and lifetime remain unresolved."]
+      },
+      "size": "0x38",
+      "fields": [
+        {
+          "id": "RVA-FLD-0150",
+          "name": "decoded_image_record",
+          "offset": "0x10",
+          "claim": "Begins the embedded seven-word GfxDecodedImageRecord used for temporary conversion storage.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../gfx-decoded-image-upload.json#/sourceSelection/temporaryPath" }
+          ],
+          "qualification": {
+            "falsificationCondition": "Offset 0x10 is not the base of the embedded seven-word decoded-image record; this field does not assign ownership or lifetime."
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0051",
+      "name": "network_command_record",
+      "image": "../image.json",
+      "claim": "Exact 0x14-byte Xbox internal command record copied as five 32-bit words by submit, ring append/drain, and command-object construction.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE19CC" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE172C" },
+        { "kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java:0x82D90A18" }
+      ],
+      "qualification": {
+        "falsificationCondition": "The current-image submit stores, ring copies, or constructor copy do not preserve exactly five consecutive 32-bit words; this internal record is not the constructed object's complete layout or a wire record."
+      },
+      "size": "0x14",
+      "fields": [
+        {
+          "id": "RVA-FLD-0159",
+          "name": "type",
+          "offset": "0x0",
+          "claim": "Holds the unsigned command type consumed by the 0..65 dispatch-table gate.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/queueAndDispatch/dispatch" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDF18" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDFF4" }
+          ],
+          "qualification": {
+            "alternatives": ["Only Xbox cases 0, 6, and 17 have accepted semantic labels in current topics."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0160",
+          "name": "arg1",
+          "offset": "0x4",
+          "claim": "Holds the first generic 32-bit command argument read by the dispatcher.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/consumerView" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDF1C" }
+          ],
+          "qualification": {
+            "alternatives": ["Its meaning varies by command type and is unnamed outside separately accepted Xbox cases."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0161",
+          "name": "arg2",
+          "offset": "0x8",
+          "claim": "Holds the second generic 32-bit command argument read by the dispatcher.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/consumerView" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDF20" }
+          ],
+          "qualification": {
+            "alternatives": ["Its meaning varies by command type and is unnamed outside separately accepted Xbox cases."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0162",
+          "name": "arg3",
+          "offset": "0xC",
+          "claim": "Holds the third generic 32-bit command argument read by the dispatcher.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation/consumerView" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CDDF24" }
+          ],
+          "qualification": {
+            "alternatives": ["Its meaning varies by command type and is unnamed outside separately accepted Xbox cases."]
+          }
+        },
+        {
+          "id": "RVA-FLD-0163",
+          "name": "arg4",
+          "offset": "0x10",
+          "claim": "Holds the fourth generic 32-bit command argument preserved by submit, ring, and constructed-object copies.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../xbox-network-message-root.json#/internalRepresentation" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CE19DC" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpFunctions.java:0x82D90A18" }
+          ],
+          "qualification": {
+            "alternatives": ["The root dispatcher does not directly load this word at entry, and its downstream consumer meaning remains unresolved."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0052",
+      "name": "building_definition_record_partial",
+      "image": "../image.json",
+      "claim": "Partial 0xCC-byte building-definition record selected by item ID minus 100.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../building-wonder-cost-identities.json#/buildingRecords" },
+        { "kind": "topic-manifest", "locator": "../building-record-identities-100-122.json#/records" }
+      ],
+      "qualification": { "alternatives": ["Seven initialized offsets are assigned in twenty-three exact records; field extents, additional fields, text consumers, complete menu eligibility, implemented effects, and runtime behavior remain unresolved."] },
+      "size": "0xCC",
+      "fields": [
+        {
+          "id": "RVA-FLD-0166",
+          "name": "identity_name",
+          "offset": "0x0",
+          "claim": "Begins the stored identity text in twenty-three exact building records at IDs 100 through 122.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../building-wonder-cost-identities.json#/buildingRecords" },
+            { "kind": "topic-manifest", "locator": "../building-record-identities-100-122.json#/records" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpStringsInRange.java:0x82F71FD8..0x82F73237" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82F71FD8,0x82F727D0" }
+          ],
+          "qualification": { "alternatives": ["Palace and Bank are raw null-terminated bytes rather than Ghidra-defined strings; fixed capacity, display consumer, and runtime use remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0167",
+          "name": "normal_production_base_cost_factor",
+          "offset": "0x41",
+          "claim": "Signed byte multiplied by the current scalar before later building-cost modifiers.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../building-wonder-cost-identities.json#/buildingRecords" },
+            { "kind": "topic-manifest", "locator": "../building-record-identities-100-122.json#/records" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82F720E5,0x82F72415,0x82F72B41" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CF1278" }
+          ],
+          "qualification": { "alternatives": ["All twenty-three factors are recorded, but each byte is a factor rather than the final production cost; adjacent fields and later modifiers remain separate."] }
+        },
+        {
+          "id": "RVA-FLD-0187",
+          "name": "menu_technology_ownership_gate",
+          "offset": "0x42",
+          "claim": "Signed halfword passed to the ordinary technology ownership query unless -1 in the building-choice loop, and compared with selected values in two definition-list functions; exact values are mapped for initialized items 100 through 122.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../building-menu-record-gates.json#/fieldUse/technologyId" },
+            { "kind": "topic-manifest", "locator": "../building-menu-record-gates.json#/values" },
+            { "kind": "topic-manifest", "locator": "../definition-technology-match-list.json#/staticResult/buildingLoop" },
+            { "kind": "topic-manifest", "locator": "../definition-technology-conditional-list.json#/staticResult/buildingLoop" }
+          ],
+          "qualification": { "alternatives": ["This local check is not complete availability or construction-effect proof; runtime execution was not observed."] }
+        },
+        {
+          "id": "RVA-FLD-0188",
+          "name": "menu_required_city_building_bits",
+          "offset": "0x44",
+          "claim": "A nonzero word requires at least one matching bit in city +0x10 for this menu loop; exact values are mapped for initialized items 100 through 122.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../building-menu-record-gates.json#/fieldUse/requiredBits" },
+            { "kind": "topic-manifest", "locator": "../building-menu-record-gates.json#/values" }
+          ],
+          "qualification": { "alternatives": ["Three single-bit required masks join to the accepted ordinary completion writer; complete menu availability, other city-bit writers, and runtime execution remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0189",
+          "name": "menu_forbidden_city_building_bits",
+          "offset": "0x48",
+          "claim": "A nonzero word rejects any matching bit in city +0x10 for this menu loop; exact values are mapped for initialized items 100 through 122.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../building-menu-record-gates.json#/fieldUse/forbiddenBits" },
+            { "kind": "topic-manifest", "locator": "../building-menu-record-gates.json#/values" }
+          ],
+          "qualification": { "alternatives": ["Three single-bit forbidden masks join to the accepted ordinary completion writer; complete menu availability, other city-bit writers, and runtime execution remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0181",
+          "name": "stored_token_text",
+          "offset": "0x20",
+          "claim": "Initialized token text at a repeated offset in the twenty-three exact building records.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../building-record-identities-100-122.json#/records" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpStringsInRange.java:0x82F71FD8..0x82F73237" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82F727F0,0x82F72BEC,0x82F72E50" }
+          ],
+          "qualification": { "alternatives": ["The token consumer, meaning, field extent, and runtime use remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0182",
+          "name": "stored_description_text",
+          "offset": "0x4C",
+          "claim": "Initialized English description text at a repeated offset in the twenty-three exact building records.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../building-record-identities-100-122.json#/records" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpStringsInRange.java:0x82F71FD8..0x82F73237" }
+          ],
+          "qualification": { "alternatives": ["Stored descriptions do not prove display or implemented gameplay effects; field extent and runtime use remain unresolved."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0053",
+      "name": "wonder_definition_record_partial",
+      "image": "../image.json",
+      "claim": "Partial 0x14C-byte wonder-definition record selected by item ID minus 200 with four repeated initialized text offsets, one signed production-factor field, and three signed outer-gate fields.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../building-wonder-cost-identities.json#/wonderRange" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0096/textOffsets" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0097/records" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0136/records" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0137/records" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0138/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0139/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0144/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0145/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0146/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0147/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0148/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0149/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0150/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0151/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0152/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0153/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0154/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0155/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0156/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0157/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0158/record" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0159/boundedNegative" },
+        { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0165/byteSummary" }
+      ],
+      "qualification": { "alternatives": ["Four initialized text offsets, the signed base-cost field, and three technology-ownership gate cells are assigned; text consumers, complete eligibility, runtime effects, and the complete layout remain unresolved.", "Twelve complete stride positions 237 through 248 are all zero and the next position contains different data, but a general valid-ID rule is unresolved."] },
+      "size": "0x14C",
+      "fields": [
+        {
+          "id": "RVA-FLD-0168",
+          "name": "normal_production_base_cost_factor",
+          "offset": "0x40",
+          "claim": "Signed halfword multiplied by the current scalar before the common wonder scale and later modifiers.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../building-wonder-cost-identities.json#/wonderRange" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82CF1278" }
+          ],
+          "qualification": { "alternatives": ["The halfword is a factor, not the final production cost; the adjacent +0x42 halfword is separately recorded with unknown meaning, other fields remain unresolved, and later modifiers are only partially mapped."] }
+        },
+        {
+          "id": "RVA-FLD-0192",
+          "name": "unnamed_stored_halfword_0042",
+          "offset": "0x42",
+          "claim": "Exact +0x40 words in accepted wonder records 220, 223, and 236 expose separate adjacent halfword values 4, 8, and 8 at +0x42; their semantic meaning is not established.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0138/currentEvidence/entries/1" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0145/currentEvidence/entries/1" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0158/currentEvidence/entries/1" }
+          ],
+          "qualification": { "alternatives": ["This records initialized bytes only. No writer, consumer, runtime behavior, or safe modding interpretation is established."] }
+        },
+        {
+          "id": "RVA-FLD-0184",
+          "name": "first_technology_ownership_gate",
+          "offset": "0x44",
+          "claim": "Signed halfword supplied as a technology ID or -1 sentinel to ordinary ownership query 0x82CEF6A8 in the first generic outer-gate condition, and compared with selected values in two definition-list functions; exact values are mapped for initialized IDs 200 through 236.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../wonder-outer-gate-record-fields.json#/genericBranch" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CF3750" },
+            { "kind": "topic-manifest", "locator": "../definition-technology-match-list.json#/staticResult/wonderLoop" },
+            { "kind": "topic-manifest", "locator": "../definition-technology-conditional-list.json#/staticResult/wonderLoop" }
+          ],
+          "qualification": { "alternatives": ["This check is not complete buildability or effect proof; indices 19 and 20 take special branches."] }
+        },
+        {
+          "id": "RVA-FLD-0185",
+          "name": "second_technology_ownership_gate",
+          "offset": "0x46",
+          "claim": "Signed halfword supplied as a technology ID or -1 sentinel to ordinary ownership query 0x82CEF6A8 in the second generic outer-gate condition and read by DefinitionTechnologyConditionalList; exact values are mapped for initialized IDs 200 through 236.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../wonder-outer-gate-record-fields.json#/genericBranch" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CF3768" },
+            { "kind": "topic-manifest", "locator": "../definition-technology-conditional-list.json#/staticResult/wonderLoop" }
+          ],
+          "qualification": { "alternatives": ["This check is not complete buildability or effect proof; indices 19 and 20 take special branches."] }
+        },
+        {
+          "id": "RVA-FLD-0186",
+          "name": "other_player_technology_gate",
+          "offset": "0x48",
+          "claim": "Signed halfword selecting a technology ownership word for the final generic outer-gate test of other player bits; exact values are mapped for initialized IDs 200 through 236.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../wonder-outer-gate-record-fields.json#/genericBranch" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82CF3784" }
+          ],
+          "qualification": { "alternatives": ["This check is not complete buildability or effect proof; indices 19 and 20 take special branches."] }
+        },
+        {
+          "id": "RVA-FLD-0171",
+          "name": "name_text",
+          "offset": "0x0",
+          "claim": "Initialized full wonder-name text; thirty-seven bounded records bind items 200 through 236.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0096/textOffsets/0" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0097/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0136/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0137/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0138/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0139/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0144/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0145/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0146/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0147/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0148/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0149/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0150/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0151/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0152/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0153/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0154/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0155/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0156/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0157/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0158/record" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpStringsInRange.java:0x82F73238..0x82F738B3" }
+          ],
+          "qualification": { "alternatives": ["The exact storage extent, localization path, display consumer, and runtime presentation remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0172",
+          "name": "short_token",
+          "offset": "0x4A",
+          "claim": "Initialized short token repeated at the same offset in thirty-seven bounded wonder records.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0096/textOffsets/1" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0097/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0136/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0137/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0138/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0139/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0144/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0145/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0146/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0147/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0148/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0149/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0150/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0151/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0152/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0153/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0154/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0155/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0156/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0157/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0158/record" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpStringsInRange.java:0x82F73238..0x82F738B3" }
+          ],
+          "qualification": { "alternatives": ["The original field name, exact storage extent, subsystem consumer, and runtime use remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0173",
+          "name": "art_token",
+          "offset": "0x8A",
+          "claim": "Initialized art token repeated at the same offset in thirty-seven bounded wonder records.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0096/textOffsets/2" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0097/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0136/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0137/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0138/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0139/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0144/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0145/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0146/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0147/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0148/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0149/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0150/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0151/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0152/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0153/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0154/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0155/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0156/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0157/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0158/record" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpStringsInRange.java:0x82F73238..0x82F738B3" }
+          ],
+          "qualification": { "alternatives": ["The original field name, exact storage extent, asset consumer, and runtime use remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0174",
+          "name": "effect_description_text",
+          "offset": "0xCA",
+          "claim": "Initialized English effect-description text repeated at the same offset in thirty-seven bounded wonder records.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0096/textOffsets/3" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0097/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0136/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0137/records" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0138/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0139/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0144/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0145/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0146/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0147/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0148/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0149/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0150/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0151/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0152/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0153/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0154/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0155/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0156/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0157/record" },
+            { "kind": "topic-manifest", "locator": "../wonder-records.json#/findings/RVA-F-0158/record" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpStringsInRange.java:0x82F73238..0x82F738B3" }
+          ],
+          "qualification": { "alternatives": ["The text is not proof of a display consumer or gameplay effect execution; exact storage extent and runtime use remain unresolved."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0054",
+      "name": "map_list_selection_state_partial",
+      "image": "../image.json",
+      "claim": "Partial receiver state written by MapListSelectionStateUpdate.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../map-list-selection-owner.json#/stateUpdate" }
+      ],
+      "qualification": { "alternatives": ["The original type, allocation size, fields outside +0x134 and +0x138, ownership, and lifetime remain unresolved."] },
+      "fields": [
+        {
+          "id": "RVA-FLD-0169",
+          "name": "selection_input",
+          "offset": "0x134",
+          "claim": "Receives update argument r4 before the selector-or-override branch.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../map-list-selection-owner.json#/stateUpdate/inputStore" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82DADCA4" }
+          ],
+          "qualification": { "alternatives": ["The field is not proved to be MAPNUMBER, a map ID, a menu ordinal, or a runtime-selected map."] }
+        },
+        {
+          "id": "RVA-FLD-0170",
+          "name": "map_list_result_or_override",
+          "offset": "0x138",
+          "claim": "Receives NumberedMapListSelect output when r5 is zero and receives r5 directly when r5 is nonzero.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../map-list-selection-owner.json#/stateUpdate" },
+            { "kind": "ghidra-static", "locator": "ghidra/DumpMemoryWords.java:0x82DADCB4,0x82DADCBC" }
+          ],
+          "qualification": { "alternatives": ["The field is not proved to be MAPNUMBER, a map ID, a menu ordinal, or a runtime-selected map."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0055",
+      "name": "resolve_destination_wrapper_factory_82517EC0_partial",
+      "image": "../image.json",
+      "claim": "Partial 24-byte factory product installed with vptr 0x82047628; provider 0x82517800 establishes the +0x14 output field for objects carrying that vptr, and one accepted configuration joins seven runtime records to this factory.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../native-renderer-alternate-resolve-provider.json#/wrapperLayout" },
+        { "kind": "generated-code", "locator": "generated:rerevved/sub_82517EC0" }
+      ],
+      "qualification": { "alternatives": ["The original type name and fields outside the five bounded offsets remain unresolved; the accepted join is bounded to one configuration and three input sets, and this layout does not apply to explicit-buffer vtable 0x8204767C."] },
+      "size": "0x18",
+      "fields": [
+        {
+          "id": "RVA-FLD-0176",
+          "name": "reference_count",
+          "offset": "0x4",
+          "claim": "Atomic wrapper reference count incremented and decremented by the bounded publication-link paths.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../native-renderer-alternate-resolve-provider.json#/release/linkCleanup" }],
+          "qualification": { "alternatives": ["Complete owner coverage and runtime destruction remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0177",
+          "name": "publication_link",
+          "offset": "0x8",
+          "claim": "Stores the distinct 20-byte publication link whose +0x10 target is this wrapper.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../native-renderer-alternate-resolve-provider.json#/creationAndPublication/linkPublication" }],
+          "qualification": { "alternatives": ["Complete publication-head ownership and link lifetime remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0178",
+          "name": "configuration_metadata",
+          "offset": "0xC",
+          "claim": "Stores an optional separately allocated 68-byte copy of factory configuration metadata.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../native-renderer-alternate-resolve-provider.json#/creationAndPublication/metadata" }],
+          "qualification": { "alternatives": ["The block is not the returned resource, descriptor, or backing; its complete schema and consumers remain unresolved."] }
+        },
+        {
+          "id": "RVA-FLD-0179",
+          "name": "configuration_halfword",
+          "offset": "0x10",
+          "claim": "Receives the low 16 bits of the bounded factory configuration input after initial value 0x100.",
+          "confidence": "strong",
+          "evidence": [{ "kind": "topic-manifest", "locator": "../native-renderer-alternate-resolve-provider.json#/wrapperLayout" }],
+          "qualification": { "alternatives": ["No allocation, contents-generation, selector, mutation, or lifecycle semantic is assigned."] }
+        },
+        {
+          "id": "RVA-FLD-0180",
+          "name": "returned_resource",
+          "offset": "0x14",
+          "claim": "Factory 0x82517EC0 stores its dynamic device-creator result at +0x14; provider 0x82517800 reads the same offset as its first output for the observed alternate item.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../native-renderer-alternate-resolve-provider.json#/provider" },
+            { "kind": "generated-code", "locator": "generated:rerevved/sub_82517800" },
+            { "kind": "runtime-probe", "locator": "runtime:native_resolve_identity_probe" }
+          ],
+          "qualification": { "alternatives": ["Seven accepted runtime records join one configuration to factory 0x82517EC0 and creator 0x82533DB8; the resource type, allocation, generation, mutation, lower release, and recycling remain unresolved."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0056",
+      "name": "wonder_claim_slot_partial",
+      "image": "../image.json",
+      "claim": "Eight-byte mutable slot in a 33-entry table at 0x830E5148, reset to all 0xFF and written for normalized wonder indices 0 through 32 on an accepted mode-one completion path.",
+      "confidence": "strong",
+      "evidence": [
+        { "kind": "topic-manifest", "locator": "../wonder-claim-slot-state.json#/reset" },
+        { "kind": "topic-manifest", "locator": "../wonder-claim-slot-state.json#/claimWrite" },
+        { "kind": "topic-manifest", "locator": "../wonder-claim-slot-state.json#/runtimeObservation" }
+      ],
+      "qualification": { "alternatives": ["One city-menu pass observed both words at -1 for all 33 slots. Complete writer coverage, save/load behavior, other live states, and indices outside this table remain unresolved."] },
+      "size": "0x8",
+      "fields": [
+        {
+          "id": "RVA-FLD-0190",
+          "name": "owner_or_unclaimed_sentinel",
+          "offset": "0x0",
+          "claim": "Reset to -1, tested for -1 by the production menu, and written with signed city owner by the mode-one helper.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../wonder-claim-slot-state.json#/claimWrite" },
+            { "kind": "topic-manifest", "locator": "../wonder-claim-slot-state.json#/runtimeObservation" }
+          ],
+          "qualification": { "alternatives": ["One city-menu pass observed -1 at this field in all 33 slots; no global ownership invariant was established."] }
+        },
+        {
+          "id": "RVA-FLD-0191",
+          "name": "city_index_on_claim",
+          "offset": "0x4",
+          "claim": "Reset to -1 and written with incoming city index r4 by the mode-one helper.",
+          "confidence": "strong",
+          "evidence": [
+            { "kind": "topic-manifest", "locator": "../wonder-claim-slot-state.json#/claimWrite" },
+            { "kind": "topic-manifest", "locator": "../wonder-claim-slot-state.json#/runtimeObservation" }
+          ],
+          "qualification": { "alternatives": ["One city-menu pass observed -1 at this field in all 33 slots; other consumers and live states remain unresolved."] }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0057",
+      "name": "result_82CAA100_partial",
+      "image": "../image.json",
+      "size": "0x6C",
+      "claim": "Partial result object constructed by sub_82CAA100 from a requested 108-byte allocation and conditionally published at the registry child's +0x20. LocalPlayerIdResolve consumes its +0xC word.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The original class and complete layout, complete writer coverage, lifetime, replacement and current player meaning are unresolved. Size records the requested extent on the accepted construction path."
+        ]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0193",
+          "name": "consumed_word",
+          "offset": "0xC",
+          "claim": "Initialized to low32 0xFFFFFFFF at 0x82CAA14C and read by LocalPlayerIdResolve at 0x82D8A3CC. The guarded child +0x88 caller chain binds conditional sub_82CAA180 stores at 0x82CAA218/0x82CAA228 to this word.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction"
+            },
+            {
+              "kind": "ghidra-static",
+              "locator": "ghidra/DumpMemoryWords.java:0x82CAA14C"
+            },
+            {
+              "kind": "ghidra-static",
+              "locator": "ghidra/DumpMemoryWords.java:0x82D8A3CC"
+            },
+            {
+              "kind": "topic-manifest",
+              "locator": "../playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/laterWordWriterBoundary"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The writer exchanges the current word only when it matches one of its two ordinal arguments. Under stable ownership/count, nonnegative ordinals without overflow and nonalias effects, initial -1 remains unchanged. Actual invocation, a compatible current consumed value and player semantics are unproved."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0058",
+      "name": "NativeVertexBufferObject",
+      "image": "../image.json",
+      "claim": "0x20-byte vertex-buffer header with encoded control, address-tag, and fetch-size words.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/0"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/sub_826982A8"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The header is bounded to selected writes and stream reads; the complete C++ type is unresolved."
+        ]
+      },
+      "size": "0x20",
+      "fields": [
+        {
+          "id": "RVA-FLD-0194",
+          "name": "header_control_word",
+          "offset": "0x0",
+          "claim": "Encoded control word written by the vertex-buffer creator.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/0/fields/0"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0195",
+          "name": "initialization_word",
+          "offset": "0x4",
+          "claim": "Header word initialized to 1 and joined to the common resource refcount path.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/0/fields/1"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The topic records the creator, AddRef and Release sites; identity across concrete resource variants remains qualified and the field is not safely ignorable."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0196",
+          "name": "control_sentinel",
+          "offset": "0x14",
+          "claim": "Control or sentinel word written as 0xFFFF0000.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/0/fields/2"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0197",
+          "name": "data_address_tagged",
+          "offset": "0x18",
+          "claim": "Allocation-derived address with low tag bits, consumed by stream setup.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/0/fields/3"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0198",
+          "name": "fetch_size_word",
+          "offset": "0x1C",
+          "claim": "Encoded fetch and size word consumed by stream setup.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/0/fields/4"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The topic separates the constructor load at 0x8269832C from the listed store at 0x82698364 and records the stream reader."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0059",
+      "name": "NativeIndexBufferObject",
+      "image": "../image.json",
+      "claim": "0x20-byte index-buffer header with encoded type, address, and size/control words.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/1"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/sub_826983D0"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The index-buffer size consumer was outside the bounded function set."
+        ]
+      },
+      "size": "0x20",
+      "fields": [
+        {
+          "id": "RVA-FLD-0199",
+          "name": "header_control_word",
+          "offset": "0x0",
+          "claim": "Encoded type or index-format word read by the indexed draw sink.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/1/fields/0"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0200",
+          "name": "initialization_word",
+          "offset": "0x4",
+          "claim": "Header word initialized to 1; no bounded reader is assigned.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/1/fields/1"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0201",
+          "name": "control_sentinel",
+          "offset": "0x14",
+          "claim": "Control or sentinel word written as 0xFFFF0000.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/1/fields/2"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0202",
+          "name": "data_address",
+          "offset": "0x18",
+          "claim": "Index-buffer address word read by the indexed draw sink.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/1/fields/3"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The topic records the index address store at 0x82698470; 0x8269845C belongs to the distinct +0x1C word."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0203",
+          "name": "size_or_control_word",
+          "offset": "0x1C",
+          "claim": "Written size or control candidate with no bounded reader.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/1/fields/4"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The topic records 0x8269845C as the +0x1C writer and leaves its reader unresolved."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0060",
+      "name": "NativeVertexDeclarationObject",
+      "image": "../image.json",
+      "claim": "Variable declaration object allocated as 0x38+12*n after a 0xFF terminator scan; n copied records begin at +0x34 and the four-byte tail is not copied.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/2"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/sub_82692EB8"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The terminator excludes the 0xFF entry; the loop copies exactly n 12-byte records and allocation leaves four bytes beyond that span, without proving API record semantics."
+        ]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0204",
+          "name": "declaration_control",
+          "offset": "0x0",
+          "claim": "Encoded declaration control word initialized to 0x100005.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/2/fields/0"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0205",
+          "name": "initialization_word",
+          "offset": "0x4",
+          "claim": "Declaration word initialized to 1.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/2/fields/1"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0206",
+          "name": "control_sentinel",
+          "offset": "0x14",
+          "claim": "Control or sentinel word written as 0xFFFF0000.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/2/fields/2"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0207",
+          "name": "element_count_candidate",
+          "offset": "0x18",
+          "claim": "Count of terminator-delimited 12-byte source steps.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/2/fields/3"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0208",
+          "name": "maximum_stream_candidate",
+          "offset": "0x1C",
+          "claim": "Maximum observed stream value from the copied input.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/2/fields/4"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0209",
+          "name": "header_pair",
+          "offset": "0x20",
+          "claim": "Two local zeroed u64 masks are byte-marked from scanned source stream indices and copied to object +0x20/+0x28.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/2/fields/5"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The local initialization and byte-marking provenance is known; semantic names and readers remain unresolved."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0210",
+          "name": "header_zero_word",
+          "offset": "0x30",
+          "claim": "Header word written as zero.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/2/fields/6"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0211",
+          "name": "declaration_record",
+          "offset": "0x34",
+          "claim": "Three 4-byte words copied at each 12-byte declaration-record stride.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/2/fields/7"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0061",
+      "name": "NativeParentBackedSurface",
+      "image": "../image.json",
+      "claim": "0x30-byte surface header with a parent texture pointer at +0x18.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/sub_8269A918"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The +0x18 parent meaning is guarded to the parent-backed creator and is not shared with the standalone builder."
+        ]
+      },
+      "size": "0x30",
+      "fields": [
+        {
+          "id": "RVA-FLD-0212",
+          "name": "surface_control",
+          "offset": "0x0",
+          "claim": "Common or control word written by the parent-backed creator.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/4/fields/0"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0213",
+          "name": "initialization_word",
+          "offset": "0x4",
+          "claim": "Word initialized to 1 and joined to the common atomic resource refcount path.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/4/fields/1"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The topic records the parent-backed creator plus AddRef/Release reads and writes; lifetime side effects make the field visible."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0214",
+          "name": "control_sentinel",
+          "offset": "0x14",
+          "claim": "Control or sentinel word written as 0xFFFF0000.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/4/fields/2"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0215",
+          "name": "parent_texture",
+          "offset": "0x18",
+          "claim": "Parent texture pointer retained and recursively AddRef'd by this constructor variant.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/4/fields/3"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The pointer store is 0x8269A994 in the parent-backed constructor; recursive AddRef/Release uses count, type and flag guards recorded in the topic."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0216",
+          "name": "packed_level_word",
+          "offset": "0x1C",
+          "claim": "Packed level or layout word written by the parent-backed creator.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/4/fields/4"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0062",
+      "name": "NativeStandaloneSurface",
+      "image": "../image.json",
+      "claim": "0x30-byte standalone surface builder with control and packed layout words, including an unresolved writer at +0x18.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/sub_8269A690"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The +0x18 writer is a standalone packed layout candidate and is not a parent pointer; output parameters at guest sites 0x8269A8F4 and 0x8269A8F8 are not header fields."
+        ]
+      },
+      "size": "0x30",
+      "fields": [
+        {
+          "id": "RVA-FLD-0217",
+          "name": "surface_control",
+          "offset": "0x0",
+          "claim": "Control or type word written as 4 by the standalone builder.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/5/fields/0"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0218",
+          "name": "initialization_word",
+          "offset": "0x4",
+          "claim": "Word initialized to 1 by the standalone builder.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/5/fields/1"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0219",
+          "name": "control_sentinel",
+          "offset": "0x14",
+          "claim": "Control or sentinel word written as 0xFFFF0000.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/5/fields/2"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0220",
+          "name": "layout_word_0",
+          "offset": "0x1C",
+          "claim": "Standalone layout word written on both observed branches.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/5/fields/4"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0221",
+          "name": "layout_word_1",
+          "offset": "0x20",
+          "claim": "Standalone layout or control word.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/5/fields/5"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0222",
+          "name": "layout_word_2",
+          "offset": "0x24",
+          "claim": "Standalone layout or control word.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/5/fields/6"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The +0x24 store is 0x8269A818; the distinct +0x18 store at 0x8269A820 is retained as an unresolved packed candidate without a catalog field entity."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0223",
+          "name": "layout_word_3",
+          "offset": "0x28",
+          "claim": "Standalone layout or control word.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/5/fields/7"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0224",
+          "name": "layout_word_4",
+          "offset": "0x2C",
+          "claim": "Standalone layout or control word.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/5/fields/8"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0063",
+      "name": "NativeRendererDeviceDrawState",
+      "image": "../image.json",
+      "claim": "Partial device state surface covering dirty masks, stream fetch shadows, resource bindings, register shadows, and shader or declaration pointers.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/sub_826A3048"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The device size, dynamic fetch-shadow extents, and index-dependent ranges are partial; unresolved readers and writer stores remain listed in the topic."
+        ]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0225",
+          "name": "dirty_vs_alu",
+          "offset": "0x0",
+          "claim": "VS ALU emission mask read and cleared by the flush.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/0"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The topic separates the flush load from its clear store and retains setter writer evidence."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0226",
+          "name": "dirty_ps_alu",
+          "offset": "0x8",
+          "claim": "PS ALU emission mask read and cleared by the flush.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/1"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The topic separates the flush load from its clear store and retains setter writer evidence."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0227",
+          "name": "dirty_render_groups",
+          "offset": "0x10",
+          "claim": "Render-register emission mask read and cleared by the flush.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/2"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The topic separates the flush load from its clear store and retains declaration-setter writer evidence."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0228",
+          "name": "dirty_fetch_groups",
+          "offset": "0x18",
+          "claim": "Fetch and related emission mask written by stream and sampler setters and cleared by the flush.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/3"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The sampler store targets device +0x18; the topic separates all load and clear roles."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0229",
+          "name": "dirty_misc_groups",
+          "offset": "0x20",
+          "claim": "0x2300, 0x2380, UCP, bool, and loop emission mask read and cleared by the flush.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/4"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The topic separates the flush load from its clear store and retains bounded setter writer evidence."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0230",
+          "name": "dirty_extra_mask",
+          "offset": "0x28",
+          "claim": "Additional mask intersected with +0x10 before a helper call; meaning unresolved.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/5"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0231",
+          "name": "vertex_declaration_binding",
+          "offset": "0x2E2C",
+          "claim": "Device declaration binding written by the setter and read by the draw loader.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/6"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0232",
+          "name": "index_buffer_binding",
+          "offset": "0x3094",
+          "claim": "Device index-buffer binding written by the setter and read by the indexed draw sink.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/7"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0233",
+          "name": "render_target_bindings",
+          "offset": "0x3098",
+          "claim": "Five consecutive surface binding words compared by the ring emitter.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/8"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0234",
+          "name": "stream_bindings",
+          "offset": "0x30AC",
+          "claim": "Per-stream vertex-buffer binding written by the stream setter.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/9"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0235",
+          "name": "stream_stride_bytes",
+          "offset": "0x30F0",
+          "claim": "Per-stream stride byte written by the stream setter.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/10"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0236",
+          "name": "texture_bindings",
+          "offset": "0x3100",
+          "claim": "Per-stage texture binding written and read by the texture setter and getter.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/11"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0237",
+          "name": "pixel_shader_binding",
+          "offset": "0x3194",
+          "claim": "Pixel shader binding consumed by the draw loader.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/12"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Function-entry anchor 0x82692948 identifies the producer path; no exact field store site is claimed in this bounded evidence."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0238",
+          "name": "vertex_shader_binding",
+          "offset": "0x3198",
+          "claim": "Vertex shader binding consumed by the draw loader.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/13"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Function-entry anchor 0x82692C48 identifies the producer path; no exact field store site is claimed in this bounded evidence."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0239",
+          "name": "fetch_shadow_group",
+          "offset": "0x480",
+          "claim": "Six-word per-stage fetch shadow group with only two bounded getter reads.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/14"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0240",
+          "name": "sampler_table_slot",
+          "offset": "0x1D4",
+          "claim": "Table-dispatched sampler state slot with no direct bounded writer or reader.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/15"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0247",
+          "name": "stream_fetch_shadow_0",
+          "offset": "0x6F0",
+          "claim": "Dynamic stream fetch-shadow word written by the stream setter.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/16"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The field is indexed by 8*(0x11-stream); direct consumers remain unresolved."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0248",
+          "name": "stream_fetch_shadow_1",
+          "offset": "0x6F4",
+          "claim": "Dynamic stream fetch-shadow word written by the stream setter.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/6/fields/17"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The field is indexed by 8*(0x11-stream); direct consumers remain unresolved."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0064",
+      "name": "NativeSamplerShadow",
+      "image": "../image.json",
+      "claim": "Partial stage sampler shadow record with two observed words; its setter also updates a device-base dirty mask.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/sub_8268EF98"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "Only stage-relative +0x0C and +0x10 are cataloged. The setter store at 0x8268F058 targets device +0x18, so no stage +0x18 field is claimed."
+        ]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0241",
+          "name": "sampler_word_0",
+          "offset": "0xC",
+          "claim": "Sampler shadow word read by the getter.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/7/fields/0"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0242",
+          "name": "sampler_word_1",
+          "offset": "0x10",
+          "claim": "Sampler shadow word read by the getter.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/7/fields/1"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0065",
+      "name": "NativeDrawCommandHeader",
+      "image": "../image.json",
+      "claim": "Partial device command-state view covering cursor, limit, and five-word commit area.",
+      "confidence": "strong",
+      "evidence": [
+        {
+          "kind": "generated-code",
+          "locator": "generated:rerevved/sub_826A3048"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "The command fields use the device base in the bounded bodies; no separate per-draw header allocation is established and the remaining bytes stay unresolved."
+        ]
+      },
+      "fields": [
+        {
+          "id": "RVA-FLD-0244",
+          "name": "command_cursor",
+          "offset": "0x30",
+          "claim": "Device-base cursor read and written by flush and rebound by the flush wrapper.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/8/fields/0"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0245",
+          "name": "command_limit",
+          "offset": "0x38",
+          "claim": "Command limit read by flush; producer remains unresolved.",
+          "confidence": "candidate",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/8/fields/1"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0246",
+          "name": "commit_words",
+          "offset": "0x3484",
+          "claim": "Five 4-byte commit words written by flush and read by its wrapper.",
+          "confidence": "strong",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../native-renderer-draw-object-fields.json#/objectLayouts/8/fields/2"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Field size, type, writer and reader sites are recorded in the topic field record."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "RVA-STR-0066",
+      "name": "ResourceDefinition",
+      "image": "../image.json",
+      "claim": "Initialized0x44-byte resource-table record with two32-byte ASCII cells followed by four scalar bytes; selected reader consumes signed terrain, remainder and nominal technology bytes.",
+      "confidence": "confirmed",
+      "evidence": [
+        {
+          "kind": "topic-manifest",
+          "locator": "../resource-definitions.json#/table"
+        }
+      ],
+      "qualification": {
+        "alternatives": [
+          "No runtime object lifetime, localized string consumer, secondary-token consumer or byte+0x41 gameplay meaning is established."
+        ]
+      },
+      "size": "0x44",
+      "fields": [
+        {
+          "id": "RVA-FLD-0249",
+          "name": "record_name",
+          "offset": "0x0",
+          "claim": "32-byte null-terminated ASCII record-name cell. All22 selected rows contain a terminating null.",
+          "confidence": "confirmed",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../resource-definitions.json#/layout/record_name"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "UI localization and the consumer of this string cell are not bound."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0250",
+          "name": "secondary_token",
+          "offset": "0x20",
+          "claim": "32-byte null-terminated ASCII secondary token cell. Oxen and Cattle both contain Cow; this field is not a unique resource identity.",
+          "confidence": "confirmed",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../resource-definitions.json#/layout/secondary_token"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "Token consumers and an asset/model semantic role are unbound."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0251",
+          "name": "terrain_code",
+          "offset": "0x40",
+          "claim": "Signed byte compared with the tile terrain byte by0x82CF1604.",
+          "confidence": "confirmed",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../resource-definitions.json#/layout/terrain_code"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The comparison does not establish a general placement-legality policy."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0252",
+          "name": "unclassified_byte_41",
+          "offset": "0x41",
+          "claim": "One initialized byte between the terrain and remainder discriminators; values0..2 in this table.",
+          "confidence": "confirmed",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../resource-definitions.json#/layout/unclassified_byte_41"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The selected reader does not consume it; yield, era and other meanings are unproved."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0253",
+          "name": "coordinate_remainder",
+          "offset": "0x42",
+          "claim": "Signed byte compared with the coordinate-sum remainder by0x82CF1614.",
+          "confidence": "confirmed",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../resource-definitions.json#/layout/coordinate_remainder"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "The selected divisor is4 for terrain1 and3 otherwise, with signed32 arithmetic and valid addresses required."
+            ]
+          }
+        },
+        {
+          "id": "RVA-FLD-0254",
+          "name": "technology_id",
+          "offset": "0x43",
+          "claim": "Signed byte passed to ordinary technology-ownership query0x82CEF6A8 by0x82CF162C..1638.",
+          "confidence": "confirmed",
+          "evidence": [
+            {
+              "kind": "topic-manifest",
+              "locator": "../resource-definitions.json#/layout/technology_id"
+            }
+          ],
+          "qualification": {
+            "alternatives": [
+              "It is nominal technology metadata, not an unconditional player-availability rule; context and bypass gates remain separate."
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

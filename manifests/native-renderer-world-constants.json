@@ -1,0 +1,1103 @@
+{
+  "schemaVersion": 1,
+  "family": "native-renderer-world-constants",
+  "findings": {
+    "RVA-F-0260": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0260",
+      "topic": "native-renderer-world-constant-ownership",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Which frame-owned world-path writers reach the native shader constant setters, what ranges do they write, and which pass families remain unresolved?",
+      "scope": {
+        "acceptedFramePath": "0x82E87D18 -> 0x82C7DF58 -> 0x82C71A00 under the incoming r4 low-byte guard, then the accepted mesh chain 0x82C7DF58 -> 0x82C71A00 -> 0x82C4C740 or 0x82C4BC00 -> 0x82C2A8E8 -> 0x82C29628 -> 0x823067F8",
+        "setterSet": [
+          "0x82692588",
+          "0x82692668",
+          "0x82692788",
+          "0x826927E8",
+          "0x82692848",
+          "0x826928A0"
+        ],
+        "scanRule": "Foreground raw direct-bl scans over initialized executable memory, aligned words, and LK=1; tail branches, indirect calls, and listing gaps are not absence proofs.",
+        "expansionBound": "At most eight exact function expansions per bounded question; generated windows are limited to exact writer and accepted frame-chain functions.",
+        "boundary": "This packet identifies two direct shader-float writes in the accepted frame-owned mesh path and maps all six setter storage families. It does not name a shader slot semantic, prove a total world-pass order, establish runtime frequency, or establish upload-reuse safety."
+      },
+      "dependencies": [
+        {
+          "topic": "native-renderer-d3d-runtime-surface",
+          "use": "Accepted storage roles, shadow offsets, dirty-word offsets, and the six setter identities."
+        },
+        {
+          "topic": "native-renderer-frame-pass-boundary",
+          "use": "Accepted callback-to-frame-driver guard and the unresolved separation between frame fragments."
+        },
+        {
+          "topic": "native-renderer-anchor-draw-sites",
+          "use": "Accepted mesh-chain ownership through 0x82C2A8E8, 0x82C29628, and 0x823067F8."
+        }
+      ],
+      "registerFamilies": [
+        {
+          "stage": "vertex",
+          "kind": "float",
+          "setter": "0x82692588",
+          "range": "device +0x780 + 16*start through start+count-1; start and count remain symbolic except at the world-path site",
+          "dirty": "dirty word offset +0x00",
+          "store": "Setter copies vec4 records into the vertex float shadow at the range above; its canonical listing body is missing, so the accepted setter role supplies the store layout.",
+          "meaning": "Stage-specific float register payload; slot meaning is unresolved.",
+          "confidence": "strong",
+          "frequency": "Per direct setter invocation only; runtime frequency is unknown."
+        },
+        {
+          "stage": "pixel",
+          "kind": "float",
+          "setter": "0x82692668",
+          "range": "device +0x1780 + 16*start through start+count-1; start and count remain symbolic except at the world-path site",
+          "dirty": "dirty word offset +0x08",
+          "store": "Setter copies vec4 records into the pixel float shadow at the range above; its canonical listing body is missing, so the accepted setter role supplies the store layout.",
+          "meaning": "Stage-specific float register payload; slot meaning is unresolved.",
+          "confidence": "strong",
+          "frequency": "Per direct setter invocation only; runtime frequency is unknown."
+        },
+        {
+          "stage": "vertex",
+          "kind": "boolean",
+          "setter": "0x82692788",
+          "range": "device +0x2780 + 4*(start>>5), with one input bit at (start & 0x1f) per element",
+          "dirty": "dirty word offset +0x20, bit 56",
+          "store": "Ghidra decompilation shows the read-modify-write bit store and count-decrement loop.",
+          "meaning": "Stage-specific boolean register payload; slot meaning is unresolved.",
+          "confidence": "strong",
+          "frequency": "Per direct setter invocation and input element; runtime frequency is unknown."
+        },
+        {
+          "stage": "pixel",
+          "kind": "boolean",
+          "setter": "0x826927E8",
+          "range": "device +0x2790 + 4*(start>>5), with one input bit at (start & 0x1f) per element",
+          "dirty": "dirty word offset +0x20, bit 56",
+          "store": "Ghidra decompilation shows the read-modify-write bit store and count-decrement loop.",
+          "meaning": "Stage-specific boolean register payload; slot meaning is unresolved.",
+          "confidence": "strong",
+          "frequency": "Per direct setter invocation and input element; runtime frequency is unknown."
+        },
+        {
+          "stage": "vertex",
+          "kind": "integer",
+          "setter": "0x82692848",
+          "range": "device +0x27A0 + 4*start through start+count-1",
+          "dirty": "dirty word offset +0x20, bit 56",
+          "store": "Ghidra decompilation shows each input record contributing bytes at offsets +3, +7, and +11 to the packed word.",
+          "meaning": "Stage-specific packed integer or loop-constant payload; exact slot meaning is unresolved.",
+          "confidence": "strong",
+          "frequency": "Per direct setter invocation and input element; runtime frequency is unknown."
+        },
+        {
+          "stage": "pixel",
+          "kind": "integer",
+          "setter": "0x826928A0",
+          "range": "device +0x27E0 + 4*start through start+count-1",
+          "dirty": "dirty word offset +0x20, bit 56",
+          "store": "Ghidra decompilation shows the same packed-byte operation as the vertex integer setter at the pixel loop-constant base.",
+          "meaning": "Stage-specific packed integer or loop-constant payload; exact slot meaning is unresolved.",
+          "confidence": "strong",
+          "frequency": "Per direct setter invocation and input element; runtime frequency is unknown."
+        }
+      ],
+      "worldPathWrites": [
+        {
+          "writer": "0x82C2A8E8",
+          "stage": "vertex",
+          "kind": "float",
+          "callSite": "0x82C2CE4C",
+          "returnAddress": "0x82C2CE50",
+          "setter": "0x82692588",
+          "arguments": "r3 is the pointer loaded from global word 0x8314F300; r4=start is 0; r5 points to the helper stack block at r1+0x80; r6=count is 96; r7=0xFFFFFF0000000000.",
+          "registerRange": "c0..c95, 96 vec4 records",
+          "sourceExtent": "r1+0x80..r1+0x67F inclusive, 0x600 bytes",
+          "deviceShadowExtent": "device +0x780..+0xD7F inclusive, 0x600 bytes",
+          "sourcePreparation": "Under the incoming-object guard, whose r3 value is saved at r1+0x16F4 and tested through its +0x1F3DC byte, 0x82C2A8E8 separately passes the shared pointer r3=[0x8314F300], r4=0, r5=r1+0x80, r6=96 at 0x82C2AAF0 -> 0x823066D0. The bounded helper chain computes requested source extent [0x8314F300]+0x780 and destination extent r1+0x80 for 0x600 bytes through 0x8281ABB8. Complete transfer and return remain qualified by unexpanded alignment branches to 0x827F89D8 and 0x82825410 with unknown source alignment. This stages the requested shadow-range bytes; it does not identify their original semantic producer or prove intervening alias behavior, byte retention, or save/restore safety.",
+          "r7DirtyMask": "0xFFFFFF0000000000",
+          "guard": "At 0x82C2A960, the +0x1F3DC byte of the incoming object saved from r3 at r1+0x16F4 is tested; bne enters constant setup at 0x82C2A978. The shared pointer loaded from 0x8314F300 is a separate value used by the copy and slot paths. The zero path performs cleanup, then branches at 0x82C2A974 to epilogue 0x82C3DD0C. No local start/count comparison guards this call.",
+          "frequency": "One selected static site on the guarded generated path; full guard-to-return reachability, execution count, and frame, object, draw, and pass cadence remain unresolved.",
+          "meaning": "Vertex float register block write for the accepted mesh-chain helper; source semantic slots are unresolved.",
+          "confidence": "strong",
+          "evidence": [
+            "generated:rerevved/sub_82C2A8E8",
+            "manifest:RVA-F-0258",
+            "manifest:RVA-F-0259",
+            "manifest:RVA-F-0264"
+          ]
+        },
+        {
+          "writer": "0x82C2A8E8",
+          "stage": "pixel",
+          "kind": "float",
+          "callSite": "0x82C2CFE4",
+          "returnAddress": "0x82C2CFE8",
+          "setter": "0x82692668",
+          "arguments": "r3 is the pointer loaded from global word 0x8314F300; r4=start is 0; r5 points to the helper stack block at r1+0x900; r6=count is 8; r7=0xC000000000000000.",
+          "registerRange": "c0..c7, 8 vec4 records",
+          "sourceExtent": "r1+0x900..r1+0x97F inclusive, 0x80 bytes",
+          "deviceShadowExtent": "device +0x1780..+0x17FF inclusive, 0x80 bytes",
+          "sourcePreparation": "Under the incoming-object guard, whose r3 value is saved at r1+0x16F4 and tested through its +0x1F3DC byte, 0x82C2A8E8 separately passes the shared pointer r3=[0x8314F300], r4=0, r5=r1+0x900, r6=8 at 0x82C2AB08 -> 0x82306688. The bounded helper chain computes requested source extent [0x8314F300]+0x1780 and destination extent r1+0x900 for 0x80 bytes through 0x8281ABB8. Complete transfer and return remain qualified by unexpanded alignment branches to 0x827F89D8 and 0x82825410 with unknown source alignment. This stages the requested shadow-range bytes; it does not identify their original semantic producer or prove intervening alias behavior, byte retention, or save/restore safety.",
+          "r7DirtyMask": "0xC000000000000000",
+          "guard": "At 0x82C2A960, the +0x1F3DC byte of the incoming object saved from r3 at r1+0x16F4 is tested; bne enters constant setup at 0x82C2A978. The shared pointer loaded from 0x8314F300 is a separate value used by the copy and slot paths. The zero path performs cleanup, then branches at 0x82C2A974 to epilogue 0x82C3DD0C. No local start/count comparison guards this call.",
+          "frequency": "One selected static site on the guarded generated path; full guard-to-return reachability, execution count, and frame, object, draw, and pass cadence remain unresolved.",
+          "meaning": "Pixel float register block write for the accepted mesh-chain helper; source semantic slots are unresolved.",
+          "confidence": "strong",
+          "evidence": [
+            "generated:rerevved/sub_82C2A8E8",
+            "manifest:RVA-F-0258",
+            "manifest:RVA-F-0259",
+            "manifest:RVA-F-0264"
+          ]
+        }
+      ],
+      "rawDirectCandidates": [
+        {
+          "site": "0x82C2CEAC",
+          "setter": "0x82692588",
+          "status": "raw direct-bl candidate within the 0x82C2A8E8 span",
+          "evidence": ["ghidra/FindDirectCallers.java", "generated:rerevved/sub_82C2A8E8"],
+          "qualification": "The argument values, decoded instructions, and reachability are unresolved. The selected generated path branches from return 0x82C2CE50 to 0x82C2CEB0 and skips this raw site; it is not promoted as an additional write or execution."
+        },
+        {
+          "site": "0x82C2D044",
+          "setter": "0x82692668",
+          "status": "raw direct-bl candidate within the 0x82C2A8E8 span",
+          "evidence": ["ghidra/FindDirectCallers.java", "generated:rerevved/sub_82C2A8E8"],
+          "qualification": "The argument values, decoded instructions, and reachability are unresolved. The selected generated path branches from return 0x82C2CFE8 to 0x82C2D048 and skips this raw site; it is not promoted as an additional write or execution."
+        }
+      ],
+      "genericUploadHelper": {
+        "writer": "0x82538718",
+        "guard": "Each block arm computes a dynamic start and end and calls its setter only when start < end.",
+        "callSites": [
+          "0x8253877C -> 0x82692588",
+          "0x825387C4 -> 0x82692668",
+          "0x825387EC -> 0x82692788",
+          "0x82538814 -> 0x826927E8",
+          "0x8253883C -> 0x82692848",
+          "0x82538864 -> 0x826928A0"
+        ],
+        "abi": {
+          "device": "r3 is loaded from record +0x80; r4=start and r6=end-start are passed after each unsigned start < end test.",
+          "vertexFloat": "start/end fields +0x18/+0x1C; source base +0x08 plus 16*start.",
+          "pixelFloat": "start/end fields +0x20/+0x24; source base +0x10 plus 16*start.",
+          "vertexBoolean": "start/end fields +0x68/+0x6C; source base +0x58 plus 4*start.",
+          "pixelBoolean": "start/end fields +0x70/+0x74; source base +0x60 plus 4*start.",
+          "vertexInteger": "start/end fields +0x40/+0x44; source base +0x30 plus 16*start.",
+          "pixelInteger": "start/end fields +0x48/+0x4C; source base +0x38 plus 16*start.",
+          "countQualification": "All start, end, and r6 values are element or record counts, not byte lengths."
+        },
+        "ranges": "All six start/count pairs are dynamic and record-backed; no shader slot semantics or caller-to-world ownership is proved.",
+        "frequency": "Conditional per helper block arm; the helper's own runtime caller and cadence remain unresolved.",
+        "meaning": "Generic constant-block upload helper, not a world-pass identity.",
+        "confidence": "strong",
+        "evidence": [
+          "generated:rerevved/sub_82538718",
+          "manifest:RVA-F-0253"
+        ]
+      },
+      "unknownPassFamilies": [
+        {
+          "family": "record-driven float writers",
+          "functions": ["0x82C25F78", "0x82C26400"],
+          "directSites": [
+            "0x82C26140 -> 0x82692588",
+            "0x82C261B0 -> 0x82692588",
+            "0x82C26378 -> 0x82692668",
+            "0x82C263E8 -> 0x82692668",
+            "0x82C265C8 -> 0x82692588",
+            "0x82C26638 -> 0x82692588",
+            "0x82C26804 -> 0x82692668",
+            "0x82C26874 -> 0x82692668"
+          ],
+          "known": "Record pointers and dynamic start/count values are guarded in the exact generated windows.",
+          "unknown": "World, terrain, water, shadow, lighting, fog, time, material, bone, and pass identity are not recovered."
+        },
+        {
+          "family": "large record-driven constant loader",
+          "functions": ["0x8266B370"],
+          "directSites": "The bounded scan finds guarded calls to all six setter families, including stage-selected pairs.",
+          "known": "The generated body is record-driven and branches on stage or count state.",
+          "unknown": "No accepted frame-owned edge or named pass identity connects this loader to the world path."
+        },
+        {
+          "family": "middleware effect or shader-patch client",
+          "functions": ["0x826C79D0"],
+          "directSites": "Boolean and integer setter calls occur with texture operations.",
+          "known": "The D3D surface classifies this function as middleware rather than the D3D runtime.",
+          "unknown": "Its effect, shader-patch, and pass meanings are unresolved and it is excluded from world ownership."
+        },
+        {
+          "family": "other direct callers",
+          "functions": ["0x823029B8", "0x8259C870", "0x8259C898", "0x8259C8F8", "0x8259CC28"],
+          "rawSites": ["0x82E36668 -> 0x82692668", "0x82E366C8 -> 0x82692668"],
+          "known": "Raw direct-bl matches exist for the setter targets; the two 0x82E3666x values are unowned raw call sites, not established function entries.",
+          "unknown": "No supported frame/world path, pass name, containing-function identity for the 0x82E3666x sites, or semantic register meaning is established."
+        }
+      ],
+      "unresolved": [
+        "No static evidence assigns any register range to camera, lighting, fog, time, material, bones, terrain, water, shadow, unit, effects, labels, menu, movie, or UI semantics.",
+        "The accepted world path has no direct bool or integer setter site; ownership of those ranges remains unresolved beyond the generic and unknown caller families.",
+        "Dynamic start/count values in all generic or record-driven callers remain symbolic. RVA-F-0264 supports the selected world-path requested stack-block extents and shader-object slot paths, but complete transfer, intervening aliases, and the original semantic producers of the receiver +0x780/+0x1780 regions remain unresolved.",
+        "RVA-F-0264's first later 0x82C2D120..0x82C2D1EC record loop calls accepted SetTexture identity 0x8269AF10 and is texture/state binding, not a promoted draw or float-shadow consumer. Its existing generated caller window at rerevved/generated/default/rerevved_recomp.106.cpp:33361-33473 contains direct U64 accesses at :33432/:33434 and indexed reads from r1+0x1220; index reloads after the unexpanded call leave effective ranges dependent on retained index state, so no derived-range negative is promoted for this loop. The later seven-arm F0267 U32 audit does not cover it. RVA-F-0267 follows selector zero through fixed selectors 4, 8, 16, 20, 24, and 36, with selector-8 table word 0x82C2E5E8=0x82C2E85C and retained case-0 0x82C2E5C8=0x82C2E6FC, reaches F3E0, and returns through 0x82C31538 -> 0x82C2D1FC. RVA-F-0270 expands the explicit interior F140 and EF98 stores: those selected-domain stores are outside the same-base device float shadows, while receiver/frame aliases, arbitrary indices, and ABI/shared-callee effects remain conditional; the later read/draw edge remains unresolved.",
+        "The indexed submission call 0x82C2BDE4 -> 0x82C29628 occurs earlier in the same large helper and has a loop backedge; common containing-function/frame-path ownership is proved, but consumption by that earlier draw and any ordered draw-state join are unresolved.",
+        "The frame callback, renderer-table fragments, and generic upload helper are not statically joined into a total pass order; no byte-retention, save/restore, runtime frequency, or upload-reuse safety is proved.",
+        "The raw scan excludes tail branches and indirect calls, and canonical listing gaps do not prove absent callers."
+      ],
+      "nextDiscriminator": {
+        "site": "RVA-F-0270 sampler footprint, 0x8268F3E0 helper state effects, and 0x82C31538 -> 0x82C2D1FC loopback.",
+        "question": "Which later helper/state consumer or loop iteration, if any, joins the bounded sampler footprint to a concrete constant read or draw?",
+        "limits": "RVA-F-0270 closes the two generated setter interiors and selected argument flow but does not establish ABI/shared-callee frame effects, receiver/frame nonaliasing, arbitrary-index exclusion, or a later consumer. Do not infer a consumer from helper arguments, state offsets, table proximity, SetTexture identity, or the earlier 0x82C2BDE4 loop-backedge."
+      },
+      "currentEvidence": {
+        "method": "Foreground read-only Ghidra exact-target expansions, raw LK=1 direct-bl scans, and narrow generated-code windows; generated locators use title repository rerevved at revision 75df5c52ca90a5ea77690a90cf965ff8d79bac92; accepted R2/R3 manifests supply the frame/world path.",
+        "queries": [
+          {
+            "question": "setter identity and storage decode",
+            "script": "ghidra/DumpFunctions.java",
+            "targets": ["0x82692588", "0x82692668", "0x82692788", "0x826927E8", "0x82692848", "0x826928A0"],
+            "bound": "six exact function expansions; canonical listing gaps affected the two float bodies and bad instruction data truncated the boolean and integer bodies.",
+            "result": "Boolean and integer stores decode to the listed shadow offsets; float roles and dirty offsets are accepted from the D3D surface."
+          },
+          {
+            "question": "six-setter direct caller inventory",
+            "script": "ghidra/FindDirectCallers.java",
+            "targets": ["0x82692588", "0x82692668", "0x82692788", "0x826927E8", "0x82692848", "0x826928A0"],
+            "bound": "initialized executable memory, aligned words, LK=1 direct-bl matching, cap 128 per target; tail-b and indirect calls excluded.",
+            "result": "Raw matches were 15, 18, 11, 11, 10, and 12 in target order, with no truncation."
+          },
+          {
+            "question": "accepted frame/world chain",
+            "script": "ghidra/DumpFunctions.java",
+            "callerScript": "ghidra/FindDirectCallers.java",
+            "targets": ["0x82C7DF58", "0x82C71A00", "0x82C4C740", "0x82C4BC00", "0x82C2A8E8", "0x82C29628", "0x823067F8"],
+            "bound": "Seven exact chain expansions and a cap-64 raw direct scan; callback 0x82E87D18 is inherited R3 evidence, and the accepted R2/R3 chain remains the ownership frontier.",
+            "result": "The world-path writer is 0x82C2A8E8; its two selected direct setter sites are retained even where canonical callers are incomplete. Raw candidates 0x82C2CEAC and 0x82C2D044 remain unresolved."
+          }
+        ],
+        "generatedWindows": [
+          "generated:rerevved/sub_82C2A8E8",
+          "generated:rerevved/sub_82538718",
+          "generated:rerevved/sub_82C25F78",
+          "generated:rerevved/sub_82C26400",
+          "generated:rerevved/sub_8266B370",
+          "generated:rerevved/sub_826C79D0"
+        ],
+        "generatedSource": {
+          "repository": "rerevved",
+          "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92"
+        },
+        "qualification": "The raw direct scan is an inventory frontier, not a completeness proof for tail or indirect edges. Earlier bctrl operations do not break a known direct edge, and generated identity is retained when canonical listing bodies are incomplete. The corrected F0267 selector-8 evidence is 0x82C2E5E8=0x82C2E85C; 0x82C2E5C8=0x82C2E6FC remains case 0. RVA-F-0270 supplies the explicit interior F140 and EF98 stores and selected argument flow; ABI/shared-callee frame effects, receiver/frame aliasing, and arbitrary-index overlap remain qualified."
+      },
+      "catalogPromotion": {
+        "symbols": ["RVA-SYM-0471", "RVA-SYM-0472", "RVA-SYM-0473", "RVA-SYM-0474", "RVA-SYM-0475", "RVA-SYM-0476", "RVA-SYM-0477"],
+        "relations": ["RVA-REL-0586", "RVA-REL-0587"],
+        "structs": [],
+        "result": "Only six reusable setter identities, the supported mesh-chain writer, and its two exact direct call edges are promoted. Register slot meanings and unresolved pass families remain qualified."
+      },
+      "guards": [
+        "Do not assign a VS address to a PS register index or a pixel shadow range to a vertex range.",
+        "Do not turn dynamic start/count values into camera, lighting, fog, time, material, bone, or other semantic names.",
+        "Do not count static callsites as frame, object, pass, or draw executions.",
+        "Do not treat a missing canonical listing row, caller, or reference as absence; the accepted generated identity and raw scan limits remain explicit.",
+        "Do not claim a complete world register map or upload-reuse safety from these static writes."
+      ],
+      "conclusion": "The accepted frame-owned mesh path reaches 0x82C2A8E8, whose selected generated path contains a vertex float setter site at 0x82C2CE4C with start 0/count 96 and r7 mask 0xFFFFFF0000000000 and a pixel float setter site at 0x82C2CFE4 with start 0/count 8 and r7 mask 0xC000000000000000. RVA-F-0264 supports the requested stack source extents: 0x600 bytes from the shared pointer +0x780 to r1+0x80 and 0x80 bytes from +0x1780 to r1+0x900, with separate shader-object slots loaded from +0x3194 and +0x3198 and conditionally retained. Complete transfer remains qualified by unexpanded 0x827F89D8 and 0x82825410 alignment branches and unknown source alignment; the copies are staging reads, not original semantic producers. Raw candidates 0x82C2CEAC and 0x82C2D044 remain unresolved and are not promoted as additional writes. The first later loop is accepted SetTexture texture/state binding at 0x8269AF10. Its existing caller window at rerevved/generated/default/rerevved_recomp.106.cpp:33361-33473 contains direct U64 accesses at :33432/:33434 and indexed reads from r1+0x1220; index reloads after the unexpanded call leave effective ranges dependent on retained index state, so no derived-range negative is promoted for this loop. The later seven-arm F0267 U32 audit does not cover it. F0267 follows selector zero through fixed selectors 4, 8, 16, 20, 24, and 36, with selector-8 table word 0x82C2E5E8=0x82C2E85C and retained case-0 0x82C2E5C8=0x82C2E6FC. RVA-F-0270 expands the explicit interior F140 and EF98 stores: their selected-domain receiver-relative stores are outside the same-base device float shadows, while receiver/frame aliases, arbitrary indices, and ABI/shared-callee effects remain conditional; F3E0 reaches the 0x82C31538 -> 0x82C2D1FC loopback. No selected-block read or draw is proved. The earlier 0x82C2BDE4 loop-backedge draw join remains unresolved; no register slot meaning, total world-pass order, runtime cadence, alias, byte-retention, save/restore, or upload-reuse safety is proved."
+    },
+    "RVA-F-0264": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0264",
+      "topic": "native-renderer-world-constant-dataflow",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "What initializes the selected world-path VS and PS source blocks and shader-object stack slots, and which first later traversal can be supported as their consumer?",
+      "scope": {
+        "writer": "0x82C2A8E8",
+        "receiverPointer": "The shared pointer loaded from absolute word 0x8314F300 at the selected setup and setter sites; its broader object or class identity remains unresolved.",
+        "guard": "The incoming object in r3 is saved at r1+0x16F4 (0x82C2A8F8), reloaded, and its +0x1F3DC byte is tested at 0x82C2A958..0x82C2A960; its nonzero branch reaches setup at 0x82C2A978. This incoming object is distinct from the shared pointer loaded from absolute word 0x8314F300 for the copy and slot paths.",
+        "sourceBlocks": [
+          {
+            "label": "selected VS block",
+            "parentCall": "0x82C2AAF0 -> 0x823066D0",
+            "arguments": "r3=[0x8314F300], r4=0, r5=r1+0x80, r6=96",
+            "source": "The helper computes the requested source extent [0x8314F300]+0x780 as the copy source.",
+            "destination": "r1+0x80..r1+0x67F inclusive",
+            "size": "96 records * 16 bytes = 0x600 bytes",
+            "helperChain": "0x823066D0 -> 0x82692748 -> 0x8281ABB8",
+            "transferQualification": "The selected body has byte, word, and vector arms, but complete transfer and return depend on unexpanded alignment branches to 0x827F89D8 and 0x82825410; source alignment is unknown."
+          },
+          {
+            "label": "selected PS block",
+            "parentCall": "0x82C2AB08 -> 0x82306688",
+            "arguments": "r3=[0x8314F300], r4=0, r5=r1+0x900, r6=8",
+            "source": "The helper computes the requested source extent [0x8314F300]+0x1780 as the copy source.",
+            "destination": "r1+0x900..r1+0x97F inclusive",
+            "size": "8 records * 16 bytes = 0x80 bytes",
+            "helperChain": "0x82306688 -> 0x82692768 -> 0x8281ABB8",
+            "transferQualification": "The selected body has byte, word, and vector arms, but complete transfer and return depend on unexpanded alignment branches to 0x827F89D8 and 0x82825410; source alignment is unknown."
+          }
+        ],
+        "shaderObjectSlots": [
+          {
+            "label": "stack slot A",
+            "stackSlot": "r1+0x74",
+            "parentCall": "0x82C2AAA8 -> 0x823067C0 -> 0x82692B08",
+            "receiverField": "shared pointer +0x3194 (loaded from 0x8314F300)",
+            "retention": "When the loaded pointer is nonzero, 0x82692B08 calls 0x82698160 before storing it at the slot.",
+            "slotLoad": "0x82C2CCD8 loads r4 from r1+0x74; 0x82C2CCEC forwards the slot-related argument.",
+            "bindCall": "0x82C2CCF4 is the selected bind BL, not a slot-load PC."
+          },
+          {
+            "label": "stack slot B",
+            "stackSlot": "r1+0x70",
+            "parentCall": "0x82C2AAB8 -> 0x82306788 -> 0x82692E18",
+            "receiverField": "shared pointer +0x3198 (loaded from 0x8314F300)",
+            "retention": "When the loaded pointer is nonzero, 0x82692E18 calls 0x82698160 before storing it at the slot.",
+            "slotLoad": "0x82C2CCF8 loads r10 from r1+0x70; 0x82C2CD0C forwards the slot-related argument.",
+            "bindCall": "0x82C2CD14 is the selected bind BL, not a slot-load PC."
+          }
+        ],
+        "firstLaterTraversal": {
+          "window": "0x82C2D120..0x82C2D1EC",
+          "guard": "The loop counter at r1+0x12C8 starts at zero and continues while it is below 16.",
+          "recordInput": "Each iteration loads one word from r1+0x1220 plus 4*index and calls 0x8269AF10 with the loaded record, index, shared pointer, and a computed mask.",
+          "identity": "The accepted D3D surface identifies 0x8269AF10 as SetTexture: native-renderer-d3d-runtime-surface.json:3294 records fetch shadow device+0x480+0x18*slot, resource slots +0x3100+4*slot, and dirty +0x18.",
+          "consumerResult": "This is a 16-record texture/state binding loop, not a promoted draw or float-shadow consumer. The existing generated caller window generated:rerevved/generated/default/rerevved_recomp.106.cpp:33361-33473 contains direct U64 accesses at :33432/:33434 and indexed reads from r1+0x1220; index reloads after the unexpanded 0x8269AF10 call leave effective indexed ranges dependent on retained index state, so no derived-range negative is promoted for this loop. The later seven-arm F0267 audit is separate and applies only to its named selected dispatch arms. RVA-F-0267 follows the local selector-0 dispatch through fixed selectors 4, 8, 16, 20, 24, and 36; selector 8 is 0x82C2E5E8=0x82C2E85C and 0x82C2E5C8=0x82C2E6FC is case 0. RVA-F-0270 expands the selected F360 and FD08 setter interiors and finds the same explicit receiver-relative +0x0C/+0x10 and dirty +0x18 footprint; under the retained 0..3 or 0..7 index domain those explicit stores are outside the same-base float shadows, while receiver/frame aliasing, arbitrary indices, and ABI/shared-callee effects remain conditional. The final selected arm calls 0x8268F3E0 and returns through 0x82C31538 to the loop increment at 0x82C2D1FC; no staged-block read or draw edge is promoted."
+        },
+      "boundary": "The packet supports requested source, destination, and count extents, slot field coordinates, conditional retention, selected bind calls, the first later texture/state binding loop, and the RVA-F-0270 sampler write boundary. F0267 now joins selector 8 through raw 0x82C2E5E8=0x82C2E85C and records a caller-only full-range staged-access audit. RVA-F-0270 establishes only conditional selected-domain nonoverlap for its explicit interior stores with the same-base device float shadows and leaves receiver/frame aliasing, ABI save/restore effects, and shared-callee effects open for the staged stack blocks. The combined packets do not prove complete transfer through the unexpanded alignment branches, identify the original semantic producer of the receiver regions, assign shader meanings, prove a consuming draw, or establish byte retention, save/restore safety, runtime cadence, pass order, or upload reuse."
+      },
+      "dependencies": [
+        {
+          "topic": "native-renderer-world-constant-ownership",
+          "use": "Accepted frame-owned writer, setter ranges, saved-object guard, and device shadow offsets."
+        },
+        {
+          "topic": "native-renderer-d3d-runtime-surface",
+          "use": "Accepted stage-specific float shadow bases and the SetTexture identity at native-renderer-d3d-runtime-surface.json:3294 used to qualify the matching source offsets and later texture/state loop."
+        },
+        {
+          "topic": "native-renderer-frame-pass-boundary",
+          "use": "Accepted frame-path guard and unresolved pass-order boundary."
+        }
+      ],
+      "currentEvidence": {
+        "method": "Foreground read-only Ghidra queries against the pinned image, with exact raw big-endian words and bounded generated windows. Generated locators use title repository rerevved at revision 75df5c52ca90a5ea77690a90cf965ff8d79bac92; the canonical function listing returned bad-data shells for 0x82C2A8E8, 0x82692B08, and 0x82692E18, so raw words supply the local instruction support.",
+        "queries": [
+          {
+            "script": "ghidra/DumpFunctions.java",
+            "targets": [
+              "0x82C2A8E8",
+              "0x823066D0",
+              "0x82306688",
+              "0x8281ABB8",
+              "0x823067C0",
+              "0x82306788",
+              "0x82692B08",
+              "0x82692E18"
+            ],
+            "mode": "foreground-read-only",
+            "bound": "Eight exact DumpFunctions targets; this is not the whole body read set. The parent and two slot producers report bad instruction data, while wrappers decompile to bounded forwarding shapes and the copy entry resolves through its save thunk.",
+            "result": "The bounded target identities and helper edges match the raw-word reports below."
+          },
+          {
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82C2A978",
+              "0x82C2A9D0",
+              "0x82C2AAA8",
+              "0x82C2AAEC",
+              "0x82C2AB04"
+            ],
+            "radius": 32,
+            "bound": "Exact word radius 32 around the guard, callback loops, slot wrappers, and two copy call sites.",
+            "result": "Raw words show the incoming-object guard, two 128-count stride-16 callback calls, zeroed stack slots, shared-pointer loads, and the selected copy arguments and branches."
+          },
+          {
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82C2A8E8",
+              "0x82C2A960",
+              "0x82C2A978",
+              "0x82C2AAEC",
+              "0x82C2AB04",
+              "0x821B0000",
+              "0x821D5678",
+              "0x82692748",
+              "0x82692768",
+              "0x82692B08",
+              "0x82692E18",
+              "0x82C2CCF4",
+              "0x82C2CD14",
+              "0x82C2CE4C",
+              "0x82C2CFE4",
+              "0x82C2D138",
+              "0x82C2D1B4",
+              "0x82C2D1FC",
+              "0x82C2D270"
+            ],
+            "radius": 4,
+            "bound": "Exact word radius 4; this report supplies the actual callback words, selected setup words, copy-helper words, slot words, setter/bind words, loop words, and local jump-table lead.",
+            "result": "0x821D5678 is exactly blr. This radius-4 report retains selected setup and traversal words; its 0x82C2D270 window ends at 0x82C2D280 and does not reach table word 0x82C2D2A0. That table word is supported by the radius-16 consumer window below."
+          },
+          {
+            "script": "ghidra/DumpInstructions.java",
+            "targets": [
+              "0x82C2A978",
+              "0x821B0000",
+              "0x821D5678",
+              "0x82C2AAEC",
+              "0x82C2AB04",
+              "0x82692748",
+              "0x82692768",
+              "0x82692B08",
+              "0x82692E18"
+            ],
+            "instructionCount": 40,
+            "countScope": "per-target",
+            "bound": "Exact retained instruction report with 40 instructions per target; the selected loop body at 0x821B0000..0x821B003C spans 16 instructions, while the rest of that target's output spills into neighboring functions.",
+            "result": "The 0x821B0000 target supplies callback dispatch, counter/stride updates, and frame save/restore in its first 16 instructions. Together with callback 0x821D5678=blr, this supports the narrower no-population conclusion. The callback BLR alone would not prove that the loop helper has no stores."
+          },
+          {
+            "script": "ghidra/DumpInstructions.java",
+            "targets": [
+              "0x82C2A8E8",
+              "0x82C2A960",
+              "0x82C2A978",
+              "0x82C2AAB0",
+              "0x82C2CE4C",
+              "0x82C2CFE4",
+              "0x82C2D120"
+            ],
+            "instructionCount": 16,
+            "countScope": "per-target",
+            "bound": "Exact retained parent-start instruction report with 16 instructions per target.",
+            "result": "The report exposes listing gaps: requested setup, setter, and first-traversal target headings jump to the next listed instruction at 0x82C2D1FC; only the parent-entry heading supplies its first two prologue instructions before the same jump. It is not support for those local guard/setup/setter/traversal claims; the raw-word reports below supply those claims."
+          },
+          {
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x823066D0",
+              "0x82306688",
+              "0x82692748",
+              "0x82692768",
+              "0x82692B08",
+              "0x82692E18",
+              "0x8281ABB8"
+            ],
+            "radius": 32,
+            "bound": "Exact word radius 32 around copy wrappers, source arithmetic, slot producers, and the copy entry.",
+            "result": "Source arithmetic, destination/length ABI forwarding, conditional slot retention, and the copy-entry save thunk are retained."
+          },
+          {
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x8281ABC0",
+              "0x8281AD1C",
+              "0x8281AE00"
+            ],
+            "radius": 64,
+            "bound": "Exact word radius 64 around the copy body and its optimized store loops.",
+            "result": "The copy body retains destination in r26/r30, source in r31, and requested length in r29; byte, aligned word, and vector arms are visible. The aligned-word arm calls unexpanded 0x827F89D8 and an unaligned bulk arm calls unexpanded 0x82825410."
+          },
+          {
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82C2AAA8",
+              "0x82C2AAB8",
+              "0x82306788",
+              "0x823067C0",
+              "0x82692B08",
+              "0x82692E18"
+            ],
+            "radius": 16,
+            "bound": "Exact word radius 16 around the slot producer calls, wrappers, and producer bodies.",
+            "result": "The two wrappers forward separate stack outputs; producer bodies load +0x3194 or +0x3198, conditionally retain, and store the pointer."
+          },
+          {
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82698160",
+              "0x826981D8",
+              "0x82692948",
+              "0x82692C48"
+            ],
+            "radius": 16,
+            "bound": "Exact word radius 16 around retention, release, and selected bind helpers.",
+            "result": "The retention helper performs an atomic increment at object +0x04; release decrements the same field. The selected bind helpers load receiver +0x3194 and +0x3198 under null guards."
+          },
+          {
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82C2CCF4",
+              "0x82C2CD14",
+              "0x82C2CE4C",
+              "0x82C2CFE4",
+              "0x82C2D048",
+              "0x82C2D060",
+              "0x82C2D090",
+              "0x82C2D0AC",
+              "0x82C2D0C8",
+              "0x82C2D120",
+              "0x82C2D138",
+              "0x82C2D1B4",
+              "0x82C2D1EC",
+              "0x82C2D1FC",
+              "0x82C2D270"
+            ],
+            "radius": 16,
+            "bound": "Exact word radius 16 around selected bind calls, setters, post-setter cleanup, the first later loop, and the following local jump-table dispatch.",
+            "result": "The selected binds and setters occur in the accepted guarded path. Post-setter state/release calls precede a 0..15 record loop at 0x82C2D120..0x82C2D1EC; its existing caller window contains explicit U64 accesses at generated:rerevved/generated/default/rerevved_recomp.106.cpp:33432/:33434 and indexed reads from r1+0x1220. Index reloads after unexpanded 0x8269AF10 leave effective indexed ranges dependent on retained index state, so this window supplies no derived-range negative. F0267's seven-arm audit is limited to later selected dispatch arms and keeps indexed/shared-pointer accesses and unexpanded callees unresolved. 0x82C2D270 initializes selector 0, loads the local table at 0x82C2D2A0, and branches first to 0x82C2D3D4, whose retained generated arm updates fetch/sampler state around shared +0x480. RVA-F-0267 then joins fixed selectors 4, 8, 16, 20, 24, and 36 through selected state arms and the 0x8268F3E0 helper before the 0x82C31538 -> 0x82C2D1FC loopback; RVA-F-0270 closes the explicit interior F140/EF98 stores and selected argument flow, but the later draw or selected-constant read remains unresolved."
+          },
+          {
+            "script": "ghidra/FindRawFieldStores.java",
+            "range": "[0x82C2A8E8,0x82C3153C)",
+            "offsets": [
+              "0x80",
+              "0x900"
+            ],
+            "bound": "Aligned initialized executable scan, 64-match cap, no listing repair.",
+            "result": "Scanned 6933 words and found zero direct stores with r1 displacement +0x80 or +0x900. This is a no-direct-store result for the named parent span and does not exclude aliasing through the copy helper or unexpanded callees."
+          }
+        ],
+        "readSets": [
+          {
+            "question": "callback initialization",
+            "bodies": ["0x82C2A8E8", "0x821B0000", "0x821D5678"],
+            "bound": "Parent setup window plus DumpMemoryWords query with 19 targets at radius 4 and DumpInstructions query with 9 targets at 40 instructions per target; one generated helper window.",
+            "evidence": ["#/findings/RVA-F-0264/currentEvidence/queries/1", "#/findings/RVA-F-0264/currentEvidence/queries/2", "#/findings/RVA-F-0264/currentEvidence/queries/3", "generated:rerevved/generated/default/rerevved_recomp.0.cpp:3-49"]
+          },
+          {
+            "question": "copy staging",
+            "bodies": ["0x82C2A8E8", "0x823066D0", "0x82306688", "0x82692748", "0x82692768", "0x8281ABB8"],
+            "bound": "DumpMemoryWords queries with 7 targets at radius 32 and 3 targets at radius 64; generated copy body window ends at the delegated alignment branch.",
+            "evidence": ["#/findings/RVA-F-0264/currentEvidence/queries/5", "#/findings/RVA-F-0264/currentEvidence/queries/6", "generated:rerevved/generated/default/rerevved_recomp.95.cpp:16348-16723"]
+          },
+          {
+            "question": "slot production, retention, bind forwarding, and cleanup",
+            "bodies": ["0x82C2A8E8", "0x823067C0", "0x82306788", "0x82692B08", "0x82692E18", "0x82698160", "0x826981D8", "0x82692948", "0x82692C48"],
+            "bound": "DumpMemoryWords queries with 6, 4, and 15 targets at radius 16 for slot production, retention, and selected bind forwarding.",
+            "evidence": ["#/findings/RVA-F-0264/currentEvidence/queries/7", "#/findings/RVA-F-0264/currentEvidence/queries/8", "#/findings/RVA-F-0264/currentEvidence/queries/9"]
+          },
+          {
+            "question": "post-setter traversal and local dispatch",
+            "bodies": ["0x82C2A8E8"],
+            "bound": "DumpMemoryWords queries with 15 targets at radius 16 and 19 targets at radius 4, plus F0267's six total selector-chain/loopback/helper queries, including the four-center radius-16 selector-8 correction. Selector-zero dispatch through the fixed-selector chain and helper boundary is inspected within parent body 0x82C2A8E8, with only 0x8268F3E0 retained as a separate helper body; the named later selected caller windows also carry the full-range staged-access audit, which excludes the earlier 0x82C2D120..0x82C2D1EC loop.",
+            "evidence": ["#/findings/RVA-F-0264/currentEvidence/queries/9", "#/findings/RVA-F-0264/currentEvidence/queries/2", "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33361-33473", "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33361-33801", "manifest:RVA-F-0267#/currentEvidence/queries/0", "manifest:RVA-F-0267#/currentEvidence/queries/1", "manifest:RVA-F-0267#/currentEvidence/queries/2", "manifest:RVA-F-0267#/currentEvidence/queries/3", "manifest:RVA-F-0267#/currentEvidence/queries/4", "manifest:RVA-F-0267#/currentEvidence/queries/5", "manifest:RVA-F-0267#/currentEvidence/stackRangeAudit", "generated:rerevved/generated/default/rerevved_recomp.106.cpp:36444-36535"]
+          }
+        ],
+        "bodyReadSet": {
+          "count": 16,
+          "dumpFunctionsTargets": 8,
+          "rawHelperInspections": 8,
+          "addresses": [
+            "0x82C2A8E8",
+            "0x823066D0",
+            "0x82306688",
+            "0x8281ABB8",
+            "0x823067C0",
+            "0x82306788",
+            "0x82692B08",
+            "0x82692E18",
+            "0x821B0000",
+            "0x821D5678",
+            "0x82692748",
+            "0x82692768",
+            "0x82698160",
+            "0x826981D8",
+            "0x82692948",
+            "0x82692C48"
+          ],
+          "qualification": "The eight raw helper inspections are retained bounded windows, not additional DumpFunctions decompiler expansions. Selector-zero dispatch through the fixed-selector chain was inspected within already counted parent body 0x82C2A8E8; F0267 separately retains the reached 0x8268F3E0 helper body. RVA-F-0270 separately expands the explicit interiors of accepted 0x8268F140 and 0x8268EF98; their ABI save/restore helpers and shared callee remain unexpanded. The earlier 0x8269AF10 loop and copy helpers 0x827F89D8 and 0x82825410 remain outside this bodyReadSet."
+        },
+        "rawFacts": [
+          {
+            "fact": "The two callback loops use r3=r1+0x80 and r3=r1+0x900, r5=128, r4=16, and callback r6=0x821D5678; the callback entry is blr, while the 0x821B0000 helper report shows callback dispatch, counter/stride updates, frame save/restore, and no selected block store in its retained 40-instruction window.",
+            "evidence": [
+              "#/findings/RVA-F-0264/currentEvidence/queries/1",
+              "#/findings/RVA-F-0264/currentEvidence/queries/2",
+              "#/findings/RVA-F-0264/currentEvidence/queries/3",
+              "generated:rerevved/generated/default/rerevved_recomp.0.cpp:3-49"
+            ]
+          },
+          {
+            "fact": "The VS copy call passes 96 elements to 0x823066D0 and the PS copy call passes 8 elements to 0x82306688; both use r4=0 and the shared pointer loaded from 0x8314F300.",
+            "evidence": [
+              "#/findings/RVA-F-0264/currentEvidence/queries/1"
+            ]
+          },
+          {
+            "fact": "The source base formulas are +0x780 and +0x1780 because 0x82692748 adds 0x78 before a left shift by 4, while 0x82692768 adds 0x178 before the same shift; both use the copy ABI r3=destination, r4=source, r5=byte length.",
+            "evidence": [
+              "#/findings/RVA-F-0264/currentEvidence/queries/5"
+            ]
+          },
+          {
+            "fact": "The requested copy extents are exact: VS source [0x8314F300]+0x780, destination r1+0x80, count 0x600; PS source [0x8314F300]+0x1780, destination r1+0x900, count 0x80. Complete transfer and return are qualified because the selected body calls unexpanded 0x827F89D8 on an aligned-word arm and 0x82825410 on an unaligned bulk arm, with source alignment unknown.",
+            "evidence": [
+              "#/findings/RVA-F-0264/currentEvidence/queries/6",
+              "generated:rerevved/generated/default/rerevved_recomp.95.cpp:16404-16420",
+              "generated:rerevved/generated/default/rerevved_recomp.95.cpp:16709-16723"
+            ]
+          },
+          {
+            "fact": "Slot A is sourced from receiver +0x3194 and slot B from receiver +0x3198; loads at 0x82C2CCD8 and 0x82C2CCF8 read the stack slots, forwarded argument loads occur at 0x82C2CCEC and 0x82C2CD0C, and bind BLs occur at 0x82C2CCF4 and 0x82C2CD14. These coordinates are separate from the +0x780 and +0x1780 copy sources.",
+            "evidence": [
+              "#/findings/RVA-F-0264/currentEvidence/queries/7",
+              "#/findings/RVA-F-0264/currentEvidence/queries/8",
+              "#/findings/RVA-F-0264/currentEvidence/queries/9"
+            ]
+          },
+          {
+            "fact": "The first later traversal is an index-bounded 16-record texture/state loop that calls accepted SetTexture identity 0x8269AF10 and then conditionally releases a record. Its existing caller window at generated:rerevved/generated/default/rerevved_recomp.106.cpp:33361-33473 contains direct U64 accesses at :33432/:33434 and indexed reads from r1+0x1220; index reloads after the unexpanded call leave effective indexed ranges dependent on retained index state, so no derived-range negative is promoted for this loop. The later seven-arm F0267 audit does not cover it. The local dispatch at 0x82C2D270 initializes selector 0 and loads the 0x82C2D2A0 table. F0267 joins fixed selectors 4, 8, 16, 20, 24, and 36; selector 8 is 0x82C2E5E8=0x82C2E85C while 0x82C2E5C8=0x82C2E6FC is case 0. RVA-F-0270 expands the explicit interior F140 and EF98 stores with the same receiver-relative footprint and closes their selected argument flow; ABI/shared-callee effects remain unresolved. F0267 then joins F3E0 and the 0x82C31538 -> 0x82C2D1FC loopback, but its later draw or selected-constant read remains unresolved.",
+            "evidence": [
+              "#/findings/RVA-F-0264/currentEvidence/queries/9",
+              "#/findings/RVA-F-0264/currentEvidence/queries/2",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33361-33473",
+              "native-renderer-d3d-runtime-surface.json:3294",
+              "manifest:RVA-F-0267#/currentEvidence/queries/5",
+              "manifest:RVA-F-0267#/currentEvidence/stackRangeAudit"
+            ]
+          }
+        ],
+        "generatedWindows": [
+          "generated:rerevved/sub_82C2A8E8",
+          "generated:rerevved/sub_823066D0",
+          "generated:rerevved/sub_82306688",
+          "generated:rerevved/sub_82692748",
+          "generated:rerevved/sub_82692768",
+          "generated:rerevved/sub_823067C0",
+          "generated:rerevved/sub_82306788",
+          "generated:rerevved/sub_82692B08",
+          "generated:rerevved/sub_82692E18",
+          "generated:rerevved/sub_8281ABB8",
+          "generated:rerevved/generated/default/rerevved_recomp.0.cpp:3-49",
+          "generated:rerevved/generated/default/rerevved_recomp.95.cpp:16348-16723",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33361-33473",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33361-33801",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:36444-36535"
+        ],
+        "generatedSource": {
+          "repository": "rerevved",
+          "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92"
+        },
+        "qualification": "The raw-word queries are the source support for instruction identity, arguments, branches, fields, and loop bounds. Generated code corroborates local control and aliases where the canonical listing is incomplete. F0267's correction query supplies selector-8 table word 0x82C2E5E8=0x82C2E85C, while the older 0x82C2E5C8=0x82C2E6FC word remains the unselected case-0 entry. Generated locators use rerevved revision 75df5c52ca90a5ea77690a90cf965ff8d79bac92; the full-range stack audit is caller-only and excludes the earlier 0x82C2D120..0x82C2D1EC loop. RVA-F-0270 closes the explicit interior F140/EF98 stores and argument flow; ABI/shared-callee frame effects, receiver/frame aliasing, and arbitrary-index overlap remain conditional. The 16-record loop is accepted as SetTexture texture/state binding from native-renderer-d3d-runtime-surface.json:3294, not as a draw or float-shadow consumer; its U64/indexed accesses and retained index state remain unresolved. Intervening stack/shadow aliases, byte retention, save/restore safety, complete copy transfer, source alignment, semantic register meanings, runtime frequency, pass order, and reuse safety remain unresolved."
+      },
+      "guards": [
+        "Do not call the callback loops source-block producers; 0x821D5678 is an exact blr and the retained 0x821B0000 40-instruction helper report shows callback dispatch, counter/stride updates, and frame save/restore without a selected block store in that window. This does not make BLR alone a no-write proof.",
+        "Do not equate receiver +0x3194 or +0x3198 with device shadow +0x780 or +0x1780; they are distinct coordinates in the selected source and slot paths.",
+        "Do not infer camera, lighting, fog, time, material, bones, terrain, water, shadow, unit, effects, labels, menu, movie, UI, or shader-stage meanings from dimensions or offsets.",
+        "Do not treat the copy staging as the original semantic producer of the receiver regions.",
+        "Treat 0x8269AF10 as the accepted SetTexture texture/state binding identity, not as a draw or float-shadow consumer; F0267's selector-8 entry is 0x82C2E5E8=0x82C2E85C, and RVA-F-0270's F140/EF98 explicit interior sampler-state stores remain conditional on the retained index and receiver/frame alias gates, with ABI/shared-callee effects unresolved.",
+        "Preserve 0x82C2BDE4 -> 0x82C29628 as an earlier loop-backedge and ordered-state join whose consumption remains unproved rather than disproved.",
+        "Do not infer complete transfer through unexpanded 0x827F89D8 or 0x82825410, intervening alias behavior, byte retention, save/restore safety, runtime cadence, complete pass order, or upload reuse from this static path."
+      ],
+      "unknowns": [
+        "The original producer and semantic owner of the shared pointer's +0x780..+0xD7F and +0x1780..+0x17FF regions remain unresolved; the selected path stages requested extents into stack blocks before the setters and later reaches only the bounded F0267 helper/loopback boundary.",
+        "The accepted 0x8269AF10 SetTexture loop may consume established device state, but it is not a promoted draw or float-shadow consumer. Its existing generated caller window at rerevved/generated/default/rerevved_recomp.106.cpp:33361-33473 contains direct U64 accesses at :33432/:33434 and indexed reads from r1+0x1220; index reloads after the unexpanded call leave effective ranges dependent on retained index state, so no derived-range negative is promoted for this loop. The later seven-arm F0267 audit does not cover it. RVA-F-0267 follows selector zero at 0x82C2D270 through the fixed 4, 8, 16, 20, 24, and 36 state dispatches, with selector-8 table word 0x82C2E5E8=0x82C2E85C and retained case-0 0x82C2E5C8=0x82C2E6FC, then the 0x8268F3E0 helper and the 0x82C31538 -> 0x82C2D1FC loopback. RVA-F-0270 expands the explicit interior F140 and EF98 stores, but later read/draw edges, ABI/shared-callee frame effects, receiver/frame aliasing, and arbitrary-index overlap remain unresolved.",
+        "The earlier indexed submission at 0x82C2BDE4 is textually earlier in the same helper and has a loop backedge; consumption by that earlier draw and any ordered draw-state join remain unresolved.",
+        "Complete transfer and return through unexpanded 0x827F89D8 and 0x82825410 remain unresolved because source alignment is unknown; intervening stack/shadow aliases, byte retention, and save/restore safety are also unresolved.",
+        "The two stack slot objects are conditionally retained and later released under null guards; object identity across calls and runtime lifetime remain unresolved.",
+        "No runtime observation establishes frequency, frame cadence, pass order, register semantics, or safe reuse."
+      ],
+      "nextDiscriminator": {
+        "site": "RVA-F-0270 sampler footprint, 0x8268F3E0 state effects, and 0x82C31538 -> 0x82C2D1FC loopback",
+        "question": "Which retained sampler/state path or later loop iteration, if any, joins the bounded setter footprint to a concrete constant read or draw?",
+        "limits": "RVA-F-0270 closes the two generated setter interiors and selected argument flow but does not establish ABI/shared-callee frame effects, receiver/frame nonaliasing, arbitrary-index exclusion, or a later consumer. Do not infer a consumer from helper arguments, state offsets, table proximity, SetTexture identity, or the earlier 0x82C2BDE4 loop-backedge."
+      },
+      "conclusion": "On the nonzero incoming-object guard path, 0x82C2A8E8 runs two callback loops whose retained 0x821B0000 helper and 0x821D5678=blr support no selected block write in the retained window, then requests 0x600 bytes from the shared pointer's +0x780 region to r1+0x80 and 0x80 bytes from +0x1780 to r1+0x900. These source, destination, and count extents are exact; complete transfer and return remain qualified by unexpanded 0x827F89D8 and 0x82825410 alignment branches with unknown source alignment. Separate wrappers initialize r1+0x74 from shared +0x3194 and r1+0x70 from +0x3198, conditionally retain nonnull objects, and feed bind BLs at 0x82C2CCF4 and 0x82C2CD14 from slot loads at 0x82C2CCD8 and 0x82C2CCF8. After setters and guarded releases, the first later traversal is the 16-entry SetTexture texture/state binding loop at 0x82C2D120..0x82C2D1EC; its existing caller window at rerevved/generated/default/rerevved_recomp.106.cpp:33361-33473 contains direct U64 accesses at :33432/:33434 and indexed reads from r1+0x1220. Index reloads after unexpanded 0x8269AF10 leave effective ranges dependent on retained index state, so no derived-range negative is promoted for this loop; the later seven-arm F0267 audit does not cover it. F0267 follows selector zero at 0x82C2D270 through fixed selectors 4, 8, 16, 20, 24, and 36, with selector-8 table word 0x82C2E5E8=0x82C2E85C and the retained unselected case-0 word 0x82C2E5C8=0x82C2E6FC. RVA-F-0270 expands the explicit interior F140 and EF98 stores: their receiver-relative stores are outside the same-base device float shadows for i=0..3 or i=0..7, while receiver/frame aliasing, arbitrary indices, and ABI/shared-callee effects remain conditional; F3E0 then reaches the 0x82C31538 -> 0x82C2D1FC loopback. No selected-block read or draw is promoted. The earlier 0x82C2BDE4 loop-backedge draw join also remains unresolved. Intervening aliases, byte retention, save/restore safety, original semantic producers, register meanings, runtime cadence, pass order, and upload reuse remain unproved."
+    },
+    "RVA-F-0267": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0267",
+      "topic": "native-renderer-world-constant-consumption",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Which bounded local dispatch edges follow the selected world-path constant setters toward a concrete selected-block read or draw edge?",
+      "scope": {
+        "writer": "0x82C2A8E8",
+        "selectedSetters": [
+          "0x82C2CE4C",
+          "0x82C2CFE4"
+        ],
+        "stagedRanges": [
+          "r1+0x80..r1+0x67F",
+          "r1+0x900..r1+0x97F"
+        ],
+        "dispatchStart": "0x82C2D270",
+        "dispatchTable": "0x82C2D2A0",
+        "postDispatchArms": [
+          "0x82C31C30",
+          "0x82C32800",
+          "0x82C333D0",
+          "0x82C33EE0"
+        ],
+        "boundary": "This packet follows the selected local jump-table chain from the exact raw selector and table words through fixed selectors 16, 20, 24, and 36, then through the four selected post-0x82C31570 arms. It records selected arms, reached helper side effects, and local rejoins. The named caller windows include a complete direct and statically derived audit of the staged byte ranges. It does not claim absence of a consumer in the whole world path."
+      },
+      "dependencies": [
+        {
+          "topic": "native-renderer-world-constant-dataflow",
+          "use": "Accepted stack staging extents, shader-object slots, saved-object guard, and first later traversal frontier."
+        },
+        {
+          "topic": "native-renderer-world-constant-ownership",
+          "use": "Accepted world-path writer, selected setter ranges, and unresolved shader-slot semantics."
+        },
+        {
+          "topic": "native-renderer-d3d-runtime-surface",
+          "use": "Accepted SetTexture identity and fetch-shadow qualification used to exclude the earlier texture/state loop from a promoted float-shadow consumer; accepted sampler-state setter identities 0x8268EF98, 0x8268F140, and 0x8268F3E0 remain qualified by their cited D3D surface entries."
+        }
+      ],
+      "staticJoin": {
+        "firstDispatch": "At 0x82C2D270, the raw words encode selector 0, the table materializer for 0x82C2D2A0, and the indirect branch. The table word at 0x82C2D2A0 is 0x82C2D3D4, so the selected case is fixed by the retained selector and table entry.",
+        "firstArm": "The generated arm at 0x82C2D3D4 reads r1+0x12CC and shared state through the surrounding stack pointers, updates the fetch/sampler state record, and branches to 0x82C2DBC0. Its named caller window has no explicit or statically derived r1-based access overlapping either complete staged range and no direct draw BL; indexed/shared-pointer accesses remain unresolved.",
+        "secondDispatch": "At 0x82C2DBC0, the generated path reaches 0x82C2DC04, which writes fixed selector 4 and loads its local table. The raw table word at 0x82C2DC44 is 0x82C2DE18, the selected case then branches to 0x82C2E554 after another state update.",
+        "thirdDispatch": "At 0x82C2E554, the generated path reaches 0x82C2E598, which writes fixed selector 8 and materializes table base 0x82C2E5C8. The retained raw correction query shows the selector-8 entry at 0x82C2E5E8 is 0x82C2E85C. The earlier 0x82C2E5C8=0x82C2E6FC word is the unselected case-0 entry; its generated window is retained as case-0 evidence and is not used as the selector-8 arm.",
+        "frontier": "The selected 0x82C2F360, 0x82C2FD08, 0x82C306B0, and 0x82C31124 caller windows contain no explicit or statically derived r1-based access overlapping the complete staged ranges r1+0x80..r1+0x67F or r1+0x900..r1+0x97F. All explicit r1-based accesses in the named selected windows are 4-byte U32 loads or stores and none crosses either range boundary. Indexed accesses through loaded pointers and unexpanded callee behavior remain unresolved. The selected 0x82C2E85C arm is included in that audit. The selected 0x82C31124 arm calls 0x8268F3E0; its exact generated helper body reads a record flag, conditionally updates the record word and a state bitset, and always stores a byte at helper incoming r3 + helper incoming r4 + 11924. The helper call then reaches 0x82C31538, whose raw branch returns to 0x82C2D1FC. The added radius-16 exit window retains the loopback at 0x82C31538 and shows the bound-exit setup at 0x82C3153C followed by the branch at 0x82C31550 to 0x82C31570; this is the next dispatch frontier, not a normal-return or later-draw result.",
+        "result": "The selected local dispatch is a bounded state and record-update chain with a supported helper side effect and loopback boundary, not a promoted VS or PS source-block consumer edge. Selector 8 is joined to 0x82C2E85C by the raw 0x82C2E5E8 table word; 0x82C2E6FC remains the unselected case-0 arm. RVA-F-0270 expands the explicit interior F140 and EF98 stores: on the retained 0..3 or 0..7 index domain those receiver-relative stores are outside the same-base device float-shadow ranges, while arbitrary computed indices and receiver/frame aliases remain conditional hazards. Unexpanded ABI/shared-callee effects remain outside that footprint. Continuation to later caller instructions still requires normal return and relevant state retention. The loop increment at 0x82C2D1FC feeds the guard at 0x82C2D208 and then the next selector-zero iteration at 0x82C2D270. The added raw query independently supports the call branch at 0x82C2BDE4 and the return-site backedge 0x82C2BDE8 -> 0x82C2BD64, plus the selected-loop exit transition 0x82C3153C -> 0x82C31570. These are static address/control-flow facts only: they do not establish executed draw-to-restore order, argument retention through intervening code, a normal-return join, or absence of a later draw. The earlier 0x82C2BDE4 loop-backedge draw join remains independently unresolved.",
+        "fourthDispatch": "At 0x82C2EF2C, the raw words write fixed selector 16 and materialize table base 0x82C2EF5C. The raw table word at 0x82C2EF9C is 0x82C2F360, so the selected arm loads r5 from [r1+0x14DC], r4 from [r1+0x12CC], and r3 from [r1+0x14D8], where the receiver slot was filled from [0x8314F300], then calls accepted sampler-state setter identity 0x8268F140 (native-renderer-d3d-runtime-surface.json:1609). RVA-F-0270 expands F140's explicit interior stores: it writes record-relative +0x0C and +0x10 lanes at R+0x48C+0x18*i and R+0x490+0x18*i, writes +0x10 twice, and ORs dirty R+0x18. Those selected-domain explicit stores do not overlap same-base D+0x780..D+0xD7F or D+0x1780..D+0x17FF, but receiver/frame aliasing, arbitrary i, and unexpanded ABI/shared-callee effects remain unresolved. The arm reaches 0x82C2F87C on normal return.",
+        "fifthDispatch": "At 0x82C2F87C, the path reaches 0x82C2F8C0, which writes fixed selector 20 and materializes table base 0x82C2F8F0. The raw table word at 0x82C2F940 is 0x82C2FD08; that selected arm loads r5 from [r1+0x1534], r4 from [r1+0x12CC], and r3 from [r1+0x1530], where the receiver slot was filled from [0x8314F300], then calls accepted sampler-state setter identity 0x8268EF98 (native-renderer-d3d-runtime-surface.json:1579; RVA-SYM-0449). RVA-F-0270 expands EF98's explicit interior stores with the same receiver-relative footprint as F140 and the same selected-domain nonoverlap result, while receiver/frame aliasing, arbitrary i, and unexpanded ABI/shared-callee effects remain unresolved. The arm reaches 0x82C30210 on normal return.",
+        "sixthDispatch": "At 0x82C30210, the path reaches 0x82C30254, which writes fixed selector 24 and materializes table base 0x82C30284. The raw table word at 0x82C302E4 is 0x82C306B0; that selected arm updates a record-derived state table and returns to 0x82C30BA4.",
+        "seventhDispatch": "At 0x82C30BA4, the path reaches 0x82C30BE8, which writes fixed selector 36 and materializes table base 0x82C30C18. The raw table word at 0x82C30CA8 is 0x82C31124; that selected arm calls accepted sampler-state setter identity 0x8268F3E0 (native-renderer-d3d-runtime-surface.json:1663) with record-derived arguments and returns to 0x82C31538. Its exact helper body is retained below; later state retention remains unresolved.",
+        "postSamplerFrontier": "The raw exit window at 0x82C3153C shows the bound-exit setup and branch 0x82C31550 -> 0x82C31570. At 0x82C31570, selector 96-40=56 uses materialized table base 0x82C315AC and entry 0x82C3168C=0x82C31C30, which loads r1+5608/5612, calls accepted state setter 0x8268D6F0 (state offset 0x60), and rejoins at 0x82C320FC. The next three selected entries are 0x82C3225C=0x82C32800 for selector 100-40=60 via base 0x82C3216C, 0x82C32E2C=0x82C333D0 for selector 104-40=64 via base 0x82C32D2C, and 0x82C3393C=0x82C33EE0 for selector 60-40=20 via base 0x82C338EC. They load r1+5616/5620, r1+5624/5628, and r1+5632/5636, call accepted state setters 0x8268DB50 (state offset 0x64), 0x8268DBB0 (state offset 0x68), and 0x8268D728 (state offset 0x3C), and rejoin at 0x82C32CBC, 0x82C3387C, and 0x82C3443C respectively. The four selected arms have no direct staged-range access or draw call in their retained generated windows; helper bodies were not expanded, so this qualifies only the selected state-setter edges and rejoins."
+      },
+      "guards": [
+        "The selector values 0, 4, 8, 16, 20, 24, 36, 56, 60, and 64 are local state-dispatch selectors; do not name their state records as shader constants, passes, or materials.",
+        "Selector 8 indexes table word 0x82C2E5E8 and reaches 0x82C2E85C; 0x82C2E5C8=0x82C2E6FC is the retained unselected case-0 entry and cannot support a selector-8 negative.",
+        "The selected arms and 0x8268F3E0 helper are bounded generated windows joined to exact raw instruction centers; do not treat this path as a whole-function absence proof.",
+        "The accepted 0x8268F140 and 0x8268EF98 identities are sampler-state setters from the D3D surface. Their explicit interior write footprint is maintained in RVA-F-0270; same-base selected-domain nonoverlap does not exclude receiver/frame aliasing, arbitrary computed indices, unexpanded ABI/shared-callee effects, established-state effects, or later consumers, and continuation still requires normal return and relevant retention.",
+        "For the post-0x82C31570 dispatches, derive table bases from lis r12,-32061 as 0x82C315AC, 0x82C3216C, 0x82C32D2C, and 0x82C338EC; the selected entries are 0x82C3168C, 0x82C3225C, 0x82C32E2C, and 0x82C3393C.",
+        "Do not treat 0x8269AF10 in the later 0..15 record loop as a draw or float-shadow consumer; its accepted identity remains SetTexture texture/state binding.",
+        "Do not infer a staged-block read or draw from table proximity, fixed selector values, shared-state offsets, helper arguments, or the absence of a direct BL in the retained windows.",
+        "The selected incoming-object and shader-slot guards from RVA-F-0264 remain prerequisites; this packet does not prove execution, cadence, object retention, aliasing, byte retention, save/restore safety, or upload reuse."
+      ],
+      "currentEvidence": {
+        "method": "Foreground read-only Ghidra DumpMemoryWords queries against the image.json image with exact raw big-endian instruction windows, plus narrow generated code windows for the selected parent body, reached helper body, and reused accepted 0x82C29628 entry/sink windows from RVA-F-0260. Generated locators use title repository rerevved at revision 75df5c52ca90a5ea77690a90cf965ff8d79bac92; no runtime launch or image repair was used.",
+        "queries": [
+          {
+            "question": "Follow the selected local dispatch chain from the world-path setters",
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82C2D2A0",
+              "0x82C2D270",
+              "0x82C2D3D4",
+              "0x82C2DBC0",
+              "0x82C2DC04",
+              "0x82C2DE18",
+              "0x82C2E554",
+              "0x82C2E598",
+              "0x82C2E6FC",
+              "0x82C2EEE8"
+            ],
+            "radius": 16,
+            "mode": "foreground-read-only",
+            "bound": "Ten exact word centers at radius 16 in existing parent body 0x82C2A8E8. The final center ends at 0x82C2EF28, before the next dispatch table and target.",
+            "result": "Raw words recover table entry 0x82C2D2A0=0x82C2D3D4, selector 0 at 0x82C2D270, fixed selector 4 and table entry 0x82C2DC44=0x82C2DE18, and fixed selector 8 setup at 0x82C2E598. The retained radius-16 window ends at 0x82C2E5D8, so it includes the separate case-0 word 0x82C2E5C8=0x82C2E6FC but does not reach selector-8's table entry; the correction query below supplies 0x82C2E5E8=0x82C2E85C."
+          },
+          {
+            "question": "Follow the fixed-selector chain after 0x82C2EF2C",
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82C2EF2C",
+              "0x82C2EF9C",
+              "0x82C2F360",
+              "0x82C2F87C",
+              "0x82C2F8C0",
+              "0x82C2F940",
+              "0x82C2FD08",
+              "0x82C30210",
+              "0x82C30254",
+              "0x82C302E4",
+              "0x82C306B0",
+              "0x82C30BA4",
+              "0x82C30CA8",
+              "0x82C31124",
+              "0x82C31538",
+              "0x8268F3E0"
+            ],
+            "radius": 16,
+            "mode": "foreground-read-only",
+            "bound": "Sixteen exact word centers at radius 16 cover the selected local dispatch words, table entries, selected arms, the loopback branch, and the reached helper entry. The query stays within parent body 0x82C2A8E8 except for the exact helper entry center; no sibling arm or additional callee body was enumerated.",
+            "result": "Raw words recover selector 16 and table entry 0x82C2EF9C=0x82C2F360, selector 20 and table entry 0x82C2F940=0x82C2FD08, selector 24 and table entry 0x82C302E4=0x82C306B0, and table entry 0x82C30CA8=0x82C31124 after the selector-36 gate. The selected arms rejoin at 0x82C2F87C, 0x82C30210, 0x82C30BA4, and 0x82C31538 respectively; the helper entry is present at 0x8268F3E0."
+          },
+          {
+            "question": "Corroborate the loop increment and termination gate",
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82C2D1FC",
+              "0x82C2D208"
+            ],
+            "radius": 16,
+            "mode": "foreground-read-only",
+            "bound": "Two exact word centers at radius 16 cover the selected helper return's loop increment and the following bound comparison.",
+            "result": "The raw words at 0x82C2D1FC increment the loop index in r1+0x12CC; the 0x82C2D208 window contains the bound calculation and branch to the loop exit or the next selector-zero setup at 0x82C2D270."
+          },
+          {
+            "question": "Corroborate the reached helper's conditional state and byte writes",
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x8268F400",
+              "0x8268F43C"
+            ],
+            "radius": 16,
+            "mode": "foreground-read-only",
+            "bound": "Two exact word centers at radius 16 cover the helper's conditional state-update arm and its common byte-store return.",
+            "result": "The raw words cover the helper's flag test at 0x8268F3F0, the conditional arm beginning at 0x8268F400, its state-word and bitset writes through 0x8268F438, and the common return byte store beginning at 0x8268F43C."
+          },
+          {
+            "question": "Corroborate the selector-36 setup word",
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82C30BE8"
+            ],
+            "radius": 16,
+            "mode": "foreground-read-only",
+            "bound": "One exact word center at radius 16 covers the selector-36 immediate and its table-base materialization.",
+            "result": "The raw word at 0x82C30BE8 is the fixed selector 36 setup; the window also contains table base 0x82C30C18. The selected table entry at 0x82C30CA8 is retained by the adjacent fixed-selector query."
+          },
+          {
+            "question": "Correct selector-8 table entry and arm",
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82C2E598",
+              "0x82C2E5E8",
+              "0x82C2E85C",
+              "0x82C2E8D0"
+            ],
+            "radius": 16,
+            "mode": "foreground-read-only",
+            "bound": "Four exact word centers at radius 16 cover the selector-8 setup, the indexed table word, the selected arm entry, and the selected arm tail/branch. No DumpFunctions target or additional helper body was expanded.",
+            "result": "The raw selector setup at 0x82C2E598 stores 8 and materializes table base 0x82C2E5C8; 0x82C2E5E8 contains 0x82C2E85C. The selected-arm window begins at 0x82C2E85C and the tail window contains the branch at 0x82C2E908 to 0x82C2EEE8. The separate 0x82C2E5C8=0x82C2E6FC word remains the selector-0 entry."
+          },
+          {
+            "question": "Corroborate the indexed-call backedge and selected-loop exit frontier",
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82C2BDE4",
+              "0x82C2CE4C",
+              "0x82C2CFE4",
+              "0x82C3153C"
+            ],
+            "radius": 16,
+            "mode": "foreground-read-only",
+            "bound": "Four exact word centers at radius 16 in the existing parent body 0x82C2A8E8 cover the indexed-call branch and return-site backedge, both selected setter call sites, and the selected-loop bound-exit setup. No helper body or distant epilogue was queried.",
+            "result": "The raw words encode 0x82C2BDE4 -> 0x82C29628 and the return-site branch 0x82C2BDE8 -> 0x82C2BD64. The setter call words at 0x82C2CE4C and 0x82C2CFE4 are retained with their generated return sites 0x82C2CE50 and 0x82C2CFE8. The 0x82C3153C window retains the selected-arm loopback at 0x82C31538 -> 0x82C2D1FC and shows the bound-exit setup followed by 0x82C31550 -> 0x82C31570. These are static address/control-flow facts only; they do not establish executed draw-to-restore order, argument retention through intervening code, a normal-return join, or absence of a later draw."
+          },
+          {
+            "question": "Follow the four selected post-0x82C31570 local dispatch arms",
+            "script": "ghidra/DumpMemoryWords.java",
+            "targets": [
+              "0x82C31570",
+              "0x82C3168C",
+              "0x82C31C30",
+              "0x82C320FC",
+              "0x82C32130",
+              "0x82C3225C",
+              "0x82C32800",
+              "0x82C32CBC",
+              "0x82C32CF0",
+              "0x82C32E2C",
+              "0x82C333D0",
+              "0x82C3387C",
+              "0x82C338B0",
+              "0x82C3393C",
+              "0x82C33EE0",
+              "0x82C3443C"
+            ],
+            "radius": 16,
+            "mode": "foreground-read-only",
+            "bound": "Sixteen exact word centers at radius 16 cover the selected setup/materializer, table entry, arm, and common rejoin for four local dispatches after 0x82C31570. The query stays in parent body 0x82C2A8E8, expands no helper body, and keeps the cumulative body inventory at three.",
+            "result": "Raw words and generated setup arithmetic join selector 96-40=56 through base 0x82C315AC to 0x82C3168C=0x82C31C30 -> 0x82C320FC; selector 100-40=60 through base 0x82C3216C to 0x82C3225C=0x82C32800 -> 0x82C32CBC; selector 104-40=64 through base 0x82C32D2C to 0x82C32E2C=0x82C333D0 -> 0x82C3387C; and selector 60-40=20 through base 0x82C338EC to 0x82C3393C=0x82C33EE0 -> 0x82C3443C. The selected generated arms load only r1+5608/5612, r1+5616/5620, r1+5624/5628, and r1+5632/5636 before calling accepted render-state setter identities 0x8268D6F0 (state offset 0x60), 0x8268DB50 (0x64), 0x8268DBB0 (0x68), and 0x8268D728 (0x3C), respectively. Their retained windows contain no direct staged-range access or draw call. This is a bounded selected state-setter and rejoin result; unexpanded helper behavior, execution, later consumers, and draw-to-restore order remain unresolved."
+          }
+        ],
+        "generatedWindows": [
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33528-33801",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:34784-34837",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:35077-35168",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:36059-36104",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:36260-36351",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:37334-37379",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:37911-37922",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:38609-38647",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:39198-39208",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:39884-39927",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:40485-40580",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:41178-41199",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:41880-41892",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:42434-42437",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:30965-30975",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33165-33177",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33227-33239",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:42434-42450",
+          "generated:rerevved/generated/default/rerevved_recomp.176.cpp:27317-27324",
+          "generated:rerevved/generated/default/rerevved_recomp.176.cpp:28787-28795",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33481-33527",
+          "generated:rerevved/generated/default/rerevved_recomp.49.cpp:12281-12340",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:36444-36535",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:42450-42479",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:43346-43355",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:44127-44157",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:45033-45042",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:45804-45834",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:46720-46729",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:47481-47511",
+          "generated:rerevved/generated/default/rerevved_recomp.106.cpp:48287-48296"
+        ],
+        "generatedSource": {
+          "repository": "rerevved",
+          "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92"
+        },
+        "stackRangeAudit": {
+          "ranges": [
+            "r1+0x80..r1+0x67F inclusive (0x600 bytes)",
+            "r1+0x900..r1+0x97F inclusive (0x80 bytes)"
+          ],
+          "selectedCallerWindows": [
+            "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33710-33801 (0x82C2D3D4)",
+            "generated:rerevved/generated/default/rerevved_recomp.106.cpp:35077-35168 (0x82C2DE18)",
+            "generated:rerevved/generated/default/rerevved_recomp.106.cpp:36444-36535 (0x82C2E85C)",
+            "generated:rerevved/generated/default/rerevved_recomp.106.cpp:37911-37922 (0x82C2F360)",
+            "generated:rerevved/generated/default/rerevved_recomp.106.cpp:39198-39209 (0x82C2FD08)",
+            "generated:rerevved/generated/default/rerevved_recomp.106.cpp:40485-40580 (0x82C306B0)",
+            "generated:rerevved/generated/default/rerevved_recomp.106.cpp:41880-41892 (0x82C31124)"
+          ],
+          "unselectedCase0Window": "generated:rerevved/generated/default/rerevved_recomp.106.cpp:36260-36351 (0x82C2E6FC)",
+          "postSamplerCallerWindows": [
+            "generated:rerevved/generated/default/rerevved_recomp.106.cpp:43346-43355 (0x82C31C30)",
+            "generated:rerevved/generated/default/rerevved_recomp.106.cpp:45033-45042 (0x82C32800)",
+            "generated:rerevved/generated/default/rerevved_recomp.106.cpp:46720-46729 (0x82C333D0)",
+            "generated:rerevved/generated/default/rerevved_recomp.106.cpp:48287-48296 (0x82C33EE0)"
+          ],
+          "directAccessResult": "Across the named selected caller windows, every explicit r1-based load or store is a 4-byte REX_LOAD_U32 or REX_STORE_U32 access outside both inclusive staged intervals; no observed access crosses either interval boundary. No explicit ctx.r1.s64 plus-immediate derived base targets either interval in these windows. The four post-0x82C31570 arms likewise load only their two per-record argument words before the accepted state-setter call and common rejoin. RVA-F-0270 separately expands the two setter interiors: their observed data stores are through the loaded receiver, so staged-stack noninterference for those stores requires the explicit receiver/frame interval condition. ABI save/restore and shared-callee frame effects remain unresolved. Indexed accesses, shared-state aliases, and later consumer behavior remain unresolved."
+        },
+        "bodyInventory": {
+          "count": 3,
+          "limit": 8,
+          "dumpFunctionsTargets": [],
+          "generatedCorroborationBodies": [
+            "0x82C2A8E8",
+            "0x8268F3E0",
+            "0x82C29628"
+          ],
+          "qualification": "Three unique generated bodies are retained cumulatively: parent 0x82C2A8E8, prior helper 0x8268F3E0, and accepted callee 0x82C29628. The 0x82C29628 entry and sink windows are reused from accepted RVA-F-0260 body evidence for this ordered-frontier follow-up; the post-0x82C31570 query expanded zero new helper bodies. The parent was covered by the retained local raw centers and narrow generated windows; the helper body was retained only to its exact generated return and raw conditional-arm centers. The separate RVA-F-0270 follow-up expands the explicit interiors of the two accepted sampler-state setter windows without adding them to this packet's read set; the four post-0x82C31570 helper identities are accepted D3D state-setter entries and were not expanded. ABI/shared-callee effects remain outside those follow-ups. The retained unselected 0x82C2E6FC case-0 window adds no body."
+        },
+        "readSets": [
+          {
+            "question": "Selected post-setter local dispatch through helper and loopback",
+            "bodies": [
+              "0x82C2A8E8",
+              "0x8268F3E0"
+            ],
+            "bound": "One 10-center radius-16 query, one 16-center radius-16 query, one 2-center radius-16 loopback query, one 2-center radius-16 helper query, one 1-center radius-16 selector query, and one 4-center radius-16 selector-8 correction query, joined to narrow generated windows and the full-range caller-only stack audit.",
+            "evidence": [
+              "#/findings/RVA-F-0267/currentEvidence/queries/0",
+              "#/findings/RVA-F-0267/currentEvidence/queries/1",
+              "#/findings/RVA-F-0267/currentEvidence/queries/2",
+              "#/findings/RVA-F-0267/currentEvidence/queries/3",
+              "#/findings/RVA-F-0267/currentEvidence/queries/4",
+              "#/findings/RVA-F-0267/currentEvidence/queries/5",
+              "#/findings/RVA-F-0267/currentEvidence/stackRangeAudit",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33528-33801",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:34784-34837",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:35077-35168",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:36059-36104",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:36260-36351",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:37334-37379",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:37911-37922",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:38609-38647",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:39198-39208",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:39884-39927",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:40485-40580",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:41178-41199",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:41880-41892",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:42434-42437",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33481-33527",
+              "generated:rerevved/generated/default/rerevved_recomp.49.cpp:12281-12340",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:36444-36535"
+            ]
+          },
+          {
+            "question": "Ordered indexed-call backedge and selected-loop exit frontier",
+            "bodies": [
+              "0x82C2A8E8",
+              "0x82C29628"
+            ],
+            "bound": "One four-center radius-16 parent-body query and narrow generated windows cover 0x82C2BDE4/0x82C2BDE8, the two selected setter call sites, and 0x82C3153C -> 0x82C31570. The 0x82C29628 entry and sink windows are reused from accepted RVA-F-0260 evidence; no new helper body was expanded and no distant epilogue was queried.",
+            "evidence": [
+              "#/findings/RVA-F-0267/currentEvidence/queries/6",
+              "manifest:RVA-F-0260",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:30965-30975",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33165-33177",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:33227-33239",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:42434-42450",
+              "generated:rerevved/generated/default/rerevved_recomp.176.cpp:27317-27324",
+              "generated:rerevved/generated/default/rerevved_recomp.176.cpp:28787-28795"
+            ]
+          },
+          {
+            "question": "Selected post-0x82C31570 state-setter arms and rejoins",
+            "bodies": [
+              "0x82C2A8E8"
+            ],
+            "bound": "One sixteen-center radius-16 read-only query and eight narrow generated windows cover four table materializers/entries, selected arms, and common rejoins. Accepted helper identities are linked through native-renderer-d3d-runtime-surface.json; no helper body was expanded and no sibling arm was enumerated.",
+            "evidence": [
+              "#/findings/RVA-F-0267/currentEvidence/queries/7",
+              "#/findings/RVA-F-0267/currentEvidence/stackRangeAudit",
+              "native-renderer-d3d-runtime-surface.json:228-251",
+              "native-renderer-d3d-runtime-surface.json:372-395",
+              "native-renderer-d3d-runtime-surface.json:4278-4360",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:42450-42479",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:43346-43355",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:44127-44157",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:45033-45042",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:45804-45834",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:46720-46729",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:47481-47511",
+              "generated:rerevved/generated/default/rerevved_recomp.106.cpp:48287-48296"
+            ]
+          }
+        ],
+        "qualification": "The raw-word queries support exact selector words, table entries, helper instructions, loopback branch, local instruction centers, and the added indexed-call backedge and bound-exit setup. The correction query joins selector 8 to 0x82C2E85C and keeps 0x82C2E6FC as the unselected case-0 arm. The post-0x82C31570 query is limited to four corrected radius-16 dispatch arms in 0x82C2A8E8, joins each retained selector/table word to its selected arm and common rejoin, and expands no helper body. Accepted D3D surface identities qualify the four reached callees as state setters at offsets 0x60, 0x64, 0x68, and 0x3C; that role does not prove staged-range reads or draw submission. Generated windows use title repository rerevved at revision 75df5c52ca90a5ea77690a90cf965ff8d79bac92; the full-range stack audit is caller-only. RVA-F-0270 supplies the separate explicit interior F140/EF98 stores and argument flow, with ABI/shared-callee effects, receiver/frame aliasing, and arbitrary-index overlap still qualified. The joined path is a partial local chain, not a whole-function or runtime consumer absence proof; static address order is not execution order or argument-retention proof."
+      },
+      "observations": [
+        "The raw table word at 0x82C2D2A0 is 0x82C2D3D4, and the raw selector setup at 0x82C2D270 stores zero before the indirect branch.",
+        "The selected 0x82C2D3D4 generated arm reads r1+0x12CC, updates a shared-state record, and returns to the next local dispatch at 0x82C2DBC0; its named caller window has no explicit or statically derived access overlapping either complete staged range.",
+        "The selector-4 table entry at 0x82C2DC44 is 0x82C2DE18. Selector 8 is written at 0x82C2E598, and the corrective raw query shows 0x82C2E5E8=0x82C2E85C. The retained 0x82C2E5C8=0x82C2E6FC word is the unselected selector-0 entry.",
+        "The selected 0x82C2E85C arm updates record-derived state and returns through 0x82C2E908 to 0x82C2EEE8; its direct r1 accesses are outside both complete staged intervals and its aliased indexed accesses remain unresolved.",
+        "The later local tables use fixed selectors 16, 20, 24, and 36: 0x82C2EF9C points to 0x82C2F360, 0x82C2F940 points to 0x82C2FD08, 0x82C302E4 points to 0x82C306B0, and 0x82C30CA8 points to 0x82C31124. F140 and EF98 are accepted sampler-state setters with explicit interior stores maintained in RVA-F-0270; ABI/shared-callee effects remain unresolved; F3E0 is the retained helper body.",
+        "The selected 0x82C31124 arm calls 0x8268F3E0; the helper's bounded body writes record/state data and a byte at helper incoming r3 + helper incoming r4 + 11924, then the parent branches through 0x82C31538 to the loop increment at 0x82C2D1FC.",
+        "The added raw radius-16 query encodes 0x82C2BDE4 -> 0x82C29628, 0x82C2BDE8 -> 0x82C2BD64, the selected setter call words at 0x82C2CE4C and 0x82C2CFE4, and the selected-loop exit setup at 0x82C3153C followed by 0x82C31550 -> 0x82C31570.",
+        "The corrected sixteen-center radius-16 query joins 0x82C31570 selector 56 to 0x82C31C30 -> 0x82C320FC, 0x82C32130 selector 60 to 0x82C32800 -> 0x82C32CBC, 0x82C32CF0 selector 64 to 0x82C333D0 -> 0x82C3387C, and 0x82C338B0 selector 20 to 0x82C33EE0 -> 0x82C3443C through table words 0x82C3168C, 0x82C3225C, 0x82C32E2C, and 0x82C3393C."
+      ],
+      "inferences": [
+        "Within the retained local chain, the selected arms update state or record data rather than providing a supported direct or statically derived read overlapping the staged VS or PS blocks.",
+        "The F140 and EF98 calls identify accepted sampler-state setter edges. Their explicit interior write footprint is conditional noninterference for the retained same-base selected index domain, while receiver/frame aliasing, arbitrary computed indices, unexpanded ABI/shared-callee effects, established state, and later reads remain unresolved; continuation to later caller instructions requires normal return and relevant state retention.",
+        "The joined evidence supports a concrete F3E0 helper side effect, the explicit interior sampler footprint, and a loopback boundary. It does not join those writes or subsequent iterations to a staged-block read or concrete draw submission.",
+        "The raw 0x82C2BDE8 -> 0x82C2BD64 branch establishes a local backedge independent of the later setter addresses, but the static query does not prove an executed draw or retain its arguments through intervening code.",
+        "The 0x82C3153C bound-exit setup reaches the next dispatch at 0x82C31570; later consumer or draw behavior remains outside this frontier.",
+        "The earlier 0x82C2BDE4 loop-backedge submission remains a separate ordered-state possibility and is neither confirmed nor excluded by this local chain.",
+        "The first four selected arms after 0x82C31570 are qualified state-setter edges: each reads only its per-record argument pair, calls an accepted render-state setter, and rejoins locally without a promoted staged VS/PS read or draw call. This bounded result supports state update at the selected arms while leaving each helper body and later consumer unresolved."
+      ],
+      "unknowns": [
+        "The helper's downstream state consumer, receiver/frame aliasing, arbitrary-index setter overlap, ABI/shared-callee frame effects, and any later loop iteration that may join the staged blocks to a draw remain unresolved.",
+        "Whether the 0x82C2BDE4 call is an executed staged-block draw, whether the later VS/PS setter calls restore after that execution on the same runtime path, and whether post-0x82C31570 code draws again remain unresolved.",
+        "No selected-block read or draw submission was proved in the bounded named caller windows, including the four post-0x82C31570 arms; this does not establish that no later consumer exists in 0x82C2A8E8 or its callees.",
+        "The staged source producers, stack/shadow aliases, byte retention, save/restore safety, object lifetime, runtime cadence, pass order, and upload reuse remain unresolved under RVA-F-0264.",
+        "No register range or state record in this chain is assigned camera, lighting, fog, time, material, bone, terrain, water, shadow, unit, effect, or pass semantics."
+      ],
+      "nextDiscriminator": {
+        "site": "RVA-F-0270 sampler footprint, 0x8268F3E0 state effects, 0x82C31538 -> 0x82C2D1FC loopback, 0x82C3153C -> 0x82C31570 exit frontier, and the four selected post-0x82C31570 setter arms",
+        "question": "Which retained sampler/state path, unexpanded setter helper, or later loop iteration, if any, joins the bounded setter footprint to a concrete constant read or draw?",
+        "limits": "The bounded follow-up closes the four selected table joins and direct arm accesses but does not establish helper-body effects, ABI/shared-callee frame effects, receiver/frame nonaliasing, arbitrary-index exclusion, a later consumer, executed draw-to-restore order, or argument retention through intervening code. Do not infer a consumer from helper arguments, state offsets, table proximity, SetTexture identity, or the earlier 0x82C2BDE4 loop-backedge."
+      },
+      "conclusion": "The image-pinned selected path enters 0x82C2D270 with selector 0 and table word 0x82C2D2A0=0x82C2D3D4. The selected D3D4 arm updates a shared fetch/sampler state record and returns to fixed selector 4 and selector 8 dispatches. Selector 8 writes 8 at 0x82C2E598 and indexes 0x82C2E5E8=0x82C2E85C; 0x82C2E5C8=0x82C2E6FC is the retained unselected case-0 entry. The later fixed selector 16, 20, 24, and 36 dispatches select 0x82C2F360, 0x82C2FD08, 0x82C306B0, and 0x82C31124. RVA-F-0270 expands the explicit interior F140 and EF98 stores: each writes receiver-relative +0x0C/+0x10 lanes at the computed record and ORs dirty R+0x18. Under the retained 0..3 or 0..7 index domain, those explicit stores are outside the same-base device float-shadow ranges, while arbitrary indices and receiver/frame aliases remain conditional hazards. ABI save/restore and shared-callee effects remain unresolved. The selected F3E0 arm's exact body conditionally updates a record word and state bitset and always stores a byte at helper incoming r3 + helper incoming r4 + 11924. The parent then branches through 0x82C31538 to 0x82C2D1FC, where the record index is incremented and the bound gate exits through 0x82C3153C; the added raw window shows the next dispatch setup at 0x82C31550 -> 0x82C31570. The corrected post-0x82C31570 query joins selector/table words to four selected arms: 0x82C31C30 -> 0x82C320FC, 0x82C32800 -> 0x82C32CBC, 0x82C333D0 -> 0x82C3387C, and 0x82C33EE0 -> 0x82C3443C. Each selected arm loads only its two per-record argument words and calls an accepted render-state setter at state offsets 0x60, 0x64, 0x68, and 0x3C; no promoted staged VS/PS read or draw call appears in those retained arm windows, and no helper body was expanded. The added raw window also shows 0x82C2BDE4 -> 0x82C29628 and the return-site backedge 0x82C2BDE8 -> 0x82C2BD64. These added facts are static address/control-flow evidence only: they do not prove an executed draw-to-restore order, argument retention through intervening code, a normal-return join, or absence of a later draw. Across the named selected caller windows, every explicit r1-based access is a 4-byte U32 operation outside the complete staged ranges r1+0x80..r1+0x67F and r1+0x900..r1+0x97F, with no observed boundary crossing; the observed interior setter data stores are through the receiver and require the explicit frame-alias condition. The retained raw centers and generated windows contain no promoted staged-block read or draw edge, so this remains a conditional explicit state-setter footprint and loopback/exit frontier rather than a VS or PS source-block consumer edge. The earlier 0x82C2BDE4 loop-backedge remains a separate unresolved ordered-state possibility, and runtime cadence, aliasing, retention, save/restore, pass meaning, and upload reuse remain unknown."
+    }
+  }
+}

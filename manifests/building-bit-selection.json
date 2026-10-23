@@ -1,0 +1,1312 @@
+{
+  "schemaVersion": 1,
+  "family": "building-bit-selection",
+  "findings": {
+    "RVA-F-0202": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0202",
+      "topic": "building-bit-weighted-yield-score",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "What first consumes the three registers conditionally adjusted by building-presence bits in sub_82D00C78?",
+      "scope": {
+        "function": "0x82D00C78",
+        "tail": "[0x82D014A4,0x82D019F0)",
+        "trackedRegisters": ["r20", "r21", "r22"],
+        "queryWindows": ["0x82D014A4..0x82D01534", "0x82D0167C..0x82D0170C", "0x82D016E4..0x82D01774", "0x82D01740..0x82D017D0"],
+        "stopCondition": "Trace these three registers to their first direct callee-return multiplications and local comparison; stop before interpreting the score as a final city yield, stored field, or gameplay effect.",
+        "boundary": "The query covers one local helper path and four exact raw-word windows, not all callers or final outputs."
+      },
+      "dependencies": [
+        { "topic": "building-postwrite-city-bit-arithmetic", "use": "Establishes the six building-bit tests and their conditional r20/r21/r22 updates." },
+        { "topic": "unique-era-ability-effect-ownership", "use": "Establishes the exact food, production, and trade component accessors called in the weighted sum." },
+        { "topic": "courthouse-city-coordinate-scan", "use": "Establishes this helper's earlier bounded coordinate-candidate scan." }
+      ],
+      "staticResult": {
+        "preservationGate": "At 0x82D014A4..0x82D014B0, r17 is compared with word 0x82F700B0. An unequal result skips replacements of r20, r21, and r22, allowing the earlier building-bit-adjusted values to reach the weighted path. On the equal path, r20 is set to four or two at 0x82D014B8..0x82D014C8, r21 and r22 are cleared at 0x82D014D0..0x82D014D4, and r21 can become four when signed city byte +0x03 is at least two. The comparison word's meaning is not assigned.",
+        "componentJoin": "At 0x82D01688..0x82D016D4, the function calls accepted food component accessor 0x82CF1CE8, production component accessor 0x82CF1AF0, and trade component accessor 0x82CF17C8 with the same local argument shape. It multiplies their signed 32-bit returns by r20, r21, and r22 respectively, then adds the products into r31. These registers are local component weights on this path; their bit-driven changes are not proven changes to the underlying tile yields.",
+        "candidateJoin": "After a separate 0x82CF1558 call and a 0x82CEFBB0 selector, switch cases 0, 1, 3 or 5, and 4 can add twice r20, r21, r22, or r19 respectively to r31; case 2 adds no such term. At 0x82D01760..0x82D01770, signed r31 at least r24 replaces r24 with r31 and r23 with current loop index r25. These are local comparison and selection values, not a proved final city field.",
+        "laterJoin": "At 0x82D01788..0x82D017A4, signed division of a stack word by six multiplies r22 and adds r21; if that value exceeds r24, r23 becomes -1. This is a second local use of two weights. The later meaning of r23 and the final effect remain unresolved."
+      },
+      "runtimeObservation": {
+        "status": "not-observed",
+        "qualification": "No building-bit branch, weighted path, selected index, city yield, or gameplay effect has been observed at runtime."
+      },
+      "currentEvidence": {
+        "method": "One foreground read-only canonical-project DumpMemoryWords query covered four bounded windows, with narrow generated-function register-flow corroboration. The three callee component meanings are accepted from a previously repaired-project exact-function query; they were not reinterpreted from record descriptions.",
+        "entries": [
+          { "role": "replacement gate", "address": "0x82D014A4..0x82D01534", "result": "One branch preserves the adjusted weights; the equal branch replaces them before the weighted path." },
+          { "role": "three component multiplications", "address": "0x82D0167C..0x82D016D4", "result": "Food, production, and trade component returns are multiplied by r20, r21, and r22, then joined." },
+          { "role": "local selected maximum", "address": "0x82D016E4..0x82D01774", "result": "An optional switch term joins r31 before its comparison against r24 and possible r23 index update." },
+          { "role": "later two-weight comparison", "address": "0x82D01788..0x82D017A4", "result": "r21 and r22 can cause r23 to become -1 after a second comparison." }
+        ],
+        "locators": [
+          "ghidra/DumpMemoryWords.java:0x82D014EC,0x82D016C4,0x82D0172C,0x82D01788 radius=18",
+          "generated:rerevved/sub_82D00C78:0x82D014A4..0x82D017A4",
+          "manifests/unique-era-ability-effect-ownership.json#/terrainYieldBoundary/ownerResults"
+        ],
+        "qualification": "The configured function listing truncates at a save thunk. Current-image words support the local branches and arithmetic, and narrow generated code joins register flow. No callee was expanded in this packet."
+      },
+      "guards": [
+        "Do not identify these local component weights as the buildings' displayed or persistent food, production, trade, happiness, veteran, or science effects.",
+        "Do not infer that either branch always runs or that the weighted score is a final city yield.",
+        "Do not infer a complete city-tile assignment from r23 without its later consumer.",
+        "Do not report a runtime effect from this static join."
+      ],
+      "conclusion": "On one branch of the directly called city helper, the building-bit-adjusted values weight accepted food, production, and trade component returns in a local candidate score. A separate branch replaces the weights, and the later selected index and city effect remain unresolved."
+    },
+    "RVA-F-0203": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0203",
+      "topic": "building-bit-selected-city-index",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Where does the city helper store the candidate ordinal selected by the building-bit-weighted score?",
+      "scope": {
+        "function": "0x82D00C78",
+        "tail": "[0x82D017A8,0x82D019F0)",
+        "trackedValues": ["r23 selected ordinal or -1", "r24 best local score"],
+        "rawWindows": ["0x82D00DC0..0x82D00DD8", "0x82D01760..0x82D017A8", "0x82D017C0..0x82D017E0", "0x82D0189C..0x82D019D4"],
+        "stopCondition": "Trace the selected ordinal through its local validation and first city-state store, check the same function for reads of the derived city +0x58 pointer, then run one nearby direct-operand check; stop before computed external-consumer search or visible gameplay interpretation.",
+        "boundary": "This packet follows one exact city helper with four raw-word windows and one nearby direct-operand reader check. It does not prove every valid loop count, external readers, save persistence, tile assignment, or runtime execution."
+      },
+      "dependencies": [
+        { "topic": "building-bit-weighted-yield-score", "use": "Establishes r23 selection from a weighted candidate score and a separate -1 comparison." },
+        { "topic": "building-postwrite-city-bit-arithmetic", "use": "Identifies eight building IDs whose bits can adjust the component weights on one branch." },
+        { "topic": "courthouse-city-coordinate-scan", "use": "Establishes the Courthouse-controlled eight- or twenty-coordinate candidate bound." },
+        { "topic": "production-cost-ownership", "use": "Provides the accepted city table base and stride." }
+      ],
+      "staticResult": {
+        "outputPointer": "After rejecting city byte +0x00 equal to 0xFF or signed city byte +0x03 at most zero, the helper forms city address 0x8314FE28 + 0xBC*cityIndex. At 0x82D00DCC it saves city +0x58 to stack +0x7C. No other write to this stack slot was found in the exact generated function.",
+        "selectedValue": "At 0x82D01760..0x82D01770, a signed candidate score at least the saved best score stores the candidate loop ordinal in r23. At 0x82D0179C..0x82D017A4, a separate r21/r22 comparison can instead set r23 to -1. A later validation path can replace r23 with a signed existing byte or set -1 before the store. Thus the stored value is not always the newly selected ordinal.",
+        "indexLoop": "The accepted positive signed city byte +0x03 is the loop bound. Stack +0x70 starts at zero; at 0x82D01788 the helper reloads it into r28, and at 0x82D019CC..0x82D019E4 it stores r28+1 back to that stack slot and loops while the incremented value is less than signed city byte +0x03. Every explicit path to the shared store follows the r28 reload. For this local path, the store index is nonnegative and less than the signed byte bound; no stronger destination-capacity rule is established.",
+        "cityStore": "At 0x82D019C4, r9 reloads stack +0x7C; at 0x82D019D4, stbx writes low byte r23 to r9+r28. The destination is city +0x58 + loop index. This exact store joins the building-bit-influenced candidate score and Courthouse candidate extent to a city byte array, subject to the replacement and sentinel paths above.",
+        "localPriorByteRead": "On one separately bit-gated path at 0x82D017C8..0x82D017D8, the helper reloads stack +0x7C, reads city +0x58 + r28 at 0x82D017CC, sign-extends the byte, and branches to the later -1 assignment when it equals -1. A byte other than -1 is scaled for a later indexed table use. This is a read of the pre-store byte in the same local loop, not a downstream consumer of the final stored value.",
+        "nearbyDirectReadBoundary": "A bounded +0x58 READ operand query over [0x82D00000,0x82D04000) scanned 82 function-owned decoded instructions and emitted zero matches below cap 32 without truncation. It excludes only that direct decoded operand form in the inspected listing; it misses the known computed local read at 0x82D017CC and cannot exclude indexed, stack-reloaded, functionless, or external readers.",
+        "scoreBoundary": "No later r24 use was found after the 0x82D0179C comparison in the exact generated function. This is a local selection score, not a stored city score."
+      },
+      "runtimeObservation": {
+        "status": "not-observed",
+        "qualification": "No execution of this read or store, actual stored byte, reader invocation, or gameplay effect was observed. A separate exact static reader is documented in the consumer frontier."
+      },
+      "currentEvidence": {
+        "method": "Three foreground read-only canonical-project raw-word windows checked the output-pointer stack store, selected-value comparison, and final byte store. A fourth exact raw-word window checked the same-function pre-store byte read and sentinel test. One bounded function-owned decoded-operand scan tested nearby direct +0x58 reads. Narrow generated-function control-flow inspection joined the city pointer, r28 loop index, replacement paths, and store where the configured Ghidra function truncates.",
+        "entries": [
+          { "role": "city output pointer", "address": "0x82D00DC0..0x82D00DD8", "result": "Saves computed city +0x58 address to stack +0x7C." },
+          { "role": "candidate and sentinel", "address": "0x82D01760..0x82D017A8", "result": "The winning candidate ordinal or -1 flows through r23; r28 is reloaded from loop-index stack state." },
+          { "role": "prior indexed byte read", "address": "0x82D017C8..0x82D017D8", "result": "Reads the existing city +0x58 + r28 byte and tests for -1 before final selection." },
+          { "role": "nearby direct-operand reader check", "address": "[0x82D00000,0x82D04000)", "result": "Zero +0x58 READ operands in 82 function-owned decoded instructions below cap 32; computed or unlisted readers remain open." },
+          { "role": "final indexed city write", "address": "0x82D0189C..0x82D019D4", "result": "After later validation, stbx writes r23 to city +0x58 + r28." }
+        ],
+        "locators": [
+          "ghidra/DumpMemoryWords.java:0x82D00DCC radius=3",
+          "ghidra/DumpMemoryWords.java:0x82D01784 radius=9",
+          "ghidra/DumpMemoryWords.java:0x82D017D0 radius=4",
+          "ghidra/DumpMemoryWords.java:0x82D01938 radius=39",
+          "ghidra/FindFieldAccesses.java:[0x82D00000,0x82D04000) offset=0x58 access=READ cap=32",
+          "generated:rerevved/sub_82D00C78:0x82D00D98..0x82D00DD0,0x82D0175C..0x82D019E4"
+        ],
+        "qualification": "The raw windows verify exact read, store, and branch words. The configured Ghidra function listing truncates at a save thunk, so no complete local-read census follows from its decoded instructions. Generated code is narrow corroboration for register and stack aliases across the function gap. The local signed-byte bound is not a program-wide city array capacity guarantee."
+      },
+      "guards": [
+        "Do not call the stored ordinal a worked tile from this same-function pre-store read or zero direct nearby operand matches; the separate reader does not establish tile meaning or a runtime effect.",
+        "Do not infer that every building-bit change reaches the final byte; another branch replaces the weights and later paths can replace r23.",
+        "Do not treat the signed-byte loop bound as proof that every computed address stays within the city record for arbitrary state.",
+        "Do not infer save persistence, presentation, or gameplay effect from this static store."
+      ],
+      "conclusion": "The post-building city helper reads a prior city +0x58 indexed byte on one gated path, then can write a selected or replaced ordinal, including -1, to that indexed field. The accepted Courthouse candidate bound and eight other building-bit weight tests can influence the selected value along conditional static paths. A separate static reader at 0x82CE1C10 counts 0xFF bytes in the indexed array for a positive signed city +0x03 bound; the field's gameplay meaning, visible effect, and runtime behavior remain unknown."
+    },
+    "RVA-F-0204": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0204",
+      "topic": "building-bit-selected-city-index-consumer-frontier",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Can a static external reader of the city +0x58 byte array be proved, and which nearby indexed-load candidates remain unresolved?",
+      "scope": {
+        "producer": "0x82D00C78",
+        "producerField": "+0x58 plus local index",
+        "candidateFunction": "0x82D019F0",
+        "candidateInterval": "[0x82D00000,0x82D04000)",
+        "candidateCount": 18,
+        "stopCondition": "Reproduce the indexed byte-load sites in sub_82D019F0 and cross-check their instruction words against the supported image. Stop that candidate set when its pointer provenance remains ambiguous. The separate exact reader at 0x82CE1C10 answers the bounded external-reader question; do not follow its caller or infer field meaning.",
+        "boundary": "The 18-site candidate check covers one generated function, and the separate exact reader proves one external indexed read. Neither is a program-wide reader census; other indexed, indirect, computed-address, functionless, or out-of-interval readers remain possible."
+      },
+      "dependencies": [
+        { "topic": "building-bit-selected-city-index", "use": "Provides the city +0x58 indexed writer and the distinct same-function prior-byte read." },
+        { "topic": "road-build-cost", "use": "Identifies sub_82D019F0 as a cost-factor helper while leaving its input and pointer provenance unresolved." },
+        { "topic": "ai-stat-choice", "use": "Supplies the accepted compiler save/restore suffix contracts reused by groupedOutputConsumer/helperActionBoundary." }
+      ],
+      "staticResult": {
+        "candidateCensus": "Generated code contains 18 lbzx sites in sub_82D019F0. Thirteen use one of the fixed-register operands in r20, r23, or r25; five use the fixed-register operand in r22. The previously reported 21 total and 8/13 split cannot be reproduced from the tracked candidate-selection criteria, which are not recorded.",
+        "fixedRegisters": {
+          "r20": "0x830E6850",
+          "r22": "0x8311FCD0",
+          "r23": "0x8312B8F8",
+          "r25": "0x830E8790"
+        },
+        "candidateSites": [
+          { "address": "0x82D01AFC", "operands": "r4+r23", "word": "0x7D64B8AE" },
+          { "address": "0x82D01B84", "operands": "r11+r25", "word": "0x7D4BC8AE" },
+          { "address": "0x82D01B9C", "operands": "r11+r23", "word": "0x7D4BB8AE" },
+          { "address": "0x82D01BBC", "operands": "r11+r20", "word": "0x7D6BA0AE" },
+          { "address": "0x82D01BD8", "operands": "r4+r22", "word": "0x7D64B0AE" },
+          { "address": "0x82D01C94", "operands": "r11+r25", "word": "0x7D4BC8AE" },
+          { "address": "0x82D01CAC", "operands": "r11+r23", "word": "0x7D4BB8AE" },
+          { "address": "0x82D01CCC", "operands": "r11+r20", "word": "0x7D6BA0AE" },
+          { "address": "0x82D01CE8", "operands": "r4+r22", "word": "0x7D64B0AE" },
+          { "address": "0x82D01DA0", "operands": "r11+r25", "word": "0x7D4BC8AE" },
+          { "address": "0x82D01DB8", "operands": "r11+r23", "word": "0x7D4BB8AE" },
+          { "address": "0x82D01DD8", "operands": "r11+r20", "word": "0x7D6BA0AE" },
+          { "address": "0x82D01DF4", "operands": "r4+r22", "word": "0x7D64B0AE" },
+          { "address": "0x82D01EB0", "operands": "r11+r25", "word": "0x7D4BC8AE" },
+          { "address": "0x82D01EC8", "operands": "r11+r23", "word": "0x7D4BB8AE" },
+          { "address": "0x82D01EE8", "operands": "r11+r20", "word": "0x7D6BA0AE" },
+          { "address": "0x82D01F04", "operands": "r4+r22", "word": "0x7D64B0AE" },
+          { "address": "0x82D01F64", "operands": "r4+r22", "word": "0x7D64B0AE" }
+        ],
+        "readerBoundary": "The 18 raw words decode as lbzx. Generated-code flow forms the candidate addresses using the fixed-register operands above and computed r4 or r11 operands. Function entry also reads city-table halfwords at +0x30 and +0x32, but none of these 18 loads is joined to the separate city +0x58 pointer saved by sub_82D00C78. Their computed address ranges and any alias remain unresolved.",
+        "externalReader": {
+          "function": "0x82CE1C10",
+          "cityAddress": "Forms 0x8314FE28 + 0xBC*cityIndex from the city index in r3, then reads the signed city byte at +0x03 as its loop bound.",
+          "indexedRead": "When the signed bound is positive, lbzx at 0x82CE1C40 reads city +0x58 + index for indices from zero through bound minus one.",
+          "result": "Counts bytes not equal to 0xFF and returns the positive bound minus that count, which is the number of 0xFF bytes. When the signed bound is at most zero, the scan is skipped and the signed bound is returned.",
+          "semanticBoundary": "This proves one external indexed reader and a 0xFF-count result. It does not identify the bytes as tile assignments or establish a gameplay meaning, visible effect, or runtime invocation."
+        }
+      },
+      "runtimeObservation": {
+        "status": "not-observed",
+        "qualification": "No execution, actual city +0x58 byte value, reader invocation, or visible effect was observed."
+      },
+      "currentEvidence": {
+        "method": "Narrow generated-code census of sub_82D019F0, followed by one foreground read-only raw-word query at radius zero for all 18 guest PCs. Each word decodes to PowerPC lbzx (opcode 31, XO 87). Separately, a foreground read-only 48-instruction listing and function neighborhood at 0x82CE1C10 were cross-checked against its narrow generated-function body.",
+        "entries": [
+          { "role": "indexed byte-load candidates", "address": "0x82D01AFC, 0x82D01B84, 0x82D01B9C, 0x82D01BBC, 0x82D01BD8, 0x82D01C94, 0x82D01CAC, 0x82D01CCC, 0x82D01CE8, 0x82D01DA0, 0x82D01DB8, 0x82D01DD8, 0x82D01DF4, 0x82D01EB0, 0x82D01EC8, 0x82D01EE8, 0x82D01F04, 0x82D01F64", "result": "All 18 generated sites are confirmed as lbzx by the corresponding supported-image words." },
+          { "role": "candidate provenance", "address": "0x82D019F0", "result": "Fixed-register operands and computed offsets do not establish an alias to the city +0x58 pointer; these 18 candidates remain unresolved." },
+          { "role": "separate external indexed reader", "address": "0x82CE1C10", "result": "For a positive signed city +0x03 bound, reads city +0x58 + index, counts non-0xFF bytes, and returns bound minus that count (the number of 0xFF bytes); for a nonpositive bound, skips the scan and returns the bound." }
+        ],
+        "locators": [
+          "ghidra/DumpMemoryWords.java:0x82D01AFC,0x82D01B84,0x82D01B9C,0x82D01BBC,0x82D01BD8,0x82D01C94,0x82D01CAC,0x82D01CCC,0x82D01CE8,0x82D01DA0,0x82D01DB8,0x82D01DD8,0x82D01DF4,0x82D01EB0,0x82D01EC8,0x82D01EE8,0x82D01F04,0x82D01F64 radius=0",
+          "generated:rerevved/sub_82D019F0:0x82D01AFC..0x82D01F64",
+          "ghidra/DumpFunctionNeighborhood.java:0x82CE1C10 radius=0x40",
+          "ghidra/DumpInstructions.java:0x82CE1C10 count=48",
+          "generated:rerevved/sub_82CE1C10:0x82CE1C10..0x82CE1CAC"
+        ],
+        "qualification": "Generated code supplied candidate localization and register flow; exact image words independently confirm the 18 indexed byte-load opcodes and the separate reader's city-table/indexed-byte flow. The reader does not establish gameplay meaning, runtime invocation, or a program-wide reader census."
+      },
+      "guards": [
+        "Do not promote the unreproduced 21/8/13 filter or infer its missing selection rule.",
+        "Do not identify any of the 18 sub_82D019F0 candidate loads as reading city +0x58; the separate 0x82CE1C10 reader does not join those candidates.",
+        "Do not treat this one-function candidate set as exhaustive of any other external readers.",
+        "Do not infer tile assignment, a gameplay effect, or runtime behavior from the separate reader's 0xFF count."
+      ],
+      "conclusion": "The bounded generated-code lead reproduces 18 indexed byte loads inside sub_82D019F0, and the supported image confirms all 18 instruction words. Thirteen use fixed-register operands r20, r23, or r25 and five use r22; none is joined to the city +0x58 pointer. Separately, sub_82CE1C10 statically reads the city +0x58 indexed bytes and returns the number of 0xFF entries among a positive signed city +0x03 bound by counting non-0xFF bytes and subtracting that count. The earlier 21/8/13 candidate filter is not recoverable from tracked evidence. The reader's gameplay meaning, visible effect, and runtime invocation remain unknown.",
+      "groupedOutputConsumer": {
+        "question": "What does the exact city +0x58 reader emit, and how do its selected callers consume that output?",
+        "status": "grouped counts and conditional cache comparison/update bound; tile-assignment semantics unresolved",
+        "confidence": "strong",
+        "scope": {
+          "functions": [
+            "0x82CE1C10",
+            "0x82E1EE48",
+            "0x82E25EA8"
+          ],
+          "chargedBodies": 3,
+          "functionCap": 8,
+          "boundary": "Two complete 40-instruction functions and selected native windows in the generated owner 0x82E25EA8. The three exact generated bodies were bounded by their own and next headers before each read. The existing selected-index producer and 18-load candidate bodies were not reopened. No helper at 0x82E24FD8 or earlier consumer-owner callee was inspected."
+        },
+        "readerOutput": {
+          "inputs": "C=0x8314FE28+0xBC*low32(entry r3), n=signed_byte(C+3), O=entry r4. For positive n, c counts bytes other than 0xFF in C+0x58 through C+0x58+n-1; otherwise c=0. Use guest address arithmetic and valid readable inputs.",
+          "initialization": "0x82CE1C5C..0x82CE1C74 clears eight consecutive 32-bit words at O, including when n<=0.",
+          "increments": "At 0x82CE1C78..0x82CE1CA4, each integer k in [c,n) increments word O+4*floor(k/6). The executed loop has nonnegative k, so native signed division toward zero equals floor. For initialized group j in 0..7 the result is max(0,min(n,6*(j+1))-max(c,6*j)) when n>0, and zero otherwise.",
+          "return": "0x82CE1CA8 returns low32(n-c). The complete leaf does not call another function, change r1 or r5, or write a nonvolatile GPR. Its memory writes are through O; an alias to other state is not excluded by the input contract.",
+          "informationLost": "The output loop uses only n and c, not the stored candidate ordinals or the positions of sentinel bytes. Arrays with equal n and equal numbers of non-0xFF bytes produce equal initialized eight-word prefixes and returns. Later output words, when reached, also depend on their prior contents. At n=7,c=6 the sole increment is in word 1 regardless of the sentinel position.",
+          "capacity": "Only words 0..7 are cleared. There is no local n<=48 check. A positive signed-byte bound above 48 can increment later words if [c,n) reaches k>=48. Such later words are not initialized by this helper. No actual game-state bound or runtime overrun is established."
+        },
+        "comparisonConsumer": {
+          "function": "0x82E1EE48",
+          "receiver": "Entry r3 is retained as R in r5. P=U32[R+0x6C] and I=U32[R+0x70] are separate stored inputs; this inspection does not prove P equals the city row selected by I.",
+          "earlyResults": "0x82E1EE58..0x82E1EE94 returns 1 if U32[R+0x6F8] differs in low32 from signed_byte(P+3), or if U32[R+0x6D0] differs in low32 from signed_halfword(P+0x3C). The second comparison uses the full signed halfword.",
+          "readerCall": "If both early comparisons agree, 0x82E1EE98..0x82E1EEA0 calls 0x82CE1C10 with r3=I and r4=SP+0x50 inside its 0x80-byte frame. The exact reader leaves r5 unchanged. Its returned count is not consumed.",
+          "outputUse": "0x82E1EEA4..0x82E1EED0 compares all eight temporary words with R+0x6D4+4*j, j=0..7. Any mismatch returns 1; all equal returns 0. No object-cache or city-byte store occurs in this comparator.",
+          "guards": "Readable receiver/pointee and writable output are required. Normal return and the receiver/memory join require intact stack/LR and nonalias state. The output-capacity qualification applies to the stack buffer as well; supported n<=48 is a sufficient local bound, not a proved game invariant."
+        },
+        "booleanConsumer": {
+          "generatedOwner": "0x82E25EA8",
+          "receiverBoundary": "The entry prefix copies r3 into r31 at 0x82E25EB8. Earlier callees in this owner are unexpanded, so its value at 0x82E26018 and retention to the original receiver are conditional.",
+          "branch": "0x82E26018 passes current r31 to 0x82E1EE48 at 0x82E2601C. At 0x82E26020..0x82E26028 the returned low byte is tested: zero branches to 0x82E2609C, bypassing the selected refresh block. Nonzero passes current r31 at 0x82E2602C to 0x82E24FD8 at 0x82E26030.",
+          "requiredEdge": "helperActionBoundary bounds the four-bin arithmetic and selected local effects of 0x82E24FD8. Required nested calls and dispatch still prevent a normal-return/retention join; no end-to-end cache update or tile assignment follows across this call.",
+          "conditionalContinuation": "Only after that helper returns with the required receiver and stack state retained, the continuation at 0x82E26034..0x82E26054 reloads P from R+0x6C and caches signed P+3 at R+0x6F8 and signed P+0x3C at R+0x6D0. It calls 0x82CE1C10 at 0x82E26058 using R+0x70 and SP+0x50, then copies all eight temporary words to R+0x6D4..R+0x6F0 at 0x82E26074..0x82E26098. The reader count is overwritten. This is a conditional cache writer, not proof of scheduling, object identity or the helper action."
+        },
+        "currentEvidence": {
+          "image": "image.json#/analysisProgram",
+          "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+          "flatImageBytes": 18939904,
+          "flatImageBase": "0x82000000",
+          "titleRevision": "0e77106f66925a54d13d738187f7b45e5ba75a00",
+          "generatedReads": [
+            {
+              "function": "0x82CE1C10",
+              "file": "rerevved:generated/default/rerevved_recomp.68.cpp",
+              "headerLine": 29260,
+              "nextHeader": "sub_82CF2230",
+              "nextHeaderLine": 29353,
+              "spanLines": 93,
+              "readWindow": [
+                29260,
+                29352
+              ],
+              "requestedLines": 93,
+              "sha256": "C1AF47A97E29797A4B03F1EA1F825DDFCA1455CC389A3B65C64C70676AEC6706"
+            },
+            {
+              "function": "0x82E1EE48",
+              "file": "rerevved:generated/default/rerevved_recomp.198.cpp",
+              "headerLine": 31490,
+              "nextHeader": "sub_82E25168",
+              "nextHeaderLine": 31581,
+              "spanLines": 91,
+              "readWindow": [
+                31490,
+                31580
+              ],
+              "requestedLines": 91,
+              "sha256": "A48640751168AB1158CB11C36785C25EB84EB4B9A061E3E2190022624289C009"
+            },
+            {
+              "function": "0x82E25EA8",
+              "file": "rerevved:generated/default/rerevved_recomp.155.cpp",
+              "headerLine": 32770,
+              "nextHeader": "sub_82E44030",
+              "nextHeaderLine": 33096,
+              "spanLines": 326,
+              "readWindow": [
+                32770,
+                33095
+              ],
+              "requestedLines": 326,
+              "sha256": "11BE42C51B0EF2D9CA9E61DF12DE2251B3D0066BF664268A549A0413FFD0B0A0"
+            }
+          ],
+          "nativeWords": 118,
+          "nativeWindows": [
+            "0x82CE1C10..0x82CE1CAC",
+            "0x82E1EE48..0x82E1EEE4",
+            "0x82E25EA8..0x82E25EB8",
+            "0x82E26018..0x82E26098"
+          ],
+          "method": "Serialized foreground tools/run-headless.ps1 -ReadOnly queries through maintained scripts. Exact radius-zero native words are checked against the pinned big-endian flat image; generated bodies corroborate register flow within explicit header boundaries.",
+          "readerReferences": "DumpReferences.java at 0x82CE1C10 emits one modeled call at 0x82E1EEA0. This is not a complete caller census: the separately verified call at 0x82E26058 is not in that result.",
+          "comparisonIngress": "DumpReferences.java at 0x82E1EE48 emits zero modeled references. FindDirectCallers.java at the same target, cap 4, emits one aligned raw branch-and-link at 0x82E2601C with word 0x4BFF8E2D, decoded=false and owner=<undefined>; Truncated=false and Cancelled=false. Its containing generated owner is 0x82E25EA8. The direct-call scan covers initialized executable memory only, not indirect calls, nonlink branches or runtime ingress.",
+          "reportSha256": {
+            "reader-references": "1708A8E511E4CBE25CF0E043BD7267A577BB669985E6C0F42A8E4651033557F2",
+            "reader-words": "37F8DF9A96E6352CE8F3D6F98761B0AADE68C5A9D8053DD9763D1FC5F13BBFE5",
+            "comparison-references": "422B5058E0C4FFCB0A2D5A744188CEC9DADF52A5C9900A522D313F178688A51F",
+            "comparison-direct-callers": "C39DD4F78CC359B69E457706F59FD376AADA035A1DFD88D023562E22A20808A3",
+            "comparison-words": "9E1658490D478584E159B1D5988DD223CAD79A6E8212B5A639966B0D643EDB84",
+            "consumer-words": "8A9821F5E55D534F69B6B70C0FD7ACAEBEFFC2CE5A1A5E9A2F114F884D7A49F7"
+          },
+          "scriptSha256": {
+            "DumpReferences.java": "FFB102E55B53E22ECC3F41C5B55CB004FF87C66C7B3A122171700B082055FCF1",
+            "DumpMemoryWords.java": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71",
+            "FindDirectCallers.java": "F48F121404B5C36F58C518B2E72674C7672254E8CFA153C387C94C317191B741"
+          },
+          "locators": [
+            "ghidra/DumpMemoryWords.java:0x82CE1C10..0x82CE1CAC,0x82E1EE48..0x82E1EEE4,0x82E25EA8..0x82E25EB8,0x82E26018..0x82E26098 radius=0",
+            "ghidra/DumpReferences.java:0x82CE1C10,0x82E1EE48",
+            "ghidra/FindDirectCallers.java:0x82E1EE48 cap=4",
+            "generated:rerevved/sub_82CE1C10",
+            "generated:rerevved/sub_82E1EE48",
+            "generated:rerevved/sub_82E25EA8:0x82E26018..0x82E26098"
+          ]
+        },
+        "closedLimits": "Reuse the accepted producer, weighted-score and coordinate-scan results. The prior direct +0x58 scan and 18 indexed-load candidate set remain closed and were not repeated. The two exact modeled-reference queries and raw direct-call lookup are closed for this image unless a new binding or image discriminator appears. No all-reader, all-writer, caller-order or runtime claim follows.",
+        "boundedResult": "One selected consumer uses only the number of non-0xFF city entries, expands the trailing ordinal interval into six-wide groups, and compares those groups with a cache. Changing candidate identities while preserving n and that count cannot change the initialized eight-word output prefix. The caller Boolean gates a helper and conditional cache refresh; it does not establish worked-tile meaning, yield production, AI policy or executed assignment.",
+        "nextDiscriminator": "Use helperActionBoundary/nextDiscriminator for the exact positive-difference call and dispatch gates. Normal return, retained current receiver/stack, P versus indexed-city identity and an ordinal-value consumer remain required before claiming cache execution or tile assignment.",
+        "helperActionBoundary": {
+          "question": "What local effects and return/retention contract can be established across 0x82E26030 -> 0x82E24FD8 for current r31?",
+          "confidence": "strong",
+          "status": "four-bin arithmetic and conditional effects bound; required calls and dispatch prevent a normal-return join",
+          "scope": {
+            "functions": [
+              "0x82E24FD8",
+              "0x82E1ECA8",
+              "0x82E21AC8"
+            ],
+            "chargedBodies": 5,
+            "newGeneratedBodies": 3,
+            "reusedAcceptedSuffixBodies": 2,
+            "functionCap": 8,
+            "boundary": "Three exact complete generated bodies and their 265 native words, plus two accepted compiler save/restore suffix bodies conservatively charged against the function cap. The accepted caller, indexed reader and comparator were reused without reopening their bodies. The 17 accepted suffix words were compared with the image without a new generated body read or Ghidra query. Expansion stopped at the selected positive-difference helper's unresolved required calls and conditional dispatch; the other action and final helpers were not expanded."
+          },
+          "inputsAndFrame": {
+            "entry": "Reuse booleanConsumer: the selected call supplies current r31 as entry r3=R and LR=0x82E26034. Equality to the owner's entry receiver remains conditional on earlier calls. 0x82E24FD8..0x82E24FE4 saves incoming LR through the accepted 0x827F7C80 suffix, allocates 0xB0 bytes and copies full R to r30. Let S denote this new SP.",
+            "localWrites": "0x82E24FFC..0x82E25024 clears H at S+0x50..S+0x5C and T at S+0x60..S+0x6C. The other explicit non-support stores in 0x82E24FD8 are its backchain and indexed H increments. Under the range/nonalias guards, neither this body nor the first leaf directly writes receiver fields.",
+            "firstCall": "P=U32[R+0x6C]. At 0x82E2500C..0x82E25098, A=signed_byte(P+3)+popcount(U16[P+0x3C]&0x3F), so -128<=A<=133. The six low bits contribute independently. 0x82E2509C calls 0x82E1ECA8 with r3=R, r4=A, r5=U32[R+0x700], r6=S+0x60. R+0x70 is never read in this helper and is not identified with P."
+          },
+          "targetLeaf": {
+            "function": "0x82E1ECA8",
+            "contract": "The complete 87-instruction leaf has no calls, SP/LR changes or nonvolatile-GPR writes. Its stores address only incoming r6+0,+4,+8,+0xC. With valid, disjoint readable inputs and writable T, it returns normally and preserves H, the helper's saved state and receiver. It does not return a new receiver; r3 stays R.",
+            "notation": "T starts at (0,0,0,0). Selector s is low32(r5); c8,c9,c10 are signed bytes P+8,P+9,P+0xA; q(x)=signed division by 2 toward zero. The caller's A range prevents overflow in these formulas. Negative targets are possible; these are neutral category counts, not established resource identities or a named policy.",
+            "selector0": "0x82E1ECA8..0x82E1ECB8: T=(A+2,0,0,0).",
+            "selector1": "0x82E1ECBC..0x82E1ED00: start T=(0,A+2,0,0). If c8>0, x=min(q(A+2),c8), then T0=x,T1=A+2-x.",
+            "selector2": "0x82E1ED04..0x82E1ED7C: start T=(0,0,A+2,0). If c9>0, y=min(q(A+2),c9), then T1=y,T2=A+2-y. Next, if c8>0, x=min(q(T1),c8), then T0=x,T1=T1-x, using the current T1.",
+            "selector3": "0x82E1ED80..0x82E1EE00: start T=(A,0,0,trunc(A/3)). If c10>0, set T2=c10,T0=A-c10 without a minimum. Next, if c9>0, y=min(q(T0),c9), then T1=y,T0=T0-y. Finally clamp only negative T0 to zero. c8 is not used and T1 or T3 may be negative. No common total or nonnegativity invariant is established.",
+            "otherSelectors": "0x82E1ED80..0x82E1ED84 returns without a store for every low32 selector other than 0,1,2,3; the caller-zeroed T remains zero."
+          },
+          "observedCountsAndCalls": {
+            "histogram": "0x82E250A0..0x82E250F0 loads B=U32[R+0x664] and E=U32[R+0x668]. B=0 skips traversal. Otherwise each unsigned loop index i is compared with U32(signed32(E-B)>>2). The body loads Q=U32[B+4*i], reads tag=U32[Q], and increments the word at S+0x50+U32(tag<<2), modulo 2^32. With a stable aligned nonwrapping readable range, 0<=E-B<=INT32_MAX and tags in 0..3, H[j] counts entries of tag j. These are sufficient guards, not proved game-state invariants. Arbitrary tags can address outside H or wrap; no local range check exists.",
+            "differences": "0x82E250F4..0x82E2514C visits j=0..3. For the current loaded h=H[j],t=T[j], signed32(h-t)>0 selects 0x82E25118 -> 0x82E21AC8; signed32(t-h)>0 selects 0x82E25134 -> 0x82E246F0. Each call supplies r3=R,r4=j. The decrement loops request the respective positive signed-low32 difference in calls only if every call returns with r26..r31, SP and required memory retained. Ordinary excess/deficit interpretation additionally needs no signed subtraction overflow. Later H/T reads can reflect callee mutations; neither successful reconciliation nor exact executed call counts follow.",
+            "finalCalls": "After the four-bin continuation, 0x82E25154 -> 0x82E22D80 and 0x82E2515C -> 0x82E22B38 each receive r3=R. Both bodies and their return/effects remain unresolved. Skipping all per-bin calls does not prove helper return."
+          },
+          "positiveDifferenceBoundary": {
+            "function": "0x82E21AC8",
+            "selection": "0x82E21AD8..0x82E21B04 searches pointer cells from R+0x664 to the reloaded R+0x668, selecting the first entry Q whose U32[Q] equals incoming j. Ordered valid range, readable entries, intact frame and accepted save/restore suffixes are required. Exhausting a finite no-match range reaches an epilogue without a semantic nested call; a consistent positive H[j] ordinarily provides a match.",
+            "firstRequiredCall": "If signed32(U32[Q+0x1C])!=-1, 0x82E21B34 -> 0x82E21838 receives r3=R,r4=U32[Q+0x1C],r5=U32[Q+0x20],r6=1,r7=U32[Q+8],r8=0,r9=1. matchedEntryCallBoundary binds its guarded local effects and sufficient returning subcases. The actual Q-derived memory case is not established, so a general normal-return/retention join remains unresolved.",
+            "localWrites": "After that call is bypassed or returns with required state retained, Q+0x10!=-1 selects 0x82E21B54, which clears the native slw(1,U32[Q+0x10]) mask in R+0x6D0. For Q+0x14!=-1, 0x82E21B68..0x82E21B94 decrements the low32 word at R+U32((U32[Q+0x14]+437)<<2) then reloads Q+0x14 and the selected word, writing zero if that reloaded word is signed-negative. With a stable nonalias index and suitable nonwrapping address, this decrements and clamps the word at R+0x6D4+4*index. There is no local index range check; no tile or yield effect is established.",
+            "dispatchStop": "0x82E21B98 loads C=U32[Q+0x24]. For C!=0, 0x82E21BA4..0x82E21BB4 loads vptr=U32[C], Tcall=U32[vptr+0xC], and calls Tcall with r3=C,r4=1, LR=0x82E21BB8. Current C, installed vptr/target and its return/retention/effects are unbound. The zero store to Q+0x24 at 0x82E21BB8 is conditional on normal return and retained Q/r28; it is not proof of disposal or lifetime end.",
+            "laterContinuation": "The continuation calls 0x82D3D9F0 with Q at 0x82E21BC0 and, for a positive signed remaining length, 0x827F1620 at 0x82E21BE8. Both remain opaque. Only after their required returns and retained state does 0x82E21BF4 reduce the then-loaded R+0x668 by four. No completed removal, memory release or matched-path normal return is proved."
+          },
+          "returnAndCacheBoundary": {
+            "epilogue": "0x82E25160 adds 0xB0 to SP; 0x82E25164 tail-branches to the accepted 0x827F7CD0 restore suffix. If reached with the correct frame and saved slots intact, it restores incoming r26..r31 and LR, returning to 0x82E26034 with the caller's current r31. This is a conditional epilogue contract, not evidence that required calls return, preserve memory or preserve receiver lifetime. The final helper's r3 result is not independently fixed here.",
+            "join": "The accepted cache continuation at 0x82E26034..0x82E26098 remains conditional on helper normal return, restored caller receiver/stack and nonalias state. Receiver identity from the owner's entry, P versus indexed-city identity, ordered invocation and execution remain open. Local cache-related word mutations inside 0x82E21AC8 do not prove the later caller refresh."
+          },
+          "currentEvidence": {
+            "image": "image.json#/analysisProgram",
+            "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+            "flatImageBytes": 18939904,
+            "flatImageBase": "0x82000000",
+            "titleRevision": "6cc0d8b0fca9db28d075ce931b6fa1ae677208a4",
+            "generatedReads": [
+              {
+                "function": "0x82E24FD8",
+                "file": "rerevved:generated/default/rerevved_recomp.203.cpp",
+                "headerLine": 33133,
+                "nextHeader": "sub_82E3ECC0",
+                "nextHeaderLine": 33367,
+                "spanLines": 234,
+                "readWindow": [
+                  33133,
+                  33366
+                ],
+                "requestedLines": 234,
+                "sha256": "F9D77EE31378655737A7E1A4BFC0FB1AB22A49F139C11AEFF47A11DCFEE340B9",
+                "nativeStart": "0x82E24FD8",
+                "nativeEnd": "0x82E25164",
+                "nativeWords": 100
+              },
+              {
+                "function": "0x82E1ECA8",
+                "file": "rerevved:generated/default/rerevved_recomp.163.cpp",
+                "headerLine": 31470,
+                "nextHeader": "sub_82E2A638",
+                "nextHeaderLine": 31671,
+                "spanLines": 201,
+                "readWindow": [
+                  31470,
+                  31670
+                ],
+                "requestedLines": 201,
+                "sha256": "E438C873C0997584B243FEA99ABEC7CC7D47EB34EFA0448E0823E86849A49610",
+                "nativeStart": "0x82E1ECA8",
+                "nativeEnd": "0x82E1EE00",
+                "nativeWords": 87
+              },
+              {
+                "function": "0x82E21AC8",
+                "file": "rerevved:generated/default/rerevved_recomp.121.cpp",
+                "headerLine": 33607,
+                "nextHeader": "sub_82E2C890",
+                "nextHeaderLine": 33787,
+                "spanLines": 180,
+                "readWindow": [
+                  33607,
+                  33786
+                ],
+                "requestedLines": 180,
+                "sha256": "35EFBECBD8D2DD7A6D2D8C69538A7839A086297344C5CDAD2E97FD396427A76C",
+                "nativeStart": "0x82E21AC8",
+                "nativeEnd": "0x82E21BFC",
+                "nativeWords": 78
+              }
+            ],
+            "nativeWords": 265,
+            "acceptedSuffixWords": 17,
+            "method": "Two serialized foreground tools/run-headless.ps1 -ReadOnly queries with ghidra/DumpMemoryWords.java at radius zero. All 265 queried words equal the pinned big-endian image, and Capstone 5.0.7 PPC64 big-endian decoding matches every bounded generated instruction comment after numeric-format and rlwinm/slwi alias normalization. The 17 accepted save/restore suffix words independently equal the image. Exact own/next headers, full span and requested count were checked before every generated read, including verification. No runtime, repair, modeled caller census or broad search was used.",
+            "acceptedEvidence": [
+              "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/booleanConsumer",
+              "ai-stat-choice.json#/setupReturnBoundary/prologueAndRetention/enteredSaveSuffix",
+              "ai-stat-choice.json#/setupReturnBoundary/nullReceiverReturn/restore"
+            ],
+            "locators": [
+              "ghidra/DumpMemoryWords.java:0x82E24FD8..0x82E25164,0x82E1ECA8..0x82E1EE00,0x82E21AC8..0x82E21BFC radius=0",
+              "generated:rerevved/sub_82E24FD8",
+              "generated:rerevved/sub_82E1ECA8",
+              "generated:rerevved/sub_82E21AC8"
+            ],
+            "reportSha256": {
+              "helper-words": "D244493ACF1B578C5A6BB2A40C8955EB008B1B7264AA76948D7711E5AED4A423",
+              "callees-words": "1678F560B76258E8D2D42BCD727E5CC592E4672FEA31F491CB8D265401CC4290"
+            },
+            "scriptSha256": {
+              "DumpMemoryWords.java": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71"
+            }
+          },
+          "boundedResult": "The selected helper computes a four-category target vector from a separate stored row pointer and selector, counts first-word tags in a pointer vector under explicit range guards, and conditionally reconciles signed differences through other helpers. One selected positive-difference path has local receiver word updates but stops at required direct and indirect call contracts. There is no established normal-return join to the caller cache refresh, resource policy, tile assignment, yield production or runtime action.",
+          "practicalRelevance": "This separates a cache invalidation test from an attempted category-count reconciliation. It identifies the row fields, selector, vector tags and exact effect/return barriers needed before any resource behavior or mod control can be named. The cached eight-word grouping does not supply the candidate identities lost by its reader.",
+          "falsificationCondition": "Different supported-image words, a selector branch with another store or call, or a concrete current-object/installed-target and retained-state proof changing the bounded edge contract would require revising this result. Observed execution and named resource semantics require independent evidence.",
+          "nextDiscriminator": "Use matchedEntryCallBoundary/nextDiscriminator to bind the actual receiver-array case and first required per-cell edge. The caller Q+0x24 dispatch and later removal helpers, deficit and final reconciliation returns, city-row identity and an ordinal-value consumer remain separate gates.",
+          "matchedEntryCallBoundary": {
+            "question": "What effects and normal-return/retention contract does 0x82E21B34 -> 0x82E21838 establish for the actual matched-entry arguments?",
+            "confidence": "strong",
+            "status": "matched inputs, guarded direct writes and sufficient return subcases bound; required nonzero-field calls and dispatch remain unresolved",
+            "scope": {
+              "functions": [
+                "0x82E21838",
+                "0x82E1EB40",
+                "0x82E1F0A8"
+              ],
+              "newGeneratedBodies": 3,
+              "compilerSuffixEntries": [
+                "0x827F7C68",
+                "0x827F7CB8",
+                "0x827F7C84",
+                "0x827F7CD4"
+              ],
+              "chargedBodies": 7,
+              "functionCap": 8,
+              "boundary": "Three complete exact generated bodies, two new six-word compiler prefixes and the accepted 17-word save/restore continuation. All four entered compiler suffixes are conservatively charged as separate functions, including overlapping accepted suffixes. Earlier caller, count and comparator bodies were not reopened. Expansion stopped at the per-cell helper's required conditional direct call and unresolved indirect target. No 0x82E1CB20, 0x827F1620, 0x821B4450, caller Q+0x24 dispatch target or further writer body was opened."
+            },
+            "acceptedInputs": {
+              "caller": "Reuse positiveDifferenceBoundary: Q is the first matching pointer-vector entry in 0x82E21AC8 and is retained in that caller's r31. At 0x82E21B34, r3=R, r4=a=U32[Q+0x1C]!=0xFFFFFFFF, r5=b=U32[Q+0x20], r6=1, r7=w=U32[Q+8], r8=0, r9=1 and LR=0x82E21B38. These are actual callsite-derived expressions, not observed field values. The caller's Q is not identified with either pointer subsequently loaded from a receiver array slot.",
+              "notation": "U(v) retains low32, S(v) interprets low32 as signed, and D(x,y)=U(R+36*U(7*x+y)). All addresses and indexed arithmetic use guest low32 semantics. The array has locally observed strides of 36 and 252 bytes; no gameplay or coordinate identity is assigned from that shape."
+            },
+            "iterationAndPruning": {
+              "actualBounds": "0x82E21844..0x82E2185C sets the outer end to U(a+1) and enters only if S(a)<S(a+1). Thus a=0x7FFFFFFF skips all cells; every other permitted a gives one outer iteration if required calls retain loop state. 0x82E21864 and 0x82E21890..0x82E21894 use column end e=U(b+w) and enter only if S(b)<S(e). With retained state, the entered columns are the signed interval [S(b),S(e)). w=0 always skips, and nonzero w can also skip through signed wrap. Incoming a/b/w are not range-checked against a matrix extent.",
+              "pairedWords": "0x82E21860..0x82E21888 and 0x82E2189C..0x82E218C4 address the paired words D(a,c)+0x88 and D(a,c)+0x8C, with low32 address addition. The column slot advances by 36 at 0x82E21AA0, and the outer base by 252 at 0x82E21AB0. Required callee returns and loop-state retention precede any later iteration claim.",
+              "fixedZeroGate": "0x82E21850 captures actual r8=0 in r22. For a nonzero first word, the exact 0x82E1EB40 leaf leaves r22 unchanged, so 0x82E218E0..0x82E218E8 bypasses the R+0x680 append stores and 0x82E2194C -> 0x821B4450. Earlier per-cell calls must retain r22 for later visits. Incoming r9=1 is not consumed as a gate in 0x82E21838. Arbitrary-r8 append effects are excluded from this actual call contract."
+            },
+            "firstWordEffects": {
+              "selectedCall": "For nonzero M=U32[D(a,c)+0x88], 0x82E218D8 stores M at helper frame+0x50 and 0x82E218DC -> 0x82E1EB40 passes r3=R,r4=M. M is not proved equal to Q; M=Q is not excluded. There is no separate direct first-word clear in this caller arm.",
+              "leafWrites": "The complete 41-instruction leaf reads row start U32[M+0x1C], row extent U32[M+0xC], column start U32[M+0x20] and column extent U32[M+8]. Signed-low32 start/end comparisons select loops. 0x82E1EB90 clears D(x,y)+0x88 for the visited row/column pairs. Inner extent/start reload at 0x82E1EB98/0x82E1EBA0 and outer extent/start reload at 0x82E1EBB0/0x82E1EBB8 make a fixed rectangle and termination conditional on stable nonalias bounds and valid finite mapped access. No local matrix-index validation occurs.",
+              "finalStoresAndReturn": "On reaching 0x82E1EBD4..0x82E1EBE0, the leaf writes U32[M+0x1C]=0xFFFFFFFF, U32[M+0x20]=0xFFFFFFFF and byte M+0x18=1, then blr. It has no nested call, SP/LR change or nonvolatile-GPR write and retains r3=R,r4=M. Valid accesses, loop completion and stores disjoint from protected state establish normal return locally. Its stores can change Q fields if M aliases Q, and can corrupt loop/frame state without the nonalias guards; register preservation alone proves neither payload retention nor lifetime."
+            },
+            "secondWordEffects": {
+              "selectionAndClear": "With the first word zero, a nonzero reloaded N=U32[D(a,c)+0x8C] selects 0x82E21960, which clears that slot before validating N's fields. 0x82E21968..0x82E21988 checks 0<=S(U32[N+0x18])<6 and 0<=S(U32[N+0x1C])<7. Failure goes to the N sentinel stores. These checks do not validate incoming a/b, Q or later reloaded indices.",
+              "derivedWrites": "For a passing pair x/y, 0x82E219A8 clears D(x,y)+0x8C, then reloads U32[N]. Current type 2 or 3 selects a fresh-field clear D(x,y)+0x188 at 0x82E219E8 and 0x82E219F8 -> 0x82E1F0A8 with (R,x+1,y), using the field loads preceding that call. Only after its return, a reloaded U32[N]==3 selects clears D(x,y)+0xB0 at 0x82E21A30 and D(x,y)+0x1AC at 0x82E21A6C, with calls (R,x,y+1) at 0x82E21A40 and (R,x+1,y+1) at 0x82E21A80. All later field reloads lack revalidation; their identities, stores and continuations require retained state and valid nonalias addresses. Initial type and indices need not survive earlier stores or calls.",
+              "sentinels": "When reached with N and r21 retained, 0x82E21A84/0x82E21A88 writes 0xFFFFFFFF to N+0x18 and N+0x1C. N is not identified with Q. These are field stores, not proof of release or lifetime end.",
+              "commonCall": "Every entered cell reaching 0x82E21A8C..0x82E21A98 calls 0x82E1F0A8 with r3=R,r4=current outer index,r5=current column. Both-zero cells also require this call. The next loop update is conditional on its normal return and retained live state."
+            },
+            "perCellBoundary": {
+              "function": "0x82E1F0A8",
+              "flagCall": "For its actual supplied (R,x,y), the helper reads byte F=U8[D(x,y)+0x94] at 0x82E1F0DC. If nonzero, 0x82E1F10C -> 0x82E1CB20 receives r3=U32[R+0x70C], unchanged r4=x/r5=y and r6=its frame+0x50, containing floats loaded from D(x,y)+0x74/+0x78 and 0x82F6E890. No constant value or complete callee signature is assigned. The body is unexpanded. Byte clear at 0x82E1F110 is conditional on its normal return and retained state.",
+              "zeroFieldsReturn": "With F=0, that call and clear are bypassed. 0x82E1F114 reads C=U32[D(x,y)+0x90]; C=0 branches to 0x82E1F1F8. This exact F=0,C=0 subcase executes no semantic nested call and no non-frame store, retains r3=R and, through the verified save27/restore27 suffixes, restores r27..r31, SP and LR while leaving r20..r26 untouched. Valid reads, ordinary mapped stack and intact saved slots are required. It proves a conditional normal return to the supplied per-cell callsite, not that actual fields are zero.",
+              "vectorWrites": "For C!=0, 0x82E1F120..0x82E1F188 searches pointer words from R+0x694 through R+0x698 by four-byte increments, then copies unequal tail entries at 0x82E1F17C. A finite stride-reachable readable range and writable destinations are required. Under stable nonalias slot/vector bytes this filters entries equal to the slot pointer while preserving unequal order; arbitrary aliases can change the reloaded comparison value. At 0x82E1F18C/0x82E1F19C, two loads address the same R+0x698 without an intervening store or call. Stable reads make the signed length zero, bypassing 0x82E1F1BC -> 0x827F1620; it is not an unconditional required edge. Where reached under that case, 0x82E1F1C0 writes the retained write cursor to R+0x698.",
+              "dispatchStop": "0x82E1F1D4 reloads C from D(x,y)+0x90. A zero reload bypasses dispatch. Otherwise 0x82E1F1E0..0x82E1F1F0 calls U32[U32[C]+0xC] with r3=C,r4=1 and LR=0x82E1F1F4. Current C, installed vptr/target, effects and normal return are unresolved. The slot clear at 0x82E1F1F4 requires that return and retained r27/r29/r31. This slot-derived C is not identified with caller Q+0x24's separate dispatch receiver."
+            },
+            "returnAndRetention": {
+              "compilerContract": "0x82E21838 copies incoming LR=0x82E21B38 to r12 and calls save20 at 0x827F7C68. The six verified prefix stores save full r20..r25 at entry SP-0x68..SP-0x40; the accepted continuation saves full r26..r31 at SP-0x38..SP-0x10 and low32 LR at SP-8. 0x82E21840 allocates 0xC0 bytes. If 0x82E21ABC is reached with matching SP and intact slots, the 0x827F7CB8 restore20 prefix plus accepted continuation restores full r20..r31 and the caller continuation 0x82E21B38. In particular caller r31=Q is restored despite the helper's local r31/r28 use. The per-cell helper's save27/restore27 entries are contained suffixes of accepted save26/restore26 evidence, with a 0x90-byte frame.",
+              "noCells": "If a=0x7FFFFFFF, or otherwise S(b)>=S(U(b+w)), 0x82E21838 reaches its epilogue without semantic nested calls or receiver/object reads or writes. Under its valid stack/save-slot contract it returns normally to 0x82E21B38 with r3=R, caller r20..r31 and SP restored. This includes w=0. These are sufficient conditions on the actual Q-derived arguments, not observed Q contents.",
+              "zeroCellRegion": "A further sufficient return subcase is a finite entered interval whose actual paired-word reads at +0x88/+0x8C are zero and whose per-cell +0x94 byte/+0x90 word reads are zero at every visit. The common per-cell calls then return by zeroFieldsReturn, retain the loop state and allow the helper to reach its restoring epilogue. With valid stable accesses and disjoint intact frames, r3=R and caller r31=Q/SP are restored, and no receiver/object stores occur. Other patterns can return under the detailed leaf and per-cell contracts; no actual pattern was observed.",
+              "limits": "For other entered-cell paths, all reached callee returns, nonvolatile loop-state retention, valid accesses, protected saved frames and required field/lifetime retention must be proved. Restoring Q's pointer register does not prove unchanged Q+0x10/+0x14/+0x24 or any payload, allocation lifetime, vector state or completed removal. The caller's later local writes and Q+0x24 dispatch remain conditional; no general return join to 0x82E26034 or its cache writes follows."
+            },
+            "currentEvidence": {
+              "image": "image.json#/analysisProgram",
+              "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+              "flatImageBytes": 18939904,
+              "flatImageBase": "0x82000000",
+              "titleRevision": "6cc0d8b0fca9db28d075ce931b6fa1ae677208a4",
+              "generatedReads": [
+                {
+                  "function": "0x82E21838",
+                  "file": "rerevved:generated/default/rerevved_recomp.226.cpp",
+                  "headerLine": 33367,
+                  "nextHeader": "sub_82E44098",
+                  "nextHeaderLine": 33723,
+                  "spanLines": 356,
+                  "requestedLines": 356,
+                  "readWindow": [
+                    33367,
+                    33722
+                  ],
+                  "sha256": "54838E48692B908823F6DBCE341AAA27E2E9B9F9BD971818F649DFD7D58254A3",
+                  "nativeStart": "0x82E21838",
+                  "nativeEnd": "0x82E21AC0",
+                  "nativeWords": 163
+                },
+                {
+                  "function": "0x82E1EB40",
+                  "file": "rerevved:generated/default/rerevved_recomp.93.cpp",
+                  "headerLine": 31444,
+                  "nextHeader": "sub_82E25D50",
+                  "nextHeaderLine": 31534,
+                  "spanLines": 90,
+                  "requestedLines": 90,
+                  "readWindow": [
+                    31444,
+                    31533
+                  ],
+                  "sha256": "BE319717BD05C173F79EE984A2AF1B9E7FDE4CA0B6A25B4D7ABFE873A9F24A04",
+                  "nativeStart": "0x82E1EB40",
+                  "nativeEnd": "0x82E1EBE0",
+                  "nativeWords": 41
+                },
+                {
+                  "function": "0x82E1F0A8",
+                  "file": "rerevved:generated/default/rerevved_recomp.11.cpp",
+                  "headerLine": 32886,
+                  "nextHeader": "sub_82E2DA80",
+                  "nextHeaderLine": 33089,
+                  "spanLines": 203,
+                  "requestedLines": 203,
+                  "readWindow": [
+                    32886,
+                    33088
+                  ],
+                  "sha256": "2FE85FC22E63F120A9830AB7DB62E6F56163E444F6CA469972921056BBAC6DC9",
+                  "nativeStart": "0x82E1F0A8",
+                  "nativeEnd": "0x82E1F1FC",
+                  "nativeWords": 86
+                }
+              ],
+              "newNativeWords": 302,
+              "acceptedSuffixWords": 17,
+              "compilerPrefixWindows": [
+                "0x827F7C68..0x827F7C7C",
+                "0x827F7CB8..0x827F7CCC"
+              ],
+              "method": "Two serialized foreground tools/run-headless.ps1 -ReadOnly queries with ghidra/DumpMemoryWords.java, radius zero. All 302 query words equal the pinned big-endian image. Capstone 5.0.7 PPC64 big-endian decoding matches all 290 generated instruction comments after numeric-format and rlwinm/slwi alias normalization; 12 compiler-prefix words independently decode as matching std/ld r20..r25 slots. The 17 accepted continuation words equal the image and provide entered save27/restore27 suffixes as well. Own/next headers and exact spans/requested counts were checked before each generated read, including verification. No runtime, repair, caller census or writer search was performed.",
+              "acceptedEvidence": [
+                "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/positiveDifferenceBoundary",
+                "ai-stat-choice.json#/setupReturnBoundary/prologueAndRetention/enteredSaveSuffix",
+                "ai-stat-choice.json#/setupReturnBoundary/nullReceiverReturn/restore"
+              ],
+              "locators": [
+                "ghidra/DumpMemoryWords.java:0x82E21838..0x82E21AC0,0x82E1EB40..0x82E1EBE0,0x82E1F0A8..0x82E1F1FC,0x827F7C68..0x827F7C7C,0x827F7CB8..0x827F7CCC radius=0",
+                "generated:rerevved/sub_82E21838",
+                "generated:rerevved/sub_82E1EB40",
+                "generated:rerevved/sub_82E1F0A8"
+              ],
+              "reportSha256": {
+                "helper-and-thunk-prefixes": "76F3DE336804A7DA92C6AF5111EBC0699590D1150E8CF2753C420D28856D4743",
+                "callee-words": "E590C3B952A0B964774DE2E9000EBF76D1CFA5BF1EEA52CF17FA5A2C6754763C"
+              },
+              "scriptSha256": {
+                "DumpMemoryWords.java": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71"
+              }
+            },
+            "boundedResult": "The actual matched-entry call selects at most one outer index, prunes its optional append path with r8=0, and performs guarded array/object clears through exact local branches and one inspected leaf. Every entered cell still needs a per-cell return. Exact empty-region and zero-field subcases close that return and preserve caller r31=Q/SP under explicit guards; nonzero per-cell fields stop at a required direct call or unbound +0xC dispatch. Field retention and lifetime remain separate from pointer-register restoration. Resource policy, tile assignment, yield production, execution and completed removal remain unproved.",
+            "practicalRelevance": "The edge now has concrete guarded memory effects and static return cases rather than an opaque helper label. This prevents treating unchanged registers as unchanged objects, or treating an apparent clear as completed resource reassignment. It also identifies the exact per-cell fields needed to decide the next required edge.",
+            "falsificationCondition": "Different supported-image words or a bound current-object/field/target contract changing a selected path would revise this result. A returning subcase is invalid if its bounds mutate, accesses fail, saved state aliases a write or a required call violates the stated retention contract. Static subcases do not establish runtime memory values.",
+            "nextDiscriminator": "Use perCellInputBoundary/nextDiscriminator for the missing same-cell prior producer and ordered field retention. The conditional earlier updater does not bind actual F/C or select a downstream edge. Caller Q+0x24 dispatch, later removal/reconciliation returns and city-row/ordinal identity remain separate gates.",
+            "perCellInputBoundary": {
+              "question": "Can the actual per-cell +0x94 flag and +0x90 pointer at 0x82E1F0A8 be bound to an ordered producer before choosing a required downstream edge?",
+              "confidence": "strong",
+              "status": "conditional earlier updater and flag store bound; actual per-cell values and ordered retention remain unbound",
+              "scope": {
+                "functions": [
+                  "0x82E25EA8",
+                  "0x82E25D50",
+                  "0x82E25CB8",
+                  "0x82E23800",
+                  "0x82E23460"
+                ],
+                "chargedBodies": 5,
+                "functionCap": 8,
+                "boundary": "One exact 190-line owner prefix and four complete exact generated functions. The owner prefix ends after the instruction comment for 0x82E25FF0, whose generated translation was not displayed or used. One new upstream-state question selected these bodies; earlier closed reader/comparator/caller inventories were not repeated. Existing matched-entry and per-cell contracts were reused without reopening their bodies. Only the header/next-header extent of 0x82E22E28 was localized; its body was not read. No compiler support body, initializer census, downstream 0x82E1CB20 body or installed indirect target was opened. Expansion stopped at required unexpanded upstream calls and dispatch, with the actual writer/retention join unresolved."
+              },
+              "acceptedFieldExpressions": {
+                "reads": "Reuse perCellBoundary: for each actual supplied (R,x,y), D(x,y)=U32(R+36*U32(7*x+y)), F=U8[D+0x94] at 0x82E1F0DC and C=U32[D+0x90] at 0x82E1F114. The matched entry supplies Q-derived indices or freshly reloaded neighboring indices; no observed values or universal index-range bound follows.",
+                "identity": "Within each inspected callee, R denotes that callee's entry receiver. Joining an earlier owner/current-r31 receiver to the later accepted R requires explicit call, frame, identity and memory retention. Q, paired-word pointees, C and the receiver's +0x6C versus indexed-city +0x70 inputs remain distinct unless joined. Restored pointer registers do not establish unchanged fields or lifetime."
+              },
+              "earlierOwnerGate": {
+                "prefix": "0x82E25EB8 captures entry r3 in r31. callerInputBoundary under priorProducerBoundary binds the predicate and its guarded bypasses; its predicateHelperBoundary supplies the lookup retention contract. The selected predicate-one 0x82E25EE8 -> 0x82D3DBA0 edge is bounded in initializationBoundary there. Actual global/context state, required error/import/helper returns and later 0x82E1C778,0x82E1C500,0x82C78D68,0x82E1C8C0 effects remain unresolved.",
+                "selectorAndOrder": "At 0x82E25F2C..0x82E25F50, current P=U32[r31+0x6C] supplies signed byte P+0, selecting a word at U32(0x830ECD08+4*signed_byte(P)). Only signed32(U32[r31+0x700]) less than that word enters the update block. It writes that word to current r31+0x700 at 0x82E25F54, then passes current r31 to 0x82E22E28 at 0x82E25F5C, 0x82E25D50 at 0x82E25F64, 0x82E25CB8 at 0x82E25F6C and 0x82E23800 at 0x82E25F74, in that order conditional on every required return and retained state. The alternative skips all four.",
+                "interveningEdges": "After this block, the inspected prefix can call unexpanded 0x82E25168 at 0x82E25FC8 and 0x82E24E88 at 0x82E25FE4 before the accepted later 0x82E26030 path. The prefix does not establish retention through the intervening suffix. The earlier updater is therefore not an end-to-end producer proof for the later reader."
+              },
+              "wrapperBoundaries": {
+                "firstWrapper": "In complete 0x82E25D50, explicit stores after the prologue initialize only SP+0x64/+0x68/+0x6C. Its R+0x674/+0x678 traversal, temporary-range processing and cleanup call unexpanded helpers including 0x82E1E768, 0x822D10C0, 0x82E21C00 and 0x82E24908. Absence of direct per-cell stores is not a no-writer or normal-return contract across its callees or possible aliases.",
+                "earlierConsumption": "0x82E25CB8 has no direct per-cell store. Current R+0x700==3 enables a count of zero tags in the R+0x664/+0x668 pointer range; a positive retained signed count calls accepted 0x82E21AC8 with (R,0) at 0x82E25D20. Its reached continuation always calls accepted 0x82E24FD8 at 0x82E25D30. Those can reach the accepted matched-entry/per-cell path before 0x82E23800 in the same owner pass. A producer in the later scan cannot precede those earlier internal invocations. All required returns and state retention remain qualified."
+              },
+              "scanGate": {
+                "function": "0x82E23800",
+                "visits": "With normal required returns and loop state retained, the scan visits x=0..5,y=0..6 and uses r30=D(x,y)+0x8C. At 0x82E23820..0x82E23848, either nonzero paired word U32[D+0x88] or U32[D+0x8C] passes the first gate. Then 0x82E2384C..0x82E23854 requires F=U8[D+0x94] nonzero. Both-zero paired words or zero F bypass the selected call.",
+                "selectedArguments": "0x82E23874 -> 0x82E23460 receives r3=R,r4=x,r5=y,r6=then-loaded U32[R+0x700],r7=1,r8=1,r9=1 and LR=0x82E23878. The scan directly writes neither F nor C and never directly reads C at +0x90. It requires an already-nonzero F before this candidate updater is called; this is not the first nonzero-flag producer."
+              },
+              "selectedUpdater": {
+                "function": "0x82E23460",
+                "requiredPrefix": "After save14 returns with the incoming arguments and required frame state retained, 0x82E23478..0x82E2349C captures selected low-byte r9=1 at new SP+0x197 and calls unexpanded 0x82E1EA10 at 0x82E2349C with (r3=R,r4=x,r5=y,r6=1,r7=1). At 0x82E234C8 it calls unexpanded 0x8234F2A8 with r3=SP+0x70 and a loaded f1. Both normal returns, memory effects, retained arguments/nonvolatile state and protected saved slots are required before the local field statements below.",
+                "cellAndExistingPointer": "Under those guards, selected unit extents visit one cell with r30=D(x,y)+0x90, r22=1 and r25=0. 0x82E2353C reads C from that slot. If nonzero, U32[C+0x70] is compared with the captured selector; mismatch first calls the accepted 0x82E1F0A8 at 0x82E23560 with (R,x,y), before the local flag store. Its F/C inputs cannot be produced by a later store in this invocation. A retained nonzero reload at 0x82E23564..0x82E2356C enters the object-update arm and skips the local flag store.",
+                "zeroPointerArm": "For initial or reloaded C=0, 0x82E23570..0x82E23584 tests byte D+0x80 and captured r9. With selected retained r9=1, either byte outcome branches to 0x82E2366C and bypasses allocation, construction, vector insertion and registration at 0x82E2358C..0x82E23668. In particular it bypasses the generic C-slot store at 0x82E235E8. A fixed installer in that excluded arm does not identify an actual current C or its vptr.",
+                "flagWriteAndOutput": "At 0x82E2366C, retained r22=1 stores byte F=1 through r30+4. It then writes four float words through V=U32[R+0x70C] and reloaded B=U32[V+0x70], at B+16*k+(0,4,8,12), k=U32(7*y+x). This output index differs from the matrix's 7*x+y. The selected scan range gives k in 0..47, so the unsigned k>=49 fallback is bypassed. Valid stable, disjoint output/input/frame storage is needed to retain the compact index and F/C result. This is a conditional normalization of an already-gated flag, not initialization proof.",
+                "conditionalPair": "With C initially/reloaded zero, required prefix returns and nonalias state retained, the selected arm has no direct C-slot store, sets F=1 and reloads C=0 at 0x82E236CC, bypassing object dispatch. Without output-buffer disjointness, its float stores can overwrite F/C, their inputs or saved frames. The displayed epilogue alone, with unexpanded save14/restore14 prefixes and earlier required calls, does not prove normal return or later retention. F=1,C=0 is a guarded local post-store case, not the actual later reader input.",
+                "nonzeroPointerStop": "Current C!=0 reaches unbound installed +0x60 dispatch at 0x82E23708 with r3=C,r4=SP+0x58,r5=r6=r7=0. Only after required returns and retained/reloaded receivers can installed +0x5C at 0x82E23720 and +0x54 at 0x82E23738 follow. Further object-derived calls and atomic stores remain conditional. No installed target, effect, lifetime or complete return is established, and these calls are distinct from the per-cell consumer's +0xC dispatch."
+              },
+              "joinLimit": "The actual Q-derived cell need not be among the scan's x=0..5,y=0..6 visits. The owner gate can skip the scan, prior reconciliation can consume the fields before it, mandatory calls precede its local flag store and later calls can invalidate it. Same receiver/cell address, invocation order, prior flag producer, actual C value, output disjointness and retained field bytes/lifetime are unproved. The five-body read set is not an initializer, all-writer or no-alias census. Neither a zero-field return nor a nonzero-field downstream call is selected for the actual 0x82E1F0A8 invocation.",
+              "currentEvidence": {
+                "image": "image.json#/analysisProgram",
+                "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+                "flatImageBytes": 18939904,
+                "flatImageBase": "0x82000000",
+                "titleRevision": "6cc0d8b0fca9db28d075ce931b6fa1ae677208a4",
+                "generatedReads": [
+                  {
+                    "function": "0x82E25EA8",
+                    "file": "rerevved:generated/default/rerevved_recomp.155.cpp",
+                    "headerLine": 32770,
+                    "nextHeader": "sub_82E44030",
+                    "nextHeaderLine": 33096,
+                    "spanLines": 326,
+                    "requestedLines": 190,
+                    "readWindow": [
+                      32770,
+                      32959
+                    ],
+                    "sha256": "11BE42C51B0EF2D9CA9E61DF12DE2251B3D0066BF664268A549A0413FFD0B0A0",
+                    "nativeStart": "0x82E25EA8",
+                    "nativeEnd": "0x82E25FF0",
+                    "nativeWords": 83
+                  },
+                  {
+                    "function": "0x82E25D50",
+                    "file": "rerevved:generated/default/rerevved_recomp.93.cpp",
+                    "headerLine": 31534,
+                    "nextHeader": "sub_82E2EF40",
+                    "nextHeaderLine": 31696,
+                    "spanLines": 162,
+                    "requestedLines": 162,
+                    "readWindow": [
+                      31534,
+                      31695
+                    ],
+                    "sha256": "BE319717BD05C173F79EE984A2AF1B9E7FDE4CA0B6A25B4D7ABFE873A9F24A04",
+                    "nativeStart": "0x82E25D50",
+                    "nativeEnd": "0x82E25E5C",
+                    "nativeWords": 68
+                  },
+                  {
+                    "function": "0x82E25CB8",
+                    "file": "rerevved:generated/default/rerevved_recomp.54.cpp",
+                    "headerLine": 31610,
+                    "nextHeader": "sub_82E28CB0",
+                    "nextHeaderLine": 31700,
+                    "spanLines": 90,
+                    "requestedLines": 90,
+                    "readWindow": [
+                      31610,
+                      31699
+                    ],
+                    "sha256": "49F44BCE67C9012CC702C6CB787C9EFCFD9CF07CA88D0AD4BC368D8559BF78A0",
+                    "nativeStart": "0x82E25CB8",
+                    "nativeEnd": "0x82E25D48",
+                    "nativeWords": 37
+                  },
+                  {
+                    "function": "0x82E23800",
+                    "file": "rerevved:generated/default/rerevved_recomp.70.cpp",
+                    "headerLine": 30875,
+                    "nextHeader": "sub_82E28610",
+                    "nextHeaderLine": 30970,
+                    "spanLines": 95,
+                    "requestedLines": 95,
+                    "readWindow": [
+                      30875,
+                      30969
+                    ],
+                    "sha256": "669C878F4C4C35175D572BE61099DDF961350E5A4A821A3EEE8A49E224B15EA7",
+                    "nativeStart": "0x82E23800",
+                    "nativeEnd": "0x82E2389C",
+                    "nativeWords": 40
+                  },
+                  {
+                    "function": "0x82E23460",
+                    "file": "rerevved:generated/default/rerevved_recomp.82.cpp",
+                    "headerLine": 32863,
+                    "nextHeader": "sub_82E52638",
+                    "nextHeaderLine": 33423,
+                    "spanLines": 560,
+                    "requestedLines": 560,
+                    "readWindow": [
+                      32863,
+                      33422
+                    ],
+                    "sha256": "590DCF227189694DBE80BBE026A14D1267B36B304418011C81E2E7156AFEB7A2",
+                    "nativeStart": "0x82E23460",
+                    "nativeEnd": "0x82E237FC",
+                    "nativeWords": 232
+                  }
+                ],
+                "nativeWords": 460,
+                "method": "One serialized foreground tools/run-headless.ps1 -ReadOnly query with ghidra/DumpMemoryWords.java, radius zero, covering the exact five native windows. All 460 words equal the pinned big-endian image and Capstone 5.0.7 PPC64 big-endian decoding matches every bounded generated instruction comment after numeric-format and rlwinm/slwi alias normalization. Exact own/next headers, full spans and requested counts were checked before every generated read, including verification. The owner prefix ends at a complete native instruction comment; its undisplayed C++ translation was not used. No downstream query, repair, runtime, all-writer search or existing closed inventory was repeated.",
+                "acceptedEvidence": [
+                  "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/booleanConsumer",
+                  "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/positiveDifferenceBoundary",
+                  "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/matchedEntryCallBoundary/perCellBoundary"
+                ],
+                "locators": [
+                  "ghidra/DumpMemoryWords.java:0x82E25EA8..0x82E25FF0,0x82E25D50..0x82E25E5C,0x82E25CB8..0x82E25D48,0x82E23800..0x82E2389C,0x82E23460..0x82E237FC radius=0",
+                  "generated:rerevved/sub_82E25EA8:0x82E25EA8..0x82E25FF0",
+                  "generated:rerevved/sub_82E25D50",
+                  "generated:rerevved/sub_82E25CB8",
+                  "generated:rerevved/sub_82E23800",
+                  "generated:rerevved/sub_82E23460"
+                ],
+                "reportSha256": {
+                  "producer-words": "7037D8531B5B275E4C03F760314BC020CA77FB7C1754CC2AEB754110A3C1698A"
+                },
+                "scriptSha256": {
+                  "DumpMemoryWords.java": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71"
+                }
+              },
+              "boundedResult": "One earlier conditional scan reads the same F byte and invokes a selected updater only after F is already nonzero. Its actual r9=1 prunes the local allocation/C-store arm; a guarded zero-C arm normalizes F to 1 while retaining C=0 only with explicit return/nonalias premises. Earlier consumers and unresolved producer/retention edges prevent joining that local state to the actual later per-cell reads. No downstream 0x82E1CB20 or installed consumer target was followed.",
+              "practicalRelevance": "This prevents using a generic allocation arm to name the current object, or using a later flag store to explain an earlier read. The next work needs a same-cell producer and ordered retention before choosing either consumer edge; resource assignment and yield effects remain unproved.",
+              "falsificationCondition": "A supported same-receiver/cell initializer or writer, ordered retained invocation, actual pointer/target binding or different supported-image words can revise the input boundary. A guarded local F/C pair fails if required calls mutate state, output buffers alias it or saved state is lost. No runtime memory was observed.",
+              "nextDiscriminator": "Use priorProducerBoundary/callerInputBoundary/predicateHelperBoundary/initializationBoundary for the selected storage-helper route and remaining state/import/return gates, or bind an actual old-slot entry producer on a bypass route. The separate updater route retains its 0x82E2349C -> 0x82E1EA10 then 0x82E234C8 -> 0x8234F2A8 effects/return/retention gate. Preserve closed read sets; do not choose a consumer edge from hypothetical F/C.",
+              "priorProducerBoundary": {
+                "question": "Does earlier 0x82E25F5C -> 0x82E22E28 produce the actual later per-cell +0x94 flag and +0x90 pointer, with supported effects, normal return and ordered retention?",
+                "confidence": "strong",
+                "status": "receiver-slot writes and caller r4 source bound; actual old-slot values, required targets and retained return remain unbound",
+                "scope": {
+                  "functions": [
+                    "0x82E22E28"
+                  ],
+                  "chargedBodies": 1,
+                  "functionCap": 8,
+                  "boundary": "One complete exact 930-line generated function, ending before the next header. Existing owner, matched-entry, per-cell reader and updater facts are reused without reopening their bodies. No compiler support body, callee, vtable word, installed target or closed inventory was opened. Expansion stops at unbound actual inputs and the earliest required installed dispatch, or the mandatory prefix helper if all old slots remain zero."
+                },
+                "entryAndIdentity": "After save25 at 0x82E22E2C returns with incoming arguments and required frame state retained, 0x82E22E38 creates a 240-byte frame, 0x82E22E3C captures entry r3=R in r31 and 0x82E22E44 captures entry r4=A in r26. callerInputBoundary binds both arguments at the owner call 0x82E25F5C, including the table-derived source of A; its numeric value remains unbound. This callee R is not joined to the actual later Q-derived receiver/cell. Reuse D=U32(Rlater+36*U32(7*x+y)), F=U8[D+0x94] and C=U32[D+0x90] from perCellBoundary; neither an index bound nor a current field value follows.",
+                "orderedOldSlotGate": {
+                  "first": "0x82E22E50 loads U32[R+0x704]. Its nonzero arm calls U32[U32[old704]+0xC] at 0x82E22E7C with r3=old704,r4=1. Only its returning continuation writes retained zero to current r31+0x704 at 0x82E22E80. The actual receiver, installed target, effects and normal return are unbound.",
+                  "remaining": "The subsequent current +0x708 load at 0x82E22E84 and +0x70C load at 0x82E22EA8 have the same zero-bypass/nonzero-dispatch structure: installed +0xC calls at 0x82E22EA0 and 0x82E22EC4 receive the loaded receiver and r4=1; returning continuations clear their slots at 0x82E22EA4 and 0x82E22EC8. Earlier calls can change later slots or earlier zeros. Entry-zero values alone do not select an all-zero prefix without retention.",
+                  "mandatoryPrefix": "After these arms, mandatory 0x82E22ED4 -> 0x82E228D8 receives (r3=A,r4=SP+0x54), then 0x82E22EE0 -> 0x82E22860 receives (A,SP+0x50). The two stack words initially hold 0x8314F0A8; their post-call values and every helper effect/return/retention remain unbound. callerInputBoundary supplies the owner-selected source of A; A is not established as a receiver, city or cell pointer."
+                },
+                "explicitWriteBoundary": {
+                  "receiverSlots": "The explicit receiver-slot writes are conditional clears at 0x82E22E80/+0x704, 0x82E22EA4/+0x708 and 0x82E22EC8/+0x70C, then returned-value installs at 0x82E22FE8/+0x704, 0x82E23234/+0x708 and 0x82E23410/+0x70C. The second returned value can pass through unexpanded 0x82E23220 -> 0x82E1D6E0 with r3=the preceding nonzero result,r4=current U32[R+0x6C],r5=retained A,r6=1,r7=0. This does not identify A or the returned value with actual C.",
+                  "returnedStorage": "A preceding nonzero result reaches 0x82E22FBC -> 0x82C61970; let B1 be its returned r3: stores at 0x82E22FC8/+0x6C and 0x82E22FD0/+0x70 copy retained signed halfwords from U32[R+0x6C]+0x30/+0x32; 0x82E22FD8 stores vptr value 0x821215B0 and 0x82E22FDC stores a reloaded B1+4 word OR 0x4000. A preceding nonzero result reaches 0x82E233F8 -> 0x82C5C500; let B3 be its returned r3; 0x82E23404 stores vptr value 0x82121DD0. Neither B1 nor B3 is joined to C, and no installed table word was read.",
+                  "otherStoresAndAliases": "The full body has 42 explicit native store sites, including prologue/stack stores, the receiver/result writes above and four conditional stwcx. sites at 0x82E23104,0x82E2313C,0x82E232D0,0x82E23308. The latter address +4 of a nested word loaded through current +0x704/+8 or +0x708/+8; opaque intervening calls prevent a net-zero claim. The remaining writes use stack addresses, including 0x82E23370 at SP+0x90. There is no explicit D calculation or per-cell +0x90/+0x94 access in this body. Stack +0x90 is not an established C slot. Unbound receiver/result/nested pointers, guest address wrap or frame aliases can overlap the later fields; callee effects are additional. This is not a no-writer, no-alias or all-producer census."
+                },
+                "conditionalContinuation": {
+                  "newValueDispatch": "The first installed value reaches unbound +0xB0 dispatch at 0x82E22FFC with r4=then U32[SP+0x54]. Later current +0x704 dispatches use +0x60 at 0x82E23038 and +0x54 at 0x82E230DC. The second value reaches +0x60 at 0x82E23260; the current receiver dispatches +0x6C at 0x82E2327C, followed by the saved pre-call second-value vptr +0x5C at 0x82E23290 and reloaded +0x54 at 0x82E232A8. Conditional nested zero-count arms dispatch +0x4 at 0x82E23164 and 0x82E23330. Targets, compatible receivers and effects remain unbound; neither local fixed vptr identifies the actual consumer C.",
+                  "zeroResults": "The first zero-result arm stores zero at +0x704 then still loads its first word at 0x82E22FEC for dispatch; the second stores zero at +0x708 then still loads its first word at 0x82E23254. Neither is a local null-result return bypass. The third zero arm passes zero to mandatory 0x82E23424 -> 0x82E1CFD8. No runtime fault, successful construction or normal return is inferred from these static arms.",
+                  "returnAndRetention": "Only if all mandatory/reached calls return with their used state retained, reached atomic retries terminate, accesses/targets are valid and saved frame/LR bytes survive can the visible epilogue at 0x82E2344C..0x82E23458 restore SP by 240, reload f30/f31 and enter restore25 at 0x827F7CCC. Save25/restore25 bodies were not opened; their required contracts remain premises. No explicit r3 return value is set after the last cleanup call at 0x82E23448 -> 0x821B15C0. The body alone supplies neither a complete normal-return contract nor field/lifetime retention into the later owner helpers and actual reader."
+                },
+                "joinLimit": "The accepted owner gate is conditional and passes through additional helpers before later per-cell consumption. This candidate has no explicit same-cell flag/pointer assignment. callerInputBoundary binds the supplied r4 expression, but its numeric value, old-slot values and every required opaque call effect remain unresolved. Its +0x70C install is a possible earlier input to the separate updater output path, conditional on same receiver, required returns and ordered retention; it does not establish a C-slot install. The actual F/C pair remains unbound, so no 0x82E1CB20 or installed consumer target is selected.",
+                "currentEvidence": {
+                  "image": "image.json#/analysisProgram",
+                  "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+                  "flatImageBytes": 18939904,
+                  "flatImageBase": "0x82000000",
+                  "titleRevision": "6cc0d8b0fca9db28d075ce931b6fa1ae677208a4",
+                  "generatedReads": [
+                    {
+                      "function": "0x82E22E28",
+                      "file": "rerevved:generated/default/rerevved_recomp.178.cpp",
+                      "headerLine": 33025,
+                      "nextHeader": "sub_82E74920",
+                      "nextHeaderLine": 33955,
+                      "spanLines": 930,
+                      "requestedLines": 930,
+                      "readWindow": [
+                        33025,
+                        33954
+                      ],
+                      "sha256": "4C6E3C6954A3012AEE6FEEE40C440CEE3E5DFC5D7CE6984CFE9EA89254E2A093",
+                      "nativeStart": "0x82E22E28",
+                      "nativeEnd": "0x82E23458",
+                      "nativeWords": 397
+                    }
+                  ],
+                  "nativeWords": 397,
+                  "method": "One serialized foreground tools/run-headless.ps1 -ReadOnly query with ghidra/DumpMemoryWords.java, radius zero, covering all 397 native words in the one exact function. Every word equals the pinned big-endian image; Capstone 5.0.7 PPC64 big-endian decoding matches every generated instruction comment after numeric-format and rlwinm/slwi alias normalization. Exact own/next headers, full span and requested count were checked before every generated read, including verification. No target/body expansion, repair, runtime or closed inventory was repeated.",
+                  "acceptedEvidence": [
+                    "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/matchedEntryCallBoundary/perCellBoundary",
+                    "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/matchedEntryCallBoundary/perCellInputBoundary"
+                  ],
+                  "locators": [
+                    "ghidra/DumpMemoryWords.java:0x82E22E28..0x82E23458 radius=0",
+                    "generated:rerevved/sub_82E22E28"
+                  ],
+                  "reportSha256": {
+                    "prior-producer-words": "D40A583D38821A272FF61D0800C3301D9A1E2ABA4094028293BA8BC59430F9E6"
+                  },
+                  "scriptSha256": {
+                    "DumpMemoryWords.java": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71"
+                  }
+                },
+                "boundedResult": "The exact earlier candidate manages receiver +0x704/+0x708/+0x70C slots and returned/nested storage, not an explicit per-cell +0x90/+0x94 expression. Its earliest possible old-slot dispatch and mandatory helpers are unbound. Aliases and opaque effects prevent ruling it out as a writer, but no actual same-cell producer, normal return, retained F/C pair or downstream consumer edge is proved.",
+                "practicalRelevance": "A nearby fixed vptr installer or receiver-buffer replacement cannot identify the per-cell object or explain its flag. The table-derived second argument is not an established object pointer; actual old-slot state and required call contracts still precede any resource assignment, cleanup or retained initializer interpretation. Resource policy, tile assignment and yield effects remain unproved.",
+                "falsificationCondition": "Concrete selector/table-word and old-slot values, the earliest reached installed target, complete required-call effects/returns and same-cell ordered retention, or an independently supported initializer/writer, can revise this boundary. Different supported-image words or a demonstrated alias can invalidate a local interpretation. No runtime state or execution was observed.",
+                "nextDiscriminator": "Use callerInputBoundary/nextDiscriminator for the remaining actual old-slot and optional-prefix state gates. The caller r4 expression is bound there; do not repeat the same r4-source question or infer a numeric value, pointer role or zero old slots from it. Earliest installed targets and mandatory helpers retain the contracts above.",
+                "callerInputBoundary": {
+                  "question": "What supplies actual r4 and receiver +0x704/+0x708/+0x70C state at 0x82E25F5C before selecting a required installed target?",
+                  "confidence": "strong",
+                  "status": "caller r4 source and inspected predicate-helper retention bound; numeric inputs, old-slot values and required target selection remain unresolved",
+                  "scope": {
+                    "functions": [
+                      "0x82E25EA8",
+                      "0x82E1F308"
+                    ],
+                    "chargedBodies": 2,
+                    "functionCap": 8,
+                    "boundary": "One exact 124-line owner prefix and one complete exact 66-line predicate. The owner prefix ends after the instruction comment for 0x82E25F78; its undisplayed C++ translation was not used. Reopening the owner prefix answers the r4/old-slot-state discriminator. Existing candidate, updater and per-cell contracts are reused without opening those bodies. No caller/lifecycle/writer census, vtable word, installed target or compiler support body was opened. The required predicate helper has a separate exact read set and contract in predicateHelperBoundary; old-slot producers remain unbound."
+                  },
+                  "callerArgument": {
+                    "expression": "Let R be current r31 at 0x82E25F2C. 0x82E25F2C loads P=U32[R+0x6C]. 0x82E25F3C reads U8[P], 0x82E25F40 sign-extends it to i in [-128,127], and 0x82E25F44 forms U32(4*i). 0x82E25F48 loads A=U32[U32(0x830ECD08+4*i)]. Use valid guest accesses and 32-bit effective-address arithmetic; the possible word addresses span 0x830ECB08..0x830ECF04. This arithmetic range is not a proved table extent or a bound on actual row identities. The actual selector byte, current table word and their gameplay meaning remain unbound.",
+                    "gateAndCall": "0x82E25F34 loads old=U32[R+0x700]. The signed32 comparison at 0x82E25F4C and branch at 0x82E25F50 enter only if signed32(old)<signed32(A). The reached path stores A to R+0x700 at 0x82E25F54, sets r3=R at 0x82E25F58, and calls 0x82E22E28 at 0x82E25F5C with r4=A and LR=0x82E25F60. No intervening call or instruction changes r4 after its load. At the call boundary r3 is current R and r4 is that same selected word; +0x700 contains the stored word under valid stores and no intervening external mutation. This does not prove normal return from the callee or survival of that cache word afterward. The signed gate does not prove A positive or nonzero: A=0 can pass for signed-negative old.",
+                    "prefixIndependence": "Every continuing optional-prefix arm merges before the fresh table-word load. Earlier volatile r4 values do not supply this call argument. Relating current R to the owner entry receiver still requires any earlier reached calls to retain r31 and required memory/frame state. The entry r4 source is therefore bound even though its numeric value and installed old-slot targets are not."
+                  },
+                  "ownerPrefixState": {
+                    "directBypass": "0x82E25EB8 captures owner entry r3 in r31. The +0x718 word load/test at 0x82E25EBC..0x82E25EC4 bypasses every application call in the prefix when nonzero and goes directly to 0x82E25F2C. The only explicit prefix stores before the selected call are owner prologue stack stores, the conditional +0x718 store at 0x82E25F04 and +0x700 at 0x82E25F54. The latter receiver offsets do not overlap +0x704/+0x708/+0x70C. With valid retained entry/frame state, stack storage disjoint from the three slots and no external mutation, this bypass carries each unknown entry slot word unchanged to the selected call. It supplies no zero/nonzero value, vptr or target.",
+                    "predicateFalseBypass": "For +0x718=0 at the owner check, 0x82E25EC8 -> 0x82E1F308 receives the owner receiver in r3. In that predicate, 0x82E1F314 captures r3 in r5 and 0x82E1F318..0x82E1F320 tests U8[R+0x71C]. Nonzero branches to 0x82E1F360, sets r3=0 and returns at 0x82E1F374 without an application call or receiver store. Its only stores are entrySP-8 at 0x82E1F30C and the 96-byte frame backchain at 0x82E1F310. With valid accesses, preserved saved LR/frame bytes and both frames disjoint from the old slots, this zero result branches at 0x82E25ED4 to 0x82E25F2C and retains their unknown owner-entry values. The predicate restores its SP; it does not modify r31 on this arm.",
+                    "requiredPredicateEdge": "For zero +0x71C at the predicate check, 0x82E1F324 sets r4=1 and 0x82E1F328 calls 0x82E1E5E8 with r3=the supplied receiver,r4=1. predicateHelperBoundary proves its conditional leaf return and preservation of r5, frame state and guest memory. Thus the returned-zero continuation at 0x82E1F334 uses the original R to load P2=U32[R+0x6C] and tests bit 0x80 of U32[P2+0x10] through 0x82E1F338..0x82E1F344, under the recorded valid-read and caller-frame guards. Its exact result and owner continuation are recorded there; no concrete old-slot value is supplied.",
+                    "initializationContinuation": "A nonzero predicate low byte enters the owner prefix at 0x82E25ED8. It calls 0x82D3DBA0 at 0x82E25EE8 with r3=864,r4=0x82148A40,r5=-1; initializationBoundary under predicateHelperBoundary bounds that exact route. A nonzero returned word reaches 0x82E25EF8 -> 0x82E1C778 with r4=current r31. The returned word or zero is stored at current r31+0x718 at 0x82E25F04, followed by 0x82E25F08 -> 0x82E1C500, 0x82E25F20 -> 0x82C78D68 and 0x82E25F28 -> 0x82E1C8C0. Only the DBA0 edge has the new bounded read set; the other listed targets remain unopened. Explicit +0x718 operations do not prove old-slot initialization, complete return or retained receiver/frame/field/lifetime state."
+                  },
+                  "selectionBoundary": "The direct bypass and inspected predicate-zero routes retain unknown owner-entry old-slot words under their stated caller-prologue/frame guards; predicateHelperBoundary covers the additional lookup-backed zero route. Predicate-one initialization still crosses unexpanded calls whose effects can change those words. No concrete +0x704/+0x708/+0x70C producer or value was established, and no slot is assumed null. Binding r4 to its selected word does not decide the sequential callee slot checks or bind per-cell F/C. Carrying a call-boundary slot value into those reads still requires accepted save25/argument/frame/memory premises. No installed target, complete candidate return, lifetime or ordered same-cell join is selected.",
+                  "currentEvidence": {
+                    "image": "image.json#/analysisProgram",
+                    "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+                    "flatImageBytes": 18939904,
+                    "flatImageBase": "0x82000000",
+                    "titleRevision": "6cc0d8b0fca9db28d075ce931b6fa1ae677208a4",
+                    "generatedReads": [
+                      {
+                        "function": "0x82E25EA8",
+                        "file": "rerevved:generated/default/rerevved_recomp.155.cpp",
+                        "headerLine": 32770,
+                        "nextHeader": "sub_82E44030",
+                        "nextHeaderLine": 33096,
+                        "spanLines": 326,
+                        "requestedLines": 124,
+                        "readWindow": [
+                          32770,
+                          32893
+                        ],
+                        "sha256": "11BE42C51B0EF2D9CA9E61DF12DE2251B3D0066BF664268A549A0413FFD0B0A0",
+                        "nativeStart": "0x82E25EA8",
+                        "nativeEnd": "0x82E25F78",
+                        "nativeWords": 53
+                      },
+                      {
+                        "function": "0x82E1F308",
+                        "file": "rerevved:generated/default/rerevved_recomp.124.cpp",
+                        "headerLine": 32492,
+                        "nextHeader": "sub_82E22C50",
+                        "nextHeaderLine": 32558,
+                        "spanLines": 66,
+                        "requestedLines": 66,
+                        "readWindow": [
+                          32492,
+                          32557
+                        ],
+                        "sha256": "9EA70321CE06608D867DCD4B270109274222B8F7C373E8455BD8D71A591ABFCF",
+                        "nativeStart": "0x82E1F308",
+                        "nativeEnd": "0x82E1F374",
+                        "nativeWords": 28
+                      }
+                    ],
+                    "nativeWords": 81,
+                    "method": "One serialized foreground tools/run-headless.ps1 -ReadOnly query with ghidra/DumpMemoryWords.java, radius zero, covering the exact 53-word owner prefix and complete 28-word predicate. All 81 words equal the pinned big-endian image and Capstone 5.0.7 PPC64 big-endian decoding matches every generated instruction comment after numeric-format and rlwinm/slwi alias normalization. Exact own/next headers, full spans and requested counts were checked before every generated read, including verification. The owner prefix final instruction translation was not displayed or used. No target, lifecycle/writer census, repair or runtime expansion was performed.",
+                    "acceptedEvidence": [
+                      "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/matchedEntryCallBoundary/perCellInputBoundary",
+                      "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/matchedEntryCallBoundary/perCellInputBoundary/priorProducerBoundary"
+                    ],
+                    "locators": [
+                      "ghidra/DumpMemoryWords.java:0x82E25EA8..0x82E25F78,0x82E1F308..0x82E1F374 radius=0",
+                      "generated:rerevved/sub_82E25EA8:0x82E25EA8..0x82E25F78",
+                      "generated:rerevved/sub_82E1F308"
+                    ],
+                    "reportSha256": {
+                      "caller-state-words": "A688E80B740D0BB231AAFD5332A58F64BFEB117B963F5BFD0DEB35477267E631"
+                    },
+                    "scriptSha256": {
+                      "DumpMemoryWords.java": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71"
+                    }
+                  },
+                  "boundedResult": "At the reached owner call, r3 is the current receiver and r4 is the freshly selected table word also stored to receiver +0x700. Guarded bypasses preserve unknown old-slot entry values; predicateHelperBoundary extends that contract through the inspected lookup-backed predicate-zero arm. Neither result establishes actual zeros, installed objects or targets. Predicate-one initialization and concrete old-slot state remain unresolved.",
+                  "practicalRelevance": "The second argument is a selected word rather than an arbitrary surviving volatile argument; it must not be treated as a city/object pointer without a separate identity proof. Preserving an unknown old slot does not make it null. These distinctions prevent selecting cleanup, resource assignment or a downstream per-cell branch from assumed state.",
+                  "falsificationCondition": "Different supported-image words, a concrete current selector/table-word or old-slot producer, an alias into either saved frame or old slots, or a supported required-call effect/return/retention contract can revise the boundary. No actual runtime memory, invocation or resource/yield effect was observed.",
+                  "nextDiscriminator": "The r4-source and lookup-retention questions are closed under their guards. Use predicateHelperBoundary/initializationBoundary for the selected predicate-one storage-helper state/import/return gates. A bypass still requires concrete old-slot entry values and retained invocation before choosing installed targets. Numeric inputs and actual fields remain unbound; do not select them from hypothetical state.",
+                  "predicateHelperBoundary": {
+                    "question": "What effects, normal-return conditions and r5/frame/memory retention does 0x82E1F328 -> 0x82E1E5E8(R,1) establish on the zero +0x718/+0x71C arm?",
+                    "confidence": "strong",
+                    "status": "conditional leaf return, register/frame/memory preservation and retained predicate continuation bound; actual collection/old-slot values and complete initialization remain unproved",
+                    "scope": {
+                      "functions": [
+                        "0x82E1E5E8"
+                      ],
+                      "chargedBodies": 1,
+                      "functionCap": 8,
+                      "boundary": "One complete exact 56-line generated leaf. Accepted owner, predicate, candidate and per-cell contracts are reused without reopening those bodies. No caller/callee expansion, writer census, table word, installed target or compiler support body was opened. The selected helper edge is closed; expansion stops at the separate old-slot producer or predicate-one initialization effect boundary."
+                    },
+                    "selectedInputs": "The accepted zero +0x718 owner arm invokes the predicate; its zero +0x71C arm sets r5=R before the selected helper and supplies r3=R,r4=1, LR=0x82E1F32C at 0x82E1F328. Conditions refer to values at their actual checks after caller prologue stores. Neither the collection pointers nor object tags, old slots or row word are observed values.",
+                    "lookup": {
+                      "rangeAndIndex": "0x82E1E5E8 captures B0=U32[R+0x6A8] in r8; 0x82E1E5EC/0x82E1E5F0 initialize i=0 and byte offset=0. Each guard at 0x82E1E5F4..0x82E1E60C first exits if captured B0=0, otherwise loads current E=U32[R+0x6AC] and forms n=U32(S32(U32(E-B0))>>2). It compares i and n unsigned and exits when i>=n. This is arithmetic right shift of the signed low-word difference, not an unsigned span division. A signed-negative difference yields a large unsigned count, not an empty range; extent, alignment and validity are not established.",
+                      "elementAndMatch": "At 0x82E1E610..0x82E1E620, current B=U32[R+0x6A8] supplies P=U32[U32(B+4*i)] and then U32[P+0x8] is compared with low32(r4)=1. There is no null-P bypass before the +0x8 read. A mismatch increments i at 0x82E1E624 and byte offset by four at 0x82E1E628, then loops at 0x82E1E62C. Addresses and offset use guest low-32-bit arithmetic; a large count can wrap element addresses.",
+                      "returnsAndReload": "A guard exit sets r3=0 at 0x82E1E640 and returns at 0x82E1E644. An equality branches to 0x82E1E630, reloads the current base, forms U32(4*i) at 0x82E1E634, reloads the selected pointer into r3 at 0x82E1E638 and returns at 0x82E1E63C. With stable relevant memory this is the first matching slot pointer. Without that stability, neither the returned pointer nor its tested tag is retained across the reload. Even with stable memory, a matching zero pointer can return zero if the unguarded U32[0x8] read validly equals 1. A zero return alone therefore does not prove absence of a matching tag or establish a nonnull-entry invariant."
+                    },
+                    "effectsAndReturn": {
+                      "writes": "All 24 native words contain no store, call, stack adjustment or LR write. Written GPRs are r3,r6,r7,r8,r9,r10,r11; CR6 and the srawi carry state can change. r4,r5,r1/SP,r12,r31 and entry LR are not written. On ordinary readable guest storage, no guest memory, caller saved-frame byte or receiver field is changed by this helper, even if its read addresses alias them. This is an instruction-level effect proof, not an ABI assumption or a claim that other execution cannot mutate memory.",
+                      "termination": "Each mismatch increases low32(i) by one; no instruction resets it inside the loop. Every guard count is at most 0xFFFFFFFF. At i=0xFFFFFFFF the unsigned i>=n test must exit before another increment, even if current end words vary between guards. Thus at most 0xFFFFFFFF element tests can be reached before a match or guard exit, provided each reached instruction/read completes and control follows the inspected code. With stable inputs and count n, at most n element tests are reached. This finite bound does not establish readable storage or practical completion time for malformed counts.",
+                      "normalReturnAndRetention": "If all reached receiver, element, tag and match-reload accesses are valid ordinary guest-memory reads and complete, control is unmodified, and the entry return address is valid, the finite loop reaches one of the two blr sites. It returns to helper entry LR=0x82E1F32C with entry SP, r5, r31 and r12 unchanged; its return r3 follows the exact branches above. Saved frames, +0x704/+0x708/+0x70C and all other guest bytes are unchanged by the helper. Equating before/after memory observations also requires no external mutation; no actual runtime return, access validity, invocation or lifetime was observed."
+                    },
+                    "retainedCallerJoin": {
+                      "predicate": "Reuse the accepted predicate body: r5 was set to R and now is proved retained across this helper. A nonzero helper return goes directly to predicate result 1 without reading the row word. A zero helper return reaches 0x82E1F334 with r5=R, reads P2=U32[R+0x6C] and U32[P2+0x10], and returns 1 if bit 0x80 is set or 0 if clear. These fallback accesses must be valid; preserved pointer registers do not themselves prove pointee validity. Under retained saved LR/frame state, the predicate restores its 96-byte frame and returns to the owner with r31 unchanged. No volatile-r5-retention assumption remains for this exact helper.",
+                      "oldSlotsAndOwner": "For the checked +0x718=0,+0x71C=0 arm, helper r3=0 followed by a clear row-word bit 0x80 makes the predicate return 0 and bypass owner initialization at 0x82E25ED4 to 0x82E25F2C. With valid reads, protected caller frames, owner/predicate prologue store ranges disjoint from the three old slots and no external mutation, each slot at the reached 0x82E25F5C call retains its unknown owner-entry word. The helper adds no store/nonalias requirement of its own. This extends the existing direct and immediate-predicate-zero bypasses; it does not establish a zero slot or a prior initializer. Reaching 0x82E25F5C also requires the accepted signed table-word comparison gate.",
+                      "initializationStop": "A nonzero helper return, or zero return followed by a set fallback bit, returns predicate 1 and enters owner initialization. The selected 0x82E25EE8 -> 0x82D3DBA0(864,0x82148A40,-1) route is bounded in initializationBoundary. Actual shared/context state, full helper return and owner/frame/slot retention remain unresolved there; the subsequent accepted initialization calls remain unopened. No installed +0xC target is selected, and the independently bound later table-word r4 source does not close these effects or old-slot values."
+                    },
+                    "currentEvidence": {
+                      "image": "image.json#/analysisProgram",
+                      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+                      "flatImageBytes": 18939904,
+                      "flatImageBase": "0x82000000",
+                      "titleRevision": "6cc0d8b0fca9db28d075ce931b6fa1ae677208a4",
+                      "generatedReads": [
+                        {
+                          "function": "0x82E1E5E8",
+                          "file": "rerevved:generated/default/rerevved_recomp.226.cpp",
+                          "headerLine": 33311,
+                          "nextHeader": "sub_82E21838",
+                          "nextHeaderLine": 33367,
+                          "spanLines": 56,
+                          "requestedLines": 56,
+                          "readWindow": [
+                            33311,
+                            33366
+                          ],
+                          "sha256": "54838E48692B908823F6DBCE341AAA27E2E9B9F9BD971818F649DFD7D58254A3",
+                          "nativeStart": "0x82E1E5E8",
+                          "nativeEnd": "0x82E1E644",
+                          "nativeWords": 24
+                        }
+                      ],
+                      "nativeWords": 24,
+                      "method": "One serialized foreground tools/run-headless.ps1 -ReadOnly query with ghidra/DumpMemoryWords.java, radius zero, covering all 24 words of the exact helper. All words equal the pinned big-endian image; Capstone 5.0.7 PPC64 big-endian decoding matches every bounded generated instruction comment after numeric-format and rlwinm/slwi alias normalization. Exact own/next headers, full span and requested count were checked before every generated read, including verification. No other body, target, census, repair or runtime was opened.",
+                      "acceptedEvidence": [
+                        "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/matchedEntryCallBoundary/perCellInputBoundary/priorProducerBoundary/callerInputBoundary"
+                      ],
+                      "locators": [
+                        "ghidra/DumpMemoryWords.java:0x82E1E5E8..0x82E1E644 radius=0",
+                        "generated:rerevved/sub_82E1E5E8"
+                      ],
+                      "reportSha256": {
+                        "predicate-helper-words": "4DEABE33DBE50CFE3058325CE45A76C51478DAC9792924CC61586591EDE3B24B"
+                      },
+                      "scriptSha256": {
+                        "DumpMemoryWords.java": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71"
+                      }
+                    },
+                    "boundedResult": "The selected lookup is a store-free leaf with conditional finite-loop return and instruction-proved preservation of r5, frame state and all guest memory. Its zero-result caller fallback uses the original receiver; a clear fallback bit adds a guarded old-slot-retaining bypass. Numeric collection/return values, actual old slots, initialization effects, installed targets and the later per-cell join remain unresolved.",
+                    "practicalRelevance": "The predicate can now use its original receiver after the lookup without relying on a volatile-register convention. The helper cannot initialize or clear the old slots through its own instructions. Retaining those unknown words still cannot select a cleanup target or explain resource assignment, tile policy or yields.",
+                    "falsificationCondition": "Different supported-image words, invalid/incomplete reads, modified control/return state or external memory mutation can invalidate a return or retained-value premise. Concrete collection/tag, row-word and old-slot producer evidence can refine the guarded caller branch. No runtime memory or gameplay execution was observed.",
+                    "nextDiscriminator": "The lookup effect/return/r5-retention edge is closed under its guards. Use initializationBoundary/nextDiscriminator for the selected predicate-one storage-helper state and required effects/returns. On predicate-zero bypasses, bind an actual same-receiver old-slot entry producer and ordered retention before selecting installed +0xC targets. Actual collection/row inputs choose the predicate outcome; no outcome or target is selected from hypothetical values.",
+                    "initializationBoundary": {
+                      "question": "What effects, normal-return conditions and owner/frame/+0x704/+0x708/+0x70C retention can be proved for 0x82E25EE8 -> 0x82D3DBA0(864,0x82148A40,-1)?",
+                      "confidence": "strong",
+                      "status": "selected size/fallback route, guarded global initialization and local write families bound; actual state, full return and owner/frame/slot retention remain unresolved",
+                      "scope": {
+                        "functions": [
+                          "0x82D3DBA0",
+                          "0x82D3DA78",
+                          "0x827F57E0",
+                          "0x82812B20",
+                          "0x82811658"
+                        ],
+                        "chargedBodies": 5,
+                        "functionCap": 8,
+                        "boundary": "Four complete exact functions and one 200-line manager prefix. The final prefix line is the complete native instruction comment at 0x828117C8; its C++ translation was not displayed or used. Accepted owner/predicate/candidate contracts and save28/restore28 suffixes are reused without body reads. Save22 remains an explicit unproved premise. No global/heap value, imported implementation, support body, pool-constructor body, local suffix or closed inventory was opened. Expansion stops at actual global/context state, required error/import bindings and out-of-prefix local edges."
+                      },
+                      "entryAndSizeRoute": {
+                        "ownerAndFrame": "At this call r3=864, not the owner pointer; the owner is incoming r31. 0x82D3DBA4 saves low32 LR at entry S-8, 0x82D3DBA8 saves incoming r31 at S-16, and 0x82D3DBAC creates the 96-byte frame at S-96. 0x82D3DBB0 overwrites live r31 with 864. The saved owner bits and their pointee fields/lifetime are separate retention requirements.",
+                        "requiredPrefixAndPruning": "0x82D3DBB4 first requires 0x82D3DA78. On its normal return with saved size retained, a zero result branches at 0x82D3DBBC to fallback. A nonzero result reaches the aligned-size computation 0x82D3DBD8..0x82D3DBE4: 864/4-1=215, and signed 215>=66 also selects fallback. Thus both returned-result cases reach 0x82D3DC34 -> 0x827F57E0 with r3 reset to 864 at 0x82D3DC30. The generic small-pool 0x82D3DC18 -> 0x82D2E7A8 path is pruned for this retained size; its body was not opened. Original r4/r5 need not survive the prefix and are not the later manager flags/size arguments.",
+                        "localReturn": "Only after fallback normal return and protected saved-state retention can 0x82D3DC38..0x82D3DC48 restore S, reload caller LR and owner r31, and return the fallback r3 to 0x82E25EEC. This visible epilogue is not a full return, allocated-identity or unchanged-pointee proof."
+                      },
+                      "sharedPrefix": {
+                        "stateAndLeafCases": "0x82D3DA8C reads D=U8[0x8314F076]. D!=0 goes through 0x82D3DB14 to return zero. Otherwise 0x82D3DA9C reads G=U32[0x83156314]: unsigned G>1 returns G, G==1 returns zero, and G==0 enters initialization. No actual D/G value was observed. The nonrecursive cases only write their own three prologue save/backchain slots and restore entry SP/LR/r31 through 0x82D3DB18..0x82D3DB28, under ordinary valid protected-frame conditions.",
+                        "recursiveArm": "For D=0,G=0, 0x82D3DAB8 stores 1 to G before 0x82D3DACC -> 0x82D3DBA0(143540,0x82148A40,-1). With that sentinel protected from frame/global aliases and external mutation, recursive DA78 returns zero without another initialization recursion. Retained size143540 also prunes the small-pool path because 143540/4-1=35884>=66. Recursive fallback return remains unresolved; the sentinel is not proof of completed or thread-safe initialization.",
+                        "postRecursiveWrites": "If recursive DBA0 returns zero, 0x82D3DAFC stores zero to G and the 0x82D3DB00..0x82D3DB10 epilogue returns zero. A nonzero returned word B instead requires 0x82D3DADC -> 0x82D2EAF0(B,4096); after its required return and retained global base, 0x82D3DAE0 stores returned word C to G and 0x82D3DAE4..0x82D3DAF4 returns C. No EAF0 effect, valid object, nonzero C, lifetime or complete return is established. DA78 frame writes at 0x82D3DA7C/80/84 and G writes at 0x82D3DAB8/DAE0/DAFC can alias protected owner/slot/frame storage unless disjointness is established."
+                      },
+                      "fallbackAndGetter": {
+                        "frameAndSelectedSize": "0x827F57E4 enters accepted save28, saving r28..r31 and caller LR in [T-0x28,T-4); 0x827F57E8 creates a 128-byte frame. Under that accepted argument-preservation contract, r30 captures N. N=864 and recursive N=143540 pass the unsigned N<=0xFFFFF000 guard and do not enter the oversize branch at 0x827F5884. This is a size guard, not an allocation or access-validity guarantee.",
+                        "currentContext": "The exact getter 0x82812B20..0x82812B28 is a store-free leaf returning current U32[0x831580F8] in r3, clobbering r11 but preserving entry SP/LR/r31 and ordinary guest memory. Fallback calls it at 0x827F5800 and again at 0x827F5830. The two observations H0/H are equal only with retained global memory; error calls between them can also change that word. No current context value or writer was bound.",
+                        "nullFirstContext": "If H0=0, 0x827F580C -> 0x827FE350 is the first unexpanded required error edge. Only after its normal return can 0x827F5814 -> 0x827FE308(30), then 0x827F581C -> 0x827F4000(255), precede the common second getter. Neither labels nor the continuing code prove those calls return. A nonzero H0 bypasses them.",
+                        "managerCall": "After the second getter, 0x827F5834 sets r4=0, 0x827F5838 supplies r5=N, and 0x827F583C calls 0x82811658 with (H,0,N). The actual call arguments therefore differ from the outer hint/-1 registers. A null or invalid H is not locally repaired before the manager prefix H+0x14 read.",
+                        "failureRetryAndWrites": "Conditional on manager return and retained live state, a nonzero M is returned through 0x827F587C/0x827F58A0. If M=0, 0x827F5848 reads Q=U32[0x82FA180C]. Q!=0 requires 0x827F585C -> 0x82801348(N); a nonzero answer retries at 0x827F5800, so repeated failures/retry answers have no proved termination. Q=0 calls 0x827F6910 at 0x827F586C and stores 12 through its result at 0x827F5870. Both Q=0 and a zero retry answer then call 0x827F6910 at 0x827F5874 and store 12 through that result at 0x827F5878. The returned addresses, equality, validity and aliases are unbound. The separate store at 0x827F589C belongs to the pruned oversize arm. A terminating zero-tested-result path returns the captured r29 if it survives the later calls; this read set does not establish its complete return bit pattern.",
+                        "conditionalRestoration": "0x827F58A0 adds 128 to SP and 0x827F58A4 enters accepted restore28 at 0x827F7CD8. The accepted suffix reloads r28..r31 and LR without changing r3/r4, conditional on protected matching slots and valid frame state. Descendant calls, retry termination and slot preservation remain requirements; this is not a proof of allocator completion."
+                      },
+                      "managerPrefix": {
+                        "entryPremise": "At 0x8281165C, save22 at 0x827F7C70 is required. Its body/argument/frame/write contract was not opened or accepted in this read set. After its returning preservation premise, 0x82811660..0x82811670 create a 320-byte frame U and capture H,flags0,N in r30,r29,r25. Prefix interpretations below also require any reached imports to retain their subsequently used state. No complete manager body or epilogue was read.",
+                        "firstImportGate": "0x82811674 reads U32[H+0x14]. Bit 0x40000 set requires 0x82811698 -> 0x82E92D14, generated label __imp__KeGetCurrentProcessType. Then U8[H+0x17B] is compared with its returned value; mismatch requires 0x828116BC -> 0x82E92D04, label __imp__KeBugCheckEx, with (244,H,U32[U+312],1459,N). The clear-bit route skips this pair. The image/generated labels do not establish imported implementation, return or effects, and a continuing BugCheckEx arm still requires an actual normal return.",
+                        "secondImportGate": "At 0x828116C0..0x828116F4, U32[H+0x18] is ORed with input flags0 and its low bit is tested. A clear low bit loads U32[H+0x580] and requires 0x828116FC -> 0x82E922D4, generated label __imp__RtlEnterCriticalSection, with that loaded word as r3. The later lock-marker store at U+104 requires its normal return. A set low bit bypasses this import; neither actual flag nor loaded receiver is bound.",
+                        "sizeAndLocalEdges": "For retained N=864, the arithmetic at 0x828116DC..0x828116E8 yields P=(864+31)&~15=880 and class K=55. With used registers retained, the K>=128 edge is bypassed and the head becomes L=U32(H+8*(55+48))=U32(H+0x338). U32[L]==L takes 0x82811728 -> 0x828117D0 outside the prefix. For recursive N=143540, P=143568,K=8973 instead takes 0x82811710 -> 0x82811914 outside the prefix. Neither local suffix was opened.",
+                        "conditionalLocalWrites": "For the class55 nonempty-head route, B=U32[L+4]-8 supplies a candidate and saved b=U8[B+5]. Let V=U32[B+8],W=U32[B+12],x=U32[W],y=U32[V+4],p=U32(B+8). The packed comparison at 0x82811764/68 allows unlink writes only if x=y=p: 0x8281176C stores V to W and 0x82811774 stores W to V+4. If additionally V==W, 0x8281179C XOR-toggles one bit in U32[H+4*((U16[B]>>5)+88)]; this is not an unconditional clear. Both consistency outcomes converge at 0x828117A0. Under retained state, 0x828117B0 decrements U32[H+0x30] by55, 0x828117B8 stores (b&0x10)|1 to B+5, and 0x828117C4 stores P-N=16 to B+6 if the saved P was not aliased. Stack saves occur at U+80/+88/+92/+100/+104/+124/+128. The final decoded word 0x828117C8 is stb r24,7(r11): with retained r24=0,r11=B it writes zero at B+7. That final effect is native-instruction evidence only; its undisplayed C++ translation was not used. These are conditional local writes, not a complete manager footprint or return proof; the write addresses can alias later inputs, owner or saved frames."
+                      },
+                      "retentionBoundary": "Known local saves/restores protect pointer register bits only when their actual stack bytes, SP and required LR values survive. The outer owner R is saved at S-16; local wrappers mostly use size/global/context values rather than dereferencing R. This does not make owner fields read-only: G, helper-returned error addresses, context counters, link words, bitmap storage, candidate bytes and unknown descendants can alias the owner, +0x704/+0x708/+0x70C, saved frames or one another. The manager save22 footprint and full return are unproved. Full normal return requires all reached recursive/helper/import calls to return, retries to terminate, valid accesses/control, retained used registers and protected matching frames. No nonzero/valid allocated identity, field/lifetime retention, unchanged old-slot words, complete cache join, resource assignment or yield effect is established.",
+                      "currentEvidence": {
+                        "image": "image.json#/analysisProgram",
+                        "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+                        "flatImageBytes": 18939904,
+                        "flatImageBase": "0x82000000",
+                        "titleRevision": "6cc0d8b0fca9db28d075ce931b6fa1ae677208a4",
+                        "generatedReads": [
+                          {
+                            "function": "0x82D3DBA0",
+                            "file": "rerevved:generated/default/rerevved_recomp.221.cpp",
+                            "headerLine": 30225,
+                            "nextHeader": "sub_82D437D0",
+                            "nextHeaderLine": 30324,
+                            "spanLines": 99,
+                            "requestedLines": 99,
+                            "readWindow": [
+                              30225,
+                              30323
+                            ],
+                            "sha256": "76D253860CD038272661BAF1885FD50C43706BCBB58391DC889C523FFEA29DC8",
+                            "nativeStart": "0x82D3DBA0",
+                            "nativeEnd": "0x82D3DC48",
+                            "nativeWords": 43
+                          },
+                          {
+                            "function": "0x82D3DA78",
+                            "file": "rerevved:generated/default/rerevved_recomp.90.cpp",
+                            "headerLine": 29463,
+                            "nextHeader": "sub_82D42C80",
+                            "nextHeaderLine": 29565,
+                            "spanLines": 102,
+                            "requestedLines": 102,
+                            "readWindow": [
+                              29463,
+                              29564
+                            ],
+                            "sha256": "D0BAC22DE84ECB6502AD476AB78BFAC0ABD2A688CDD456CDCCFA68FE0AE07DE9",
+                            "nativeStart": "0x82D3DA78",
+                            "nativeEnd": "0x82D3DB28",
+                            "nativeWords": 45
+                          },
+                          {
+                            "function": "0x827F57E0",
+                            "file": "rerevved:generated/default/rerevved_recomp.108.cpp",
+                            "headerLine": 15922,
+                            "nextHeader": "sub_827FA6C0",
+                            "nextHeaderLine": 16051,
+                            "spanLines": 129,
+                            "requestedLines": 129,
+                            "readWindow": [
+                              15922,
+                              16050
+                            ],
+                            "sha256": "3C4EDDA002B075524322BB2B6C26A65EBFB6F070A91A403C8299BBA86EB3D586",
+                            "nativeStart": "0x827F57E0",
+                            "nativeEnd": "0x827F58A4",
+                            "nativeWords": 50
+                          },
+                          {
+                            "function": "0x82812B20",
+                            "file": "rerevved:generated/default/rerevved_recomp.114.cpp",
+                            "headerLine": 16280,
+                            "nextHeader": "sub_82813638",
+                            "nextHeaderLine": 16290,
+                            "spanLines": 10,
+                            "requestedLines": 10,
+                            "readWindow": [
+                              16280,
+                              16289
+                            ],
+                            "sha256": "D32DB1353F22F0D9CDE0E4D59BFDC320F3BC08521E08D6E7E2FAC1C03F542915",
+                            "nativeStart": "0x82812B20",
+                            "nativeEnd": "0x82812B28",
+                            "nativeWords": 3
+                          },
+                          {
+                            "function": "0x82811658",
+                            "file": "rerevved:generated/default/rerevved_recomp.97.cpp",
+                            "headerLine": 16470,
+                            "nextHeader": "sub_82888D20",
+                            "nextHeaderLine": 17631,
+                            "spanLines": 1161,
+                            "requestedLines": 200,
+                            "readWindow": [
+                              16470,
+                              16669
+                            ],
+                            "sha256": "48F3F35686D2AC61BAEC85046C6BCC9FE7A51E67E0460BFE66B3473C7D91D495",
+                            "nativeStart": "0x82811658",
+                            "nativeEnd": "0x828117C8",
+                            "nativeWords": 93
+                          }
+                        ],
+                        "nativeWords": 234,
+                        "method": "One serialized foreground tools/run-headless.ps1 -ReadOnly query with ghidra/DumpMemoryWords.java, radius zero, covering the exact five native windows. All 234 words equal the pinned big-endian image and Capstone 5.0.7 PPC64 big-endian decoding matches every generated instruction comment after numeric formatting, exact rlwinm/slwi/srwi rotate-mask aliases and repeated-source or./mr. normalization. Each generatedReads.sha256 hashes the entire named generated source file; readWindow bounds the displayed excerpt. Own/next headers, full spans and requested counts were checked before every generated read, including verification. The manager final native word was verified; its C++ translation was not displayed or used. No actual heap/global state, import implementation, repair or runtime was inspected.",
+                        "acceptedEvidence": [
+                          "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/matchedEntryCallBoundary/perCellInputBoundary/priorProducerBoundary/callerInputBoundary",
+                          "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/matchedEntryCallBoundary/perCellInputBoundary/priorProducerBoundary/callerInputBoundary/predicateHelperBoundary",
+                          "ai-stat-choice.json#/setupReturnBoundary/prologueAndRetention/enteredSaveSuffix",
+                          "ai-stat-choice.json#/setupReturnBoundary/nullReceiverReturn/restore"
+                        ],
+                        "acceptedSuffixUse": "Only the entered save28/restore28 subranges 0x827F7C88..0x827F7C9C and 0x827F7CD8..0x827F7CF0 are reused. No new support body was displayed, and no save22 contract is inferred from them.",
+                        "locators": [
+                          "ghidra/DumpMemoryWords.java:0x82D3DBA0..0x82D3DC48,0x82D3DA78..0x82D3DB28,0x827F57E0..0x827F58A4,0x82812B20..0x82812B28,0x82811658..0x828117C8 radius=0",
+                          "generated:rerevved/sub_82D3DBA0",
+                          "generated:rerevved/sub_82D3DA78",
+                          "generated:rerevved/sub_827F57E0",
+                          "generated:rerevved/sub_82812B20",
+                          "generated:rerevved/sub_82811658:0x82811658..0x828117C8"
+                        ],
+                        "reportSha256": {
+                          "initialization-words": "9BAFD479D445A638D962BF7225BAC45A16A7F719D4CD8302DFFF0D5A99A83AEA"
+                        },
+                        "scriptSha256": {
+                          "DumpMemoryWords.java": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71"
+                        }
+                      },
+                      "boundedResult": "With required prefix return and saved-size retention, the actual 864 input selects the generic fallback regardless of the prefix return word; it cannot take the small-pool call. Guarded global recursion, explicit write families and the exact current-context getter are bound. Actual global/context values, required error/import/helper contracts, retry termination, manager suffix return and nonalias saved-state retention remain unresolved, so full owner/frame/old-slot retention is not proved.",
+                      "practicalRelevance": "This generic storage path does not identify a city-resource object. A local return-register restoration cannot substitute for proving that heap/error/global writes leave the owner, saved frames and old slots intact. The next work needs concrete state and binding evidence rather than another read of the size wrapper; resource policy and yields remain unproved.",
+                      "falsificationCondition": "Different supported-image words, modified control, invalid accesses, external/global mutation or a demonstrated alias can invalidate a local state/return premise. Actual D/G/context values, an accepted context producer and the required imported/error/constructor effects can refine the route. No runtime state, successful allocation or executed initialization was observed.",
+                      "nextDiscriminator": "Use globalStateBoundary for the stored-image values and closed reference/raw-store models. A selected-call D/G/H value still needs an exact producer or initializer through an uncovered form, its ordered invocation before the relevant reads, and retained storage, or independent call-boundary value evidence. Image zeros do not select an actual prefix, error, import or local edge. Preserve the conditional recursive EAF0, null-context error, manager flags/import/save22 and local-suffix gates above. Actual old-slot entry production is a separate bypass-route question.",
+                      "globalStateBoundary": {
+                        "question": "Can stored-image values and bounded writer searches bind D=U8[0x8314F076], G=U32[0x83156314] and H=U32[0x831580F8] at the selected initialization/fallback reads before choosing a required descendant edge?",
+                        "confidence": "strong",
+                        "status": "stored-image zeros and narrow search results bound; required actual writer/order/retention remains unresolved, so no descendant edge is selected",
+                        "scope": {
+                          "globals": [
+                            "0x8314F076",
+                            "0x83156314",
+                            "0x831580F8"
+                          ],
+                          "functions": [
+                            "0x82D3DA78"
+                          ],
+                          "chargedBodies": 1,
+                          "functionCap": 8,
+                          "generatedBodiesOpened": 0,
+                          "boundary": "One function is conservatively charged for the isolated raw materializer/store words at 0x82D3DA98/0x82D3DAB8. Its ownership and sentinel effect reuse the accepted initializationBoundary without reopening its body. Reference metadata, exact data words and one capped raw-store model are the new read set. No other function, generated body, prior H search, required error/import implementation, caller census or local suffix was opened. Discovery stopped at an unresolved actual producer and ordering gate."
+                        },
+                        "imageValues": {
+                          "D": {
+                            "address": "0x8314F076",
+                            "bytes": 1,
+                            "fileOffset": 18149494,
+                            "storedValue": "0x00",
+                            "wordCheck": "0x8314F074 byte index 2"
+                          },
+                          "G": {
+                            "address": "0x83156314",
+                            "bytes": 4,
+                            "fileOffset": 18178836,
+                            "storedValue": "0x00000000"
+                          },
+                          "H": {
+                            "address": "0x831580F8",
+                            "bytes": 4,
+                            "fileOffset": 18186488,
+                            "acceptedValue": "xbox-network-message-root.json#/turnAndSyncAnchors/case55/case53Producers/stackObjectTable/sharedLeadingHelper/fallback/valueSource/global",
+                            "corroboration": "The queried word and pinned flat-image bytes match the accepted stored zero."
+                          },
+                          "qualification": "These are bytes in the supported flat artifact, not selected-call contents or proof that a loader mapped them unchanged. No ordering, earlier initializer, writer, alias exclusion or retained value was established. The H stored-zero and earlier search qualifications remain owned by the accepted valueSource/global record."
+                        },
+                        "referenceModel": {
+                          "script": "ghidra/DumpReferences.java",
+                          "targets": [
+                            "0x8314F076",
+                            "0x83156314"
+                          ],
+                          "referenceCounts": [
+                            0,
+                            0
+                          ],
+                          "qualification": "This configured reference model omits accepted D/G reads at 0x82D3DA8C/0x82D3DA9C and G stores at 0x82D3DAB8/0x82D3DAE0/0x82D3DAFC. Its empty result cannot establish no accesses, no writers or retained zero values. The earlier H reference/scalar/aligned-value searches were reused, not repeated."
+                        },
+                        "rawStoreModel": {
+                          "script": "ghidra/FindRawGlobalStoreCandidates.java",
+                          "targets": [
+                            "0x8314F076",
+                            "0x83156314",
+                            "0x831580F8"
+                          ],
+                          "memory": "Aligned words in initialized executable memory; high and store words must lie within the same memory block.",
+                          "forms": [
+                            "lis",
+                            "stw",
+                            "stwu",
+                            "stb",
+                            "stbu",
+                            "sth",
+                            "sthu"
+                          ],
+                          "lookaheadWords": 8,
+                          "candidateCap": 32,
+                          "candidates": 1,
+                          "matchesByGlobal": {
+                            "0x8314F076": 0,
+                            "0x83156314": 1,
+                            "0x831580F8": 0
+                          },
+                          "truncated": false,
+                          "cancelled": false,
+                          "emittedCandidate": {
+                            "high": "0x82D3DA98",
+                            "store": "0x82D3DAB8",
+                            "computedAddress": "0x83156314",
+                            "acceptedEffect": "The accepted DA78 route stores sentinel 1 to G only on its D=0,G=0 initialization arm."
+                          },
+                          "knownOmissions": "The accepted later G stores at 0x82D3DAE0/0x82D3DAFC are 18/25 words after the same high materializer, beyond this eight-word window. Thus the model is incomplete even for already known G writes.",
+                          "qualification": "The new discriminator covers raw direct lis-plus-D-form candidates, including undefined executable words omitted by decoded-listing searches. It does not validate intervening register writes, control flow, source-value retention, code ownership or aliases. It excludes longer-lived/nonlocal bases, indirect/indexed stores, copied addresses, bulk/overlapping writes and other store/address forms. Zero D/H candidates and the single G candidate do not establish a writer inventory or selected-call values."
+                        },
+                        "conditionalImageRoute": "Only if the flat-image D/G zeros were mapped unchanged and retained through the outer DA78 reads would its accepted D=0,G=0 arm be selected. Its known sentinel write then changes G, so even that hypothetical route does not retain all three image zeros globally. If the recursive fallback were reached and H separately remained zero until its first getter, the accepted first-null 0x827F580C -> 0x827FE350 error gate would be required. These mapping, order, value and return premises were not established; no actual recursive, error, import or manager route was chosen.",
+                        "currentEvidence": {
+                          "image": "image.json#/analysisProgram",
+                          "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+                          "flatImageBytes": 18939904,
+                          "flatImageBase": "0x82000000",
+                          "instructionWords": 2,
+                          "dataWords": 3,
+                          "queriedWords": 5,
+                          "instructionAddresses": [
+                            "0x82D3DA98",
+                            "0x82D3DAB8"
+                          ],
+                          "dataWordAddresses": [
+                            "0x8314F074",
+                            "0x83156314",
+                            "0x831580F8"
+                          ],
+                          "method": "Three serialized foreground tools/run-headless.ps1 -ReadOnly queries: D/G reference metadata, the capped raw direct-store model for all three globals, then radius-zero word checks. All five queried words match the pinned big-endian flat image; Capstone 5.0.7 PPC64 big-endian decoding independently confirms the two candidate instructions and the computed G address. Exact slot bytes total nine; the D word check includes three adjacent bytes solely to verify its containing word. No generated body or runtime state was read. Accepted instruction/route facts, H zero and prior closed H searches are referenced without repeating them.",
+                          "acceptedEvidence": [
+                            "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/matchedEntryCallBoundary/perCellInputBoundary/priorProducerBoundary/callerInputBoundary/predicateHelperBoundary/initializationBoundary/sharedPrefix",
+                            "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/matchedEntryCallBoundary/perCellInputBoundary/priorProducerBoundary/callerInputBoundary/predicateHelperBoundary/initializationBoundary/fallbackAndGetter",
+                            "xbox-network-message-root.json#/turnAndSyncAnchors/case55/case53Producers/stackObjectTable/sharedLeadingHelper/fallback/valueSource/global"
+                          ],
+                          "locators": [
+                            "ghidra/DumpReferences.java:0x8314F076,0x83156314",
+                            "ghidra/FindRawGlobalStoreCandidates.java:0x8314F076,0x83156314,0x831580F8 lookahead=8 cap=32",
+                            "ghidra/DumpMemoryWords.java:0x8314F074,0x83156314,0x831580F8,0x82D3DA98,0x82D3DAB8 radius=0"
+                          ],
+                          "reportSha256": {
+                            "global-state-words": "A7F47BFE7147EA6A0A699F8B8ED2C8529287CBFE3FD6C4DEC13111EB0615237E",
+                            "global-references": "4BB4394541CA9A0A0BF880F1DD784AA20F3EF44DB3E700761EB933F54D4EF38D",
+                            "global-store-candidates": "0C37F5AC7B5F971E09EA8340BE5AF529460B0EA7FE1D5D56828BB6BFA41B13B3"
+                          },
+                          "scriptSha256": {
+                            "DumpMemoryWords.java": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71",
+                            "DumpReferences.java": "FFB102E55B53E22ECC3F41C5B55CB004FF87C66C7B3A122171700B082055FCF1",
+                            "FindRawGlobalStoreCandidates.java": "162EEF96BCE2C530A71F8FD3F847A6E6D97F4ADF1B7BF5B0D34962635A912407"
+                          }
+                        },
+                        "boundedResult": "All three stored-image slots are zero, but neither the incomplete reference model nor the raw direct-store model binds their contents at the actual city-resource call or either context getter. Only the already accepted G sentinel candidate was found. A required producer/order/retention proof remains missing, so no next descendant edge, full return, allocated identity or owner/frame/old-slot retention was established.",
+                        "practicalRelevance": "Selecting the null-context error path from the file zero could bypass an unseen initialization writer; selecting a usable manager from the allocator shape would assume a value never supplied. Concrete stored bytes close an artifact question, while the city-resource continuation still needs a current value and its ordered retention.",
+                        "falsificationCondition": "An exact writer or initializer through an uncovered form, accepted loader mapping plus ordering/noninterference, independent call-boundary values or different supported-image evidence can refine this boundary. The no-candidate results cover only their declared models and do not exclude other writers or prove runtime contents.",
+                        "nextDiscriminator": "Identify an exact D/G/H producer or initializer using evidence outside the closed models, such as an indirect/indexed or bulk write or a nonlocal/long-lived base, then establish its actual ordered invocation and retained values at 0x82D3DA8C/0x82D3DA9C and the getters at 0x827F5800/0x827F5830; independent supported call-boundary value evidence is another discriminator. Do not repeat the same image-zero, reference, scalar/aligned-value or eight-word direct-store searches without a new discriminator. Only after actual values are bound may the accepted recursive EAF0, first-null error, context/import/save22 or exact local-suffix gate be selected. Stop at the current unknown writer/order; no next packet was executed."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1093 @@
+{
+  "schemaVersion": 1,
+  "family": "stonehenge",
+  "findings": {
+    "RVA-F-0222": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0222",
+      "topic": "stonehenge-temple-contribution",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Does the accepted city-update path apply an indexed Stonehenge contribution under its Temple branch, and where is the retained result written?",
+      "scope": {
+        "functions": [
+          "0x82D13978",
+          "0x82CEF4E8"
+        ],
+        "stonehengeItem": 203,
+        "stonehengeIndex": 3,
+        "templeItem": 103,
+        "templeMask": "0x00000008",
+        "cathedralItem": 111,
+        "cathedralMask": "0x00000800",
+        "predicateBody": "[0x82CEF4E8,0x82CEF660)",
+        "queryWindows": [
+          "0x82D14F0C..0x82D14FCC",
+          "0x82D15290..0x82D15350",
+          "0x82CEF4E8..0x82CEF5A8",
+          "0x82CEF59C..0x82CEF65C"
+        ],
+        "boundary": "The selected windows establish one Temple-conditioned contribution, its indexed predicate, and the later city halfword and owner-aggregate stores. They do not enumerate all Stonehenge consumers, classify every intervening contribution modifier, prove final culture semantics, or establish runtime behavior."
+      },
+      "dependencies": [
+        {
+          "topic": "wonder-record-identities",
+          "use": "Binds item 203 to Stonehenge and normalized index three."
+        },
+        {
+          "topic": "building-record-identities-100-122",
+          "use": "Binds ordinary indices three and eleven to Temple and Cathedral."
+        },
+        {
+          "topic": "building-completion-state-writer",
+          "use": "Provides the ordinary city building-presence bit producer."
+        },
+        {
+          "topic": "wonder-claim-slot-state",
+          "use": "Provides the accepted eight-byte claim owner/city slots."
+        },
+        {
+          "topic": "starting-technology-grants",
+          "use": "Identifies the ordinary technology-ownership words consumed by the indexed predicate."
+        },
+        {
+          "topic": "library-city-yield-writers",
+          "use": "Provides the shared city context and 40-byte owner-aggregate base from the same selected read set."
+        }
+      ],
+      "contribution": {
+        "precedence": "At 0x82D14F24, retained state word r23 equal to three bypasses this building contribution group. Otherwise the Cathedral mask at 0x82D14F2C takes precedence: its path adds twice the signed city +0x03 byte and branches past the Temple path.",
+        "templeGate": "When the Cathedral mask is clear, 0x82D14F58 tests mask 0x8 of retained building word r22. A clear result skips to 0x82D150AC. Narrow generated register flow joins r22 to city +0x10.",
+        "baseline": "The Temple path reads the signed city +0x03 byte into r30 and adds it to the contribution retained in r18 and stack +0x78 before testing Stonehenge.",
+        "predicateCall": "At 0x82D14F68..0x82D14F88, r3 is three, r4 is the retained city owner, and r5 is the original city index from stack +0x174. The direct call targets 0x82CEF4E8.",
+        "extraTerm": "Only on a nonzero predicate return, 0x82D14F94..0x82D14FA0 adds signed truncation-toward-zero of r30 divided by two to r18 and writes the updated stack +0x78 value. With B the prior contribution and P the signed city +0x03 byte, this local Temple path contributes B + P + trunc(P/2) when active, or B + P when inactive.",
+        "qualification": "The arithmetic is a native indexed contribution, not a stored description or AI candidate weight. The retained state word, complete intervening modifiers, allowed input ranges, final culture interpretation, and other consumers remain outside this result."
+      },
+      "indexedPredicate": {
+        "entry": "0x82CEF4F0 rejects signed normalized indices at least 33. The selected body has no matching lower-index guard. For index three it reads the claim owner at 0x830E5148 + index*8 and rejects owner -1.",
+        "globalGate": "A nonzero byte at 0x8314F10B additionally rejects indices at least 21. This does not reject selected index three.",
+        "recordTechnologyGate": "The predicate reads signed halfword 0x830E8FE0. For value zero, it reads signed record +0x48 from 0x82F73238 + index*0x14C; if that value is not -1, a nonzero ordinary technology-ownership word at 0x830EDC48 + technologyId*4 rejects the predicate.",
+        "alternateRecordGate": "For state value one and a non-sentinel record +0x48, the predicate scans the count at 0x82F700AC. An ownership bit for an entry whose signed halfword at 0x830E9070 differs from the requested player's halfword rejects it. Other state values bypass these local record gates. The state and halfword-array meanings are not assigned.",
+        "ownerGate": "After the record gates, requested player -1 reaches the true return. Other requested players must equal the stored claim owner or have the same halfword at 0x830E9070 as that owner.",
+        "cityGate": "Only normalized indices four, nine, and thirteen additionally compare requested city r5 with claim slot +0x04. Selected index three has no such city comparison, so this predicate alone does not select the city containing Stonehenge.",
+        "returns": "The selected physical body returns one through 0x82CEF608..0x82CEF60C or zero through 0x82CEF658..0x82CEF65C, using the external restore thunk.",
+        "qualification": "These are the complete selected body's local gates. They are not a safe contract for arbitrary indices or sentinel/player combinations, and they do not establish the specific Stonehenge record +0x48 value, gate activation at runtime, or the halfword array's player-facing meaning."
+      },
+      "resultWrites": {
+        "city": "After later contribution arithmetic, 0x82D152E8..0x82D152F0 stores the low halfword of retained r18 to city +0x48.",
+        "ownerAggregate": "Only when incoming city-update mode r4, retained in r15, equals zero, 0x82D152F8..0x82D15310 adds the retained contribution to word 0x830EE388 + owner*0x28 + 0x10.",
+        "qualification": "A stored contribution and owner accumulation are established. This does not identify every subsequent city or player consumer, the persistent culture result, or a complete point for applying a fixed culture bonus."
+      },
+      "runtimeObservation": {
+        "status": "not-observed",
+        "qualification": "No guest state or runtime behavior was changed or observed."
+      },
+      "currentEvidence": {
+        "method": "One foreground read-only DumpMemoryWords query shared with the Library city-writer result. This topic's four radius-24 windows emitted 196 rows covering 192 unique words. Every row matched the selected flat image. Narrow generated windows corroborated the exact functions and retained register flow.",
+        "entries": [
+          {
+            "role": "Temple and indexed extra contribution",
+            "address": "0x82D14F24..0x82D14FA4",
+            "confidence": "strong"
+          },
+          {
+            "role": "indexed predicate body",
+            "address": "0x82CEF4E8..0x82CEF65C",
+            "confidence": "strong"
+          },
+          {
+            "role": "retained result stores",
+            "address": "0x82D152E8..0x82D15310",
+            "confidence": "strong"
+          }
+        ],
+        "locators": [
+          "ghidra/DumpMemoryWords.java:0x82D14F6C,0x82D152F0,0x82CEF548,0x82CEF5FC radius=24",
+          "generated:rerevved/sub_82D13978",
+          "generated:rerevved/sub_82CEF4E8"
+        ],
+        "qualification": "Current-image words establish the selected instructions despite canonical listing truncation. Generated code is corroboration, not an independent correctness authority. No callee beyond the selected predicate was expanded."
+      },
+      "guards": [
+        "Do not infer all Stonehenge effects or consumers from this one city-update branch.",
+        "Do not use the indexed predicate alone as a selector for the city containing Stonehenge.",
+        "Do not clear claim ownership to suppress this native contribution.",
+        "Do not name the neutral state word or halfword array from their shapes alone.",
+        "Do not infer a fixed final culture bonus, completion grant, save behavior, or runtime acceptance from these static stores."
+      ],
+      "conclusion": "The selected city-update Temple path calls the normalized-index-three predicate and, on a nonzero result, adds signed truncation-toward-zero of half the city's +0x03 byte to its retained contribution. The predicate consumes claim ownership and record-dependent gates and does not restrict index three to the claimed city. The later contribution is written to city +0x48 and, in mode zero, an owner-aggregate word. Complete culture semantics, consumer closure, completion grants, and runtime behavior remain unresolved."
+    },
+    "RVA-F-0226": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0226",
+      "topic": "stonehenge-direct-call-frontier",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Which raw direct calls reach the accepted indexed Wonder predicate, and which of its city-update calls select Stonehenge?",
+      "scope": {
+        "target": "0x82CEF4E8",
+        "selectedFunction": "0x82D13978",
+        "stonehengeIndex": 3,
+        "directCallCap": 64,
+        "queryWindows": [
+          "0x82D1432C..0x82D143EC",
+          "0x82D14C30..0x82D14CF0",
+          "0x82D14F10..0x82D14FD0",
+          "0x82D14FD4..0x82D15094",
+          "0x82D1511C..0x82D151DC"
+        ],
+        "boundary": "This result inventories aligned raw direct branch-and-link words to one exact target in initialized executable memory and verifies six selected argument writes in the accepted city-update body. It does not classify the other callers, indirect or terminal branches, direct claim-slot readers, complete effects, or runtime behavior."
+      },
+      "dependencies": [
+        {
+          "topic": "stonehenge-temple-contribution",
+          "use": "Provides the accepted predicate, city-update owner, Temple contribution, and city-local replacement boundary."
+        },
+        {
+          "topic": "wonder-record-identities",
+          "use": "Binds normalized index three to Stonehenge."
+        }
+      ],
+      "directCallInventory": {
+        "addresses": [
+          "0x82CB59D0",
+          "0x82CB5ED0",
+          "0x82CB5F98",
+          "0x82CB60A0",
+          "0x82CBAE40",
+          "0x82CBAE98",
+          "0x82CBAED0",
+          "0x82CBAF54",
+          "0x82CBAF98",
+          "0x82CBB014",
+          "0x82CBB084",
+          "0x82CBB12C",
+          "0x82CC0134",
+          "0x82CC0894",
+          "0x82CCC3CC",
+          "0x82CCC3F4",
+          "0x82CCC7A0",
+          "0x82CCEB70",
+          "0x82CD1204",
+          "0x82CD2398",
+          "0x82CD4A24",
+          "0x82CD9CB8",
+          "0x82CD9E2C",
+          "0x82CDD4B0",
+          "0x82CE7E8C",
+          "0x82CEDA00",
+          "0x82CEDA40",
+          "0x82CEF704",
+          "0x82CEFCE0",
+          "0x82CEFD08",
+          "0x82CF0130",
+          "0x82CF0604",
+          "0x82CF11C0",
+          "0x82CF1908",
+          "0x82CF1EC4",
+          "0x82CF22B4",
+          "0x82CF56B4",
+          "0x82CF571C",
+          "0x82CF8210",
+          "0x82D094A0",
+          "0x82D094F8",
+          "0x82D1116C",
+          "0x82D11448",
+          "0x82D1439C",
+          "0x82D14C90",
+          "0x82D14CB0",
+          "0x82D14F88",
+          "0x82D15038",
+          "0x82D15180",
+          "0x82D1A838",
+          "0x82D1A890",
+          "0x82D20F10",
+          "0x82D20F8C",
+          "0x82D210CC",
+          "0x82D21134",
+          "0x82D2119C",
+          "0x82D21204",
+          "0x82D2126C",
+          "0x82D212D4",
+          "0x82D2133C",
+          "0x82D213BC",
+          "0x82DE4CD4",
+          "0x82DE4E04",
+          "0x82E85638"
+        ],
+        "emittedCount": 64,
+        "truncated": false,
+        "cancelled": false,
+        "decodedSites": 4,
+        "undefinedOwnerSites": 60,
+        "qualification": "The 64-site cap was not exceeded: the raw scanner finished without truncation or cancellation. Four emitted sites have decoded instructions and modeled owners; the other sixty have neither. These are syntactic direct-call words, not 64 proved gameplay effects or reachable invocations."
+      },
+      "selectedCityArguments": {
+        "calls": [
+          {
+            "callSite": "0x82D1439C",
+            "argumentWrite": "0x82D1438C",
+            "wonderIndex": 4
+          },
+          {
+            "callSite": "0x82D14C90",
+            "argumentWrite": "0x82D14C8C",
+            "wonderIndex": 13
+          },
+          {
+            "callSite": "0x82D14CB0",
+            "argumentWrite": "0x82D14CAC",
+            "wonderIndex": 16
+          },
+          {
+            "callSite": "0x82D14F88",
+            "argumentWrite": "0x82D14F70",
+            "wonderIndex": 3
+          },
+          {
+            "callSite": "0x82D15038",
+            "argumentWrite": "0x82D15034",
+            "wonderIndex": 12
+          },
+          {
+            "callSite": "0x82D15180",
+            "argumentWrite": "0x82D1517C",
+            "wonderIndex": 9
+          }
+        ],
+        "result": "Each selected straight-line argument sequence loads r3 with the stated normalized index before calling the predicate. Only 0x82D14F88 selects index three; its accepted Temple-conditioned contribution remains unchanged. The five other direct predicate calls in the selected city-update body select indices four, thirteen, sixteen, twelve, and nine.",
+        "qualification": "This closes the literal index discriminator for these six direct calls only. It does not establish that the Temple path is Stonehenge's sole native effect."
+      },
+      "remainingCoverage": {
+        "unclassifiedDirectSites": 58,
+        "qualification": "The other 58 inventory sites were not expanded or assigned effect meanings. Their argument provenance, generic versus specific indexing, reachability, and relation to Stonehenge remain unresolved. Non-call branches and computed/direct claim-slot reads are outside this inventory."
+      },
+      "runtimeObservation": {
+        "status": "not-observed",
+        "qualification": "No native suppression, mod activation, culture result, ownership change, or gameplay behavior was observed or changed."
+      },
+      "currentEvidence": {
+        "method": "Two shared foreground read-only invocations: a raw direct-caller inventory for the predicate and city update, followed by selected radius-24 word windows. This topic's five word windows emitted 245 rows covering 245 unique words. All 64 predicate call words and all selected context rows matched the supported flat image. Narrow generated windows corroborated the six argument writes and exact city-update owner.",
+        "locators": [
+          "ghidra/FindDirectCallers.java:0x82CEF4E8 maxMatches=64",
+          "ghidra/DumpMemoryWords.java:0x82D1438C,0x82D14C90,0x82D14F70,0x82D15034,0x82D1517C radius=24",
+          "generated:rerevved/sub_82D13978"
+        ],
+        "qualification": "The syntactic inventory covers the configured initialized executable blocks and excludes computed, indirect, and terminal branches. Generated code supplies corroboration, not independent authority. Shared query measurements are projected to this topic; repeated words are not independent evidence."
+      },
+      "guards": [
+        "Do not equate a raw direct-call inventory with complete Stonehenge effect coverage.",
+        "Do not infer the arguments or semantics of unexpanded callers from their addresses.",
+        "Do not suppress ordinary claim ownership or every indexed predicate call to replace this one Wonder's effects.",
+        "Do not infer runtime cadence, final culture, presentation, save/load behavior, or mod acceptance from these static callsites."
+      ],
+      "conclusion": "The raw predicate scan finished with 64 syntactic direct calls and no truncation. Six are selected city-update calls with exact literal indices; only the accepted Temple contribution selects Stonehenge index three. The remaining 58 callsites and non-call/claim-slot consumers remain a concrete coverage frontier before promising complete native replacement."
+    },
+    "RVA-F-0228": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0228",
+      "topic": "stonehenge-caller-argument-coverage",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Which of the 58 previously unclassified direct predicate sites have an exact local literal Wonder argument, and does an additional index-three consumer exist?",
+      "scope": {
+        "target": "0x82CEF4E8",
+        "stonehengeIndex": 3,
+        "inputInventory": "stonehenge.json#/findings/RVA-F-0226/directCallInventory",
+        "excludedSelectedCalls": "stonehenge.json#/findings/RVA-F-0226/selectedCityArguments",
+        "selectedSites": 58,
+        "wordRadius": 16,
+        "directSlotTargets": [
+          "0x830E5160",
+          "0x830E5164"
+        ],
+        "splitCandidateCap": 32,
+        "boundary": "This result classifies nearest straight-line local argument writes in 58 selected caller windows, maps one additional index-three modifier, and bounds an exact split-constant search for two Stonehenge slot words. Complete caller control flow, wider argument provenance, all effects, aliases, computed claim-slot readers, and runtime behavior remain outside the result."
+      },
+      "dependencies": [
+        {
+          "topic": "stonehenge-direct-call-frontier",
+          "use": "Supplies the accepted 64-site raw inventory and the six already classified city-update argument sites."
+        },
+        {
+          "topic": "stonehenge-temple-contribution",
+          "use": "Binds the existing Temple contribution, index-three predicate, ownership gates, and city-local selection limit."
+        },
+        {
+          "topic": "wonder-claim-slot-state",
+          "use": "Provides the eight-byte claim-slot layout and table base used to select index-three owner and city words."
+        },
+        {
+          "topic": "wonder-record-identities",
+          "use": "Binds normalized Wonder index three to Stonehenge."
+        },
+        {
+          "topic": "unit-definitions-ai-evaluation",
+          "use": "Identifies 0x82CB44E0 as the accepted AI choice evaluation owner without assigning this local modifier a complete score formula."
+        }
+      ],
+      "localArguments": {
+        "literalCount": 45,
+        "controlFlowBoundaryCount": 13,
+        "literalCalls": [
+          {
+            "callSite": "0x82CB59D0",
+            "owner": "0x82CB44E0",
+            "argumentWrite": "0x82CB59CC",
+            "wonderIndex": 3
+          },
+          {
+            "callSite": "0x82CB5ED0",
+            "owner": "0x82CB44E0",
+            "argumentWrite": "0x82CB5ECC",
+            "wonderIndex": 33
+          },
+          {
+            "callSite": "0x82CB5F98",
+            "owner": "0x82CB44E0",
+            "argumentWrite": "0x82CB5F94",
+            "wonderIndex": 33
+          },
+          {
+            "callSite": "0x82CB60A0",
+            "owner": "0x82CB44E0",
+            "argumentWrite": "0x82CB6098",
+            "wonderIndex": 12
+          },
+          {
+            "callSite": "0x82CC0134",
+            "owner": "0x82CBF570",
+            "argumentWrite": "0x82CC0130",
+            "wonderIndex": 1
+          },
+          {
+            "callSite": "0x82CC0894",
+            "owner": "0x82CBF570",
+            "argumentWrite": "0x82CC0890",
+            "wonderIndex": 1
+          },
+          {
+            "callSite": "0x82CCC3CC",
+            "owner": "0x82CCBED0",
+            "argumentWrite": "0x82CCC3C8",
+            "wonderIndex": 1
+          },
+          {
+            "callSite": "0x82CCC3F4",
+            "owner": "0x82CCBED0",
+            "argumentWrite": "0x82CCC3F0",
+            "wonderIndex": 1
+          },
+          {
+            "callSite": "0x82CCC7A0",
+            "owner": "0x82CCBED0",
+            "argumentWrite": "0x82CCC79C",
+            "wonderIndex": 1
+          },
+          {
+            "callSite": "0x82CCEB70",
+            "owner": "0x82CCE880",
+            "argumentWrite": "0x82CCEB6C",
+            "wonderIndex": 1
+          },
+          {
+            "callSite": "0x82CD1204",
+            "owner": "0x82CCEFA8",
+            "argumentWrite": "0x82CD1200",
+            "wonderIndex": 1
+          },
+          {
+            "callSite": "0x82CD2398",
+            "owner": "0x82CCEFA8",
+            "argumentWrite": "0x82CD2394",
+            "wonderIndex": 1
+          },
+          {
+            "callSite": "0x82CD9CB8",
+            "owner": "0x82CD9970",
+            "argumentWrite": "0x82CD9CB4",
+            "wonderIndex": 10
+          },
+          {
+            "callSite": "0x82CD9E2C",
+            "owner": "0x82CD9970",
+            "argumentWrite": "0x82CD9E28",
+            "wonderIndex": 10
+          },
+          {
+            "callSite": "0x82CDD4B0",
+            "owner": "0x82CD9970",
+            "argumentWrite": "0x82CDD4AC",
+            "wonderIndex": 5
+          },
+          {
+            "callSite": "0x82CEDA00",
+            "owner": "0x82CED8D0",
+            "argumentWrite": "0x82CED9FC",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82CEDA40",
+            "owner": "0x82CED8D0",
+            "argumentWrite": "0x82CEDA3C",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82CEF704",
+            "owner": "0x82CEF6A8",
+            "argumentWrite": "0x82CEF700",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82CEFD08",
+            "owner": "0x82CEFC98",
+            "argumentWrite": "0x82CEFD04",
+            "wonderIndex": 20
+          },
+          {
+            "callSite": "0x82CF0130",
+            "owner": "0x82CF0070",
+            "argumentWrite": "0x82CF012C",
+            "wonderIndex": 15
+          },
+          {
+            "callSite": "0x82CF11C0",
+            "owner": "0x82CF1148",
+            "argumentWrite": "0x82CF11BC",
+            "wonderIndex": 14
+          },
+          {
+            "callSite": "0x82CF1908",
+            "owner": "0x82CF17C8",
+            "argumentWrite": "0x82CF1904",
+            "wonderIndex": 7
+          },
+          {
+            "callSite": "0x82CF1EC4",
+            "owner": "0x82CF1CE8",
+            "argumentWrite": "0x82CF1EC0",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82CF22B4",
+            "owner": "0x82CF2230",
+            "argumentWrite": "0x82CF22B0",
+            "wonderIndex": 10
+          },
+          {
+            "callSite": "0x82CF56B4",
+            "owner": "0x82CF5588",
+            "argumentWrite": "0x82CF56B0",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82CF571C",
+            "owner": "0x82CF5588",
+            "argumentWrite": "0x82CF5718",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D094A0",
+            "owner": "0x82D09208",
+            "argumentWrite": "0x82D0949C",
+            "wonderIndex": 6
+          },
+          {
+            "callSite": "0x82D094F8",
+            "owner": "0x82D09208",
+            "argumentWrite": "0x82D094F4",
+            "wonderIndex": 6
+          },
+          {
+            "callSite": "0x82D1116C",
+            "owner": "0x82D10FD8",
+            "argumentWrite": "0x82D11168",
+            "wonderIndex": 19
+          },
+          {
+            "callSite": "0x82D11448",
+            "owner": "0x82D10FD8",
+            "argumentWrite": "0x82D11444",
+            "wonderIndex": 20
+          },
+          {
+            "callSite": "0x82D1A838",
+            "owner": "0x82D1A6C0",
+            "argumentWrite": "0x82D1A834",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D1A890",
+            "owner": "0x82D1A6C0",
+            "argumentWrite": "0x82D1A88C",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D20F10",
+            "owner": "0x82D1EAB0",
+            "argumentWrite": "0x82D20F0C",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D20F8C",
+            "owner": "0x82D1EAB0",
+            "argumentWrite": "0x82D20F88",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D210CC",
+            "owner": "0x82D1EAB0",
+            "argumentWrite": "0x82D210C8",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D21134",
+            "owner": "0x82D1EAB0",
+            "argumentWrite": "0x82D21130",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D2119C",
+            "owner": "0x82D1EAB0",
+            "argumentWrite": "0x82D21198",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D21204",
+            "owner": "0x82D1EAB0",
+            "argumentWrite": "0x82D21200",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D2126C",
+            "owner": "0x82D1EAB0",
+            "argumentWrite": "0x82D21268",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D212D4",
+            "owner": "0x82D1EAB0",
+            "argumentWrite": "0x82D212D0",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D2133C",
+            "owner": "0x82D1EAB0",
+            "argumentWrite": "0x82D21338",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82D213BC",
+            "owner": "0x82D1EAB0",
+            "argumentWrite": "0x82D213B8",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82DE4CD4",
+            "owner": "0x82DE3598",
+            "argumentWrite": "0x82DE4CD0",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82DE4E04",
+            "owner": "0x82DE3598",
+            "argumentWrite": "0x82DE4E00",
+            "wonderIndex": 17
+          },
+          {
+            "callSite": "0x82E85638",
+            "owner": "0x82E854D8",
+            "argumentWrite": "0x82E85630",
+            "wonderIndex": 17
+          }
+        ],
+        "qualification": "Each recorded li r3 instruction is the nearest r3 write in its selected local straight-line sequence before the direct call. Its immediate and register fields were independently decoded from the supported image. The other selected lookbacks stop at the listed control-flow boundary. These local sequences do not prove whole-function dominance, reachability, caller frequency, or a valid supported index range."
+      },
+      "additionalStonehengeConsumer": {
+        "function": "0x82CB44E0",
+        "acceptedOwner": "unit-definitions-ai-evaluation.json#/aiConsumers/0",
+        "callSite": "0x82CB59D0",
+        "argumentWrite": "0x82CB59CC",
+        "index": 3,
+        "otherArguments": "0x82CB59C4 copies r20 to r4; 0x82CB59C8 loads r5 from stack +0x234. Their wider provenance is not assigned here.",
+        "modifier": "0x82CB59D4 tests the predicate return for zero, and 0x82CB59D8 skips to 0x82CB59E8 when zero. A nonzero result reaches 0x82CB59DC..0x82CB59E4, which adds signed r31 divided by two, truncated toward zero, to the retained r31 value.",
+        "qualification": "This is an additional local Stonehenge-conditioned arithmetic consumer in the accepted AI owner, distinct from the Temple-conditioned city-yield writer. The r31 input, final score formula, resulting decision, and runtime effect remain unclassified."
+      },
+      "remainingArguments": {
+        "sites": [
+          {
+            "callSite": "0x82CBAE40",
+            "owner": "0x82CB6E48",
+            "localBoundary": "0x82CBAE34"
+          },
+          {
+            "callSite": "0x82CBAE98",
+            "owner": "0x82CB6E48",
+            "localBoundary": "0x82CBAE8C"
+          },
+          {
+            "callSite": "0x82CBAED0",
+            "owner": "0x82CB6E48",
+            "localBoundary": "0x82CBAEC4"
+          },
+          {
+            "callSite": "0x82CBAF54",
+            "owner": "0x82CB6E48",
+            "localBoundary": "0x82CBAF48"
+          },
+          {
+            "callSite": "0x82CBAF98",
+            "owner": "0x82CB6E48",
+            "localBoundary": "0x82CBAF8C"
+          },
+          {
+            "callSite": "0x82CBB014",
+            "owner": "0x82CB6E48",
+            "localBoundary": "0x82CBB008"
+          },
+          {
+            "callSite": "0x82CBB084",
+            "owner": "0x82CB6E48",
+            "localBoundary": "0x82CBB078"
+          },
+          {
+            "callSite": "0x82CBB12C",
+            "owner": "0x82CB6E48",
+            "localBoundary": "0x82CBB120"
+          },
+          {
+            "callSite": "0x82CD4A24",
+            "owner": "0x82CD4798",
+            "localBoundary": "0x82CD4A18"
+          },
+          {
+            "callSite": "0x82CE7E8C",
+            "owner": "0x82CE77D8",
+            "localBoundary": "0x82CE7E80"
+          },
+          {
+            "callSite": "0x82CEFCE0",
+            "owner": "0x82CEFC98",
+            "localBoundary": "0x82CEFCD8"
+          },
+          {
+            "callSite": "0x82CF0604",
+            "owner": "0x82CF05C0",
+            "localBoundary": "0x82CF05F8"
+          },
+          {
+            "callSite": "0x82CF8210",
+            "owner": "0x82CF81C8",
+            "localBoundary": "0x82CF8204"
+          }
+        ],
+        "qualification": "The selected backward read stops at these local control-flow instructions before establishing a straight-line r3 write. No literal index, generic index range, or Stonehenge exclusion is claimed for these thirteen sites."
+      },
+      "exactSlotMaterialization": {
+        "table": "0x830E5148",
+        "stride": 8,
+        "index": 3,
+        "ownerWord": "0x830E5160",
+        "cityWord": "0x830E5164",
+        "method": "A raw aligned lis/addi or lis/ori candidate search over initialized memory used these two exact targets, an eight-word lookahead, and a cap of 32 candidates.",
+        "emittedCandidates": 0,
+        "truncated": false,
+        "qualification": "No matching exact split-constant materializer was emitted. This does not exclude table-base-plus-offset, aliases, loaded pointers, computed indexing, indirect reads, other materialization forms, or claim-slot consumers."
+      },
+      "coverageConsequences": {
+        "result": "Together with the six accepted city-update arguments, 51 of the 64 inventory sites now have selected local literal sequences. Two select index three: the Temple contribution and this AI-owner modifier. The other 49 local literal sequences select different values, including two value-33 sequences outside the predicate's accepted upper guard. Thirteen sites remain at control-flow boundaries.",
+        "qualification": "Literal discrimination is not full effect coverage. Suppressing only the Temple contribution would leave the additional selected index-three arithmetic consumer; disabling every indexed predicate or ordinary claim state is not justified."
+      },
+      "runtimeObservation": {
+        "status": "not-observed",
+        "qualification": "No AI decision, native suppression, culture result, mod activation, ownership change, or gameplay behavior was observed or changed."
+      },
+      "currentEvidence": {
+        "method": "One foreground read-only DumpMemoryWords invocation selected 58 radius-16 windows, emitting 1,914 rows covering 1,724 unique words. Every row matched the supported flat image. Exact generated headers identified 26 caller owners; 143 selected backward-window instruction rows corroborated local argument writes or the first control-flow boundary. The selected AI post-call window corroborated the zero-return branch and retained arithmetic. One additional foreground read-only exact split-constant query emitted zero candidates without truncation.",
+        "locators": [
+          "ghidra/DumpMemoryWords.java:0x82CB59D0,0x82CB5ED0,0x82CB5F98,0x82CB60A0,0x82CBAE40,0x82CBAE98,0x82CBAED0,0x82CBAF54,0x82CBAF98,0x82CBB014,0x82CBB084,0x82CBB12C,0x82CC0134,0x82CC0894,0x82CCC3CC,0x82CCC3F4,0x82CCC7A0,0x82CCEB70,0x82CD1204,0x82CD2398,0x82CD4A24,0x82CD9CB8,0x82CD9E2C,0x82CDD4B0,0x82CE7E8C,0x82CEDA00,0x82CEDA40,0x82CEF704,0x82CEFCE0,0x82CEFD08,0x82CF0130,0x82CF0604,0x82CF11C0,0x82CF1908,0x82CF1EC4,0x82CF22B4,0x82CF56B4,0x82CF571C,0x82CF8210,0x82D094A0,0x82D094F8,0x82D1116C,0x82D11448,0x82D1A838,0x82D1A890,0x82D20F10,0x82D20F8C,0x82D210CC,0x82D21134,0x82D2119C,0x82D21204,0x82D2126C,0x82D212D4,0x82D2133C,0x82D213BC,0x82DE4CD4,0x82DE4E04,0x82E85638 radius=16",
+          "ghidra/FindSplitConstantCandidates.java:0x830E5160,0x830E5164 maxMatches=32 lookahead=8",
+          "generated:rerevved/sub_82CB44E0:0x82CB59C4..0x82CB59E4"
+        ],
+        "selectedArgumentLocators": [
+          "generated:rerevved/sub_82CB44E0:0x82CB59CC",
+          "generated:rerevved/sub_82CB44E0:0x82CB5ECC",
+          "generated:rerevved/sub_82CB44E0:0x82CB5F94",
+          "generated:rerevved/sub_82CB44E0:0x82CB6098",
+          "generated:rerevved/sub_82CBF570:0x82CC0130",
+          "generated:rerevved/sub_82CBF570:0x82CC0890",
+          "generated:rerevved/sub_82CCBED0:0x82CCC3C8",
+          "generated:rerevved/sub_82CCBED0:0x82CCC3F0",
+          "generated:rerevved/sub_82CCBED0:0x82CCC79C",
+          "generated:rerevved/sub_82CCE880:0x82CCEB6C",
+          "generated:rerevved/sub_82CCEFA8:0x82CD1200",
+          "generated:rerevved/sub_82CCEFA8:0x82CD2394",
+          "generated:rerevved/sub_82CD9970:0x82CD9CB4",
+          "generated:rerevved/sub_82CD9970:0x82CD9E28",
+          "generated:rerevved/sub_82CD9970:0x82CDD4AC",
+          "generated:rerevved/sub_82CED8D0:0x82CED9FC",
+          "generated:rerevved/sub_82CED8D0:0x82CEDA3C",
+          "generated:rerevved/sub_82CEF6A8:0x82CEF700",
+          "generated:rerevved/sub_82CEFC98:0x82CEFD04",
+          "generated:rerevved/sub_82CF0070:0x82CF012C",
+          "generated:rerevved/sub_82CF1148:0x82CF11BC",
+          "generated:rerevved/sub_82CF17C8:0x82CF1904",
+          "generated:rerevved/sub_82CF1CE8:0x82CF1EC0",
+          "generated:rerevved/sub_82CF2230:0x82CF22B0",
+          "generated:rerevved/sub_82CF5588:0x82CF56B0",
+          "generated:rerevved/sub_82CF5588:0x82CF5718",
+          "generated:rerevved/sub_82D09208:0x82D0949C",
+          "generated:rerevved/sub_82D09208:0x82D094F4",
+          "generated:rerevved/sub_82D10FD8:0x82D11168",
+          "generated:rerevved/sub_82D10FD8:0x82D11444",
+          "generated:rerevved/sub_82D1A6C0:0x82D1A834",
+          "generated:rerevved/sub_82D1A6C0:0x82D1A88C",
+          "generated:rerevved/sub_82D1EAB0:0x82D20F0C",
+          "generated:rerevved/sub_82D1EAB0:0x82D20F88",
+          "generated:rerevved/sub_82D1EAB0:0x82D210C8",
+          "generated:rerevved/sub_82D1EAB0:0x82D21130",
+          "generated:rerevved/sub_82D1EAB0:0x82D21198",
+          "generated:rerevved/sub_82D1EAB0:0x82D21200",
+          "generated:rerevved/sub_82D1EAB0:0x82D21268",
+          "generated:rerevved/sub_82D1EAB0:0x82D212D0",
+          "generated:rerevved/sub_82D1EAB0:0x82D21338",
+          "generated:rerevved/sub_82D1EAB0:0x82D213B8",
+          "generated:rerevved/sub_82DE3598:0x82DE4CD0",
+          "generated:rerevved/sub_82DE3598:0x82DE4E00",
+          "generated:rerevved/sub_82E854D8:0x82E85630"
+        ],
+        "qualification": "The raw context bounds include adjacent words; promoted argument facts use exact selected caller windows. Generated code corroborates the supported image and supplies useful instruction locators, rather than independent execution authority. The split search covers only its stated exact pattern."
+      },
+      "guards": [
+        "Do not treat the Temple contribution as Stonehenge's only native consumer: the selected AI-owner modifier also uses index three.",
+        "Do not infer a final culture formula, AI choice, exact score semantics, or runtime benefit from the local r31 arithmetic.",
+        "Do not infer argument values for the thirteen control-flow-boundary sites or treat local literal discrimination as complete caller reachability.",
+        "Do not equate a zero exact-slot candidate result with absence of computed or aliased claim-slot consumers.",
+        "Do not suppress all indexed Wonder queries or mutate ordinary claim ownership to implement one Wonder's replacement effects."
+      ],
+      "conclusion": "The 58 selected lookbacks contain 45 verified local literal arguments and thirteen unresolved control-flow boundaries. One additional literal-three call conditionally adds signed half of retained r31 to that value in the accepted AI evaluation owner. The exact split-constant search for the two index-three slot words emitted no candidates, while computed and aliased claim-slot readers remain outside that negative result. Complete native replacement and runtime acceptance remain unclosed."
+    },
+    "RVA-F-0230": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0230",
+      "topic": "stonehenge-predecessor-input-boundary",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Which local predecessor conditions bound the thirteen remaining direct Wonder-predicate arguments, and what selected arithmetic feeds the additional Stonehenge AI modifier?",
+      "scope": {
+        "predicate": "0x82CEF4E8",
+        "aiOwner": "0x82CB44E0",
+        "frontierInput": "stonehenge.json#/findings/RVA-F-0228/remainingArguments/sites",
+        "boundary": "Local predecessor paths and selected AI input arithmetic are supported. Complete function reachability, indirect/non-call dispatch, computed or aliased claim-slot consumers, the complete AI valuation, and runtime behavior are outside this result."
+      },
+      "dependencies": [
+        {
+          "topic": "stonehenge-caller-argument-coverage",
+          "use": "Supplies thirteen exact frontiers, 45 local literals, and the second index-three consumer."
+        },
+        {
+          "topic": "stonehenge-direct-call-frontier",
+          "use": "Supplies the accepted 64 direct-call sites and six city-update literal sequences."
+        },
+        {
+          "topic": "stonehenge-temple-contribution",
+          "use": "Binds the distinct Temple-conditioned city contribution and ownership limits."
+        },
+        {
+          "topic": "unit-definitions-ai-evaluation",
+          "use": "Identifies AIUnitChoiceEvaluate without assigning the entire retained value a semantic score."
+        }
+      ],
+      "predecessorArguments": {
+        "zeroReturnJoin": "Each listed path calls 0x82CEF6A8, compares returned r3 with zero, and branches away when nonzero. Its continuing path writes only r4 and r5 before calling 0x82CEF4E8, leaving r3 equal to zero. This is a conditional local argument proof; the callee body is not expanded.",
+        "zeroSites": [
+          {
+            "callSite": "0x82CBAE40",
+            "owner": "0x82CB6E48",
+            "precedingCall": "0x82CBAE2C",
+            "comparison": "0x82CBAE30",
+            "nonzeroBranch": "0x82CBAE34"
+          },
+          {
+            "callSite": "0x82CBAE98",
+            "owner": "0x82CB6E48",
+            "precedingCall": "0x82CBAE84",
+            "comparison": "0x82CBAE88",
+            "nonzeroBranch": "0x82CBAE8C"
+          },
+          {
+            "callSite": "0x82CBAED0",
+            "owner": "0x82CB6E48",
+            "precedingCall": "0x82CBAEBC",
+            "comparison": "0x82CBAEC0",
+            "nonzeroBranch": "0x82CBAEC4"
+          },
+          {
+            "callSite": "0x82CBAF54",
+            "owner": "0x82CB6E48",
+            "precedingCall": "0x82CBAF40",
+            "comparison": "0x82CBAF44",
+            "nonzeroBranch": "0x82CBAF48"
+          },
+          {
+            "callSite": "0x82CBAF98",
+            "owner": "0x82CB6E48",
+            "precedingCall": "0x82CBAF84",
+            "comparison": "0x82CBAF88",
+            "nonzeroBranch": "0x82CBAF8C"
+          },
+          {
+            "callSite": "0x82CBB014",
+            "owner": "0x82CB6E48",
+            "precedingCall": "0x82CBB000",
+            "comparison": "0x82CBB004",
+            "nonzeroBranch": "0x82CBB008"
+          },
+          {
+            "callSite": "0x82CBB084",
+            "owner": "0x82CB6E48",
+            "precedingCall": "0x82CBB070",
+            "comparison": "0x82CBB074",
+            "nonzeroBranch": "0x82CBB078"
+          },
+          {
+            "callSite": "0x82CBB12C",
+            "owner": "0x82CB6E48",
+            "precedingCall": "0x82CBB118",
+            "comparison": "0x82CBB11C",
+            "nonzeroBranch": "0x82CBB120"
+          },
+          {
+            "callSite": "0x82CE7E8C",
+            "owner": "0x82CE77D8",
+            "precedingCall": "0x82CE7E78",
+            "comparison": "0x82CE7E7C",
+            "nonzeroBranch": "0x82CE7E80"
+          },
+          {
+            "callSite": "0x82CF0604",
+            "owner": "0x82CF05C0",
+            "precedingCall": "0x82CF05F0",
+            "comparison": "0x82CF05F4",
+            "nonzeroBranch": "0x82CF05F8"
+          },
+          {
+            "callSite": "0x82CF8210",
+            "owner": "0x82CF81C8",
+            "precedingCall": "0x82CF81FC",
+            "comparison": "0x82CF8200",
+            "nonzeroBranch": "0x82CF8204"
+          }
+        ],
+        "otherSites": [
+          {
+            "callSite": "0x82CD4A24",
+            "owner": "0x82CD4798",
+            "wonderIndex": 1,
+            "join": "0x82CD4A14 compares r3 with one; 0x82CD4A18 branches away when unequal. Only r5 and r4 are written before the predicate call."
+          },
+          {
+            "callSite": "0x82CEFCE0",
+            "owner": "0x82CEFC98",
+            "wonderIndex": 19,
+            "join": "0x82CEFCD4 loads r3 with 19; 0x82CEFCD8 can branch out. The continuing path writes only r5 before the predicate call."
+          }
+        ],
+        "inventoryJoin": "The 51 accepted local literal sequences plus these thirteen predecessor joins bound arguments at all 64 inventoried raw direct call sites. Two local sequences select index three: the city Temple call at 0x82D14F88 and AI call at 0x82CB59D0. The other thirteen newly selected paths use zero, one, or nineteen.",
+        "qualification": "This does not establish execution, all possible incoming control flow, non-call branches, function-pointer calls, direct/computed slot readers, or sole-effect status."
+      },
+      "aiInputs": {
+        "cityJoin": "0x82CB44FC saves incoming city index at stack +0x234. 0x82CB4500 multiplies that index by 0xBC; 0x82CB4504 forms city table base 0x8314FE28. 0x82CB4520 and 0x82CB4570 retain its signed owner byte in r20. The later selected call passes r20 in r4 and the saved incoming city in r5.",
+        "localBase": "On the 0x82CB592C path, signed city byte +0x03 is multiplied by 30 at 0x82CB5950. A word indexed by signed city-owner byte through current r23 is loaded at 0x82CB5954, incremented by two, and used by signed divw at 0x82CB5964 to produce r31. Native division trap checks remain in the selected sequence.",
+        "localModifiers": "0x82CB5974..0x82CB59C0 conditionally doubles r31 for a word-three comparison and city halfword +0x3C bit 0x10, adds 100 for city word +0x24 bit 0x10000, and clears r31 for another indexed word-three comparison. 0x82CB59D0 then conditionally adds signed half of r31 with truncation toward zero, as accepted in stonehenge-caller-argument-coverage.",
+        "downstream": "0x82CB59F4 calls the accepted civilization-bonus predicate 0x82CF0CB0 with effect index four; its nonzero return causes another retained half-addition. 0x82CB5A14..0x82CB5A1C subsequently replaces a negative r31 with zero. Complete later valuation and selection are not read.",
+        "setupBoundary": "The selected 0x82CB48F8 branch can bypass the inspected table-setup sequence at 0x82CB48FC..0x82CB4A1C. Current r23/r25 and stack +0x60 therefore are not assigned unconditional table identities from that sequence. Their complete route-specific provenance remains open.",
+        "qualification": "The selected native arithmetic and owner/city call arguments are supported. No whole AI score, candidate-item interpretation, decision, balance consequence, or runtime valuation is assigned."
+      },
+      "currentEvidence": {
+        "method": "Foreground read-only DumpMemoryWords selected thirteen radius-64 frontier windows plus two radius-64 AI windows; the paired Calendar window was checked separately. Four radius-24 AI joins corroborated entry and route-specific setup. Every emitted word matched the supported flat image. Exact generated instruction metadata and narrow windows corroborated local branch, argument, and arithmetic sequences.",
+        "locators": [
+          "ghidra/DumpMemoryWords.java:0x82CBAE40,0x82CBAE98,0x82CBAED0,0x82CBAF54,0x82CBAF98,0x82CBB014,0x82CBB084,0x82CBB12C,0x82CD4A24,0x82CE7E8C,0x82CEFCE0,0x82CF0604,0x82CF8210,0x82CB5930,0x82CB59D0 radius=64",
+          "ghidra/DumpMemoryWords.java:0x82CB4510,0x82CB491C,0x82CB49D0,0x82CB5544 radius=24",
+          "generated:rerevved/sub_82CB6E48:0x82CBAE18..0x82CBB134",
+          "generated:rerevved/sub_82CD4798:0x82CD4A14..0x82CD4A24",
+          "generated:rerevved/sub_82CE77D8:0x82CE7E64..0x82CE7E94",
+          "generated:rerevved/sub_82CEFC98:0x82CEFCD4..0x82CEFCE0",
+          "generated:rerevved/sub_82CF05C0:0x82CF05E0..0x82CF0604",
+          "generated:rerevved/sub_82CF81C8:0x82CF81E8..0x82CF8210",
+          "generated:rerevved/sub_82CB44E0:0x82CB44FC..0x82CB4570,0x82CB48F8..0x82CB4A1C,0x82CB592C..0x82CB5A1C"
+        ],
+        "qualification": "The existing direct-call inventory was reused; no unchanged caller or exact-slot scan was repeated. Generated address-map gaps outside the promoted sequences were not assigned instruction semantics. No complete function, callee, computed-slot search, or runtime observation was added."
+      },
+      "guards": [
+        "Do not identify the additional AI modifier as the final city Culture output or suppress ordinary ownership.",
+        "Do not infer full replacement coverage from classification of a raw direct-call inventory.",
+        "Do not assign unconditional AI table identities or remove its other native modifiers from one route-specific setup.",
+        "Do not interpret static local arithmetic as runtime mod activation or acceptance."
+      ],
+      "conclusion": "The thirteen selected predecessors add no index-three call to the accepted direct inventory. Two local direct-call sequences select Stonehenge: Temple yield and an AI retained-value modifier. Selected AI arithmetic and owner/city arguments are bounded, while complete valuation, computed or aliased slot consumers, and runtime replacement remain unresolved."
+    },
+    "RVA-F-0246": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0246",
+      "topic": "stonehenge-completion-religion-grant",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Which executed native production boundary witnesses a new Stonehenge claim, and which ordinary acquisition arguments fit a Religion reward while retaining native Wonder behavior?",
+      "scope": {
+        "completion": "CityUpdate 0x82D13978 call 0x82D16340 to helper 0x82D16BA0 and post-call boundary 0x82D16344.",
+        "identity": "Stonehenge item 203, normalized Wonder index 3; Religion technology 19.",
+        "acquisition": "TechnologyAcquire 0x82D09208, native availability query 0x82CEF6A8, and reason-five presentation branch 0x82CEA694.",
+        "boundary": "Static contract for the selected executed production edge and consistent ordinary claim state. Actual hook execution, UI appearance, AI strategy, network replication, malformed restored state and complete hidden aliases are not runtime-verified."
+      },
+      "dependencies": [
+        {
+          "topic": "wonder-post-threshold-helper-boundary",
+          "use": "Sufficient-production, eligibility and exact helper call/mode."
+        },
+        {
+          "topic": "wonder-claim-slot-state",
+          "use": "Claim layout, range guard and paired owner/city stores."
+        },
+        {
+          "topic": "wonder-claim-table-consumer-boundary",
+          "use": "Distinct serializer, reset, transfer and Calendar owner-sync writers."
+        },
+        {
+          "topic": "wonder-record-identities",
+          "use": "Existing Stonehenge index-three identity."
+        },
+        {
+          "topic": "starting-technology-grants",
+          "use": "Ordinary Religion identity, acquisition ownership, availability and persistence."
+        },
+        {
+          "topic": "oxford-technology-acquisition-branch",
+          "use": "A native acquisition call inside the same production helper after claim commit."
+        },
+        {
+          "topic": "city-yield-credit-call-boundary",
+          "use": "Accepted direct CityUpdate mode/caller inventory, including nested calls."
+        },
+        {
+          "topic": "science-completion",
+          "use": "Separate ordinary player-count and excluded-player validation precedent."
+        },
+        {
+          "topic": "civilization-bonus-storage",
+          "use": "Player civilization selector, without adding a civilization restriction."
+        }
+      ],
+      "completionEdge": {
+        "status": "proven",
+        "identity": "wonder-records.json#/findings/RVA-F-0096/records/3 identifies item 203 as Stonehenge.",
+        "preconditions": "Signed invested production meets the Wonder cost. 0x82D162CC reloads claim base 0x830E5148 from stack +0xA8. 0x82D162DC loads owner at index*8, 0x82D162E0 compares with -1, and 0x82D162E4 branches away if claimed. Eligibility 0x82CF3608 at 0x82D162EC must return nonzero.",
+        "call": "0x82D16340 passes r3=r27 (normalized Wonder), r4=r23 (city), r5=1 and r6=0 to 0x82D16BA0 after native production/item/flag writes.",
+        "claimStores": "0x82D16C08 stwx r21,r10,r11 commits signed live city owner; 0x82D16C10 stwx r4,r10,r8 commits city. At those instructions r18 is Wonder index, r4 is city, r21 is signed city +0, r10=index*8, r11=0x830E5148 and r8=0x830E514C. Stonehenge words are 0x830E5160 and 0x830E5164.",
+        "postCallBoundary": "0x82D16344 inside CityUpdate follows the complete native helper. Nonvolatile caller r27=3 identifies Stonehenge and r23 retains city. Caller r21 is entry owner, restored from stack +0x84 on the ordinary route and retained on the mode-one route. Validate the newly stored claim/live owner instead of assuming entry owner cannot change.",
+        "qualification": "The helper prefix does not itself require an unclaimed slot. Hooking this specific guarded caller-return edge is materially different from hooking every helper invocation or polling a changed owner."
+      },
+      "lifecycleDiscrimination": {
+        "status": "proven for known routes",
+        "restoreReset": "Initializer 0x82D060C4..0x82D060D4 and serializer 0x82CC4F14..0x82CC4FF0 directly reset/transfer/copy claims. The old-format path resets 33 slots then restores paired words for indices 0..20, including Stonehenge index 3. These direct stores do not take 0x82D16344.",
+        "transfer": "0x82D1B01C and 0x82D1C8F4 rewrite owner only when claim city matches a supplied city. They retain the claim city and do not constitute this production edge.",
+        "calendar": "Owner synchronization stores 0x82D1F57C/0x82D1F5D4/0x82D1F62C operate on claimed slots. The later conditional mode-zero CityUpdate calls can reach 0x82D16344 only through a separate successful production claim.",
+        "modeAndNesting": "Mode one branches to production at 0x82D13A50 -> 0x82D159A4. It is noncrediting for yields but can complete production. Early same-city mode-one selfcalls at 0x82D13B38/0x82D13B5C and later selected nested calls have the same claim gate. Once an inner invocation claims the slot, a later invocation cannot repeat this claim while the owner word remains claimed.",
+        "originRule": "The selected executed edge witnesses the same native production claim regardless of human, AI, UI or hurry origin. Origin labels or a mode-zero-only filter are not needed to identify that local commit. Exact AI/scenario/hurry/network ingress and runtime parity are not fully inventoried.",
+        "qualification": "Consistent loaded existing Stonehenge is claimed and is excluded by the local gate. An inconsistent restored slot -1 with item 203 and sufficient production can complete again. This result does not define recovery policy for corrupted, inconsistent or externally rewritten claims."
+      },
+      "acquisitionContract": {
+        "status": "strong static contract; runtime acceptance open",
+        "entry": "0x82D09208",
+        "arguments": {
+          "r3": "validated completing owner",
+          "r4": "19",
+          "r5": "validated completing city",
+          "r6": "5, native Wonder reward source",
+          "r7": "1, ordinary state/fan-out phase"
+        },
+        "argumentEvidence": "The native Oxford branch calls this same generic owner at 0x82D17194 with owner, selected technology, completing city, 5 and 1 after the paired claim stores. Acquisition interprets r5 as a live context, with a selected path feeding city-indexed reads; arbitrary zero is not equivalent. Reason 5 selects a generic Great Wonder message, with technology-name substitution, at 0x82CEA694 -> 0x8214BB9C. This identifies a generic reward source rather than an index-eight-only acquisition parameter.",
+        "state": "0x82D09370 records technology at 0x830EDD28 + 4*owner. 0x82D0937C ORs the owner bit into 0x830EDC48 + 4*technology. 0x82D09384 records reason at 0x830ED588 + 4*(48*owner + technology). The ordinary owner performs its native city/building/unit/government and other state consequences.",
+        "alreadyAvailable": "Use 0x82CEF6A8(19, owner)==0 before acquisition. It implements native effective availability, including the selector-17 shortcut. Raw stored Religion ownership is word 0x830EDC94 with PPC slw(1,owner); raw bit alone is not the complete native availability predicate.",
+        "duplicateBoundary": "Acquisition has no preceding duplicate or input-validity guard in its selected prefix and can repeat side effects. The availability check and guarded executed completion are both required.",
+        "callTiming": "The supported insertion candidate is the same guest execution context at 0x82D16344, after claim helper returns. The native Oxford nested call demonstrates ordinary acquisition compatibility within this production-helper context. New-hook safety is a title integration obligation: preserve interrupted PPC registers, CR/XER/LR/CTR, stack and continuation, validate city/owner/claim agreement, and release host-side registry locks before guest acquisition.",
+        "qualification": "These arguments and ordering are a static implementation contract for validated ordinary state. This is not observed hook safety, a lock census, permission to call from a host worker, or a guarantee for malformed lifecycle state."
+      },
+      "presentation": {
+        "status": "proven selected branch behavior; actual UI open",
+        "flags": "Flags 1 enable bit-zero state fan-out and leave bit one clear. Selected bit-one presentation gates at 0x82D0A7A0 and 0x82D0A93C are not entered by that invocation. No additional flag-two acquisition is part of this state-grant contract.",
+        "reason": "At 0x82D0A890, a selected bit-one path calls 0x82CEA5A0; reason 5 selects 0x82CEA694 and generic Great Wonder text at 0x8214BB9C with the technology name supplied separately. The reason value is not an Oxford-only literal.",
+        "wonderBranch": "A separate helper mode-two branch compares Wonder index with 8 at 0x82D17334, reads selected technology 0x830E33CC at 0x82D17340, and conditionally appends the same generic reward message at 0x82D173A8. Its index-eight mode-two ingress is not established by the direct production call, whose local extra mode-two call is limited to indices 19/20.",
+        "boundary": "Keep the native Stonehenge completion presentation unchanged. This contract promises ordinary saved acquisition state and native fan-out, not a separate Religion popup or an Oxford-style text append. It does not repurpose 0x830E33CC or add a second acquisition phase. Actual UI presentation remains title acceptance."
+      },
+      "validity": {
+        "status": "proven sources; inferred ordinary validation envelope",
+        "city": "0x8314FE28 + 0xBC*city; signed owner byte +0. Validate city and current owner against the committed claim pair before acquisition.",
+        "player": "Ordinary science uses signed count 0x82F700AC and excludes word 0x82F700B0. A candidate supported envelope is nonnegative owner below the ordinary count and below 32, with the excluded owner held at native behavior. The acquisition callee does not independently supply these guards; the exact excluded-owner reachability at this Wonder site is unproved.",
+        "civilization": "0x830ECD28 + 4*owner is the accepted civilization selector. This Religion rule imposes no civilization filter or AI valuation change.",
+        "qualification": "Do not infer barbarian identity, allocation extent or a supported custom grant from the count/exclusion words alone. Unsupported owner/city state must not cause guest acquisition. Human/AI presentation and network replication require separate title acceptance."
+      },
+      "persistence": "starting-technology-grants.json#/persistence identifies ownership serialization at 0x82CC4718/0x82CC473C and discovery serialization at 0x82CC4760/0x82CC4784. Ordinary granted Religion remains saved state; disabling a future rule does not revoke it.",
+      "currentEvidence": {
+        "method": "Accepted current-image contracts plus foreground read-only exact native-word and defined-data queries. Narrow identified generated windows corroborate register and conditional presentation dataflow. No runtime capture or game launch.",
+        "entries": [
+          {
+            "role": "completion and mode ingress",
+            "address": "0x82D13A18, 0x82D162CC..0x82D16344, 0x82D16BC8..0x82D16C14",
+            "confidence": "strong"
+          },
+          {
+            "role": "acquisition ABI, ownership and reason",
+            "address": "0x82D09208..0x82D094B0, 0x82CEF6A8..0x82CEF750",
+            "confidence": "strong"
+          },
+          {
+            "role": "generic Wonder source and formatter",
+            "address": "0x82CEA694..0x82CEA6D0, 0x8214BB9C, 0x82D17194",
+            "confidence": "strong"
+          },
+          {
+            "role": "serializer prefix and conditional Wonder presentation",
+            "address": "0x82CC4F54..0x82CC5054, 0x82D1719C, 0x82D17334..0x82D173A8",
+            "confidence": "strong"
+          }
+        ],
+        "locators": [
+          "ghidra/DumpMemoryWords.java:0x82D162D0,0x82D16BF0,0x82D09280,0x82CEF6D8 radius=40",
+          "ghidra/DumpMemoryWords.java:0x82D13A18,0x82D09378,0x82D09470,0x82CEA694,0x82D17194 radius=40",
+          "ghidra/DumpMemoryWords.java:0x82CC4FD4,0x82D171A0,0x82D17360 radius=32",
+          "ghidra/DumpDataValues.java:0x8214BB9C,0x821500D8",
+          "generated:rerevved/sub_82D13978",
+          "generated:rerevved/sub_82D16BA0",
+          "generated:rerevved/sub_82D09208",
+          "generated:rerevved/sub_82CEF6A8",
+          "generated:rerevved/sub_82CEA5A0",
+          "generated:rerevved/sub_82CC4040"
+        ],
+        "qualification": "Static ordering and local predicates support the selected contract. Native message data is interpreted semantically; retail message text is not copied here. Consistent-state, valid-input and same-context qualifications are part of the contract."
+      },
+      "catalogPromotion": {
+        "newEntities": [],
+        "updatedEntities": [],
+        "result": "The function, ownership and claim entities already have catalog homes. This topic records their bounded completion/acquisition composition; no new named class or complete lifecycle relation is asserted."
+      },
+      "guards": [
+        "Do not suppress native Stonehenge effects, Culture, claim membership or construction costs.",
+        "Do not grant on activation, first observation, save restore, transfer, reset or owner synchronization alone.",
+        "Do not hook every 0x82D16BA0 entry or use mode zero as the only completion detector.",
+        "Do not invoke acquisition when native Religion availability is already nonzero.",
+        "Do not replace ordinary acquisition with a direct ownership-bit store.",
+        "Do not promise a standalone Religion popup or claim conditional index-eight mode-two presentation actually executes.",
+        "Do not call the guest owner from an unrelated host worker or while holding a host registry lock.",
+        "Do not treat inconsistent restored claims, unsupported owners, unknown aliases or multiplayer replication as verified support."
+      ],
+      "falsificationCondition": "The selected contract is falsified if a consistent restore/transfer/reset/synchronization alone executes 0x82D16344 after its guarded helper without a new production claim, if retained city/index or committed owner disagree at that boundary, or if the proposed generic owner/city/19/5/1 call has additional required context not present in the native same-helper reward precedent.",
+      "conclusion": "The guarded CityUpdate return 0x82D16344 is the selected new Stonehenge native claim boundary for consistent ordinary state. The ordinary acquisition candidate is 0x82D09208(owner,19,city,5,1), after native effective availability returns zero and city/owner/claim validation succeeds. Its source is generic Wonder reward and its phase is native state fan-out. Native Stonehenge behavior and completion presentation remain unchanged. Actual title hook safety, excluded-owner reachability, malformed lifecycle recovery and runtime UI/network parity remain qualified acceptance boundaries."
+    }
+  }
+}

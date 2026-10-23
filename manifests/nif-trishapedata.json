@@ -1,0 +1,527 @@
+{
+  "schemaVersion": 1,
+  "family": "nif-trishapedata",
+  "findings": {
+    "RVA-F-0120": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0120",
+      "topic": "nif-trishapedata-consumer-boundary",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Does a NiTriShapeData-specific stream or construction method consume, skip, or retain the serialized match-group outer count and nested 16-bit values?",
+      "scope": {
+        "typeString": "0x8200F504",
+        "typeDescriptor": "0x82F8E634",
+        "candidateMethodTable": "[0x8200F538,0x8200F5A0)",
+        "baseComparisonTable": "[0x8201FF88,0x8201FFF0)",
+        "inspectedDifferingSlots": ["+0x00", "+0x10", "+0x1C", "+0x20", "+0x24", "+0x50", "+0x5C", "+0x60"],
+        "triangleMethods": ["0x823A2C78", "0x823A2A70"],
+        "boundedConsumer": "0x8250B668",
+        "boundary": "This packet identifies one exact type, descriptor, self-identifying candidate method table, its 26-slot base comparison, eight differing candidate methods, two triangle-list methods, one descriptor-referencing consumer, and one retained match-group record boundary. It does not prove a construction edge for the candidate table, name the nested 16-bit values, or prove runtime execution."
+      },
+      "typeBoundary": {
+        "string": "The exact defined string NiTriShapeData is stored at 0x8200F504 and has two modeled references.",
+        "initializer": "Function 0x82E8DBD0 stores the string pointer at descriptor 0x82F8E634 and stores 0x82F8EA34 in the following word.",
+        "candidateMethodTable": "Initialized range [0x8200F538,0x8200F5A0) contains 26 function pointers before the next defined string data. Its +0x08 entry 0x823A35C8 returns descriptor 0x82F8E634, but the current model records no reference to table base 0x8200F538.",
+        "tableComparison": "The candidate table and base comparison range [0x8201FF88,0x8201FFF0) each contain 26 entries. Eleven slots differ by address: +0x00, +0x08, +0x10, +0x14, +0x18, +0x1C, +0x20, +0x24, +0x50, +0x5C, and +0x60. The +0x14 and +0x18 pairs are distinct adjustment thunks to the same underlying targets, while +0x08 is the already-proved descriptor accessor.",
+        "constructionResult": "None of the eight inspected NiTriShapeData-specific methods materializes and stores table base 0x8200F538. The bounded set therefore does not promote the table to a proved object vtable.",
+        "qualification": "The self-identifying table shape is strong type evidence. Without a modeled construction or object-field write, this packet keeps its object-vtable role candidate rather than confirmed."
+      },
+      "triangleStorage": {
+        "fieldPresentation": "Function 0x823A34E0 first invokes the corresponding NiTriBasedGeomData function, then reads object +0x44 under exact string m_uiTriListLength and object +0x48 under exact string m_pusTriList.",
+        "indexedAccessor": "Candidate-table slot +0x5C is 0x823A2C78. It masks the requested index to 16 bits, multiplies by six, and returns three consecutive 16-bit values from the pointer at object +0x48.",
+        "bulkAccessor": "Candidate-table slot +0x60 is 0x823A2A70. It returns the 16-bit value at object +0x40, a zero word, the pointer at object +0x48, and three times the +0x40 value.",
+        "result": "The current image exposes a triangle count and packed three-unsigned-16-bit triangle-list pointer in this exact type boundary.",
+        "qualification": "The method behaviors establish index width and storage shape, not winding, coordinate space, render submission, or successful file loading."
+      },
+      "firstConsumer": {
+        "function": "0x8250B668",
+        "descriptorEdge": "The function calls neutral helper 0x821CAA40 with the object and descriptor 0x82F8E634, then branches on the returned byte before its descriptor-selected triangle path.",
+        "objectRelativeReads": ["+0x0C", "+0x20", "+0x24", "+0x28", "+0x2C", "+0x32", "+0x34", "+0x36", "+0x40", "+0x44", "+0x48"],
+        "trianglePath": "The descriptor-selected path passes the +0x40 halfword to 0x823A29B8 and later passes +0x44 and +0x48 to 0x823EE998 on a different conditional branch.",
+        "qualification": "The exact listing from entry through tail branch 0x8250B7C4 exposes no additional r31-relative field. Callee behavior, field meanings other than the proved triangle accessors, and this first consumer's match-group handling remain unresolved; separate selected methods close the retained-record boundary."
+      },
+      "matchGroupBoundary": {
+        "stringSearch": "A case-insensitive canonical-image literal-string search for matchgroup, match group, and match returned 63 general matches and no match-group field-name or type-name literal.",
+        "readMethod": "Candidate-table slot +0x10 is 0x823A3010, compared with base-table function 0x823F6B80. After the base call it reads the four-byte list length into object +0x44 and a one-byte presence value. When the presence value and +0x44 are nonzero, it allocates +0x44 times two bytes, stores that pointer at +0x48, and reads the packed list. It then reads a 16-bit outer count into +0x50, allocates +0x50 eight-byte records at +0x4C, and for each record reads a 16-bit nested count followed by count times two bytes into a buffer retained by that record's +0x4 pointer.",
+        "writeMethod": "Candidate-table slot +0x1C is 0x823A3308, compared with base-table function 0x823F6BF8. After the base call it writes +0x44, a one-byte +0x48-presence value, and +0x44 times two bytes from +0x48 when present. It then writes +0x50 and, for each +0x4C record, its 16-bit count followed by count times two bytes from the record's +0x4 pointer.",
+        "recordShape": "Object +0x50 is the retained outer count. Object +0x4C points to an array of eight-byte records; each record exposes a 16-bit nested count at +0x0 and a nested-value pointer at +0x4. The two bytes between them remain uninterpreted.",
+        "consumerMethod": "Candidate-table slot +0x50 is 0x823F5430, compared with base-table function 0x827F16E0. It reads the packed triangle list at +0x48 and, only when +0x4C is non-null and +0x50 equals object +0x0C, uses each selected packed-list value to choose one eight-byte record. It iterates that record's nested 16-bit values as 12-byte strides into the buffer at object +0x24 while accumulating a computed three-float vector.",
+        "retentionResult": "The read and write methods mirror the serialized outer-count, nested-count, and nested-u16 sequence immediately following the packed triangle list. The title retains that sequence in +0x50 and +0x4C records and one differing method consumes the retained nested values; the values are not discarded during this load path.",
+        "semanticLimit": "The bounded methods prove storage shape and arithmetic use. They do not establish a semantic name for the nested values, prove that they are vertex or triangle indices, establish winding or visibility, or prove runtime execution.",
+        "examinedDifferingMethods": [
+          { "slot": "+0x00", "candidate": "0x823A3688", "base": "0x823F6D60", "result": "Cleanup and conditional deallocation shape; no match-group field operation or candidate-table-base store in the visible exact body." },
+          { "slot": "+0x10", "candidate": "0x823A3010", "base": "0x823F6B80", "result": "Reads and retains the packed list plus outer-count and nested-u16 record sequence." },
+          { "slot": "+0x1C", "candidate": "0x823A3308", "base": "0x823F6BF8", "result": "Writes the exact mirror of the retained packed-list and nested-record sequence." },
+          { "slot": "+0x20", "candidate": "0x823A2B30", "base": "0x823F6B10", "result": "Extends base equality with +0x44 equality and a byte comparison over +0x44 times two bytes at +0x48; it does not inspect +0x4C or +0x50." },
+          { "slot": "+0x24", "candidate": "0x823A34E0", "base": "0x823F6C68", "result": "Presents the exact type descriptor plus +0x44 and +0x48 fields; it does not inspect +0x4C or +0x50." },
+          { "slot": "+0x50", "candidate": "0x823F5430", "base": "0x827F16E0", "result": "Consumes +0x4C records and +0x50 count under an exact +0x50-equals-+0x0C guard." },
+          { "slot": "+0x5C", "candidate": "0x823A2C78", "base": "0x823F6AF0", "result": "Returns three packed 16-bit triangle-list values; it does not inspect +0x4C or +0x50." },
+          { "slot": "+0x60", "candidate": "0x823A2A70", "base": "0x823F6AF8", "result": "Returns triangle count, packed-list pointer, and count times three; it does not inspect +0x4C or +0x50." }
+        ]
+      },
+      "currentEvidence": {
+        "method": "Foreground read-only canonical-image string, reference, function, initialized-pointer, slot-by-slot table, memory-word, and bounded instruction queries, with narrow exact-function generated-code corroboration for thunk-truncated bodies.",
+        "entries": [
+          { "role": "type-string inventory", "address": "0x8200F504", "result": "Exact NiTriShapeData string with two modeled references.", "confidence": "strong" },
+          { "role": "type descriptor", "address": "0x82F8E634", "result": "Initialized by 0x82E8DBD0 and returned by candidate-table function 0x823A35C8.", "confidence": "strong" },
+          { "role": "candidate method table", "address": "0x8200F538", "result": "Twenty-six initialized function pointers ending before string data at 0x8200F5A0; no modeled reference to the table base.", "confidence": "strong" },
+          { "role": "base table comparison", "address": "0x8201FF88", "result": "Twenty-six entries compared slot by slot; eleven differ by address, including two same-target adjustment-thunk pairs and the descriptor accessor.", "confidence": "strong" },
+          { "role": "match-group read method", "address": "0x823A3010", "result": "Reads outer count to +0x50 and retains eight-byte nested-count and nested-u16-pointer records at +0x4C after the packed triangle list.", "confidence": "strong" },
+          { "role": "match-group write method", "address": "0x823A3308", "result": "Writes the mirror outer-count, per-record nested-count, and nested-u16 sequence from +0x50 and +0x4C.", "confidence": "strong" },
+          { "role": "match-group record consumer", "address": "0x823F5430", "result": "Consumes +0x4C records when +0x50 equals +0x0C and uses retained nested values as 12-byte strides into object buffer +0x24.", "confidence": "strong" },
+          { "role": "indexed triangle accessor", "address": "0x823A2C78", "result": "Returns three 16-bit values from object +0x48 at masked-index times six.", "confidence": "strong" },
+          { "role": "bulk triangle accessor", "address": "0x823A2A70", "result": "Returns object +0x40, object +0x48, and three times the +0x40 value.", "confidence": "strong" },
+          { "role": "first bounded consumer", "address": "0x8250B668", "result": "Reads raw object fields plus proved triangle fields +0x40, +0x44, and +0x48, with no operation this packet can connect to serialized match-group values.", "confidence": "strong" }
+        ],
+        "locators": [
+          "ghidra/FindStrings.java:NiTriShapeData",
+          "ghidra/DumpReferences.java:0x8200F504,0x82F8E634,0x8200F538",
+          "ghidra/DumpFunctions.java:0x82E8DBD0,0x823A35C8,0x823A34E0,0x823A2C78,0x823A2A70,0x8250B668",
+          "ghidra/FindPointerValues.java:0x823A35C8,0x823A34E0,0x8250B668",
+          "ghidra/FindPointerValues.java:0x823F6D50,0x823F6C68",
+          "ghidra/DumpMemoryWords.java:0x8200F538,0x8201FF88",
+          "ghidra/DumpInstructions.java:0x823A34E0,0x8250B668",
+          "ghidra/DumpMemoryWords.java:0x8200F56C,0x8201FFBC;radius=13",
+          "ghidra/DumpFunctions.java:0x823A3688,0x823F6D60,0x823A3010,0x823F6B80,0x823A3308,0x823F6BF8,0x823A2B30,0x823F6B10,0x823A34E0,0x823F6C68,0x823F5430,0x827F16E0,0x823A2C78,0x823F6AF0,0x823A2A70,0x823F6AF8",
+          "ghidra/DumpInstructions.java:0x823A3688,0x823F6D60,0x823A3010,0x823F6B80,0x823A3308,0x823F6BF8,0x823A2B30,0x823F6B10,0x823F5430",
+          "ghidra/DumpMemoryWords.java:0x823A3688,0x823F6D60,0x823A3010,0x823F6B80,0x823A3308,0x823F6BF8,0x823A2B30,0x823F6B10,0x823A30D0,0x823A31D0,0x823A3270,0x823A33F0,0x823A3460,0x823F5430,0x823F56F0",
+          "generated:rerevved/sub_823A3010",
+          "generated:rerevved/sub_823A3308",
+          "generated:rerevved/sub_823A2B30",
+          "generated:rerevved/sub_823F5430"
+        ],
+        "qualification": "The configured Ghidra project was idle before each foreground read-only invocation. Its function model truncates several selected bodies after save-register thunks, so bounded current-image words and narrow generated-code bodies corroborate those exact functions. No runtime probe was used."
+      },
+      "catalogPromotion": {
+        "newEntities": [],
+        "result": "Catalog promotion remains deferred. The retained record relation is represented completely in this manifest, while the candidate table still lacks a construction edge and the nested values lack a supported semantic name."
+      },
+      "guards": [
+        "Do not infer complete reference coverage from the configured Ghidra model.",
+        "Do not treat the candidate method table as a confirmed object vtable without a construction edge.",
+        "Do not infer that the retained nested values are vertex indices, triangle indices, match-group labels, or render-relevant.",
+        "Do not infer winding, visible geometry, material binding, texture binding, scene placement, runtime execution, or implementation safety.",
+        "Do not use this packet alone to activate a model viewer work."
+      ],
+      "conclusion": "The current image contains an exact NiTriShapeData descriptor and a self-identifying 26-entry candidate method table. Slot +0x10 retains the serialized match-group outer count at object +0x50 and eight-byte nested-count and nested-u16-pointer records at +0x4C; slot +0x1C writes the mirror sequence, and slot +0x50 consumes those records. This closes the bounded retained-versus-discarded match-group contract. The candidate table still lacks a construction edge, the nested values retain no supported semantic name, runtime execution is unproved, and the broader inspection-tool retained-array, material, texture, scene, and synthetic-fixture gates remain open; Model Viewer is not activated."
+    },
+    "RVA-F-0121": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0121",
+      "topic": "nif-trishapedata-matchgroup-domain",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "What exact record domain is stored at object +0x24 with count +0x0C, and what supported role can be assigned to the retained nested 16-bit values used by 0x823F5430 as 12-byte strides into that buffer?",
+      "dependencies": [
+        {
+          "topic": "nif-trishapedata-consumer-boundary",
+          "use": "Accepts RVA-F-0120's proved +0x50 outer count, +0x4C retained-record array, nested-u16 storage, and 0x823F5430 consumer edge without repeating that packet's full evidence."
+        }
+      ],
+      "scope": {
+        "typeDescriptor": "0x82F8E634",
+        "candidateMethodTable": "0x8200F538",
+        "derivedReadMethod": "0x823A3010",
+        "derivedWriteMethod": "0x823A3308",
+        "retainedRecordConsumer": "0x823F5430",
+        "baseReadComparison": "0x823F6B80",
+        "baseWriteComparison": "0x823F6BF8",
+        "basePresentationComparison": "0x823F6C68",
+        "baseSlot50Comparison": "0x827F16E0",
+        "fields": {
+          "baseRecordCount": "+0x0C",
+          "baseRecordBuffer": "+0x24",
+          "retainedRecordArray": "+0x4C",
+          "retainedOuterCount": "+0x50"
+        },
+        "boundary": "This packet follows only the direct base calls from the accepted derived read and write methods, the exact base presentation and slot +0x50 comparisons, the accepted retained-record consumer, and four directly called helpers. It does not search callers, neighboring table slots, other field users, or runtime behavior."
+      },
+      "baseSerialization": {
+        "derivedCalls": "Derived read method 0x823A3010 directly calls base read comparison 0x823F6B80 before its NiTriShapeData-specific fields. Derived write method 0x823A3308 directly calls base write comparison 0x823F6BF8 before writing its type-specific fields.",
+        "readWrapper": "Base read comparison 0x823F6B80 calls inherited read helper 0x82365DC8, then reads the halfword at object +0x40 and mirrors it to +0x42. The +0x0C and +0x24 operations occur in the direct inherited helper.",
+        "writeWrapper": "Base write comparison 0x823F6BF8 calls inherited write helper 0x823663B0, then writes the halfword at object +0x40. The +0x0C and +0x24 operations occur in the direct inherited helper.",
+        "countRule": "Helper 0x82365DC8 reads two bytes into object +0x0C. Both 0x82365DC8 and 0x823663B0 derive a working record count from +0x0C: it is +0x0C when (object +0x32 & 0xF000) is zero and three times +0x0C otherwise.",
+        "readRule": "After a one-byte presence value, 0x82365DC8 allocates working-record-count times 12 bytes, stores the resulting pointer at object +0x24, and reads that many raw bytes into the buffer when the presence value is nonzero.",
+        "writeRule": "Helper 0x823663B0 writes object +0x0C, emits a one-byte presence value for object +0x24, and, when present, writes working-record-count times 12 raw bytes from +0x24.",
+        "allocationRule": "Direct helper 0x82364680 independently applies the same one-or-three multiplier to +0x0C, allocates count times 12 bytes only when +0x24 is null, stores the pointer at +0x24, and, when its second argument is nonzero, passes +0x24, zero, and the same byte extent to an out-of-scope helper.",
+        "result": "Object +0x0C governs the allocation and serialized extent of object +0x24, but the exact number of 12-byte records is conditionally +0x0C or three times +0x0C rather than unconditionally +0x0C."
+      },
+      "presentationBoundary": {
+        "method": "Base presentation method 0x823F6C68 directly calls presentation helper 0x82366840.",
+        "literalAssociations": [
+          {
+            "field": "+0x0C",
+            "string": "m_usVertices",
+            "access": "16-bit value"
+          },
+          {
+            "field": "+0x24",
+            "string": "m_pkNormal",
+            "access": "pointer value"
+          }
+        ],
+        "qualification": "These are exact current-image presentation strings connected to the fields. This packet records the literals but, under its semantic boundary, does not use them alone to assign vertex or normal meaning to the retained nested values or the selected records."
+      },
+      "selectorDomain": {
+        "outerGuard": "Derived consumer 0x823F5430 enters the retained-record path only when object +0x4C is non-null and the 16-bit outer count at +0x50 equals the 16-bit value at +0x0C.",
+        "recordCarrier": "RVA-F-0120 proves that each triangle-list value selects one eight-byte retained record at +0x4C and that the record supplies a nested count and nested-u16 buffer.",
+        "selectorTransform": "For each nested value, 0x823F5430 zero-extends the u16 and performs only address scaling: value times three times four, or value times 12. No remap or other domain carrier is visible in the bounded method.",
+        "selectedRecord": "The scaled value is added directly to object buffer +0x24. The consumer accesses three consecutive single-precision values at record offsets 0, 4, and 8 while accumulating a computed three-float result.",
+        "rangeCheck": "The bounded consumer contains no comparison of an individual nested u16 with +0x0C or with the conditional working record count before the +0x24 access. The +0x50-equals-+0x0C comparison constrains the retained outer-record count, not each nested selector.",
+        "supportedRole": "The retained nested u16 values are direct three-float-record selectors into +0x24. Their serialized or title semantic name remains unsupported.",
+        "qualification": "The three consecutive float accesses prove how each selected 12-byte record is consumed. They do not establish coordinate space, vector meaning, vertex identity, normal identity, or validity of malformed selector values."
+      },
+      "derivedComparison": {
+        "baseMethod": "Base slot +0x50 comparison 0x827F16E0 performs no object-relative field access in its exact body; it conditionally invokes a global callback and calls three fixed helpers.",
+        "derivedAddition": "Relative to that base target, 0x823F5430 adds the +0x24 initialization helper call, packed-triangle and retained-record traversal, +0x50-equals-+0x0C guard, nested-u16 times-12 selection, and three-float accumulation path.",
+        "qualification": "This comparison records only the exact additional object behavior. It does not infer why the computed result is needed or whether the path executes at runtime."
+      },
+      "examinedHelpers": [
+        {
+          "address": "0x82365DC8",
+          "caller": "0x823F6B80",
+          "result": "Reads +0x0C and conditionally allocates and fills +0x24 using a 12-byte record extent."
+        },
+        {
+          "address": "0x823663B0",
+          "caller": "0x823F6BF8",
+          "result": "Writes +0x0C, +0x24 presence, and the conditionally sized 12-byte record extent."
+        },
+        {
+          "address": "0x82366840",
+          "caller": "0x823F6C68",
+          "result": "Associates exact presentation literals m_usVertices and m_pkNormal with +0x0C and +0x24."
+        },
+        {
+          "address": "0x82364680",
+          "caller": "0x823F5430",
+          "result": "Allocates +0x24 using +0x0C, the conditional one-or-three multiplier, and a 12-byte record extent, then conditionally passes that extent to an out-of-scope helper."
+        }
+      ],
+      "currentEvidence": {
+        "method": "Foreground read-only canonical-image function, instruction, and bounded memory-word queries, with narrow exact-function generated-code corroboration for save-thunk-truncated bodies.",
+        "entries": [
+          {
+            "role": "base read chain",
+            "address": "0x823F6B80 -> 0x82365DC8",
+            "result": "Serializes +0x0C and allocates and reads the conditional 12-byte-record extent at +0x24.",
+            "confidence": "strong"
+          },
+          {
+            "role": "base write chain",
+            "address": "0x823F6BF8 -> 0x823663B0",
+            "result": "Writes +0x0C, +0x24 presence, and the mirror conditional record extent.",
+            "confidence": "strong"
+          },
+          {
+            "role": "base presentation",
+            "address": "0x823F6C68 -> 0x82366840",
+            "result": "Presents +0x0C under m_usVertices and +0x24 under m_pkNormal.",
+            "confidence": "strong"
+          },
+          {
+            "role": "base record initializer",
+            "address": "0x82364680",
+            "result": "Uses +0x0C and a conditional one-or-three multiplier to allocate 12-byte records at +0x24 and conditionally pass that extent to an out-of-scope helper.",
+            "confidence": "strong"
+          },
+          {
+            "role": "derived retained-record consumer",
+            "address": "0x823F5430",
+            "result": "Uses each retained nested u16 directly as a 12-byte selector into +0x24 and accesses three floats without a visible per-selector bounds check.",
+            "confidence": "strong"
+          },
+          {
+            "role": "base slot +0x50 comparison",
+            "address": "0x827F16E0",
+            "result": "Contains no object-relative field access or retained-record traversal in its exact body.",
+            "confidence": "strong"
+          }
+        ],
+        "locators": [
+          "ghidra/DumpFunctions.java:0x823F6B80,0x823F6BF8,0x823F6C68,0x827F16E0,0x823F5430,0x82365DC8,0x823663B0,0x82366840,0x82364680",
+          "ghidra/DumpInstructions.java:0x823F6B80,0x823F6BF8,0x823F6C68,0x827F16E0,0x823F5430,0x82365DC8,0x823663B0,0x82366840,0x82364680",
+          "ghidra/DumpMemoryWords.java:0x82365E40,0x82366020,0x823660F0,0x82366580,0x82366600,0x823646B0,0x823F5668;radius=24",
+          "generated:rerevved/sub_82365DC8",
+          "generated:rerevved/sub_823663B0",
+          "generated:rerevved/sub_82366840",
+          "generated:rerevved/sub_82364680",
+          "generated:rerevved/sub_823F6B80",
+          "generated:rerevved/sub_823F6BF8",
+          "generated:rerevved/sub_823F6C68",
+          "generated:rerevved/sub_823F5430",
+          "generated:rerevved/sub_827F16E0"
+        ],
+        "qualification": "The configured canonical Ghidra project was confirmed idle before every foreground read-only invocation. Its current function model truncates several selected bodies after save-register thunks, so bounded current-image words and narrow generated-code bodies corroborate only these exact functions. No runtime probe was used."
+      },
+      "catalogPromotion": {
+        "newEntities": [],
+        "result": "Catalog promotion remains deferred. The structural record-selector relation is represented completely in this manifest, while the selected records and nested values lack a semantic name supported within the packet boundary."
+      },
+      "guards": [
+        "Do not infer that +0x24 has exactly +0x0C records in every flag state; the bounded methods prove a conditional one-or-three multiplier.",
+        "Do not infer that each nested selector is range-checked or valid for malformed input.",
+        "Do not infer vertex, normal, coordinate-space, winding, skinning, material, texture, scene, visibility, or renderer behavior.",
+        "Do not infer runtime execution or implementation safety from static current-image evidence.",
+        "Do not use this packet alone to activate a model viewer work."
+      ],
+      "conclusion": "Object +0x0C governs object +0x24 as an array of 12-byte records: the serialized and allocated extent is +0x0C records when (object +0x32 & 0xF000) is zero and three times +0x0C otherwise. Consumer 0x823F5430 uses each retained nested u16 directly, after zero-extension and multiplication by 12, to select one +0x24 record and access three consecutive floats. It does not visibly range-check each selector against +0x0C. This closes the structural retained nested-value domain with the neutral names three-float record array and record selector; semantic vertex or normal meaning, runtime execution, and the remaining a model viewer gates stay open."
+    },
+    "RVA-F-0122": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0122",
+      "topic": "nif-trishapedata-normal-group-consumer",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Does 0x823F5430 combine, normalize, or redistribute the selected three-float records in a way that independently supports the exact m_pkNormal presentation identity and establishes a normal-sharing group relationship?",
+      "dependencies": [
+        {
+          "topic": "nif-trishapedata-consumer-boundary",
+          "use": "Accepts RVA-F-0120's retained +0x4C eight-byte records, +0x50 outer count, and nested-u16 storage contract."
+        },
+        {
+          "topic": "nif-trishapedata-matchgroup-domain",
+          "use": "Accepts RVA-F-0121's +0x0C count, +0x24 12-byte three-float-record array, direct nested-u16 selector arithmetic, and exact m_pkNormal presentation association."
+        }
+      ],
+      "scope": {
+        "consumer": "0x823F5430",
+        "baseComparisonTarget": "0x827F16E0",
+        "presentationHelper": "0x82366840",
+        "initializer": "0x82364680",
+        "qualifyingDirectCallees": ["0x823DCE88"],
+        "fields": {
+          "presentedCount": "+0x0C",
+          "sourceThreeFloatRecords": "+0x20",
+          "presentedThreeFloatRecords": "+0x24",
+          "finalNormalizationCount": "+0x30",
+          "resultFlags": "+0x34",
+          "workItemCount": "+0x42",
+          "packedThreeSelectorList": "+0x48",
+          "retainedRecords": "+0x4C",
+          "retainedOuterCount": "+0x50"
+        },
+        "boundary": "This packet recovers the exact 0x823F5430 body, including its accumulator, selected-record writes, retained-list loops, and final direct callee 0x823DCE88. It does not inspect callers, indirect targets, neighboring slots, the callee of accepted initializer 0x82364680, or any other helper."
+      },
+      "completeAlgorithm": {
+        "initialization": "The consumer calls accepted initializer 0x82364680 with second argument one. RVA-F-0121 proves that helper allocates +0x24 if needed and passes the buffer, zero, and its computed extent to an out-of-scope helper; this packet does not assign the callee's effect.",
+        "iteration": "The body reads a 16-bit work-item count from +0x42 and walks the packed list at +0x48. Each item supplies three consecutive u16 selectors. A zero work-item count skips directly to final array normalization.",
+        "sourceSelection": "Each of the three packed selectors is multiplied by 12 and used to select one three-float record from object +0x20. The packet records this source only structurally and does not assign vertex-position semantics.",
+        "vectorConstruction": "The body forms two component-wise differences from the three selected +0x20 records. Three multiply-subtract expressions produce the exact cross-product arithmetic for a three-float accumulator.",
+        "firstNormalization": "The accumulator is dotted with itself through a three-component multiply-sum. The body applies reciprocal-square-root estimation and one refinement sequence, scales all three components, and stores the normalized result on the stack.",
+        "zeroLengthFallback": "The body compares the squared length with zero before selecting the normalized result. When equal, it selects the saved zero squared-length vector, so the stored three-float contribution is zero rather than the reciprocal-square-root result.",
+        "directWriteBack": "The same stored normalized contribution is added component-wise and written back to each of the three +0x24 records selected directly by the packed list.",
+        "retainedWriteBack": "When +0x4C is non-null and +0x50 equals +0x0C, the body selects one retained eight-byte record for each of the three packed selectors. For every nested u16 in each selected record, it adds the same normalized contribution component-wise to +0x24 plus nested value times 12 and writes all three floats back.",
+        "nestedCountRole": "Each retained record's nested count is only a loop bound. The body performs no scalar division by that count, no averaging, and no count-derived scaling of the contribution.",
+        "finalNormalization": "After all work items, the consumer calls 0x823DCE88 with +0x24 as the base, the halfword at +0x30 as the record count, and 12 as the stride. It then sets bit 1 in the halfword at +0x34.",
+        "destinationSet": "The per-item contribution affects all three direct packed-list destinations and every destination selected by the three applicable retained nested lists. The final callee affects the first +0x30 strided records, which is a separately supplied destination count."
+      },
+      "normalizationCallee": {
+        "address": "0x823DCE88",
+        "arguments": {
+          "base": "object +0x24 pointer",
+          "count": "16-bit object +0x30",
+          "stride": "12 bytes"
+        },
+        "algorithm": "For each counted record, the complete body loads three floats, computes their squared-length sum, applies reciprocal-square-root estimation with two scalar refinement steps, multiplies each component by the refined reciprocal length, writes all three values back in place, and advances by the supplied stride.",
+        "zeroCount": "A zero count returns before reading the buffer.",
+        "zeroLength": "The callee contains no comparison or fallback for a zero squared length before reciprocal square root. It still writes all three computed components for a nonzero record count, but the bounded body supplies no finite-result guarantee for that case.",
+        "otherOperations": "The callee contains no scalar division by a group count, no averaging, no copying between records, and no additional fixed callee."
+      },
+      "semanticPromotion": {
+        "presentationDiscriminator": "Accepted presentation helper 0x82366840 associates object +0x24 with exact string m_pkNormal.",
+        "independentArithmetic": "The consumer independently constructs a cross-product-form vector, normalizes it with a zero-length fallback, distributes that shared normalized contribution to direct and retained-list-selected +0x24 records, and invokes an in-place three-float normalizer over a counted +0x24 prefix.",
+        "arrayRole": "Together, the exact m_pkNormal identity and the independent arithmetic promote object +0x24 from a neutral three-float-record array to the normal-vector array.",
+        "groupRole": "Each retained nested list identifies normal-vector records that receive the same normalized per-item contribution. The supported neutral semantic name is normal-sharing group.",
+        "qualification": "The relation shares a contribution rather than copying one final accumulated vector among members. Records may receive different prior or later contributions, and the body neither averages by group size nor proves that group members finish equal."
+      },
+      "boundsAndMalformedInput": {
+        "outerGuard": "The retained-list path requires +0x4C to be non-null and +0x50 to equal +0x0C.",
+        "selectorChecks": "The exact body does not bound packed-list selectors against the conditional +0x24 capacity of +0x0C or three times +0x0C, does not bound packed selectors used to choose +0x4C records against +0x50, and does not bound retained nested selectors against the conditional +0x24 capacity or +0x30 before using them as 12-byte record indices.",
+        "pointerChecks": "The body dereferences the +0x48 packed-list pointer, +0x20 source-record pointer, +0x24 destination pointer, and each nonempty retained record's nested pointer without a local null or extent check. Only the outer +0x4C pointer has the explicit guard described above.",
+        "finalPrefix": "The final normalizer processes exactly the first +0x30 records. The consumer does not check +0x30 against the allocated conditional +0x24 record extent, and the bounded method does not prove that every malformed retained selector lies in that prefix.",
+        "duplicateSelectors": "The body performs no deduplication. If the same destination is selected more than once, the same contribution is added once per visit.",
+        "qualification": "These missing checks constrain malformed-input and equality claims; they do not change the exact normal-array and shared-contribution relation shown by the bounded valid-object algorithm."
+      },
+      "baseComparison": {
+        "target": "0x827F16E0",
+        "acceptedDifference": "RVA-F-0121 establishes that the base target contains no object-relative field access or retained-record traversal. The normal construction, direct and retained write-back, final normalization call, and +0x34 flag update are additional behavior in 0x823F5430.",
+        "qualification": "This packet does not inspect the base target again or infer runtime dispatch from the candidate table."
+      },
+      "currentEvidence": {
+        "method": "Foreground read-only canonical-image function, instruction, and bounded memory-word queries, with narrow complete generated-code corroboration for the thunk-truncated consumer and its one qualifying direct fixed callee.",
+        "entries": [
+          {
+            "role": "normal-group consumer",
+            "address": "0x823F5430",
+            "result": "Constructs and normalizes one cross-product-form contribution, adds it to direct and retained-list-selected +0x24 records, calls the final array normalizer, and sets +0x34 bit 1.",
+            "confidence": "strong"
+          },
+          {
+            "role": "array normalizer",
+            "address": "0x823DCE88",
+            "result": "Normalizes three-float records in place for the supplied count and stride, without a visible zero-length fallback.",
+            "confidence": "strong"
+          },
+          {
+            "role": "presentation identity",
+            "address": "0x82366840",
+            "result": "Accepted exact m_pkNormal association for object +0x24.",
+            "confidence": "strong"
+          }
+        ],
+        "locators": [
+          "ghidra/DumpFunctions.java:0x823F5430,0x823DCE88",
+          "ghidra/DumpInstructions.java:0x823F5430,0x823DCE88;count=256",
+          "ghidra/DumpMemoryWords.java:0x823F5430,0x823F5488,0x823F54E0,0x823F5520,0x823F5570,0x823F55D0,0x823F5640,0x823F56B8,0x823F5724,0x823F57A0;radius=16",
+          "generated:rerevved/sub_823F5430",
+          "generated:rerevved/sub_823DCE88"
+        ],
+        "qualification": "The canonical project was confirmed idle before every foreground read-only query. Ghidra truncates 0x823F5430 after its save-register thunk, so bounded current-image words and the exact complete generated body corroborate that function. No runtime probe was used."
+      },
+      "catalogPromotion": {
+        "newEntities": [],
+        "result": "Catalog promotion remains deferred because the enclosing object type and candidate table still lack a proved construction edge. The normal-array and normal-sharing-group relation is represented completely in this bounded manifest."
+      },
+      "guards": [
+        "Do not infer that the +0x20 source records are vertex positions or assign a coordinate space.",
+        "Do not infer winding, tangent, skinning, material, texture, scene, visibility, render submission, or runtime execution.",
+        "Do not infer that normal-sharing group members finish with identical values or that the algorithm averages their records.",
+        "Do not infer selector safety or final-normalization coverage for malformed values.",
+        "Do not use this packet alone to activate a model viewer work."
+      ],
+      "conclusion": "Consumer 0x823F5430 constructs a cross-product-form three-float contribution, normalizes it with an explicit zero-length fallback, adds the same normalized contribution to all three direct +0x24 destinations and every destination selected by their retained nested lists, then calls 0x823DCE88 to normalize the first +0x30 records in place. With the exact m_pkNormal presentation association, this independently promotes +0x24 as the normal-vector array and each retained nested list as a normal-sharing group whose selectors receive a shared normalized contribution. The method does not average by group size, make group members equal, bounds-check selectors, or provide a zero-length fallback in the final array normalizer; runtime execution and all remaining Model Viewer gates stay open."
+    },
+    "RVA-F-0123": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0123",
+      "topic": "nif-trishapedata-position-array-domain",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Does object +0x20 store vertex-position records selected by the packed triangle list, and what exact serialized count, allocation, and presentation contract governs that array?",
+      "dependencies": [
+        {
+          "topic": "nif-trishapedata-consumer-boundary",
+          "use": "Accepts RVA-F-0120's +0x40 triangle count, +0x44 packed-list length, and +0x48 packed three-u16 triangle-list storage contract."
+        },
+        {
+          "topic": "nif-trishapedata-matchgroup-domain",
+          "use": "Accepts RVA-F-0121's exact m_usVertices association for +0x0C and counted three-float-record structure for the related +0x24 array."
+        },
+        {
+          "topic": "nif-trishapedata-normal-group-consumer",
+          "use": "Accepts RVA-F-0122's +0x42 packed three-selector work-item count, direct packed-selector addressing of three +0x20 records, component-wise differences, cross-product construction, +0x24 normal-vector role, and normal-sharing-group relation."
+        }
+      ],
+      "scope": {
+        "readHelper": "0x82365DC8",
+        "writeHelper": "0x823663B0",
+        "presentationHelper": "0x82366840",
+        "acceptedConsumer": "0x823F5430",
+        "fields": {
+          "vertexCount": "+0x0C",
+          "positionArray": "+0x20",
+          "normalArray": "+0x24",
+          "triangleCount": "+0x40",
+          "workItemCount": "+0x42",
+          "packedListLength": "+0x44",
+          "packedTriangleList": "+0x48"
+        },
+        "boundary": "This packet inspects only the +0x20 operations in the accepted base read, write, and presentation helpers. It accepts the closed RVA-F-0122 consumer result without re-investigating that algorithm and inspects no additional helper, caller, neighboring slot, or runtime path."
+      },
+      "serializationContract": {
+        "countRead": "Read helper 0x82365DC8 passes object +0x0C to the stream for an exact two-byte transfer before processing the +0x20 presence value. The field is therefore serialized as a u16 count.",
+        "presenceRead": "The helper reads one serialized byte for +0x20 presence. A zero value skips the +0x20 allocation and payload read; any nonzero value enters them.",
+        "allocation": "On the nonzero path, the helper loads the u16 at +0x0C, computes count plus twice count and then multiplies by four, yielding exactly count times 12 bytes. Both visible allocation paths use that extent, and the resulting buffer pointer is stored at +0x20.",
+        "payloadRead": "The helper passes the +0x20 pointer and the exact +0x0C times 12 byte extent to the stream read operation as one contiguous payload.",
+        "countWrite": "Write helper 0x823663B0 passes object +0x0C to the stream for the exact mirror two-byte transfer.",
+        "presenceWrite": "The helper writes one byte equal to one when +0x20 is non-null and zero when it is null.",
+        "payloadWrite": "When the emitted presence value is nonzero, the helper loads +0x0C, computes exactly count times 12, and passes the +0x20 pointer and that extent to the stream write operation. A null +0x20 pointer emits zero presence and no payload.",
+        "arrayExtent": "The serialized +0x20 payload is exactly +0x0C records of 12 bytes each when present. Unlike the related +0x24 normal allocation described by RVA-F-0121, this extent has no conditional one-or-three multiplier.",
+        "recordShape": "The stream helpers transfer the payload as bytes rather than issuing per-component float operations. Accepted RVA-F-0122 loads three consecutive floating components at offsets zero, four, and eight from every selector-addressed +0x20 unit, independently establishing a three-float, 12-byte record shape."
+      },
+      "presentationContract": {
+        "count": "Presentation helper 0x82366840 associates object +0x0C with exact string m_usVertices.",
+        "array": "The same helper loads object +0x20 and passes it with exact string m_pkVertex at 0x8200B8C4 to the presentation path.",
+        "adjacentDiscriminator": "The next presented pointer, object +0x24, is separately associated with exact string m_pkNormal. This preserves the distinction between the source +0x20 records and the proved normal-vector array.",
+        "qualification": "The literal m_pkVertex identifies the title's field name. Position semantics additionally rely on the accepted triangle-selector and cross-product use rather than on the literal alone."
+      },
+      "semanticPromotion": {
+        "independentConsumer": "RVA-F-0122 proves that each packed triangle work item supplies three u16 values used directly as value times 12 selectors into +0x20. The consumer loads three floats from each selected record, forms two component-wise differences, and computes their cross product for normal construction.",
+        "arrayRole": "The exact m_pkVertex association, the +0x0C m_usVertices count, the exact count-times-12 serialization contract, and the independent triangle/cross-product consumer together promote +0x20 as the vertex-position array.",
+        "selectorRole": "The packed triangle list's three u16 values directly select vertex-position records in +0x20. The bounded evidence does not show a transform applied to a selector before the value-times-12 address calculation.",
+        "qualification": "The promotion identifies record role and selector relationship only. It does not establish coordinate conventions, valid-index enforcement, triangle winding, or any renderer-facing interpretation."
+      },
+      "geometryContract": {
+        "status": "closed for static untextured triangle-geometry decoding",
+        "vertices": "Object +0x0C is the serialized vertex count and governs the optional +0x20 array of exactly that many 12-byte three-float vertex-position records.",
+        "triangles": "Accepted RVA-F-0120 identifies +0x40 triangle count, +0x44 packed-list length, and +0x48 packed three-u16 triangle-list storage. RVA-F-0122 identifies +0x42 as the packed three-selector work-item count and connects each work item's selectors directly to +0x20 records.",
+        "normals": "Accepted RVA-F-0122 identifies +0x24 as the normal-vector array and proves cross-product contribution construction from selected +0x20 positions, contribution write-back, and final counted normalization.",
+        "sharingGroups": "Accepted RVA-F-0120 through RVA-F-0122 establish retained +0x4C/+0x50 normal-sharing groups whose nested selectors receive a shared normalized contribution.",
+        "limit": "This is a static untextured triangle-geometry decoding contract, not a complete Model Viewer contract and not proof of runtime rendering."
+      },
+      "boundsAndMalformedInput": {
+        "countExtent": "Because +0x0C is a u16, the visible count-times-12 computation is within 786420 bytes and does not overflow a 32-bit unsigned extent for any serialized count value.",
+        "presence": "The read path treats any nonzero presence byte as present, while the write path emits only zero or one. The bounded path does not prove that a zero presence value clears a previously non-null +0x20 field; ordinary construction state remains outside this packet.",
+        "allocationFailure": "The bounded helper body shows the computed extent and pointer store but does not establish a complete failure contract for either allocation path or prove that a nonzero-count read cannot receive a null result.",
+        "streamExtent": "The helper supplies the expected byte count to the stream operation. This packet does not independently prove how the stream reports a truncated payload or whether every malformed input is rejected before object use.",
+        "selectorChecks": "Accepted RVA-F-0122 shows no local comparison of the packed u16 selectors against +0x0C before +0x20 plus value times 12 is dereferenced. No selector-safety claim is supported.",
+        "pointerChecks": "The accepted consumer dereferences +0x20 without a local null or serialized-extent check. The semantic contract describes valid retained objects, not arbitrary malformed object state."
+      },
+      "currentEvidence": {
+        "method": "Foreground read-only canonical-image function and bounded memory-word queries, with narrow generated-code corroboration for the save-register-thunk-truncated read and write helpers and accepted closed-packet evidence for the consumer algorithm.",
+        "entries": [
+          {
+            "role": "position-array read contract",
+            "address": "0x82365DC8",
+            "result": "Reads +0x0C as a two-byte count, reads one +0x20 presence byte, and on nonzero presence allocates, stores, and reads exactly count times 12 bytes at +0x20.",
+            "confidence": "strong"
+          },
+          {
+            "role": "position-array write contract",
+            "address": "0x823663B0",
+            "result": "Writes +0x0C as a two-byte count, emits +0x20 non-nullness as one byte, and when present writes exactly count times 12 bytes from +0x20.",
+            "confidence": "strong"
+          },
+          {
+            "role": "position-array presentation identity",
+            "address": "0x82366840",
+            "result": "Associates +0x0C with m_usVertices and +0x20 with exact string m_pkVertex, separately from +0x24 m_pkNormal.",
+            "confidence": "strong"
+          },
+          {
+            "role": "accepted triangle and normal consumer",
+            "address": "0x823F5430",
+            "result": "RVA-F-0122 proves direct packed-u16 selection of three +0x20 records and their use in difference and cross-product normal construction.",
+            "confidence": "strong"
+          }
+        ],
+        "locators": [
+          "ghidra/DumpFunctions.java:0x82365DC8,0x823663B0,0x82366840",
+          "ghidra/DumpMemoryWords.java:0x82365F0C,0x82365F40,0x82365F70,0x82365F9C,0x82365FC0,0x823664C0,0x823664E8,0x82366500,0x82366530,0x82366920;radius=5",
+          "generated:rerevved/sub_82365DC8",
+          "generated:rerevved/sub_823663B0",
+          "generated:rerevved/sub_82366840",
+          "manifest:RVA-F-0122"
+        ],
+        "qualification": "The canonical project was confirmed idle before every foreground read-only query. Ghidra exposes 0x82365DC8 and 0x823663B0 only through save-register thunks, so bounded current-image words and exact generated bodies corroborate their field and extent operations. The complete 0x82366840 decompilation supplies the exact presentation associations. No string inventory, additional helper inspection, runtime probe, or previous-packet re-investigation was used."
+      },
+      "catalogPromotion": {
+        "newEntities": [],
+        "result": "Catalog promotion remains deferred because the enclosing object type and candidate table still lack a proved construction edge. The vertex-position and untextured triangle-geometry decoding contracts are represented completely in this bounded manifest."
+      },
+      "guards": [
+        "Do not infer coordinate space, handedness, units, winding, tangent, skinning, transform, scene, visibility, material, or texture relationships.",
+        "Do not infer selector bounds checks, allocation-failure handling, or complete malformed-stream rejection.",
+        "Do not infer runtime execution or render submission from this static contract.",
+        "Do not use this packet alone to activate a model viewer work."
+      ],
+      "conclusion": "Object +0x20 is the vertex-position array. Read helper 0x82365DC8 serializes +0x0C as a u16, consumes one presence byte, and when present allocates and reads exactly +0x0C times 12 bytes into +0x20; write helper 0x823663B0 mirrors that count, presence, and payload contract. Presentation helper 0x82366840 associates +0x0C with m_usVertices and +0x20 with exact string m_pkVertex. Together with RVA-F-0122's direct packed-triangle selection of three +0x20 records and their cross-product normal construction, the accepted static evidence now closes an untextured triangle-geometry decoding contract connecting vertex positions, triangle storage, normals, and normal-sharing groups. Selector safety, coordinate and winding conventions, runtime behavior, and the remaining Model Viewer gates remain unresolved."
+    }
+  }
+}

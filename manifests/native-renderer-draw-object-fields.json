@@ -1,0 +1,3134 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0257",
+  "topic": "native-renderer-draw-object-fields",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which bounded native-renderer object and device fields have proved byte coverage for buffer, declaration, texture, surface, binding, dirty, command, and lifetime paths?",
+  "scope": {
+    "boundedQuestions": [
+      "VB and IB headers, declaration allocation and copied records",
+      "texture and surface descriptor fields, including parent-backed and standalone constructors",
+      "device stream, sampler, texture, shader, render-target, declaration and dirty-state bindings",
+      "draw command cursor and commit header fields, plus resource refcount and fence readers"
+    ],
+    "querySets": [
+      {
+        "name": "vb-ib-declaration",
+        "functions": [
+          "0x826982A8",
+          "0x826983D0",
+          "0x8268FB08",
+          "0x8268FCB0",
+          "0x82692FA8",
+          "0x82692E60",
+          "0x826A39F8",
+          "0x82303C38"
+        ]
+      },
+      {
+        "name": "texture-surface-sampler",
+        "functions": [
+          "0x82692EB8",
+          "0x8269AB90",
+          "0x8269AF10",
+          "0x8269B090",
+          "0x8269A918",
+          "0x8269A690",
+          "0x8268EF98",
+          "0x8268F060"
+        ]
+      },
+      {
+        "name": "dirty-command-lifetime",
+        "functions": [
+          "0x826A3048",
+          "0x826A3568",
+          "0x826ADD88",
+          "0x8269CD20",
+          "0x82698160",
+          "0x826981D8",
+          "0x8269C150",
+          "0x8269C738"
+        ]
+      }
+    ],
+    "boundary": "Static foreground read-only evidence only. The layouts are partial where a consumer, producer, or allocation extent was outside the bounded sets."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-d3d-runtime-surface",
+      "use": "Accepted device dirty words, register shadows, bindings, and static-state boundaries."
+    },
+    {
+      "topic": "native-renderer-resolve-resource-contract",
+      "use": "Accepted 0x34-byte texture header and qualified descriptor-word roles."
+    },
+    {
+      "topic": "native-renderer-ring-span-boundary",
+      "use": "Accepted ring-span emitter and command-state comparison boundary."
+    },
+    {
+      "topic": "native-renderer-indexed-draw-caller-frontier",
+      "use": "Accepted indexed draw sink and caller-side submission edge."
+    },
+    {
+      "topic": "gfx-draw-producer",
+      "use": "Accepted shader-loader consumers of device shader bindings."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Three bounded foreground read-only DumpFunctions runs, a bounded instruction window whose saved listing was sparse, and exact generated-code corroboration for the same identified functions.",
+    "querySets": [
+      {
+        "name": "vb-ib-declaration",
+        "tool": "ghidra/DumpFunctions.java",
+        "functions": [
+          "0x826982A8",
+          "0x826983D0",
+          "0x8268FB08",
+          "0x8268FCB0",
+          "0x82692FA8",
+          "0x82692E60",
+          "0x826A39F8",
+          "0x82303C38"
+        ],
+        "result": "status OK; canonical truncation left generated corroboration necessary"
+      },
+      {
+        "name": "texture-surface-sampler",
+        "tool": "ghidra/DumpFunctions.java",
+        "functions": [
+          "0x82692EB8",
+          "0x8269AB90",
+          "0x8269AF10",
+          "0x8269B090",
+          "0x8269A918",
+          "0x8269A690",
+          "0x8268EF98",
+          "0x8268F060"
+        ],
+        "result": "status OK; canonical truncation left generated corroboration necessary"
+      },
+      {
+        "name": "dirty-command-lifetime",
+        "tool": "ghidra/DumpFunctions.java",
+        "functions": [
+          "0x826A3048",
+          "0x826A3568",
+          "0x826ADD88",
+          "0x8269CD20",
+          "0x82698160",
+          "0x826981D8",
+          "0x8269C150",
+          "0x8269C738"
+        ],
+        "result": "status OK; canonical truncation left generated corroboration necessary"
+      },
+      {
+        "name": "flush-instruction-window",
+        "tool": "ghidra/DumpInstructions.java",
+        "functions": [
+          "0x826A3048"
+        ],
+        "result": "status OK; saved listing was sparse after the entry prologue and did not expose internal flush sites; generated body supplies the exact reads, clears, cursor, packet, and commit sites"
+      }
+    ],
+    "functionEntries": [
+      {
+        "address": "0x826982A8",
+        "role": "vertex-buffer creator",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.83.cpp:12617",
+        "guestSites": [
+          "0x8269832C",
+          "0x82698338",
+          "0x82698344",
+          "0x82698350",
+          "0x82698358",
+          "0x82698364"
+        ]
+      },
+      {
+        "address": "0x826983D0",
+        "role": "index-buffer creator",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.61.cpp:12831",
+        "guestSites": [
+          "0x8269845C",
+          "0x82698464",
+          "0x82698468",
+          "0x8269846C",
+          "0x82698470"
+        ]
+      },
+      {
+        "address": "0x8268FB08",
+        "role": "stream-source setter",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.124.cpp:12900",
+        "guestSites": [
+          "0x8268FB80",
+          "0x8268FBF4",
+          "0x8268FC00",
+          "0x8268FB64",
+          "0x8268FB68",
+          "0x8268FC1C"
+        ]
+      },
+      {
+        "address": "0x8268FCB0",
+        "role": "index-buffer setter",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.161.cpp:12634",
+        "guestSites": [
+          "0x8268FD34"
+        ]
+      },
+      {
+        "address": "0x82692FA8",
+        "role": "vertex-declaration creator",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.176.cpp:13016",
+        "guestSites": [
+          "0x82692FC8",
+          "0x82692FD8",
+          "0x82692FF0",
+          "0x8269300C"
+        ]
+      },
+      {
+        "address": "0x82692E60",
+        "role": "vertex-declaration binding setter",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.62.cpp:12851",
+        "guestSites": [
+          "0x82692E60",
+          "0x82692E6C"
+        ]
+      },
+      {
+        "address": "0x826A39F8",
+        "role": "indexed draw sink",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.91.cpp:13354",
+        "guestSites": [
+          "0x826A3C38",
+          "0x826A3CA4",
+          "0x826A3CB0"
+        ]
+      },
+      {
+        "address": "0x82303C38",
+        "role": "title-side draw submission gate",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.21.cpp:3366",
+        "guestSites": [
+          "0x82303CC0",
+          "0x82303CCC",
+          "0x82303E3C",
+          "0x82303E8C"
+        ]
+      },
+      {
+        "address": "0x82692EB8",
+        "role": "declaration layout copier",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.31.cpp:12652",
+        "guestSites": [
+          "0x82692EE0",
+          "0x82692F0C",
+          "0x82692F3C",
+          "0x82692F44",
+          "0x82692F4C",
+          "0x82692F50",
+          "0x82692F58",
+          "0x82692F5C",
+          "0x82692F60",
+          "0x82692F64",
+          "0x82692F7C",
+          "0x82692F84",
+          "0x82692F90"
+        ]
+      },
+      {
+        "address": "0x8269AB90",
+        "role": "texture header creator",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.104.cpp:12673",
+        "guestSites": [
+          "0x8269ABB0",
+          "0x8269ACA0",
+          "0x8269ACA4"
+        ]
+      },
+      {
+        "address": "0x8269AF10",
+        "role": "texture fetch-shadow and binding setter",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.30.cpp:12903",
+        "guestSites": [
+          "0x8269AF34",
+          "0x8269AF3C",
+          "0x8269AF44",
+          "0x8269AF4C",
+          "0x8269AF50",
+          "0x8269AF54",
+          "0x8269AF9C",
+          "0x8269AFB0",
+          "0x8269AFB8",
+          "0x8269AFC0",
+          "0x8269AFC8",
+          "0x8269AFCC",
+          "0x8269B010",
+          "0x8269B014"
+        ]
+      },
+      {
+        "address": "0x8269B090",
+        "role": "texture binding getter",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.143.cpp:12823",
+        "guestSites": [
+          "0x8269B0B0",
+          "0x8269B0C0"
+        ]
+      },
+      {
+        "address": "0x8269A918",
+        "role": "parent-backed surface creator",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.102.cpp:12623",
+        "guestSites": [
+          "0x8269A994",
+          "0x8269A9A0",
+          "0x8269A9B0",
+          "0x8269A9B4",
+          "0x8269A9BC",
+          "0x8269A9C0"
+        ]
+      },
+      {
+        "address": "0x8269A690",
+        "role": "standalone surface builder",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.69.cpp:12999",
+        "guestSites": [
+          "0x8269A6EC",
+          "0x8269A6F8",
+          "0x8269A700",
+          "0x8269A7E8",
+          "0x8269A820",
+          "0x8269A840",
+          "0x8269A884",
+          "0x8269A890",
+          "0x8269A8E8",
+          "0x8269A8F0"
+        ]
+      },
+      {
+        "address": "0x8268EF98",
+        "role": "sampler shadow setter",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.200.cpp:12638",
+        "guestSites": [
+          "0x8268EFE8",
+          "0x8268F014",
+          "0x8268F04C",
+          "0x8268F058"
+        ]
+      },
+      {
+        "address": "0x8268F060",
+        "role": "sampler shadow getter",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.217.cpp:13215",
+        "guestSites": [
+          "0x8268F06C",
+          "0x8268F070"
+        ]
+      },
+      {
+        "address": "0x826A3048",
+        "role": "dirty-state flush and command packet emitter",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.150.cpp:12564",
+        "guestSites": [
+          "0x826A30BC",
+          "0x826A30C4",
+          "0x826A30C8",
+          "0x826A30D0",
+          "0x826A30D4",
+          "0x826A30E8",
+          "0x826A30EC",
+          "0x826A3108",
+          "0x826A310C",
+          "0x826A312C",
+          "0x826A3134",
+          "0x826A31EC",
+          "0x826A32D8",
+          "0x826A32DC",
+          "0x826A32E0",
+          "0x826A333C",
+          "0x826A3440",
+          "0x826A3488",
+          "0x826A350C",
+          "0x826A3524",
+          "0x826A3534"
+        ]
+      },
+      {
+        "address": "0x826A3568",
+        "role": "flush wrapper and command cursor commit",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.147.cpp:12623",
+        "guestSites": [
+          "0x826A35AC",
+          "0x826A35F8",
+          "0x826A35FC"
+        ]
+      },
+      {
+        "address": "0x826ADD88",
+        "role": "shader and declaration draw loader",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.17.cpp:12974",
+        "guestSites": [
+          "0x826ADDCC",
+          "0x826ADDD0",
+          "0x826ADDD4"
+        ]
+      },
+      {
+        "address": "0x8269CD20",
+        "role": "ring-span render-target comparison and packet emitter",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.226.cpp:12791",
+        "guestSites": [
+          "0x8269CD7C",
+          "0x8269CD94",
+          "0x8269CDAC",
+          "0x8269CDC4",
+          "0x8269CDDC"
+        ]
+      },
+      {
+        "address": "0x82698160",
+        "role": "resource AddRef",
+        "confidence": "confirmed",
+        "generated": "generated/default/rerevved_recomp.79.cpp:12897",
+        "guestSites": [
+          "0x8269817C",
+          "0x82698184",
+          "0x8269819C",
+          "0x826981B4"
+        ]
+      },
+      {
+        "address": "0x826981D8",
+        "role": "resource Release",
+        "confidence": "confirmed",
+        "generated": "generated/default/rerevved_recomp.185.cpp:13205",
+        "guestSites": [
+          "0x826981F8",
+          "0x82698200",
+          "0x82698218",
+          "0x82698230",
+          "0x8269823C"
+        ]
+      },
+      {
+        "address": "0x8269C150",
+        "role": "resource block-until-not-busy",
+        "confidence": "strong",
+        "generated": "generated/default/rerevved_recomp.41.cpp:12759",
+        "guestSites": [
+          "0x8269C154"
+        ]
+      },
+      {
+        "address": "0x8269C738",
+        "role": "resource busy query",
+        "confidence": "candidate",
+        "generated": "generated/default/rerevved_recomp.96.cpp:12889",
+        "guestSites": [
+          "0x8269C738"
+        ]
+      }
+    ],
+    "generatedCorroboration": [
+      "generated/default/rerevved_recomp.83.cpp:12617",
+      "generated/default/rerevved_recomp.61.cpp:12831",
+      "generated/default/rerevved_recomp.124.cpp:12900",
+      "generated/default/rerevved_recomp.161.cpp:12634",
+      "generated/default/rerevved_recomp.176.cpp:13016",
+      "generated/default/rerevved_recomp.62.cpp:12851",
+      "generated/default/rerevved_recomp.91.cpp:13354",
+      "generated/default/rerevved_recomp.21.cpp:3366",
+      "generated/default/rerevved_recomp.31.cpp:12652",
+      "generated/default/rerevved_recomp.104.cpp:12673",
+      "generated/default/rerevved_recomp.30.cpp:12903",
+      "generated/default/rerevved_recomp.143.cpp:12823",
+      "generated/default/rerevved_recomp.102.cpp:12623",
+      "generated/default/rerevved_recomp.69.cpp:12999",
+      "generated/default/rerevved_recomp.200.cpp:12638",
+      "generated/default/rerevved_recomp.217.cpp:13215",
+      "generated/default/rerevved_recomp.150.cpp:12564",
+      "generated/default/rerevved_recomp.147.cpp:12623",
+      "generated/default/rerevved_recomp.17.cpp:12974",
+      "generated/default/rerevved_recomp.226.cpp:12791",
+      "generated/default/rerevved_recomp.79.cpp:12897",
+      "generated/default/rerevved_recomp.185.cpp:13205",
+      "generated/default/rerevved_recomp.41.cpp:12759",
+      "generated/default/rerevved_recomp.96.cpp:12889"
+    ]
+  },
+  "objectLayouts": [
+    {
+      "name": "vertex_buffer",
+      "catalogId": "RVA-STR-0058",
+      "size": "0x20",
+      "claim": "0x20-byte vertex-buffer header with encoded control, address-tag, and fetch-size words.",
+      "fields": [
+        {
+          "name": "header_control_word",
+          "offset": "+0x00",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [
+            {
+              "function": "0x826982A8",
+              "sites": [
+                "0x82698338"
+              ],
+              "locator": "generated/default/rerevved_recomp.83.cpp:12706"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The writer selects encoded control values, but no bounded reader or complete bit meaning is proved."
+          ],
+          "catalogId": "RVA-FLD-0194",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.83.cpp:12706"
+            }
+          ]
+        },
+        {
+          "name": "initialization_word",
+          "offset": "+0x04",
+          "size": "0x4",
+          "type": "u32",
+          "class": "bookkeeping-candidate",
+          "writers": [
+            {
+              "function": "0x826982A8",
+              "sites": [
+                "0x82698350"
+              ],
+              "locator": "generated/default/rerevved_recomp.83.cpp:12719"
+            },
+            {
+              "function": "0x82698160",
+              "sites": [
+                "0x82698184"
+              ],
+              "locator": "generated/default/rerevved_recomp.79.cpp:12930"
+            },
+            {
+              "function": "0x826981D8",
+              "sites": [
+                "0x82698200"
+              ],
+              "locator": "generated/default/rerevved_recomp.185.cpp:13240"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x82698160",
+              "sites": [
+                "0x8269817C"
+              ],
+              "locator": "generated/default/rerevved_recomp.79.cpp:12922"
+            },
+            {
+              "function": "0x826981D8",
+              "sites": [
+                "0x826981F8"
+              ],
+              "locator": "generated/default/rerevved_recomp.185.cpp:13232"
+            }
+          ],
+          "confidence": "candidate",
+          "qualifications": [
+            "The creator initializes the same +0x04 counter used by common AddRef/Release paths; identity across resource variants is qualified and lifetime side effects make it visible."
+          ],
+          "catalogId": "RVA-FLD-0195",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.83.cpp:12719"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.79.cpp:12922"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.185.cpp:13232"
+            }
+          ]
+        },
+        {
+          "name": "control_sentinel",
+          "offset": "+0x14",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [
+            {
+              "function": "0x826982A8",
+              "sites": [
+                "0x82698358"
+              ],
+              "locator": "generated/default/rerevved_recomp.83.cpp:12722"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The observed value is 0xFFFF0000; no masking rule is supported."
+          ],
+          "catalogId": "RVA-FLD-0196",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.83.cpp:12722"
+            }
+          ]
+        },
+        {
+          "name": "data_address_tagged",
+          "offset": "+0x18",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x826982A8",
+              "sites": [
+                "0x82698344"
+              ],
+              "locator": "generated/default/rerevved_recomp.83.cpp:12712"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x8268FB08",
+              "sites": [
+                "0x8268FB2C"
+              ],
+              "locator": "generated/default/rerevved_recomp.124.cpp:12924"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The constructor stores an allocation-derived address OR 3 and the stream setter reads the word; host pointer meaning remains unresolved."
+          ],
+          "catalogId": "RVA-FLD-0197",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.83.cpp:12712"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.124.cpp:12924"
+            }
+          ]
+        },
+        {
+          "name": "fetch_size_word",
+          "offset": "+0x1C",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x826982A8",
+              "sites": [
+                "0x82698364"
+              ],
+              "locator": "generated/default/rerevved_recomp.83.cpp:12729"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x8268FB08",
+              "sites": [
+                "0x8268FB34"
+              ],
+              "locator": "generated/default/rerevved_recomp.124.cpp:12929"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The constructor preserves a control bit, masks the size portion, and adds the encoded base; the setter consumes it as a fetch/size input."
+          ],
+          "catalogId": "RVA-FLD-0198",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.83.cpp:12729"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.124.cpp:12929"
+            }
+          ]
+        }
+      ],
+      "unresolvedRanges": [
+        "+0x08..+0x13 remains unresolved in this bounded header read."
+      ],
+      "qualifications": [
+        "The two creation paths prove selected writes only; they do not prove a complete C++ layout."
+      ]
+    },
+    {
+      "name": "index_buffer",
+      "catalogId": "RVA-STR-0059",
+      "size": "0x20",
+      "claim": "0x20-byte index-buffer header with encoded type, address, and size/control words.",
+      "fields": [
+        {
+          "name": "header_control_word",
+          "offset": "+0x00",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x826983D0",
+              "sites": [
+                "0x82698464"
+              ],
+              "locator": "generated/default/rerevved_recomp.61.cpp:12923"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x826A39F8",
+              "sites": [
+                "0x826A3CB0"
+              ],
+              "locator": "generated/default/rerevved_recomp.91.cpp:13749"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The draw sink reads this word from the bound index buffer; exact format subfields remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0199",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.61.cpp:12923"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.91.cpp:13749"
+            }
+          ]
+        },
+        {
+          "name": "initialization_word",
+          "offset": "+0x04",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [
+            {
+              "function": "0x826983D0",
+              "sites": [
+                "0x82698468"
+              ],
+              "locator": "generated/default/rerevved_recomp.61.cpp:12925"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The observed value is 1; no bounded reader or lifetime meaning is proved."
+          ],
+          "catalogId": "RVA-FLD-0200",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.61.cpp:12925"
+            }
+          ]
+        },
+        {
+          "name": "control_sentinel",
+          "offset": "+0x14",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [
+            {
+              "function": "0x826983D0",
+              "sites": [
+                "0x8269846C"
+              ],
+              "locator": "generated/default/rerevved_recomp.61.cpp:12927"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The observed value is 0xFFFF0000; no masking rule is supported."
+          ],
+          "catalogId": "RVA-FLD-0201",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.61.cpp:12927"
+            }
+          ]
+        },
+        {
+          "name": "data_address",
+          "offset": "+0x18",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x826983D0",
+              "sites": [
+                "0x82698470"
+              ],
+              "locator": "generated/default/rerevved_recomp.61.cpp:12930"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x826A39F8",
+              "sites": [
+                "0x826A3CA4"
+              ],
+              "locator": "generated/default/rerevved_recomp.91.cpp:13742"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The draw sink consumes the bound index-buffer address word."
+          ],
+          "catalogId": "RVA-FLD-0202",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.61.cpp:12930"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.91.cpp:13742"
+            }
+          ]
+        },
+        {
+          "name": "size_or_control_word",
+          "offset": "+0x1C",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [
+            {
+              "function": "0x826983D0",
+              "sites": [
+                "0x8269845C"
+              ],
+              "locator": "generated/default/rerevved_recomp.61.cpp:12920"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "A separate reader is outside this bounded set; retain the word as visible coverage."
+          ],
+          "catalogId": "RVA-FLD-0203",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.61.cpp:12920"
+            }
+          ]
+        }
+      ],
+      "unresolvedRanges": [
+        "+0x08..+0x13 remains unresolved in this bounded header read."
+      ],
+      "qualifications": [
+        "The index-buffer size consumer was not expanded in this packet."
+      ]
+    },
+    {
+      "name": "vertex_declaration",
+      "catalogId": "RVA-STR-0060",
+      "size": "0x38+12*n",
+      "claim": "Variable vertex-declaration object allocated as 0x38+12*n after a 0xFF terminator scan; exactly n records are copied from +0x34 and a four-byte tail is not copied.",
+      "fields": [
+        {
+          "name": "declaration_control",
+          "offset": "+0x00",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x82692EB8",
+              "sites": [
+                "0x82692F50"
+              ],
+              "locator": "generated/default/rerevved_recomp.31.cpp:12738"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The encoded value 0x100005 is written, but no bounded consumer names its subfields."
+          ],
+          "catalogId": "RVA-FLD-0204",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.31.cpp:12738"
+            }
+          ]
+        },
+        {
+          "name": "initialization_word",
+          "offset": "+0x04",
+          "size": "0x4",
+          "type": "u32",
+          "class": "bookkeeping-candidate",
+          "writers": [
+            {
+              "function": "0x82692EB8",
+              "sites": [
+                "0x82692F4C"
+              ],
+              "locator": "generated/default/rerevved_recomp.31.cpp:12736"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The observed value is 1; refcount semantics are not proved for this declaration path."
+          ],
+          "catalogId": "RVA-FLD-0205",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.31.cpp:12736"
+            }
+          ]
+        },
+        {
+          "name": "control_sentinel",
+          "offset": "+0x14",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [
+            {
+              "function": "0x82692EB8",
+              "sites": [
+                "0x82692F58"
+              ],
+              "locator": "generated/default/rerevved_recomp.31.cpp:12742"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The observed value is 0xFFFF0000; no masking rule is supported."
+          ],
+          "catalogId": "RVA-FLD-0206",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.31.cpp:12742"
+            }
+          ]
+        },
+        {
+          "name": "element_count_candidate",
+          "offset": "+0x18",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x82692EB8",
+              "sites": [
+                "0x82692F3C"
+              ],
+              "locator": "generated/default/rerevved_recomp.31.cpp:12728"
+            }
+          ],
+          "readers": [],
+          "confidence": "strong",
+          "qualifications": [
+            "n counts terminator-delimited 12-byte source steps; it is not promoted to a complete-record count without a consumer join."
+          ],
+          "catalogId": "RVA-FLD-0207",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.31.cpp:12728"
+            }
+          ]
+        },
+        {
+          "name": "maximum_stream_candidate",
+          "offset": "+0x1C",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x82692EB8",
+              "sites": [
+                "0x82692F44"
+              ],
+              "locator": "generated/default/rerevved_recomp.31.cpp:12732"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The writer stores the maximum observed stream value; API identity and reader remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0208",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.31.cpp:12732"
+            }
+          ]
+        },
+        {
+          "name": "header_pair",
+          "offset": "+0x20",
+          "size": "0x10",
+          "type": "u64[2]",
+          "class": "unresolved",
+          "writers": [
+            {
+              "function": "0x82692EB8",
+              "sites": [
+                "0x82692F60",
+                "0x82692F64"
+              ],
+              "locator": "generated/default/rerevved_recomp.31.cpp:12746"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "Two local stack u64 values are zeroed, bytes selected by scanned source stream indices are marked, and the locals are copied to object +0x20/+0x28; semantic names and readers remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0209",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.31.cpp:12746"
+            }
+          ]
+        },
+        {
+          "name": "header_zero_word",
+          "offset": "+0x30",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [
+            {
+              "function": "0x82692EB8",
+              "sites": [
+                "0x82692F5C"
+              ],
+              "locator": "generated/default/rerevved_recomp.31.cpp:12744"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The writer stores zero; no semantic consumer is proved."
+          ],
+          "catalogId": "RVA-FLD-0210",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.31.cpp:12744"
+            }
+          ]
+        },
+        {
+          "name": "declaration_record",
+          "offset": "+0x34",
+          "size": "0x0C",
+          "type": "record[12]",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x82692EB8",
+              "sites": [
+                "0x82692F7C",
+                "0x82692F84",
+                "0x82692F90"
+              ],
+              "locator": "generated/default/rerevved_recomp.31.cpp:12760"
+            }
+          ],
+          "readers": [],
+          "confidence": "strong",
+          "qualifications": [
+            "Records copy three 4-byte source words at a 12-byte stride. The terminator and allocation extent do not prove that n is a count of complete API records."
+          ],
+          "catalogId": "RVA-FLD-0211",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.31.cpp:12760"
+            }
+          ]
+        }
+      ],
+      "unresolvedRanges": [
+        "+0x34 through the n-dependent record span has unresolved subfield meanings.",
+        "+0x34 + 12*n through +0x37 + 12*n is an un-copied four-byte allocation tail."
+      ],
+      "qualifications": [
+        "The allocation expression is 0x38+12*n and the source terminator is a 16-bit 0xFF; the terminator is not copied and n is a copied-step count, not a proved complete API-record count."
+      ]
+    },
+    {
+      "name": "backend_texture",
+      "catalogId": "RVA-STR-0028",
+      "size": "0x34",
+      "claim": "0x34-byte backend texture descriptor whose six dwords at +0x1C..+0x30 feed the selected fetch shadow.",
+      "fields": [
+        {
+          "name": "fetch_template_dword_0",
+          "offset": "+0x1C",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [],
+          "readers": [
+            {
+              "function": "0x8269AF10",
+              "sites": [
+                "0x8269AF4C"
+              ],
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "Function-entry anchor 0x8269A378 identifies the producer path, but no exact field store site is claimed in this bounded evidence; readers and field semantics remain as recorded."
+          ],
+          "catalogId": "RVA-FLD-0076",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.16.cpp:13133"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ]
+        },
+        {
+          "name": "fetch_template_dword_1",
+          "offset": "+0x20",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269AB90",
+              "sites": [
+                "0x8269ACA0"
+              ],
+              "locator": "generated/default/rerevved_recomp.104.cpp:12691"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x8269AF10",
+              "sites": [
+                "0x8269AF3C"
+              ],
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The creator patches allocation-derived address bits; the Resolve contract qualifies format and page-base bits."
+          ],
+          "catalogId": "RVA-FLD-0077",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.104.cpp:12691"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ]
+        },
+        {
+          "name": "fetch_template_dword_2",
+          "offset": "+0x24",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [],
+          "readers": [
+            {
+              "function": "0x8269AF10",
+              "sites": [
+                "0x8269AF50"
+              ],
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "Function-entry anchor 0x8269A378 identifies the producer path, but no exact field store site is claimed in this bounded evidence; readers and field semantics remain as recorded."
+          ],
+          "catalogId": "RVA-FLD-0078",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.16.cpp:13133"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ]
+        },
+        {
+          "name": "fetch_template_dword_3",
+          "offset": "+0x28",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [],
+          "readers": [
+            {
+              "function": "0x8269AF10",
+              "sites": [
+                "0x8269AF54"
+              ],
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "Function-entry anchor 0x8269A378 identifies the producer path, but no exact field store site is claimed in this bounded evidence; readers and field semantics remain as recorded."
+          ],
+          "catalogId": "RVA-FLD-0079",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.16.cpp:13133"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ]
+        },
+        {
+          "name": "fetch_template_dword_4",
+          "offset": "+0x2C",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [],
+          "readers": [
+            {
+              "function": "0x8269AF10",
+              "sites": [
+                "0x8269AF44"
+              ],
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ],
+          "confidence": "candidate",
+          "qualifications": [
+            "Function-entry anchor 0x8269A378 identifies the producer path, but no exact field store site is claimed in this bounded evidence; readers and field semantics remain as recorded."
+          ],
+          "catalogId": "RVA-FLD-0080",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.16.cpp:13133"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ]
+        },
+        {
+          "name": "fetch_template_dword_5",
+          "offset": "+0x30",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269AB90",
+              "sites": [
+                "0x8269ACA4"
+              ],
+              "locator": "generated/default/rerevved_recomp.104.cpp:12691"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x8269AF10",
+              "sites": [
+                "0x8269AF34"
+              ],
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The creator patches optional address bits; Resolve consumes only qualified low control bits."
+          ],
+          "catalogId": "RVA-FLD-0081",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.104.cpp:12691"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ]
+        }
+      ],
+      "unresolvedRanges": [
+        "+0x00..+0x1B remains unresolved in this texture header."
+      ],
+      "qualifications": [
+        "The existing BackendTextureFetchTemplate catalog entity is reused; no new texture-header identity is invented."
+      ]
+    },
+    {
+      "name": "parent_backed_surface",
+      "catalogId": "RVA-STR-0061",
+      "size": "0x30",
+      "claim": "0x30-byte surface header built with a parent texture pointer at +0x18.",
+      "fields": [
+        {
+          "name": "surface_control",
+          "offset": "+0x00",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [
+            {
+              "function": "0x8269A918",
+              "sites": [
+                "0x8269A9A0"
+              ],
+              "locator": "generated/default/rerevved_recomp.102.cpp:12665"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The writer stores a common/control value; no bounded reader names its semantics."
+          ],
+          "catalogId": "RVA-FLD-0212",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.102.cpp:12665"
+            }
+          ]
+        },
+        {
+          "name": "initialization_word",
+          "offset": "+0x04",
+          "size": "0x4",
+          "type": "u32",
+          "class": "bookkeeping-candidate",
+          "writers": [
+            {
+              "function": "0x8269A918",
+              "sites": [
+                "0x8269A9B0"
+              ],
+              "locator": "generated/default/rerevved_recomp.102.cpp:12709"
+            },
+            {
+              "function": "0x82698160",
+              "sites": [
+                "0x82698184"
+              ],
+              "locator": "generated/default/rerevved_recomp.79.cpp:12930"
+            },
+            {
+              "function": "0x826981D8",
+              "sites": [
+                "0x82698200"
+              ],
+              "locator": "generated/default/rerevved_recomp.185.cpp:13240"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x82698160",
+              "sites": [
+                "0x8269817C"
+              ],
+              "locator": "generated/default/rerevved_recomp.79.cpp:12922"
+            },
+            {
+              "function": "0x826981D8",
+              "sites": [
+                "0x826981F8"
+              ],
+              "locator": "generated/default/rerevved_recomp.185.cpp:13232"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The +0x04 word is initialized by the parent-backed creator and joins the common atomic AddRef/Release counter path; lifetime side effects make it visible."
+          ],
+          "catalogId": "RVA-FLD-0213",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.102.cpp:12709"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.79.cpp:12922"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.185.cpp:13232"
+            }
+          ]
+        },
+        {
+          "name": "control_sentinel",
+          "offset": "+0x14",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [
+            {
+              "function": "0x8269A918",
+              "sites": [
+                "0x8269A9B4"
+              ],
+              "locator": "generated/default/rerevved_recomp.102.cpp:12665"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The observed value is 0xFFFF0000; no masking rule is supported."
+          ],
+          "catalogId": "RVA-FLD-0214",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.102.cpp:12665"
+            }
+          ]
+        },
+        {
+          "name": "parent_texture",
+          "offset": "+0x18",
+          "size": "0x4",
+          "type": "pointer",
+          "class": "bookkeeping-candidate",
+          "writers": [
+            {
+              "function": "0x8269A918",
+              "sites": [
+                "0x8269A994"
+              ],
+              "locator": "generated/default/rerevved_recomp.102.cpp:12696"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x82698160",
+              "sites": [
+                "0x826981B4"
+              ],
+              "locator": "generated/default/rerevved_recomp.79.cpp:12897"
+            },
+            {
+              "function": "0x826981D8",
+              "sites": [
+                "0x82698230"
+              ],
+              "locator": "generated/default/rerevved_recomp.185.cpp:13268"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The parent relationship is proved only for the parent-backed constructor; AddRef reaches the parent only when the incremented count is 1, the common word low nibble is 4, and bit 0x40000000 is set. Release has the corresponding zero-count and type/flag guards; the standalone builder does not share this field meaning."
+          ],
+          "catalogId": "RVA-FLD-0215",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.102.cpp:12696"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.79.cpp:12897"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.185.cpp:13268"
+            }
+          ]
+        },
+        {
+          "name": "packed_level_word",
+          "offset": "+0x1C",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269A918",
+              "sites": [
+                "0x8269A9BC"
+              ],
+              "locator": "generated/default/rerevved_recomp.102.cpp:12665"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "Packed level/layout meaning remains unresolved and no bounded reader was found."
+          ],
+          "catalogId": "RVA-FLD-0216",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.102.cpp:12665"
+            }
+          ]
+        }
+      ],
+      "unresolvedRanges": [
+        "+0x08..+0x13 and +0x20..+0x2F remain unresolved in this parent-backed header."
+      ],
+      "qualifications": [
+        "The +0x18 parent pointer is guarded to this constructor variant."
+      ]
+    },
+    {
+      "name": "standalone_surface",
+      "catalogId": "RVA-STR-0062",
+      "size": "0x30",
+      "claim": "0x30-byte standalone surface builder with independently written control, packed layout, and unresolved +0x18 layout word.",
+      "fields": [
+        {
+          "name": "surface_control",
+          "offset": "+0x00",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269A690",
+              "sites": [
+                "0x8269A6F8"
+              ],
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ],
+          "readers": [],
+          "confidence": "strong",
+          "qualifications": [
+            "The builder stores value 4; semantic API identity remains unresolved."
+          ],
+          "catalogId": "RVA-FLD-0217",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ]
+        },
+        {
+          "name": "initialization_word",
+          "offset": "+0x04",
+          "size": "0x4",
+          "type": "u32",
+          "class": "bookkeeping-candidate",
+          "writers": [
+            {
+              "function": "0x8269A690",
+              "sites": [
+                "0x8269A6EC"
+              ],
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ],
+          "readers": [],
+          "confidence": "strong",
+          "qualifications": [
+            "The builder stores value 1; lifetime meaning and reader remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0218",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ]
+        },
+        {
+          "name": "control_sentinel",
+          "offset": "+0x14",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [
+            {
+              "function": "0x8269A690",
+              "sites": [
+                "0x8269A700"
+              ],
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ],
+          "readers": [],
+          "confidence": "strong",
+          "qualifications": [
+            "The builder stores 0xFFFF0000; no masking rule is supported."
+          ],
+          "catalogId": "RVA-FLD-0219",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ]
+        },
+        {
+          "name": "packed_layout_word_at_18",
+          "offset": "+0x18",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269A690",
+              "sites": [
+                "0x8269A820"
+              ],
+              "locator": "generated/default/rerevved_recomp.69.cpp:13219"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The standalone builder writes this word, but its packed layout meaning and readers remain unresolved; it is not a proved parent pointer."
+          ],
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.69.cpp:13219"
+            }
+          ]
+        },
+        {
+          "name": "layout_word_0",
+          "offset": "+0x1C",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269A690",
+              "sites": [
+                "0x8269A840",
+                "0x8269A8E8"
+              ],
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The builder writes layout data; subfields and readers remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0220",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ]
+        },
+        {
+          "name": "layout_word_1",
+          "offset": "+0x20",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269A690",
+              "sites": [
+                "0x8269A884",
+                "0x8269A890"
+              ],
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The builder writes layout/control data; meaning remains unresolved."
+          ],
+          "catalogId": "RVA-FLD-0221",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ]
+        },
+        {
+          "name": "layout_word_2",
+          "offset": "+0x24",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269A690",
+              "sites": [
+                "0x8269A818"
+              ],
+              "locator": "generated/default/rerevved_recomp.69.cpp:13215"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The builder writes layout/control data; meaning remains unresolved."
+          ],
+          "catalogId": "RVA-FLD-0222",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.69.cpp:13215"
+            }
+          ]
+        },
+        {
+          "name": "layout_word_3",
+          "offset": "+0x28",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269A690",
+              "sites": [
+                "0x8269A7E8"
+              ],
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The builder writes layout/control data; meaning remains unresolved."
+          ],
+          "catalogId": "RVA-FLD-0223",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ]
+        },
+        {
+          "name": "layout_word_4",
+          "offset": "+0x2C",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269A690",
+              "sites": [
+                "0x8269A8F0"
+              ],
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The builder writes layout/control data; meaning remains unresolved."
+          ],
+          "catalogId": "RVA-FLD-0224",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.69.cpp:12999"
+            }
+          ]
+        }
+      ],
+      "unresolvedRanges": [
+        "+0x08..+0x13 remains unresolved; +0x18 is a known packed write with no proved semantic name."
+      ],
+      "qualifications": [
+        "The +0x18 write is guarded to the standalone builder and is not promoted to a parent pointer; output parameters at guest sites 0x8269A8F4 and 0x8269A8F8 are call outputs, not header fields."
+      ]
+    },
+    {
+      "name": "device_draw_state",
+      "catalogId": "RVA-STR-0063",
+      "size": "partial; at least +0x319C",
+      "claim": "Partial device state surface covering dirty emission masks, stream fetch shadows, resource bindings, register shadows, and shader or declaration pointers.",
+      "fields": [
+        {
+          "name": "dirty_vs_alu",
+          "offset": "+0x00",
+          "size": "0x8",
+          "type": "u64",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x823038D8",
+              "sites": [
+                "0x823038D8"
+              ],
+              "locator": "generated/default/rerevved_recomp.135.cpp:3494"
+            },
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A30EC"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12659"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A30BC"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12634"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "Flush reads and clears this VS ALU emission mask; writer-side exact stores are outside the final bounded set."
+          ],
+          "catalogId": "RVA-FLD-0225",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12634"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12659"
+            }
+          ]
+        },
+        {
+          "name": "dirty_ps_alu",
+          "offset": "+0x08",
+          "size": "0x8",
+          "type": "u64",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x823039E8",
+              "sites": [
+                "0x823039E8"
+              ],
+              "locator": "generated/default/rerevved_recomp.209.cpp:12878"
+            },
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A310C"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12677"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A30D4"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12646"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "Flush reads and clears this PS ALU emission mask; writer-side exact stores are outside the final bounded set."
+          ],
+          "catalogId": "RVA-FLD-0226",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12646"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12677"
+            }
+          ]
+        },
+        {
+          "name": "dirty_render_groups",
+          "offset": "+0x10",
+          "size": "0x8",
+          "type": "u64",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x82692E60",
+              "sites": [
+                "0x82692E6C"
+              ],
+              "locator": "generated/default/rerevved_recomp.62.cpp:12851"
+            },
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A31EC"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12802"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A30D0"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12644"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The flush uses this mask for render-register emission; observed declaration and shader setters also set bits, so it is draw control."
+          ],
+          "catalogId": "RVA-FLD-0227",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.62.cpp:12851"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12644"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12802"
+            }
+          ]
+        },
+        {
+          "name": "dirty_fetch_groups",
+          "offset": "+0x18",
+          "size": "0x8",
+          "type": "u64",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8268FB08",
+              "sites": [
+                "0x8268FB74"
+              ],
+              "locator": "generated/default/rerevved_recomp.124.cpp:12962"
+            },
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A323C"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12847"
+            },
+            {
+              "function": "0x8268EF98",
+              "sites": [
+                "0x8268F058"
+              ],
+              "locator": "generated/default/rerevved_recomp.200.cpp:12733"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A30C8"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12640"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "Stream and sampler setters OR this device-base mask; the flush reads and clears it. The sampler store at 0x8268F058 targets device +0x18, not a stage-relative sampler record; this is emission control, not ignorable bookkeeping."
+          ],
+          "catalogId": "RVA-FLD-0228",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.124.cpp:12962"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.200.cpp:12733"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12640"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12847"
+            }
+          ]
+        },
+        {
+          "name": "dirty_misc_groups",
+          "offset": "+0x20",
+          "size": "0x8",
+          "type": "u64",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8268FF98",
+              "sites": [
+                "0x8268FF98"
+              ],
+              "locator": "generated/default/rerevved_recomp.2.cpp:12742"
+            },
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A32D8"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12934"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A30C4"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12638"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The flush reads and clears this mask for the 0x2300/0x2380, UCP, bool, and loop groups; writer paths are only bounded to the accepted setter entry."
+          ],
+          "catalogId": "RVA-FLD-0229",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.2.cpp:12742"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12638"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12934"
+            }
+          ]
+        },
+        {
+          "name": "dirty_extra_mask",
+          "offset": "+0x28",
+          "size": "0x8",
+          "type": "u64",
+          "class": "unresolved",
+          "writers": [],
+          "readers": [
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A3134"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12633"
+            }
+          ],
+          "confidence": "candidate",
+          "qualifications": [
+            "The flush intersects this value with +0x10 and passes the result to 0x826AC8C8; writer and meaning remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0230",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12633"
+            }
+          ]
+        },
+        {
+          "name": "vertex_declaration_binding",
+          "offset": "+0x2E2C",
+          "size": "0x4",
+          "type": "pointer_or_control",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x82692E60",
+              "sites": [
+                "0x82692E60"
+              ],
+              "locator": "generated/default/rerevved_recomp.62.cpp:12853"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x826ADD88",
+              "sites": [
+                "0x826ADDD0"
+              ],
+              "locator": "generated/default/rerevved_recomp.17.cpp:13017"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The setter writes the device binding and the draw loader reads it; declaration object layout remains partial."
+          ],
+          "catalogId": "RVA-FLD-0231",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.62.cpp:12853"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.17.cpp:13017"
+            }
+          ]
+        },
+        {
+          "name": "index_buffer_binding",
+          "offset": "+0x3094",
+          "size": "0x4",
+          "type": "pointer_or_control",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8268FCB0",
+              "sites": [
+                "0x8268FD34"
+              ],
+              "locator": "generated/default/rerevved_recomp.161.cpp:12711"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x826A39F8",
+              "sites": [
+                "0x826A3C38"
+              ],
+              "locator": "generated/default/rerevved_recomp.91.cpp:13680"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The setter stores the index buffer after deferred-release handling and the draw sink loads it."
+          ],
+          "catalogId": "RVA-FLD-0232",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.161.cpp:12711"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.91.cpp:13680"
+            }
+          ]
+        },
+        {
+          "name": "render_target_bindings",
+          "offset": "+0x3098",
+          "size": "0x14",
+          "type": "pointer[5]",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x826904D0",
+              "sites": [
+                "0x826904D0"
+              ],
+              "locator": "generated/default/rerevved_recomp.41.cpp:12632"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x8269CD20",
+              "sites": [
+                "0x8269CD7C",
+                "0x8269CD94",
+                "0x8269CDAC",
+                "0x8269CDC4",
+                "0x8269CDDC"
+              ],
+              "locator": "generated/default/rerevved_recomp.226.cpp:12848"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The ring emitter compares five consecutive surface bindings; the exact writer body is outside this packet."
+          ],
+          "catalogId": "RVA-FLD-0233",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.226.cpp:12848"
+            }
+          ]
+        },
+        {
+          "name": "stream_bindings",
+          "offset": "+0x30AC",
+          "size": "0x4",
+          "type": "pointer_or_control",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8268FB08",
+              "sites": [
+                "0x8268FBF4"
+              ],
+              "locator": "generated/default/rerevved_recomp.124.cpp:13029"
+            }
+          ],
+          "readers": [],
+          "confidence": "strong",
+          "qualifications": [
+            "The setter writes one stream slot per call; direct consumers remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0234",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.124.cpp:13029"
+            }
+          ]
+        },
+        {
+          "name": "stream_stride_bytes",
+          "offset": "+0x30F0",
+          "size": "0x1",
+          "type": "u8",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8268FB08",
+              "sites": [
+                "0x8268FC00"
+              ],
+              "locator": "generated/default/rerevved_recomp.124.cpp:13038"
+            }
+          ],
+          "readers": [],
+          "confidence": "strong",
+          "qualifications": [
+            "One stride byte per stream is written; the complete stride representation and consumer remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0235",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.124.cpp:13038"
+            }
+          ]
+        },
+        {
+          "name": "texture_bindings",
+          "offset": "+0x3100",
+          "size": "0x4",
+          "type": "pointer_or_control",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269AF10",
+              "sites": [
+                "0x8269B014"
+              ],
+              "locator": "generated/default/rerevved_recomp.30.cpp:13043"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x8269B090",
+              "sites": [
+                "0x8269B0B0",
+                "0x8269B0C0"
+              ],
+              "locator": "generated/default/rerevved_recomp.143.cpp:12838"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The setter and getter prove a 4-byte binding word per texture stage; draw consumption remains unresolved."
+          ],
+          "catalogId": "RVA-FLD-0236",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.30.cpp:13043"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.143.cpp:12838"
+            }
+          ]
+        },
+        {
+          "name": "pixel_shader_binding",
+          "offset": "+0x3194",
+          "size": "0x4",
+          "type": "pointer_or_control",
+          "class": "draw-state",
+          "writers": [],
+          "readers": [
+            {
+              "function": "0x826ADD88",
+              "sites": [
+                "0x826ADDD4"
+              ],
+              "locator": "generated/default/rerevved_recomp.17.cpp:13017"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "Function-entry anchor 0x82692948 identifies the producer path, but no exact field store site is claimed in this bounded evidence; readers and field semantics remain as recorded."
+          ],
+          "catalogId": "RVA-FLD-0237",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.17.cpp:13017"
+            }
+          ]
+        },
+        {
+          "name": "vertex_shader_binding",
+          "offset": "+0x3198",
+          "size": "0x4",
+          "type": "pointer_or_control",
+          "class": "draw-state",
+          "writers": [],
+          "readers": [
+            {
+              "function": "0x826ADD88",
+              "sites": [
+                "0x826ADDCC"
+              ],
+              "locator": "generated/default/rerevved_recomp.17.cpp:13017"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "Function-entry anchor 0x82692C48 identifies the producer path, but no exact field store site is claimed in this bounded evidence; readers and field semantics remain as recorded."
+          ],
+          "catalogId": "RVA-FLD-0238",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.17.cpp:13017"
+            }
+          ]
+        },
+        {
+          "name": "fetch_shadow_group",
+          "offset": "+0x480",
+          "size": "0x18",
+          "type": "u32[6]",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8269AF10",
+              "sites": [
+                "0x8269AF9C",
+                "0x8269AFB0",
+                "0x8269AFB8",
+                "0x8269AFC0",
+                "0x8269AFC8",
+                "0x8269AFCC"
+              ],
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x8268F060",
+              "sites": [
+                "0x8268F06C",
+                "0x8268F070"
+              ],
+              "locator": "generated/default/rerevved_recomp.217.cpp:13215"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "Only shadow words +0x0C and +0x10 have a bounded getter; other four words and draw consumers remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0239",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.30.cpp:12903"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.217.cpp:13215"
+            }
+          ]
+        },
+        {
+          "name": "sampler_table_slot",
+          "offset": "+0x1D4",
+          "size": "0x4",
+          "type": "u32",
+          "class": "unresolved",
+          "writers": [],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "Static table maps sampler types through +0x1D4, but no direct writer or reader was in the bounded set."
+          ],
+          "catalogId": "RVA-FLD-0240",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.217.cpp:13215"
+            }
+          ]
+        },
+        {
+          "name": "stream_fetch_shadow_0",
+          "offset": "+0x6F0 + 8*(0x11-stream)",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8268FB08",
+              "sites": [
+                "0x8268FB64"
+              ],
+              "locator": "generated/default/rerevved_recomp.124.cpp:12953"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The stream setter writes this dynamic fetch-shadow word when an incoming vertex buffer is nonnull; direct consumers remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0247",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.124.cpp:12953"
+            }
+          ]
+        },
+        {
+          "name": "stream_fetch_shadow_1",
+          "offset": "+0x6F4 + 8*(0x11-stream)",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8268FB08",
+              "sites": [
+                "0x8268FB68"
+              ],
+              "locator": "generated/default/rerevved_recomp.124.cpp:12955"
+            }
+          ],
+          "readers": [],
+          "confidence": "candidate",
+          "qualifications": [
+            "The stream setter writes this dynamic fetch-shadow word when an incoming vertex buffer is nonnull; direct consumers remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0248",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.124.cpp:12955"
+            }
+          ]
+        }
+      ],
+      "unresolvedRanges": [
+        "+0x309C..+0x30A8 are covered by the render_target_bindings group; stream slots after the first, texture stages after the first, and sampler types are index-dependent.",
+        "+0x6F0/+0x6F4 dynamic fetch-shadow consumers remain unresolved.",
+        "Other device bytes and all metadata ranges beyond +0x319C remain unresolved."
+      ],
+      "qualifications": [
+        "The size is partial; it is a field surface, not a complete device layout."
+      ]
+    },
+    {
+      "name": "sampler_shadow",
+      "catalogId": "RVA-STR-0064",
+      "size": "partial; stage shadow records",
+      "claim": "Partial stage sampler shadow record with two observed words; its setter also updates a device-base dirty mask.",
+      "fields": [
+        {
+          "name": "sampler_word_0",
+          "offset": "+0x0C",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8268EF98",
+              "sites": [
+                "0x8268F014"
+              ],
+              "locator": "generated/default/rerevved_recomp.200.cpp:12638"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x8268F060",
+              "sites": [
+                "0x8268F070"
+              ],
+              "locator": "generated/default/rerevved_recomp.217.cpp:13215"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The getter returns selected bits from this word; public sampler API identity remains unresolved."
+          ],
+          "catalogId": "RVA-FLD-0241",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.200.cpp:12638"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.217.cpp:13215"
+            }
+          ]
+        },
+        {
+          "name": "sampler_word_1",
+          "offset": "+0x10",
+          "size": "0x4",
+          "type": "u32",
+          "class": "draw-state",
+          "writers": [
+            {
+              "function": "0x8268EF98",
+              "sites": [
+                "0x8268EFE8",
+                "0x8268F04C"
+              ],
+              "locator": "generated/default/rerevved_recomp.200.cpp:12638"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x8268F060",
+              "sites": [
+                "0x8268F06C"
+              ],
+              "locator": "generated/default/rerevved_recomp.217.cpp:13215"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The getter returns selected bits from this word; public sampler API identity remains unresolved."
+          ],
+          "catalogId": "RVA-FLD-0242",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.200.cpp:12638"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.217.cpp:13215"
+            }
+          ]
+        }
+      ],
+      "unresolvedRanges": [
+        "+0x00..+0x08 and any record extent beyond the two observed words remain unresolved; device +0x18 is classified separately."
+      ],
+      "qualifications": [
+        "The +0x0C/+0x10 words are stage-relative shadow fields. The setter store at 0x8268F058 targets device +0x18, and does not establish a stage +0x18 field."
+      ]
+    },
+    {
+      "name": "draw_command_header",
+      "catalogId": "RVA-STR-0065",
+      "size": "partial; at least +0x3498",
+      "claim": "Partial device command-state view covering the cursor, limit, and five-word commit area.",
+      "fields": [
+        {
+          "name": "command_cursor",
+          "offset": "+0x30",
+          "size": "0x4",
+          "type": "u32",
+          "class": "bookkeeping-candidate",
+          "writers": [
+            {
+              "function": "0x826A3568",
+              "sites": [
+                "0x826A35FC"
+              ],
+              "locator": "generated/default/rerevved_recomp.147.cpp:12623"
+            },
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A354C"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:13328"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A32E0"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12633"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "The device-base cursor is read by flush and written by both the flush path and wrapper commit; ordering and lifetime semantics remain unresolved."
+          ],
+          "catalogId": "RVA-FLD-0244",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.147.cpp:12623"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12633"
+            }
+          ]
+        },
+        {
+          "name": "command_limit",
+          "offset": "+0x38",
+          "size": "0x4",
+          "type": "u32",
+          "class": "bookkeeping-candidate",
+          "writers": [],
+          "readers": [
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A32DC"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:12633"
+            }
+          ],
+          "confidence": "candidate",
+          "qualifications": [
+            "The limit is read by the flush; its producer is outside the bounded set."
+          ],
+          "catalogId": "RVA-FLD-0245",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:12633"
+            }
+          ]
+        },
+        {
+          "name": "commit_words",
+          "offset": "+0x3484",
+          "size": "0x14",
+          "type": "u32[5]",
+          "class": "bookkeeping-candidate",
+          "writers": [
+            {
+              "function": "0x826A3048",
+              "sites": [
+                "0x826A3524",
+                "0x826A3528",
+                "0x826A352C",
+                "0x826A3530",
+                "0x826A3534"
+              ],
+              "locator": "generated/default/rerevved_recomp.150.cpp:13296"
+            }
+          ],
+          "readers": [
+            {
+              "function": "0x826A3568",
+              "sites": [
+                "0x826A35F8"
+              ],
+              "locator": "generated/default/rerevved_recomp.147.cpp:12623"
+            }
+          ],
+          "confidence": "strong",
+          "qualifications": [
+            "These words carry the flush-to-wrapper commit edge; no word-level semantic names or safe masking rule are proved."
+          ],
+          "catalogId": "RVA-FLD-0246",
+          "evidence": [
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.150.cpp:13296"
+            },
+            {
+              "kind": "generated-code",
+              "locator": "generated/default/rerevved_recomp.147.cpp:12623"
+            }
+          ]
+        }
+      ],
+      "unresolvedRanges": [
+        "+0x00..+0x2F, +0x34, and +0x3C..+0x3483 remain unresolved.",
+        "The packet words written through the cursor at 0x826A333C..0x826A350C are command payload, not a complete header layout."
+      ],
+      "qualifications": [
+        "The cursor, limit and commit words use the device base in the bounded bodies; no separate per-draw header allocation is established."
+      ]
+    }
+  ],
+  "lifetimeFields": [
+    {
+      "name": "resource_type_word",
+      "offset": "+0x00",
+      "size": "0x4",
+      "type": "u32",
+      "class": "bookkeeping-candidate",
+      "writers": [],
+      "readers": [
+        {
+          "function": "0x82698160",
+          "sites": [
+            "0x8269819C"
+          ],
+          "locator": "generated/default/rerevved_recomp.79.cpp:12945"
+        },
+        {
+          "function": "0x826981D8",
+          "sites": [
+            "0x82698218"
+          ],
+          "locator": "generated/default/rerevved_recomp.185.cpp:13255"
+        }
+      ],
+      "confidence": "strong",
+      "qualifications": [
+        "Type tests drive the common AddRef/Release lifetime path; both selected bodies load +0x00, and no complete type enum is proved."
+      ],
+      "evidence": [
+        {
+          "kind": "generated-code",
+          "locator": "generated/default/rerevved_recomp.79.cpp:12897"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated/default/rerevved_recomp.185.cpp:13205"
+        }
+      ]
+    },
+    {
+      "name": "resource_refcount",
+      "offset": "+0x04",
+      "size": "0x4",
+      "type": "u32",
+      "class": "bookkeeping-candidate",
+      "writers": [
+        {
+          "function": "0x826982A8",
+          "sites": [
+            "0x82698350"
+          ],
+          "locator": "generated/default/rerevved_recomp.83.cpp:12719"
+        },
+        {
+          "function": "0x82698160",
+          "sites": [
+            "0x82698184"
+          ],
+          "locator": "generated/default/rerevved_recomp.79.cpp:12930"
+        },
+        {
+          "function": "0x826981D8",
+          "sites": [
+            "0x82698200"
+          ],
+          "locator": "generated/default/rerevved_recomp.185.cpp:13240"
+        }
+      ],
+      "readers": [
+        {
+          "function": "0x82698160",
+          "sites": [
+            "0x8269817C"
+          ],
+          "locator": "generated/default/rerevved_recomp.79.cpp:12922"
+        },
+        {
+          "function": "0x826981D8",
+          "sites": [
+            "0x826981F8"
+          ],
+          "locator": "generated/default/rerevved_recomp.185.cpp:13232"
+        }
+      ],
+      "confidence": "strong",
+      "qualifications": [
+        "The creator initializes the same +0x04 word atomically incremented and decremented by AddRef/Release; refcount and destruction side effects make this bookkeeping visible."
+      ],
+      "evidence": [
+        {
+          "kind": "generated-code",
+          "locator": "generated/default/rerevved_recomp.83.cpp:12719"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated/default/rerevved_recomp.79.cpp:12922"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated/default/rerevved_recomp.185.cpp:13232"
+        }
+      ]
+    },
+    {
+      "name": "resource_fence_word",
+      "offset": "+0x08",
+      "size": "0x4",
+      "type": "u32",
+      "class": "bookkeeping-candidate",
+      "writers": [
+        {
+          "function": "0x8268FB08",
+          "sites": [
+            "0x8268FB98"
+          ],
+          "locator": "generated/default/rerevved_recomp.124.cpp:12981"
+        },
+        {
+          "function": "0x8268FCB0",
+          "sites": [
+            "0x8268FCDC"
+          ],
+          "locator": "generated/default/rerevved_recomp.161.cpp:12663"
+        }
+      ],
+      "readers": [
+        {
+          "function": "0x8269C150",
+          "sites": [
+            "0x8269C154"
+          ],
+          "locator": "generated/default/rerevved_recomp.41.cpp:12759"
+        }
+      ],
+      "confidence": "candidate",
+      "qualifications": [
+        "The load at 0x8269C154 reads +0x08; 0x8269C16C is a later tail branch in the same helper, not another +0x08 field read. The stream and index setters conditionally write the prior resource +0x08 only when the prior binding and device +0x2A9C are nonzero; fence identity, generation, completion and object join remain unresolved."
+      ],
+      "evidence": [
+        {
+          "kind": "generated-code",
+          "locator": "generated/default/rerevved_recomp.124.cpp:12981"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated/default/rerevved_recomp.161.cpp:12663"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated/default/rerevved_recomp.41.cpp:12759"
+        }
+      ]
+    },
+    {
+      "name": "parent_resource_pointer",
+      "offset": "+0x18",
+      "size": "0x4",
+      "type": "pointer",
+      "class": "bookkeeping-candidate",
+      "writers": [
+        {
+          "function": "0x8269A918",
+          "sites": [
+            "0x8269A994"
+          ],
+          "locator": "generated/default/rerevved_recomp.102.cpp:12696"
+        }
+      ],
+      "readers": [
+        {
+          "function": "0x82698160",
+          "sites": [
+            "0x826981B4"
+          ],
+          "locator": "generated/default/rerevved_recomp.79.cpp:12958"
+        },
+        {
+          "function": "0x826981D8",
+          "sites": [
+            "0x82698230"
+          ],
+          "locator": "generated/default/rerevved_recomp.185.cpp:13268"
+        }
+      ],
+      "confidence": "strong",
+      "qualifications": [
+        "The parent pointer is written only by the parent-backed constructor. AddRef recurses only after count becomes 1 with (Common & 0xF)==4 and Common & 0x40000000 nonzero; Release recurses only after count becomes zero with the same type and flag tests."
+      ],
+      "evidence": [
+        {
+          "kind": "generated-code",
+          "locator": "generated/default/rerevved_recomp.102.cpp:12696"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated/default/rerevved_recomp.79.cpp:12958"
+        },
+        {
+          "kind": "generated-code",
+          "locator": "generated/default/rerevved_recomp.185.cpp:13268"
+        }
+      ]
+    }
+  ],
+  "unresolvedCoverage": [
+    {
+      "object": "vertex_buffer",
+      "ranges": [
+        "+0x08 writer-to-VB join",
+        "+0x09..+0x13"
+      ],
+      "reason": "A conditional prior-resource +0x08 writer is proved in lifetimeFields; the exact vertex-buffer allocation join and remaining bytes are unresolved."
+    },
+    {
+      "object": "index_buffer",
+      "ranges": [
+        "+0x08..+0x13",
+        "+0x1C reader"
+      ],
+      "reason": "The index size/control reader was outside the eight-function set."
+    },
+    {
+      "object": "vertex_declaration",
+      "ranges": [
+        "+0x34..allocation end record subfields"
+      ],
+      "reason": "The 12-byte record stride and four-byte un-copied allocation tail extent are proved; record subfield meanings and any tail use remain unresolved."
+    },
+    {
+      "object": "backend_texture",
+      "ranges": [
+        "+0x00..+0x1B"
+      ],
+      "reason": "Existing six-dword descriptor contract begins at +0x1C."
+    },
+    {
+      "object": "parent_backed_surface",
+      "ranges": [
+        "+0x08..+0x13",
+        "+0x20..+0x2F"
+      ],
+      "reason": "No bounded writer/reader semantics were proved."
+    },
+    {
+      "object": "standalone_surface",
+      "ranges": [
+        "+0x08..+0x13"
+      ],
+      "reason": "Standalone output and packed header bytes remain unresolved; +0x18 has a known write but no semantic name and is not assumed parent-backed."
+    },
+    {
+      "object": "device_draw_state",
+      "ranges": [
+        "+0x28 writer",
+        "+0x30AC+4*stream reader",
+        "+0x30F0+stream reader",
+        "+0x3100+4*stage draw reader",
+        "+0x480 shadow readers except +0x0C/+0x10",
+        "+0x1D4+type writer/reader",
+        "+0x6F0/+0x6F4 dynamic fetch-shadow consumers"
+      ],
+      "reason": "The final bounded set proves writers or selected readers only; no runtime or executable-wide absence is claimed."
+    },
+    {
+      "object": "draw_command_header",
+      "ranges": [
+        "+0x00..+0x2F",
+        "+0x34",
+        "+0x3C..+0x3483",
+        "+0x3498 onward"
+      ],
+      "reason": "Only cursor, limit, and commit words were bounded."
+    },
+    {
+      "object": "resource_lifetime",
+      "ranges": [
+        "fence object join",
+        "release queue controls"
+      ],
+      "reason": "Conditional +0x08 writers are known for prior VB/IB bindings, but fence identity, ownership and deferred-release side effects remain unresolved."
+    }
+  ],
+  "guards": [
+    "Dirty words control draw emission and remain state, even where their writer-side coverage is outside the final bounded set.",
+    "Refcount, parent and fence fields are bookkeeping candidates with lifetime side effects; no snapshot exclusion is safe from this evidence.",
+    "Declaration allocation 0x38+12*n and source 0xFF terminator prove a variable extent and 12-byte copy stride, not a proved count of complete records.",
+    "Do not infer runtime frequency, complete object layout, draw ordering, or safe capture masking from static paths.",
+    "The standalone +0x18 writer is a packed layout candidate and is not a parent pointer; the parent-backed +0x18 relationship remains constructor-specific.",
+    "The sampler setter store at 0x8268F058 targets device +0x18; no stage-relative sampler dirty field is promoted.",
+    "Refcount and fence fields have lifetime side effects, and dirty masks control emission; no snapshot exclusion is safe from this evidence."
+  ],
+  "conclusion": "The bounded evidence proves byte-sized writers and readers for buffer address and size words, declaration metadata and records, texture descriptor and binding words, two distinct surface constructor families, device draw-state controls and bindings, command cursor and commit words, and resource lifetime readers. Remaining bytes and readers are listed explicitly below; these records do not authorize a complete layout or snapshot mask.",
+  "catalogPromotion": {
+    "structs": [
+      "RVA-STR-0058",
+      "RVA-STR-0059",
+      "RVA-STR-0060",
+      "RVA-STR-0061",
+      "RVA-STR-0062",
+      "RVA-STR-0063",
+      "RVA-STR-0064",
+      "RVA-STR-0065"
+    ],
+    "fields": [
+      "RVA-FLD-0194",
+      "RVA-FLD-0195",
+      "RVA-FLD-0196",
+      "RVA-FLD-0197",
+      "RVA-FLD-0198",
+      "RVA-FLD-0199",
+      "RVA-FLD-0200",
+      "RVA-FLD-0201",
+      "RVA-FLD-0202",
+      "RVA-FLD-0203",
+      "RVA-FLD-0204",
+      "RVA-FLD-0205",
+      "RVA-FLD-0206",
+      "RVA-FLD-0207",
+      "RVA-FLD-0208",
+      "RVA-FLD-0209",
+      "RVA-FLD-0210",
+      "RVA-FLD-0211",
+      "RVA-FLD-0212",
+      "RVA-FLD-0213",
+      "RVA-FLD-0214",
+      "RVA-FLD-0215",
+      "RVA-FLD-0216",
+      "RVA-FLD-0217",
+      "RVA-FLD-0218",
+      "RVA-FLD-0219",
+      "RVA-FLD-0220",
+      "RVA-FLD-0221",
+      "RVA-FLD-0222",
+      "RVA-FLD-0223",
+      "RVA-FLD-0224",
+      "RVA-FLD-0225",
+      "RVA-FLD-0226",
+      "RVA-FLD-0227",
+      "RVA-FLD-0228",
+      "RVA-FLD-0229",
+      "RVA-FLD-0230",
+      "RVA-FLD-0231",
+      "RVA-FLD-0232",
+      "RVA-FLD-0233",
+      "RVA-FLD-0234",
+      "RVA-FLD-0235",
+      "RVA-FLD-0236",
+      "RVA-FLD-0237",
+      "RVA-FLD-0238",
+      "RVA-FLD-0239",
+      "RVA-FLD-0240",
+      "RVA-FLD-0241",
+      "RVA-FLD-0242",
+      "RVA-FLD-0244",
+      "RVA-FLD-0245",
+      "RVA-FLD-0246",
+      "RVA-FLD-0247",
+      "RVA-FLD-0248"
+    ],
+    "symbols": [
+      "RVA-SYM-0438",
+      "RVA-SYM-0439",
+      "RVA-SYM-0440",
+      "RVA-SYM-0441",
+      "RVA-SYM-0442",
+      "RVA-SYM-0443",
+      "RVA-SYM-0444",
+      "RVA-SYM-0445",
+      "RVA-SYM-0446",
+      "RVA-SYM-0447",
+      "RVA-SYM-0448",
+      "RVA-SYM-0449",
+      "RVA-SYM-0450",
+      "RVA-SYM-0451",
+      "RVA-SYM-0452",
+      "RVA-SYM-0453",
+      "RVA-SYM-0454",
+      "RVA-SYM-0455",
+      "RVA-SYM-0456"
+    ]
+  }
+}

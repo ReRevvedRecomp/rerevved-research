@@ -1,0 +1,5155 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0253",
+  "topic": "native-renderer-d3d-runtime-surface",
+  "status": "open",
+  "confidence": "candidate",
+  "image": "image.json",
+  "question": "Which functions in the bounded region 0x8268CAA8-0x826C9C3F does title code call directly, and what role does each function body support?",
+  "scope": {
+    "region": "0x8268CAA8-0x826C9C3F; the nominal D3D band 0x82690000-0x826BFFFF is a subset",
+    "surfaceRule": "A function is in this surface when it lies in the bounded region 0x8268CAA8-0x826C9C3F and title code outside the region calls it directly or tail-branches to it. Ten sampler setters with no direct call are also listed because the static state table registers them. Membership is an address-range criterion, not D3D ownership.",
+    "roleRule": "Each role comes only from that function body's evidence: device fields, register shadows, dirty words, resource headers, or a static state-table entry. Address proximity never assigns a role or D3D ownership.",
+    "classificationScale": "Entries use the repository vocabulary. confirmed means a known anchor accepted in a dependency manifest, or a setter identified by the static state table. strong means device-field, register-shadow or resource-header behavior in the body identifies the role. candidate means shape only.",
+    "middleware": [
+      "0x826BF6B8",
+      "0x826BFBC0",
+      "0x826C7480",
+      "0x826C7570",
+      "0x826C7998",
+      "0x826C79D0"
+    ],
+    "unclassified": [
+      "owner of the 0x26D0-byte double-record helpers 0x82691940-0x826979B0",
+      "API name of shader microcode descriptor helper 0x826928F8",
+      "exact XGraphics names for the tiling and format helpers",
+      "D3D API identity of EVENT_WRITE emitter 0x8268D080",
+      "the tiling-pass pair 0x8269D7D8 and 0x8269DB20",
+      "base object written by 0x8279F528"
+    ],
+    "boundary": "This is a static surface over one address range. It assigns roles from function bodies and static tables, and does not establish runtime call frequency, ordering, or that every registered table setter is used. The six middleware entries are D3D clients that share the range, not D3D runtime functions."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-d3d-inventory",
+      "use": "accepted indexed-draw lowering root and draw operations"
+    },
+    {
+      "topic": "native-renderer-d3d-device-publication",
+      "use": "published device pointer and device create path 0x826A63E8"
+    },
+    {
+      "topic": "native-renderer-vdswap-boundary",
+      "use": "VdSwap owner 0x826A4638 and pre-swap path 0x826A4150"
+    },
+    {
+      "topic": "native-renderer-ring-span-boundary",
+      "use": "ring initializer 0x8269C8E0 and command emitter 0x8269CD20"
+    },
+    {
+      "topic": "native-renderer-resolve-resource-contract",
+      "use": "Resolve 0x8269E520, the 0x34-byte texture header and the XGraphics base patcher"
+    },
+    {
+      "topic": "native-renderer-d3d-draw-lowering-frontier",
+      "use": "draw lowering entries and repaired reference replay"
+    },
+    {
+      "topic": "native-renderer-indexed-draw-caller-frontier",
+      "use": "indexed draw entry 0x826A39F8 callers"
+    },
+    {
+      "topic": "gfx-renderer-state-setters",
+      "use": "GFx renderer state setter callers of the sampler and constant setters"
+    },
+    {
+      "topic": "gfx-draw-producer",
+      "use": "0x826ADD88 loads the pixel object from device +0x3194 and the vertex object from +0x3198, fixing the shader stages"
+    }
+  ],
+  "currentEvidence": {
+    "method": "Generated-code call graph over all ReXGlue output, with register-shadow and dirty-word decoding from the flush at 0x826A3048. Read-only foreground headless queries: ghidra/DumpReferences.java on 195 region functions, ghidra/FindDirectCallers.java on 8 candidates (raw bl scan, cap 64), ghidra/DumpFunctions.java on 40 candidates, and ghidra/DumpMemoryWords.java at 0x82F1A700, 0x82F1A904 and 0x82F1AB08 with radius 64 for the state tables.",
+    "entries": [
+      {
+        "address": "0x8268CBA0",
+        "role": "other: device AddRef",
+        "confidence": "strong",
+        "engineCallers": 19,
+        "engineCallSites": 19,
+        "definition": "generated/default/rerevved_recomp.188.cpp:12730",
+        "evidence": "increments device +0x3C refcount; 19 engine callers",
+        "sampleCallers": [
+          "0x82304538",
+          "0x824FDB10",
+          "0x82514AD0",
+          "0x82516530",
+          "0x8251A4A8"
+        ]
+      },
+      {
+        "address": "0x8268CE38",
+        "role": "release or free (device Release)",
+        "confidence": "strong",
+        "engineCallers": 17,
+        "engineCallSites": 17,
+        "definition": "generated/default/rerevved_recomp.7.cpp:12695",
+        "evidence": "decrements device +0x3C; at zero calls teardown 0x826A66D0 and frees 0x82E29160",
+        "sampleCallers": [
+          "0x82304538",
+          "0x823045D0",
+          "0x82512C38",
+          "0x8251BE38",
+          "0x8251BE80"
+        ]
+      },
+      {
+        "address": "0x8268CE90",
+        "role": "device reset or resize",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.147.cpp:12357",
+        "evidence": "Reset(device, presentation params): returns 0 or 0x8007000E; calls ringInit 0x8269C8E0, 0x8269C810, 0x826A5EB8 (gamma/display init) and 0x826A60F8; one caller 0x8250A688; reinitializes ring and display state",
+        "sampleCallers": [
+          "0x8250A688"
+        ]
+      },
+      {
+        "address": "0x8268CF10",
+        "role": "other: device thread ownership acquire",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.188.cpp:12746",
+        "evidence": "writes current thread ID from 0x8280DA68 to device +0x2A88 at0x8268CF38; native-renderer-d3d-completion-contract.json#/threadOwnership owns the value interpretation and source identity",
+        "sampleCallers": [
+          "0x82C98760",
+          "0x82D83888",
+          "0x82D840C8"
+        ]
+      },
+      {
+        "address": "0x8268CF50",
+        "role": "other: device thread ownership release",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.81.cpp:12641",
+        "evidence": "executes eieio then writes zero to device +0x2A88 at0x8268CF58; native-renderer-d3d-completion-contract.json#/threadOwnership owns the value interpretation and source identity",
+        "sampleCallers": [
+          "0x82C987D0",
+          "0x82D83888"
+        ]
+      },
+      {
+        "address": "0x8268CF60",
+        "role": "other: device suspend",
+        "confidence": "strong",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.88.cpp:12413",
+        "evidence": "notifies callback *(*0x820009F4)+4 with 2, calls 0x8269C810, sets device +0x2ABE bit 2 under the +0x3A60 critical section",
+        "sampleCallers": [
+          "0x821B31B8",
+          "0x82C98998",
+          "0x82E63490"
+        ]
+      },
+      {
+        "address": "0x8268CFF8",
+        "role": "other: device resume",
+        "confidence": "strong",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.186.cpp:12334",
+        "evidence": "notifies the same callback with 1, stores the current thread ID from0x8280DA68 in +0x2A88, clears +0x2ABE bit 2 under the +0x3A60 critical section; native-renderer-d3d-completion-contract.json#/threadOwnership owns the value interpretation and source identity",
+        "sampleCallers": [
+          "0x82C98910",
+          "0x82E63490"
+        ]
+      },
+      {
+        "address": "0x8268D080",
+        "role": "query or event",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.62.cpp:12710",
+        "evidence": "emits one EVENT_WRITE type-3 packet through the command cursor +0x30, toggles +0x2ABD; single caller 0x8250E718",
+        "sampleCallers": [
+          "0x8250E718"
+        ]
+      },
+      {
+        "address": "0x8268D2C8",
+        "role": "device create",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.81.cpp:12650",
+        "evidence": "calls device publication 0x826A63E8 and ring/device init chain; single engine caller 0x8250F2B0 (NiXenon renderer init)",
+        "sampleCallers": [
+          "0x8250F2B0"
+        ]
+      },
+      {
+        "address": "0x8268D690",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 11,
+        "engineCallSites": 51,
+        "definition": "generated/default/rerevved_recomp.196.cpp:12824",
+        "evidence": "static table entry 0x82F1A6A8 0x38 default 0x6; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82302F60",
+          "0x825168B0",
+          "0x82516D70",
+          "0x8251F890",
+          "0x82A90458"
+        ]
+      },
+      {
+        "address": "0x8268D6C0",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 46,
+        "definition": "generated/default/rerevved_recomp.40.cpp:12398",
+        "evidence": "static table entry 0x82F1A69C 0x34 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x825169B8",
+          "0x82516D70",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268D6F0",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 7,
+        "engineCallSites": 48,
+        "definition": "generated/default/rerevved_recomp.217.cpp:13137",
+        "evidence": "static table entry 0x82F1A720 0x60 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82302F60",
+          "0x82516630",
+          "0x82516D70",
+          "0x82C15240",
+          "0x82C18D38"
+        ]
+      },
+      {
+        "address": "0x8268D728",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 12,
+        "engineCallSites": 56,
+        "definition": "generated/default/rerevved_recomp.172.cpp:12555",
+        "evidence": "static table entry 0x82F1A6B4 0x3C default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82302A50",
+          "0x82302F60",
+          "0x82303F70",
+          "0x8250AC90",
+          "0x8250E718"
+        ]
+      },
+      {
+        "address": "0x8268D7B8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 5,
+        "engineCallSites": 46,
+        "definition": "generated/default/rerevved_recomp.9.cpp:12769",
+        "evidence": "static table entry 0x82F1A6F0 0x50 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x823036D0",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268D848",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 47,
+        "definition": "generated/default/rerevved_recomp.59.cpp:12758",
+        "evidence": "static table entry 0x82F1A6D8 0x48 default 0x1; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x823036D0",
+          "0x82516D70",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268D8D8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 47,
+        "definition": "generated/default/rerevved_recomp.115.cpp:12701",
+        "evidence": "static table entry 0x82F1A6E4 0x4C default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x823036D0",
+          "0x82516D70",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268D968",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 5,
+        "engineCallSites": 45,
+        "definition": "generated/default/rerevved_recomp.169.cpp:12230",
+        "evidence": "static table entry 0x82F1A714 0x5C default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x823036D0",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268D9D8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 5,
+        "engineCallSites": 45,
+        "definition": "generated/default/rerevved_recomp.83.cpp:12443",
+        "evidence": "static table entry 0x82F1A6FC 0x54 default 0x1; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x823036D0",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268DA48",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 5,
+        "engineCallSites": 45,
+        "definition": "generated/default/rerevved_recomp.27.cpp:12548",
+        "evidence": "static table entry 0x82F1A708 0x58 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x823036D0",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268DAB8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 5,
+        "engineCallSites": 46,
+        "definition": "generated/default/rerevved_recomp.46.cpp:12819",
+        "evidence": "static table entry 0x82F1A6C0 0x40 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x823036D0",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268DB50",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 46,
+        "definition": "generated/default/rerevved_recomp.92.cpp:12627",
+        "evidence": "static table entry 0x82F1A72C 0x64 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82516630",
+          "0x82516D70",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268DBB0",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 46,
+        "definition": "generated/default/rerevved_recomp.31.cpp:12546",
+        "evidence": "static table entry 0x82F1A738 0x68 default 0x7; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82516630",
+          "0x82516D70",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268DBE0",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.95.cpp:12653",
+        "evidence": "static table entry 0x82F1A6CC 0x44 default 0xFFFFFFFF; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268DCE0",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.196.cpp:12842",
+        "evidence": "static table entry 0x82F1AA98 0x188 default 0x1; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268DD18",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.211.cpp:12377",
+        "evidence": "static table entry 0x82F1AAA4 0x18C default 0x3F800000; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268DD88",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 5,
+        "engineCallSites": 45,
+        "definition": "generated/default/rerevved_recomp.40.cpp:12416",
+        "evidence": "stores device +0x5D7C only; static table entry 0x82F1AAB0 0x190 default 0x1; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x8250F2B0",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268DDB8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 11,
+        "engineCallSites": 52,
+        "definition": "generated/default/rerevved_recomp.200.cpp:12583",
+        "evidence": "static table entry 0x82F1A678 0x28 default 0x1; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82302F60",
+          "0x8250E718",
+          "0x825169D8",
+          "0x82516D70",
+          "0x82A90458"
+        ]
+      },
+      {
+        "address": "0x8268DDF8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 8,
+        "engineCallSites": 48,
+        "definition": "generated/default/rerevved_recomp.120.cpp:12382",
+        "evidence": "static table entry 0x82F1A690 0x30 default 0x1; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82302F60",
+          "0x8250E718",
+          "0x825169D8",
+          "0x82516D70",
+          "0x82C15240"
+        ]
+      },
+      {
+        "address": "0x8268DE28",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 8,
+        "engineCallSites": 48,
+        "definition": "generated/default/rerevved_recomp.167.cpp:12793",
+        "evidence": "static table entry 0x82F1A684 0x2C default 0x3; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82302F60",
+          "0x8250E718",
+          "0x825169D8",
+          "0x82516D70",
+          "0x82C15240"
+        ]
+      },
+      {
+        "address": "0x8268DE60",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 7,
+        "engineCallSites": 48,
+        "definition": "generated/default/rerevved_recomp.188.cpp:12786",
+        "evidence": "static table entry 0x82F1A744 0x6C default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82304288",
+          "0x823044C0",
+          "0x825168B0",
+          "0x82C15240",
+          "0x82C18D38"
+        ]
+      },
+      {
+        "address": "0x8268DEA0",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.49.cpp:12221",
+        "evidence": "static table entry 0x82F1A750 0x70 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268DED8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 7,
+        "engineCallSites": 49,
+        "definition": "generated/default/rerevved_recomp.215.cpp:12567",
+        "evidence": "static table entry 0x82F1A780 0x80 default 0x7; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82304288",
+          "0x82304440",
+          "0x825168B0",
+          "0x82C15240",
+          "0x82C18D38"
+        ]
+      },
+      {
+        "address": "0x8268DF08",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 46,
+        "definition": "generated/default/rerevved_recomp.53.cpp:12485",
+        "evidence": "static table entry 0x82F1A75C 0x74 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82304288",
+          "0x825168B0",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268DF40",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 46,
+        "definition": "generated/default/rerevved_recomp.7.cpp:12748",
+        "evidence": "static table entry 0x82F1A768 0x78 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82304288",
+          "0x825168B0",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268DF78",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 7,
+        "engineCallSites": 49,
+        "definition": "generated/default/rerevved_recomp.217.cpp:13167",
+        "evidence": "static table entry 0x82F1A774 0x7C default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82304288",
+          "0x82304440",
+          "0x825168B0",
+          "0x82C15240",
+          "0x82C18D38"
+        ]
+      },
+      {
+        "address": "0x8268DFA8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.126.cpp:12409",
+        "evidence": "static table entry 0x82F1A7D4 0x9C default 0x7; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268DFD8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.61.cpp:12696",
+        "evidence": "static table entry 0x82F1A7B0 0x90 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E010",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.2.cpp:12684",
+        "evidence": "static table entry 0x82F1A7BC 0x94 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E048",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.140.cpp:12817",
+        "evidence": "static table entry 0x82F1A7C8 0x98 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E078",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 7,
+        "engineCallSites": 49,
+        "definition": "generated/default/rerevved_recomp.45.cpp:12798",
+        "evidence": "static table entry 0x82F1A78C 0x84 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82304288",
+          "0x82304440",
+          "0x825168B0",
+          "0x82C15240",
+          "0x82C18D38"
+        ]
+      },
+      {
+        "address": "0x8268E098",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 7,
+        "engineCallSites": 47,
+        "definition": "generated/default/rerevved_recomp.42.cpp:13049",
+        "evidence": "static table entry 0x82F1A798 0x88 default 0xFFFFFFFF; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82304288",
+          "0x82304440",
+          "0x825168B0",
+          "0x82C15240",
+          "0x82C18D38"
+        ]
+      },
+      {
+        "address": "0x8268E0B8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.196.cpp:12864",
+        "evidence": "static table entry 0x82F1A7A4 0x8C default 0xFFFFFFFF; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E0D8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.120.cpp:12400",
+        "evidence": "static table entry 0x82F1A7E0 0xA0 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E0F8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.31.cpp:12574",
+        "evidence": "static table entry 0x82F1A7EC 0xA4 default 0xFFFFFFFF; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E118",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.179.cpp:12706",
+        "evidence": "static table entry 0x82F1A7F8 0xA8 default 0xFFFFFFFF; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E138",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 7,
+        "engineCallSites": 49,
+        "definition": "generated/default/rerevved_recomp.40.cpp:12446",
+        "evidence": "static table entry 0x82F1A804 0xAC default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82302F60",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82D960D0"
+        ]
+      },
+      {
+        "address": "0x8268E190",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.215.cpp:12585",
+        "evidence": "static table entry 0x82F1A864 0xCC default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E258",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.167.cpp:12815",
+        "evidence": "static table entry 0x82F1A870 0xD0 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E300",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.177.cpp:12515",
+        "evidence": "static table entry 0x82F1A840 0xC0 default 0x1; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E330",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.163.cpp:12556",
+        "evidence": "static table entry 0x82F1A84C 0xC4 default 0xFFFFFFFF; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E350",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 10,
+        "engineCallSites": 51,
+        "definition": "generated/default/rerevved_recomp.226.cpp:12624",
+        "evidence": "static table entry 0x82F1A87C 0xD4 default 0xF; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82304288",
+          "0x82304440",
+          "0x8250E718",
+          "0x82C15240",
+          "0x82C18D38"
+        ]
+      },
+      {
+        "address": "0x8268E390",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.84.cpp:13160",
+        "evidence": "static table entry 0x82F1A888 0xD8 default 0xF; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E3D0",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.69.cpp:12850",
+        "evidence": "static table entry 0x82F1A894 0xDC default 0xF; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E410",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.45.cpp:12812",
+        "evidence": "static table entry 0x82F1A8A0 0xE0 default 0xF; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E450",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.32.cpp:12841",
+        "evidence": "stores device +0x2E6C only (software state, no register shadow); static table entry 0x82F1A828 0xB8 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E460",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.42.cpp:13063",
+        "evidence": "static table entry 0x82F1A810 0xB0 default 0x3F800000; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E4B8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.74.cpp:12698",
+        "evidence": "static table entry 0x82F1A81C 0xB4 default 0x3F800000; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E508",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.126.cpp:12427",
+        "evidence": "static table entry 0x82F1A834 0xBC default 0x42800000; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E558",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.120.cpp:12414",
+        "evidence": "static table entry 0x82F1A8D0 0xF0 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E578",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.47.cpp:12352",
+        "evidence": "static table entry 0x82F1A8DC 0xF4 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E5A0",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.30.cpp:12747",
+        "evidence": "static table entry 0x82F1A8E8 0xF8 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E5C8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.66.cpp:12513",
+        "evidence": "static table entry 0x82F1A8F4 0xFC default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E5F0",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.31.cpp:12588",
+        "evidence": "static table entry 0x82F1A900 0x100 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E618",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.7.cpp:12770",
+        "evidence": "static table entry 0x82F1A90C 0x104 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E640",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.49.cpp:12251",
+        "evidence": "static table entry 0x82F1A918 0x108 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E668",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.193.cpp:12672",
+        "evidence": "static table entry 0x82F1A924 0x10C default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E688",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.12.cpp:12613",
+        "evidence": "static table entry 0x82F1A930 0x110 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E6A8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.176.cpp:12952",
+        "evidence": "static table entry 0x82F1A93C 0x114 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E6D0",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.200.cpp:12616",
+        "evidence": "static table entry 0x82F1A948 0x118 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E6F8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.217.cpp:13193",
+        "evidence": "static table entry 0x82F1A954 0x11C default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E720",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.56.cpp:12842",
+        "evidence": "static table entry 0x82F1A960 0x120 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E748",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.113.cpp:12730",
+        "evidence": "static table entry 0x82F1A96C 0x124 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E770",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.140.cpp:12835",
+        "evidence": "static table entry 0x82F1A978 0x128 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E798",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.32.cpp:12849",
+        "evidence": "static table entry 0x82F1A984 0x12C default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268E8B8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 11,
+        "engineCallSites": 53,
+        "definition": "generated/default/rerevved_recomp.177.cpp:12533",
+        "evidence": "static table entry 0x82F1A990 0x130 default 0x1; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x8250E718",
+          "0x82512608",
+          "0x82523DF0",
+          "0x82523E78",
+          "0x82A90458"
+        ]
+      },
+      {
+        "address": "0x8268E908",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 47,
+        "definition": "generated/default/rerevved_recomp.50.cpp:12870",
+        "evidence": "static table entry 0x82F1A99C 0x134 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x8250AC90",
+          "0x82516630",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268E9B8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 47,
+        "definition": "generated/default/rerevved_recomp.92.cpp:12687",
+        "evidence": "static table entry 0x82F1A9A8 0x138 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x8250AC90",
+          "0x82516630",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268EA68",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 47,
+        "definition": "generated/default/rerevved_recomp.61.cpp:12728",
+        "evidence": "static table entry 0x82F1A9B4 0x13C default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x8250AC90",
+          "0x82516630",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268EB18",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 46,
+        "definition": "generated/default/rerevved_recomp.98.cpp:12625",
+        "evidence": "static table entry 0x82F1A9C0 0x140 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x8250AC90",
+          "0x82516630",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268EBC8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.211.cpp:12425",
+        "evidence": "static table entry 0x82F1A8B8 0xE8 default 0x3F800000; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EC00",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.2.cpp:12716",
+        "evidence": "static table entry 0x82F1A8C4 0xEC default 0x3F800000; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EC38",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.163.cpp:12582",
+        "evidence": "static table entry 0x82F1A8AC 0xE4 default 0x1; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EC70",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 48,
+        "definition": "generated/default/rerevved_recomp.130.cpp:13059",
+        "evidence": "static table entry 0x82F1A9CC 0x144 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x8250E718",
+          "0x82512608",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268ECA8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.147.cpp:12463",
+        "evidence": "static table entry 0x82F1A9D8 0x148 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268ECD8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.169.cpp:12290",
+        "evidence": "static table entry 0x82F1A9E4 0x14C default 0xFFFF; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268ED00",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.124.cpp:12882",
+        "evidence": "static table entry 0x82F1A9F0 0x150 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268ED30",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.27.cpp:12600",
+        "evidence": "static table entry 0x82F1A9FC 0x154 default 0x87; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268ED68",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.196.cpp:12904",
+        "evidence": "static table entry 0x82F1AA08 0x158 default 0x40000000; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268ED98",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.88.cpp:12501",
+        "evidence": "static table entry 0x82F1AA14 0x15C default 0x40000000; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EDC8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.53.cpp:12533",
+        "evidence": "static table entry 0x82F1AA20 0x160 default 0x3F800000; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EDF0",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.12.cpp:12633",
+        "evidence": "static table entry 0x82F1AA2C 0x164 default 0x3F800000; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EE20",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.32.cpp:12867",
+        "evidence": "stores +0x2E4C and dirty +0x10 bit 0x20000 (RB_COLORCONTROL group); static table entry 0x82F1AA80 0x180 default 0x2; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EE50",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.179.cpp:12748",
+        "evidence": "stores +0x2E4C, dirty +0x10 and +0x28 bit 0x100 (HiZ enable path); also called by EndTiling; static table entry 0x82F1AA8C 0x184 default 0x2; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EEB8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.83.cpp:12511",
+        "evidence": "static table entry 0x82F1AA38 0x168 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EEE8",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.47.cpp:12374",
+        "evidence": "static table entry 0x82F1AA44 0x16C default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EF18",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.66.cpp:12535",
+        "evidence": "static table entry 0x82F1AA50 0x170 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EF48",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.186.cpp:12431",
+        "evidence": "static table entry 0x82F1AA5C 0x174 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EF68",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 9,
+        "engineCallSites": 49,
+        "definition": "generated/default/rerevved_recomp.7.cpp:12792",
+        "evidence": "stores device +0x351C only; 9 callers including 0x8250A688 and 0x826A5C50; static table entry 0x82F1AA68 0x178 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x8250A688",
+          "0x8250F2B0",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "address": "0x8268EF78",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 44,
+        "definition": "generated/default/rerevved_recomp.165.cpp:12321",
+        "evidence": "stores device +0x2E4C only; static table entry 0x82F1AA74 0x17C default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268EF98",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 11,
+        "engineCallSites": 32,
+        "definition": "generated/default/rerevved_recomp.200.cpp:12638",
+        "evidence": "no device field touched directly; computed fetch-shadow writes; 11 engine callers incl. GFx 0x82302A50/0x82302F60; static table entry 0x82F1AAFC 0x14 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "sampleCallers": [
+          "0x82302A50",
+          "0x82302F60",
+          "0x82303F70",
+          "0x8250E718",
+          "0x82512608"
+        ]
+      },
+      {
+        "address": "0x8268F098",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 3,
+        "engineCallSites": 19,
+        "definition": "generated/default/rerevved_recomp.56.cpp:12864",
+        "evidence": "static table entry 0x82F1AB44 0x2C default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "sampleCallers": [
+          "0x82C21A88",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268F140",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 11,
+        "engineCallSites": 32,
+        "definition": "generated/default/rerevved_recomp.140.cpp:12857",
+        "evidence": "same shape and callers as 0x8268EF98; static table entry 0x82F1AAF0 0x10 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "sampleCallers": [
+          "0x82302A50",
+          "0x82302F60",
+          "0x82303F70",
+          "0x8250E718",
+          "0x82512608"
+        ]
+      },
+      {
+        "address": "0x8268F240",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 3,
+        "engineCallSites": 19,
+        "definition": "generated/default/rerevved_recomp.198.cpp:12755",
+        "evidence": "static table entry 0x82F1AB38 0x28 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "sampleCallers": [
+          "0x82C21A88",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268F2E0",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 0,
+        "engineCallSites": 0,
+        "definition": "generated/default/rerevved_recomp.188.cpp:12845",
+        "evidence": "no direct engine call; an engine dispatcher selects this type through the static type map 0x82F18250 (0x82526830 map[6], 0x8251A610 map[6]); static table entry 0x82F1AB08 0x18 default 0x2; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "reachedBy": "device state table only"
+      },
+      {
+        "address": "0x8268F338",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 3,
+        "engineCallSites": 19,
+        "definition": "generated/default/rerevved_recomp.226.cpp:12657",
+        "evidence": "static table entry 0x82F1AB50 0x30 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "sampleCallers": [
+          "0x82C21A88",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268F3E0",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 3,
+        "engineCallSites": 19,
+        "definition": "generated/default/rerevved_recomp.49.cpp:12281",
+        "evidence": "static table entry 0x82F1AB2C 0x24 default 0x1; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "sampleCallers": [
+          "0x82C21A88",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268F458",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 3,
+        "engineCallSites": 19,
+        "definition": "generated/default/rerevved_recomp.193.cpp:12706",
+        "evidence": "static table entry 0x82F1AB74 0x3C default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "sampleCallers": [
+          "0x82C21A88",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268F500",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 20,
+        "definition": "generated/default/rerevved_recomp.20.cpp:12280",
+        "evidence": "static table entry 0x82F1AB14 0x1C default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "sampleCallers": [
+          "0x82302F60",
+          "0x82C21A88",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268F5A0",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 3,
+        "engineCallSites": 19,
+        "definition": "generated/default/rerevved_recomp.69.cpp:12883",
+        "evidence": "static table entry 0x82F1AB20 0x20 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "sampleCallers": [
+          "0x82C21A88",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268F620",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 3,
+        "engineCallSites": 19,
+        "definition": "generated/default/rerevved_recomp.45.cpp:12845",
+        "evidence": "static table entry 0x82F1AB5C 0x34 default 0xD; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "sampleCallers": [
+          "0x82C21A88",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x8268F6A0",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 0,
+        "engineCallSites": 0,
+        "definition": "generated/default/rerevved_recomp.120.cpp:12448",
+        "evidence": "no direct engine call and no statically selected dispatch found; only data-driven dispatchers (types loaded at runtime) and device init could reach it, so registration does not prove the title uses it; static table entry 0x82F1AAE4 0xC default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "reachedBy": "device state table only"
+      },
+      {
+        "address": "0x8268F710",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 0,
+        "engineCallSites": 0,
+        "definition": "generated/default/rerevved_recomp.62.cpp:12819",
+        "evidence": "no direct engine call; an engine dispatcher selects this type through the static type map 0x82F18250 (0x82526830 map[0], 0x8251A6B8 map[0]); static table entry 0x82F1AAC0 0x0 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "reachedBy": "device state table only"
+      },
+      {
+        "address": "0x8268F760",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 0,
+        "engineCallSites": 0,
+        "definition": "generated/default/rerevved_recomp.31.cpp:12620",
+        "evidence": "no direct engine call; an engine dispatcher selects this type through the static type map 0x82F18250 (0x82526830 map[1], 0x8251A6B8 map[1]); static table entry 0x82F1AACC 0x4 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "reachedBy": "device state table only"
+      },
+      {
+        "address": "0x8268F7B0",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 0,
+        "engineCallSites": 0,
+        "definition": "generated/default/rerevved_recomp.176.cpp:12984",
+        "evidence": "no direct engine call; an engine dispatcher selects this type through the static type map 0x82F18250 (0x82526830 map[2]); static table entry 0x82F1AAD8 0x8 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "reachedBy": "device state table only"
+      },
+      {
+        "address": "0x8268F800",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 0,
+        "engineCallSites": 0,
+        "definition": "generated/default/rerevved_recomp.169.cpp:12308",
+        "evidence": "no direct engine call and no statically selected dispatch found; only data-driven dispatchers (types loaded at runtime) and device init could reach it, so registration does not prove the title uses it; static table entry 0x82F1AB68 0x38 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "reachedBy": "device state table only"
+      },
+      {
+        "address": "0x8268F858",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 0,
+        "engineCallSites": 0,
+        "definition": "generated/default/rerevved_recomp.37.cpp:12578",
+        "evidence": "no direct engine call and no statically selected dispatch found; only data-driven dispatchers (types loaded at runtime) and device init could reach it, so registration does not prove the title uses it; static table entry 0x82F1AB80 0x40 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "reachedBy": "device state table only"
+      },
+      {
+        "address": "0x8268F8B0",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 0,
+        "engineCallSites": 0,
+        "definition": "generated/default/rerevved_recomp.107.cpp:12858",
+        "evidence": "no direct engine call and no statically selected dispatch found; only data-driven dispatchers (types loaded at runtime) and device init could reach it, so registration does not prove the title uses it; static table entry 0x82F1AB8C 0x44 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "reachedBy": "device state table only"
+      },
+      {
+        "address": "0x8268F908",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 0,
+        "engineCallSites": 0,
+        "definition": "generated/default/rerevved_recomp.78.cpp:12393",
+        "evidence": "no direct engine call and no statically selected dispatch found; only data-driven dispatchers (types loaded at runtime) and device init could reach it, so registration does not prove the title uses it; static table entry 0x82F1AB98 0x48 default 0x0; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "reachedBy": "device state table only"
+      },
+      {
+        "address": "0x8268F960",
+        "role": "set sampler state",
+        "confidence": "confirmed",
+        "engineCallers": 0,
+        "engineCallSites": 0,
+        "definition": "generated/default/rerevved_recomp.172.cpp:12627",
+        "evidence": "no direct engine call and no statically selected dispatch found; only data-driven dispatchers (types loaded at runtime) and device init could reach it, so registration does not prove the title uses it; static table entry 0x82F1ABA4 0x4C default 0x1; device init 0x826A5C50 copies it to device +0x1D4 + state and calls it",
+        "reachedBy": "device state table only"
+      },
+      {
+        "address": "0x8268FAB8",
+        "role": "other: GetViewport",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.39.cpp:12691",
+        "evidence": "copies device +0x3168..+0x317C to caller struct",
+        "sampleCallers": [
+          "0x82306718"
+        ]
+      },
+      {
+        "address": "0x8268FB08",
+        "role": "set stream source",
+        "confidence": "strong",
+        "engineCallers": 11,
+        "engineCallSites": 15,
+        "definition": "generated/default/rerevved_recomp.124.cpp:12900",
+        "evidence": "writes vertex fetch dword pair into fetch shadow (device +0x6F0 + 8*(0x11-stream) region), stores VB at device +0x30AC+4*stream, stride byte +0x30F0+stream, ORs caller dirty mask into +0x18; deferred release of previous VB via fence",
+        "sampleCallers": [
+          "0x824FF208",
+          "0x825107A0",
+          "0x82510DD8",
+          "0x82513CE0",
+          "0x82539A30"
+        ]
+      },
+      {
+        "address": "0x8268FC28",
+        "role": "other: GetStreamSource",
+        "confidence": "strong",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.27.cpp:12618",
+        "evidence": "reads device +0x30AC+4*stream and fetch shadow, AddRef, returns offset and stride",
+        "sampleCallers": [
+          "0x82306638",
+          "0x82A903A0"
+        ]
+      },
+      {
+        "address": "0x8268FCB0",
+        "role": "set indices",
+        "confidence": "strong",
+        "engineCallers": 6,
+        "engineCallSites": 6,
+        "definition": "generated/default/rerevved_recomp.161.cpp:12634",
+        "evidence": "stores index buffer at device +0x3094 after fence-deferred release of previous (+0x2A9C/+0x2AA0/+0x34D4 pending list); consumed by 0x826A39F8 at G+0x3094",
+        "sampleCallers": [
+          "0x82306880",
+          "0x825107A0",
+          "0x82510DD8",
+          "0x82513CE0",
+          "0x8252E168"
+        ]
+      },
+      {
+        "address": "0x8268FD40",
+        "role": "other: GetIndices",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.165.cpp:12333",
+        "evidence": "loads device +0x3094 and AddRef",
+        "sampleCallers": [
+          "0x82306600"
+        ]
+      },
+      {
+        "address": "0x8268FD80",
+        "role": "other: GetRenderTarget",
+        "confidence": "strong",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.9.cpp:12839",
+        "evidence": "loads device +0x3098+4*index and AddRef 0x82698160",
+        "sampleCallers": [
+          "0x82306C18",
+          "0x8250B350"
+        ]
+      },
+      {
+        "address": "0x8268FDC8",
+        "role": "other: GetDepthStencilSurface",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.211.cpp:12451",
+        "evidence": "loads device +0x30A8 and AddRef 0x82698160",
+        "sampleCallers": [
+          "0x82304288"
+        ]
+      },
+      {
+        "address": "0x8268FF98",
+        "role": "set render state",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.2.cpp:12742",
+        "evidence": "copies four dwords from argument 3 and ORs dirty +0x20; two middleware callers",
+        "sampleCallers": [
+          "0x82D960D0",
+          "0x82E62C40"
+        ]
+      },
+      {
+        "address": "0x8268FFE8",
+        "role": "set render state",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 8,
+        "definition": "generated/default/rerevved_recomp.119.cpp:12719",
+        "evidence": "dirty +0x10 bit 0x20000 update; single caller 0x82516630",
+        "sampleCallers": [
+          "0x82516630"
+        ]
+      },
+      {
+        "address": "0x82690390",
+        "role": "set render state",
+        "confidence": "confirmed",
+        "engineCallers": 5,
+        "engineCallSites": 45,
+        "definition": "generated/default/rerevved_recomp.115.cpp:12771",
+        "evidence": "stores device +0x2E50 then tail-calls scissor update 0x8268F9C0 with rect +0x3184; called from the 4 render-state switch owners; static table entry 0x82F1A858 0xC8 default 0x0; device init 0x826A5C50 copies it to device +0x40 + state and calls it",
+        "sampleCallers": [
+          "0x82302F60",
+          "0x82C15240",
+          "0x82C18D38",
+          "0x82C2A8E8",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x826903A0",
+        "role": "set viewport",
+        "confidence": "strong",
+        "engineCallers": 5,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.53.cpp:12555",
+        "evidence": "reads D3DVIEWPORT9 (X,Y,W,H dwords, MinZ,MaxZ floats), converts to float and calls 0x82690138, which stores device +0x3168..+0x317C and PA_CL_VPORT shadows",
+        "sampleCallers": [
+          "0x82302F60",
+          "0x8250B168",
+          "0x8250BA00",
+          "0x8250BF10",
+          "0x82512608"
+        ]
+      },
+      {
+        "address": "0x82690830",
+        "role": "set depth stencil",
+        "confidence": "strong",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.130.cpp:13081",
+        "evidence": "stores device +0x30A8; updates RB_DEPTH_INFO (+0x2888), RB_SURFACE_INFO, RB_DEPTHCONTROL, RB_HIZCONTROL shadows; dirty +0x10",
+        "sampleCallers": [
+          "0x82512608",
+          "0x82520478",
+          "0x82520510",
+          "0x82C6D980"
+        ]
+      },
+      {
+        "address": "0x82690B08",
+        "role": "set render target",
+        "confidence": "strong",
+        "engineCallers": 5,
+        "engineCallSites": 13,
+        "definition": "generated/default/rerevved_recomp.41.cpp:12632",
+        "evidence": "tail branch to 0x826904D0, which stores surface at device +0x3098+4*index, patches RB_COLOR_INFO shadow (+0x2884) and RB_SURFACE_INFO, dirty +0x10",
+        "sampleCallers": [
+          "0x82512608",
+          "0x82520478",
+          "0x82520510",
+          "0x82C2A8E8",
+          "0x82C6D980"
+        ]
+      },
+      {
+        "address": "0x82691940",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.115.cpp:12782",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x825FF508",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82691960",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.17.cpp:12680",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600E60",
+          "0x826CF770",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82691980",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.187.cpp:12379",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600FA8",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82691E98",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.177.cpp:12570",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x825AB368",
+          "0x826EADA8",
+          "0x82C129E8",
+          "0x82C12A38"
+        ]
+      },
+      {
+        "address": "0x82692588",
+        "role": "set shader constants (vertex float)",
+        "confidence": "strong",
+        "engineCallers": 10,
+        "engineCallSites": 12,
+        "definition": "generated/default/rerevved_recomp.81.cpp:12783",
+        "evidence": "copies vec4 array to device +0x780+16*start (ALU regs 0x4000+), ORs mask into dirty word +0x00",
+        "sampleCallers": [
+          "0x82538718",
+          "0x8259CA30",
+          "0x8259CAC8",
+          "0x8259CB50",
+          "0x8266ADE8"
+        ]
+      },
+      {
+        "address": "0x82692668",
+        "role": "set shader constants (pixel float)",
+        "confidence": "strong",
+        "engineCallers": 11,
+        "engineCallSites": 13,
+        "definition": "generated/default/rerevved_recomp.209.cpp:12878",
+        "evidence": "copies vec4 array to device +0x1780+16*start (ALU regs 0x4400+), ORs mask into dirty word +0x08",
+        "sampleCallers": [
+          "0x823029B8",
+          "0x82538718",
+          "0x8259CD60",
+          "0x8259CDB0",
+          "0x8259CE48"
+        ]
+      },
+      {
+        "address": "0x82692748",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.129.cpp:12273",
+        "evidence": "thin wrapper around out-of-region 0x8281ABB8 (memory or string helper)",
+        "sampleCallers": [
+          "0x823066D0"
+        ]
+      },
+      {
+        "address": "0x82692768",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.217.cpp:13245",
+        "evidence": "thin wrapper around out-of-region 0x8281ABB8 (memory or string helper)",
+        "sampleCallers": [
+          "0x82306688"
+        ]
+      },
+      {
+        "address": "0x82692788",
+        "role": "set shader constants (vertex boolean)",
+        "confidence": "strong",
+        "engineCallers": 7,
+        "engineCallSites": 9,
+        "definition": "generated/default/rerevved_recomp.160.cpp:12821",
+        "evidence": "sets bits in device +0x2780+4*(start>>5) (bool constants 0x4900), dirty +0x20 bit 56",
+        "sampleCallers": [
+          "0x82538718",
+          "0x8259C870",
+          "0x8259C898",
+          "0x8259C8F8",
+          "0x8266ADE8"
+        ]
+      },
+      {
+        "address": "0x826927E8",
+        "role": "set shader constants (pixel boolean)",
+        "confidence": "strong",
+        "engineCallers": 7,
+        "engineCallSites": 9,
+        "definition": "generated/default/rerevved_recomp.104.cpp:12567",
+        "evidence": "sets bits in device +0x2790+4*(start>>5), dirty +0x20 bit 56",
+        "sampleCallers": [
+          "0x82538718",
+          "0x8259CBA0",
+          "0x8259CBC8",
+          "0x8259CC28",
+          "0x8266ADE8"
+        ]
+      },
+      {
+        "address": "0x82692848",
+        "role": "set shader constants (vertex integer)",
+        "confidence": "strong",
+        "engineCallers": 7,
+        "engineCallSites": 8,
+        "definition": "generated/default/rerevved_recomp.43.cpp:12404",
+        "evidence": "packs int4 bytes into loop constants at device +0x27A0+4*start, dirty +0x20 bit 56",
+        "sampleCallers": [
+          "0x82538718",
+          "0x8259C960",
+          "0x8259C9B8",
+          "0x8259C9E0",
+          "0x8266ADE8"
+        ]
+      },
+      {
+        "address": "0x826928A0",
+        "role": "set shader constants (pixel integer)",
+        "confidence": "strong",
+        "engineCallers": 7,
+        "engineCallSites": 10,
+        "definition": "generated/default/rerevved_recomp.82.cpp:12738",
+        "evidence": "same packing as 0x82692848 at the pixel loop-constant block, dirty +0x20 bit 56",
+        "sampleCallers": [
+          "0x82538718",
+          "0x8259CC90",
+          "0x8259CCE8",
+          "0x8259CD10",
+          "0x8266ADE8"
+        ]
+      },
+      {
+        "address": "0x826928F8",
+        "role": "other: shader microcode descriptor helper",
+        "confidence": "candidate",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.191.cpp:12884",
+        "evidence": "fills a four-word descriptor {blob, header size 0x28 plus a conditional 0x340 when blob word 0 bit 0 is set plus blob[1], blob + blob[1], blob[2]}; same size rule as the shader creators 0x826944D8/0x826945E8; no 0x26D0 record selection (Ghidra decompile agrees)",
+        "sampleCallers": [
+          "0x825AB368",
+          "0x826EAE10",
+          "0x826EAFE0",
+          "0x826F2078"
+        ]
+      },
+      {
+        "address": "0x82692948",
+        "role": "set pixel shader",
+        "confidence": "strong",
+        "engineCallers": 15,
+        "engineCallSites": 20,
+        "definition": "generated/default/rerevved_recomp.188.cpp:12879",
+        "evidence": "stores the pixel shader at device +0x3194 after fence-deferred release of the previous one; ORs dirty +0x10 bits 0x100000 and 0x20000; for a non-null shader with metadata at +0x28 + [+0x3C], clears the shader PS ALU overlap mask from dirty +0x08, sets dirty +0x20 bit 56 when the bool/loop mask is non-zero, and applies the shader fetch patches into the fetch shadow +0x480; the 0x826ADD88 loader reads the pixel object from +0x3194 (gfx-draw-producer)",
+        "sampleCallers": [
+          "0x82302538",
+          "0x82302620",
+          "0x824FDCB0",
+          "0x82512C38",
+          "0x82514288"
+        ]
+      },
+      {
+        "address": "0x82692B08",
+        "role": "other: GetPixelShader",
+        "confidence": "strong",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.17.cpp:12698",
+        "evidence": "loads the pixel shader from device +0x3194 and AddRef",
+        "sampleCallers": [
+          "0x823067C0",
+          "0x82514288"
+        ]
+      },
+      {
+        "address": "0x82692C48",
+        "role": "set vertex shader",
+        "confidence": "strong",
+        "engineCallers": 19,
+        "engineCallSites": 25,
+        "definition": "generated/default/rerevved_recomp.21.cpp:12814",
+        "evidence": "ORs dirty +0x10 bit 0x80000 only when the new shader is non-null; stores the vertex shader at device +0x3198 after fence-deferred release of the previous one; clears +0x2ABE bit 0x80; for a shader with metadata at +0x368 + [+0x37C], clears the shader VS ALU overlap mask from dirty +0x00, sets dirty +0x20 bit 56 when the bool/loop mask is non-zero, and applies the fetch patches into +0x480; 0x826ADD88 loads the vertex object from +0x3198 (gfx-draw-producer)",
+        "sampleCallers": [
+          "0x82302538",
+          "0x82302F60",
+          "0x823035D0",
+          "0x82303C38",
+          "0x82303EA8"
+        ]
+      },
+      {
+        "address": "0x82692E18",
+        "role": "other: GetVertexShader",
+        "confidence": "strong",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.38.cpp:12596",
+        "evidence": "loads the vertex shader from device +0x3198 and AddRef",
+        "sampleCallers": [
+          "0x82306788",
+          "0x82514220"
+        ]
+      },
+      {
+        "address": "0x82692E60",
+        "role": "set vertex declaration",
+        "confidence": "strong",
+        "engineCallers": 20,
+        "engineCallSites": 26,
+        "definition": "generated/default/rerevved_recomp.62.cpp:12851",
+        "evidence": "stores device +0x2E2C and sets dirty +0x10 bit 0x80000 (oris 8)",
+        "sampleCallers": [
+          "0x82302538",
+          "0x82302F60",
+          "0x82303C38",
+          "0x82303EA8",
+          "0x82303F70"
+        ]
+      },
+      {
+        "address": "0x82692E78",
+        "role": "other: GetVertexDeclaration",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.115.cpp:12803",
+        "evidence": "loads device +0x2E2C and AddRef",
+        "sampleCallers": [
+          "0x82306750"
+        ]
+      },
+      {
+        "address": "0x82692FA8",
+        "role": "resource create (vertex declaration)",
+        "confidence": "strong",
+        "engineCallers": 5,
+        "engineCallSites": 12,
+        "definition": "generated/default/rerevved_recomp.176.cpp:13016",
+        "evidence": "counts 12-byte D3DVERTEXELEMENT9 entries to the 0xFF stream terminator, allocates 0x38+12n and builds via 0x82692EB8",
+        "sampleCallers": [
+          "0x82302348",
+          "0x8251C728",
+          "0x8266E8B8",
+          "0x82A91480",
+          "0x82C3E790"
+        ]
+      },
+      {
+        "address": "0x82693030",
+        "role": "other: SetShaderGPRAllocation",
+        "confidence": "candidate",
+        "engineCallers": 7,
+        "engineCallSites": 9,
+        "definition": "generated/default/rerevved_recomp.211.cpp:12490",
+        "evidence": "defaults both counts to 0x40, packs them into device +0x2AA8 and emits a type-3 packet through the command cursor +0x30",
+        "sampleCallers": [
+          "0x8250F2B0",
+          "0x82517E38",
+          "0x82C71A00",
+          "0x82C98910",
+          "0x82C98998"
+        ]
+      },
+      {
+        "address": "0x82693118",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.165.cpp:12372",
+        "evidence": "thin wrapper around out-of-region 0x8281ABB8 (memory or string helper)",
+        "sampleCallers": [
+          "0x826D2820"
+        ]
+      },
+      {
+        "address": "0x82693120",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.169.cpp:12342",
+        "evidence": "thin wrapper around out-of-region 0x8281ABB8 (memory or string helper)",
+        "sampleCallers": [
+          "0x825A0888"
+        ]
+      },
+      {
+        "address": "0x82693E88",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.93.cpp:11716",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600FA8",
+          "0x826EE8A0"
+        ]
+      },
+      {
+        "address": "0x82693EB0",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.88.cpp:12558",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x825FF5C0",
+          "0x826D01D0"
+        ]
+      },
+      {
+        "address": "0x82693EC8",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.169.cpp:12355",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x825FF5C0",
+          "0x826D00B8",
+          "0x826D01D0",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82693EE0",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.62.cpp:12865",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x825FFCD0",
+          "0x826002F8",
+          "0x82600480"
+        ]
+      },
+      {
+        "address": "0x82693EF8",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.172.cpp:12665",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600738",
+          "0x82600878",
+          "0x826D16F0"
+        ]
+      },
+      {
+        "address": "0x82693F10",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.151.cpp:12715",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82693F28",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 5,
+        "engineCallSites": 19,
+        "definition": "generated/default/rerevved_recomp.171.cpp:12548",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600668",
+          "0x826D0698",
+          "0x826D1338",
+          "0x826EB9F8",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82693F58",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.117.cpp:12467",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600738",
+          "0x826D0988",
+          "0x826D16F0",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82693F70",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.148.cpp:12880",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82694270",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 5,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.47.cpp:12445",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600FA8",
+          "0x826D3D28",
+          "0x826EAFE0",
+          "0x826EE8A0",
+          "0x827864E0"
+        ]
+      },
+      {
+        "address": "0x82694428",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.167.cpp:12909",
+        "evidence": "thin wrapper around out-of-region 0x8281ABB8 (memory or string helper)",
+        "sampleCallers": [
+          "0x82662E70"
+        ]
+      },
+      {
+        "address": "0x82694480",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.34.cpp:12587",
+        "evidence": "thin wrapper around out-of-region 0x8281ABB8 (memory or string helper)",
+        "sampleCallers": [
+          "0x82662D28"
+        ]
+      },
+      {
+        "address": "0x826944D8",
+        "role": "resource create (shader object)",
+        "confidence": "strong",
+        "engineCallers": 11,
+        "engineCallSites": 12,
+        "definition": "generated/default/rerevved_recomp.47.cpp:12454",
+        "evidence": "optional create hook at *0x82F9B084, allocates a 0x28-byte header (plus 0x340 when microcode word 0 bit 0 is set) with Common 0x00100007 (type 7), copies the metadata to +0x28 and the microcode to a separate allocation: CreatePixelShader; the +0x28 metadata matches the pixel setter 0x82692948",
+        "sampleCallers": [
+          "0x82302208",
+          "0x824FF690",
+          "0x824FF7A8",
+          "0x825290E0",
+          "0x82558518"
+        ]
+      },
+      {
+        "address": "0x826945E8",
+        "role": "resource create (shader object)",
+        "confidence": "strong",
+        "engineCallers": 8,
+        "engineCallSites": 8,
+        "definition": "generated/default/rerevved_recomp.119.cpp:12769",
+        "evidence": "same allocation shape as 0x826944D8 with hook *0x82F9B088, but zeroes a 0x368-byte header, copies metadata to +0x368, calls 0x82692B50 and sets Common bit 0x100000: CreateVertexShader; the +0x368 metadata matches the vertex setter 0x82692C48",
+        "sampleCallers": [
+          "0x82302348",
+          "0x824FF578",
+          "0x82528FA0",
+          "0x825584C8",
+          "0x825E0248"
+        ]
+      },
+      {
+        "address": "0x826946D8",
+        "role": "set vertex declaration (SetFVF)",
+        "confidence": "strong",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.88.cpp:12573",
+        "evidence": "stores FVF at device +0x3090, builds declaration into +0x2FA0 via 0x82690B10, stores +0x2E2C, dirty +0x10 bit 0x80000",
+        "sampleCallers": [
+          "0x82306298",
+          "0x82516D10",
+          "0x8266B370"
+        ]
+      },
+      {
+        "address": "0x826957A0",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.117.cpp:12482",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x825FF5C0",
+          "0x826D01D0",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82695820",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.148.cpp:12895",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x826964B0",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.206.cpp:12762",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82602718",
+          "0x826D0490",
+          "0x826EE8A0"
+        ]
+      },
+      {
+        "address": "0x826970D0",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.148.cpp:12910",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600FA8",
+          "0x82601408",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x826970E8",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.121.cpp:12953",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x825FF5C0",
+          "0x826CFC50",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82697100",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.171.cpp:12577",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x825FF5C0",
+          "0x826CFC50",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82697768",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 5,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.92.cpp:12775",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x825FA280",
+          "0x826D1398",
+          "0x826D16F0",
+          "0x826D4A98",
+          "0x826EE8A0"
+        ]
+      },
+      {
+        "address": "0x82697770",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.104.cpp:12620",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x825FF508",
+          "0x82601620",
+          "0x826D0490",
+          "0x826EE8A0"
+        ]
+      },
+      {
+        "address": "0x82697778",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.198.cpp:12829",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82601620",
+          "0x826D0490",
+          "0x826EE8A0"
+        ]
+      },
+      {
+        "address": "0x82697780",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.133.cpp:12776",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600480",
+          "0x826CFDC8",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82697798",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.61.cpp:12816",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x826002F8",
+          "0x826CFDC8",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x826977B0",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.98.cpp:12713",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x826002F8",
+          "0x826CFDC8",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x826977C8",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 4,
+        "engineCallSites": 8,
+        "definition": "generated/default/rerevved_recomp.220.cpp:12362",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x825FFCD0",
+          "0x826CFDC8",
+          "0x826EC4A0",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x826977E0",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.79.cpp:12883",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600FA8",
+          "0x826D0490",
+          "0x826EE8A0"
+        ]
+      },
+      {
+        "address": "0x826977E8",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.89.cpp:12894",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600FA8",
+          "0x826D1398",
+          "0x826D16F0",
+          "0x826EE8A0"
+        ]
+      },
+      {
+        "address": "0x826977F0",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.92.cpp:12782",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600FA8",
+          "0x826D1398",
+          "0x826D16F0",
+          "0x826EE8A0"
+        ]
+      },
+      {
+        "address": "0x82697950",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.221.cpp:12453",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600878",
+          "0x826CFDC8",
+          "0x826EC7D0"
+        ]
+      },
+      {
+        "address": "0x82697968",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 9,
+        "engineCallSites": 21,
+        "definition": "generated/default/rerevved_recomp.56.cpp:12942",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600588",
+          "0x82600668",
+          "0x82600878",
+          "0x82600FA8",
+          "0x82601408"
+        ]
+      },
+      {
+        "address": "0x826979B0",
+        "role": "other: non-device record helper (owner unknown)",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.79.cpp:12890",
+        "evidence": "argument +0x0 selects one of several 0x26D0-byte records; callers are in 0x825F0000-0x826FFFFF middleware, not the device",
+        "sampleCallers": [
+          "0x82600FA8",
+          "0x826EE8A0"
+        ]
+      },
+      {
+        "address": "0x826979B8",
+        "role": "other: GetType",
+        "confidence": "strong",
+        "engineCallers": 8,
+        "engineCallSites": 9,
+        "definition": "generated/default/rerevved_recomp.2.cpp:12830",
+        "evidence": "maps Common type and fetch dimension to resource type codes 0x10..0x14",
+        "sampleCallers": [
+          "0x82518B40",
+          "0x8251DBA8",
+          "0x82521708",
+          "0x82521EC0",
+          "0x825794A8"
+        ]
+      },
+      {
+        "address": "0x82697A48",
+        "role": "other: GetDesc",
+        "confidence": "strong",
+        "engineCallers": 6,
+        "engineCallSites": 6,
+        "definition": "generated/default/rerevved_recomp.89.cpp:12901",
+        "evidence": "vertex buffer GetDesc: Format 8, Type 1, Size = +0x1C & 0x03FFFFFC",
+        "sampleCallers": [
+          "0x82522D68",
+          "0x82523008",
+          "0x82523250",
+          "0x82523350",
+          "0x825234D0"
+        ]
+      },
+      {
+        "address": "0x82697A78",
+        "role": "other: GetDesc",
+        "confidence": "strong",
+        "engineCallers": 5,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.148.cpp:12925",
+        "evidence": "index buffer GetDesc: Type 2, Format from Common, Size +0x1C",
+        "sampleCallers": [
+          "0x8252D930",
+          "0x8252DC68",
+          "0x8252DD88",
+          "0x8252DF88",
+          "0x8252E430"
+        ]
+      },
+      {
+        "address": "0x82698160",
+        "role": "other: AddRef",
+        "confidence": "confirmed",
+        "engineCallers": 28,
+        "engineCallSites": 39,
+        "definition": "generated/default/rerevved_recomp.79.cpp:12897",
+        "evidence": "D3DResource AddRef: atomic increment of +0x4, parent recursion for surfaces",
+        "sampleCallers": [
+          "0x82304C68",
+          "0x82515E70",
+          "0x82518800",
+          "0x8251C728",
+          "0x825223C0"
+        ]
+      },
+      {
+        "address": "0x826981D8",
+        "role": "release or free",
+        "confidence": "confirmed",
+        "engineCallers": 79,
+        "engineCallSites": 166,
+        "definition": "generated/default/rerevved_recomp.185.cpp:13205",
+        "evidence": "D3DResource Release: atomic decrement of +0x4, parent recursion for surfaces, destroy 0x82697AA8 at zero; 166 engine sites",
+        "sampleCallers": [
+          "0x822F9888",
+          "0x82301C40",
+          "0x82301F60",
+          "0x82302538",
+          "0x82304288"
+        ]
+      },
+      {
+        "address": "0x82698258",
+        "role": "other: GetDevice",
+        "confidence": "strong",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.136.cpp:12874",
+        "evidence": "loads *(*0x820009F0) published device, AddRef 0x8268CBA0, stores to out pointer",
+        "sampleCallers": [
+          "0x82578658",
+          "0x8258B038",
+          "0x82662D28",
+          "0x82662E70"
+        ]
+      },
+      {
+        "address": "0x826982A8",
+        "role": "resource create (vertex buffer)",
+        "confidence": "strong",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.83.cpp:12617",
+        "evidence": "allocates 0x20-byte header with Common type 1, allocates data, stores address|3 at +0x18 and the encoded vertex fetch word (old & 0x08000000) | (size & 0x03FFFFFC) | 0x10000002 at +0x1C, +0x14 = 0xFFFF0000",
+        "sampleCallers": [
+          "0x82306A10",
+          "0x82A91480"
+        ]
+      },
+      {
+        "address": "0x82698370",
+        "role": "lock",
+        "confidence": "strong",
+        "engineCallers": 4,
+        "engineCallSites": 6,
+        "definition": "generated/default/rerevved_recomp.97.cpp:12663",
+        "evidence": "vertex buffer Lock: passes +0x18 & ~3 address and +0x1C & 0x03FFFFFC size to lock core 0x82697CA0 (fence wait, WAIT_REG_MEM, COHER_SIZE_HOST)",
+        "sampleCallers": [
+          "0x82306410",
+          "0x82523250",
+          "0x82523350",
+          "0x82A903A0"
+        ]
+      },
+      {
+        "address": "0x826983C0",
+        "role": "unlock",
+        "confidence": "strong",
+        "engineCallers": 4,
+        "engineCallSites": 6,
+        "definition": "generated/default/rerevved_recomp.133.cpp:12791",
+        "evidence": "vertex buffer Unlock: unlock core 0x82697F38 (atomic lock-count decrement on Common, CPU cache flush 0x826A72F8, sync)",
+        "sampleCallers": [
+          "0x823063E0",
+          "0x82523250",
+          "0x82523350",
+          "0x82A903A0"
+        ]
+      },
+      {
+        "address": "0x826983D0",
+        "role": "resource create (index buffer)",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.61.cpp:12831",
+        "evidence": "allocates 0x20-byte header with Common type 2 and index-format bit, allocates data, stores address +0x18 and size +0x1C",
+        "sampleCallers": [
+          "0x82306990"
+        ]
+      },
+      {
+        "address": "0x82698480",
+        "role": "lock",
+        "confidence": "strong",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.98.cpp:12728",
+        "evidence": "index buffer Lock: passes +0x18/+0x1C to lock core 0x82697CA0",
+        "sampleCallers": [
+          "0x82306490",
+          "0x8252DD88",
+          "0x8252DF88",
+          "0x8252E430"
+        ]
+      },
+      {
+        "address": "0x826984C8",
+        "role": "unlock",
+        "confidence": "strong",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.220.cpp:12377",
+        "evidence": "index buffer Unlock: unlock core 0x82697F38 with +0x18 address",
+        "sampleCallers": [
+          "0x82306460",
+          "0x8252DD88",
+          "0x8252DF88",
+          "0x8252E430"
+        ]
+      },
+      {
+        "address": "0x826984D8",
+        "role": "other: resource-bound check",
+        "confidence": "strong",
+        "engineCallers": 6,
+        "engineCallSites": 6,
+        "definition": "generated/default/rerevved_recomp.120.cpp:12554",
+        "evidence": "compares a resource against device +0x2E2C, +0x3094, +0x3098, +0x30A8, +0x3194, +0x3198 (is the resource currently set)",
+        "sampleCallers": [
+          "0x823048A8",
+          "0x8252DD88",
+          "0x8252DF88",
+          "0x8252E430",
+          "0x82531970"
+        ]
+      },
+      {
+        "address": "0x82698F48",
+        "role": "unlock",
+        "confidence": "strong",
+        "engineCallers": 11,
+        "engineCallSites": 23,
+        "definition": "generated/default/rerevved_recomp.167.cpp:12966",
+        "evidence": "texture UnlockRect: unlock core 0x82697F38 with base +0x20 and mip base +0x30",
+        "sampleCallers": [
+          "0x822F9888",
+          "0x82305648",
+          "0x8250E1D0",
+          "0x82521EC0",
+          "0x82578658"
+        ]
+      },
+      {
+        "address": "0x82698F60",
+        "role": "other: texture GetLevelCount",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.107.cpp:12974",
+        "evidence": "Ghidra decompile agrees; ((+0x24 >> 26) & 0x3F) + 1 from fetch dword 2",
+        "sampleCallers": [
+          "0x82578658"
+        ]
+      },
+      {
+        "address": "0x82698F70",
+        "role": "other: GetContainer",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.34.cpp:12644",
+        "evidence": "loads +0x18 parent and AddRef",
+        "sampleCallers": [
+          "0x825794A8"
+        ]
+      },
+      {
+        "address": "0x82698FB0",
+        "role": "unlock",
+        "confidence": "strong",
+        "engineCallers": 11,
+        "engineCallSites": 17,
+        "definition": "generated/default/rerevved_recomp.30.cpp:12879",
+        "evidence": "surface UnlockRect: parent +0x18 then unlock core 0x82697F38",
+        "sampleCallers": [
+          "0x825219C8",
+          "0x82521B18",
+          "0x82521C78",
+          "0x8252A5D0",
+          "0x8258ADF0"
+        ]
+      },
+      {
+        "address": "0x8269A908",
+        "role": "other: GetLevelCount",
+        "confidence": "strong",
+        "engineCallers": 9,
+        "engineCallSites": 9,
+        "definition": "generated/default/rerevved_recomp.135.cpp:12931",
+        "evidence": "((+0x2C >> 6) & 0xF) + 1",
+        "sampleCallers": [
+          "0x8251DBA8",
+          "0x82521708",
+          "0x825219C8",
+          "0x82521B18",
+          "0x82521C78"
+        ]
+      },
+      {
+        "address": "0x8269A918",
+        "role": "resource create (surface or render target)",
+        "confidence": "strong",
+        "engineCallers": 12,
+        "engineCallSites": 18,
+        "definition": "generated/default/rerevved_recomp.102.cpp:12623",
+        "evidence": "GetSurfaceLevel: allocates 0x30-byte surface whose +0x18 parent is the texture, Common type 4 (0x4401 pattern), AddRef parent",
+        "sampleCallers": [
+          "0x82304CF0",
+          "0x825219C8",
+          "0x825794A8",
+          "0x8257A6B0",
+          "0x8257AC50"
+        ]
+      },
+      {
+        "address": "0x8269A9D0",
+        "role": "lock",
+        "confidence": "strong",
+        "engineCallers": 11,
+        "engineCallSites": 17,
+        "definition": "generated/default/rerevved_recomp.167.cpp:12981",
+        "evidence": "texture LockRect: forwards to 0x8269A238, which writes D3DLOCKED_RECT pitch and bits from level layout 0x8269A160",
+        "sampleCallers": [
+          "0x822F9888",
+          "0x82305648",
+          "0x8250E0F0",
+          "0x82521EC0",
+          "0x82578658"
+        ]
+      },
+      {
+        "address": "0x8269A9F0",
+        "role": "resource create (surface or render target)",
+        "confidence": "strong",
+        "engineCallers": 7,
+        "engineCallSites": 12,
+        "definition": "generated/default/rerevved_recomp.217.cpp:13328",
+        "evidence": "same parented 0x30-byte surface builder as 0x8269A918 (cube-face or volume-level variant)",
+        "sampleCallers": [
+          "0x82518800",
+          "0x82521B18",
+          "0x8252A5D0",
+          "0x825794A8",
+          "0x8257A6B0"
+        ]
+      },
+      {
+        "address": "0x8269AAA8",
+        "role": "lock",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.144.cpp:12364",
+        "evidence": "cube texture LockRect variant into 0x8269A238 with face argument",
+        "sampleCallers": [
+          "0x82578658"
+        ]
+      },
+      {
+        "address": "0x8269AAC8",
+        "role": "other: GetDesc",
+        "confidence": "strong",
+        "engineCallers": 5,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.123.cpp:13283",
+        "evidence": "tail to 0x82699B98 (volume desc, 7 dwords): volume texture GetLevelDesc",
+        "sampleCallers": [
+          "0x8251DBA8",
+          "0x82521708",
+          "0x82521C78",
+          "0x8257A6B0",
+          "0x8257AC50"
+        ]
+      },
+      {
+        "address": "0x8269AAD0",
+        "role": "resource create (surface or render target)",
+        "confidence": "strong",
+        "engineCallers": 4,
+        "engineCallSites": 7,
+        "definition": "generated/default/rerevved_recomp.54.cpp:13032",
+        "evidence": "same parented sub-resource builder as 0x8269A918 (third variant)",
+        "sampleCallers": [
+          "0x82521C78",
+          "0x8257A6B0",
+          "0x8257AC50",
+          "0x8257B080"
+        ]
+      },
+      {
+        "address": "0x8269AB80",
+        "role": "lock",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.30.cpp:12896",
+        "evidence": "volume texture LockBox: tail to 0x8269A2C8, which writes row pitch, slice pitch and bits",
+        "sampleCallers": [
+          "0x82578658"
+        ]
+      },
+      {
+        "address": "0x8269AB88",
+        "role": "other: GetDesc",
+        "confidence": "strong",
+        "engineCallers": 11,
+        "engineCallSites": 17,
+        "definition": "generated/default/rerevved_recomp.42.cpp:13233",
+        "evidence": "tail to 0x82699A98 (surface desc, 8 dwords): texture GetLevelDesc",
+        "sampleCallers": [
+          "0x822F9888",
+          "0x82305448",
+          "0x8251DBA8",
+          "0x82521708",
+          "0x825219C8"
+        ]
+      },
+      {
+        "address": "0x8269AB90",
+        "role": "resource create (texture)",
+        "confidence": "strong",
+        "engineCallers": 13,
+        "engineCallSites": 18,
+        "definition": "generated/default/rerevved_recomp.104.cpp:12673",
+        "evidence": "allocates 0x34-byte header (0x82E29168), builds fetch template through 0x8269A378, allocates backing; matches the 0x34-byte header of resolve-resource-contract",
+        "sampleCallers": [
+          "0x82304CF0",
+          "0x82305558",
+          "0x8250B350",
+          "0x82578658",
+          "0x8257A278"
+        ]
+      },
+      {
+        "address": "0x8269ACB0",
+        "role": "resource create (surface or render target)",
+        "confidence": "strong",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.56.cpp:12985",
+        "evidence": "allocates 0x30-byte surface header, builds it via 0x8269A690, sets Common bit 0x100000, depth-format check 0x16/0x17; engine callers 0x82306908, 0x82512608, 0x825201B8",
+        "sampleCallers": [
+          "0x82306908",
+          "0x82512608",
+          "0x825201B8",
+          "0x82520240"
+        ]
+      },
+      {
+        "address": "0x8269ADE8",
+        "role": "other: GetDesc",
+        "confidence": "strong",
+        "engineCallers": 7,
+        "engineCallSites": 9,
+        "definition": "generated/default/rerevved_recomp.135.cpp:12943",
+        "evidence": "surface GetDesc via 0x82699A98",
+        "sampleCallers": [
+          "0x82304288",
+          "0x8250B350",
+          "0x8250E650",
+          "0x82518800",
+          "0x82520338"
+        ]
+      },
+      {
+        "address": "0x8269AE80",
+        "role": "lock",
+        "confidence": "strong",
+        "engineCallers": 9,
+        "engineCallSites": 15,
+        "definition": "generated/default/rerevved_recomp.123.cpp:13290",
+        "evidence": "surface LockRect: parent texture +0x18 and level from +0x1C into 0x8269A238",
+        "sampleCallers": [
+          "0x825219C8",
+          "0x82521B18",
+          "0x8252A5D0",
+          "0x8258ADF0",
+          "0x8258B038"
+        ]
+      },
+      {
+        "address": "0x8269AEA8",
+        "role": "other: GetDesc",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.200.cpp:12744",
+        "evidence": "volume GetDesc via 0x82699B98",
+        "sampleCallers": [
+          "0x8258B530"
+        ]
+      },
+      {
+        "address": "0x8269AEF0",
+        "role": "lock",
+        "confidence": "strong",
+        "engineCallers": 2,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.140.cpp:12963",
+        "evidence": "volume LockBox: parent +0x18 and level into 0x8269A2C8",
+        "sampleCallers": [
+          "0x82521C78",
+          "0x8258B530"
+        ]
+      },
+      {
+        "address": "0x8269AF10",
+        "role": "set texture",
+        "confidence": "strong",
+        "engineCallers": 27,
+        "engineCallSites": 51,
+        "definition": "generated/default/rerevved_recomp.30.cpp:12903",
+        "evidence": "merges the resource six-dword fetch template into fetch shadow slot (device +0x480+0x18*slot), records resource at +0x3100+4*slot, dirty +0x18; also the GFx fetchSelector of gfx-backend-fetch-descriptor",
+        "sampleCallers": [
+          "0x82302758",
+          "0x82302F60",
+          "0x823035D0",
+          "0x82303F70",
+          "0x823045D0"
+        ]
+      },
+      {
+        "address": "0x8269B090",
+        "role": "other: GetTexture",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.143.cpp:12823",
+        "evidence": "loads device +0x3100+4*stage and AddRef",
+        "sampleCallers": [
+          "0x823065C0"
+        ]
+      },
+      {
+        "address": "0x8269C150",
+        "role": "query or event",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.41.cpp:12759",
+        "evidence": "BlockUntilNotBusy: passes resource fence +0x8 to 0x8269BE70 with the published device",
+        "sampleCallers": [
+          "0x823062D0"
+        ]
+      },
+      {
+        "address": "0x8269C738",
+        "role": "query or event",
+        "confidence": "candidate",
+        "engineCallers": 6,
+        "engineCallSites": 8,
+        "definition": "generated/default/rerevved_recomp.96.cpp:12889",
+        "evidence": "IsBusy: resource fence +0x8 into 0x8269C6C0",
+        "sampleCallers": [
+          "0x8251BD90",
+          "0x8252DD88",
+          "0x8252DF88",
+          "0x8252E430",
+          "0x82531970"
+        ]
+      },
+      {
+        "address": "0x8269C8E0",
+        "role": "ring and PM4 internal",
+        "confidence": "confirmed",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.151.cpp:12836",
+        "evidence": "known ring initializer: VdInitializeRingBuffer, VdEnableRingBufferRPtrWriteBack, ME_INIT",
+        "sampleCallers": [
+          "0x8250E368",
+          "0x82C72148"
+        ]
+      },
+      {
+        "address": "0x8269CD20",
+        "role": "ring and PM4 internal",
+        "confidence": "strong",
+        "engineCallers": 2,
+        "engineCallSites": 8,
+        "definition": "generated/default/rerevved_recomp.226.cpp:12791",
+        "evidence": "known command emitter (ring-span-boundary); engine callers 0x8250AC90 and 0x8250F988 call it directly",
+        "sampleCallers": [
+          "0x8250AC90",
+          "0x8250F988"
+        ]
+      },
+      {
+        "address": "0x8269CE90",
+        "role": "other: BeginTiling",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.122.cpp:13162",
+        "evidence": "stores tile-rect count +0x31CC and rects +0x31D4/+0x32C4, sets tiling flags +0x2ABF, programs scissor/viewport and clears via 0x826A2970",
+        "sampleCallers": [
+          "0x8250F988"
+        ]
+      },
+      {
+        "address": "0x8269D320",
+        "role": "resolve",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.96.cpp:12898",
+        "evidence": "EndTiling: per-tile Resolve 0x8269E520 calls with clear values +0x33A0/+0x33A4, restores render targets +0x3098..+0x30A8",
+        "sampleCallers": [
+          "0x8250AC90"
+        ]
+      },
+      {
+        "address": "0x8269D7D8",
+        "role": "other: tiling pass begin",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.115.cpp:12935",
+        "evidence": "BeginTiling-shaped (tile rects +0x31CC, viewport, scissor, clears through 0x826A2970) without the rect-list argument; single middleware caller 0x82C71880 (BeginZPass-like)",
+        "sampleCallers": [
+          "0x82C71880"
+        ]
+      },
+      {
+        "address": "0x8269DB20",
+        "role": "other: tiling pass end",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.41.cpp:12780",
+        "evidence": "shares EndTiling tail (0x8269C888, 0x8269C3E0, 0x8269CD20) without Resolve; single caller 0x82C71880 (EndZPass-like)",
+        "sampleCallers": [
+          "0x82C71880"
+        ]
+      },
+      {
+        "address": "0x8269E520",
+        "role": "resolve",
+        "confidence": "confirmed",
+        "engineCallers": 5,
+        "engineCallSites": 6,
+        "definition": "generated/default/rerevved_recomp.163.cpp:12764",
+        "evidence": "known D3DDevice_Resolve (resolve-resource-contract); writes RB_COPY_CONTROL 0x2318, RB_COPY_DEST_INFO 0x231B",
+        "sampleCallers": [
+          "0x8250AC90",
+          "0x8250B350",
+          "0x82512608",
+          "0x82C2A8E8",
+          "0x82C6C488"
+        ]
+      },
+      {
+        "address": "0x8269F538",
+        "role": "other: Direct3D GetAdapterIdentifier",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.31.cpp:12787",
+        "evidence": "copies 0x450 bytes from static 0x8208EBF0 to argument 3 and returns 0",
+        "sampleCallers": [
+          "0x82306C80"
+        ]
+      },
+      {
+        "address": "0x8269F570",
+        "role": "other: GetDeviceCaps",
+        "confidence": "strong",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.45.cpp:13010",
+        "evidence": "copies 0x130 bytes (D3DCAPS9 size) from static 0x82090040 to argument 2",
+        "sampleCallers": [
+          "0x82302E90",
+          "0x82508718",
+          "0x82579E50",
+          "0x8266B370"
+        ]
+      },
+      {
+        "address": "0x8269F588",
+        "role": "other: Direct3D query helper",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.66.cpp:12707",
+        "evidence": "writes 1 to *argument 2 when non-null",
+        "sampleCallers": [
+          "0x82304668",
+          "0x82C3E790",
+          "0x82C40608"
+        ]
+      },
+      {
+        "address": "0x8269F5F0",
+        "role": "other: Direct3D CheckDeviceFormat",
+        "confidence": "strong",
+        "engineCallers": 7,
+        "engineCallSites": 7,
+        "definition": "generated/default/rerevved_recomp.27.cpp:12779",
+        "evidence": "Ghidra decompile: (adapter, devtype==1 HAL, adapter format, usage mask 0x1F8, resource type 3/4/..., check format) returning D3DERR_NOTAVAILABLE 0x8876086A, INVALIDDEVICE 0x8876086B, INVALIDCALL 0x8876086C",
+        "sampleCallers": [
+          "0x824FF3F0",
+          "0x825095C0",
+          "0x82518148",
+          "0x82518280",
+          "0x82518968"
+        ]
+      },
+      {
+        "address": "0x8269F7F0",
+        "role": "other: Direct3D CheckDeviceMultiSampleType",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.29.cpp:12826",
+        "evidence": "Ghidra decompile: devtype==1, windowed==0, multisample type < 3, writes quality levels 1",
+        "sampleCallers": [
+          "0x82508598"
+        ]
+      },
+      {
+        "address": "0x8269F878",
+        "role": "other: Direct3D CheckDepthStencilMatch",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.190.cpp:13165",
+        "evidence": "devtype==1, both formats validated by 0x8269F5A0, depth format low 6 bits 0x16 or 0x17",
+        "sampleCallers": [
+          "0x82520338"
+        ]
+      },
+      {
+        "address": "0x826A2970",
+        "role": "clear",
+        "confidence": "strong",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.199.cpp:12649",
+        "evidence": "D3DDevice_ClearF: derives rect from bound RT +0x3098 or depth +0x30A8 extents and calls clear-quad emitter 0x826A22F8 (IM_LOAD_IMMEDIATE shader, draw)",
+        "sampleCallers": [
+          "0x823064E0",
+          "0x8250E718"
+        ]
+      },
+      {
+        "address": "0x826A2A98",
+        "role": "clear",
+        "confidence": "strong",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.108.cpp:12710",
+        "evidence": "D3DDevice_Clear: converts D3DCOLOR to float4 and loops over rects calling ClearF 0x826A2970",
+        "sampleCallers": [
+          "0x82304288",
+          "0x8250B168"
+        ]
+      },
+      {
+        "address": "0x826A2B58",
+        "role": "draw",
+        "confidence": "confirmed",
+        "engineCallers": 2,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.79.cpp:12977",
+        "evidence": "known draw entry NonindexedSink",
+        "sampleCallers": [
+          "0x8250E718",
+          "0x82512608"
+        ]
+      },
+      {
+        "address": "0x826A2FF0",
+        "role": "draw",
+        "confidence": "confirmed",
+        "engineCallers": 3,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.196.cpp:13107",
+        "evidence": "known draw commit entry: device +0x30 = +0x3484",
+        "sampleCallers": [
+          "0x8250E718",
+          "0x825107A0",
+          "0x82512608"
+        ]
+      },
+      {
+        "address": "0x826A3000",
+        "role": "draw",
+        "confidence": "confirmed",
+        "engineCallers": 4,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.206.cpp:12889",
+        "evidence": "known draw entry NonindexedUp",
+        "sampleCallers": [
+          "0x82302F60",
+          "0x82303EA8",
+          "0x82303F70",
+          "0x82E305F8"
+        ]
+      },
+      {
+        "address": "0x826A3048",
+        "role": "draw",
+        "confidence": "confirmed",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.150.cpp:12564",
+        "evidence": "known draw entry IndexedUpLowerer; also the dirty-state flush",
+        "sampleCallers": [
+          "0x825107A0"
+        ]
+      },
+      {
+        "address": "0x826A3568",
+        "role": "draw",
+        "confidence": "confirmed",
+        "engineCallers": 1,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.147.cpp:12623",
+        "evidence": "known draw entry IndexedUp (GraphicsFlushAndIssue)",
+        "sampleCallers": [
+          "0x82303C38"
+        ]
+      },
+      {
+        "address": "0x826A3608",
+        "role": "draw",
+        "confidence": "confirmed",
+        "engineCallers": 5,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.51.cpp:12619",
+        "evidence": "known draw entry AutomaticIndex",
+        "sampleCallers": [
+          "0x8250C498",
+          "0x82511518",
+          "0x82A90458",
+          "0x82A90AC0",
+          "0x82A912D0"
+        ]
+      },
+      {
+        "address": "0x826A39F8",
+        "role": "draw",
+        "confidence": "confirmed",
+        "engineCallers": 6,
+        "engineCallSites": 6,
+        "definition": "generated/default/rerevved_recomp.91.cpp:13354",
+        "evidence": "known draw entry IndexedBuffer (native_draw_hook.h); emits DRAW_INDX",
+        "sampleCallers": [
+          "0x823067F8",
+          "0x8250C498",
+          "0x8250C840",
+          "0x825107A0",
+          "0x82510DD8"
+        ]
+      },
+      {
+        "address": "0x826A4630",
+        "role": "present or swap",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.124.cpp:13062",
+        "evidence": "pre-swap flush tail wrapper to 0x826A4150 (vdswap-boundary)",
+        "sampleCallers": [
+          "0x82517E38"
+        ]
+      },
+      {
+        "address": "0x826A4638",
+        "role": "present or swap",
+        "confidence": "confirmed",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.211.cpp:12650",
+        "evidence": "known VdSwap owner, call site 0x826A4884",
+        "sampleCallers": [
+          "0x82517E38"
+        ]
+      },
+      {
+        "address": "0x826A4C18",
+        "role": "other: helper",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.152.cpp:13248",
+        "evidence": "AddRef of a non-D3D object (+0xC count)",
+        "sampleCallers": [
+          "0x8265F808"
+        ]
+      },
+      {
+        "address": "0x826A4F88",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 5,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.123.cpp:13367",
+        "evidence": "object +0x8/+0xC bookkeeping; callers 0x8265F808/0x82662218/0x826624B8/0x825E8BE8; 0x826A50A0 replays render-target, stream, index, shader and declaration setters (state restore)",
+        "sampleCallers": [
+          "0x82662218",
+          "0x82662288",
+          "0x826622F8",
+          "0x82662368",
+          "0x82666068"
+        ]
+      },
+      {
+        "address": "0x826A5000",
+        "role": "other: helper",
+        "confidence": "strong",
+        "engineCallers": 4,
+        "engineCallSites": 9,
+        "definition": "generated/default/rerevved_recomp.127.cpp:12789",
+        "evidence": "Release of the same object (+0xC count, frees via 0x82E29160)",
+        "sampleCallers": [
+          "0x825E8BE8",
+          "0x825E8D18",
+          "0x8265CA28",
+          "0x82666068"
+        ]
+      },
+      {
+        "address": "0x826A5058",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.124.cpp:13071",
+        "evidence": "object +0x8/+0xC bookkeeping; callers 0x8265F808/0x82662218/0x826624B8/0x825E8BE8; 0x826A50A0 replays render-target, stream, index, shader and declaration setters (state restore)",
+        "sampleCallers": [
+          "0x82666068"
+        ]
+      },
+      {
+        "address": "0x826A50A0",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.202.cpp:12840",
+        "evidence": "object +0x8/+0xC bookkeeping; callers 0x8265F808/0x82662218/0x826624B8/0x825E8BE8; 0x826A50A0 replays render-target, stream, index, shader and declaration setters (state restore)",
+        "sampleCallers": [
+          "0x826624B8"
+        ]
+      },
+      {
+        "address": "0x826B31C0",
+        "role": "other: XGraphics desc helper",
+        "confidence": "candidate",
+        "engineCallers": 16,
+        "engineCallSites": 26,
+        "definition": "generated/default/rerevved_recomp.5.cpp:12976",
+        "evidence": "tail to 0x826B2D90, which dispatches on GetType 0x826979B8 to the GetDesc helpers",
+        "sampleCallers": [
+          "0x8250AC90",
+          "0x825219C8",
+          "0x82521B18",
+          "0x82521C78",
+          "0x82521EC0"
+        ]
+      },
+      {
+        "address": "0x826B31C8",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.5.cpp:12983",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82578E00",
+          "0x825796C8"
+        ]
+      },
+      {
+        "address": "0x826B34C0",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.75.cpp:12888",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82578E00",
+          "0x825796C8"
+        ]
+      },
+      {
+        "address": "0x826B3968",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.31.cpp:12995",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82578E00",
+          "0x825796C8"
+        ]
+      },
+      {
+        "address": "0x826B3990",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.108.cpp:12868",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82578E00",
+          "0x825796C8"
+        ]
+      },
+      {
+        "address": "0x826B39F0",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.61.cpp:13114",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82C3E440",
+          "0x82C6F808"
+        ]
+      },
+      {
+        "address": "0x826B5F30",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 5,
+        "engineCallSites": 5,
+        "definition": "generated/default/rerevved_recomp.47.cpp:12789",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x825219C8",
+          "0x82521B18",
+          "0x82578658",
+          "0x82C67D48",
+          "0x82C8D738"
+        ]
+      },
+      {
+        "address": "0x826B6B00",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.30.cpp:13110",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82521C78",
+          "0x82578658"
+        ]
+      },
+      {
+        "address": "0x826B6C40",
+        "role": "resource create (vertex buffer header, XGraphics)",
+        "confidence": "strong",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.72.cpp:13295",
+        "evidence": "zeroes a 0x20-byte header, Common type 1 (0x00200001 variant), +0x18 address|3, +0x1C encoded fetch word (old & 0x08000000) | (size & 0x03FFFFFC) | 0x10000002; callers 0x82534428/0x82534508/0x82534AA0 (NiXenon device)",
+        "sampleCallers": [
+          "0x82534428",
+          "0x82534508",
+          "0x82534AA0"
+        ]
+      },
+      {
+        "address": "0x826B6CD8",
+        "role": "resource create (index buffer header, XGraphics)",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.43.cpp:12789",
+        "evidence": "zeroes a 0x20-byte header, Common type 2 with index-format bit, +0x18 address, +0x1C size; caller 0x82534488",
+        "sampleCallers": [
+          "0x82534488"
+        ]
+      },
+      {
+        "address": "0x826B6F78",
+        "role": "resource create (texture header, XGraphics)",
+        "confidence": "strong",
+        "engineCallers": 4,
+        "engineCallSites": 6,
+        "definition": "generated/default/rerevved_recomp.161.cpp:13045",
+        "evidence": "wrapper of header builder 0x826B6D68 with 2D constants; no allocation (caller allocates)",
+        "sampleCallers": [
+          "0x82518280",
+          "0x82C3E440",
+          "0x82C6F808",
+          "0x82E39A00"
+        ]
+      },
+      {
+        "address": "0x826B6FE8",
+        "role": "resource create (texture header, XGraphics)",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.100.cpp:13081",
+        "evidence": "wrapper of 0x826B6D68; called by engine creator 0x82533DB8 (resolve-resource-contract)",
+        "sampleCallers": [
+          "0x82533DB8"
+        ]
+      },
+      {
+        "address": "0x826B7060",
+        "role": "resource create (texture header, XGraphics)",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.187.cpp:12830",
+        "evidence": "wrapper of 0x826B6D68 with 6 faces and type 0x12 (cube)",
+        "sampleCallers": [
+          "0x82533ED8"
+        ]
+      },
+      {
+        "address": "0x826B70D8",
+        "role": "resource create (texture header, XGraphics)",
+        "confidence": "strong",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.86.cpp:12935",
+        "evidence": "wrapper of 0x826B6D68 with type 0x11 (volume)",
+        "sampleCallers": [
+          "0x82533FF0"
+        ]
+      },
+      {
+        "address": "0x826B7140",
+        "role": "resource create (base address patch, XGraphics)",
+        "confidence": "strong",
+        "engineCallers": 3,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.35.cpp:13376",
+        "evidence": "adds base to header +0x20 and, for more than one level, mip base +0x30 (resolve-resource-contract base patcher)",
+        "sampleCallers": [
+          "0x82533DB8",
+          "0x82533ED8",
+          "0x82533FF0"
+        ]
+      },
+      {
+        "address": "0x826B71A8",
+        "role": "resource create (base address patch, XGraphics)",
+        "confidence": "strong",
+        "engineCallers": 6,
+        "engineCallSites": 6,
+        "definition": "generated/default/rerevved_recomp.108.cpp:12926",
+        "evidence": "per-type offset of resource address: VB +0x18, IB/shader +0x20 style, textures via 0x826B7140",
+        "sampleCallers": [
+          "0x82518280",
+          "0x82534428",
+          "0x82534488",
+          "0x82534508",
+          "0x82534AA0"
+        ]
+      },
+      {
+        "address": "0x826B7E00",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.207.cpp:13248",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82578E00",
+          "0x82C69850"
+        ]
+      },
+      {
+        "address": "0x826B7E08",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.160.cpp:13201",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82521558",
+          "0x82578658"
+        ]
+      },
+      {
+        "address": "0x826B8060",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 3,
+        "definition": "generated/default/rerevved_recomp.117.cpp:12814",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82578E00",
+          "0x82C6C488"
+        ]
+      },
+      {
+        "address": "0x826B8068",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.97.cpp:13003",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82578658"
+        ]
+      },
+      {
+        "address": "0x826B8960",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.10.cpp:13058",
+        "evidence": "callers 0x82582FD8/0x825853E8/0x82586070; no device field or ring write",
+        "sampleCallers": [
+          "0x825853E8"
+        ]
+      },
+      {
+        "address": "0x826B8D70",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.98.cpp:13066",
+        "evidence": "callers 0x82582FD8/0x825853E8/0x82586070; no device field or ring write",
+        "sampleCallers": [
+          "0x82582FD8",
+          "0x825853E8"
+        ]
+      },
+      {
+        "address": "0x826B8DC8",
+        "role": "other: helper",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.49.cpp:12681",
+        "evidence": "callers 0x82582FD8/0x825853E8/0x82586070; no device field or ring write",
+        "sampleCallers": [
+          "0x825853E8",
+          "0x82586070"
+        ]
+      },
+      {
+        "address": "0x826BF6B8",
+        "role": "other: middleware (effect or shader-patch library, not D3D)",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.224.cpp:13278",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "sampleCallers": [
+          "0x82567F40",
+          "0x825689C8"
+        ]
+      },
+      {
+        "address": "0x826BFBC0",
+        "role": "other: middleware (effect or shader-patch library, not D3D)",
+        "confidence": "candidate",
+        "engineCallers": 3,
+        "engineCallSites": 4,
+        "definition": "generated/default/rerevved_recomp.152.cpp:13525",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "sampleCallers": [
+          "0x825690D8",
+          "0x82569A40",
+          "0x82577398"
+        ]
+      },
+      {
+        "address": "0x826C7480",
+        "role": "other: middleware (effect or shader-patch library, not D3D)",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.13.cpp:13256",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "sampleCallers": [
+          "0x82567F40",
+          "0x825689C8"
+        ]
+      },
+      {
+        "address": "0x826C7570",
+        "role": "other: middleware (effect or shader-patch library, not D3D)",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.13.cpp:13265",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "sampleCallers": [
+          "0x82569848"
+        ]
+      },
+      {
+        "address": "0x826C7998",
+        "role": "other: middleware (effect or shader-patch library, not D3D)",
+        "confidence": "candidate",
+        "engineCallers": 16,
+        "engineCallSites": 47,
+        "definition": "generated/default/rerevved_recomp.157.cpp:13196",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "sampleCallers": [
+          "0x825712B8",
+          "0x825712F0",
+          "0x82571320",
+          "0x82571360",
+          "0x82571368"
+        ]
+      },
+      {
+        "address": "0x826C79D0",
+        "role": "other: middleware (effect or shader-patch library, not D3D)",
+        "confidence": "candidate",
+        "engineCallers": 2,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.43.cpp:12875",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "sampleCallers": [
+          "0x82577208",
+          "0x82578168"
+        ]
+      },
+      {
+        "address": "0x826C95E0",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.22.cpp:13299",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x825796C8"
+        ]
+      },
+      {
+        "address": "0x826C9618",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.15.cpp:12987",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82578658"
+        ]
+      },
+      {
+        "address": "0x826C9908",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 2,
+        "definition": "generated/default/rerevved_recomp.36.cpp:13274",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x825796C8"
+        ]
+      },
+      {
+        "address": "0x826C9940",
+        "role": "other: XGraphics tiling or format helper",
+        "confidence": "candidate",
+        "engineCallers": 1,
+        "engineCallSites": 1,
+        "definition": "generated/default/rerevved_recomp.216.cpp:13676",
+        "evidence": "texture layout arithmetic and copy loops using 0x826B3518/0x826B3990/0x82698FC8; no device field, no ring write",
+        "sampleCallers": [
+          "0x82578658"
+        ]
+      }
+    ],
+    "stateTables": {
+      "renderState": [
+        {
+          "state": "0x0",
+          "setter": "0x821D5678",
+          "getter": "0x822DF8A0",
+          "default": "0x0",
+          "entry": "0x82F1A600"
+        },
+        {
+          "state": "0x4",
+          "setter": "0x821D5678",
+          "getter": "0x822DF8A0",
+          "default": "0x3",
+          "entry": "0x82F1A60C"
+        },
+        {
+          "state": "0x8",
+          "setter": "0x821D5678",
+          "getter": "0x822DF8A0",
+          "default": "0x1",
+          "entry": "0x82F1A618"
+        },
+        {
+          "state": "0xC",
+          "setter": "0x821D5678",
+          "getter": "0x822DF8A0",
+          "default": "0x0",
+          "entry": "0x82F1A624"
+        },
+        {
+          "state": "0x10",
+          "setter": "0x821D5678",
+          "getter": "0x822DF8A0",
+          "default": "0x0",
+          "entry": "0x82F1A630"
+        },
+        {
+          "state": "0x14",
+          "setter": "0x821D5678",
+          "getter": "0x822DF8A0",
+          "default": "0x0",
+          "entry": "0x82F1A63C"
+        },
+        {
+          "state": "0x18",
+          "setter": "0x821D5678",
+          "getter": "0x822DF8A0",
+          "default": "0x3F800000",
+          "entry": "0x82F1A648"
+        },
+        {
+          "state": "0x1C",
+          "setter": "0x821D5678",
+          "getter": "0x822DF8A0",
+          "default": "0x0",
+          "entry": "0x82F1A654"
+        },
+        {
+          "state": "0x20",
+          "setter": "0x821D5678",
+          "getter": "0x822DF8A0",
+          "default": "0x0",
+          "entry": "0x82F1A660"
+        },
+        {
+          "state": "0x24",
+          "setter": "0x821D5678",
+          "getter": "0x822DF8A0",
+          "default": "0x0",
+          "entry": "0x82F1A66C"
+        },
+        {
+          "state": "0x28",
+          "setter": "0x8268DDB8",
+          "getter": "0x8268DDF0",
+          "default": "0x1",
+          "entry": "0x82F1A678"
+        },
+        {
+          "state": "0x2C",
+          "setter": "0x8268DE28",
+          "getter": "0x8268DE50",
+          "default": "0x3",
+          "entry": "0x82F1A684"
+        },
+        {
+          "state": "0x30",
+          "setter": "0x8268DDF8",
+          "getter": "0x8268DE18",
+          "default": "0x1",
+          "entry": "0x82F1A690"
+        },
+        {
+          "state": "0x34",
+          "setter": "0x8268D6C0",
+          "getter": "0x8268D6E0",
+          "default": "0x0",
+          "entry": "0x82F1A69C"
+        },
+        {
+          "state": "0x38",
+          "setter": "0x8268D690",
+          "getter": "0x8268D6B0",
+          "default": "0x6",
+          "entry": "0x82F1A6A8"
+        },
+        {
+          "state": "0x3C",
+          "setter": "0x8268D728",
+          "getter": "0x8268D7A8",
+          "default": "0x0",
+          "entry": "0x82F1A6B4"
+        },
+        {
+          "state": "0x40",
+          "setter": "0x8268DAB8",
+          "getter": "0x8268DB40",
+          "default": "0x0",
+          "entry": "0x82F1A6C0"
+        },
+        {
+          "state": "0x44",
+          "setter": "0x8268DBE0",
+          "getter": "0x8268DC70",
+          "default": "0xFFFFFFFF",
+          "entry": "0x82F1A6CC"
+        },
+        {
+          "state": "0x48",
+          "setter": "0x8268D848",
+          "getter": "0x8268D8C8",
+          "default": "0x1",
+          "entry": "0x82F1A6D8"
+        },
+        {
+          "state": "0x4C",
+          "setter": "0x8268D8D8",
+          "getter": "0x8268D958",
+          "default": "0x0",
+          "entry": "0x82F1A6E4"
+        },
+        {
+          "state": "0x50",
+          "setter": "0x8268D7B8",
+          "getter": "0x8268D838",
+          "default": "0x0",
+          "entry": "0x82F1A6F0"
+        },
+        {
+          "state": "0x54",
+          "setter": "0x8268D9D8",
+          "getter": "0x8268DA38",
+          "default": "0x1",
+          "entry": "0x82F1A6FC"
+        },
+        {
+          "state": "0x58",
+          "setter": "0x8268DA48",
+          "getter": "0x8268DAA8",
+          "default": "0x0",
+          "entry": "0x82F1A708"
+        },
+        {
+          "state": "0x5C",
+          "setter": "0x8268D968",
+          "getter": "0x8268D9C8",
+          "default": "0x0",
+          "entry": "0x82F1A714"
+        },
+        {
+          "state": "0x60",
+          "setter": "0x8268D6F0",
+          "getter": "0x8268D718",
+          "default": "0x0",
+          "entry": "0x82F1A720"
+        },
+        {
+          "state": "0x64",
+          "setter": "0x8268DB50",
+          "getter": "0x8268DB88",
+          "default": "0x0",
+          "entry": "0x82F1A72C"
+        },
+        {
+          "state": "0x68",
+          "setter": "0x8268DBB0",
+          "getter": "0x8268DBD0",
+          "default": "0x7",
+          "entry": "0x82F1A738"
+        },
+        {
+          "state": "0x6C",
+          "setter": "0x8268DE60",
+          "getter": "0x8268DE98",
+          "default": "0x0",
+          "entry": "0x82F1A744"
+        },
+        {
+          "state": "0x70",
+          "setter": "0x8268DEA0",
+          "getter": "0x8268DEC8",
+          "default": "0x0",
+          "entry": "0x82F1A750"
+        },
+        {
+          "state": "0x74",
+          "setter": "0x8268DF08",
+          "getter": "0x8268DF30",
+          "default": "0x0",
+          "entry": "0x82F1A75C"
+        },
+        {
+          "state": "0x78",
+          "setter": "0x8268DF40",
+          "getter": "0x8268DF68",
+          "default": "0x0",
+          "entry": "0x82F1A768"
+        },
+        {
+          "state": "0x7C",
+          "setter": "0x8268DF78",
+          "getter": "0x8268DF98",
+          "default": "0x0",
+          "entry": "0x82F1A774"
+        },
+        {
+          "state": "0x80",
+          "setter": "0x8268DED8",
+          "getter": "0x8268DEF8",
+          "default": "0x7",
+          "entry": "0x82F1A780"
+        },
+        {
+          "state": "0x84",
+          "setter": "0x8268E078",
+          "getter": "0x8268E090",
+          "default": "0x0",
+          "entry": "0x82F1A78C"
+        },
+        {
+          "state": "0x88",
+          "setter": "0x8268E098",
+          "getter": "0x8268E0B0",
+          "default": "0xFFFFFFFF",
+          "entry": "0x82F1A798"
+        },
+        {
+          "state": "0x8C",
+          "setter": "0x8268E0B8",
+          "getter": "0x8268E0D0",
+          "default": "0xFFFFFFFF",
+          "entry": "0x82F1A7A4"
+        },
+        {
+          "state": "0x90",
+          "setter": "0x8268DFD8",
+          "getter": "0x8268E000",
+          "default": "0x0",
+          "entry": "0x82F1A7B0"
+        },
+        {
+          "state": "0x94",
+          "setter": "0x8268E010",
+          "getter": "0x8268E038",
+          "default": "0x0",
+          "entry": "0x82F1A7BC"
+        },
+        {
+          "state": "0x98",
+          "setter": "0x8268E048",
+          "getter": "0x8268E068",
+          "default": "0x0",
+          "entry": "0x82F1A7C8"
+        },
+        {
+          "state": "0x9C",
+          "setter": "0x8268DFA8",
+          "getter": "0x8268DFC8",
+          "default": "0x7",
+          "entry": "0x82F1A7D4"
+        },
+        {
+          "state": "0xA0",
+          "setter": "0x8268E0D8",
+          "getter": "0x8268E0F0",
+          "default": "0x0",
+          "entry": "0x82F1A7E0"
+        },
+        {
+          "state": "0xA4",
+          "setter": "0x8268E0F8",
+          "getter": "0x8268E110",
+          "default": "0xFFFFFFFF",
+          "entry": "0x82F1A7EC"
+        },
+        {
+          "state": "0xA8",
+          "setter": "0x8268E118",
+          "getter": "0x8268E130",
+          "default": "0xFFFFFFFF",
+          "entry": "0x82F1A7F8"
+        },
+        {
+          "state": "0xAC",
+          "setter": "0x8268E138",
+          "getter": "0x8268E178",
+          "default": "0x0",
+          "entry": "0x82F1A804"
+        },
+        {
+          "state": "0xB0",
+          "setter": "0x8268E460",
+          "getter": "0x8268E4A8",
+          "default": "0x3F800000",
+          "entry": "0x82F1A810"
+        },
+        {
+          "state": "0xB4",
+          "setter": "0x8268E4B8",
+          "getter": "0x8268E4F8",
+          "default": "0x3F800000",
+          "entry": "0x82F1A81C"
+        },
+        {
+          "state": "0xB8",
+          "setter": "0x8268E450",
+          "getter": "0x8268E458",
+          "default": "0x0",
+          "entry": "0x82F1A828"
+        },
+        {
+          "state": "0xBC",
+          "setter": "0x8268E508",
+          "getter": "0x8268E548",
+          "default": "0x42800000",
+          "entry": "0x82F1A834"
+        },
+        {
+          "state": "0xC0",
+          "setter": "0x8268E300",
+          "getter": "0x8268E320",
+          "default": "0x1",
+          "entry": "0x82F1A840"
+        },
+        {
+          "state": "0xC4",
+          "setter": "0x8268E330",
+          "getter": "0x8268E348",
+          "default": "0xFFFFFFFF",
+          "entry": "0x82F1A84C"
+        },
+        {
+          "state": "0xC8",
+          "setter": "0x82690390",
+          "getter": "0x8268E188",
+          "default": "0x0",
+          "entry": "0x82F1A858"
+        },
+        {
+          "state": "0xCC",
+          "setter": "0x8268E190",
+          "getter": "0x8268E238",
+          "default": "0x0",
+          "entry": "0x82F1A864"
+        },
+        {
+          "state": "0xD0",
+          "setter": "0x8268E258",
+          "getter": "0x8268E2F0",
+          "default": "0x0",
+          "entry": "0x82F1A870"
+        },
+        {
+          "state": "0xD4",
+          "setter": "0x8268E350",
+          "getter": "0x8268E388",
+          "default": "0xF",
+          "entry": "0x82F1A87C"
+        },
+        {
+          "state": "0xD8",
+          "setter": "0x8268E390",
+          "getter": "0x8268E3C8",
+          "default": "0xF",
+          "entry": "0x82F1A888"
+        },
+        {
+          "state": "0xDC",
+          "setter": "0x8268E3D0",
+          "getter": "0x8268E408",
+          "default": "0xF",
+          "entry": "0x82F1A894"
+        },
+        {
+          "state": "0xE0",
+          "setter": "0x8268E410",
+          "getter": "0x8268E448",
+          "default": "0xF",
+          "entry": "0x82F1A8A0"
+        },
+        {
+          "state": "0xE4",
+          "setter": "0x8268EC38",
+          "getter": "0x8268EC60",
+          "default": "0x1",
+          "entry": "0x82F1A8AC"
+        },
+        {
+          "state": "0xE8",
+          "setter": "0x8268EBC8",
+          "getter": "0x8268EBF0",
+          "default": "0x3F800000",
+          "entry": "0x82F1A8B8"
+        },
+        {
+          "state": "0xEC",
+          "setter": "0x8268EC00",
+          "getter": "0x8268EC28",
+          "default": "0x3F800000",
+          "entry": "0x82F1A8C4"
+        },
+        {
+          "state": "0xF0",
+          "setter": "0x8268E558",
+          "getter": "0x8268E7B8",
+          "default": "0x0",
+          "entry": "0x82F1A8D0"
+        },
+        {
+          "state": "0xF4",
+          "setter": "0x8268E578",
+          "getter": "0x8268E7C8",
+          "default": "0x0",
+          "entry": "0x82F1A8DC"
+        },
+        {
+          "state": "0xF8",
+          "setter": "0x8268E5A0",
+          "getter": "0x8268E7D8",
+          "default": "0x0",
+          "entry": "0x82F1A8E8"
+        },
+        {
+          "state": "0xFC",
+          "setter": "0x8268E5C8",
+          "getter": "0x8268E7E8",
+          "default": "0x0",
+          "entry": "0x82F1A8F4"
+        },
+        {
+          "state": "0x100",
+          "setter": "0x8268E5F0",
+          "getter": "0x8268E7F8",
+          "default": "0x0",
+          "entry": "0x82F1A900"
+        },
+        {
+          "state": "0x104",
+          "setter": "0x8268E618",
+          "getter": "0x8268E808",
+          "default": "0x0",
+          "entry": "0x82F1A90C"
+        },
+        {
+          "state": "0x108",
+          "setter": "0x8268E640",
+          "getter": "0x8268E818",
+          "default": "0x0",
+          "entry": "0x82F1A918"
+        },
+        {
+          "state": "0x10C",
+          "setter": "0x8268E668",
+          "getter": "0x8268E828",
+          "default": "0x0",
+          "entry": "0x82F1A924"
+        },
+        {
+          "state": "0x110",
+          "setter": "0x8268E688",
+          "getter": "0x8268E838",
+          "default": "0x0",
+          "entry": "0x82F1A930"
+        },
+        {
+          "state": "0x114",
+          "setter": "0x8268E6A8",
+          "getter": "0x8268E848",
+          "default": "0x0",
+          "entry": "0x82F1A93C"
+        },
+        {
+          "state": "0x118",
+          "setter": "0x8268E6D0",
+          "getter": "0x8268E858",
+          "default": "0x0",
+          "entry": "0x82F1A948"
+        },
+        {
+          "state": "0x11C",
+          "setter": "0x8268E6F8",
+          "getter": "0x8268E868",
+          "default": "0x0",
+          "entry": "0x82F1A954"
+        },
+        {
+          "state": "0x120",
+          "setter": "0x8268E720",
+          "getter": "0x8268E878",
+          "default": "0x0",
+          "entry": "0x82F1A960"
+        },
+        {
+          "state": "0x124",
+          "setter": "0x8268E748",
+          "getter": "0x8268E888",
+          "default": "0x0",
+          "entry": "0x82F1A96C"
+        },
+        {
+          "state": "0x128",
+          "setter": "0x8268E770",
+          "getter": "0x8268E898",
+          "default": "0x0",
+          "entry": "0x82F1A978"
+        },
+        {
+          "state": "0x12C",
+          "setter": "0x8268E798",
+          "getter": "0x8268E8A8",
+          "default": "0x0",
+          "entry": "0x82F1A984"
+        },
+        {
+          "state": "0x130",
+          "setter": "0x8268E8B8",
+          "getter": "0x8268E8F8",
+          "default": "0x1",
+          "entry": "0x82F1A990"
+        },
+        {
+          "state": "0x134",
+          "setter": "0x8268E908",
+          "getter": "0x8268E9B0",
+          "default": "0x0",
+          "entry": "0x82F1A99C"
+        },
+        {
+          "state": "0x138",
+          "setter": "0x8268E9B8",
+          "getter": "0x8268EA60",
+          "default": "0x0",
+          "entry": "0x82F1A9A8"
+        },
+        {
+          "state": "0x13C",
+          "setter": "0x8268EA68",
+          "getter": "0x8268EB10",
+          "default": "0x0",
+          "entry": "0x82F1A9B4"
+        },
+        {
+          "state": "0x140",
+          "setter": "0x8268EB18",
+          "getter": "0x8268EBC0",
+          "default": "0x0",
+          "entry": "0x82F1A9C0"
+        },
+        {
+          "state": "0x144",
+          "setter": "0x8268EC70",
+          "getter": "0x8268EC98",
+          "default": "0x0",
+          "entry": "0x82F1A9CC"
+        },
+        {
+          "state": "0x148",
+          "setter": "0x8268ECA8",
+          "getter": "0x8268ECC8",
+          "default": "0x0",
+          "entry": "0x82F1A9D8"
+        },
+        {
+          "state": "0x14C",
+          "setter": "0x8268ECD8",
+          "getter": "0x8268ECF8",
+          "default": "0xFFFF",
+          "entry": "0x82F1A9E4"
+        },
+        {
+          "state": "0x150",
+          "setter": "0x8268ED00",
+          "getter": "0x8268ED20",
+          "default": "0x0",
+          "entry": "0x82F1A9F0"
+        },
+        {
+          "state": "0x154",
+          "setter": "0x8268ED30",
+          "getter": "0x8268ED50",
+          "default": "0x87",
+          "entry": "0x82F1A9FC"
+        },
+        {
+          "state": "0x158",
+          "setter": "0x8268ED68",
+          "getter": "0x8268ED90",
+          "default": "0x40000000",
+          "entry": "0x82F1AA08"
+        },
+        {
+          "state": "0x15C",
+          "setter": "0x8268ED98",
+          "getter": "0x8268EDC0",
+          "default": "0x40000000",
+          "entry": "0x82F1AA14"
+        },
+        {
+          "state": "0x160",
+          "setter": "0x8268EDC8",
+          "getter": "0x8268EDE8",
+          "default": "0x3F800000",
+          "entry": "0x82F1AA20"
+        },
+        {
+          "state": "0x164",
+          "setter": "0x8268EDF0",
+          "getter": "0x8268EE18",
+          "default": "0x3F800000",
+          "entry": "0x82F1AA2C"
+        },
+        {
+          "state": "0x168",
+          "setter": "0x8268EEB8",
+          "getter": "0x8268EED8",
+          "default": "0x0",
+          "entry": "0x82F1AA38"
+        },
+        {
+          "state": "0x16C",
+          "setter": "0x8268EEE8",
+          "getter": "0x8268EF08",
+          "default": "0x0",
+          "entry": "0x82F1AA44"
+        },
+        {
+          "state": "0x170",
+          "setter": "0x8268EF18",
+          "getter": "0x8268EF38",
+          "default": "0x0",
+          "entry": "0x82F1AA50"
+        },
+        {
+          "state": "0x174",
+          "setter": "0x8268EF48",
+          "getter": "0x8268EF60",
+          "default": "0x0",
+          "entry": "0x82F1AA5C"
+        },
+        {
+          "state": "0x178",
+          "setter": "0x8268EF68",
+          "getter": "0x8268EF70",
+          "default": "0x0",
+          "entry": "0x82F1AA68"
+        },
+        {
+          "state": "0x17C",
+          "setter": "0x8268EF78",
+          "getter": "0x8268EF88",
+          "default": "0x0",
+          "entry": "0x82F1AA74"
+        },
+        {
+          "state": "0x180",
+          "setter": "0x8268EE20",
+          "getter": "0x8268EE40",
+          "default": "0x2",
+          "entry": "0x82F1AA80"
+        },
+        {
+          "state": "0x184",
+          "setter": "0x8268EE50",
+          "getter": "0x8268EEA8",
+          "default": "0x2",
+          "entry": "0x82F1AA8C"
+        },
+        {
+          "state": "0x188",
+          "setter": "0x8268DCE0",
+          "getter": "0x8268DD08",
+          "default": "0x1",
+          "entry": "0x82F1AA98"
+        },
+        {
+          "state": "0x18C",
+          "setter": "0x8268DD18",
+          "getter": "0x8268DD58",
+          "default": "0x3F800000",
+          "entry": "0x82F1AAA4"
+        },
+        {
+          "state": "0x190",
+          "setter": "0x8268DD88",
+          "getter": "0x8268DDA8",
+          "default": "0x1",
+          "entry": "0x82F1AAB0"
+        }
+      ],
+      "samplerState": [
+        {
+          "state": "0x0",
+          "setter": "0x8268F710",
+          "getter": "0x8268F748",
+          "default": "0x0",
+          "entry": "0x82F1AAC0"
+        },
+        {
+          "state": "0x4",
+          "setter": "0x8268F760",
+          "getter": "0x8268F798",
+          "default": "0x0",
+          "entry": "0x82F1AACC"
+        },
+        {
+          "state": "0x8",
+          "setter": "0x8268F7B0",
+          "getter": "0x8268F7E8",
+          "default": "0x0",
+          "entry": "0x82F1AAD8"
+        },
+        {
+          "state": "0xC",
+          "setter": "0x8268F6A0",
+          "getter": "0x8268F6F0",
+          "default": "0x0",
+          "entry": "0x82F1AAE4"
+        },
+        {
+          "state": "0x10",
+          "setter": "0x8268F140",
+          "getter": "0x8268F208",
+          "default": "0x0",
+          "entry": "0x82F1AAF0"
+        },
+        {
+          "state": "0x14",
+          "setter": "0x8268EF98",
+          "getter": "0x8268F060",
+          "default": "0x0",
+          "entry": "0x82F1AAFC"
+        },
+        {
+          "state": "0x18",
+          "setter": "0x8268F2E0",
+          "getter": "0x8268F320",
+          "default": "0x2",
+          "entry": "0x82F1AB08"
+        },
+        {
+          "state": "0x1C",
+          "setter": "0x8268F500",
+          "getter": "0x8268F560",
+          "default": "0x0",
+          "entry": "0x82F1AB14"
+        },
+        {
+          "state": "0x20",
+          "setter": "0x8268F5A0",
+          "getter": "0x8268F610",
+          "default": "0x0",
+          "entry": "0x82F1AB20"
+        },
+        {
+          "state": "0x24",
+          "setter": "0x8268F3E0",
+          "getter": "0x8268F448",
+          "default": "0x1",
+          "entry": "0x82F1AB2C"
+        },
+        {
+          "state": "0x28",
+          "setter": "0x8268F240",
+          "getter": "0x8268F2D0",
+          "default": "0x0",
+          "entry": "0x82F1AB38"
+        },
+        {
+          "state": "0x2C",
+          "setter": "0x8268F098",
+          "getter": "0x8268F130",
+          "default": "0x0",
+          "entry": "0x82F1AB44"
+        },
+        {
+          "state": "0x30",
+          "setter": "0x8268F338",
+          "getter": "0x8268F3D0",
+          "default": "0x0",
+          "entry": "0x82F1AB50"
+        },
+        {
+          "state": "0x34",
+          "setter": "0x8268F620",
+          "getter": "0x8268F690",
+          "default": "0xD",
+          "entry": "0x82F1AB5C"
+        },
+        {
+          "state": "0x38",
+          "setter": "0x8268F800",
+          "getter": "0x8268F840",
+          "default": "0x0",
+          "entry": "0x82F1AB68"
+        },
+        {
+          "state": "0x3C",
+          "setter": "0x8268F458",
+          "getter": "0x8268F4B8",
+          "default": "0x0",
+          "entry": "0x82F1AB74"
+        },
+        {
+          "state": "0x40",
+          "setter": "0x8268F858",
+          "getter": "0x8268F898",
+          "default": "0x0",
+          "entry": "0x82F1AB80"
+        },
+        {
+          "state": "0x44",
+          "setter": "0x8268F8B0",
+          "getter": "0x8268F8F0",
+          "default": "0x0",
+          "entry": "0x82F1AB8C"
+        },
+        {
+          "state": "0x48",
+          "setter": "0x8268F908",
+          "getter": "0x8268F948",
+          "default": "0x0",
+          "entry": "0x82F1AB98"
+        },
+        {
+          "state": "0x4C",
+          "setter": "0x8268F960",
+          "getter": "0x8268F9A8",
+          "default": "0x1",
+          "entry": "0x82F1ABA4"
+        }
+      ]
+    },
+    "ghidraResult": "Raw bl scan callers matched generated callers exactly for all 8 targets (23 sites). The canonical project has no references for 0x826A4638, 0x82693030, 0x8268D080, 0x8269D7D8 and 0x8269DB20, because their callers are undisassembled. Getter references come only from unreachable bl words inside 0x82C27268 and 0x82C27FB0, which the project treats as data. Of 40 decompiles, 9 were usable, 15 halted on bad instruction data, and 16 truncated at save or restore thunks 0x827F7C50-0x827F7C8C. The 363 state-table words matched the flat-image decode.",
+    "generatedCorroboration": {
+      "definition": "Each entry's definition field gives the generated function locator.",
+      "stateTableInit": "generated/default/rerevved_recomp.131.cpp:13246",
+      "dirtyFlush": "generated/default/rerevved_recomp.150.cpp:12564"
+    },
+    "deviceLayout": {
+      "dirtyWords": "+0x00 VS ALU, +0x08 PS ALU, +0x10 render registers 0x2000-0x2234, +0x18 fetch constants (low 32 bits) and 0x2280 group, +0x20 0x2300 and 0x2380 groups, UCP, and bool/loop constants (bit 56)",
+      "shadows": "fetch constants +0x480 (0x18 bytes per slot), VS ALU +0x780, PS ALU +0x1780, bool/loop +0x2780, registers from +0x2880",
+      "bindings": "index buffer +0x3094, FVF +0x3090, declaration +0x2E2C, pixel shader +0x3194, vertex shader +0x3198, render targets +0x3098 + 4i, depth +0x30A8, streams +0x30AC + 4i, strides +0x30F0 + i, textures +0x3100 + 4i, viewport +0x3168, scissor rect +0x3184",
+      "stateTables": "render-state setters at +0x40 + state, sampler setters at +0x1D4 + type, render-state getters at +0x224 + state, sampler getters at +0x3B8 + type; filled by 0x826A5C50"
+    },
+    "inlineShadowWriters": [
+      {
+        "address": "0x823038D8",
+        "writes": "VS ALU +0x780 range with dirty word +0x00"
+      },
+      {
+        "address": "0x82302758",
+        "writes": "VS ALU +0x784..+0x78C with dirty word +0x00; its +0x18 updates are separate fetch-shadow writes; also calls set texture 0x8269AF10",
+        "locators": [
+          "generated/default/rerevved_recomp.135.cpp:3494",
+          "generated/default/rerevved_recomp.135.cpp:3613",
+          "generated/default/rerevved_recomp.135.cpp:3742",
+          "generated/default/rerevved_recomp.135.cpp:3796"
+        ]
+      },
+      {
+        "address": "0x823039E8",
+        "writes": "PS ALU +0x1780 with dirty word +0x08"
+      },
+      {
+        "address": "0x82512608",
+        "writes": "fetch +0x48C with dirty +0x18 on the device loaded from engine wrapper +0xF54; its +0xEE0 stores go to the engine wrapper, not the device",
+        "locators": [
+          "generated/default/rerevved_recomp.114.cpp:9073",
+          "generated/default/rerevved_recomp.114.cpp:9145",
+          "generated/default/rerevved_recomp.114.cpp:9284"
+        ]
+      },
+      {
+        "address": "0x8250E718",
+        "writes": "fetch shadow +0x48C with dirty +0x18"
+      },
+      {
+        "address": "0x82302F60",
+        "writes": "fetch shadow +0x48C and +0x4A4 with dirty +0x18"
+      },
+      {
+        "address": "0x82A90458",
+        "writes": "fetch shadow with dirty +0x18"
+      },
+      {
+        "address": "0x82A90AC0",
+        "writes": "fetch shadow with dirty +0x18"
+      },
+      {
+        "address": "0x82A912D0",
+        "writes": "fetch shadow with dirty +0x18"
+      }
+    ],
+    "tableDispatch": {
+      "renderStateSetterCallers": [
+        "0x82516B00",
+        "0x82517630",
+        "0x82519328",
+        "0x825193B0",
+        "0x82519D00",
+        "0x8251A6B8",
+        "0x82577B18",
+        "0x82577FD8",
+        "0x8266B370"
+      ],
+      "samplerSetterCallers": [
+        "0x82516BD8",
+        "0x82517698",
+        "0x8251A610",
+        "0x8251A6B8",
+        "0x82526830",
+        "0x825391A8",
+        "0x82539248",
+        "0x82577B18",
+        "0x82577FD8",
+        "0x8266AC48",
+        "0x8266B370"
+      ],
+      "samplerTypeMap": "0x82F18250 maps index i to sampler type 4i; 0x82526830 reads entries 0, 1, 2, 4, 5 and 6, 0x8251A6B8 reads entries 0 and 1, and 0x8251A610 reads entry 6",
+      "tableOnlySelected": [
+        "0x8268F710",
+        "0x8268F760",
+        "0x8268F7B0",
+        "0x8268F2E0"
+      ],
+      "tableOnlyUnselected": [
+        "0x8268F6A0",
+        "0x8268F800",
+        "0x8268F858",
+        "0x8268F8B0",
+        "0x8268F908",
+        "0x8268F960"
+      ],
+      "qualification": "Table registration and default initialization by 0x826A5C50 do not prove that the title selects each setter. For the six unselected setters, only data-driven dispatchers, which load the type at runtime, could reach them."
+    },
+    "absentRoles": [
+      {
+        "role": "set scissor",
+        "qualification": "Only internal 0x8268F9C0 and 0x82690440 store the scissor rect +0x3184..+0x3190, and no engine code stores it. Scissor enable is render state 0xC8 at 0x82690390."
+      },
+      {
+        "role": "gamma",
+        "qualification": "0x8268FE08 and 0x8268FED0 are called only from 0x826A5EB8, at 0x826A60BC and 0x826A60DC, confirmed by a raw bl scan. There is no engine caller."
+      },
+      {
+        "role": "query or event objects",
+        "qualification": "No query-object family was found in the reviewed surface; only the fence helpers 0x8269C150 and 0x8269C738 and the EVENT_WRITE emitter 0x8268D080. Not a global absence proof."
+      }
+    ],
+    "qualification": "Roles come from device-field, shadow-register and resource-header behavior in generated code, and from the static tables. They are not runtime-observed. Hooks placed on function bodies miss the inline shadow writers."
+  },
+  "nextDiscriminator": {
+    "site": "the confirmed and strong setter, create, lock, draw, Resolve and present entries in this surface",
+    "question": "Do native hooks on these bodies, plus explicit handling of the nine inline shadow writers, observe every state change the title makes before the PM4 path runs?",
+    "limits": "Do not hook candidate rows as D3D API entries before their roles are discriminated. Do not treat the middleware entries as D3D runtime functions. Do not port ReBlue addresses or offsets."
+  },
+  "guards": [
+    "Do not infer runtime call frequency or ordering from static caller counts.",
+    "Do not treat the nominal band or the bounded region as D3D ownership; roles come from each body's evidence.",
+    "Do not assume per-function hooks capture all VS and PS constant or fetch-shadow updates; the inline writers bypass them.",
+    "Do not assume a table-registered setter without an observed selector is used by the title."
+  ],
+  "conclusion": "Title code directly calls 277 functions in the bounded region 0x8268CAA8-0x826C9C3F, at 5540 call sites. Each role comes from that body's evidence; six of the functions are effect-library middleware, not D3D. Ten more sampler setters are registered only in the device state table, and four of them have a statically observed type selector. Render and sampler states are table-driven: static tables at 0x82F1A600 (101 entries) and 0x82F1AAC0 (20 entries) are copied by 0x826A5C50 to device +0x40/+0x224 and +0x1D4/+0x3B8, and the title also calls through those device slots. The pixel shader is bound at device +0x3194 by 0x82692948, and the vertex shader at +0x3198 by 0x82692C48."
+}

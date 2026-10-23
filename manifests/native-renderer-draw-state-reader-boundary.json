@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0307",
+  "topic": "native-renderer-draw-state-reader-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which bounded surviving CPU readers prevent treating draw-path dirty, mode, shader-cache and allocator writes as command-only state?",
+  "scope": {
+    "consumedEntries": ["0x826A2B58", "0x826A2FF0", "0x826A3000", "0x826A3048", "0x826A3568", "0x826A3608", "0x826A39F8"],
+    "invocationBoundary": "Draw entries, commit and their skipped descendants are consumed for those invocations. Setters, getters, creators, Release, reset, Clear, Resolve, tiling, present and title code survive. A helper remains live through a surviving caller.",
+    "dirtyFields": ["G+0x0", "G+0x8", "G+0x10", "G+0x18", "G+0x20"],
+    "modeFields": ["G+0x2884", "G+0x2920", "G+0x2924", "G+0x2928", "G+0x2940", "G+0x2954", "G+0x2ABD", "G+0x2ABE", "G+0x319C"],
+    "cacheFields": ["G+[0x2E38,0x2E48)", "VD+0x30", "selected VS variant prefix", "patched VS code", "0x82FA0544"],
+    "allocationFields": ["G+0x30", "G+0x34", "G+0x38", "G+0x33C8", "G+0x3484", "G+0x3488", "G+0x348C", "G+0x3490", "G+0x3494", "G+0x3A44", "G+0x3A4C", "G+0x3A54"],
+    "directExpansionLimitPerReadSet": 8,
+    "qualification": "Positive static reader joins and bounded syntax inventories. This is not complete copied, indexed, rebased, bulk, partial-width, indirect or runtime reader closure, and does not admit a draw consume."
+  },
+  "dependencies": [
+    {"topic": "native-renderer-shader-fetch-patch-boundary", "use": "Owns the writer, persistent patch destination, mode and fence boundaries."},
+    {"topic": "native-renderer-d3d-runtime-surface", "use": "Owns API roles, table dispatch and the nine accepted inline dirty writers."},
+    {"topic": "native-renderer-d3d-api-boundary", "use": "Owns retained object identities, API aliases and the distinct wider replacement policy."},
+    {"topic": "native-renderer-d3d-completion-contract", "use": "Owns resource-header fences, scratch units, allocator and completion qualifications."},
+    {"topic": "native-renderer-tiling-worker-store-boundary", "use": "Owns list replay, external destinations and unresolved worker aliases."}
+  ],
+  "currentEvidence": {
+    "method": "Serial foreground no-analysis read-only queries through tools/run-headless.ps1. Maintained ghidra/DumpMemoryWords.java supplied semantic native words; ghidra/FindDirectCallers.java supplied bounded raw direct-BL inventories; ghidra/FindGlobalAddressAccesses.java, ghidra/FindSplitConstantCandidates.java and ghidra/DumpReferences.java supplied counter-address leads. Aligned raw-word and generated instruction-comment scans supplied syntactic field candidates; narrow exact-function generated windows supplied register-flow corroboration.",
+    "generatedRevision": "72bf852bed174893372fb948f2a4edbcd599e63b",
+    "inputQualification": {
+      "supportedFlatSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "mappedProgramSha256": "389EB006B1DCDE90C5DE775C92D67C18542B8FD9BD39845574206D4B213E9B13",
+      "comparedRange": "[0x82000000,0x83210000)",
+      "mismatchBytes": 470,
+      "mismatchRanges": 60,
+      "mismatchEnvelope": "[0x827F3F50,0x827F4280)",
+      "qualification": "Fresh sequential comparison confined differences to the historical thunk band. Cited semantic windows avoid it. Regional equivalence does not establish original thunk semantics or whole-image reader absence."
+    },
+    "scanBoundary": {
+      "rawAlignedWords": 4734976,
+      "rawCandidates": 20133,
+      "rawRange": "[0x82000000,0x83210000)",
+      "rawForms": "D-form address formation and scalar load/store opcodes 14,32..55 plus DS forms58/62. Selected high-field overlap starts were scanned globally; low offsets0..0x70 only in [0x82680000,0x826D0000). No result cap was used.",
+      "generatedInstructionComments": 3436498,
+      "generatedCandidates": 14154,
+      "generatedCheck": "Every matched displacement/base-register encoding was checked against supported flat words. This validates candidate locators, not base provenance or complete instruction semantics.",
+      "decodedFieldInstructions": 462689,
+      "decodedFieldHits": 27,
+      "qualification": "The untruncated decoded scan missed known D3D fields because function/listing coverage was sparse. Raw candidates include code, data and undefined bytes. None of these counts proves object identity, arbitrary aliases or runtime execution."
+    },
+    "dirtyReaders": {
+      "directModel": "All319 raw ld/ext0 candidates for non-SP offsets0..0x27 in [0x82680000,0x826D0000) matched generated instructions. Of these,277 were classified G reads,9 other fields and33 unresolved aliases. Nine accepted inline owners added24 G reads. Partial-width, indexed and bulk forms were not closed.",
+      "localTransfers": "The277 surviving classified G reads contained210 local OR and2 shader-metadata ANDC transfers plus65 retained flush-chain reads. SetPixelShader reads G+0x8 at0x82692A00 and stores its ANDC at0x82692A0C; SetVertexShader reads G+0x0 at0x82692D10 and stores its ANDC at0x82692D1C. Old dirty values did not select a local branch or API result before these same-field transfers.",
+      "retainedFamilies": [
+        {"function": "0x8269E520", "sites": ["0x8269E968", "0x8269EA88", "0x8269EAD8"], "role": "Resolve"},
+        {"function": "0x826A22F8", "sites": ["0x826A2444", "0x826A2564", "0x826A25B4"], "role": "Clear helper"},
+        {"function": "0x826A8140", "sites": ["0x826A823C", "0x826A835C", "0x826A83AC"], "caller": "0x826A8B28"},
+        {"function": "0x826AA088", "sites": ["0x826AA150", "0x826AA270", "0x826AA2C0"], "caller": "0x826AAD8C"},
+        {"function": "0x826B1DA0", "sites": ["0x826B1DC8", "0x826B1EE8", "0x826B1F38"], "role": "conditional diagnostic capture"}
+      ],
+      "use": "These families test/mask G+0x10/+0x18/+0x20, invoke shared emission helpers and clear selected groups. ACC60 writes the resulting G+0x30 at0x826ACD14 and may enter a command-space slow path. Extra emission alone does not prove an observable API-result difference or prove equivalent redundant work.",
+      "boundedOmissionCandidates": "G+0x0/+0x8 have only local OR/ANDC surviving reads in this direct/API model. G+0x18 retained emission uses mask0x007FFFFC00000000, bits34..54, excluding low32 fetch bits. These are local projection results, not universal never-clear policies.",
+      "qualification": "Whole-qword sticky equivalence remains unresolved. Close partial-width/alias readers, ACFF8 tail/indirect ingress and retained cursor/allocation consequences before selecting it.",
+      "corroboration": "generated/default/rerevved_recomp.163.cpp:13371; rerevved_recomp.143.cpp:13064; rerevved_recomp.118.cpp:13234; rerevved_recomp.148.cpp:13224; rerevved_recomp.102.cpp:12874; rerevved_recomp.117.cpp:12696"
+    },
+    "modeReaders": {
+      "exactCpuNibble": {
+        "function": "0x8269E448",
+        "sites": ["0x8269E460", "0x8269E474", "0x8269E47C"],
+        "condition": "r5==0 selects G+0x2884; other values select indexed render-state words. Resolve reaches the helper at0x8269E8DC when flags include0x100, with the selected local control word's low three bits as r5.",
+        "use": "The selected format nibble at bits16..19 drives CPU table/helper selection and G+0x2A30/+0x2A34 writes. Preserve the exact mode-folded nibble for this retained path.",
+        "setterQualification": "Setter0x8268E908 reads G+0x2884 at0x8268E98C but masks out its old nibble before merging a new one. That RMW alone does not require the old nibble.",
+        "corroboration": "generated/default/rerevved_recomp.216.cpp:13370; rerevved_recomp.163.cpp:13245; rerevved_recomp.50.cpp:12940"
+      },
+      "rebasedPayload": "Clear at0x826A24B0 and Resolve at0x8269E9D4 pass G+0x2920 to ACC60; mask0x1F000 selects five contiguous words. ACC60 rebases the pointer and loads at0x826ACCF8, with AC610 providing the slow copy path. This includes G+0x2924/+0x2928 despite their direct-load negatives. Similar retained families pass G+0x2880 and the same G+0x2920 block. Loaded values were payload-only in these inspected copy paths; existing host consumers remain separate obligations.",
+      "controlEffects": "G+0x2940 is passed by Clear0x826A2464 and Resolve0x8269E988 to AC8C8; bit0 can change CPU command-construction branching/cursor length, while lowbit1 was payload-only in the inspected paths. Resolve tests G+0x2ABE mask0x08 at0x8269ECE0 and clears it at0x8269ED20 after its selected synchronization sequence. Omission needs an explicit cursor/helper equivalence contract.",
+      "bitPrecision": "AC6C8 changes G+0x2940 bits0/1 and G+0x2ABD mask0x04, not mask0x10. Render-state getters return other G+0x2940 bits or byte G+0x2942. Present's G+0x2ABE mask0x10 test does not read the draw-written0x08/0x40/0x80 values.",
+      "boundedDeadCandidates": "No retained direct G-derived reader of G+0x2954/+0x319C was identified. Inspected retained direct uses allowed stale G+0x2ABD mask0x04 and G+0x2ABE masks0x40/0x80. Arbitrary aliases and raw-only candidates remain unresolved.",
+      "qualification": "Neither a fullword load nor a preserved unrelated flag proves all bits observable. Payload-only copies do not by themselves require exact values when payload is discarded. They also do not prove complete omission safe.",
+      "corroboration": "generated/default/rerevved_recomp.117.cpp:12696; rerevved_recomp.138.cpp:12692; rerevved_recomp.163.cpp:13872"
+    },
+    "persistentReaders": {
+      "layout": "R_v=VS+0x1A0*v. Declaration tag=VD+0x30; variant tag=R_v+0x28; stride qwords=R_v+0x30/+0x38; variant fence stamp=R_v+0x40; saved source fetch records start atR_v+0x44. Literal VS+0x48..0x63 overlaps saved records, not the stride cache.",
+      "cachedStride": "SetStreamSource0x8268FB08 forms G+stream and reads byte G+0x2E38+stream at0x8268FC08 when full unsigned stride>>2 is nonzero. Comparison inequality ORs dirty0x80000. Exact cached bytes preserve the branch; stale bytes require a proved redundant-dirty protocol. The two UP comparison readers are consumed.",
+      "cpuCodeCopy": {
+        "function": "0x82694480",
+        "sites": ["0x826944C8", "0x826944CC"],
+        "condition": "A nonnull destination selects the copy arm; null only reports metadata-plus-code size.",
+        "use": "Load C=word(VS+0x20), M=word(VS+0x36C), S=word(VS+0x370), then request a copy of S code bytes from C to destination+M after copying metadata from VS+0x368. This reads the persistent code allocation patched by the consumed selector.",
+        "callerClosure": "0x82662D28 calls0x82694480 at0x82662D60 for size and0x82662DF8 for the nonnull copy. Its owner-derived shader record supplies resource+4 and buffer+8. On device mismatch it releases the resource and calls0x825E0248 to recreate it from the retained buffer. Direct upstream clients call0x82662D28 at0x825E1D2C and0x8265E26C after record+0x14 bit0x80000000 and nonnull-resource tests.",
+        "obligation": "Preserve the exact requested code bytes for a retained readback of the patched resource, or provide an equivalent readback contract. Consuming draw entries alone does not eliminate this CPU reader.",
+        "qualification": "Actual ordered identity with a previously patched VS, optional buffer vtable+0xC targets, copy helper effects and ranges remain guarded. No runtime activation, save/reset semantic name or universal resource-alias closure is claimed.",
+        "corroboration": "generated/default/rerevved_recomp.34.cpp:12587; rerevved_recomp.9.cpp:12136; rerevved_recomp.3.cpp:10617; rerevved_recomp.134.cpp:12315"
+      },
+      "gettersAndLifetime": "GetVertexShader0x82692E18 returns/AddRefs G+0x3198; GetVertexDeclaration0x82692E78 returns/AddRefs G+0x2E2C. Their inspected bodies do not read cache prefixes or code. Release0x826981D8 and type6 cleanup0x82697AA8 read resource header+4/+8 and the VS code pointer for freeing, not variant stamp+0x40 or code bytes. Resource header+8 and variant stamp are distinct.",
+      "constructorBoundary": "Init0x82692B50 reads code records and snapshots them at R_v+0x44+12*i. Its sole raw direct caller is CreateVS0x826946BC after fresh allocation/code copy. It did not establish a retained post-patch use of the initializer.",
+      "boundedDeadCandidates": "Identified VD tag, variant tag/stride/stamp, saved fetch record and ID counter readers were inside consumed selector/patcher paths. The readback API excludes the cache prefix. Optional creation callbacks and copied/indexed/bulk aliases keep global absence unresolved.",
+      "counterSearch": "Counter0x82FA0544 had one decoded materializer and one raw8-word split candidate at0x826ADD1C/0x826ADD20, zero database xrefs, with caps256/8 not reached. The atomic increment is at0x826ADD30/0x826ADD38. Long-distance/copied/indexed aliases are outside that search.",
+      "corroboration": "generated/default/rerevved_recomp.124.cpp:13026; rerevved_recomp.77.cpp:13173; rerevved_recomp.199.cpp:12503; rerevved_recomp.185.cpp:13205"
+    },
+    "listAndAllocatorReaders": {
+      "rebasedCursor": "EndTiledList0x826AC218 forms L=G+0x33C0 at0x826AC2BC and calls0x8269B508 at0x826AC2C0. For nonnull L+4, B508 reads L+8=G+0x33C8 at0x8269B514/0x8269B538, links the tail and writes the terminator through that cursor. Direct G+0x33C8 negatives therefore do not establish deadness.",
+      "listGrowth": "0x8269C170 reads L+8 at0x8269C190/0x8269C1FC and updates the list descriptor through allocation/linking. Retained list initialization/finalization/submission share this protocol. Exact descriptor/record storage or a replacement list contract is needed while those readers survive; complete record-byte/replay/reclaim closure remains open.",
+      "sharedPools": "0x8269B618 reads G+0x3A44 at0x8269B634 and G+0x3A4C at0x8269B6B4/0x8269B780 to select allocation addresses and wrap/wait paths.0x826A6848 reads G+0x3A44 at0x826A685C and cursor/limits to choose a pointer or failure and lower limits.0x8269B818 reads G+0x3A54 at0x8269B888 and G+0x3A4C at0x8269B8B4 for used-byte accounting and threshold cursor/limit writes.",
+      "snapshot": "0x8269B0E0 snapshots G+0x30/+0x34 and G+0x3A4C/+0x3A44 at0x8269B0E0/0x8269B0E4/0x8269B0EC/0x8269B0F0; retained BeginTiledList calls it at0x826AC0C8.0x8269B118 restores the saved pool/cursor words.",
+      "dirtyAllocationFrontier": "Skipped dirty emission can change G+0x30 and command-space paths before allocation. B618's zero-cursor alternatives and A6848's collision test consume shared cursor/limits. Entry-only arithmetic does not close newly admitted dirty allocation, manager, wait, growth, threshold or failure paths.",
+      "qualification": "Preserve exact shared-pool behavior on admitted paths or replace its observable allocation contract. The low-offset cursor inventory includes other-object collisions; it is not complete G provenance. Returned scratch extents, existing host staging and post-commit lifetime remain governed by the completion contract.",
+      "corroboration": "generated/default/rerevved_recomp.173.cpp:13216; rerevved_recomp.222.cpp:12770; rerevved_recomp.227.cpp:12596; rerevved_recomp.50.cpp:13017; rerevved_recomp.47.cpp:12616; rerevved_recomp.93.cpp:11808"
+    }
+  },
+  "nextDiscriminator": [
+    "Close the explicit unclassified dirty aliases, partial-width/indexed/bulk overlaps, escaped getter-created object aliases and raw-only code/data candidates before an exhaustive reader-absence claim.",
+    "Bind retained command discard, cursor/helper and allocator observations to concrete masks/inputs before claiming whole dirty-qword or derived-flag stale equivalence.",
+    "Bind a retained CPU readback's ordered resource identity and buffer/copy targets, or implement an equivalent readback bridge before omitting patched guest code.",
+    "Close tail/indirect patcher and constant-flush ingress, counter aliases, full tile-record decoder/reclaim and actual dirty allocation paths before broadening admission."
+  ],
+  "guards": [
+    "Do not call surviving dirty readers OR-only, or infer whole-qword sticky equivalence from local same-field transfers.",
+    "Do not call patched VS code GPU-only; a surviving CPU code-copy and conditional recreation chain is identified.",
+    "Do not conflate decimal40/48/64 with hexadecimal offsets0x40/0x48/0x64, resource-header fences with variant stamps, or flag mask0x04 with bit index4.",
+    "Do not equate direct-load absence with rebased, indexed, copied or bulk reader absence.",
+    "Do not infer runtime activation, complete API cut equivalence, allocator ownership, scratch lifetime or safe consume admission from this static result."
+  ],
+  "conclusion": "The draw-only cut retains a CPU shader-code copy/recreation path, exact Resolve color-format nibble use, cached-stride comparison, masked dirty flushes and rebased list/shared-pool readers. Some cache-prefix, flag and dirty-bit writes are bounded omission candidates, but complete reader and observation closure remains unresolved."
+}

@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0258",
+  "topic": "native-renderer-anchor-draw-sites",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which containing functions and bounded static resource paths own the four runtime-reported native renderer draw and clear anchors?",
+  "scope": {
+    "anchors": [
+      "0x8230686C",
+      "0x82304258",
+      "0x82303E90",
+      "0x826A22F8"
+    ],
+    "runtimeSeedReport": "Title df823a99, observation 2026-10-17, supplied the four guest addresses for static search. The report selects anchors but is not independent runtime evidence for this packet.",
+    "callerLimit": "At most eight exact functions and about five caller levels per anchor; stop at indirect dispatch, unresolved fanout, or an unbound subsystem.",
+    "boundary": "This packet attributes the supplied sites to containing functions, direct branch targets, bounded caller paths, and statically visible resource bindings. It does not claim runtime frequency, asset identity, render-target identity, or complete subsystem coverage."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-d3d-runtime-surface",
+      "use": "Accepted D3D device bindings and draw and clear entry roles."
+    },
+    {
+      "topic": "native-renderer-d3d-inventory",
+      "use": "Accepted version 1.3 renderer anchor inventory and image context."
+    },
+    {
+      "topic": "gfx-nonindexed-up-draw",
+      "use": "Accepted nonindexed UP call tuple and 28-byte vertex copy boundary."
+    },
+    {
+      "topic": "gfx-draw-producer",
+      "use": "Accepted GFx fill, transform, indexed draw gates, and renderer field roles."
+    }
+  ],
+  "anchors": [
+    {
+      "reportedAddress": "0x8230686C",
+      "addressRole": "return address after the indexed draw branch",
+      "actualBranch": {
+        "address": "0x82306868",
+        "word": "0x4839D191",
+        "operation": "bl 0x826A39F8"
+      },
+      "function": {
+        "address": "0x823067F8",
+        "label": "NativeIndexedBufferAnchorCaller",
+        "generated": "generated/default/rerevved_recomp.177.cpp:3280-3353",
+        "result": "Loads seven caller arguments, computes a table-derived source word from the seventh argument, calls 0x826A39F8, and returns zero."
+      },
+      "callerPath": {
+        "functions": [
+          {
+            "address": "0x82C2A8E8",
+            "label": "sub_82C2A8E8",
+            "role": "generated enclosing caller",
+            "site": "generated/default/rerevved_recomp.106.cpp:30971-30975",
+            "initMap": "generated/default/rerevved_init.cpp:31857",
+            "result": "The nearest generated definition at 28014 encloses the raw call 0x82C2BDE4 and return 0x82C2BDE8, loads the indexed-submission arguments, and calls 0x82C29628. The exact canonical query at its entry reports no callers or callees and bad-instruction truncation."
+          },
+          {
+            "address": "0x82C29628",
+            "label": "sub_82C29628",
+            "role": "direct caller",
+            "site": "generated/default/rerevved_recomp.176.cpp:28787-28821",
+            "result": "Sets primitive value 4, calls 0x823067F8, then increments the owner counters at +0x21E0 and +0x21E4 from record and table values."
+          },
+          {
+            "address": "0x82C4C740",
+            "label": "sub_82C4C740",
+            "role": "generated outer caller",
+            "site": "generated/default/rerevved_recomp.104.cpp:25404-25428,25641-25655,25950-25984",
+            "initMap": "generated/default/rerevved_init.cpp:32057",
+            "result": "The generated definition and map identify one direct call to 0x82C2A8E8 at 0x82C4CACC and one direct call to 0x82C4BC00 at 0x82C4C8E0. The earlier indirect bctrl at 0x82C4CAC0 returns at 0x82C4CAC4 before the separate direct 0x82C2A8E8 call and is not a caller-chain barrier."
+          },
+          {
+            "address": "0x82C4BC00",
+            "label": "sub_82C4BC00",
+            "role": "generated outer caller",
+            "site": "generated/default/rerevved_recomp.108.cpp:27212-27238,28705-28735,28857-28886",
+            "initMap": "generated/default/rerevved_init.cpp:32056",
+            "result": "The generated definition and map identify two direct calls to 0x82C2A8E8 at 0x82C4C618 and 0x82C4C724; the raw scan identifies 0x82C4C740 as its direct caller at 0x82C4C8E0."
+          },
+          {
+            "address": "0x82C71A00",
+            "label": "sub_82C71A00",
+            "role": "bounded outer caller",
+            "site": "generated/default/rerevved_recomp.80.cpp:29018-29055,29477-29495",
+            "initMap": "generated/default/rerevved_init.cpp:32624",
+            "result": "The raw scan identifies the direct call to 0x82C4C740 at 0x82C71D44; the generated body gates on a loaded flag, sets r6=1, forwards r4 and r5, and calls the renderer path."
+          },
+          {
+            "address": "0x82C7DF58",
+            "label": "sub_82C7DF58",
+            "role": "final bounded caller",
+            "site": "generated/default/rerevved_recomp.12.cpp:28527-28536",
+            "result": "Calls 0x82C71A00 at 0x82C7E104 after the prior bctrl at 0x82C7E0F8; the direct caller edge is retained while the prior dispatch leaves input provenance unresolved."
+          },
+          {
+            "address": "0x82D83B38",
+            "label": "sub_82D83B38",
+            "role": "final bounded caller",
+            "site": "generated/default/rerevved_recomp.40.cpp:29982-29992",
+            "result": "Calls 0x82C71A00 at 0x82D83C58 after the prior bctrl at 0x82D83C4C; the direct caller edge is retained while the prior dispatch leaves input provenance unresolved."
+          }
+        ],
+        "boundary": "The retained eight-function set is 0x823067F8, 0x82C29628, 0x82C2A8E8, 0x82C4C740, 0x82C4BC00, 0x82C71A00, 0x82C7DF58, and 0x82D83B38. The saved function listing reports an empty getCallingFunctions set for 0x82C29628, but that is listing-only. The generated map identifies enclosing function 0x82C2A8E8, while the canonical query remains truncated. Three generated direct calls to 0x82C2A8E8 are identified in two outer functions: 0x82C4C740 at 0x82C4CACC and 0x82C4BC00 at 0x82C4C618 and 0x82C4C724. The bounded raw scan found one direct bl to 0x82C4BC00 at 0x82C4C8E0 and one to 0x82C4C740 at 0x82C71D44. The longest retained direct path is six edges via 0x82C4BC00, 0x82C4C740, 0x82C71A00, and either final caller; the direct 0x82C4C740 path is five edges. Prior bctrls at 0x82C4CAC0, 0x82C7E0F8, and 0x82D83C4C constrain input provenance only and are not caller-chain barriers. Subsystem ownership remains unresolved at the eight-function/about-five-level cap; no terrain, water, units, fog, labels, UI/GFx, effects, minimap, or leader-scene owner is established."
+      },
+      "resources": {
+        "vertexFormat": "The caller supplies primitive value 4. No vertex-format value is proven at this anchor.",
+        "textureSource": "No concrete texture object or asset is joined. The sink reads the device index binding at +0x3094 and draw-state shader and declaration fields; the caller's source word is table-derived.",
+        "renderTarget": "The anchor does not select or write a render target. Accepted device bindings place render targets at +0x3098+4i and depth at +0x30A8, but the selected target is unresolved.",
+        "source": "The function computes param7 * word_82115418[param2] + word_8211541C[param2] before passing it to the indexed sink; prior indirect-dispatch results leave input provenance unresolved."
+      },
+      "frequency": {
+        "staticCadence": "The direct caller increments owner fields +0x21E0 and +0x21E4 after the indexed submission, under nested record loops and state-change guards.",
+        "runtimeClassification": "unresolved"
+      },
+      "confidence": "strong",
+      "unknowns": [
+        "The source word, vertex format, texture identity, target identity, and submitted packet contents remain unbound.",
+        "No per-frame or per-draw runtime frequency follows from the static call."
+      ]
+    },
+    {
+      "reportedAddress": "0x82304258",
+      "addressRole": "return address after the nonindexed UP branch",
+      "actualBranch": {
+        "address": "0x82304254",
+        "word": "0x4839EDAD",
+        "operation": "bl 0x826A3000"
+      },
+      "function": {
+        "address": "0x82303F70",
+        "label": "GfxNonindexedUpProducer",
+        "generated": "generated/default/rerevved_recomp.180.cpp:3396-3887",
+        "result": "Checks renderer state, applies matrix and color-transform state, binds the direct [entry-r8+0x28] texture path, and submits expanded vertices through the nonindexed UP wrapper."
+      },
+      "callerPath": {
+        "functions": [],
+        "boundary": "The canonical listing has a gap around the supplied return site and the bounded raw direct-branch scan reported no 0x82303F70 match. This bounded scan does not prove unique references or cover indirect dispatch. The function is a GFx-style renderer producer by its matrix, color-transform, renderer-field, and vertex-stream operations; its external subsystem entry remains unresolved."
+      },
+      "resources": {
+        "vertexFormat": "Primitive value 4, source vertices at renderer +0x208, and a 28-byte stride. The submitted count is r5=3*trunc(r9/3), where r9 is the expanded-vertex counter; the loop adds six to r9 per source record and caps a batch at 288 vertices.",
+        "textureSource": "The producer passes renderer +0x114 to its color-transform setup, then selects value 4 through 0x82302620 and binds [entry-r8+0x28] directly through 0x8269AF10; this path does not call GfxTextureBind.",
+        "renderTarget": "The producer does not select a render target. The current device target remains outside this bounded path.",
+        "wrapper": "0x826A3000 copies the source vertices and publishes the lowerer's command cursor; no index source is used."
+      },
+      "frequency": {
+        "staticCadence": "The function increments renderer +0x160 after each wrapper invocation and is reached only after its active-state and source-count guards.",
+        "runtimeClassification": "unresolved"
+      },
+      "confidence": "strong",
+      "unknowns": [
+        "The concrete UI/GFx caller, visible asset, target surface, and runtime draw count remain unresolved.",
+        "The primitive value is retained without assigning a public API enum name."
+      ]
+    },
+    {
+      "reportedAddress": "0x82303E90",
+      "addressRole": "return address after the indexed UP branch",
+      "actualBranch": {
+        "address": "0x82303E8C",
+        "word": "0x4839F6DD",
+        "operation": "bl 0x826A3568"
+      },
+      "function": {
+        "address": "0x82303C38",
+        "label": "GfxIndexedDraw",
+        "generated": "generated/default/rerevved_recomp.21.cpp:3366-3712",
+        "result": "Checks active, stream, index, format, and count gates, applies fill and matrix state, then issues indexed UP draws."
+      },
+      "callerPath": {
+        "functions": [],
+        "boundary": "The bounded raw direct-branch scan reported no 0x82303C38 match; the accepted catalog identifies renderer vtable slot 0x82169E6C (+0x3C) as the dynamic owner boundary. This scan does not prove unique references or cover indirect dispatch, so subsystem attribution stops here."
+      },
+      "resources": {
+        "vertexFormat": "Renderer fields +0x164 and +0x16C supply the vertex buffer and format; +0x168 and +0x170 supply the index buffer and normalized index format.",
+        "textureSource": "The active fill path binds non-null texture records and selects the bounded pixel-shader variants before the draw.",
+        "renderTarget": "The draw path does not select a render target. Device render-target slots remain +0x3098+4i, with depth at +0x30A8.",
+        "wrapper": "0x826A3568 forwards the guarded issue tuple to graphics dirty-state and draw preparation."
+      },
+      "frequency": {
+        "staticCadence": "Large submissions split into bounded chunks and increment renderer +0x160 after each wrapper invocation; the final remainder requires a positive count, while wrapper success and runtime frequency remain unproved.",
+        "runtimeClassification": "unresolved"
+      },
+      "confidence": "strong",
+      "unknowns": [
+        "The vtable owner, shader and asset identities, target surface, and runtime frequency remain unresolved.",
+        "The static path does not prove execution or visible output."
+      ]
+    },
+    {
+      "reportedAddress": "0x826A22F8",
+      "addressRole": "clear-quad emitter entry",
+      "actualBranch": {
+        "address": "0x826A2A80",
+        "word": "0x4BFFF879",
+        "operation": "bl 0x826A22F8"
+      },
+      "function": {
+        "address": "0x826A22F8",
+        "label": "D3DClearQuadEmitter",
+        "generated": "generated/default/rerevved_recomp.143.cpp:12870-13829",
+        "result": "Builds the clear command and immediate-mode quad state, clips it against viewport and scissor bounds, and iterates selected bound MRT slots before lower clear calls."
+      },
+      "callerPath": {
+        "functions": [
+          {
+            "address": "0x826A2970",
+            "label": "D3DDeviceClearF",
+            "role": "direct caller",
+            "site": "generated/default/rerevved_recomp.199.cpp:12649-12817",
+            "result": "If r5 is non-null, branches directly to 0x826A22F8 unchanged; otherwise selects default extents from bound RT0 at +0x3098 or depth at +0x30A8, builds a local rectangle, forwards r3=device, r4=mask, r5=rectangle, r6=float4 color pointer, f1=depth, and r8=stencil, then calls 0x826A22F8."
+          },
+          {
+            "address": "0x823064E0",
+            "label": "sub_823064E0",
+            "role": "bounded ClearF caller",
+            "site": "generated/default/rerevved_recomp.8.cpp:3428-3430",
+            "result": "Forwards the clear arguments to 0x826A2970."
+          },
+          {
+            "address": "0x8250E718",
+            "label": "sub_8250E718",
+            "role": "bounded middleware caller",
+            "site": "generated/default/rerevved_recomp.1.cpp:8853-8861",
+            "result": "Calls ClearF after an indirect dispatch whose low-byte result gates the later direct ClearF call, before subsequent texture-state work; this limits input provenance without removing the direct caller edge."
+          }
+        ],
+        "boundary": "The saved raw direct-branch scan found seven ClearF matches; 0x823064E0 and 0x8250E718 are the two selected engine callers, and five other matches remain unexpanded at the declared caller cap. The prior bctrl in 0x8250E718 gates the later direct ClearF call on a nonzero low-byte result and limits input provenance without being a caller-chain barrier. The two outer callers do not provide a stable terrain, water, units, fog, labels, UI/GFx, effects, minimap, or leader-scene identity."
+      },
+      "resources": {
+        "vertexFormat": "The clear emitter builds an immediate-mode quad command; a complete vertex declaration or public format name is not proven.",
+        "textureSource": "No sampled texture source is selected by ClearF or the clear emitter; shader and command state are device-owned.",
+        "renderTarget": "ClearF selects default extents from bound RT0 at +0x3098 or depth at +0x30A8; the emitter clips against viewport and scissor state and iterates selected bound MRT slots. The concrete tiled MRT set and surface identity are unresolved.",
+        "clearInputs": "The ABI is r3=device, r4=mask, r5=optional rectangle, r6=float4 color pointer, f1=depth, and r8=stencil; the emitter preserves these inputs while building device-owned clear state."
+      },
+      "frequency": {
+        "staticCadence": "ClearF forwards a nonnull r5 unchanged or builds one default rectangle when r5 is null and calls the emitter; viewport/scissor clipping and selected-MRT iteration occur in the emitter, while rectangle-list iteration belongs to the separate D3DDeviceClear wrapper. Runtime cadence remains unresolved.",
+        "runtimeClassification": "unresolved"
+      },
+      "confidence": "strong",
+      "unknowns": [
+        "The specific off-screen MRT set, outer render pass, and runtime clear cadence remain unresolved.",
+        "The static clear path does not establish per-frame execution."
+      ]
+    }
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra queries against the image.json program, followed by exact narrow generated-code windows.",
+    "queries": [
+      {
+        "script": "ghidra/DumpFunctions.java",
+        "targets": [
+          "0x8230686C",
+          "0x82304258",
+          "0x82303E90",
+          "0x826A22F8",
+          "0x82C29628",
+          "0x82303F70",
+          "0x82303EA8",
+          "0x82303C38",
+          "0x826A2970",
+          "0x823064E0",
+          "0x8250E718",
+          "0x82C2A8E8"
+        ]
+      },
+      {
+        "script": "ghidra/DumpFunctionNeighborhoodBatch.java",
+        "targets": [
+          "0x8230686C",
+          "0x82304258",
+          "0x82303E90",
+          "0x826A22F8",
+          "0x82306868",
+          "0x82304254",
+          "0x82303E8C",
+          "0x826A2A80"
+        ]
+      },
+      {
+        "script": "ghidra/FindDirectCallers.java",
+        "targets": [
+          "0x823067F8",
+          "0x82303F70",
+          "0x82303C38",
+          "0x826A2970",
+          "0x826A22F8",
+          "0x82C29628",
+          "0x82C4C740",
+          "0x82C4BC00"
+        ]
+      }
+    ],
+    "generatedWindows": [
+      "generated/default/rerevved_recomp.177.cpp:3280-3353",
+      "generated/default/rerevved_recomp.180.cpp:3396-3887",
+      "generated/default/rerevved_recomp.21.cpp:3366-3712",
+      "generated/default/rerevved_recomp.143.cpp:12870-13829",
+      "generated/default/rerevved_recomp.199.cpp:12649-12817",
+      "generated/default/rerevved_recomp.176.cpp:27305-27405,28787-28821",
+      "generated/default/rerevved_recomp.8.cpp:3389-3441",
+      "generated/default/rerevved_recomp.1.cpp:8733-8861",
+      "generated/default/rerevved_recomp.106.cpp:28014-28065,30956-30982",
+      "generated/default/rerevved_recomp.104.cpp:25404-25428,25641-25655,25950-25984",
+      "generated/default/rerevved_recomp.108.cpp:27212-27238,28705-28735,28857-28886",
+      "generated/default/rerevved_recomp.80.cpp:29018-29055,29477-29495",
+      "generated/default/rerevved_recomp.12.cpp:28527-28536",
+      "generated/default/rerevved_recomp.40.cpp:29982-29992",
+      "generated/default/rerevved_init.cpp:31857,32056-32057,32624"
+    ],
+    "qualification": "The canonical listing omits or truncates some supplied return-site bodies around save and restore thunks. FindDirectCallers used initialized executable memory, aligned words, LK=1 direct-bl matching, and a 32-match cap; it omits direct tail-b and indirect calls. The five original targets had counts 1/0/0/7/1 in listed order, the owner-only target 0x82C29628 had one match at 0x82C2BDE4 with decoded=false and owner=<undefined>, and the final two-target scan had one match each with no truncation or cancellation: 0x82C4C8E0 -> 0x82C4BC00 and 0x82C71D44 -> 0x82C4C740. Generated source and init-map entries identify those sites and the three direct calls to 0x82C2A8E8 in two outer functions. The retained caller set has eight exact functions with six edges on the longest path via 0x82C4BC00 and five via direct 0x82C4C740. The prior bctrls constrain input provenance only and do not block direct caller edges. Five ClearF matches remain unexpanded at the declared caller cap. Generated windows corroborate only the exact functions and branches listed here; they do not establish complete caller graphs or runtime behavior."
+  },
+  "guards": [
+    "Do not label any anchor per-frame or per-draw from static draw code alone.",
+    "Do not infer a concrete subsystem from address proximity, a vtable slot, or an indirect caller.",
+    "Do not infer asset, texture, render-target, shader, visible-output, or shutdown-cause identity beyond the listed static fields and guards.",
+    "The runtime seed report selects the search sites but does not replace a default-off runtime observation."
+  ],
+  "catalogPromotion": {
+    "symbols": [
+      "RVA-SYM-0457",
+      "RVA-SYM-0458",
+      "RVA-SYM-0459",
+      "RVA-SYM-0460",
+      "RVA-SYM-0461"
+    ],
+    "relations": [
+      "RVA-REL-0573",
+      "RVA-REL-0574",
+      "RVA-REL-0575"
+    ],
+    "result": "The catalog additions retain exact reusable function and call edges; subsystem ownership, resource identity, and runtime cadence remain in this bounded topic result."
+  },
+  "conclusion": "The four supplied anchors have exact static roles: an indexed-buffer sink call from 0x823067F8, a nonindexed UP call from the GFx-style producer 0x82303F70, an indexed UP call from GfxIndexedDraw 0x82303C38, and a ClearF-to-clear-quad call through 0x826A2970 to 0x826A22F8. Caller expansion stops at the declared caller caps, missing direct-bl matches, or accepted dynamic-vtable boundary. Runtime frequency remains unresolved for all four."
+}

@@ -1,0 +1,282 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0081",
+  "topic": "native-renderer-d3d-inventory",
+  "status": "open",
+  "confidence": "candidate",
+  "image": "image.json",
+  "question": "What is the complete reachable title-used Xbox D3D surface above PM4?",
+  "scope": {
+    "surface": "partial-bootstrap",
+    "includedEvidence": [
+      "NRD-ROOT-0001",
+      "NRD-OP-0001",
+      "NRD-OP-0002",
+      "NRD-CONTRACT-0001"
+    ],
+    "staticRuntimeBoundary": "Static reachability is distinct from runtime observation.",
+    "referenceBoundary": "Indirect or unrecovered references remain outside the maintained repaired reference index.",
+    "unclassified": [
+      "device publication",
+      "dispatch-table extent",
+      "other lowering sinks",
+      "subsystem anchors",
+      "control seeds",
+      "object lifetimes",
+      "resources",
+      "formats",
+      "states",
+      "shaders",
+      "EDRAM",
+      "resolve",
+      "swap",
+      "presentation"
+    ],
+    "boundary": "This is a partial inventory, not a completeness claim. It includes one lowering root, two reachable operations, and one primitive contract."
+  },
+  "dependencies": [
+    {
+      "topic": "gfx-draw-producer",
+      "use": "accepted indexed-draw identity, gates, renderer slot, and two direct issue callsites"
+    },
+    {
+      "topic": "gfx-fetch-allocation",
+      "use": "accepted flush-and-issue wrapper identity and direct wrapper call"
+    },
+    {
+      "topic": "native-renderer-d3d-draw-lowering-frontier",
+      "use": "accepted repaired reference replay for the two direct callsites and bounded partial root"
+    }
+  ],
+  "completenessRoots": [
+    {
+      "id": "NRD-ROOT-0001",
+      "kind": "lowering-sink",
+      "locator": "0x826A3568",
+      "claim": "The maintained repaired reference index admits exactly the two accepted direct GFx indexed-draw callsites to the flush-and-issue wrapper and no additional code or data row.",
+      "extentRule": "One repaired DumpReferences.java result for only 0x826A3568 must reproduce sources 0x82303E3C and 0x82303E8C, type UNCONDITIONAL_CALL, owner 0x82303C38, count two, and no other row.",
+      "closureDirection": "reverse",
+      "claimRefs": [
+        "native-renderer-d3d-draw-lowering-frontier.json#/repairedReferenceIndex",
+        "RVA-SYM-0255",
+        "RVA-REL-0349"
+      ],
+      "reproduction": "Run DumpReferences.java for target 0x826A3568 over closure {0x826A3568, 0x82303C38} after the accepted repair checks in a disposable project copy.",
+      "qualification": "Indirect or unrecovered references remain outside the maintained repaired reference index; this root closes only the accepted partial direct frontier."
+    }
+  ],
+  "surface": [
+    {
+      "id": "NRD-OP-0001",
+      "address": "0x82303C38",
+      "name": "GfxIndexedDraw",
+      "roles": [
+        "entry-point",
+        "lowering-boundary"
+      ],
+      "classes": [
+        "draw",
+        "gfx"
+      ],
+      "rootIds": [
+        "NRD-ROOT-0001"
+      ],
+      "predecessors": [
+        {
+          "kind": "vtable-slot",
+          "vtable": "RVA-VTBL-0010",
+          "slot": "RVA-SLOT-0032",
+          "offset": "0x3C"
+        }
+      ],
+      "callerFamilies": [
+        "gfx-renderer"
+      ],
+      "signatureRefs": [
+        "RVA-SYM-0172",
+        "gfx-draw-producer.json#/scope",
+        "gfx-draw-producer.json#/drawSubmission"
+      ],
+      "contractRefs": [
+        "NRD-CONTRACT-0001"
+      ],
+      "staticReachability": "reachable",
+      "runtimeJoinKey": "d3d:0x82303C38",
+      "hostRequirements": [
+        "Preserve the accepted active, vertex-buffer, index-buffer, index-format, and positive-count gates and the bounded indexed-triangle issue split; do not assign a backend owner."
+      ],
+      "claimRefs": [
+        "RVA-SYM-0172",
+        "RVA-VTBL-0010",
+        "RVA-SLOT-0032",
+        "RVA-REL-0349",
+        "gfx-draw-producer.json#/currentEvidence/entries/10",
+        "gfx-draw-producer.json#/drawSubmission",
+        "native-renderer-d3d-draw-lowering-frontier.json#/repairedReferenceIndex"
+      ],
+      "confidence": "strong",
+      "qualification": "Static evidence only; runtime execution, submitted counts, inherited state, resource identity, host behavior, and visible output remain unproved.",
+      "reproduction": "Resolve the vtable slot and symbol, then reproduce the two accepted direct issue callsites and owner rows using only the cited current-image authorities."
+    },
+    {
+      "id": "NRD-OP-0002",
+      "address": "0x826A3568",
+      "name": "GraphicsFlushAndIssue",
+      "roles": [
+        "wrapper",
+        "lowering-boundary"
+      ],
+      "classes": [
+        "draw",
+        "state"
+      ],
+      "rootIds": [
+        "NRD-ROOT-0001"
+      ],
+      "predecessors": [
+        {
+          "kind": "direct-call",
+          "sites": [
+            "0x82303E3C",
+            "0x82303E8C"
+          ],
+          "ownerId": "NRD-OP-0001",
+          "relation": "RVA-REL-0349"
+        }
+      ],
+      "callerFamilies": [
+        "gfx-renderer"
+      ],
+      "signatureRefs": [
+        "RVA-SYM-0255",
+        "gfx-fetch-allocation.json#/scope",
+        "gfx-fetch-allocation.json#/vertexFetchProducer/wrapper"
+      ],
+      "contractRefs": [
+        "NRD-CONTRACT-0001"
+      ],
+      "staticReachability": "reachable",
+      "runtimeJoinKey": "d3d:0x826A3568",
+      "hostRequirements": [
+        "Preserve forwarding of the accepted site-fixed primitive discriminator into the bounded dirty-state and draw-preparation path; do not infer another argument or assign a backend owner."
+      ],
+      "claimRefs": [
+        "RVA-SYM-0255",
+        "RVA-REL-0349",
+        "RVA-REL-0350",
+        "gfx-fetch-allocation.json#/currentEvidence/entries/2",
+        "gfx-fetch-allocation.json#/vertexFetchProducer/wrapper",
+        "native-renderer-d3d-draw-lowering-frontier.json#/repairedReferenceIndex"
+      ],
+      "confidence": "strong",
+      "qualification": "Runtime execution, complete ABI, descriptor values, other arguments, later command processing, host behavior, shader identity, asset identity, and visible output remain unproved.",
+      "reproduction": "Reproduce the two accepted direct caller rows and the direct wrapper call at 0x826A35AC from the cited packet and catalog authorities."
+    }
+  ],
+  "contracts": [
+    {
+      "id": "NRD-CONTRACT-0001",
+      "kind": "primitive",
+      "identity": "RVA-REL-0349",
+      "operationIds": [
+        "NRD-OP-0001",
+        "NRD-OP-0002"
+      ],
+      "claimRefs": [
+        "RVA-REL-0349",
+        "gfx-draw-producer.json#/drawSubmission/issue",
+        "gfx-fetch-allocation.json#/vertexFetchProducer/wrapper"
+      ],
+      "hostRequirement": "Distinguish site-fixed primitive discriminator 4 at each accepted issue site while retaining one unknown discriminator for any unmapped input; assign no hardware primitive name beyond the accepted indexed-triangle context.",
+      "reproduction": "Check exact callsites 0x82303E3C and 0x82303E8C, accepted primitive value 4, and their common direct target 0x826A3568 from the cited authorities."
+    }
+  ],
+  "unresolvedCoverage": {
+    "categories": [
+      "device-publication",
+      "dispatch-table",
+      "remaining-lowering-sinks",
+      "subsystem-anchors",
+      "control-seeds"
+    ],
+    "evidenceBasis": [
+      "native-renderer-d3d-draw-lowering-frontier.json#/repairedReferenceIndex"
+    ]
+  },
+  "partialExport": {
+    "schema_version": 1,
+    "image_sha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "surface": "partial",
+    "source_pointers": {
+      "schema_version": "#/partialExport/schema_version",
+      "image_sha256": "#/partialExport/image_sha256",
+      "surface": "#/partialExport/surface"
+    },
+    "operations": [
+      {
+        "operation_id": "NRD-OP-0002",
+        "runtime_join_key": "d3d:0x826A3568",
+        "roles": [
+          "wrapper",
+          "lowering-boundary"
+        ],
+        "contract_ids": [
+          "NRD-CONTRACT-0001"
+        ],
+        "hook_sites": [
+          {
+            "address": "0x82303E3C",
+            "phase": "value",
+            "discriminator": "primitive-4"
+          },
+          {
+            "address": "0x82303E8C",
+            "phase": "value",
+            "discriminator": "primitive-4"
+          }
+        ],
+        "registers": [],
+        "value_domains": [
+          {
+            "id": "primitive-4",
+            "value": 4,
+            "selection": "site-fixed"
+          },
+          {
+            "id": "unknown",
+            "value": null,
+            "selection": "unmapped-input"
+          }
+        ],
+        "resource_action": "none",
+        "claim_refs": [
+          "#/surface/1",
+          "#/contracts/0",
+          "#/completenessRoots/0",
+          "RVA-SYM-0255",
+          "RVA-REL-0349",
+          "gfx-draw-producer.json#/drawSubmission/issue",
+          "native-renderer-d3d-draw-lowering-frontier.json#/repairedReferenceIndex"
+        ],
+        "source_pointers": {
+          "operation_id": "#/partialExport/operations/0/operation_id",
+          "runtime_join_key": "#/partialExport/operations/0/runtime_join_key",
+          "roles": "#/partialExport/operations/0/roles",
+          "contract_ids": "#/partialExport/operations/0/contract_ids",
+          "hook_sites": "#/partialExport/operations/0/hook_sites",
+          "registers": "#/partialExport/operations/0/registers",
+          "value_domains": "#/partialExport/operations/0/value_domains",
+          "resource_action": "#/partialExport/operations/0/resource_action",
+          "claim_refs": "#/partialExport/operations/0/claim_refs"
+        }
+      }
+    ]
+  },
+  "guards": [
+    "Do not present this partial inventory as complete.",
+    "Do not infer runtime observation, submitted values, resource identity, shader identity, host behavior, or visible output from the static rows.",
+    "Do not infer that indirect or unrecovered references are absent from the maintained repaired reference index.",
+    "Do not assign a backend implementation owner or make this research manifest a title runtime dependency."
+  ],
+  "conclusion": "RVA-F-0081 records one partial lowering root, two reachable operations, and one primitive contract. Five unresolved coverage categories keep the aggregate partial."
+}

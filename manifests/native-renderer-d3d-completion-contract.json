@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0306",
+  "topic": "native-renderer-d3d-completion-contract",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which exact completion effects constrain surviving guest APIs when draw, replay, present and ring bodies are replaced together, and where does the bounded evidence stop?",
+  "scope": {
+    "surfaceRegion": "0x8268CAA8-0x826C9C3F",
+    "boundary": "Static contract and explicit frontiers, not every device/resource alias, complete queue reclamation, runtime equivalence or a safe renderer cut. A separate exact-function packet had at most eight direct functions; generated semantic reads had at most 200 lines per window.",
+    "candidateHybrid": "Keep guest setters, getters, creators and dispatch tables; replace all draw entries, scratch begin/commit, Clear, Resolve, tiling/replay, predication, present and ring entries together. Internal fields need preservation only when a surviving reader or callback still observes them.",
+    "continuationFunctions": "Device initialization 0x8268D220/0x8268D278/0x8268D2C8/0x826A6380/0x826A63E8 and fill 0x827F7BB0; submit/list 0x8269BD98/0x826AC218/0x826AC020/0x826AC3F8/0x826ABB90/0x826ABA68; exact allocation and callback packets."
+  },
+  "dependencies": [
+    {"topic": "native-renderer-d3d-api-boundary", "use": "Surviving API, object, dispatch-table and outside busy/wait clients."},
+    {"topic": "native-renderer-d3d-runtime-surface", "use": "Accepted per-body API roles and partial ownership classification."},
+    {"topic": "native-renderer-d3d-lock-fill-contract", "use": "Resource wait callers and the distinct lock-selected resource+0xC fence."},
+    {"topic": "native-renderer-ring-span-boundary", "use": "Separate command storage, primary-ring publication and unclosed exact owned-span join."},
+    {"topic": "native-renderer-tiling-worker-store-boundary", "use": "List-selected replay writes without an allocation-owner or outside-reader closure."},
+    {"topic": "native-renderer-guest-frame-pacing", "use": "Accepted presentation callback, selector and fence dependencies."}
+  ],
+  "currentEvidence": {
+    "method": "Serial foreground read-only no-analysis tools/run-headless.ps1 queries; maintained ghidra/DumpFunctions.java, ghidra/DumpMemoryWords.java, ghidra/FindDirectCallers.java, ghidra/FindRawFieldStores.java and ghidra/FindPointerValues.java, with bounded exact-function generated corroboration. Sparse/truncated decompilation was not used as absence evidence.",
+    "generatedRevision": "d114f2b9b43c215cf88f0e4b6699bab99ea09d75",
+    "sdkRevision": "1f03b7bd45e92d21c4198e5d6caadf46118a3d89",
+    "inputQualification": "Fresh flat SHA-256 matched image.json. Mapped [0x82000000,0x83210000) SHA-256 was389EB006B1DCDE90C5DE775C92D67C18542B8FD9BD39845574206D4B213E9B13; 470 differing bytes in60ranges remained confined to[0x827F3F50,0x827F4280). Cited semantic words avoided that band. This was regional equivalence, not whole mapped-image equality.",
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x8269C6F0,0x8269BEB0,0x8269C5F0,0x8269C840,0x8269BD50,0x8269BDE0,0x8268CC30,0x8280DA68 word radius32",
+      "ghidra/DumpMemoryWords.java:0x8268CF10,0x8268CF50,0x8269CB90,0x8269CB08 word radius24",
+      "ghidra/DumpMemoryWords.java:0x8269BA84,0x8269BAD4,0x826A5BA0,0x8268D048 word radius20",
+      "ghidra/DumpMemoryWords.java:0x826A6974,0x826A69D4,0x826A6A88,0x8268FBB0,0x826981F8,0x82697B40 word radius32",
+      "ghidra/DumpMemoryWords.java:0x826A6350,0x8269B490,0x826A3ED0,0x826A3FD0,0x826A4710,0x826A489C,0x826A4B88,0x826A4210 word radius32",
+      "ghidra/DumpMemoryWords.java:0x826A2B78,0x826A2DF4,0x826A2FCC,0x826A2FF0,0x8269B844,0x8269C1B0,0x8250E9B0,0x82512940 word radius28",
+      "generated:rerevved/sub_8269C6C0,sub_8269BE70,sub_8269BCA8,sub_8269BD98,sub_8269C810,sub_8269C8E0",
+      "generated:rerevved/sub_826A6958,sub_826A6A08,sub_826981D8,sub_82697AA8,sub_826A62F8,sub_8269B450",
+      "generated:rerevved/sub_826A2B58,sub_826A2FF0,sub_8269B818,sub_8269C170,sub_8250E718,sub_82512608",
+      "ghidra/DumpFunctions.java:0x8268D220,0x8268D278,0x8268D2C8,0x826A6380,0x826A63E8,0x827F7BB0",
+      "ghidra/DumpFunctions.java:0x8269BD98,0x8269B550,0x826ABB90,0x826ABA68,0x826AC218,0x826AC020,0x826AC3F8,0x8269C810",
+      "ghidra/DumpMemoryWords.java:0x8268D220,0x826A6380,0x827F7BB0,0x8268D2A8,0x826A645C,0x8269CB9C,0x826A8C30,0x8319AEA8 word radius24",
+      "ghidra/DumpMemoryWords.java:0x827F7BE8,0x827F7C28,0x826A63A8,0x826ABB34,0x826ABB00,0x826AC344,0x826AB8A8,0x826AB9D0 word radius24",
+      "ghidra/FindDirectCallers.java:0x8269BD98 cap128; five direct linked sites 0x8269C538,0x8269C610,0x826AC364,0x826AC3B0,0x826AC3E4",
+      "ghidra/FindDirectCallers.java:0x8269BF40 cap128; four direct linked sites 0x8269C8CC,0x826A4298,0x826AAEA0,0x826AC32C",
+      "ghidra/FindDirectCallers.java:0x8269C888 cap128; two direct linked sites 0x8269D560,0x8269DBD0",
+      "ghidra/DumpFunctions.java:0x8269BF40,0x8268CAD8,0x8269C888,0x826AADA8,0x826A4150,0x8269D320,0x8269DB20,0x826A8BE8",
+      "ghidra/DumpMemoryWords.java:0x8269BFA0,0x8269C0F4,0x8269C8C0,0x826A4290,0x826AAE94,0x8269D550,0x8269DBC0,0x8268CB44 word radius24",
+      "generated:rerevved/sub_8268D220,sub_8268D278,sub_8268D2C8,sub_826A6380,sub_826A63E8,sub_827F7BB0",
+      "generated:rerevved/sub_826AC020,sub_826AC3F8,sub_826ABB90,sub_826ABA68,sub_826AC218",
+      "generated:rerevved/sub_826AB448,sub_826AB510,sub_826AB648,sub_826AB058,sub_826AB740,sub_826A6AB8",
+      "generated:rerevved/sub_8269BF40,sub_8268CAD8,sub_8269C888,sub_826AADA8,sub_826A4150,sub_8269D320,sub_8269DB20,sub_826A8BE8",
+      "ghidra/DumpFunctions.java:0x8269B508,0x8268D278,0x826AC3F8",
+      "ghidra/DumpMemoryWords.java:0x8269B538,0x826AC068,0x826ABC58,0x826ABCC4,0x826ABDE0,0x826AC4D0,0x826AC3B0,0x826AC2B8 word radius24",
+      "generated/default/rerevved_recomp.173.cpp:13216-13254 sub_8269B508",
+      "ghidra/DumpMemoryWords.java:0x826AAE14,0x826AAE6C word radius24",
+      "ghidra/DumpMemoryWords.java:0x8269C538,0x8269C610 word radius24"
+    ],
+    "queryBounds": {
+      "directStores": "62,566 initialized executable aligned words in[0x8268CAA8,0x826C9C40); 24D/DS store-displacement candidates for2A9C,2AA0,2A90,2A88,2AC8,2B00,34D4,34D8, no truncation/cancellation.",
+      "readWriteAddressForms": "121D/DS read/store or addi-address candidates for the same fields/range, no truncation/cancellation. Base provenance was unchecked; rebased/indexed/atomic accesses, bulk writes and copied aliases were outside the syntax model.",
+      "maskWriter": "Device allocation fill is a closed initial zero writer. Whole initialized-mapped exact stw-displacement forms found two P sites BD84/CB9C and zero2AA0; overlapping std at2A98 had one unclassified code/data candidate0x8319AEA8, while2A9C/2AA0 had zero. No all-alias, indexed, atomic or bulk-writer closure follows.",
+      "allocationCalls": "ghidra/FindDirectCallers.java:0x8269B818; 13 direct linked calls, cap256, no truncation/cancellation. A callsite inventory did not inspect all13 bodies or identify the reported6MB owner.",
+      "callbackWriters": "ghidra/FindRawFieldStores.java:[0x82680000,0x826D0000),81920 initialized executable words, fields409C/40A0/347C/2A9C/2AA0/2A98, cap128: only P stores BD84/CB9C. ghidra/FindPointerValues.java:whole initialized-mapped maskFC00FFFF stw409C/40A0/347C each0; maskFC00FFFC std4098/409C/40A0/3478/347C each0. addi forms had2/4/11 candidates with bases unproved; the11-site fanout stopped before semantic expansion. No non-D3D installer or absence proof follows.",
+      "recordHeader": "ghidra/FindPointerValues.java:whole initialized-mapped lis maskFC1FFFFF pattern3C008A00, cap32, found only parser0x826AB918. Copied/computed headers and actual0x80/0x8A producers remain unresolved."
+    },
+    "continuationGeneratedRevision": "72bf852bed174893372fb948f2a4edbcd599e63b",
+    "revisionScope": "generatedRevision identifies inherited fence, thread/SDK, resource, scratch and present evidence. continuationGeneratedRevision identifies deviceInitialization, zeroPReachability, allocationOwnership, callbackInstallations, the refined submission retirement and A6380 thread-ID writer. Guest native words are authoritative; instrumentation in generated code is corroboration. No new SDK interpretation was required."
+  },
+  "fenceArithmetic": {
+    "label": "V",
+    "notation": "G=*(*0x820009F0); B=load32(G+0x2A90); P=load32(G+0x2A9C); C=load32(B+0); U(x)=x modulo2^32; f is a requested scalar fence.",
+    "busy": "0x8269C6C0 returned0 for f=0. If f=P it called0x8269C588 before reloading P/C. It returned1 exactly when U(P-f)<U(P-C), comparing unsigned32 values; otherwise0. Wrapper0x8269C738 loaded f from resource+8. This was not a signed half-range comparison.",
+    "wait": "0x8269BE70 exited for f=0 or U(P-f)>=U(P-C). While pending, r7 low byte0 and f=P selected an early exit forG+0x33B0!=0 or a C588 flush otherwise. It rechecked the predicate and bracketed polling with0x8268CAA8/0x8268CAD8. Poll0x8268CBB8 could escape independently; residualr3 was not established as a canonical HRESULT.",
+    "emitter": "0x8269BCA8 emitted INVALIDATE_STATE then two C0025800 EVENT_WRITE_SHD packets with initiator3: encodedphysical(B+4)|2 received G+0x30|(G+0x3A48&3), then encodedphysical(B)|2 received oldP. It stored U(oldP+2) toG+0x2A9C at0x8269BD84.",
+    "guardedCpuWrites": "Only when G+0x541C==0 and byte G+0x2ABD&2 did BCA8 also directly write B+0=oldP followed by B+4=cursor before advancing P. The branch at0x8269BD60 skipped these stores for a nonzero541C. This guarded CPU order differed from GPU packet order and was not ordinary GPU-retirement proof.",
+    "initialization": "0x8269C8E0 allocated/zeroed96-byteB and separate32-byteS2 atG+0x2A94. It selectedP=3 only for oldP=0, otherwise retainedP; setC=U(P-2), B+4=cursor andG+0x2AC8=0. B+0x3C was separately registered with VdEnableRingBufferRPtrWriteBack; B+8 with VdSetSystemCommandBufferGpuIdentifierAddress.",
+    "qualification": "The modular rule is exact for these readers. Reset epochs, outstanding distance and aliases remain inputs. Ring RPTR, next issue ticket and completed ticket are distinct."
+  },
+  "deviceInitialization": {
+    "label": "V",
+    "allocation": "0x8268D2C8 cleared its output, requested24064bytes=0x5E00 atalignment128 through0x8268D278, ran0x826A6380 and then0x826A63E8. D220 requested size+alignment, rounded its raw result up and stored the raw base at aligned-4 at0x8268D258; it did not clear memory.",
+    "fill": "On a nonnull allocation D278 called0x827F7BB0(device,0,24064) at0x8268D2A8, continuation0x8268D2AC. The complete normal-return helper performed alignment bytes, repeated-word16-byte groups, word and byte tails, without forwarding a call. It zeroed[device,device+0x5E00), including P,2AA0,347C,409C,40A0,34CC,34D0,34D4 and34D8.",
+    "beforePublication": "A6380 directly wrote only device+3C=1,+2A80=the loaded global64,+2A88=current thread ID,+2A8C=0,+4158=the4800-byte allocation result. A63E8 publishedG at0x826A645C, then called ExGetXConfigSetting and C8E0 at0x826A6474, continuation6478. No direct pre-init binder was found in this exact construction chain; imported effects/reentrancy remain qualified.",
+    "corroboration": "generated/default/rerevved_recomp.2.cpp:12633-12683; rerevved_recomp.179.cpp:12645-12695; rerevved_recomp.81.cpp:12653-12785; rerevved_recomp.161.cpp:12852-12914; rerevved_recomp.94.cpp:12929-13239; rerevved_recomp.110.cpp:15950-16048",
+    "qualification": "Normal-return zero fill and observed direct construction effects are closed. Allocation failure, imported calls and unobserved later aliases do not establish an immutable zero value or runtime activation."
+  },
+  "threadOwnership": {
+    "label": "V",
+    "value": "0x8280DA68 read[[r13+0x100]+0x14C]. SDK src/kernel/xboxkrnl/xboxkrnl_threading.cpp:45-56 and include/rex/system/xthread.h:278 at the pinned revision identified thread_id. G+0x2A88 therefore carried current-thread identity on the inspected writers, not a timestamp.",
+    "writers": "0x8268CF10 wrote the current ID at0x8268CF38;0x8268CF50 executed eieio then wrote zero at0x8268CF58; resume0x8268CFF8 wrote the ID at0x8268D050 under its critical section. A6380 also wrote the current ID at0x826A63B0. The separate raw0x8268CFD8 candidate and all aliased writers were not globally classified.",
+    "readers": "0x8268CBB8 comparedG+0x2A88 with the current ID and checkedG+0x2AFC. Its separate watchdog tested unsigned elapsed kernel_time>=5000 from wait-context+0xC; units were not proved.0x8268CAD8 also updated profiling and optionally calledG+0x347C.",
+    "corroboration": "generated/default/rerevved_recomp.68.cpp:16429-16438; rerevved_recomp.188.cpp:12746-12788; rerevved_recomp.81.cpp:12641-12652; rerevved_recomp.186.cpp:12334-12413"
+  },
+  "zeroPReachability": {
+    "label": "I",
+    "knownTransitions": "After successful C8E0 on a fresh zero-filled device, P=3. C8E0 preserves an old nonzero P; BCA8 adds2 modulo2^32. Reset0x8268CE90 calls C8E0 and has no own P store. Captured suspend0x8268CF60/resume0x8268CFF8 bodies have no own P store. Odd parity survives these identified paths and wrap, so none reachesP=0.",
+    "preInit": "Before first ring success the known state isP=0 and2AA0=0. The known binder/resource zero-P mask test0&resource[0] is false. No direct pre-init binder appears in D2C8/D278/A6380/A63E8. C8E0 failure can leave the freshly published device atP=0; its externally usable lifetime and later writers are unclosed.",
+    "stop": "This is a known-transition invariant, not global P==0 unreachability. Indirect callbacks, imported effects, indexed/rebased/overlapping/atomic/copy writers and the unclassified0x8319AEA8 candidate remain outside closure. No pre-init record decoder or complete binder reachability was established.",
+    "corroboration": "generated:rerevved/sub_8269C8E0,sub_8269BCA8,sub_8268CE90,sub_8268CF60,sub_8268CFF8; currentEvidence/queryBounds/maskWriter"
+  },
+  "resourceRecords": {
+    "label": "V",
+    "survivingWriters": "SetStreamSource0x8268FB08, SetIndices0x8268FCB0, SetPixelShader0x82692948, SetVertexShader0x82692C48 and SetTexture0x8269AF10 stamped the old nonnull resource+8 withP whenP!=0. ForP=0 they testedG+0x2AA0&resource[0] and could append a pointer-derived record.0x82698BB0 and replaced Resolve0x8269E520 supplied additional producer classes.",
+    "layout": "G+0x34D0 held current segment, G+0x34D4 the next8-byte record, G+0x34D8 its exclusive end.0x826A6958 requested502dwords=2008bytes, alignment128; normal payload[segment+8,segment+2008) held250records. Full check was unsignedcursor>=limit. Segment+0 linked the next segment; segment+4 recorded used count when linked; allocator ownerG+0x34CC received the first encoded link atowner+0x70.",
+    "record": "Observed appenders wrote an8-byte value: pointer-derived first word, secondword0xFFFFFFFF, then cursor+=8. Binders cleared bit30; result-reader/Resolve producers setbit30. The record decoder and exact class meaning were not identified. No observed append itself decrementedresource+4, calledRelease or freed a resource.",
+    "adjacentQueue": "0x826A6A08 requested34dwords=136bytes, alignment128; separateG+0x34DC/34E0/34E4 described a16-record payload after an8-byte header. It was not the34D4drain.0x826A72F8 flushed cache lines and synchronized; it did not clear the payload.",
+    "release": "0x826981D8 atomically decrementedresource+4; zero could recursively release a type4child then call0x82697AA8. That cleanup selected type-specific resource+8 waits throughBE70 before physical frees through0x82E29160 on captured paths. It did not directly consumeG+0x34D4.",
+    "drainFrontier": "The queue was a deferred resource-record/stamp candidate, not a proved pending-release list. Its initial mask/cursors are zero, and known successful ticket transitions stay odd. A nonzero mask writer and a P=0 reachable producer would be required to activate the known append guard. Global unreachability, an exact decoder, drain trigger and segment reclamation remain unproved. AdvancingP/C alone is not equivalent processing if such a surviving path is reached.",
+    "corroboration": "generated:rerevved/sub_826A6958,sub_826A6A08,sub_826A72F8,sub_826981D8,sub_82697AA8; append PCs0x8268FBEC,0x8268FD30,0x826929C8,0x82692CDC,0x8269B080,0x82698C6C,0x8269F35C"
+  },
+  "submissionAndCallbacks": {
+    "label": "V",
+    "pendingCount": "BD98 adds incomingr7 toN=load32(G+0x2B00) once through mutually exclusive deferred0x8269BE1C or direct0x8269BE4C arms. Direct routing also occurs if a locked nonzero-path reread becomes0. Native direct-LK census found five calls: C400 atC538 and C588 atC610 withr7=0; AC218 optionalAC364/middleAC3B0/finalAC3E4 withr7=0/1/0. Zero adds create no independent unit to retire. C810 separately spins onN after its fence wait.",
+    "ringIndex": "0x8269B900 usedG+0x2AC8, primary baseG+0x3A30 and maskG+0x3A34 for masked command writes; it published the index at0x8269BA84 and MMIO0x7FC80714 at0x8269BA90 with sync/eieio. OptionalG+0x541C/G+0x5B0C sinks were separate indirect boundaries. Index/RPTR progression did not itself writeC.",
+    "registration": "0x826A62F8 called VdSetGraphicsInterruptCallback at0x826A6364, continuation0x826A6368, withr3=0x8269B450,r4=G. The guest handler received event selectorr3 andG inr4.",
+    "handler": "For event1,0x8269B450 loaded callback=S2+0x10, trapped after a debug call for0x0BADF00D, and otherwise called a nonzero callback withr3=load32(S2+0x14). UnderG+0x2A98 lock it cleared the current CPU bit fromS2+0 and masked to0x3F. For event0, MMIO0x7FC86544 bit0 gated0x826A3EB8.",
+    "presentCallbacks": "0x826A3EB8/0x826A3FB8 updated a distinct G+0x413C/4140 queue, counters/timing and S2+4 or MMIO0x7FC86110. A3EB8 used optional callback G+0x40A0; A3FB8 used G+0x409C. These bodies did not directly store G+0x2B00; transitive/aliased writers remained unknown.0x8269BF40 emitted callback/interrupt/wait commands; command construction was not callback execution.",
+    "qualification": "S2 denoted the block atG+0x2A94. EVENT_WRITE stores, RPTR writeback, callback acknowledgements, vblank queue state and guarded CPU recovery were separate producers. No single observed word replaced their whole protocol.",
+    "rootQueueJoin": "AC218 finalizes L=G+0x3438 throughB508 at0x826AC2B8. For nonnull L+4, B508 writes an encoded tail link and exactC0000000 at[L+8] at0x8269B53C. AC218 emitsAC020 with the encoded L[0] root/zero at0x826AC32C and its counted middleBD98r7=1 at0x826AC3B0 unless the captured guarded bypass applies. Whether the middle descriptor is direct or deferred, AC020 is the original root callback; the direct two-word submit descriptor need not carry that root terminator.",
+    "queueIdentity": "AC3F8's selected constructor stores W=G+0x2AC0 and CPU ordinali atQ_i+0/+4, Q_i=G+0x2C3C+80*i. AC020 places incomingr3 inQ_cpu+0x40+4*(producer&3), incrementsQ_cpu+0x38 and signalsQ_cpu+0x20. BB90 pops a queue item, incrementsW+0x3C at0x826ABC58 and advancesQ_i+0x3C at0x826ABC74. Those are worker participation, distinct fromN.",
+    "normalRetirement": "ABB90 passes exactC000 toABA68 at0x826ABDD4; nonexactC-class links continue at link+4. UnderW+0x44, ABA68 clears the current CPU participation bit and decrementsW+0x3C at0x826ABACC. On its final0 transition, it advances selected CPU queue consumers, and decrementsW+0x40=N at0x826ABB34 only ifW+0x48 is null. The six-CPU cleanup does not decrementN per CPU. This reconciles the normal writer recorded in RVA-F-0303; watchdogA5B48 zero remains separate.",
+    "pendingContinuation": "AB740's0x88 arm can retain an advanced cursor inW+0x48 and switch toW+0x54. After popping an item, BB90's first participant selects and clears a nonnullW48; otherwise it selects the fresh queued root+4 and saves that root atW4C. Later participants resumeW24. A pending cursor suppresses retirement at the earlier final active transition; only a final transition with no pending cursor decrementsN.",
+    "conservationLimit": "I: ordered normal-path event accounting isN_end=U(N_start+sum(selectedBD98r7)-D), whereD counts ABA68 exact-C000 final active transitions with nullW48. The counted middle submit and root callback are structurally joined. A global equalityD=sum(r7), exactly-once delivery for every valid root/pending chain, indirect submit/callback aliases, empty/failure roots and imported synchronization/runtime progress are not proved. The decrement is conditional per completed aggregate root/continuation group, not per BD98 descriptor, nested link or CPU."
+  },
+  "allocationOwnership": {
+    "label": "V",
+    "listInputs": "AB740's0x80 arm called0x827F8550 at0x826AB8A8 with destinationW+0x6C, source record+4 and count248, then advanced252bytes and resetW34/W164/W168. The0x8A arm read record+4/+8/+12/+16, calledAB1C0, passed word+4 toAB448 and conditionally W+0x6C with word+8 toAB510 or word+12 toAB648. native-renderer-replay-destination-owner-boundary.json owns the concrete0x80/0x89 constructor interfaces and remaining0x8A/output-pointer allocation frontier.",
+    "manager": "B818 staged r4dwords asr4<<2bytes, retained alignment, selected B618 for nullG34CC, A6848 for nonnull manager+98, otherwise A6AB8. native-renderer-replay-destination-owner-boundary.json owns A6AB8's exact minimum-request/context/dispatch contract and the unbound installer/target boundary.",
+    "ringConfiguration": "C8E0 read its incoming config+4/+8/+12/+16/+20. Zero sizes selected primary0x8000 and secondary0x200000; a zero divisor selected32. Existing config+8/+16 pointers bypassed allocations; resulting pointers were stored atG3A30/G3A38. These defaults, B96/S2 32 and C170's16896-byte staged request/4224-byte linked span do not bind the reported6MB extent.",
+    "extentQualification": "[0x1EBB0000,0x1F1B0000) is0x600000bytes in supplied runtime context, not a reproduced allocation identity. No allocator-return/free/physical-alias join or complete outside-replay reader set was established.",
+    "corroboration": "generated/default/rerevved_recomp.104.cpp:13045-13065,13187-13239; rerevved_recomp.152.cpp:13304-13334; rerevved_recomp.93.cpp:11837-11940; rerevved_recomp.151.cpp:13030-13225"
+  },
+  "scratchPair": {
+    "label": "V",
+    "begin": "0x826A2B58 calculated q=(low32(r5*r6)>>2), called0x8269B818(G,q,16), returned its pointer orzero, encoded that upload in command words and stored the pending command cursor atG+0x3484, upload pointer atG+0x3488 andq atG+0x3490. B818 scaledq by4 into a byte-size request.",
+    "inspectedCallers": "0x8250E718 and0x82512608 supplied count4,stride20, givingq=20dwords=80bytes. Their stores covered returned pointer+0 through+76 as four20-byte vertices; the first five words were not the whole buffer. Requested alignment was16.",
+    "endVertices": "0x826A2FF0 loaded one word fromG+0x3484 and stored it toG+0x30, then returned. It did not copy a20-byte vertex buffer or read all vertex bytes on the CPU. The emitted GPU fetch described the upload; post-commit backing retention/reuse was not closed.",
+    "allocatorBoundary": "0x8269B818 selected0x8269B618,0x826A6848 or an indirect manager route through0x826A6AB8; no specific system allocation or6MBowner was joined. Separately0x8269C170 passed4224dwords andalignment128 toB818, staging16896requested bytes, but linked a[H+4,H+4220) record area and flushed throughH+4224. Those units and extents were distinct.",
+    "qualification": "BeginVertices/EndVertices remained candidate names for the exact scratch-producing/commit behavior. Preserve writable80bytes through the paired commit for these observed calls; other count/stride forms, failure semantics and post-commit lifetime need their own caller join. The reported6MBallocation was not proved to back this upload or all list records."
+  },
+  "presentEffects": {
+    "label": "V",
+    "preSwap": "0x826A4630 tail-called0x826A4150 withr4=0. That path emitted GPU waits onS2+4, first reference1 then callback0x826A3FB8 then reference0, withwait_info0x13, mask0xFFFFFFFF andinterval0x100; it setG+0x2ABD bit0x10. These were command-stream waits, not frontbuffer freshness acknowledgement.",
+    "swap": "0x826A4638 incrementedG+0x40B0, called VdGetSystemCommandBuffer, conditionally copied its result toB+8 forG+0x541C!=0, otherwise reserved64dwords and called VdSwap at0x826A4884. It published retainedreservation+0x100 toG+0x30, updated flags/queue state and waited throughBE70 onG+0x3A5C before clearing bit0x10. Optional display persistence and other counter stores were internal effects with survival unclosed.",
+    "survivalQualification": "These were present-path writes. No exhaustive surviving-reader census forG+0x40B0,5B04,547C,5D78,4144 or callback queue/timing fields was proved. Replacing the complete present/ring subgraph did not automatically require each internal cursor or counter; retaining any consumer required its exact inputs and event ordering. G+0x2A88 was thread ownership, not a per-present timestamp."
+  },
+  "callbackInstallations": {
+    "label": "V",
+    "packetAbi": "S2=load32(G+0x2A94). BF40 carried incomingr6 callback/r7 argument in emitted register words when enabled; absent flags2/4 it normalized with6. C888 forwarded(G,flags,callback,argument) tor3/r5/r6/r7 ofBF40 and retained the cursor. This was command construction, distinct from B450 execution ofS2+10/+14.",
+    "constantTargets": [
+      {
+        "call": "0x8269D560",
+        "entry": "0x8269D320",
+        "callback": "0x826AC020",
+        "argument": "transformedG3438 head or selected zero/fallback arm; intervening retention was not fully read for an independent zero-arm proof"
+      },
+      {
+        "call": "0x8269DBD0",
+        "entry": "0x8269DB20",
+        "callback": "0x826AC020",
+        "argument": "transformedG3438 head or selected zero arm"
+      },
+      {
+        "call": "0x826AC32C",
+        "entry": "0x826AC218",
+        "callback": "0x826AC020",
+        "argument": "transformedG3438 head or0; flags originalr5|1"
+      },
+      {
+        "call": "0x826A4298",
+        "entry": "0x826A4150",
+        "callback": "0x826A3FB8",
+        "argument": "r30 computed from the selected interval/mode word"
+      },
+      {
+        "call": "0x826AAEA0",
+        "entry": "0x826AADA8",
+        "callback": "0x826A8BE8",
+        "argument": "AA6B0 return for incomingr4=0 and clear byteG2ABD bit2; otherwise stack+104 after zero-fill and optional code92 sink. Without a sink write that stack word remains0. Incomingr4 only selects the branch/mode; every emitting path overwritesr30."
+      }
+    ],
+    "queueCallback": "AC020 queues its incomingr3 to the current CPU's Q_i four-slot ring, increments its producer and signals the event. The worker's0x8C W+10/+14 dispatch is a different protocol and its installed target remains unbound.",
+    "optionalDeviceSlots": "The device fill initializesG347C/G409C/G40A0 to0. CAD8 optionally callsG347C withr3=0,r4=wait reason,f1=scaled unsigned low-timebase difference; units/target remain unbound. A3FB8 usesG409C and A3EB8 usesG40A0. Direct scalar-form searches did not bind a later writer, actual installed value or non-D3D title installer, and did not prove their absence.",
+    "otherEffects": "A8BE8 saves its input, calls0x8280F100, shifts the returned timestamp by10, includesG54AC and optionally calls *(*0x820007E8)+18 withcode93 and a stack payload. Clock-helper, optional sink and external consumers remain unclosed; this is not a proved ignorable callback.",
+    "corroboration": "generated:rerevved/sub_8269BF40,sub_8269C888,sub_8269D320,sub_8269DB20,sub_826AC218,sub_826A4150,sub_826AADA8,sub_826A8BE8,sub_8268CAD8; currentEvidence/queryBounds/callbackWriters",
+    "qualification": "Direct linked-call inventories and materialized constants establish static registration paths, not execution, every indirect/tail alias, actual S2 memory-write timing, installed optional callback lifetime or removal safety."
+  },
+  "candidateContract": {
+    "label": "I",
+    "obligations": [
+      "Retain valid G, resource headers and scalar stamps while surviving API/Release/wait clients read them. Issue the captured logical ticket withU(P+2), publish its completedC only after equivalent prior host work retires, and preserve the exact unsigned predicate across wrap/reset epochs.",
+      "For a surviving counted submission, retireN separately from completedC. Replace the root callback, per-CPU queue participation and pending continuation as one coherent effect; a root group retires only after its active participation reaches0 with no pendingW48. r7=0 descriptor calls add no independent unit. Model applicable S2 acknowledgement/RPTR/ring-space progression when their consumers survive. C810 requires its separate N loop to reach0.",
+      "Initial mask0 suppresses the known P=0 append guard; known successful ticket paths stay odd. Remove34D4 only after closing failed-init exposure, hiddenP/mask writers and surviving producers/consumers, or preserve the actual decoder/drain/reclamation. Do not invent Release calls or clear unknown records.",
+      "Return writable aligned scratch for surviving scratch callers and consume their upload before reuse. The known count4,stride20 form needs80bytes at requestedalignment16, not20bytes.",
+      "Bridge callback/present state only for surviving consumers. AC020 queueing, A3FB8 present effects and A8BE8's optional sink are real or unresolved effects; optionalG347C/G409C/G40A0 installers/lifetimes remain unbound. Drop their protocols only with their producers/effects/consumers together. A returned VdSwap, readable frontbuffer, RPTR or watchdog escape does not prove host/GPU completion."
+    ],
+    "sufficiency": "These are necessary conditional obligations. Normal decrement and initial zero fill are closed, but global group conservation, aliases, deferred-record reachability/decoder and physical backing lifetime prevent a complete implementable hybrid contract."
+  },
+  "unresolved": [
+    {
+      "boundary": "all completion aliases and nonzero2AA0 writer",
+      "nextStatic": "Begin with an actual G-derived indexed/atomic/copy writer or initializer after the closed D278 zero fill; classify code/data and operands at std candidate0x8319AEA8. Do not repeat direct-displacement negatives as all-writer closure.",
+      "runtimeDiscriminator": "Separately authorized observations record actualP/2AA0 writes at construction success/failure/reset/wrap, caller PC and exposed device lifetime; distinguish initialzero from later nonzero transitions."
+    },
+    {
+      "boundary": "root-group conservation and pending continuations",
+      "nextStatic": "Use the boundAC218->BF40/AC020->Q_i->BB90->ABA68 path to close valid root/continuation identity, exactly-once final transitions and indirect aliases. The normal writer isABB34, not an unresolved direct-offset search.",
+      "runtimeDiscriminator": "Record every BD98 selected arm/r7, root pointer, callback PC/arg, Q producer/consumer, W3C/W48/N change throughC810 exit; tag watchdogzero separately. Test pending continuation and overlapping roots rather than count one decrement per CPU/list descriptor."
+    },
+    {
+      "boundary": "34D4decoder and segment reclamation",
+      "nextStatic": "First bind a reachableP=0/nonzero-mask producer or failed-init exposure. Then bind ownerG34CC+70 link consumers, actual decoder and segment reclaim in a<=8function packet; preserve distinct34DC. Initialzero and known odd parity are not global unreachability.",
+      "runtimeDiscriminator": "Observe one naturalP=0/mask-matching append through consumption: resource pointer/class, selected stamp fields/values, trigger, free and segment reuse. MereP/Cadvance is not the decoder."
+    },
+    {
+      "boundary": "6MBowner and outside readers",
+      "nextStatic": "Use native-renderer-replay-destination-owner-boundary.json for accepted0x80/0x89 interfaces; bind the remaining0x8A and selected output-pointer constructors, then the G34CC/manager+A4/+A8/+AC installer and actualA6AB8 target before allocator fanout. C8E0 config/default pointers require actual-value/return joins.",
+      "runtimeDiscriminator": "Join allocator entry/return/free, requestedbytes/alignment and physical aliases to the reported[0x1EBB0000,0x1F1B0000) allocation; record reads outside replay and compare the actual scratch return."
+    },
+    {
+      "boundary": "scratch retention",
+      "nextStatic": "Join the savedG3488upload and emitted fetch to its consumer/reuse point; bind other count/stride callers separately, without treating the20dword request as bytes.",
+      "runtimeDiscriminator": "Observe80-byte upload writes, pairedcommit, host/GPU consumption and backing reuse/free in order; also recordzero-return callers."
+    },
+    {
+      "boundary": "callback and present survival",
+      "nextStatic": "S2 constant construction targets AC020/A3FB8/A8BE8 are bound. Find actual G-derived later installers/values for347C/409C/40A0, bind A8BE8's optional sink and distinct0x8C W10 target, and enumerate selected surviving present/counter readers before retaining internal fields.",
+      "runtimeDiscriminator": "Record source0/1, CPU bit/maskclear, callbackargs, S2+4, presentfence and display publication versus completedhost work; test actualreset/wrap epochs separately."
+    }
+  ],
+  "catalogPromotion": {
+    "newEntities": [
+      "RVA-SYM-0491",
+      "RVA-SYM-0492",
+      "RVA-SYM-0493",
+      "RVA-SYM-0494",
+      "RVA-SYM-0495"
+    ],
+    "updatedEntities": [
+      "RVA-SYM-0483"
+    ],
+    "result": "Promoted exact busy/fence emitters, conditional ABA68 retirement, D278 normal-return zero initialization and AC020 queue callback; refined the scalar wait claim. No complete device layout, global conservation, queue decoder or runtime-safe stub set was promoted."
+  },
+  "guards": [
+    "No every-reader/writer claim follows from displacement or direct-call syntax. Incomplete decompilation proves no absence.",
+    "No run-specific owner census was reproduced here; it did not prove6MBownership, universalcallback absence or safe ring stubs.",
+    "Do not callG+0x2A88 a timestamp,20dwords20bytes, or the34D4append path an observedRelease/free.",
+    "No title/SDK edits, runtime execution, builds, project save/repair or renderer implementation was established."
+  ],
+  "conclusion": "Completed and next tickets, resource stamps, submission count, ring pointers, callback acknowledgement and thread ownership are distinct observations. The ABA68 normal decrement/root callback join and device-wide zero fill refine the contract; known ticket paths stay odd. Global root conservation, hidden writers, deferred-record decoder,6MBowner and surviving aliases remain concrete frontiers. Advancing one fence word does not establish the complete completion contract."
+}

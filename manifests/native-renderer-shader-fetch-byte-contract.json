@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0304",
+  "topic": "native-renderer-shader-fetch-byte-contract",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which inputs and ordering rules determine the shader-fetch bytes written by 0x826AD150, and can its frame seed affect them?",
+  "scope": {
+    "function": "0x826AD150",
+    "instructionRange": "[0x826AD150,0x826AD75C)",
+    "copyHelper": "0x827F8550",
+    "copyCount": 12,
+    "directFunctions": 2,
+    "boundary": "Conditional shader-byte transformation, scratch ordering and sparse copy effect. No full register/frame contract, caller resource selection, live input retention or runtime parity."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-shader-fetch-patch-boundary",
+      "use": "Owns the mapped-input qualification, caller selection, compatible-cache hit and persistent versus allocated destinations."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Serial foreground read-only no-analysis queries through tools/run-headless.ps1 and ghidra/DumpMemoryWords.java, with exact-function generated corroboration and conditional integer/ordering checks.",
+    "inputQualification": "native-renderer-shader-fetch-patch-boundary.json#/currentEvidence/inputQualification applies. Fresh mapped-versus-flat comparison reproduced that qualification; AD150, the selected small-copy paths and both table ranges avoid every mismatch range.",
+    "coverage": "All 387 instruction positions of the exact generated AD150 body have captured native words. Address labels and selected load/store/immediate/rotate-mask operand encodings were reconciled. This is not a whole-program or runtime proof.",
+    "notation": "U(x) reduces modulo 2^32. R(x,s) rotates a 32-bit word left by s. I(d,x,s,m)=(R(x,s)&m)|(d&~m), reduced to 32 bits. s32 interprets a 32-bit word as signed; srawi32 is a 32-bit arithmetic right shift. Memory words and halfwords are big-endian.",
+    "inputs": {
+      "arguments": "r3=VS, r4=selected writable code base, r5=VD, r6=stride bytes, r7=variant v.",
+      "metadata": "M=VS+load32(VS+8*(v+112))+872; N=load32(M+28); patch list begins M+4*(load32(M+24)+9).",
+      "records": "Source record i begins VS+416*v+68+12*i; A,B,C are its words at +0,+4,+8. P_i is the original patch-list word at ordinal i.",
+      "declarations": "Count=load32(VD+24), record j begins d=VD+52+12*j. The first record whose byte9 equals R(P_i,20)&0xF and byte10 equals R(P_i,16)&0xF matches. D=load32(d+4), D0=load16(d), D2=load16(d+2).",
+      "sites": ["0x826AD164", "0x826AD1B8", "0x826AD1F4", "0x826AD200", "0x826AD320", "0x826AD32C"],
+      "corroboration": "generated/default/rerevved_recomp.60.cpp:13167-13272,13406-13424",
+      "qualification": "Current pointer identity, allocation extents, count validity, nonwrapping arithmetic and retention are required inputs, not established caller facts."
+    },
+    "recordWords": {
+      "noMatch": "n0=(running&0xF)|0x9250; w0=I(A,95,20,0x3FF00000); b=(B&0xBFC6CFFF)|0x00060000; w2=(C&0x80000000)|load8(strides).",
+      "matchedTag": "u=(R(D,22)&0x38)|(R(D,16)&7); u=R(u,3)&0xFFFFFFF8; u|=R(D,13)&7; u=R(u,1)&0xFFFFFFFE; u|=D&0xFC00; u=R(u,3)&0xFFFFFFF8; n0=(u|(running&0xF))&0xFFFF.",
+      "normalization": "Only when (D&0xC0)==0x40, normalize fields 0xE000,0x1C00,0x0380,0x0070 in order. If a field is at most 0x6000,0x0C00,0x0180,0x0030 respectively, toggle 0x2000,0x0400,0x0080,0x0010 respectively, preserving other bits. Composition before this gate is unconditional.",
+      "matchedWords": "k=(R(D,12)&0x3F000)|(D&0x300); z=U((95-D0)*0x01560056); z=I(z,z,11,0x00F80000); w0=I(A,z,1,0x07F00000)&0xC7FFFFFF; b=(R(k,4)&0xFFFFFFF0)|(B&0xBFC0CFFF); w2=(R(D2,6)&0x7FFFFF00)|load8(strides+D0)|(C&0x80000000).",
+      "sites": ["0x826AD228", "0x826AD25C", "0x826AD29C", "0x826AD34C", "0x826AD380", "0x826AD388"],
+      "corroboration": "generated/default/rerevved_recomp.60.cpp:13273-13452",
+      "qualification": "The 0x00F80000 operation replaces a field; OR gives different words. The no-match and matched B masks differ."
+    },
+    "packing": {
+      "table": "Eight big-endian halfwords in [0x82091394,0x820913A4). T[o] denotes load16(0x82091394+o), where o is an even byte offset0..14. Each captured halfword is even.",
+      "tag": "n=(n0&0xFFFF)|0xE; subsequent records carry n's low nibble.",
+      "selection": "Four sequential stages select table halfwords using R(currentWord1,1/30/27/24)&0xE as byte offsets, AND the halfword with n, fold the selected components, and replace fields 0x7,0x38,0x1C0,0xE00 respectively.",
+      "firstFold": "q=T[index]&n; a=(R(q,29)&0x1FFF)|q; apply a=(R(a,29)&0x1FFFFFFF)|q three more times; word1=I(b,a,31,0x7).",
+      "remainingStages": "The later families retain the current word outside their respective fields and use the distinct shift/mask sequences at the listed exact windows. Their table indices are evaluated after preceding field replacements.",
+      "sites": ["0x826AD37C", "0x826AD390", "0x826AD3D0", "0x826AD40C", "0x826AD448", "0x826AD480"],
+      "corroboration": "generated/default/rerevved_recomp.60.cpp:13453-13501,13502-13529,13530-13557,13558-13587"
+    },
+    "frameSeed": {
+      "load": "0x826AD1B8",
+      "claim": "The initial halfword read is at frame+0x50, not a source-address nibble. Only its low nibble is carried; OR 0xE fixes bits1..3. The remaining seed bit0 is removed by every tableHalfword&n because the captured halfwords are all even. Under retained tables and protected nonaliasing storage, changing the seed cannot change the shader-byte result.",
+      "qualification": "This is byte-output independence. Carried register state can still differ. Odd replacement table values, aliases or concurrent writes invalidate the proof; no full register/frame equivalence follows."
+    },
+    "orderingTable": {
+      "base": "0x820913A8",
+      "extent": "[0x820913A8,0x820913E8)",
+      "constructionSites": ["0x826AD4A0", "0x826AD4A4"],
+      "readSites": ["0x826AD5F0", "0x826AD5F4", "0x826AD600", "0x826AD604", "0x826AD6BC", "0x826AD6C0", "0x826AD6C4"],
+      "claim": "Both sort tie-break and canonicalization use byte index load16(record+4)&0x3F, which is (word1>>16)&0x3F in the big-endian layout. The low six bits of word1 select a different byte.",
+      "corroboration": "generated/default/rerevved_recomp.60.cpp:13595-13606,13789-13802,13900-13912"
+    },
+    "tableWriterSearch": {
+      "extent": ["[0x82091394,0x820913A4)", "[0x820913A8,0x820913E8)"],
+      "materializerForm": "Aligned initialized mapped words: lis followed within eight words by compatible addi/ori, for every byte address in the two intervals; cap128, two candidates, not truncated.",
+      "materializerSites": ["0x826AD1BC+0x826AD1C8", "0x826AD4A0+0x826AD4A4"],
+      "literalForm": "Exact aligned literals 0x82091394,0x82091398,0x8209139C,0x820913A0,0x820913A8,0x820913E4; cap64 per value, zero matches.",
+      "storeForm": "Raw stw/stwu/stb/stbu/sth/sthu/std/stdu opcode/displacement candidates in 0x1380..0x13FF:109 words, none in [0x82680000,0x826B0000), no cap saturation. Base provenance was not established.",
+      "claim": "The only materializer candidates were the known AD150 readers. No writer was identified by these bounded forms.",
+      "qualification": "The mapped-input qualification applies. This does not prove immutability: other base offsets, indexed or overlapping writes, aliases, bulk copies and runtime mutation remain unbound. Retain the table-retention guard."
+    },
+    "sorting": {
+      "span": "Positions with (P&0x300000)!=0 delimit a span. If the second boundary has both bits set, its pivot is special: distance-1 passes over a distance bound; otherwise distance passes over a distance+1 bound.",
+      "iteration": "During an inner sweep the left record pointer remains fixed while the right pointer advances. Swaps exchange all three words. The left pointer advances between sweeps; this is not an adjacent-pair bubble loop.",
+      "keys": "K0=(R(w0,14)&0x7C)|(R(w0,7)&3). Differing K0 values use right-minus-left, with special-pivot equality overrides. Equal K0 values compare signed K2=s32(srawi32(R(w2,1)&0xFFFFFFFE,9)); remaining ties compare bytes from the ordering table using the high-halfword index.",
+      "sites": ["0x826AD4A8", "0x826AD4FC", "0x826AD590", "0x826AD5F0", "0x826AD61C", "0x826AD648", "0x826AD650"],
+      "corroboration": "generated/default/rerevved_recomp.60.cpp:13607-13652,13658-13717,13718-13852",
+      "qualification": "Patch-list storage/order is retained. The reordered payloads are stack scratch, not metadata-list swaps."
+    },
+    "canonicalization": {
+      "guard": "For equal C0=I(w0,w0,25,0x000C0000)&0x01FC0000 tags, continue only when unsigned currentK2<=nextK2. Compute delta=U(table[highHalfwordIndex(next.w1)]-currentK2+nextK2), then require delta<=8.",
+      "writes": "Reduce delta by one modulo2^32 and raise it to R(current.w0,5)&7 if that old value is greater. Replace current.w0 field0x38000000 using I(current.w0,delta,27,0x38000000), and set next.w1 bit0x40000000.",
+      "iteration": "On a change the current pointer stays fixed while the following pointer advances; a no-change path moves current to following.",
+      "sites": ["0x826AD674", "0x826AD6B4", "0x826AD6B8", "0x826AD6BC", "0x826AD6C8", "0x826AD6CC", "0x826AD6F0", "0x826AD6FC"],
+      "corroboration": "generated/default/rerevved_recomp.60.cpp:13864-13951"
+    },
+    "copy": {
+      "mapping": "In original patch-list order, scratch payload i maps to codeBase+12*(P_i&0xFFF). The call is skipped only when that destination equals the current scratch pointer. Otherwise r5=12 and r4 is that scratch pointer at 0x826AD738..0x826AD740.",
+      "duplicates": "Repeated low-12-bit indices produce ordered writes; later copies determine final bytes at that index. The destination extent follows actual indices, not N*12.",
+      "globalAliasGuard": "Each executed destination is disjoint from every live scratch record and all immutable/protected inputs and save slots, so an earlier copy cannot overwrite a later source, patch entry or lookup byte. The native exact-pointer skip executes no helper; it is not permission for other overlapping copies.",
+      "helperGuards": "For the independently bounded word-aligned count12 helper paths, source and destination are divisible by four; payload and [SP-8,SP) addresses do not wrap; source is readable/immutable, destination writable, save slot readable/writable, and all three ranges are pairwise disjoint.",
+      "helperEffect": "The four source/destination mod8 cases0/4 copy 12 bytes via8+4,4+4+4,4+4+4,4+8. The helper separately saves/restores full64 r3 at SP-8. This does not reproduce its complete register or cache-operation contract.",
+      "sites": ["0x826AD720", "0x826AD730", "0x826AD734", "0x826AD738", "0x826AD740", "0x827F8550", "0x827F85AC", "0x827F85F8", "0x827F863C", "0x827F87C4"],
+      "corroboration": "generated/default/rerevved_recomp.60.cpp:13953-13987; generated/default/rerevved_recomp.167.cpp:16238-16410,16575-16636"
+    }
+  },
+  "guards": [
+    "Require valid nonwrapping VS/VD/variant/metadata/patch/source/stride/table/destination ranges, retained values and protected input/frame storage throughout the call.",
+    "No semantic maximum fetch count or safe compiler scratch capacity was established. Whole-frame arithmetic is not proof that records avoid saved registers, LR or other live slots.",
+    "Apply the seed-independence proof only with the retained even patch-table halfwords and no relevant aliases or concurrent writes.",
+    "Keep selected code allocation ownership, synchronization, allocator/fence effects and surrounding draw-entry writes under their separate caller contract.",
+    "This conditional byte model is not permission to consume AD150 or a draw entry, or to drop its frame/register/cache effects."
+  ],
+  "nextDiscriminators": [
+    "Bind a real call's arguments, counts, all patch indices, both lookup tables, selected code allocation and protected stack extents before admitting any caller case.",
+    "A separately authorized probe must predict from an immutable entry snapshot, execute Original once, and compare every selected shader byte and all surrounding modeled CPU-visible outputs."
+  ],
+  "conclusion": "The guarded shader-byte computation has explicit declaration/stride/table inputs, fixed-left scratch sorting, high-halfword lookup indices, conditional canonicalization and sparse ordered copies. With the captured even patch table the frame seed is irrelevant to these bytes. Actual caller validity/retention and complete draw-consumption parity remain separate unresolved requirements."
+}

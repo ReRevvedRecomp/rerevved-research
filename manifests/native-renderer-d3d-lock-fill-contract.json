@@ -1,0 +1,520 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0254",
+  "topic": "native-renderer-d3d-lock-fill-contract",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "How does the title create, lock, fill, bind and free its D3D resources, and what does each step write?",
+  "scope": {
+    "region": "Resource header producers, the lock core 0x82697CA0 and unlock core 0x82697F38 with their eleven entries, set texture 0x8269AF10, the fence wait 0x8269BE70, the release path through 0x82697AA8 and 0x82535298, the tile resolve caller 0x8250AC90, and the callback emitter 0x8269BF40",
+    "boundary": "This is static evidence from generated code and read-only Ghidra queries. It does not establish runtime call frequency, ordering, lock and unlock pairing, written ranges, or when the deferred release pass runs. Each item names the default-off runtime census or probe in nextDiscriminator that must settle it. Texel writers other than the Scaleform external image path and the Gamebryo 2D DDS path were not traced.",
+    "naming": "Public D3D or Gamebryo names appear only where an image string or a structural match supports them. Lock flag bits are named by behavior, not by public flag names."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-d3d-runtime-surface",
+      "use": "region functions, device layout and the inline shadow writers around set texture"
+    },
+    {
+      "topic": "native-renderer-resource-lifetime-boundary",
+      "use": "retained explicit buffer slots and the allocator reference inventory"
+    },
+    {
+      "topic": "native-renderer-creator-input-lifetime-boundary",
+      "use": "creator 0x82533DB8, its backing allocation call and the release dispatcher that this record extends"
+    },
+    {
+      "topic": "native-renderer-resolve-resource-contract",
+      "use": "0x34-byte texture header, Resolve 0x8269E520 and the base patcher"
+    },
+    {
+      "topic": "gfx-draw-producer",
+      "use": "renderer bind 0x82302758 that reaches set texture 0x8269AF10"
+    },
+    {
+      "topic": "gfx-backend-fetch-descriptor",
+      "use": "backend texture creation and the merge of the six-dword template into the fetch shadow"
+    },
+    {
+      "topic": "gfx-decoded-image-upload",
+      "use": "renderer upload 0x82304CF0 that creates and fills the backend texture"
+    }
+  ],
+  "currentEvidence": {
+    "method": "Generated-code inspection of exact bodies in the default generated output with narrow windows, flat-image word reads from the pinned image, and foreground read-only Ghidra queries FindVtableSlotCalls.java (displacement 0x003C over 0x82500000-0x8253FFFF), DumpReferences.java and DumpMemoryWords.java against the supported image. No runtime observation.",
+    "entries": [
+      {
+        "address": "0x82533DB8, 0x8269AB90, 0x826B6F78, 0x826982A8, 0x826983D0, 0x82534AA0, 0x82534BC0",
+        "role": "resource header producers",
+        "confidence": "strong",
+        "evidence": "0x82533DB8 is slot +0x08 (2D texture) of the resource manager vtable 0x8204A1B0 and is one of at least four texture header paths. D3D create texture 0x8269AB90 has 14 direct callers, the manager cube and volume slots +0x10 0x82533ED8 and +0x18 0x82533FF0 are siblings, and the caller-allocated header builder 0x826B6F78 has four callers. Vertex buffers come from 0x826982A8 and manager slot +0x28 0x82534AA0, which pops a pooled header and backing through 0x82534508 for usage bit 0x2. Index buffers come from 0x826983D0 and manager slot +0x30 0x82534BC0 -> 0x825346B0 -> 0x82534488.",
+        "locators": [
+          "generated/default/rerevved_recomp.19.cpp:9222",
+          "generated/default/rerevved_recomp.19.cpp:9231",
+          "generated/default/rerevved_recomp.19.cpp:9313",
+          "generated/default/rerevved_recomp.19.cpp:9347",
+          "generated/default/rerevved_recomp.131.cpp:9427",
+          "generated/default/rerevved_recomp.9.cpp:9349",
+          "generated/default/rerevved_recomp.104.cpp:12755",
+          "generated/default/rerevved_recomp.220.cpp:3893",
+          "generated/default/rerevved_recomp.149.cpp:10545",
+          "generated/default/rerevved_recomp.161.cpp:13101",
+          "generated/default/rerevved_recomp.168.cpp:9296",
+          "generated/default/rerevved_recomp.168.cpp:9325",
+          "generated/default/rerevved_recomp.28.cpp:31313",
+          "generated/default/rerevved_recomp.28.cpp:31340",
+          "generated/default/rerevved_recomp.30.cpp:26313",
+          "generated/default/rerevved_recomp.53.cpp:27472",
+          "generated/default/rerevved_recomp.195.cpp:9226",
+          "generated/default/rerevved_recomp.195.cpp:9241",
+          "generated/default/rerevved_recomp.25.cpp:9560",
+          "generated/default/rerevved_recomp.111.cpp:9274",
+          "ghidra/DumpMemoryWords.java:0x8204A1D0",
+          "ghidra/DumpReferences.java:0x82533DB8,0x82534AA0,0x8204A1B0"
+        ],
+        "runtimeCheck": "Count each producer per presented frame, and check sampled base pages that no producer covered, grouped by the drawing caller."
+      },
+      {
+        "address": "0x82697CA0, 0x82697F38",
+        "role": "lock core and unlock core",
+        "confidence": "strong",
+        "evidence": "All eleven lock and unlock entries reach one lock core 0x82697CA0 or one unlock core 0x82697F38. The lock adds 0x100 atomically to resource word +0x00 and the unlock subtracts it, which pairs them by a lock count. The lock waits on the resource fence, optionally emits ring coherency packets, and returns the backing's own guest address. Texture locks write {row pitch, bits}, volume locks {row pitch, slice pitch, bits}, buffer locks return the whole-buffer base. The unlock writes nothing the GPU consumes; when the last lock closes it flushes the CPU data cache over the ranges recorded at +0x14 and +0x18 through 0x826A72F8 and resets them to 0xFFFF0000.",
+        "locators": [
+          "generated/default/rerevved_recomp.92.cpp:12791",
+          "generated/default/rerevved_recomp.92.cpp:13159",
+          "generated/default/rerevved_recomp.154.cpp:13280",
+          "generated/default/rerevved_recomp.154.cpp:13298",
+          "generated/default/rerevved_recomp.167.cpp:12981",
+          "generated/default/rerevved_recomp.89.cpp:12929",
+          "generated/default/rerevved_recomp.148.cpp:12951",
+          "generated/default/rerevved_recomp.144.cpp:12364",
+          "generated/default/rerevved_recomp.123.cpp:13290",
+          "generated/default/rerevved_recomp.30.cpp:12896",
+          "generated/default/rerevved_recomp.107.cpp:12986",
+          "generated/default/rerevved_recomp.140.cpp:12963",
+          "generated/default/rerevved_recomp.97.cpp:12663",
+          "generated/default/rerevved_recomp.98.cpp:12728",
+          "generated/default/rerevved_recomp.167.cpp:12966",
+          "generated/default/rerevved_recomp.30.cpp:12879",
+          "generated/default/rerevved_recomp.133.cpp:12791",
+          "generated/default/rerevved_recomp.220.cpp:12377",
+          "generated/default/rerevved_recomp.219.cpp:13098",
+          "generated/default/rerevved_recomp.157.cpp:8880",
+          "generated/default/rerevved_recomp.163.cpp:8715"
+        ],
+        "runtimeCheck": "Join each lock to the unlock of the same resource and count intent flags. The unlock returns no range, so a written range equal to the locked subresource stays an assumption for a write watch to back."
+      },
+      {
+        "address": "0x8269AF10",
+        "role": "texture fetch shadow writer and bind-time registration",
+        "confidence": "strong",
+        "evidence": "Set texture 0x8269AF10 receives the device in r3, the slot in r4, the header or zero in r5 and a dirty bit in r6. It merges header +0x1C..+0x30 into the six fetch words at G+0x480+24*slot with base pages converted to physical, keeps the shadow's own sampler bits, clamps word 4 by the per-slot bytes at G+0x2EAE and G+0x2EC8, and stores the header pointer at G[0x3100+4*slot]. The previous header gets +0x08 = G+0x2A9C or is queued at G+0x34D4. The engine inline writers that touch texture fetch words call it first and then change only sampler bits in word 0 or word 3; the inline writers of shader constants (for example 0x823039E8, generated/default/rerevved_recomp.16.cpp:3209) do not call it.",
+        "locators": [
+          "generated/default/rerevved_recomp.30.cpp:12915",
+          "generated/default/rerevved_recomp.30.cpp:12929",
+          "generated/default/rerevved_recomp.30.cpp:13031",
+          "generated/default/rerevved_recomp.30.cpp:13042",
+          "generated/default/rerevved_recomp.30.cpp:13048",
+          "generated/default/rerevved_recomp.30.cpp:13059",
+          "generated/default/rerevved_recomp.100.cpp:23325",
+          "generated/default/rerevved_recomp.114.cpp:9070",
+          "generated/default/rerevved_recomp.216.cpp:13476"
+        ],
+        "runtimeCheck": "At each draw compare the storage words of every sampled slot with the header held in G[0x3100+4*slot] and count mismatches. Writers with computed addresses outside the scanned region are not excluded statically."
+      },
+      {
+        "address": "0x826982A8, 0x826983D0, 0x82697CA0",
+        "role": "vertex and index buffer headers and lock flag effects",
+        "confidence": "strong",
+        "evidence": "Vertex and index buffer headers are 0x20 bytes with the six-word resource prefix of texture headers. The vertex header holds the type word at +0x00, the refcount at +0x04, fences at +0x08 and +0x0C, the flush range at +0x14, address|3 at +0x18 and the encoded size at +0x1C. In the lock core flags 0x1010 select fence +0x0C, flags 0x12 skip coherency packets, flag 0x10 returns the 0xC0000000 view, and flag 0x1 suppresses flush-range recording. Effects are named by behavior, not by public flag names.",
+        "locators": [
+          "generated/default/rerevved_recomp.83.cpp:12617",
+          "generated/default/rerevved_recomp.83.cpp:12651",
+          "generated/default/rerevved_recomp.83.cpp:12700",
+          "generated/default/rerevved_recomp.61.cpp:12866",
+          "generated/default/rerevved_recomp.61.cpp:12917",
+          "generated/default/rerevved_recomp.92.cpp:12861",
+          "generated/default/rerevved_recomp.92.cpp:12935",
+          "generated/default/rerevved_recomp.92.cpp:13069",
+          "generated/default/rerevved_recomp.92.cpp:13141",
+          "generated/default/rerevved_recomp.173.cpp:9421",
+          "generated/default/rerevved_recomp.173.cpp:9434",
+          "generated/default/rerevved_recomp.173.cpp:9480",
+          "generated/default/rerevved_recomp.45.cpp:9127",
+          "generated/default/rerevved_recomp.226.cpp:23837",
+          "generated/default/rerevved_recomp.18.cpp:9382",
+          "generated/default/rerevved_recomp.210.cpp:9477",
+          "generated/default/rerevved_recomp.44.cpp:9538"
+        ],
+        "runtimeCheck": "Count vertex buffer locks by flag per presented frame, and check whether 0x1000 locks overwrite ranges the GPU still reads in the same frame."
+      },
+      {
+        "address": "0x82578E00, 0x8258B038, 0x8257B080, 0x825219C8, 0x82521EC0, 0x8252A5D0",
+        "role": "file texel fill under surface lock and unlock",
+        "confidence": "strong",
+        "evidence": "In the Scaleform external image path and the Gamebryo 2D DDS path, texels are written by conversion or copy routines between a surface lock 0x8269AE80 and unlock 0x82698FB0 (or 0x8269A9D0 and 0x82698F48), after creation and never by plain stores outside a lock. The final DDS texture comes from manager slot +0x08 0x82533DB8 and is filled by 0x826B5F30 under a source lock with flags 0x13 and a destination lock with flags 0. The engine source-data copies 0x82521EC0 and 0x8252A5D0 use the same lock, copy, unlock pattern with flags 0.",
+        "locators": [
+          "generated/default/rerevved_recomp.220.cpp:3893",
+          "generated/default/rerevved_recomp.220.cpp:4076",
+          "generated/default/rerevved_recomp.12.cpp:9986",
+          "generated/default/rerevved_recomp.172.cpp:10285",
+          "generated/default/rerevved_recomp.172.cpp:10464",
+          "generated/default/rerevved_recomp.12.cpp:10611",
+          "generated/default/rerevved_recomp.154.cpp:10413",
+          "generated/default/rerevved_recomp.69.cpp:10023",
+          "generated/default/rerevved_recomp.149.cpp:10545",
+          "generated/default/rerevved_recomp.149.cpp:10700",
+          "generated/default/rerevved_recomp.216.cpp:9524",
+          "generated/default/rerevved_recomp.102.cpp:8822",
+          "generated/default/rerevved_recomp.102.cpp:8877",
+          "generated/default/rerevved_recomp.102.cpp:8888",
+          "generated/default/rerevved_recomp.102.cpp:8926",
+          "generated/default/rerevved_recomp.144.cpp:8651",
+          "generated/default/rerevved_recomp.144.cpp:8686",
+          "generated/default/rerevved_recomp.144.cpp:8693",
+          "generated/default/rerevved_recomp.17.cpp:9097",
+          "generated/default/rerevved_recomp.17.cpp:9160",
+          "generated/default/rerevved_recomp.17.cpp:9189"
+        ],
+        "runtimeCheck": "Count, per new mirror, whether the first write notice falls inside a lock window of the same header, and count notices with no open lock. Movie, dynamic and untraced 0x82C... writers were not traced."
+      },
+      {
+        "address": "0x82697CA0, 0x8269BE70",
+        "role": "lock fence wait",
+        "confidence": "strong",
+        "evidence": "The lock core calls 0x8269BE70 with resource +0x08, or +0x0C when flags & 0x1010 (the parent's fields for a parented surface), and reason 10 for vertex buffers, 12 for index buffers and 14 for textures. A zero fence returns at once. The wait is done when the block word B[0] = *(G+0x2A90) has reached the fence in wrap-aware order against G+0x2A9C. A fence equal to the pending G+0x2A9C first runs the flush 0x8269C588, unless G+0x33B0 is nonzero, in which case it returns without waiting. Otherwise it polls 0x8268CBB8 between 0x8268CAA8 and 0x8268CAD8.",
+        "locators": [
+          "generated/default/rerevved_recomp.92.cpp:12837",
+          "generated/default/rerevved_recomp.92.cpp:12861",
+          "generated/default/rerevved_recomp.92.cpp:12904",
+          "generated/default/rerevved_recomp.136.cpp:12923",
+          "generated/default/rerevved_recomp.136.cpp:12959",
+          "generated/default/rerevved_recomp.136.cpp:12998",
+          "generated/default/rerevved_recomp.30.cpp:13048",
+          "generated/default/rerevved_recomp.124.cpp:12974",
+          "generated/default/rerevved_recomp.161.cpp:12656",
+          "generated/default/rerevved_recomp.163.cpp:14643",
+          "generated/default/rerevved_recomp.163.cpp:14831",
+          "generated/default/rerevved_recomp.195.cpp:12297",
+          "generated/default/rerevved_recomp.140.cpp:16627",
+          "generated/default/rerevved_recomp.121.cpp:13097",
+          "generated/default/rerevved_recomp.41.cpp:12776",
+          "generated/default/rerevved_recomp.117.cpp:12672",
+          "generated/default/rerevved_recomp.75.cpp:12732",
+          "generated/default/rerevved_recomp.211.cpp:13427",
+          "generated/default/rerevved_recomp.115.cpp:12931",
+          "generated/default/rerevved_recomp.132.cpp:12498"
+        ],
+        "runtimeCheck": "Record the requested fence against B[0] at lock entry, split by reason code. The meaning of the G+0x33B0 early return is unresolved."
+      },
+      {
+        "address": "0x826981D8, 0x82697AA8, 0x82535298, 0x82E29160",
+        "role": "refcount-zero release and backing free",
+        "confidence": "strong",
+        "evidence": "Both release families free the backing through 0x82E29160 -> 0x8280DB58 -> 0x8280DEC8 -> MmFreePhysicalMemory 0x82E92434. D3D Release 0x826981D8 reaches destroy 0x82697AA8 at refcount zero, which waits on +0x08 and frees immediately. Resource manager release slots 0x825348A8, 0x82534950 and 0x825349F8 only store the allocation attributes at +0x04 and queue the header on RM+0x22C. Manager slot +0x3C 0x82535298, called through renderer method 0x8250B8B0, frees a queued texture only when 0x826984D8 and 0x8269C738 both return zero (not bound, fence passed). The creator's attributes 0xBCFF0000 have bit 31 set, so the backing comes from 0x8280DE40 and MmAllocatePhysicalMemoryEx 0x82E92654, and bit 30 clear means it is not zero-filled.",
+        "locators": [
+          "generated/default/rerevved_recomp.185.cpp:13220",
+          "generated/default/rerevved_recomp.121.cpp:12968",
+          "generated/default/rerevved_recomp.121.cpp:13079",
+          "generated/default/rerevved_recomp.121.cpp:13265",
+          "generated/default/rerevved_recomp.200.cpp:9094",
+          "generated/default/rerevved_recomp.115.cpp:9258",
+          "generated/default/rerevved_recomp.226.cpp:9309",
+          "generated/default/rerevved_recomp.167.cpp:9855",
+          "generated/default/rerevved_recomp.167.cpp:9931",
+          "generated/default/rerevved_recomp.167.cpp:9977",
+          "generated/default/rerevved_recomp.122.cpp:9139",
+          "generated/default/rerevved_recomp.76.cpp:9063",
+          "generated/default/rerevved_recomp.76.cpp:9072",
+          "generated/default/rerevved_recomp.92.cpp:9239",
+          "generated/default/rerevved_recomp.73.cpp:30750",
+          "generated/default/rerevved_recomp.108.cpp:16379",
+          "generated/default/rerevved_recomp.99.cpp:16393",
+          "generated/default/rerevved_init.cpp:40197",
+          "generated/default/rerevved_init.cpp:40231",
+          "ghidra/DumpReferences.java:0x82535298",
+          "ghidra/DumpMemoryWords.java:0x8208E9E0",
+          "generated/default/rerevved_recomp.214.cpp:16196",
+          "generated/default/rerevved_recomp.214.cpp:16231",
+          "generated/default/rerevved_recomp.214.cpp:16237",
+          "generated/default/rerevved_recomp.19.cpp:9313",
+          "generated/default/rerevved_recomp.200.cpp:9144",
+          "generated/default/rerevved_recomp.167.cpp:9866",
+          "generated/default/rerevved_recomp.167.cpp:9875",
+          "generated/default/rerevved_recomp.167.cpp:9948",
+          "generated/default/rerevved_recomp.167.cpp:9971",
+          "ghidra/FindVtableSlotCalls.java:0x82500000-0x8253FFFF"
+        ],
+        "runtimeCheck": "Record events at the two 0x82E29160 calls in 0x82535298 and at 0x82697AA8, keyed by header pointer and serial, and compare later creates against freed ranges. The frequency of the deferred pass is unmeasured."
+      },
+      {
+        "address": "0x8250AC90, 0x8269D320",
+        "role": "per-tile resolves inside the tiling bracket",
+        "confidence": "strong",
+        "evidence": "Do_EndUsingRenderTargetGroup 0x8250AC90 (EndTiling string 0x8203F230) issues the per-tile Resolve calls 0x8269E520 itself, for color targets and depth, with predication 0x8269CD20(G, 3 << (2 * tile)) when the tile count is above one. It then clears predication and calls EndTiling 0x8269D320 with null resolve arguments, so EndTiling's own resolve loop is skipped. The resolves follow every draw of the bracket and no draw sits between them and EndTiling. The second tiling user 0x82C71880 calls no Resolve. The other direct Resolve callers were not placed relative to a bracket.",
+        "locators": [
+          "generated/default/rerevved_recomp.60.cpp:8684",
+          "generated/default/rerevved_recomp.60.cpp:8730",
+          "generated/default/rerevved_recomp.60.cpp:8841",
+          "generated/default/rerevved_recomp.60.cpp:9098",
+          "generated/default/rerevved_recomp.60.cpp:9143",
+          "generated/default/rerevved_recomp.60.cpp:9173",
+          "generated/default/rerevved_recomp.60.cpp:9190",
+          "generated/default/rerevved_recomp.96.cpp:12930",
+          "generated/default/rerevved_recomp.96.cpp:13092",
+          "generated/default/rerevved_recomp.96.cpp:13119",
+          "generated/default/rerevved_recomp.96.cpp:13531",
+          "generated/default/rerevved_recomp.28.cpp:26815",
+          "generated/default/rerevved_recomp.28.cpp:26853"
+        ],
+        "runtimeCheck": "Count per bracket the Resolve calls with predication nonzero, and whether any draw or lock falls between the first tile Resolve and EndTiling."
+      },
+      {
+        "address": "0x8269BF40",
+        "role": "callback emitter cursor advance",
+        "confidence": "strong",
+        "evidence": "0x8269BF40 returns the cursor advanced by 4 bytes per dword written. Flag bits 0 or 6 write 37 dwords (148 bytes), 7 or 1 write 35, 2 writes 29, 3 writes 27 and 4 writes 8. The callers that store the result to G+0x30 (0x8269C888, 0x826A4150, 0x826AADA8) all use the 37-dword form. The tiling replay caller 0x826AC218 writes 35 dwords into its own 148-byte reservation from 0x8269B818 and does not store to G+0x30.",
+        "locators": [
+          "generated/default/rerevved_recomp.34.cpp:12687",
+          "generated/default/rerevved_recomp.34.cpp:12700",
+          "generated/default/rerevved_recomp.34.cpp:12734",
+          "generated/default/rerevved_recomp.34.cpp:12749",
+          "generated/default/rerevved_recomp.34.cpp:12955",
+          "generated/default/rerevved_recomp.123.cpp:13357",
+          "generated/default/rerevved_recomp.123.cpp:13359",
+          "generated/default/rerevved_recomp.45.cpp:13254",
+          "generated/default/rerevved_recomp.74.cpp:13068",
+          "generated/default/rerevved_recomp.222.cpp:12729",
+          "generated/default/rerevved_recomp.222.cpp:12740",
+          "generated/default/rerevved_recomp.222.cpp:12861",
+          "generated/default/rerevved_recomp.96.cpp:13150",
+          "generated/default/rerevved_recomp.96.cpp:13219",
+          "generated/default/rerevved_recomp.41.cpp:12884",
+          "generated/default/rerevved_recomp.43.cpp:12575"
+        ],
+        "runtimeCheck": "The advance length needs no probe. Whether the title depends on the emitted callback being raised is not settled by this record."
+      }
+    ],
+    "headerProducers": [
+      {
+        "producer": "0x82533DB8 (resource manager slot +0x08, 2D)",
+        "construction": "0x34-byte header from 0x82465E18, builder 0x826B6FE8 -> 0x826B6D68 -> 0x8269A378, backing from 0x82E29168 with attributes 0xBCFF0000, base patch 0x826B7140",
+        "callers": "indirect only, through renderer +0x574 slot +0x08 and explicit-buffer factory 0x825184D0"
+      },
+      {
+        "producer": "0x82533ED8 (slot +0x10, cube) and 0x82533FF0 (slot +0x18, volume)",
+        "construction": "same pattern through 0x826B7060 / 0x826B70D8 and base patch 0x826B7140",
+        "callers": "indirect only"
+      },
+      {
+        "producer": "0x8269AB90 (D3D create texture)",
+        "construction": "0x34-byte header and backing both from 0x82E29168; template 0x8269A378",
+        "callers": "14 direct: 0x82304CF0, 0x8257B080, 0x82578658, 0x8257A278, 0x8258B038, 0x82305558, 0x8250B350, 0x82A91668, 0x82A91798, 0x82C6C488, 0x82C67CB8, 0x82C292D0, 0x82C8D738, 0x826A5EB8"
+      },
+      {
+        "producer": "0x826B6F78 (caller-allocated header)",
+        "construction": "0x826B6D68 without allocation; callers allocate the backing and patch with 0x826B71A8",
+        "callers": "0x82518280, 0x82E39A00, 0x82C6F808, 0x82C3E440; the last two hand the header to 0x82D3DBA0 / 0x82D3DC80, not traced"
+      },
+      {
+        "producer": "0x8269A378 direct users 0x826A8140, 0x826AA6B0, 0x826AA088",
+        "construction": "fetch-template builder inside the device",
+        "callers": "device-internal; roles not traced"
+      },
+      {
+        "producer": "0x826982A8 (D3D vertex buffer) and manager slot +0x28 0x82534AA0",
+        "construction": "D3D: 0x20-byte header and data from 0x82E29168. Manager: usage bit 0x2 pops a pooled header from 0x82534508 (power-of-two buckets at RM+0x2C), otherwise builder 0x826B6C40 with backing attributes 0xB2FB0000",
+        "callers": "0x82306A10, 0x82A91480 (D3D); indirect (manager)"
+      },
+      {
+        "producer": "0x826983D0 (D3D index buffer) and manager slot +0x30 0x82534BC0",
+        "construction": "D3D: 0x20-byte header and data from 0x82E29168. Manager: 0x825346B0 -> 0x82534488, builder 0x826B6CD8, backing attributes 0xB2FA0000",
+        "callers": "0x82306990 (D3D); indirect (manager)"
+      }
+    ],
+    "lockEntries": [
+      {
+        "entry": "0x8269A9D0",
+        "kind": "2D texture lock",
+        "path": "0x8269A238(tex, 0, 0, level, out, rect, flags) -> 0x8269A160 -> lock core, reason 14",
+        "writes": "out[0] = row pitch, out[4] = level address plus rect offset using the bits-per-pixel table 0x8208EA11"
+      },
+      {
+        "entry": "0x8269AAA8",
+        "kind": "cube texture lock",
+        "path": "0x8269A238(tex, 0, face, level, ...)",
+        "writes": "as 0x8269A9D0"
+      },
+      {
+        "entry": "0x8269AE80",
+        "kind": "surface lock",
+        "path": "parent +0x18, face (+0x1C >> 22) & 0x3F, level (+0x1C >> 28) & 0xF into 0x8269A238",
+        "writes": "as 0x8269A9D0"
+      },
+      {
+        "entry": "0x8269AB80",
+        "kind": "volume lock",
+        "path": "tail to 0x8269A2C8 -> 0x8269A160",
+        "writes": "out[0] = row pitch, out[4] = slice pitch, out[8] = bits"
+      },
+      {
+        "entry": "0x8269AEF0",
+        "kind": "volume level lock",
+        "path": "parent +0x18, level (+0x1C >> 28)",
+        "writes": "as 0x8269AB80"
+      },
+      {
+        "entry": "0x82698370",
+        "kind": "vertex buffer lock",
+        "path": "lock core with address +0x18 & ~3, size +0x1C & 0x03FFFFFC, reason 10, coherency word 0x03000000; r4 and r5 ignored, flags in r6",
+        "writes": "returns the buffer base in r3"
+      },
+      {
+        "entry": "0x82698480",
+        "kind": "index buffer lock",
+        "path": "lock core with +0x18 and +0x1C, reason 12, flags forced | 2",
+        "writes": "returns the buffer base in r3"
+      },
+      {
+        "entry": "0x82698F48, 0x82698FB0, 0x826983C0, 0x826984C8",
+        "kind": "texture, surface, vertex buffer and index buffer unlocks",
+        "path": "unlock core 0x82697F38 with page bases (+0x20 & ~0xFFF, +0x30 & ~0xFFF), the parent's bases, or +0x18",
+        "writes": "no return value"
+      }
+    ],
+    "lockFlagEffects": [
+      {
+        "condition": "flags & 0x1010",
+        "effect": "wait on fence +0x0C instead of +0x08"
+      },
+      {
+        "condition": "flags & 0x12",
+        "effect": "skip the ring coherency packets"
+      },
+      {
+        "condition": "flags & 0x10",
+        "effect": "return the pointer through the 0xC0000000 view of the same physical page"
+      },
+      {
+        "condition": "flags & 0x10 or resource word +0x00 bit 0x00200000, unless flags & 1",
+        "effect": "accumulate the locked range in 128-byte units into +0x14 (base) or +0x18 (mip level)"
+      },
+      {
+        "condition": "64-bit r4 nonzero",
+        "effect": "use a per-index fence pair at device +0x5D88 and force flags | 2; every listed entry passes zero"
+      },
+      {
+        "condition": "otherwise on the device owner thread",
+        "effect": "write register 0x0A31 with the coherency word, registers 0x0A2F and 0x0A30 with base and size, and a WAIT_REG_MEM (0xC0043C00) into the ring at G+0x30, flushing through 0x8269C588 when G+0x30 exceeds G+0x38; from another thread merge the range into G+0x2E30 through 0x8269B390"
+      }
+    ],
+    "bufferHeaders": {
+      "size": "0x20 bytes for vertex and index buffers",
+      "word00": "type word: 0x00100001 (vertex, type 1), 0x00100002 | (format << 29) (index); usage bit 0x4 adds 0x00200000, usage bit 0x200 adds 0x00400000",
+      "word04": "refcount, 1 at creation",
+      "word08": "GPU-use fence, zero at creation",
+      "word0C": "GPU-write fence, zero at creation",
+      "word14": "flush range, 0xFFFF0000 when empty",
+      "word18": "vertex: backing address | 3; index: backing address",
+      "word1C": "vertex: (old & 0x08000000) | (length & 0x03FFFFFC) | 0x10000002; index: length",
+      "vertexAllocation": "header from 0x82E29168(32, 0x64800000), which sets attribute bit 30 (zero fill); data from 0x82E29168(length, 0xB0800000), or 0xA0800000 for usage bit 0x4, with bit 30 clear",
+      "qualification": "The usage bit values are the D3D create inputs observed in the creator bodies and are not named by public usage flags."
+    },
+    "fenceWriters": [
+      {
+        "writer": "0x8269AF10, 0x8268FB08, 0x8268FCB0, 0x82692948, 0x82692C48",
+        "effect": "store G+0x2A9C into the unbound resource's +0x08"
+      },
+      {
+        "writer": "0x8269E520 (Resolve)",
+        "effect": "stores G+0x2A9C into the destination +0x08, and into +0x08 and +0x0C on the second path"
+      },
+      {
+        "writer": "0x82698BB0",
+        "effect": "writes +0x08 and +0x0C"
+      },
+      {
+        "writer": "0x826A0108",
+        "effect": "writes +0x0C"
+      },
+      {
+        "writer": "0x826A4638 (present)",
+        "effect": "writes +0x08"
+      }
+    ],
+    "fenceWaiters": "0x8269BE70 has 12 call sites: the lock core, destroy 0x82697AA8 (+0x08), 0x8269C150 (+0x08), 0x8269C588 (G+0x2A9C - 2), 0x8269C810 (G+0x2A9C), present 0x826A4638 (G+0x3A5C), 0x8269C130 and 0x8269C270 (argument). IsBusy 0x8269C738 reads +0x08 without waiting.",
+    "releasePath": {
+      "d3dRelease": "0x826981D8 decrements +0x04 and at zero calls destroy 0x82697AA8, which switches on the type nibble through the byte table at 0x8208E9E0, waits on +0x08, frees texture pages +0x20 and +0x30, vertex +0x18 & ~3 or index +0x18 with attributes 0xB1800000, and frees the header with 0x24800000.",
+      "managerRelease": "0x82518678 -> 0x82518B40 dispatches slots +0x0C 0x825348A8, +0x14 0x82534950 and +0x1C 0x825349F8, which store 0xBCFF0000, 0xBCFE0000 and 0xBCFD0000 at +0x04 and append the header to the pending list at RM+0x22C under the lock at RM+0x208. Vertex slot +0x2C 0x82534B18 and index slot +0x34 0x82534BD8 use lists RM+0x12C and RM+0x1AC. Code 19 0x82533D10 returns 1 with no list.",
+      "deferredPass": "0x82535298 walks the lists. A texture header is freed only when 0x826984D8 returns 0 (not bound in the device stream, texture, index or target tables) and 0x8269C738 returns 0 (B[0] has passed +0x08). It removes the entry, calls 0x82515FA8(renderer[0x564]), frees +0x20 & ~0xFFF with 0x82E29160(base, attributes = +0x04), frees +0x30 & ~0xFFF when nonzero, different and header +0x1C bit 0x00200000 is clear, and frees the header with 0x82465F08. The vertex and index lists free +0x18 the same way unless +0x04 is 2, which goes to 0x82534D70.",
+      "passCaller": "Renderer method 0x8250B8B0 calls renderer[0x574] slot +0x3C with r4 = renderer[0xA8]. The manager methods 0x82535E08, 0x82535F10, 0x82535880 and 0x82535C20 also call their own slot +0x3C after a failure test. renderer[0x574] is constructed by 0x82534F48, which installs vtable 0x8204A1B0.",
+      "importChain": "0x82E29160 tails to 0x8280DB58; attributes with bit 31 set go to 0x8280DEC8, which tails to MmFreePhysicalMemory 0x82E92434. The allocation side is 0x82E29168 -> 0x8280DAC0 -> 0x8280DE40 -> MmAllocatePhysicalMemoryEx 0x82E92654."
+    },
+    "tileResolve": {
+      "owner": "0x8250AC90 loops over count = [r26+4] tiles; with count above one it sets predication 0x8269CD20(G, 3 << (2 * tile)) (the shift advances by two per tile, generated/default/rerevved_recomp.60.cpp:9122), calls Resolve 0x8269E520 for the color targets and for depth, then clears predication and calls EndTiling 0x8269D320 with integer r4,r5,r6,r7,r9,r10 = 0, r8 unproved, and f1 as a separate floating argument slot.",
+      "endTiling": "0x8269D320 runs its own per-tile Resolve loop only when its resolve-rect or destination argument is nonzero, then emits the replay through 0x826AC218.",
+      "beginTilingCallers": "0x8269CE90 (from 0x8250F988) and 0x8269D7D8 (from 0x82C71880)."
+    },
+    "callbackEmitter": [
+      {
+        "flags": "0 or 6 (flags & 6 == 0 gains 6)",
+        "dwords": 37,
+        "advance": 148
+      },
+      {
+        "flags": "7 or 1",
+        "dwords": 35,
+        "advance": 140
+      },
+      {
+        "flags": "2",
+        "dwords": 29,
+        "advance": 116
+      },
+      {
+        "flags": "3",
+        "dwords": 27,
+        "advance": 108
+      },
+      {
+        "flags": "4",
+        "dwords": 8,
+        "advance": 32
+      }
+    ],
+    "qualification": "Static evidence only. Runtime frequency, ordering, pairing and identity require a default-off probe. The vertex buffer call-site flags (0x1000 at 0x82523250 and 0x82523350, 0 at 0x82A903A0, forwarded at 0x82306410) and the index buffer call sites (all 0) are direct caller observations, not a complete flag census."
+  },
+  "nextDiscriminator": {
+    "site": "producer returns, lock core 0x82697CA0, unlock core 0x82697F38, set texture 0x8269AF10, the free calls in 0x82535298 and 0x82697AA8, and the Resolve calls from 0x8250AC90",
+    "question": "Do the static contracts hold in the running title, and which resources and ranges does each step touch?",
+    "limits": "The census must be default-off and read-only. It must not enable itself from this manifest and must not infer persistent identity from a guest pointer alone.",
+    "checks": [
+      "Count each header producer per presented frame, and check sampled base pages that no producer covered.",
+      "Join each lock to the unlock of the same resource, count intent flags, and compare the written range with the locked subresource.",
+      "Compare the storage words of each sampled slot at draw time with the header in G[0x3100+4*slot].",
+      "Count vertex buffer locks by flag, and check whether 0x1000 locks overwrite ranges the GPU still reads in the same frame.",
+      "Check whether the first write notice for each new mirror falls inside a lock window of the same header.",
+      "Record the requested fence against B[0] at lock entry, split by reason code.",
+      "Record the free calls in 0x82535298 and 0x82697AA8 keyed by header and serial, and compare later creates against freed ranges.",
+      "Count tile Resolve calls with predication nonzero per bracket, and whether any draw or lock falls between the first one and EndTiling.",
+      "Settle whether the title needs the callback raised that 0x8269BF40 emits."
+    ]
+  },
+  "guards": [
+    "Do not assume one create hook at 0x82533DB8 covers every mirror; at least four texture producers exist.",
+    "Do not treat an engine vertex buffer returned by 0x82534508 as a fresh allocation; it can be a pooled header and backing.",
+    "Do not treat the static lock shape as the runtime lock contract; pairing and intent need the census.",
+    "Do not assume the unlock reports a written range; it only flushes CPU cache over recorded ranges.",
+    "Do not name the lock flag bits with public lock names from familiarity; the effects recorded here are the evidence.",
+    "Do not assume a 0x1000 vertex buffer lock waits for GPU reads; it waits only on +0x0C.",
+    "Do not exclude computed-address writers to the fetch shadow outside the scanned region; only 0x8268CAA8-0x826C9C3F was scanned.",
+    "Do not bind by header pointer without checking storage words; G[0x3100+4*slot] is only as current as the last 0x8269AF10 call.",
+    "Do not extend the file fill result to movie, dynamic or untraced 0x82C... textures.",
+    "Do not treat the G+0x33B0 early return in 0x8269BE70 as a general no-wait rule; its meaning is unresolved.",
+    "Do not infer how often 0x82535298 runs or how soon an address is reused without a probe.",
+    "Do not place the other direct Resolve callers relative to a tiling bracket without a probe.",
+    "Do not return the input cursor from a stand-in for 0x8269BF40; the callers that store to G+0x30 need r4 + 148."
+  ],
+  "conclusion": "No single function sees every texture header: 0x82533DB8 is one of at least four texture producers, and vertex and index buffers have D3D and resource manager producers. All eleven lock and unlock entries reach lock core 0x82697CA0 or unlock core 0x82697F38, paired by a lock count in resource word +0x00. The lock waits on resource fence +0x08 (or +0x0C for flags 0x1010) through 0x8269BE70 and returns the backing's own address. The unlock flushes CPU cache over recorded ranges and reports no range. Set texture 0x8269AF10 writes the fetch shadow words from the header and records the header at G[0x3100+4*slot]. File texels are written between surface locks and unlocks in the two traced paths. Both release families free the backing through MmFreePhysicalMemory, D3D at once and the resource manager through the deferred pass 0x82535298 once the header is unbound and its fence has passed. Tile resolves are issued by 0x8250AC90 inside the bracket, after its draws, and EndTiling is called with null resolve arguments. 0x8269BF40 advances the cursor 148 bytes for the callers that store to G+0x30. Runtime pairing, frequency and reuse remain for the census."
+}

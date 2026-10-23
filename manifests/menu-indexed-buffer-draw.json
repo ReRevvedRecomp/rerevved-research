@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0161",
+  "topic": "menu-indexed-buffer-draw",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which bound-buffer draw function consumes an index resource and publishes an indexed packet?",
+  "scope": {
+    "draw": "0x826A39F8",
+    "fetchEmitter": "0x826ACEA0",
+    "boundary": "Arguments, bound index fields, CPU fetch-array mapping and final cursor publication. Runtime mesh, shader and visible-content identity require separate correlation."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only ghidra/DumpInstructions.java and ghidra/DumpMemoryWords.java against image.json, corroborated by narrow generated bodies of 0x826A39F8 and 0x826ACEA0 and their direct caller windows.",
+    "wordQueries": [
+      { "addresses": ["0x826A39F8", "0x826A3C30", "0x826A3CBC", "0x826A3D24", "0x826A3E18", "0x825118B8"], "radius": 16 },
+      { "addresses": ["0x826ACEB8", "0x826ACFA4", "0x8250C764", "0x82510D48", "0x8250CB94"], "radius": 12 }
+    ],
+    "qualification": "The unrepaired listing skips the draw body after the save-register thunk. Exact big-endian image words confirm the stated sites; no database repair or complete decompilation is implied.",
+    "entry": "0x826A3A04..0x826A3A14 retains r3=G, r4=primitive, r5=vertex index offset, r6=start index and r7=index count in r31, r18, r17, r21 and r19 respectively.",
+    "indexResource": {
+      "pointer": "0x826A3C38, word 0x831F3094, loads G+0x3094 into r24.",
+      "fields": "0x826A3CA4 loads resource+24 backing; 0x826A3CB0 loads resource+0 flags. With flags bit 31 clear the start-index byte offset is twice r21. With bit 31 set it is four times r21 and the draw control gains 0x800.",
+      "physicalAddress": "The selected raw address maps to (raw & 0x1FFFFFFF) + (((raw >> 20) + 512) & 0x1000).",
+      "sizeWord": "The low count bits are combined with ((flags << 1) & 0xC0000000). The 32-bit-index path doubles the count contribution."
+    },
+    "submission": {
+      "vertexOffset": "0x826A3C60..0x826A3C70 writes register 0x2102 and entry r5 before the indexed packet.",
+      "packet": "The direct path at 0x826A3D30..0x826A3D4C writes header 0xC0032201, mode word, primitive/count word, physical index base and size/endian word. The alternate recording path retains these same indexed operands with additional command records.",
+      "completion": "At 0x826A3E18, r31 is G, r11 is the final command-word cursor, r28 is the physical index base, r29 is the size/endian word, r27 is this packet's count and r19 is the remaining requested count. 0x826A3E1C, word 0x917F0030, publishes r11 to G+0x30. A nonzero remaining count loops; a zero remainder returns through the restore thunk without defining an HRESULT."
+    },
+    "fetchArray": {
+      "base": "0x826ACEB4, word 0x395B0480, selects G+0x480; 0x826ACEB8 selects register 0x4800.",
+      "mapping": "The emitter advances the CPU source by 24 bytes and the register index by six words per fetch group. At 0x826ACFA4..0x826ACFC4 it copies three consecutive 64-bit pairs. Thus CPU words G+0x778/+0x77C map to registers 0x48BE/0x48BF in group 31 when that group is emitted.",
+      "qualification": "This maps the existing CPU array to emitted registers. It does not identify the setter, prove that a particular group is dirty, or establish backing lifetime."
+    },
+    "shaderLiteralDependency": {
+      "method": "Foreground read-only DumpMemoryWords.java at 0x826ADBB8, 0x826ADBCC, 0x826ADC18 and 0x826AE0BC, radius 12, corroborated by the narrow 0x826ADB98 body and call window.",
+      "call": "0x826AE0B0..0x826AE0C0 calls 0x826ADB98 with r3=G, r4=vertex shader object+872 and r5=[vertex shader object+32].",
+      "table": "0x826ADBA4 loads the relative offset at metadata+20. If nonzero, table=metadata+offset, records=table+20, and recordsEnd=records+[table+16]. Each eight-byte record has BE16 first constant at +0, BE16 word count at +2, and BE32 resource-relative backing at +4. A zero word count terminates the loop.",
+      "submission": "0x826ADBF0 adds the resource backing to the record offset. 0x826ADC04..0x826ADC34 emits header 0xC0022F00, the same physical-alias conversion used by the indexed stream, firstConstant*4 and wordCount, then publishes G+0x30.",
+      "qualification": "This establishes the shader resource literal source and packet layout. The values, live descriptor shape, use by a particular shader, and output correspondence require runtime evidence. It does not establish resource lifetime ownership."
+    },
+    "directCalls": [
+      { "owner": "0x82511518", "call": "0x825118D4", "return": "0x825118D8", "tuple": "G=[renderer+0xBC], primitive=[item+0x38], vertex offset=[item+0x30], start index=r27, count derived from primitive table and r29." },
+      { "owner": "0x8250C498", "call": "0x8250C764", "return": "0x8250C768", "tuple": "G=[renderer+0xBC], primitive=[item+0x38], vertex offset=[item+0x30], start index=r26, count derived from primitive table and r28." },
+      { "owner": "0x825107A0", "call": "0x82510D48", "return": "0x82510D4C", "tuple": "G=[renderer+0xBC], primitive=[item+0x38], vertex offset=[item+0x30], start index=0, count derived from primitive table and item+0x3C." },
+      { "owner": "0x8250C840", "call": "0x8250CB94", "return": "0x8250CB98", "tuple": "G=[renderer+0xBC], primitive=r15, vertex offset=[item+0x30], start index=r28, count derived from primitive table and r27." }
+    ]
+  },
+  "guards": [
+    "Do not confuse 0x826A3608's automatic-index packet with 0x826A39F8's bound index stream.",
+    "Do not infer mesh, shader or visible-content identity from a caller or tuple alone.",
+    "Original state emission, command recording and cursor publication remain required during input validation.",
+    "A CPU-readable bound resource does not by itself establish GPU-write completion or release/reuse ownership."
+  ],
+  "conclusion": "0x826A39F8 consumes a bound index resource from G+0x3094 and publishes an indexed packet through G+0x30. 0x826ACEA0 maps the device's CPU fetch array to six-word register groups. These boundaries permit bounded runtime correlation without replacing original guest execution."
+}

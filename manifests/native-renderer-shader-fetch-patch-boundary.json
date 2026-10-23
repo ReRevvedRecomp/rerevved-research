@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0302",
+  "topic": "native-renderer-shader-fetch-patch-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which shader-fetch patch and persistent-cache effects must a draw-entry model distinguish from dropped command words?",
+  "scope": {
+    "initialSeeds": ["0x826ADD88", "0x826AD150", "0x826ADA38", "0x826ADC48", "0x826ADB98", "0x826ADEF8", "0x826AC6C8", "0x826A39F8"],
+    "wrapperSeeds": ["0x826A2B58", "0x826A3000", "0x826A3048", "0x826A3568"],
+    "constructionSeeds": ["0x826945E8", "0x82692B50", "0x82692C48"],
+    "directExpansionLimitPerReadSet": 8,
+    "boundary": "Bounded native-word and narrow generated-code reconciliation. No complete transitive helper-write tree, allocator ownership, runtime model parity or safe draw-consumption result."
+  },
+  "dependencies": [
+    {
+      "topic": "gfx-draw-producer",
+      "use": "Owns accepted shader selection, copied versus persistent patch destinations and metadata contracts."
+    },
+    {
+      "topic": "native-renderer-d3d-runtime-surface",
+      "use": "Owns the separate dirty-group and bound-state inventory."
+    },
+    {
+      "topic": "native-renderer-draw-object-fields",
+      "use": "Owns the device binding and shader/declaration object field evidence."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only no-analysis queries through tools/run-headless.ps1 using ghidra/DumpFunctions.java, ghidra/DumpInstructions.java and ghidra/DumpMemoryWords.java; narrow exact-function generated corroboration.",
+    "generatedRevision": "e69f8e597ad634103fdf1719a0ec9cc517ca5043",
+    "inputQualification": {
+      "supportedFlatSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "mappedProgramSha256": "389EB006B1DCDE90C5DE775C92D67C18542B8FD9BD39845574206D4B213E9B13",
+      "comparedRange": "[0x82000000,0x83210000)",
+      "mismatchBytes": 470,
+      "mismatchRanges": 60,
+      "mismatchEnvelope": "[0x827F3F50,0x827F4280)",
+      "claim": "A sequential read-only mapped-memory comparison found all differences inside the historical thunk band. None overlaps the cited semantic native windows.",
+      "qualification": "The mapped program is not byte-identical to the supported flat image. No original thunk semantics or whole-image reader absence follows. Function-body claims rely on source-equivalent inspected words; no repair was performed."
+    },
+    "decompilerLimit": "Canonical decompilation truncates at Xenon save/restore thunks or undefined instructions. Sparse decoded iteration can skip gaps; it is not complete function coverage.",
+    "drawEntryGate": {
+      "function": "0x826A39F8",
+      "sites": ["0x826A3A70", "0x826A3A84"],
+      "claim": "The draw entry tests low-word mask 0x1E0000 of the dirty qword at G+0x10 before calling 0x826ADD88 with the dirty value. In the big-endian layout this mask is in G+0x14.",
+      "corroboration": "generated/default/rerevved_recomp.148.cpp:13149-13170",
+      "qualification": "This groups four bits. It does not assign each bit the same semantic action."
+    },
+    "modeBoundary": [
+      {
+        "function": "0x826ADD88",
+        "sites": ["0x826ADD9C", "0x826ADDC4"],
+        "mask": "0x20000",
+        "claim": "The entry masks this bit and conditionally calls 0x826AC6C8. That helper writes derived G+0x2940 and device-byte state plus command words.",
+        "corroboration": "generated/default/rerevved_recomp.111.cpp:13037-13063; generated:rerevved/sub_826AC6C8",
+        "qualification": "Complete helper effects and original semantic names remain qualified."
+      },
+      {
+        "function": "0x826ADD88",
+        "mask": "0x80000",
+        "claim": "A shader/fetch update arm can select a persistent variant through 0x826ADC48 or an allocated command copy through 0x826ADA38, with metadata loading through 0x826ADB98.",
+        "corroboration": "generated/default/rerevved_recomp.111.cpp:13466-13652",
+        "qualification": "Actual selected variant, cache compatibility, helper returns and allocation remain guarded."
+      },
+      {
+        "function": "0x826ADD88",
+        "mask": "0x100000",
+        "claim": "The bounded generated path includes separate pixel/alternate selection and derived mode state; it is not interchangeable with the stride-triggered patch arm.",
+        "corroboration": "generated/default/rerevved_recomp.111.cpp:13187-13331",
+        "qualification": "This is generated corroboration of the native windows, not runtime activation."
+      },
+      {
+        "function": "0x826ADD88",
+        "mask": "0x40000",
+        "claim": "The bit reaches ADD88 through the draw-entry grouped gate. With input exactly0x40000 and no locally added0x80000/0x100000, it skips the0x20000 helper and the0x180000 grouped stores at0x826AE20C/0x826AE21C. A39F8 still clears G+0x10 at0x826A3B44.",
+        "qualification": "Other ADD88 mode, binding and command conditions still depend on device state. No independent action was assigned to this bit; do not infer a no-op or map it to0x20000."
+      }
+    ],
+    "transientStrideBoundary": {
+      "functions": ["0x826A2B58", "0x826A3048"],
+      "sites": ["0x826A2B7C", "0x826A2BA4", "0x826A309C", "0x826A30B8"],
+      "claim": "The selected UP lowerer/sink path temporarily stores the low byte of input stride in dwords at G+0x30F0 and can set dirty mask 0x80000 when it differs from the cached stride and a vertex shader is bound.",
+      "corroboration": "generated/default/rerevved_recomp.151.cpp:12800-12843; generated/default/rerevved_recomp.63.cpp:13039-13106",
+      "qualification": "The transient value, restored exit byte, later dirty clears and side-buffer protocol are distinct outputs."
+    },
+    "patcherBoundary": {
+      "function": "0x826AD150",
+      "inputs": {
+        "r3": "vertex shader object VS",
+        "r4": "writable selected code destination",
+        "r5": "declaration VD",
+        "r6": "stream-stride bytes",
+        "r7": "variant ordinal"
+      },
+      "recordStores": ["0x826AD380", "0x826AD388", "0x826AD480"],
+      "claim": "The patcher derives three-word, 12-byte fetch-instruction records using shader patch metadata, a 12-byte declaration-record scan and stream stride bytes, orders/canonicalizes scratch records, then copies selected records to codeDestination+12*index.",
+      "corroboration": "generated:rerevved/sub_826AD150; generated/default/rerevved_recomp.60.cpp:13223-13268,13453-13587,13607-13853,13863-13987",
+      "byteContract": "native-renderer-shader-fetch-byte-contract.json#/currentEvidence",
+      "qualification": "The guarded byte transformation, table/seed result, scratch ordering and selected 12-byte copy effect are recorded in the byte contract. Actual input/table retention, bounds, aliases and caller resource ownership remain required. This is not a complete host draw model. Ordering and canonicalization write stack scratch."
+    },
+    "destinationBoundary": {
+      "allocatedCopy": {
+        "function": "0x826ADA38",
+        "call": "0x826ADB6C",
+        "claim": "Passes the allocated/copied command-code buffer to 0x826AD150, with VS, declaration, stride bytes and variant supplied separately.",
+        "qualification": "This does not imply that only a disposable copy can be modified. Allocator output and ownership remain unproved."
+      },
+      "persistentResource": {
+        "function": "0x826ADC48",
+        "call": "0x826ADD0C",
+        "claim": "Can pass the shader resource's selected code address to the same patcher before publishing cache fields.",
+        "publicationSites": ["0x826AE3BC", "0x826AE3C0", "0x826AE3D4", "0x826AE3D8", "0x826AE3F0", "0x826AE400", "0x826AE408", "0x826AE414"],
+        "publication": "The selected ADD88 branch appends header0xC0012701, an encoded address derived from the same C+load32(M_v) patched by ADC48, and load32(M_v+4)>>2. It then stamps the selected record. The address encoding is(D&0x1FFFFFFF)+(((rol32(D,12)&0xFFF)+512)&0x1000).",
+        "packetInterpretation": "External Xenia Type3Opcode identifies0x27 as pointer-based IM_LOAD and0x2B as IM_LOAD_IMMEDIATE: https://github.com/xenia-project/xenia/blob/95a5c3ee250f80c3b9d139658649d9ffb6db3eec/src/xenia/gpu/xenos.h#L1523-L1525 . ADB98's0x2F packet is an ALU-constant load, not the shader-code byte writer.",
+        "qualification": "The retained code allocation is the published instruction-memory input under that packet/address interpretation. Actual GPU fetch, cache visibility, pointer/variant validity, allocation ownership and fence guards remain unobserved. A CPU reader of the selected patched guest range sees its changed bytes under the byte contract's retention/alias guards."
+      },
+      "interiorSite": {
+        "address": "0x826ADEF8",
+        "claim": "This is an interior linked-call site for 0x826ADB98, not an independently identified shader-loader entry."
+      }
+    },
+    "shaderConstructionBoundary": {
+      "functions": ["0x826945E8", "0x82692B50"],
+      "sites": ["0x82694650", "0x8269467C", "0x82694688", "0x826946B0", "0x826946BC", "0x82692B78", "0x82692BB4", "0x82692BF4", "0x82692C14", "0x82692C30"],
+      "notation": "B is the compiled input blob; under retained fields M=load32(B+4), S=load32(B+8). VS and C are the two selected allocation returns.",
+      "allocationRequests": "CreateVS requests M+40+((load32(B)&1)?832:0) bytes for VS and S bytes separately for C through0x82E29168. The metadata helper call0x8269467C requests0x8281ABB8(VS+872,B,M); call0x826946B0 requests0x827F8550(C,B+M,S).",
+      "codePointer": "Init receives(VS,C) at0x826946BC and stores C at VS+32 at0x82692B78. This is the retained separate code allocation, not VS itself.",
+      "metadata": "Init reads offsets at VS+896+8*v. Their producer is the metadata transfer request, corresponding to blob B+24+8*v if that transfer completes as requested. Init does not synthesize this table. It forms M_v=VS+load32(VS+896+8*v)+872 and code=C+load32(M_v).",
+      "savedRecords": "For selected patch-list word P_i, init copies12 bytes from code+12*(P_i&0xFFF) to VS+68+416*v+12*i when the addresses differ. It stores-1 at VS+40+416*v at0x82692C30; that store is a cache tag, not an offset-table write.",
+      "corroboration": "Canonical rerevved generated/default/rerevved_recomp.119.cpp:12769-12939 and rerevved_recomp.199.cpp:12503-12648 at observed HEAD81798450751cfb75460269f82c2eb4df02754e80.",
+      "qualification": "These are allocation/transfer requests and direct pointer/record stores. Hook effects, actual extents, full transfer/alignment behavior, allocator ownership, blob/metadata validity and aliases remain guarded. The existing world-constant transfer evidence also leaves unexpanded0x8281ABB8 alignment branches."
+    },
+    "dirtyProducerBoundary": {
+      "encodingSearch": "Aligned initialized mapped words: oris immediates4/8/16 followed within four words by stw+0x14 or std+0x10 using the same result register.29 raw pairs, cap128 not reached; intervening writes and base provenance required confirmation.",
+      "directFunctions": ["0x8268D6F0", "0x8268FB08", "0x826904D0", "0x826922D0", "0x826985C8", "0x82698720", "0x8269E520", "0x826A22F8"],
+      "producers": [
+        { "function": "0x8268D6F0", "sites": ["0x8268D708", "0x8268D70C"], "mask": "0x40000", "condition": "Direct render-state setter; also changes G+0x293C bit3 and ORs low-word bit0x200." },
+        { "function": "0x8268FB08", "sites": ["0x8268FBF8", "0x8268FC00", "0x8268FC08", "0x8268FC18", "0x8268FC1C"], "mask": "0x80000", "condition": "SetStreamSource stores stride byte at G+0x30F0+stream. It sets the patch bit when unsigned(stride>>2) is nonzero and differs from the byte at G+0x2E38+stream. This is separate from its caller-mask OR into G+0x18, not a mask transfer." },
+        { "function": "0x826904D0", "sites": ["0x82690630", "0x8269065C", "0x82690660"], "mask": "0x100000", "condition": "Selected render-target path with index0, nonnull input object and selected type nibble5/7/15; helper and object validity remain guarded." },
+        { "function": "0x826922D0", "sites": ["0x82692358", "0x82692360", "0x82692364", "0x8269236C"], "mask": "0x180000", "condition": "Selected initialization path ORs the two bits separately. Its earlier0x82692344 candidate stores to G+0x20 instead." },
+        { "function": "0x826985C8", "sites": ["0x826986C8", "0x826986CC"], "mask": "0x80000", "condition": "On the reached hook/count/limit path; complete helper effects remain qualified." },
+        { "function": "0x82698720", "sites": ["0x82698A1C", "0x82698A24", "0x82698A28", "0x82698A30"], "mask": "0x180000", "condition": "Reached hook-guarded path; earlier0x82698A08 candidate stores to G+0x20 instead." },
+        { "function": "0x8269E520", "sites": ["0x8269F1F0", "0x8269F1FC"], "mask": "0x80000", "condition": "Reached Resolve path after its helper branch join;0x8269EF2C stores to G+0x20 instead." },
+        { "function": "0x826A22F8", "sites": ["0x826A27FC", "0x826A2800", "0x826A2804", "0x826A2808"], "mask": "0x180000", "condition": "Reached clear-quad path after earlier object/mask guards;0x826A27E8 stores to G+0x20 instead." }
+      ],
+      "existingProducers": "The runtime-surface evidence owns SetPixelShader0x82692948, SetVertexShader0x82692C48, SetVertexDeclaration0x82692E60 and SetFVF0x826946D8. The UP stride sites remain under transientStrideBoundary.",
+      "qualification": "This is a bounded producer matrix, not every API or encoding. Remaining0x826B1DA0 candidates exceed this eight-function read set. Computed masks, other distances, indexed/bulk stores, helper aliases and runtime activation remain unproved."
+    },
+    "bitActionStoreBoundary": {
+      "function": "0x826ADD88",
+      "modeSites": ["0x826ADE4C", "0x826ADE6C", "0x826ADEF8", "0x826ADF1C", "0x826ADF64", "0x826ADF78", "0x826ADFB4"],
+      "claim": "With a live G+0x3198 binding, mode logic can write G+0x2954/+0x2884 and add local dirty bits. The0x100000 arm additionally reaches guarded metadata/cursor and G+0x2928 writes. The0x180000 grouped test at0x826AE1F0..0x826AE1FC gates G+0x2924/+0x2920 stores at0x826AE20C/0x826AE21C.",
+      "commandBoundary": "Subsequent G+0x2ABC bit0x40, local-mask and record guards select ring append blocks, record stamps and cursor publication. cpuVisibleDeviceWrites/fenceBoundary own their exact stores.",
+      "qualification": "The direct branch/store frontier does not close metadata, allocation, ring-wrap or other helper effects. It does not assign the0x40000 bit an independent shader operation."
+    },
+    "fetchFieldInterpretation": {
+      "reference": "https://github.com/xenia-project/xenia/blob/95a5c3ee250f80c3b9d139658649d9ffb6db3eec/src/xenia/gpu/ucode.h#L655-L735",
+      "locator": "VertexFetchInstruction::Data; bits numbered from each 32-bit word's least significant bit.",
+      "word0": "Bits20..24 bank,25..26 selector,27..29 prefetch. The reference computes fetch-constant index as3*bank+selector.",
+      "word1": "Bits0..11 destination swizzle,12 signedness,13 integer/normalization mode,16..21 data format,30 mini-fetch mode.",
+      "word2": "Bits0..7 dword stride,8..30 signed dword offset.",
+      "qualification": "External decoder interpretation corroborates the native byte masks; it is not title or hardware proof. The transformation also changes swizzle, signedness, normalization, prefetch and full/mini selection. Sorting moves entire records, so a fixed destination may receive other source-record bits. No opcode validation of every selected input was established; require valid vfetch metadata."
+    },
+    "persistentCacheBoundary": {
+      "function": "0x826ADC48",
+      "sites": ["0x826ADC6C", "0x826ADC70", "0x826ADD0C", "0x826ADD1C", "0x826ADD24", "0x826ADD3C", "0x826ADD50", "0x826ADD54", "0x826ADD58", "0x826ADD60", "0x826ADD68", "0x826ADD78", "0x826ADD7C"],
+      "claim": "The compatibility key is declaration VD+0x30, not the command cursor or a device tag. A zero declaration tag can allocate an ID using global counter 0x82FA0544. The selected record stores a tag at +0x28 and stride qwords at +0x30/+0x38, and the device caches stride state at G+0x2E38/+0x2E40.",
+      "corroboration": "generated/default/rerevved_recomp.155.cpp:12794-12980",
+      "qualification": "A compatible cache hit can reuse code without running the patcher. A busy variant can reject persistent patching. A host model must preserve these distinct branches."
+    },
+    "compatibleCacheHitSubmodel": {
+      "function": "0x826ADC48",
+      "branch": "0x826ADCAC",
+      "continuation": "0x826ADD6C",
+      "conditions": "The selected record's +0x28 tag equals VD+0x30 and the OR of both 64-bit masked stride differences is zero.",
+      "outputs": "Copy current G+0x30F0 and G+0x30F8 to G+0x2E38 and G+0x2E40, then return r3=1.",
+      "qualification": "This arm skips the patcher, declaration ID allocation, record tag/stride stores and fence test. It is a limited persistent-output model for this callee, not the complete register/frame contract or a draw-entry consume model."
+    },
+    "fenceBoundary": {
+      "function": "0x826ADD88",
+      "sites": ["0x826AE414", "0x826AE498", "0x826AE508", "0x826AE5B0"],
+      "claim": "Selected variant records receive current G+0x2A9C at record+0x40 after selected program publication paths. The persistent selector compares this stamp against completion state reached through G+0x2A90.",
+      "qualification": "These are CPU-visible reuse/lifetime inputs. Dropping command words does not alone justify dropping stamps."
+    },
+    "cpuVisibleDeviceWrites": {
+      "function": "0x826ADD88",
+      "sites": ["0x826ADE4C", "0x826ADE6C", "0x826ADEE4", "0x826ADF6C", "0x826ADF78", "0x826ADF98", "0x826ADFB4", "0x826AE060", "0x826AE0D0", "0x826AE180", "0x826AE1B8", "0x826AE20C", "0x826AE21C", "0x826AE530", "0x826AE5B4"],
+      "destinations": ["G+0x30", "G+0x2884", "G+0x2920", "G+0x2924", "G+0x2928", "G+0x2954", "G+0x2ABE", "G+0x319C"],
+      "claim": "Mode, shader selection, shadow-register, byte-flag and cursor stores are distinct from dynamic command-buffer payload words.",
+      "qualification": "The list is a bounded direct-store result, not all transitive helper writes or an exhaustive reader classification."
+    },
+    "dirtyClears": {
+      "function": "0x826A39F8",
+      "sites": ["0x826A3A44", "0x826A3A64", "0x826A3B44", "0x826A3B94", "0x826A3C30"],
+      "claim": "The selected draw body clears dirty qwords at G+0x0,+0x8,+0x10,+0x18,+0x20 after their respective helper paths. A consume's dirty-word policy is a separate model decision, not evidence that native writes are absent."
+    }
+  },
+  "guards": [
+    "Do not call the shader update ring-only: persistent shader bytes, declaration tags, variant cache fields and fence stamps can be CPU-visible outputs.",
+    "Do not execute a patch on a cache-hit branch that native code reuses without patching.",
+    "Do not infer a complete draw-entry model from a one-record patcher formula.",
+    "Do not infer actual stream/declaration identity, bounds, lifetime or nonaliasing from compatible shapes.",
+    "No full call-tree, allocator, synchronization or runtime parity closure was established."
+  ],
+  "nextDiscriminators": [
+    "Bind the actual 0x80000 variant path and its declaration tag, stride masks, completion window and current code destination before selecting a host-model case.",
+    "Bind the byte contract's current input/table retention, protected stack and selected code-range guards before admitting a caller case or claiming runtime parity.",
+    "Keep zero-tag global-ID allocation, busy-variant fallback, allocation/ring-wrap and unresolved far-helper paths refused until their effects are separately bound.",
+    "A separately authorized exit probe must predict without mutating entry state, run Original once, then compare all modeled device/cache/declaration fields and every changed shader byte; classify command-only differences separately."
+  ],
+  "conclusion": "The dirty vertex-fetch path can patch retained shader-code allocation bytes as well as allocated command copies and writes CPU-visible cache, tag, shadow and fence state. A translator using unpatched code and current declaration/stride state is not disproved by those byte differences, but its GPU semantic equivalence and complete guest exit parity remain unproved. Shared-ID allocation, completion, allocator, aliases, metadata validity and helper effects remain qualified; no complete safe consume model is established."
+}

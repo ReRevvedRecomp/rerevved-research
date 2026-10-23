@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0308",
+  "topic": "native-renderer-shader-readback-activation",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Can effect operations read a previously drawn VS code allocation, and which bytes must an equivalent readback expose?",
+  "scope": {
+    "copy": "0x82694480",
+    "recordRefresh": "0x82662D28",
+    "clients": ["0x825E1C40", "0x8265DFB0"],
+    "qualification": "Conditional static activation and a byte-observation contract. No runtime call frequency, complete escaped-pointer closure or draw admission is established."
+  },
+  "dependencies": [
+    {"topic": "native-renderer-draw-state-reader-boundary", "use": "Owns the retained copy/recreation reader and independent cache/lifetime observations."},
+    {"topic": "native-renderer-shader-fetch-patch-boundary", "use": "Owns selector, persistent/inline destination, cache and stamp branches."},
+    {"topic": "native-renderer-shader-fetch-byte-contract", "use": "Owns ordered sparse patch writes and their input/extent qualifications."}
+  ],
+  "currentEvidence": {
+    "method": "Foreground serial read-only native-word, raw direct-BL and literal-pointer queries through tools/run-headless.ps1, corroborated by narrow exact-function generated windows. Direct BL and literal-pointer inventories exclude computed/CTR ingress; sparse database xrefs prove no absence.",
+    "generatedRevision": "3129fb65f656394b2fb93e6b206d6d1b60157ba5",
+    "inputQualification": {
+      "flatSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "mappedSha256": "389EB006B1DCDE90C5DE775C92D67C18542B8FD9BD39845574206D4B213E9B13",
+      "comparedRange": "[0x82000000,0x83210000)",
+      "qualification": "470 differing bytes in60 ranges were confined to [0x827F3F50,0x827F4280). Cited semantic words avoid that band. Checkout revision is not generated-byte provenance."
+    },
+    "effectOwnership": {
+      "constructor": "0x825E8A80 builds a340-byte effect object O and installs vptr0x8207C768 at0x825E8A9C; initialized slot+0x18 at0x8207C780 contains0x8265F6D8.",
+      "layout": "O+0x18 points to24-byte shader records Q; O+0x48 points to108-byte effect entries E. Selected descriptor/value indices join these tables. Q+4 is a D3D resource, Q+8 its retained byte buffer and Q+0x14 its flags.",
+      "recordProduction": "0x825E0388 bounds the record index by O+0x14 and creates buffer Q+8. Type16 selects VS and type15 PS. 0x825E0248 obtains buffer bytes, calls CreateVS0x826945E8 at0x825E0290 and stores Q+4 at0x825E0294; success sets Q+0x14 bits0xC0000000.",
+      "drawIdentity": "0x8265D778 stores a selected Q pointer in a32-byte runtime state at0x8265D95C. State dispatcher0x8266B370 type10 loads Q+4 at0x8266BA1C and calls SetVS0x82692C48 at0x8266BA20, binding this same resource to G+0x3198.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.21.cpp:10778; rerevved_recomp.28.cpp:10562; rerevved_recomp.70.cpp:10582; rerevved_recomp.224.cpp:12083; rerevved_recomp.70.cpp:12870"
+    },
+    "activation": {
+      "preparationClient": "0x825E1C40 has two raw BL callers:0x825E465C in effect setup0x825E44E8 and0x8266B27C in pass-state preparation0x8266B1F0. Setup selects E+0xC bit0x02000000; pass preparation selects0x08000000; both require E+0x20!=0xFFFF. Effect loaders0x8257FEB8/0x82580200 and clone0x8265F808 call setup. Pass preparation also has state-dispatch and BeginPass-shaped0x8266C530 ingress.",
+      "queryClient": "0x8265DFB0 recurses at0x8265E1A8 and is called at0x8265F788 by installed description-query slot0x8265F6D8. Its selected shader path exposes VS bytes at output+8 and PS bytes at output+0xC. Semantic API names are descriptive inferences, not recovered retail symbols.",
+      "copyPredicate": "Both clients require Q+0x14 bit0x80000000 and nonnull Q+4 before calling0x82662D28 at0x825E1D2C/0x8265E26C; successful refresh clears that dirty bit. Repeated pass/query invocation therefore need not copy. Initial loading may copy before any draw.",
+      "afterDrawWitness": "Same-device clone0x8265F808 compares devices at0x8265F870..0x8265F888, shares/AddRefs source Q+4 into destination Q+4 at0x8265FAC4, ORs0x80000000 into destination Q+0x14 at0x8265FB00 and calls setup0x825E44E8 at0x8265FB34. Under retained resource identity/lifetime this can read a VS already patched by a draw without an intervening draw.",
+      "frequency": "Load, clone, pass application and descriptor-query events are established static contexts. Caller-controlled frequency and actual post-draw instance/order are unobserved; no unconditional per-frame copy is established.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.3.cpp:10617; rerevved_recomp.134.cpp:11984; rerevved_recomp.104.cpp:10497; rerevved_recomp.102.cpp:11909; rerevved_recomp.174.cpp:11906; rerevved_recomp.109.cpp:11882"
+    },
+    "byteFate": {
+      "copy": "Nonnull destination in0x82694480 copies metadata from VS+0x368 for M=word(VS+0x36C), then S=word(VS+0x370) code bytes from C=word(VS+0x20) to destination+M. Null destination only reports M+S. The cache/variant prefix is excluded.",
+      "recreation": "0x82662D28 retains the result in Q+8. Device mismatch at0x82662E08 releases Q+4 and recreates through0x825E0248. Copied patched code can become both new code and constructor-saved fetch input, so another draw is not proved to repair stale or differently patched input.",
+      "otherConsumers": "0x825E1C40 passes selected copied bytes to reflection/chunk helpers0x8265BC20 at0x825E1EC0 and0x82580460 at0x825E1F58. Their local format-dependent reads are bounded below; description query exposes a buffer pointer. External output consumers and pointer retention remain unclosed.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.34.cpp:12587; rerevved_recomp.9.cpp:12136; rerevved_recomp.3.cpp:10896"
+    },
+    "equivalentReadback": {
+      "requiredBytes": "At a reached nonnull copy, expose C*(t): the entire resource-generation code range as the Original would have left it immediately before the copy. Start with creation bytes and replay ordered persistent sparse writes, preserving untouched bytes and ordered overlap across variants, consumed calls and retained/fallback Originals.",
+      "branchHistory": "A compatible ADC48 cache hit writes no C, even if the most recent draw key differs. A reusable miss patches C through AD150. Busy miss or forced inline uses ADA38 and patches ring storage, leaving C unchanged. No-in-flight removes no forced-inline branch from byte2ABE/2ABC high bits. ADD88 can patch primary and variant1 in one invocation; one last key is insufficient.",
+      "minimalScopedBridge": "Before the nonnull copy at0x82694480, materialize missing C* bytes and execute the existing copy. A save/materialize/copy/restore implementation additionally needs disjoint output/code/metadata storage and no concurrent or reentrant observer/writer. The null size query needs no materialization.",
+      "sideEffects": "This scoped copy alone needs no variant tag/stride/stamp or G+0x2E38 stores. Logical tag/stride/ID history is needed to predict Original branch choices. Stamp reuse modeling is separate; do not manufacture an extra publication stamp. Independent setter/lifetime readers retain their own obligations.",
+      "durableMaterialization": "Leaving C* in place also requires coherence with every future Original cache decision. Old tag/stride prefixes can otherwise accept changed bytes as a compatible hit. Maintain logical cache history and synchronize/intercept/refuse before Original execution; readback-only prefix omission is not a durable-cache theorem.",
+      "refusal": "Refuse consumption before losing history if resource generation, immutable patch inputs, exact code extents, alias protection, branch/cache history or future Original coherence cannot be established.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.77.cpp:13173; rerevved_recomp.22.cpp:13100; rerevved_recomp.17.cpp:13374; native-renderer-shader-fetch-byte-contract.json"
+    },
+    "consumerInspection": {
+      "qualification": "V: Only the complete local bodies0x82580460..0x825805A0 and0x8265BC20..0x8265BF34 were newly expanded. Their279 native words matched the supported flat image outside the mismatch band. The BC20 decompiler stopped at its save thunk; full raw words and exact generated windows supplied interpretation. Generated revision is checkout identity, not generation provenance.",
+      "generatedRevision": "0b77a0a49df57d4d445db9f311bf2329c9797f5a",
+      "generatedWindows": [
+        {
+          "artifact": "rerevved:generated/default/rerevved_recomp.13.cpp",
+          "firstLine": 9842,
+          "lastLine": 10023,
+          "sha256": "D424DAF210EF45F2DDBBBB0C41670D289836850368C2A11EC22D0CA2374EA72C"
+        },
+        {
+          "artifact": "rerevved:generated/default/rerevved_recomp.142.cpp",
+          "firstLine": 11822,
+          "lastLine": 12021,
+          "sha256": "FC084880D25DCF8A5B28ED7DFD9B99E90E2902444C5F324AA8E4BE9FEBEB530C"
+        },
+        {
+          "artifact": "rerevved:generated/default/rerevved_recomp.142.cpp",
+          "firstLine": 12022,
+          "lastLine": 12221,
+          "sha256": "0A98B7869D0378C2A316D3D5413BB0971C88BDCE99B3694A1229601FF4BB19AB"
+        },
+        {
+          "artifact": "rerevved:generated/default/rerevved_recomp.142.cpp",
+          "firstLine": 12222,
+          "lastLine": 12253,
+          "sha256": "B99D605A2B496F940D41508D5CB25B8C91A2CC4AD0A38111D9EBBF1D31ADA9F5"
+        }
+      ],
+      "chunkFinder": "V: 0x82580460 clears optional pointer/length outputs first. Null input returns0x8876086C. Header mask0x102A1100 returns1 without scanning. Other accepted high16 families0x4658/0x5458/0x7FFE/0x7FFF/0xFFFE/0xFFFF scan token words from B+4. A low16=0xFFFE token with k=(word>>16)&0x7FFF greater than1 compares the next word to the requested tag; match returns payload pointer T+8 and length4*(k-1), return0. Low16=0xFFFF returns1; unsupported header returns0x88760B59. Skips depend on token/header bits; no input-length bound or termination proof exists. Traversed token/tag words can affect results; skipped payload is not read locally.",
+      "reflection": "V: 0x8265BC20 initializes three8-byte halfword groups and pointer/optional length outputs. For header mask0x102A1100 it selects D=word(B+0x10), C=B+D+4, L=word(B+D), unless D=0. Other headers call0x82580460 at0x8265BCF0 with tag0x42415443. Signed-negative helper results become return0; null selected C also returns0. Selected chunks require L>=28 and the unsigned wrapped count test L>=4*(word(C+0xC)+7). It reads entry offset word(C+0x10), 20-byte entries, bounded NUL name bytes, register-set/base/count halfwords at entry+0x4/+0x6/+0x8, optional default-offset word at entry+0x10, and repeatedly reloads the count. It updates four sum/min/max groups, then publishes C/L. It checks default offset plus count*width but never dereferences default-value bytes. Validation failure returns0x80004005 without rolling back aggregates.",
+      "dependence": "I: Metadata-only independence needs the actual selected ranges disjoint from persistent patch writes, stable readable inputs and protected output/frame/lifetime aliases. No complete-buffer validation or universal code independence follows. Selected pointers and ordinary readback output remain guest-visible; unexpanded external users may retain or process them. No local hash/file call establishes absence in those users.",
+      "corroboration": "rerevved:generated/default/rerevved_recomp.13.cpp:9842; rerevved:generated/default/rerevved_recomp.142.cpp:11822; native0x8258050C..0x825805A0 and0x8265BC98..0x8265BF34"
+    },
+    "bridgeAlternatives": {
+      "orderedHistory": "I: Option(a) is exact only when generation-specific C* and logical selector/cache/ID/lifetime transitions include every consumed and retained Original operation. Materialize before every actual code reader, including ADA38 current-code copying; cover prefix/key readers separately. A94480-only hook supplies only the scoped copy portion.",
+      "lazyPatch": "I: Option(b) reconstructed from the latest key fails on compatible hits, inline nonwrites, other-variant and ordered overlap histories. Full-history lazy materialization reduces to(a). Durable code writes require coherent future Original tag/key/stamp decisions; scoped save/copy/restore requires exclusion and disjointness. Neither a synthetic stamp nor a G+0x2E38-only publication is justified.",
+      "readerRefusal": "I: Option(c) needs a generation/lifetime/alias eligibility proof before the first lost patch, including future acquisitions such as clone and escaped byte pointers. Current dirty bits, raw address, refcount or effect affiliation alone do not decide that temporal predicate. No exact executable live-reader predicate is established in the selected implementation; conservative refusal must precede history loss.",
+      "compactImage": "I: Option(d) refines the existing C* representation: retain creation bytes and apply persistent sparse writes immediately in Original order to a per-generation image or byte overlay. Induction preserves the same byte result without an unbounded event log; untouched bytes and duplicate/overlapping destinations remain significant. State is O(S) for a full S-byte image plus logical state, update work O(w) for w bytes written, and ordinary readback still copies M+S bytes. These are bounds, not measured cost. Direct output synthesis might avoid guest overlay writes only after exact alias, ordering, ABI/fault and complete-reader coverage is proved.",
+      "recommendation": "I: Conditionally prefer(a) with(d) compact current-image storage and reader interception, retaining all existing refusal guards until generation, branch/state coverage and alias/Original coherence are proved. This is a research contract, not draw admission or a claim that reader frequency makes it worthwhile."
+    },
+    "shippedInteraction": {
+      "titleRevision": "0b77a0a49df57d4d445db9f311bf2329c9797f5a",
+      "dirtyReplay": "V: indexed_buffer_consume.cpp:340 zeros five qwords G+0x0..0x27. UP then stores qword1 at G+0x18 as word(G+0x18)=0 and word(G+0x1C)=1. Notifications at indexed_buffer_consume.cpp:375 and user_pointer_consume.cpp:245 precede replay. I: Bridge input/history capture must precede loss of entry state; reader reachability does not undo or replace those effects.",
+      "identityMemo": "V: solid_draw_adapter.cpp:791 uses256 thread-local slots; hashes locate entries and exact equality of13 byte spans validates current-draw derived code. indexed_buffer_draw_inputs.cpp:669 reads current patch inputs with optional exact-byte journal validation at:462. Neither facility retains Original generation history or publishes guest code/cache state. native_draw_shader_words.cpp:60 requires both VS and PS; its no-PS patch-model limit does not describe every other host reader. I: A logical overlay must provide a consistent view to cache validation and derivation; memo code with inline linkage is not persistent C*.",
+      "watch": "V: vs_code_watch.cpp:17 declares default-off/init-only observation; :151 disables raw views/shader read cache and installs guarded copies. vs_code_probe.cpp:25 compares selected current guest code with expected current fetch backing; :78 compares current16 stream bytes against G+0x2E38 and selected Rv+0x30. It does not compare tag/allocation/stamp history or observe guest loads. :182 independently drains event counts; stale shader addresses are cumulative and capped at256, not generation identities. These counters measure exposure, not reader cadence.",
+      "remainingObservation": "I: Proposed reader-entry events need call/root, generation, frame/epoch/thread, Qdirty, size/copy, bytes and clone/query ordering. Separate transition events need both variants, hit/miss/busy/inline, actual destinations, ID/tag/key/stamp and retained Original divergence. Coverage drops, escaped aliases, overlap/reentry and unreadable cases must be explicit. Counters can measure sampled frequency/cost but cannot prove universal alias or future-reader absence; no new counter or runtime result is asserted.",
+      "corroboration": "rerevved:src/gpu/guest_d3d/indexed_buffer_consume.cpp:340; rerevved:src/gpu/guest_d3d/user_pointer_consume.cpp:245; rerevved:src/gpu/guest_d3d/solid_draw_adapter.cpp:791; rerevved:src/gpu/guest_d3d/indexed_buffer_draw_inputs.cpp:294,462,669; rerevved:src/gpu/guest_d3d/native_draw_shader_words.cpp:60; rerevved:src/gpu/guest_d3d/vs_code_watch.cpp:52,151,182; rerevved:src/gpu/guest_d3d/vs_code_probe.cpp:25,78"
+    },
+    "generationReaderLedgerBoundary": {
+      "sourceRevision": "1ee3460e5efd6878f3af1d7311dd30e9f02c90eb",
+      "qualification": "Conditional static event and reader obligations; no runtime population, complete alias closure, model validation or consume admission.",
+      "notation": "PCs/device offsets/masks are hexadecimal; U reduces modulo32; W/Q are BE32/BE64. Rv=VS+0x1A0*v,C=W(VS+0x20),M=W(VS+0x36C),S=W(VS+0x370). Resource header+0x08 lifetime differs from Rv+0x40 reuse stamp; VD+0x30 is the declaration ID. Byte counts and explicitly decimal stack arguments retain their units.",
+      "readerScope": "The supported readback, reflection, acquisition/lifetime, setter, retained helper and host cached-read families remain separate boundaries; copied buffers retain the snapshot they received.",
+      "requiredEventKinds": [
+        "successful create/recreate baseline",
+        "retire/reinit/share/acquisition/escape",
+        "effective entry inputs before loss",
+        "ordered primary/secondary/forced-inline selection",
+        "hit/busy/reusable decision and completion inputs",
+        "executed sparse payload and overlap order",
+        "global atomic IDs and key/cache publication",
+        "inline current source/copy/source-cache/linkage",
+        "actual issue/completion/stamp/cursor domains",
+        "setter and retained-Original coherent tuple",
+        "real query/copy reader",
+        "refresh/buffer/outer activation and transient Q state",
+        "host actual reads and journal/memo/watch validity",
+        "loss/unknown/concurrency/ownership boundary"
+      ],
+      "sparseWriteSite": "At0x826AD720 read patch index;0x826AD72C sets r3=r22+12*(index&0xFFF);0x826AD730/0x826AD734 skip exact equality with scratch r31;0x826AD738 sets r5=12,0x826AD73C r4=r31;0x826AD740 calls0x827F8550. Capture final12bytes/destination/skips in executed list order, preserving duplicates/overlaps and shared primary/secondary code.",
+      "atomicPublicationSites": "Global0x82FA0544:0x826ADD30 reservation load,0x826ADD34 increment,0x826ADD38 conditional store,0x826ADD40 retry to0x826ADD28;0x826ADD44/48/4C rejects candidatesFFFFFFFF/0 via0x826ADD24.0x826ADD50 stores VD ID,0x826ADD58 tag,0x826ADD60/68 record strides,0x826ADD78/7C device caches. Preserve MSR/reservation outcomes and global interleaving; no finite contention bound is proved.",
+      "stampSites": "Ordinary0x826AE5AC loads actual G+0x2A9C,0x826AE5B0 stores selected Rv+0x40,0x826AE5B4 publishes cursor after packet writes. Z stamps0x826AE414/0x826AE498/0x826AE508 precede cursor0x826AE530. ADC48 and readback do not independently publish a stamp; issue/completed/B/RPTR/host generations remain distinct.",
+      "inlineSource": "ADA38 at0x826ADB08 copies L current persistent source bytes through its encoded alias;0x826ADB18 cache call covers SOURCE(A,U(A+L),0), then optional linkage and0x826ADB6C fetch patch precede cursor and reversed G+0x2E40/G+0x2E38 cache publication. GeneralL/alias/cache/helper/storage lifetime remain qualified.",
+      "partialCurrentObservers": "The raw AD150 wrapper saves selected entry operands, runs Original and optionally reads after-images;0x826AE5B8 selection observer can read selected code after ordinary stamp/cursor. Solid readers use132bytes; label/active capture use selected metadata lengths. These are genuine optional host readers and partial coverage, not ordered patch/global-ID history. Lowerer entry/pre-take samples and scalar readback entry/return samples do not supply a generation certificate.",
+      "scalarReaderObserver": {
+        "sourceRevision": "5abbe29c9b34c32f53194a04dfc06b36b09790d4",
+        "qualification": "The source-bound reader observer at0x82662D28/0x82694480 saves entry operands, scalar Q/header/query-size fields and raw return values with pairing/loss quality. It samples no code/metadata payload or patch/state history and explicitly leaves allocation generation and outer activation unknown. Source inspection alone establishes no review/runtime acceptance or installed-main coverage.",
+        "scalarReads": "Refresh samples saved Q+0x04/Q+0x08/Q+0x14 and O+0x0C at entry/normal return. Query samples metadata/code sizes at entry and the saved size-output pointer at normal return; copy samples sizes and code pointer at entry, with no exit memory read. Raw entry operands/results and pairing/quality records do not supply payload or intermediate-write history.",
+        "locators": [
+          "rerevved:src/gpu/guest_d3d/vs_readback_probe_hooks.cpp:12-37",
+          "rerevved:src/gpu/guest_d3d/vs_readback_probe.cpp:556-624",
+          "rerevved:src/gpu/guest_d3d/vs_readback_probe.h:18-35,110-158"
+        ]
+      },
+      "fixtureContract": "A successful allocation-generation baseline, immutable effective inputs before loss, actual ordered Original writes/branches and independent full-state/byte expectations are required. Global ID attempts, actual issue/completion stamp domains, escaped aliases and all permitted concurrent observers/writers need coverage. Unknown target/generation/input, dropped events or ambiguous ordering invalidate the affected interval; finite zero counts prove no universal completeness.",
+      "locators": [
+        "rerevved:src/gpu/diagnostics/native_guest_draw_capture.cpp:1025-1031,1159-1171",
+        "rerevved:config/rerevved_hooks.toml:367-370",
+        "native-renderer-shader-fetch-byte-contract.json#/currentEvidence/copy",
+        "native-renderer-dirty-up-helper-contract.json#/currentEvidence/persistentOrder"
+      ],
+      "selectedGeneratedWindows": [
+        {
+          "entry": "0x826ADC48",
+          "artifact": "rerevved:generated/default/rerevved_recomp.77.cpp",
+          "lines": "13232-13360",
+          "nativeRange": "0x826ADCB0..0x826ADD84",
+          "captureSha256": "91FD6D00F9AA4E2B685CD3CD33B465EDF0E55732B30BD9EBAE1C3E5D68C856BE"
+        },
+        {
+          "entry": "0x826AD150",
+          "artifact": "rerevved:generated/default/rerevved_recomp.119.cpp",
+          "lines": "13828-13849",
+          "nativeRange": "0x826AD720..0x826AD744",
+          "captureSha256": "9393D37CF0E6669B360CF37B5C7248BF92C63DFD4A86E652E87B7653F9AA2B2B"
+        },
+        {
+          "entry": "0x826ADD88",
+          "artifact": "rerevved:generated/default/rerevved_recomp.17.cpp",
+          "lines": "14162-14191",
+          "nativeRange": "0x826AE590..0x826AE5BC",
+          "captureSha256": "DDCEF2F0D643947CDB599EE3281F569592583F91715B432BF5BEACB470310B22"
+        }
+      ]
+    }
+  },
+  "nextDiscriminator": [
+    "Join actual descriptor-slot callers and output+8 consumers; identify concrete selected chunk/range and buffer dispatch targets before claiming code independence, alias protection or absence of hashing/comparison/persistence beyond the inspected helpers.",
+    "Bind actual resource generation/order, patch-input snapshots and Original branch history before implementing an exact readback bridge.",
+    "Prove scoped alias/reentrancy guards or durable code/cache coherence before selecting a materialization policy."
+  ],
+  "guards": [
+    "Do not equate raw caller counts with runtime frequency or the static clone witness with an observed clone.",
+    "Do not reconstruct code from only the last consumed key, patch inline draws into persistent C, or assume a subsequent draw repairs recreation from different saved input.",
+    "Do not infer draw admission, complete API equivalence or universal prefix deadness from this byte-observation contract."
+  ],
+  "conclusion": "Effect preparation and installed description queries retain code readback; same-device cloning supplies a conditional identity-preserving post-draw activation. An equivalent bridge must expose ordered Original persistent-code history, with scoped copy and durable cache coherence treated separately."
+}

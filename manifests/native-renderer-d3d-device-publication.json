@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0110",
+  "topic": "native-renderer-d3d-device-publication",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Where does the supported title publish its guest D3D device object after engine initialization succeeds?",
+  "scope": {
+    "function": "0x826A63E8",
+    "engineInitializationWrapper": "0x826A62F8",
+    "indirectCell": "0x820009F0",
+    "publicationStore": "0x826A645C",
+    "postPublicationSite": "0x826A6460",
+    "ringLifecycleHelper": "0x8269C8E0",
+    "boundary": "This packet identifies the exact VdGlobalDevice pointer publication and closes it with one non-mutating native runtime observation. It does not assign a device layout, lifetime, dispatch table, reset contract, or renderer operation."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-d3d-inventory",
+      "use": "open device-publication discovery frontier and aggregate evidence boundary"
+    }
+  ],
+  "currentEvidence": {
+    "method": "one foreground read-only DumpFunctions.java query for 0x826A63E8, one foreground read-only DumpMemoryWords.java query centered on 0x826A645C with word radius 9, narrow generated-code corroboration, and one bounded native runtime observation at the exact post-store site",
+    "entries": [
+      {
+        "role": "publication function candidate",
+        "address": "0x826A63E8",
+        "evidence": "The generated function calls 0x826A62F8, rejects its zero result, then reaches the bounded indirect store sequence only on success.",
+        "confidence": "candidate"
+      },
+      {
+        "role": "indirect destination load",
+        "address": "0x826A6450",
+        "word": "0x816B09F0",
+        "instruction": "lwz r11,0x09F0(r11)",
+        "baseProducer": {
+          "address": "0x826A6438",
+          "word": "0x3D608200",
+          "instruction": "lis r11,0x8200"
+        },
+        "result": "The sequence loads the big-endian word at 0x820009F0 into r11.",
+        "confidence": "strong"
+      },
+      {
+        "role": "guest object publication",
+        "address": "0x826A645C",
+        "word": "0x93EB0000",
+        "instruction": "stw r31,0(r11)",
+        "result": "The title stores its retained object pointer in r31 through the indirect destination loaded at 0x826A6450.",
+        "confidence": "strong"
+      },
+      {
+        "role": "post-publication observation site",
+        "address": "0x826A6460",
+        "word": "0x487EC065",
+        "instruction": "bl 0x82E924C4",
+        "result": "This call follows the publication store. A read-only observation inserted before the original call retains r31 and the indirect destination in r11, and then preserves the call itself.",
+        "confidence": "strong"
+      }
+    ],
+    "generatedCorroboration": {
+      "definition": "generated/default/rerevved_recomp.193.cpp:13221",
+      "wrapperCall": "generated/default/rerevved_recomp.193.cpp:13261",
+      "publicationSequence": "generated/default/rerevved_recomp.193.cpp:13271"
+    },
+    "decompilerQualification": "The canonical-project decompile truncated at bad instruction data near 0x826A63F0 and supplied no caller or callee result. No semantic claim relies on that decompilation.",
+    "reproduction": "Run DumpMemoryWords.java read-only for target 0x826A645C with REREVVED_WORD_RADIUS=9 against the image pinned by image.json, then compare words 0x826A6438 through 0x826A6464 with the entries above. Corroborate only function 0x826A63E8 in generated ReXGlue output.",
+    "runtimeIdentity": {
+      "runId": "NATIVE-ID-20260830-0001",
+      "titleCommit": "61e96e719199851658347fed5dbedeba187d877f",
+      "sdkCommit": "e89618afbe9c6b5e178797b1ee5e7d03ec3d77e6",
+      "executableSha256": "63a3a044edc124f5c6b8c88b9ecfd82fd3dc63af3c6b72399b0b5f2d9d8064a7",
+      "logSha256": "11a48b1d23234463ab6bc078274a373ffaeff372f955fa88c777175a49cfe64c",
+      "observation": "The native-only post-store observer read cell 0xFFCAE000, verified its big-endian word equaled retained device 0x50235580, and published that exact pair. SDK e89618a maps the title's VdGlobalDevice variable import to 0xFFCAE000.",
+      "classification": "Promoted as exact VdGlobalDevice publication identity. This proves the imported cell and stored guest object for this execution only; it does not prove object layout, validity duration, dispatch semantics, or native output."
+    }
+  },
+  "postPublicationHelper": {
+    "address": "0x8269C8E0",
+    "callsite": "0x826A6474",
+    "continuation": "0x826A6478",
+    "method": "one foreground read-only DumpFunctions.java query for 0x8269C8E0 and narrow generated-code corroboration of only 0x826A63E8 and 0x8269C8E0",
+    "ghidraResult": "The canonical project identified the exact function entry but truncated at save thunk 0x827F7C78. Its decompilation and caller/callee model supplied no usable body or complete reference result.",
+    "generatedCallChain": "After ExGetXConfigSetting returns nonnegative, 0x826A63E8 passes the retained published object in r3 and r30 + 0x48 in r4 to 0x8269C8E0. A zero helper return continues to 0x8268CC88.",
+    "generatedBody": "The helper conditionally tears down prior anonymous buffers, clears object fields +0x3A24, +0x3A28, +0x30, and +0x34, allocates 96 and 32 bytes into +0x2A90 and +0x2A94, zeroes both blocks, calls VdInitializeRingBuffer, calls VdEnableRingBufferRPtrWriteBack, and publishes additional ring bookkeeping fields.",
+    "classification": "strong static ring-buffer lifecycle boundary",
+    "qualification": "This does not identify a render target, texture, EDRAM surface, resolve, swap, present path, device reset API, complete field layout, caller inventory, ownership, destruction contract, or runtime execution.",
+    "generatedCorroboration": {
+      "callerWindow": "generated/default/rerevved_recomp.193.cpp:13292",
+      "definition": "generated/default/rerevved_recomp.186.cpp:13125",
+      "clearAndAllocationWindow": "generated/default/rerevved_recomp.186.cpp:13235",
+      "ringInitializationWindow": "generated/default/rerevved_recomp.186.cpp:13413",
+      "writeBackWindow": "generated/default/rerevved_recomp.186.cpp:13451"
+    },
+    "nextBoundary": "0x8268CC88 remains unclassified and is reached only after the ring helper returns zero."
+  },
+  "postRingTemplateHelper": {
+    "address": "0x8268CC88",
+    "callsite": "0x826A6484",
+    "continuation": "0x826A6488",
+    "method": "one foreground read-only DumpFunctions.java query for 0x8268CC88 and narrow generated-code corroboration of only 0x826A63E8 and 0x8268CC88",
+    "ghidraResult": "The canonical project identified the exact entry but immediately truncated on bad instruction data. It reported no caller, callee, or usable body.",
+    "generatedCallChain": "After 0x8269C8E0 returns zero, 0x826A63E8 passes the retained published object in r3 to 0x8268CC88. A nonzero helper return continues to 0x826AC3F8.",
+    "generatedBody": "The helper allocates 4096 bytes into object field +0x5D80 and 512 bytes into +0x5D88, writes a fixed leading sequence and fifteen repeated five-word groups into the first block, records the emitted dword count at +0x5D84, and returns one. Allocation failure returns zero.",
+    "classification": "strong static anonymous fixed-template storage builder",
+    "qualification": "The fixed words are not decoded here. This does not identify a command opcode, register, render target, texture, EDRAM surface, format, state group, resolve, swap, present path, ownership, destruction contract, or runtime execution.",
+    "generatedCorroboration": {
+      "callerWindow": "generated/default/rerevved_recomp.193.cpp:13313",
+      "definition": "generated/default/rerevved_recomp.47.cpp:12942",
+      "allocationWindow": "generated/default/rerevved_recomp.47.cpp:12961",
+      "templateWindow": "generated/default/rerevved_recomp.47.cpp:13007",
+      "countAndReturnWindow": "generated/default/rerevved_recomp.47.cpp:13135"
+    },
+    "nextBoundary": "0x826AC3F8 remains unclassified and is reached only after this helper returns nonzero."
+  },
+  "postTemplateWorkerHelper": {
+    "address": "0x826AC3F8",
+    "callsite": "0x826A6494",
+    "continuation": "0x826A6498",
+    "method": "one foreground read-only DumpFunctions.java query for 0x826AC3F8 and narrow generated-code corroboration of only 0x826A63E8 and 0x826AC3F8",
+    "ghidraResult": "The canonical project identified the exact entry but truncated at save thunk 0x827F7C78. It supplied no usable body or complete caller result.",
+    "generatedCallChain": "After 0x8268CC88 returns nonzero, 0x826A63E8 passes the retained published object in r3 to 0x826AC3F8. A nonzero helper return continues to 0x82692448.",
+    "generatedBody": "The helper conditionally allocates a 200-byte block, derives an enabled-worker count from six tested bits, initializes per-worker records, calls 0x8281A3B0 for enabled records, references the returned thread handles, sets base priority 17, dereferences the thread objects, and returns one. Allocation or worker creation failure returns zero.",
+    "classification": "strong static worker-pool initialization boundary",
+    "qualification": "This does not identify a render target, texture, EDRAM surface, format, draw state, command meaning, resolve, swap, present path, complete thread lifetime, or runtime execution.",
+    "generatedCorroboration": {
+      "callerWindow": "generated/default/rerevved_recomp.193.cpp:13322",
+      "definition": "generated/default/rerevved_recomp.100.cpp:13500",
+      "workerSelectionWindow": "generated/default/rerevved_recomp.100.cpp:13542",
+      "creationWindow": "generated/default/rerevved_recomp.100.cpp:13624",
+      "priorityWindow": "generated/default/rerevved_recomp.100.cpp:13669"
+    },
+    "nextBoundary": "0x82692448 is the next linear initialization helper, but this packet stops the chain because the first three post-publication helpers are ring lifecycle, anonymous template storage, and worker-pool setup rather than render-target or presentation producers."
+  },
+  "nextDiscriminator": {
+    "site": "the title-used guest D3D operation surface after exact device publication",
+    "question": "Which proved high-level device, resource, state, draw, Resolve, and present operations must native mode replace before the original PM4 path can remain a bounded no-op?",
+    "limits": "Do not dereference the published device or infer layout from this identity result. Do not treat ignored ring calls as sufficient replacement for the title-used D3D surface, and do not copy ReBlue device fields or addresses."
+  },
+  "guards": [
+    "Do not generalize the observed VdGlobalDevice object address across executions or infer fields from it.",
+    "Do not infer a guest device size, layout, dispatch table, field meaning, reset path, resource owner, or PM4 replacement.",
+    "Do not relabel the ring-buffer lifecycle helper as a render-target, resolve, swap, present, or complete device-reset boundary.",
+    "Do not decode or assign the anonymous fixed template without a separate bounded packet or register contract.",
+    "Do not treat worker-pool initialization as guest graphics output or continue the linear startup chain under this packet.",
+    "Do not transfer ReBlue or Blue Dragon addresses, offsets, constants, formats, or device structures.",
+    "Do not infer native draw, Resolve, VdSwap, or visible guest output from exact device publication."
+  ],
+  "conclusion": "The supported image proves that function 0x826A63E8 conditionally stores its retained object pointer r31 through an indirect destination loaded from 0x820009F0 at 0x826A645C. Native run NATIVE-ID-20260830-0001 then observed exact cell 0xFFCAE000, the SDK e89618a VdGlobalDevice import mapping, verified that the cell contained retained device 0x50235580, and recorded the pair without mutation. This closes publication identity only. Device layout, lifetime, dispatch semantics, reset ownership, the title-used high-level D3D replacement surface, and native output remain separate gates."
+}

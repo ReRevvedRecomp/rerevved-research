@@ -1,0 +1,40 @@
+name: Checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  repository-checks:
+    name: Repository Checks
+    runs-on: windows-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Install development requirements
+        run: python -m pip install -r tools/requirements-dev.txt
+      - name: Install PowerShell checks
+        shell: pwsh
+        run: |
+          $settings = Import-PowerShellDataFile ./tools/powershell-checks.psd1
+          Install-Module -Name $settings.Module.ModuleName `
+            -RequiredVersion $settings.Module.RequiredVersion `
+            -Repository PSGallery -Scope CurrentUser -Force -ErrorAction Stop
+      - name: Run repository checks
+        shell: pwsh
+        run: .\tools\verify.ps1

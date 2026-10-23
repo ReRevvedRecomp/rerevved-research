@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0190",
+  "topic": "building-wonder-cost-gate-source-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Do bounded Ghidra reference, address-materialization, or displacement searches identify a writer or meaning for the shared Library/University cost gate at 0x830E8FFE?",
+  "scope": {
+    "target": "0x830E8FFE",
+    "knownConsumer": {
+      "function": "0x82CF1278",
+      "address": "0x82CF148C",
+      "itemIds": [105, 112],
+      "result": "An unsigned halfword at the target gates a sequential three-quarter cost reduction."
+    },
+    "addressMaterializerSearch": {
+      "splitConstantLookahead": 8,
+      "firstUseWindow": 16,
+      "resultCap": 32,
+      "decodedInstructionsScanned": 654329,
+      "matches": 0,
+      "truncated": false
+    },
+    "displacementSearch": {
+      "offset": "0x8FFE",
+      "scanRange": "0x82000000 through 0x8320FFFF",
+      "functionOwnedInstructionsScannedPerFilter": 462689,
+      "readMatches": 0,
+      "writeMatches": 0,
+      "resultCapPerFilter": 32,
+      "truncated": false
+    },
+    "consumerListing": {
+      "address": "0x82CF148C",
+      "containingFunction": null,
+      "instructionWindow": "0x82CF144C..0x82CF14CC",
+      "decodedInstructionCount": 0,
+      "previousDefinedFunction": "0x82CF1278..0x82CF127F",
+      "nextDefinedFunction": "0x82CF1558..0x82CF155F"
+    },
+    "boundary": "DumpReferences checks references recorded by Ghidra to the exact target. FindGlobalAddressAccesses scans decoded split-address materializers. FindFieldAccesses scans register-plus-displacement operands only inside Ghidra-defined functions and the explicit address range; it does not cover the consumer instruction window because Ghidra defines no function there."
+  },
+  "dependencies": [
+    { "topic": "building-wonder-cost-modifier-branches", "use": "Provides the exact Library 105 and University 112 gate and sequential three-quarter cost arithmetic at 0x82CF148C through 0x82CF14B8." }
+  ],
+  "currentEvidence": {
+    "method": "Five foreground read-only canonical-project queries: one exact reference lookup, one decoded split-address scan, separate read and write displacement scans, and one function-neighborhood query at the known consumer address.",
+    "entries": [
+      {
+        "role": "exact Ghidra references",
+        "address": "0x830E8FFE",
+        "result": "The reference manager returned References: 0."
+      },
+      {
+        "role": "split-address materializers",
+        "address": "0x830E8FFE",
+        "result": "No materializer matched among 654329 decoded instructions; the cap of 32 was not reached."
+      },
+      {
+        "role": "encoded register displacement",
+        "address": "+0x8FFE",
+        "result": "Separate read and write scans each found zero accesses among 462689 function-owned instructions in 0x82000000..0x83210000; neither scan truncated."
+      },
+      {
+        "role": "consumer listing boundary",
+        "address": "0x82CF148C",
+        "result": "No containing function or decoded instructions were returned for 0x82CF144C..0x82CF14CC."
+      }
+    ],
+    "locators": [
+      "ghidra/DumpReferences.java:0x830E8FFE",
+      "ghidra/FindGlobalAddressAccesses.java:0x830E8FFE lookahead=8 firstUseWindow=16 cap=32",
+      "ghidra/FindFieldAccesses.java:+0x8FFE READ,WRITE 0x82000000..0x83210000 cap=32",
+      "ghidra/DumpFunctionNeighborhood.java:0x82CF148C"
+    ],
+    "qualification": "No runtime action or generated-code expansion was performed. These results do not identify a writer or semantic name and do not prove that no writer exists: the scans omit non-split address construction, effective-address patterns other than the tested displacement, data aliases, and code absent from Ghidra's function listing."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": ["RVA-SYM-0323"],
+    "result": "The existing cost-helper symbol gains this bounded source-search limit. No global entity or write relation is added because the gate meaning and producer remain unidentified."
+  },
+  "guards": [
+    "Do not infer that 0x830E8FFE has no writer from these zero-match queries.",
+    "Do not use the Library/University reduction gate as a named gameplay policy or claim runtime activation.",
+    "Do not treat the decoded instruction scans as covering the unmodeled consumer window at 0x82CF148C."
+  ],
+  "conclusion": "The bounded Ghidra queries found no recorded reference, decoded split-address materializer, or tested register displacement for 0x830E8FFE. The known consumer at 0x82CF148C has no containing function or decoded instructions in the canonical listing. The gate's writer and meaning remain unresolved; this is a limit of the inspected Ghidra model, not proof that no writer exists."
+}

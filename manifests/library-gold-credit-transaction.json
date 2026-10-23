@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0245",
+  "topic": "library-gold-credit-transaction",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "In CityUpdate 0x82D13978, which exact operands form the selected per-city Gold cache boundary before 0x82D1537C and the Gold reserve credit store at 0x82D15610, and how do native overrides, Science, owner aggregates, and the Chinese and Library selectors relate to them?",
+  "scope": {
+    "function": "0x82D13978",
+    "cacheBoundary": "0x82D1537C",
+    "creditStore": "0x82D15610",
+    "cityTable": "0x8314FE28",
+    "cityStride": "0xBC",
+    "reserve": "0x830ED544",
+    "ownerAggregate": "0x830EE388",
+    "ownerAggregateStride": "0x28",
+    "playerCivilizationArray": "0x830ECD28",
+    "queryWindows": [
+      "0x82D13978..0x82D13A5C",
+      "0x82D14620..0x82D146FC",
+      "0x82D14E00..0x82D152BC",
+      "0x82D152C0..0x82D1567C",
+      "0x82D16B98..0x82D16BA4"
+    ],
+    "boundary": "Gold only. This result pins local operands, predecessor paths, and selected native overrides between the selected city Gold cache store and the selected reserve credit. It does not identify a Culture credit, close Stonehenge suppression, enumerate every reserve writer or caller, or establish a once-per-city-per-turn cadence."
+  },
+  "dependencies": [
+    {
+      "topic": "city-yield-state-credit",
+      "use": "Provides the accepted reserve credit, mode gates, UEA 42 clearing, and separate owner-byte branch that this result pins to exact operands."
+    },
+    {
+      "topic": "library-city-yield-writers",
+      "use": "Provides the city context, Library and University presence bits, the +0x44 and +0x46 writers, and the mode-zero owner-aggregate additions."
+    },
+    {
+      "topic": "civilization-bonus-storage",
+      "use": "Provides the per-player civilization word at 0x830ECD28, Chinese civilization index 6, and the excluded-player word at 0x82F700B0."
+    },
+    {
+      "topic": "city-yield-credit-call-boundary",
+      "use": "Provides the 24 direct CityUpdate sites and their modes zero, one, and -1."
+    },
+    {
+      "topic": "gold-reserve-interest",
+      "use": "Identifies the player-indexed reserve word and the separate CalendarTurnAdvance interest store."
+    },
+    {
+      "topic": "science-completion",
+      "use": "Provides the technology progress words written by the Science branch before the Gold credit and the separate excess-Gold store."
+    },
+    {
+      "topic": "unique-era-ability-effect-ownership",
+      "use": "Provides the UEA 23 accumulator and UEA 42 gate identities adjacent to the Gold operands."
+    },
+    {
+      "topic": "playable-game-state-gates",
+      "use": "Provides the manager +0x10 receiver, vtable +0x100 target 0x82A73340, and result +0x0C resolver contract used by the indirect call at 0x82D154DC."
+    }
+  ],
+  "cityRecord": {
+    "addressing": "0x82D13984..0x82D13998 sets r14 to city table base 0x8314FE28, retains the incoming city index in r23, sets r31 = index*0xBC, and saves the base at stack +0x74 and the index at stack +0x174. CityUpdate performs no local index bound check.",
+    "capacity": "The accepted reader loop at 0x82CF9F44..0x82CF9F58 covers 128 slots of stride 0xBC. Callers are responsible for the index range.",
+    "owner": "0x82D1399C loads city byte +0x00, 0x82D139B0 sign-extends it, and 0x82D139D8 saves it at stack +0x84. This entry snapshot is the owner used by the aggregate rows and the credit. 0x82D1538C and 0x82D154EC later reread the live signed byte +0x00 for comparisons only.",
+    "secondByte": "City byte +0x01 is read signed only at 0x82D153A4..0x82D153A8 for the excluded-player comparison. Its meaning remains unassigned.",
+    "library": "0x82D14650..0x82D14654 loads the 32-bit big-endian word at city +0x10 through retained base r25. 0x82D146C4 tests mask 0x20 (Library 105), equivalent to bit 0x20 of byte +0x13. Mask 0x1000 (University 112) at 0x82D14698 takes precedence.",
+    "goldCache": "City +0x46 is a halfword. 0x82D14ED0 stores the low 16 bits of the 32-bit stack +0x7C value. The accepted reader sign-extends it."
+  },
+  "cacheBoundary": {
+    "predecessors": "Exactly three branches reach 0x82D1537C: 0x82D15334 and 0x82D1534C branch to 0x82D15374, which falls through 0x82D15378; the UEA 42 clearing block 0x82D15350..0x82D1536C ends with 0x82D15370 b 0x82D1537C. No other branch enters 0x82D14EC8..0x82D1537C.",
+    "clearingCondition": "0x82D15318..0x82D15324 branches to clearing when city word +0x24 has mask 0x8. Otherwise 0x82D15328..0x82D15334 skips clearing when word 0x830ED3D8 + owner*4 (stack +0xA4 base) is nonzero, and 0x82D15338..0x82D1534C skips it when cumulative UEA 42 is active for r17. The remaining path clears.",
+    "registers": {
+      "mode": "r15, loaded from stack +0x17C at 0x82D14E90; stack +0x17C is written only at entry 0x82D139B4 from incoming r4.",
+      "cityOffset": "r31 = city index*0xBC, written only at 0x82D13990.",
+      "cityBase": "Stack +0x74 = 0x8314FE28. No register holds the bare base at 0x82D1537C on both paths: r30 is reloaded from stack +0x80 at 0x82D15374 or zeroed at 0x82D15354.",
+      "fieldBases": "r24 = base+0x40 (0x82D14E28), r25 = base+0x42 (0x82D14E60), r26 = base+0x44 (0x82D14E94), r27 = base+0x46 (0x82D14EC8). None is rewritten before 0x82D15384, where r24 becomes the bare base.",
+      "goldCacheAddress": "r31 + r27 = 0x8314FE28 + index*0xBC + 0x46.",
+      "owner": "r17 = signed entry owner from stack +0x84, loaded at 0x82D14E98.",
+      "ownerTimesFour": "r19 = low32 owner*4, written at 0x82D14684 from r18 after every path reloads r18 from stack +0x84.",
+      "aggregateBase": "Not retained. r29 held 0x830EE388 through 0x82D152FC but becomes stack +0x90 at 0x82D15378 or zero at 0x82D1535C.",
+      "goldValue": "Stack +0x7C. On the fallthrough path it equals the value whose low 16 bits were stored at 0x82D14ED0. On the clearing path it is zero and city +0x46 is zero."
+    },
+    "pathEquality": "r15, r31, r17, r19, and r24..r27 are identical on all three predecessor paths. r29, r30, r20, stack +0x7C, and city +0x40..+0x46 differ by path.",
+    "modes": "Mode one branches at 0x82D13A50 to 0x82D159A4 and cannot reach 0x82D1537C. Mode -1 can reach it and exits at 0x82D15380 to the epilogue 0x82D16B98. Any other mode that reaches it continues to the credit. The accepted direct inventory passes only zero, one, and -1.",
+    "aggregateGuards": "Owner-row additions at 0x82D14EC0 (+0x08), 0x82D14EF0 (+0x0C), 0x82D14F20 (+0x14), and 0x82D15310 (+0x10) are each guarded by cmpwi r15,0 (0x82D14E9C, 0x82D14ECC, 0x82D14EFC, 0x82D152EC). Only mode zero performs them. All precede the UEA 42 clearing, which does not revert them."
+  },
+  "creditStore": {
+    "operands": "0x82D155E4 loads r10 from stack +0xB0, which holds 0x830ED544 (written only at 0x82D13A24). 0x82D155EC loads r9 from stack +0x7C. 0x82D15600 loads r11 = word r19 + r10. 0x82D15604 forms r8 = r9 + r11. 0x82D15610 stwx r8,r19,r10 stores the low 32 bits to 0x830ED544 + owner*4, where owner is the stack +0x84 entry snapshot.",
+    "noIntervening": "0x82D15608 and 0x82D1560C write only r11 and r7. Nothing writes r8, r10, or r19 between 0x82D15604 and 0x82D15610.",
+    "goldWriters": "Between 0x82D14EC4 and 0x82D155EC, stack +0x7C is written only by the clears at 0x82D1536C and 0x82D153C0.",
+    "noLocalLoop": "0x82D155E4..0x82D15614 is straight-line code inside no local loop. Each traversal performs one reserve store."
+  },
+  "ownerAggregate": {
+    "row": "0x830EE388 + owner*0x28 with owner from r17. Field +0x0C is a 32-bit word updated by lwzx, add, and stwx at 0x82D14EE8..0x82D14EF0 with low32 wrap.",
+    "range": "CityUpdate has no local owner range check before these rows or the reserve store. The accepted turn path rejects owner -1 before its mode-zero calls."
+  },
+  "chineseSelector": {
+    "storage": "Word 0x830ECD28 + owner*4 holds the player's civilization index; index 6 is Chinese in the accepted 16-row table.",
+    "localUse": "CityUpdate does not read 0x830ECD28 on the selected path. The comparison with 6 at 0x82D1468C reads 0x830ED3D8 + owner*4 and is not a civilization test."
+  },
+  "nativeOverrides": {
+    "uea42": "0x82D15350..0x82D1536C clears city +0x42, +0x40, +0x44, and +0x46, retained r20, r29, r30, and stack +0x7C together, so cache and credit Gold stay consistent at zero.",
+    "excludedOwner": "For any mode that passes 0x82D15380, 0x82D15388..0x82D153B0 compares live signed city bytes +0x00 and +0x01 with the excluded-player word 0x82F700B0. When both match, 0x82D153C0..0x82D153EC zeroes stack +0x7C, r18, r20, r29, and stack +0x78, 0x82D154AC stores one to city +0x03, and 0x82D154B0 writes city +0x38. City +0x46 is not rewritten, so the native credit adds zero Gold while the cache keeps its value.",
+    "scienceOnlyClear": "Otherwise 0x82D154B8..0x82D154F8 compares the live owner byte with the local-player resolver result (-1 when manager +0x10 is null). When they differ and halfword 0x8314F1D4 is nonzero, 0x82D15524 zeroes r20. This clear affects Science only; stack +0x7C and r18 are unchanged.",
+    "truncation": "The credit adds the full 32-bit stack +0x7C value while city +0x46 holds only its low 16 bits."
+  },
+  "intermediateCalls": {
+    "calls": "Between 0x82D15380 and 0x82D15610 the only call is bctrl at 0x82D154DC, on the not-excluded path. It dispatches vtable +0x100 of manager 0x8314EFE0 field +0x10. The UEA 23 lookup call at 0x82D15618 follows the 0x82D15610 and 0x82D15614 stores.",
+    "target": "On the accepted publication path, cell 0x8215FB78 selects 0x82A73340, which returns receiver +0x20 without a call, so it cannot re-enter CityUpdate. Other receiver vtables are outside the accepted publication proof."
+  },
+  "scienceSeparation": "r20 feeds city +0x44, aggregate +0x08, and the progress stores at 0x82D155B8, 0x82D155BC, or 0x82D155E0, all before 0x82D155E4. Changing only r8 at 0x82D15610 leaves those stores and the Library arithmetic unchanged.",
+  "multiplicity": "One reserve store per executed credit traversal. The accepted Calendar loop can make more than one mode-zero call for the same city, so this is not proved once per city per turn.",
+  "openQualifications": [
+    "No per-city Culture credit is established. The adjacent 0x82D15614 store targets the owner-indexed UEA 23 accumulator, which is not a city Culture bank.",
+    "Native Stonehenge suppression and the complete set of Stonehenge consumers remain open and are outside this result.",
+    "The meaning of the 0x830ED3D8 word, city byte +0x01, halfword 0x8314F1D4, and the excluded player's category remain unassigned.",
+    "Valid owner indices beyond nonnegative, complete reserve writers, display consumers of +0x46, and runtime cadence remain unresolved."
+  ],
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No city update, reserve credit, or hook was executed or observed."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only queries over exact ranges: two raw-word queries with non-persistent pseudo-disassembly covering the listed query windows, and maintained DumpMemoryWords radius-32 windows at the selected sites. All 1,182 emitted rows matched the pinned flat image, including cell 0x8215FB78 = 0x82A73340. Exact-function generated code supplied register-write, stack-slot, and inbound-branch corroboration.",
+    "entries": [
+      {
+        "role": "city context, saved owner, reserve base, and mode-one bypass",
+        "address": "0x82D13984..0x82D13A50",
+        "confidence": "strong"
+      },
+      {
+        "role": "owner index and Library arithmetic",
+        "address": "0x82D14648..0x82D146E8",
+        "confidence": "strong"
+      },
+      {
+        "role": "field bases, cache stores, and mode-zero aggregate guards",
+        "address": "0x82D14E28..0x82D152EC",
+        "confidence": "strong"
+      },
+      {
+        "role": "cache boundary predecessors and mode -1 exit",
+        "address": "0x82D15318..0x82D15380",
+        "confidence": "strong"
+      },
+      {
+        "role": "native overrides and indirect resolver",
+        "address": "0x82D15384..0x82D15548",
+        "confidence": "strong"
+      },
+      {
+        "role": "reserve credit store",
+        "address": "0x82D155E4..0x82D15610",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82D13A08,0x82D14684,0x82D14E90,0x82D15130,0x82D15344,0x82D154EC,0x82D155E4,0x8215FB78 radius=32",
+      "generated:rerevved/sub_82D13978"
+    ],
+    "qualification": "Generated code places 0x82D1537C and 0x82D15610 inside sub_82D13978 as instruction boundaries. loc_82D1537C is the target of 0x82D15370; 0x82D15610 is unlabeled straight-line code. Generated code is corroboration, not an independent authority. Register preservation across calls assumes the callees follow the ABI."
+  },
+  "guards": [
+    "Do not use r29 or r30 as the aggregate or city base at 0x82D1537C; both differ by predecessor path.",
+    "Do not add an owner-aggregate delta for any mode other than zero.",
+    "Do not load a cache-stage Gold bonus into stack +0x7C; the credit would count it again.",
+    "Do not infer Chinese ownership from the comparison against six at 0x82D1468C.",
+    "Do not assume the cache and the credit agree on the excluded-owner path or for values outside signed 16 bits.",
+    "Do not infer once-per-city-per-turn cadence, a Culture credit, or complete Stonehenge suppression from this result."
+  ],
+  "conclusion": "At 0x82D1537C, every predecessor path holds mode r15, city offset r31, owner r17, owner*4 r19, and r27 = 0x8314FE28 + 0x46, so the Gold cache is halfword r31 + r27. Only mode zero performed the earlier aggregate +0x0C addition, and mode -1 exits at 0x82D15380. At 0x82D15610, r8 = old reserve + stack +0x7C, stored to 0x830ED544 + owner*4 through r19 and r10. The only intervening call is a resolver getter that cannot re-enter CityUpdate on the accepted path. The excluded-owner branch zeroes credit Gold but not the cache."
+}

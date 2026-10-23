@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0168",
+  "topic": "wonder-post-threshold-helper-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact normalized-index gate follows the accepted sufficient-production wonder path, and does it cover all thirty-seven stored wonder identities?",
+  "scope": {
+    "cityUpdate": "0x82D13978",
+    "preWriteGate": "0x82CF3608",
+    "postThresholdHelper": "0x82D16BA0",
+    "normalizedIndex": "item ID minus 200 in r27 at the city-update callsite",
+    "boundary": "This packet follows the known wonder sufficient-production path through its immediate pre-write gate, first stores, one direct post-threshold helper call, and that helper's entry range guard. Separate packets classify Great Wall, Hanging Gardens, Oxford University, Leonardo's Workshop, and Statue of Liberty interior branches. Other cases, callers, invalid-ID outcomes, and runtime execution remain outside this packet."
+  },
+  "dependencies": [
+    { "topic": "non-unit-production-threshold-boundary", "use": "Provides the accepted wonder cost call, signed invested-production threshold, neutral pre-write gates, and first three stores." },
+    { "topic": "wonder-record-byte-boundary-237-249", "use": "Provides the static initialized-record frontier at item 236 and all-zero continuation positions." },
+    { "topic": "wonder-record-identity-236", "use": "Provides the last exact stored identity beyond the helper's normalized-index gate." }
+  ],
+  "callsite": {
+    "preWrite": "At 0x82D162E8 the city-update path passes normalized wonder index r27 to 0x82CF3608 after a neutral indexed word equals -1; return r3 must be nonzero at 0x82D162F0 through 0x82D162F4.",
+    "firstWrites": "After the accepted +0x36, +0x3A, and +0x24 stores, a conditional store of -1 to city +0x38 occurs at 0x82D1632C when the retained r22 value is zero.",
+    "helperCall": "At 0x82D16330 through 0x82D16340, the path passes r3 = r27, r4 = retained r23, r5 = 1, and r6 = 0 to 0x82D16BA0.",
+    "extraCall": "A later local condition can call the same helper with r3 = r27, r4 = r23, r5 = 2, and r6 = 0 only when r27 equals 19 or 20; the other local flag remains neutral.",
+    "qualification": "These calls follow the sufficient-production and pre-write gates. Neither r5 mode is assigned a gameplay-effect meaning in this packet."
+  },
+  "helperEntry": {
+    "rangeCheck": "0x82D16BC8 compares signed normalized index with zero and branches away when negative; 0x82D16BD8 compares it with 33 and branches away when index is at least 33.",
+    "acceptedIndexRange": "0 through 32 for the helper body",
+    "correspondingStoredItemIds": "200 through 232 for this direct city-update callsite",
+    "outsideGate": "The helper body is not entered for normalized indices 33 through 36, corresponding to stored item IDs 233 through 236, on this direct callsite.",
+    "qualification": "This does not prove that items 233 through 236 are globally invalid, impossible to select, or devoid of effects through other paths. The city-update path can perform earlier stores before this helper gate."
+  },
+  "modeSplit": {
+    "directCall": "The accepted 0x82D16340 city-update call supplies r5 = 1. At 0x82D16BE0 the helper tests bit zero and enters the explicit branch group; at its common join 0x82D1719C it tests bit one, which is clear for this call and returns through 0x82D17824.",
+    "explicitIndices": "The complete direct mode-one branch group compares normalized indices 2 at 0x82D16CAC, 11 at 0x82D16D0C, 27 at 0x82D16EA8, 1 at 0x82D16FE8, and 8 at 0x82D17098. Other admitted indices join 0x82D1719C without one of these local effect branches.",
+    "extraCall": "The separately accepted city-update call for indices 19 or 20 supplies r5 = 2. Its clear bit zero skips the five-branch group; its set bit one enters the longer common tail at 0x82D171A8. A separate packet classifies the tail's terminal state writes, while its intermediate behavior remains unresolved.",
+    "qualification": "This is a census of this helper's direct mode-one interior branches, not all wonder effects, generic prefix writes, other consumers, or runtime behavior. The conditional mode-two path remains open."
+  },
+  "currentEvidence": {
+    "method": "One exact-function generated-code window located the direct call and helper entry guard; a foreground read-only Ghidra raw-word query corroborated the complete local callsite and entry comparison windows in the current image.",
+    "entries": [
+      { "role": "wonder sufficient path", "address": "0x82D162E0 through 0x82D16378", "result": "Exact words corroborate the neutral pre-write gate, direct 0x82CF3608 call, first stores, 0x82D16BA0 calls, and the local 19-or-20 extra-call condition.", "confidence": "strong" },
+      { "role": "post-threshold helper entry", "address": "0x82D16BC8 through 0x82D16BDC", "result": "Exact words compare the signed normalized index with zero and 33 before the helper's interior body.", "confidence": "strong" },
+      { "role": "mode-one branch census", "address": "0x82D16CAC through 0x82D171A8", "result": "Five exact index comparisons lead to the local branches; the common join tests mode bit one and returns for direct mode one.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82D162F0,0x82D16338 radius=18", "ghidra/DumpMemoryWords.java:0x82D16BD0 radius=18", "ghidra/DumpMemoryWords.java:0x82D16D70,0x82D16E40,0x82D17040 radius=40", "ghidra/DumpMemoryWords.java:0x82D171A0 radius=9", "generated:rerevved/sub_82D13978", "generated:rerevved/sub_82D16BA0"],
+    "qualification": "The configured Ghidra listing truncates the large city-update function, so raw current-image words support each interior address. The exact generated windows corroborate the local dataflow. No runtime probe was performed."
+  },
+  "guards": [
+    "Do not equate the 0-through-32 helper-body range with the 200-through-236 stored record range.",
+    "Do not call the first city writes or the helper calls a complete wonder effect implementation.",
+    "Do not infer that stored items 233 through 236 are globally invalid, unavailable, or never displayed.",
+    "Do not classify the neutral pre-write gate, mode arguments, or downstream helper body without separate evidence.",
+    "Do not infer runtime execution or safe modding behavior."
+  ],
+  "conclusion": "The accepted sufficient-production wonder path calls 0x82D16BA0 with item ID minus 200 after a separate nonzero pre-write gate. That helper enters its body only for normalized indices 0 through 32, corresponding at this callsite to stored IDs 200 through 232. Its direct mode-one branch group has exactly five explicit indices: 1, 2, 8, 11, and 27. Separate packets map those branches. Mode one skips the later mode-two tail; the extra mode-two call for indices 19 or 20 enters a tail whose terminal state writes are separately mapped. Stored IDs 233 through 236 lie outside this direct helper-body range, while earlier city writes and other possible paths remain unresolved."
+}

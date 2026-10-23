@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0173",
+  "topic": "wonder-outer-gate-special-19-20",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact special outer-gate conditions replace the generic wonder-record checks for normalized indices 19 and 20?",
+  "scope": {
+    "function": "0x82CF3608",
+    "normalizedIndices": [19, 20],
+    "storedItemIds": [219, 220],
+    "recordIdentities": ["United Nations", "The World Bank"],
+    "boundary": "This packet classifies the two special branches after the accepted inner gate. It does not establish the meanings or writers of the state words and halfwords, runtime return values, game victory behavior, or a general valid-ID rule."
+  },
+  "dependencies": [
+    { "topic": "wonder-eligibility-dispatch-boundary", "use": "Establishes the required nonzero inner-gate result." },
+    { "topic": "wonder-outer-gate-record-fields", "use": "Establishes the distinct generic branch used for other normalized indices." },
+    { "topic": "wonder-record-identities-215-219", "use": "Binds item 219 to United Nations." },
+    { "topic": "wonder-record-identity-220", "use": "Binds item 220 to The World Bank." }
+  ],
+  "index19": {
+    "entry": "0x82CF3634",
+    "quantity": "At 0x82CF3644, load signed word from 0x830ED41C + selector*4 and clamp to 0 through 999. At 0x82CF3688 and 0x82CF368C, load words from 0x830ECBE4 + selector*4 and 0x830ED3F8 + selector*4.",
+    "threshold": "Sign-extend halfword 0x830E8FE6. The sum of the two words and clamped quantity must be at least five times (4 minus that halfword); otherwise return zero at 0x82CF3628.",
+    "finalState": "Sign-extend halfword 0x830E8FE4. If it is nonzero, return one only when it equals 4. If zero, return one when unsigned halfword 0x830E8FF2 differs from 4, otherwise zero.",
+    "qualification": "These are 32-bit guest arithmetic and branch conditions, not a proven diplomatic or victory rule."
+  },
+  "index20": {
+    "entry": "0x82CF36DC",
+    "quantity": "At 0x82CF3700, load word from 0x830ECB84 + selector*4.",
+    "threshold": "The word must be at least (8 minus signed halfword 0x830E8FE6); otherwise return zero at 0x82CF3628.",
+    "finalState": "Sign-extend halfword 0x830E8FE4. If it is nonzero, return one only when it equals 3. If zero, return one when unsigned halfword 0x830E8FF2 differs from 3, otherwise zero.",
+    "qualification": "These are static state checks; they do not prove an economic-victory effect."
+  },
+  "runtimeObservation": {
+    "source": "wonder-eligibility-virtual-target",
+    "result": "The fresh-game probe logged the inner virtual target returning zero for indices 19 and 20, but the inner helper can still accept both by its below-21 fallback. No outer-gate return or branch inputs were logged.",
+    "outerResultObserved": false
+  },
+  "currentEvidence": {
+    "method": "One narrow exact-function generated-code window localized both branches. A foreground read-only canonical-project raw-word query covered 0x82CF3634 through 0x82CF373C in two disjoint windows.",
+    "entries": [
+      { "role": "index 19 branch", "address": "0x82CF3634 through 0x82CF36D8", "result": "Clamped quantity, two additional words, threshold comparison, and two halfword state tests.", "confidence": "strong" },
+      { "role": "index 20 branch", "address": "0x82CF36DC through 0x82CF373C", "result": "One word threshold comparison and the corresponding two halfword state tests.", "confidence": "strong" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:0x82CF3674,0x82CF36FC radius=16", "generated:rerevved/sub_82CF3608"],
+    "qualification": "The configured decompiler truncates at a save thunk; the current-image words support the static branch and generated code only corroborates instruction interpretation."
+  },
+  "guards": [
+    "Do not equate stored effect descriptions with implemented victory behavior.",
+    "Do not infer runtime acceptance from the static comparisons or the inner probe alone.",
+    "Do not apply these special branches to any index other than 19 and 20."
+  ],
+  "conclusion": "After the inner gate, normalized indices 19 and 20 use separate state-word thresholds and halfword conditions instead of the generic record-field branch. Their static comparisons are exact, while state ownership, runtime outcomes, and effects remain unresolved."
+}

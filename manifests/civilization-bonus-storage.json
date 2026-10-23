@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0066",
+  "topic": "civilization-bonus-storage",
+  "status": "closed",
+  "confidence": "confirmed",
+  "image": "image.json",
+  "question": "Are the four cumulative Unique Era Abilities driven by one shared data table, and do runtime consumers read that source directly or through derived caches?",
+  "scope": {
+    "functions": ["0x82CF0CB0", "0x82CF97D0"],
+    "globals": ["0x82F6F950", "0x830ECD08", "0x830ECD28", "0x82F700B0", "0x82F7A348"],
+    "boundary": "This packet maps Unique Era Ability ID storage, activation lookup semantics, direct consumer coverage, and runtime table selection. It does not map the separate Unique Abilities, assign gameplay meanings to every Unique Era Ability ID, change the table, map player era or civilization assignment writers, define a ruleset sidecar, or claim AI behavioral parity for a future variant."
+  },
+  "storage": {
+    "table": "0x82F6F950",
+    "shape": { "civilizations": 16, "erasPerCivilization": 4, "entrySize": 4, "rowSize": 16, "totalSize": 256 },
+    "index": "table[civilization_index * 4 + era_index]",
+    "initialization": "The complete UEA table of 64 words is present in the initialized image. The only recovered references to its base are two reads inside ActiveCivilizationBonusLookup; no runtime initializer, copy, writer, or second reader was recovered.",
+    "civilizationNames": "0x82F7A348",
+    "rows": [
+      { "index": 0, "name": "Roman", "bonuses": [1, 24, 23, 36] },
+      { "index": 1, "name": "Egyptian", "bonuses": [32, 58, 12, 38] },
+      { "index": 2, "name": "Greek", "bonuses": [60, 23, 20, 28] },
+      { "index": 3, "name": "Spanish", "bonuses": [7, 6, 25, 41] },
+      { "index": 4, "name": "German", "bonuses": [50, 30, 19, 47] },
+      { "index": 5, "name": "Russian", "bonuses": [16, 26, 17, 34] },
+      { "index": 6, "name": "Chinese", "bonuses": [36, 10, 20, 42] },
+      { "index": 7, "name": "American", "bonuses": [47, 35, 16, 2] },
+      { "index": 8, "name": "Japanese", "bonuses": [28, 27, 42, 26] },
+      { "index": 9, "name": "French", "bonuses": [59, 1, 13, 12] },
+      { "index": 10, "name": "Indian", "bonuses": [42, 43, 5, 18] },
+      { "index": 11, "name": "Arab", "bonuses": [38, 9, 14, 47] },
+      { "index": 12, "name": "Aztec", "bonuses": [46, 4, 1, 25] },
+      { "index": 13, "name": "African", "bonuses": [55, 8, 25, 17] },
+      { "index": 14, "name": "Mongolian", "bonuses": [40, 3, 56, 48] },
+      { "index": 15, "name": "English", "bonuses": [61, 6, 41, 51] }
+    ],
+    "nameQualification": "The image names index 13 African. No player-facing civilization name is substituted for that internal string."
+  },
+  "lookup": {
+    "function": "0x82CF0CB0",
+    "arguments": { "r3": "bonus ID", "r4": "player index", "r5": "exact-era flag" },
+    "playerEraArray": "0x830ECD08",
+    "playerCivilizationArray": "0x830ECD28",
+    "excludedPlayerGlobal": "0x82F700B0",
+    "cumulativeMode": "When r5 is zero, clamp the player's era to 0 through 3 and return true when the requested bonus appears anywhere from era 0 through the clamped era.",
+    "exactMode": "When r5 is nonzero, compare only the row entry at the player's current era. This path does not clamp the era before indexing.",
+    "excludedPlayerRule": "Return false when the requested player equals the value stored at 0x82F700B0.",
+    "recoveredUsage": "All 95 generated call sites pass r5 equal to zero. No caller of exact mode was recovered."
+  },
+  "nativeReturnContract": {
+    "question": "Does the native cumulative lookup return finitely without changing caller memory or retained registers?",
+    "scope": {
+      "function": "0x82CF0CB0",
+      "nativeStart": "0x82CF0CB0",
+      "nativeEndExclusive": "0x82CF0D8C",
+      "nativeWords": 55,
+      "coverage": "Complete native body, including the final blr at 0x82CF0D88. The selected theorem uses low32(r5)=0; the nonzero exact-mode branch is outside its cumulative row predicate."
+    },
+    "inputs": "Let b=U32(entry r3), p=U32(entry r4), q=U32(4*p), E=U32[0x82F700B0], A=low32(0x830ECD08+q), C=low32(0x830ECD28+q), and T=0x82F6F950. All effective addresses use guest low32 arithmetic. This contract selects mode U32(entry r5)=0.",
+    "readConditions": [
+      "Require valid executable instructions, ordinary completing integer/RAM reads and a valid incoming LR return target. The helper makes no native call, explicit trap, stack allocation or stack access.",
+      "The four-byte exclusion read must complete. If p==E, no era, civilization or table read is reached and the helper returns0.",
+      "For p!=E, require the four-byte era read at A, every reached four-byte civilization read at C, and every reached table read at low32(T+U32(16*c_n+4*n)) to complete. There is no native player or civilization bounds check. A numeric player-array capacity is not established by these contracts; supported player identity requires the computed A/C words to be actual current player-array elements.",
+      "To interpret table reads as the accepted 16x4 table, each sampled c_n must be in0..15 and the reached cells must retain that table's identity. Machine-level finite Boolean return needs valid computed reads; it does not itself certify a supported row."
+    ],
+    "cumulativeReturn": {
+      "era": "The era word is loaded once at 0x82CF0D24 and interpreted as signed32 e. Define k=min(3,max(0,e)); high-bit-set words clamp to0. No input era-range guard is required in this mode.",
+      "loop": "n starts0. Each loop header at 0x82CF0D30..0x82CF0D54 recomputes k from the retained era word and returns0 when n>k. Otherwise 0x82CF0D58 reloads c_n=U32[C], 0x82CF0D5C..0x82CF0D64 forms d_n=U32(16*c_n+4*n), and 0x82CF0D68 loads U32[T+d_n]. Equality with low32 b returns1 at 0x82CF0D7C/0x82CF0D80. A miss increments n and repeats.",
+      "bound": "At most four table comparisons, five loop-header visits and ten data-load instructions execute: one exclusion, one era, and at most four civilization plus four table loads. The excluded path executes only the exclusion load. Stable contents are unnecessary for termination when every reached read completes.",
+      "value": "For stable supported c and table contents, return1 iff p!=E and some n in0..k has U32[T+16*c+4*n]==b; otherwise return0. Both selected returns assign full64 r3=0 or1 and use unchanged incoming LR. The all-miss/excluded return includes the final blr at 0x82CF0D88.",
+      "bonus36": "For b=36 and retained initialized table cells from #/storage/rows, the only matches are row0/slot3 and row6/slot0. Thus return1 iff p!=E and (c==6 or (c==0 and e>=3)). This is conditional table membership, without an actual caller c/e/E value or a new gameplay meaning for36."
+    },
+    "effects": {
+      "memoryWrites": [],
+      "preservedGprs": "All64 bits of r0,r1,r2,r12..r31, including SP, are unchanged. No ABI save/restore assumption is needed.",
+      "changedGprs": "Only r3..r11 may change in cumulative mode. r3 is the full64 Boolean. On the excluded path, only r3 and r11 change. On a nonexcluded path, r4 becomes the last tested zero-extended table byte offset d_n, and r5 becomes U32(4*c_n)+n; neither generally retains its argument value.",
+      "otherState": "All FPRs, LR, CTR, XER and CR0..CR5/CR7 are preserved. Only CR6 is assigned by the comparisons, with SO copied from retained XER.SO.",
+      "memoryRetention": "Every caller frame, city, index, coordinate, player and global byte is unchanged by this native body. No alias exclusion between its reads and those bytes, mapped callee stack or stack-disjointness premise is needed. This is a no-write contract under ordinary RAM semantics, without external mutation or exceptional/device-read effects."
+    },
+    "generatedBoundary": "Generated line28187 inserts ApplyUniqueEraAbilityCell(ctx.r4,ctx.r9,ctx.r11) before the translated comparison at 0x82CF0D6C. It has no native instruction/call in this extent. This native contract excludes that host insertion and REX_FUNC_PROLOGUE scaffolding; it proves no executing-title hook return, mutation, effective result or parity.",
+    "evidence": {
+      "method": "Foreground read-only DumpMemoryWords.java at every aligned address in [0x82CF0CB0,0x82CF0D8C), with guarded exact-owner generated corroboration and independent offline native decode against image.json.",
+      "nativeVerification": "All55 words matched the supported flat image; all55 instruction comments matched native decoding, with six rotate aliases checked from raw fields. No inline data occurred in this helper.",
+      "generatedSource": {
+        "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+        "file": "generated/default/rerevved_recomp.8.cpp",
+        "sha256": "E1802AF225637745252D1E5900A3A6B71044DBAE81FBD2834FCEDA735AF7EA30",
+        "function": "sub_82CF0CB0",
+        "headerLine": 28086,
+        "nextHeaderLine": 28207,
+        "nextFunction": "sub_82CFE820",
+        "spanLines": 121
+      },
+      "locators": [
+        "ghidra/DumpMemoryWords.java:[0x82CF0CB0,0x82CF0D8C);4-byte stride;radius0",
+        "generated:rerevved/sub_82CF0CB0"
+      ],
+      "qualification": "Static native contract only. Actual player/table/era inputs, execution-time identity/order and generated host behavior remain separate. No runtime, build, probe, patch, UI or API work was performed."
+    },
+    "falsificationCondition": "A supported-image instruction in the declared complete extent writes memory, calls a descendant, changes a stated preserved register, permits an unbounded selected iteration or contradicts the stated return assignments. Invalid reached reads or return state fall outside the sufficient conditions."
+  },
+  "startingBonusBoundary": {
+    "presentationFunction": "0x82CF97D0",
+    "formatString": "0x8214EF00",
+    "evidence": {
+      "locator": "image.json:0x8214EF00",
+      "bytes": 46,
+      "sha256": "FA45BD611BB9D172C187D08F42386A9051BA4496F3DEBC3AB882AF6A9A2C98B4",
+      "summary": "Combines a civilization name with its starting-bonus description.",
+      "qualification": "Digest covers recorded UTF-8 text bytes only, excluding any terminator; original encoding is not established."
+    },
+    "conclusion": "The player-facing Unique Ability is presented separately from the four-entry Unique Era Ability row. This boundary does not identify a shared Unique Ability storage table or map the implementation of each starting effect."
+  },
+  "consumers": {
+    "generatedCallSites": 95,
+    "generatedCallerFunctions": 30,
+    "callerAddresses": [
+      "0x82CB2E48", "0x82CB44E0", "0x82CB6E48", "0x82CD7A60", "0x82CD9970",
+      "0x82CE27F0", "0x82CEA5A0", "0x82CEBC38", "0x82CECCD8", "0x82CF1060",
+      "0x82CF1148", "0x82CF1278", "0x82CF1558", "0x82CF17C8", "0x82CF1AF0",
+      "0x82CF1CE8", "0x82CF1F70", "0x82CF21A0", "0x82CF2230", "0x82CF2D98",
+      "0x82CF83C0", "0x82CF9F38", "0x82D076D8", "0x82D0BB10", "0x82D13978",
+      "0x82D178A8", "0x82D18D88", "0x82D1D1C0", "0x82D1EAB0", "0x82E5DD30"
+    ],
+    "lookupBonusRange": { "minimumObserved": 1, "maximumObserved": 61 },
+    "derivedCaches": "None recovered. The table has no reader other than ActiveCivilizationBonusLookup, and all recovered semantic consumers call that function instead of reading or copying table rows.",
+    "qualification": "The configured Ghidra project recovers six call references in three callers because affected Xenon functions truncate after save-register thunks. The generated call inventory is bounded to the accepted lookup target and corroborates the full 95-site set; it does not name the gameplay meaning of every caller."
+  },
+  "runtimeProbe": {
+    "status": "captured",
+    "date": "2026-08-20",
+    "default": "off",
+    "cvar": "civilization_bonus_probe",
+    "hook": "0x82CF0CB0",
+    "result": "An interactive Release run loaded a Medieval America game and exited normally. Player 0 resolved to civilization 7, era 1, row [47,35,16,2]; bonus 25 returned inactive and bonus 35 returned active. Four AI players resolved distinct table rows, and every observed query used cumulative mode.",
+    "samplePlayers": [
+      { "player": 0, "civilization": 7, "era": 1, "row": [47, 35, 16, 2] },
+      { "player": 1, "civilization": 0, "era": 1, "row": [1, 24, 23, 36] },
+      { "player": 2, "civilization": 15, "era": 1, "row": [61, 6, 41, 51] },
+      { "player": 3, "civilization": 12, "era": 1, "row": [46, 4, 1, 25] },
+      { "player": 4, "civilization": 2, "era": 1, "row": [60, 23, 20, 28] }
+    ],
+    "excludedPlayer": 5,
+    "mutationBoundary": "The probe reads the selected row independently, deduplicates queries per player/civilization/era state, and does not change registers or guest memory."
+  },
+  "staticQuery": {
+    "scripts": ["ghidra/DumpReferences.java", "ghidra/DumpFunctions.java", "ghidra/DumpInstructions.java", "ghidra/DumpMemoryWords.java", "ghidra/DumpStringsInRange.java"],
+    "mode": "foreground-read-only",
+    "generatedCorroboration": [
+      "generated:rerevved/sub_82CB2E48", "generated:rerevved/sub_82CB44E0", "generated:rerevved/sub_82CB6E48", "generated:rerevved/sub_82CD7A60", "generated:rerevved/sub_82CD9970",
+      "generated:rerevved/sub_82CE27F0", "generated:rerevved/sub_82CEA5A0", "generated:rerevved/sub_82CEBC38", "generated:rerevved/sub_82CECCD8", "generated:rerevved/sub_82CF1060",
+      "generated:rerevved/sub_82CF1148", "generated:rerevved/sub_82CF1278", "generated:rerevved/sub_82CF1558", "generated:rerevved/sub_82CF17C8", "generated:rerevved/sub_82CF1AF0",
+      "generated:rerevved/sub_82CF1CE8", "generated:rerevved/sub_82CF1F70", "generated:rerevved/sub_82CF21A0", "generated:rerevved/sub_82CF2230", "generated:rerevved/sub_82CF2D98",
+      "generated:rerevved/sub_82CF83C0", "generated:rerevved/sub_82CF9F38", "generated:rerevved/sub_82D076D8", "generated:rerevved/sub_82D0BB10", "generated:rerevved/sub_82D13978",
+      "generated:rerevved/sub_82D178A8", "generated:rerevved/sub_82D18D88", "generated:rerevved/sub_82D1D1C0", "generated:rerevved/sub_82D1EAB0", "generated:rerevved/sub_82E5DD30", "generated:rerevved/sub_82CF97D0"
+    ],
+    "truncationGuard": "Ghidra's incomplete call-reference set is not negative evidence. The lookup body and both table reads decompile completely; generated code is used only to inventory exact calls to this accepted function and their immediate r5 argument writes."
+  },
+  "indianStartingResourceReconciliation": {
+    "classification": "confirmed static identity branch; successful grant conditional",
+    "civilizationIndex": 10,
+    "ueaRow": [42, 43, 5, 18],
+    "canonicalBoundary": "resource-density-generation-boundary.json#/postSetupTileMutationBoundary/indianStartingArm",
+    "locators": ["0x830ECD28+4*p", "0x82D23324", "0x82D2332C"],
+    "result": "The reached initial-Settler setup arm directly compares the player's civilization index with10, ORs presence0x20 on one selected adjacent candidate, and invokes cached receiver+0xF4. This is separate from the four cumulative UEA entries and does not query ActiveCivilizationBonusLookup or test era. India's player-resource availability fallback is another distinct reader path.",
+    "qualification": "Always-on describes the civilization-selected starting attempt. It does not prove a successful Settler, in-bounds eligible candidate, newly added resource, Iron identity or completed retained positive refresh. The canonical boundary owns selector, terrain, flag, ordering and refresh gates; no fifth UEA entry is added."
+  },
+  "guards": [
+    "Treat the table as four cumulative era unlocks per civilization, not four mutually exclusive era replacements.",
+    "Do not use exact mode without an era-range guard; no recovered caller exercises it and the native branch does not clamp.",
+    "Do not assume Unique Abilities pass through this lookup; this packet covers only the four cumulative era entries.",
+    "Do not patch individual consumer branches for a generic Unique Era Ability variant; all recovered Unique Era Ability consumers already converge on the shared lookup.",
+    "Do not assign player-facing meanings to bonus IDs or caller functions without their own bounded producer-consumer evidence.",
+    "Do not distribute a bonus-table variant before ruleset identity, load mismatch handling, and multiplayer policy are implemented.",
+    "Do not claim AI behavioral parity merely because AI-side functions query the same lookup; behavior still requires an explicit test."
+  ],
+  "conclusion": "G6 confirms one image-backed 16 by 4 Unique Era Ability table at 0x82F6F950 and one shared activation owner at 0x82CF0CB0. Rows unlock cumulatively by era, 95 recovered call sites across 30 functions use cumulative mode, and no derived cache or second table reader was recovered. Runtime selected America's [47,35,16,2] row and returned Medieval UEA 35 active. Unique Abilities are a separate mechanism outside this packet. A future generic UEA variant has one shared lookup and table mechanism, while UA handling, ruleset persistence, and behavioral parity remain separate work."
+}

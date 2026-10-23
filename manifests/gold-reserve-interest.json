@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0087",
+  "topic": "gold-reserve-interest",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which current-image paths implement UEA 47 Gold-reserve interest, which storage do they consume, and what exact arithmetic do they apply?",
+  "scope": {
+    "functions": ["0x82CF0CB0", "0x82CF9F38", "0x82D1EAB0"],
+    "globals": ["0x830ED544"],
+    "boundary": "This packet identifies the cumulative UEA 47 gameplay mutation and one read-side aggregate consumer. It does not name the broader 0x82CF9F38 aggregate, prove every reserve writer or reader, establish runtime cadence under every game mode, or claim presentation, AI, save, scenario, or multiplayer parity."
+  },
+  "dependencies": [
+    {
+      "topic": "civilization-bonus-storage",
+      "use": "Provides the accepted cumulative ActiveCivilizationBonusLookup contract and complete retail UEA placement table."
+    },
+    {
+      "topic": "game-calendar-state",
+      "use": "Provides the accepted CalendarTurnAdvance identity for 0x82D1EAB0."
+    }
+  ],
+  "activation": {
+    "ueaId": 47,
+    "effect": "Gold reserves earn 2% interest",
+    "lookup": "0x82CF0CB0",
+    "mode": "cumulative",
+    "retailPlacements": [
+      { "civilization": "German", "era": "Modern" },
+      { "civilization": "American", "era": "Ancient" },
+      { "civilization": "Arab", "era": "Modern" }
+    ]
+  },
+  "reserveStorage": {
+    "base": "0x830ED544",
+    "index": "player * 4",
+    "width": "32-bit word",
+    "qualification": "Both accepted paths address the same player-indexed word. This packet names it from the player-facing UEA 47 effect and its direct arithmetic; it does not recover the complete player-state layout or every access."
+  },
+  "arithmetic": {
+    "term": "signed divide toward zero of (reserve + 25) by 50",
+    "nonnegativeEquivalent": "floor((reserve + 25) / 50)",
+    "interpretation": "For an ordinary nonnegative reserve, the code adds 2 percent rounded to the nearest integer with a half-unit rounded upward. Negative reserve behavior follows the exact signed divide-toward-zero expression and is not generalized as symmetric rounding."
+  },
+  "mutationOwner": {
+    "function": "0x82D1EAB0",
+    "semanticName": "CalendarTurnAdvance",
+    "player": "incoming r3 retained in r24",
+    "lookupArguments": {
+      "mode": { "address": "0x82D1F470", "value": 0 },
+      "player": { "address": "0x82D1F474", "source": "r24" },
+      "ueaId": { "address": "0x82D1F47C", "value": 47 }
+    },
+    "lookupCallsite": "0x82D1F484",
+    "resultTest": "0x82D1F488",
+    "inactiveTarget": "0x82D1F4A8",
+    "reserveLoad": "0x82D1F490",
+    "roundingBias": { "address": "0x82D1F498", "value": 25 },
+    "divisor": { "address": "0x82D1F494", "value": 50 },
+    "divide": "0x82D1F49C",
+    "add": "0x82D1F4A0",
+    "store": "0x82D1F4A4",
+    "result": "When cumulative UEA 47 is active, CalendarTurnAdvance adds the exact interest term to the player-indexed reserve word and stores the result back to the same address."
+  },
+  "readSideConsumer": {
+    "function": "0x82CF9F38",
+    "player": "incoming r4 retained in r27",
+    "lookupArguments": {
+      "mode": { "address": "0x82CF9FDC", "value": 0 },
+      "player": { "address": "0x82CF9FE0", "source": "r27" },
+      "ueaId": { "address": "0x82CF9FE4", "value": 47 }
+    },
+    "lookupCallsite": "0x82CF9FE8",
+    "resultTest": "0x82CF9FEC",
+    "inactiveTarget": "0x82CFA01C",
+    "reserveBase": { "address": "0x82CF9FFC", "value": "0x830ED544" },
+    "reserveLoad": "0x82CFA004",
+    "roundingBias": { "address": "0x82CFA008", "value": 25 },
+    "divisor": { "address": "0x82CFA000", "value": 50 },
+    "divide": "0x82CFA00C",
+    "aggregateAdd": "0x82CFA010",
+    "result": "When cumulative UEA 47 is active, the function adds the same exact interest term to its retained aggregate before returning. The inactive path returns the aggregate without that term."
+  },
+  "currentEvidence": {
+    "method": "One foreground read-only current-image query with two 25-word windows, exact verification of 26 selected words and branch targets, and narrow generated-code corroboration of 0x82D1EAB0 and 0x82CF9F38.",
+    "entries": [
+      { "role": "turn-transition reserve mutation", "address": "0x82D1F484", "confidence": "strong" },
+      { "role": "read-side aggregate interest term", "address": "0x82CF9FE8", "confidence": "strong" },
+      { "role": "player-indexed reserve base", "address": "0x830ED544", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82D1F454..0x82D1F4B4",
+      "ghidra/DumpMemoryWords.java:0x82CF9FBC..0x82CFA01C",
+      "generated:rerevved/sub_82D1EAB0",
+      "generated:rerevved/sub_82CF9F38"
+    ],
+    "qualification": "No runtime action was performed. The query established the exact local lookup and arithmetic paths; generated code supplied only bounded register provenance and the retained aggregate context."
+  },
+  "guards": [
+    "Do not replace the exact signed divide-toward-zero expression with floating-point multiplication.",
+    "Do not infer a complete player-state layout or reserve access closure from the accepted base word.",
+    "Do not claim that 0x82CF9F38 is solely an interest function; it computes a broader retained aggregate before the bounded UEA 47 term.",
+    "Do not infer runtime cadence, presentation, AI, save, scenario, or multiplayer parity from these static consumers."
+  ],
+  "conclusion": "UEA 47 uses cumulative lookup ownership in both accepted consumers. CalendarTurnAdvance mutates the player reserve at 0x830ED544 + player*4 by adding signed (reserve + 25) / 50, while 0x82CF9F38 adds the same term to a separate returned aggregate without storing the reserve."
+}

@@ -1,0 +1,320 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0233",
+  "topic": "city-yield-ranking-table-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What local production, refresh-route, transfer, and selector contracts bound the stride-32 halfwords consumed by selected Calendar scheduling paths?",
+  "scope": {
+    "table": "0x830E9200",
+    "rowStride": "0x20",
+    "producer": "0x82CB2E48",
+    "serializer": "0x82CC4040",
+    "boundary": "One ordinal producer, two raw direct callers, selected enclosing dispatch routes, one halfword transfer span, and conditional selector ownership are supported. Complete writers, semantic names for every column, live selector validity, a write-to-read freshness join, producer cadence, and runtime scheduling remain unresolved."
+  },
+  "dependencies": [
+    {
+      "topic": "city-yield-scheduling-producer-boundary",
+      "use": "Supplies the accepted Calendar stack +0x78 base and conditional manager accessor."
+    },
+    {
+      "topic": "city-yield-turn-scheduling-inputs",
+      "use": "Supplies saved incoming-player selectors, signed versus unsigned reads, state checks, and remainder gates."
+    },
+    {
+      "topic": "city-yield-credit-call-boundary",
+      "use": "Supplies all 24 bounded local direct modes without a runtime frequency claim."
+    },
+    {
+      "topic": "wonder-claim-table-consumer-boundary",
+      "use": "Separates ordinary claim membership and definition-factor inputs from native effect suppression."
+    }
+  ],
+  "baseCandidates": {
+    "count": 18,
+    "cap": 64,
+    "truncated": false,
+    "lowInstructions": [
+      "0x82CB36D8",
+      "0x82CB4130",
+      "0x82CBA63C",
+      "0x82CBFEEC",
+      "0x82CC51AC",
+      "0x82CC51D0",
+      "0x82CC696C",
+      "0x82CC6E20",
+      "0x82CC9AFC",
+      "0x82CCB170",
+      "0x82CCD610",
+      "0x82CCED8C",
+      "0x82CCFBDC",
+      "0x82CCFE24",
+      "0x82D0E8A8",
+      "0x82D110B8",
+      "0x82DE2DF8"
+    ],
+    "qualification": "Two different high instructions pair with low 0x82D0E8A8. The eight-word syntactic lookahead misses the already accepted distant Calendar base join. These are candidates, not an exhaustive use or writer inventory."
+  },
+  "ordinalProducer": {
+    "inputs": "0x82CB2F28 loads player-count word 0x82F700AC into r24. 0x82CB2E70 and 0x82CB3580 supply zero r27; 0x82CB36B4 uses it as initial column r30. 0x82CB36D8 sets table base r28. 0x82CB36DC loads excluded-player word 0x82F700B0.",
+    "excludedRow": "When the excluded-player value differs from -1, 0x82CB3704..0x82CB3710 stores low r24 at base + 32*excludedPlayer + 2*column. The local guard does not prove any other excluded-player value is a valid row.",
+    "selection": "For positive r24, 0x82CB3730..0x82CB3744 skips the excluded player and already-selected entries in stack +0x210. 0x82CB374C..0x82CB3768 chooses a seven-way column source for columns 0 through 6; other admitted columns retain local zero r11. The first jump-table word at 0x82CB376C targets 0x82CB3788, whose retained value comes from stack +0xD0 + 4*player. 0x82CB3718 initializes candidate maximum r7 to -1. At 0x82CB3928..0x82CB3948 a strict signed greater comparison selects the maximal remaining value above -1, scanning indices from zero to r24-1. If no value qualifies, 0x82CB394C/0x82CB3950 ends the column without writing ranks for the remaining players.",
+    "rankWrite": "0x82CB36E8 starts r29 at zero for each column. 0x82CB39A0..0x82CB39C0 marks the selected player and stores signed-halfword r29 at base + 32*selectedPlayer + 2*column, then increments r29. 0x82CB39C8..0x82CB39D0 advances columns until twelve. The first halfword therefore has a local zero-based ordinal role, with lower assigned rank selected earlier; it is not a city yield or a turn timestamp.",
+    "column24": "0x82CB39E8 selects row +0x18. 0x82CB39F4 clears it and 0x82CB39F8..0x82CB3A1C increments it for non-excluded zero words in the selected stride-eight row of 0x830ED2D8. 0x82CB3A2C..0x82CB3A38 advances rows by 32 over the retained count. The source matrix and gameplay meaning of this count are unassigned.",
+    "qualification": "The local ordinal algorithm and source offsets are supported. Full composite-value production, labels for ranking columns, indirect-call consequences at 0x82CB398C, player-count validation, initialization of unwritten columns, complete caller coverage, and live rank values are not established. The bounded direct refresh routes below do not prove runtime cadence. Ordinary claim/definition-factor inputs at 0x82CB35BC..0x82CB36B0 must remain intact."
+  },
+  "producerProvenance": {
+    "directCallerBound": "Raw aligned branch-and-link words in initialized executable memory contain two calls to 0x82CB2E48: 0x82D0C900 in exact generated owner 0x82D0C3E8, returning to 0x82D0C904; and 0x82D2582C in owner 0x82D255B8, returning to 0x82D25830. Cap 32 was not reached. This excludes neither non-link branches, indirect calls, runtime-generated code, nor reentry through unresolved callbacks.",
+    "refreshDispatch": "The only raw direct call to 0x82D0C3E8 is 0x82CDED9C in 0x82CDDF08. Entry 0x82CDDF18 loads dispatch selector from input +0; 0x82CDDFF4..0x82CDE010 admits unsigned selectors <=65 and jumps through 66 words at 0x82CDE014. Word 54 at 0x82CDE0EC selects 0x82CDED8C; this arm calls the refresh owner and branches at 0x82CDEDA0 to the common exit 0x82CE16AC. The refresh owner calls the producer after its local 0x82D0C8F0..0x82D0C8FC indexed word publication. This supports a distinct dispatch-arm refresh, not a refresh inside Calendar or a once-per-turn rule.",
+    "otherRefreshRoute": "The only raw direct call to 0x82D255B8 is 0x82D86A3C in exact owner 0x82D86400, passing retained r20. In 0x82D255B8, 0x82D25744..0x82D2574C loads count and bypasses selected array preparation when count <=0, but still reaches producer call 0x82D2582C. After return, direct calls 0x82D25848/0x82D2584C/0x82D25858 and conditional later helpers precede the caller's exit. No load/save or turn cadence is assigned to this route.",
+    "calendarDispatch": "All four raw direct Calendar calls are in 0x82CDDF08: 0x82CDE254 and 0x82CDE320 under dispatch arm 46 at 0x82CDE1AC; 0x82CDE4FC under arm 47 at 0x82CDE424; 0x82CDE830 under arm 48 at 0x82CDE79C. Each passes r31 through r3; selected loops reload runtime count. The first three depend on nonzero low-byte helper 0x82CD5A70 results; 0x82CDE830 follows the zero-result branch at 0x82CDE828. Arm 46 selects between two paths using the word loaded at 0x82CDE1F8; arm 48 also has three prior nonzero-word bypasses. These separate arms do not require arm 54 before any Calendar call. Incoming r31 initialization differs by arm and is not uniformly zero.",
+    "nativeBindings": {
+      "dispatchInput": "0x82CDDF18 loads unsigned dispatch selector into r30 from original input r3 +0. At 0x82CDDF1C the executed load's r30 and still-original input r3 can be copied without another guest read. 0x82CDDFF4 compares unsigned r30 against 65. Arm 54 reaches enclosing call 0x82CDED9C -> 0x82CDEDA0; r30 supplies the selected arm at that call. A retained input address is a copied scalar, never permission to dereference it later.",
+      "otherEnclosingContext": "0x82D86A38 copies retained r20 into r3 immediately before 0x82D86A3C -> 0x82D86A40. Both supply the enclosing call's native argument context. LR at that pre-call point is not the original 0x82D86400 caller; without an entry observation, original enclosing-caller identity remains unavailable.",
+      "calendarEntry": "At exact Calendar entry 0x82D1EAB0, mflr r12 precedes the save thunk and nested calls. An entry hook can copy original LR separately from observer parent. 0x82D1EAC4 copies incoming r3 into r24, and 0x82D1EAD0 saves r24 to stack +0x1E4. The saved incoming selector and original caller are distinct copied identities.",
+      "qualification": "These bindings support native scalar capture only. A dispatch input must be correlated within its observed thread/frame before attaching it to an enclosing pair; stack equality alone does not establish object lifetime, message ownership, intervening coverage or freshness. Unobserved entry context remains unavailable. No live route, dispatch delivery, cadence, new writer inventory or runtime behavior is established."
+    },
+    "writeReachability": "Producer 0x82CB2F30 can skip value collection when signed count <=0 and still reaches the ranking loop. At each column, excluded != -1 reaches 0x82CB3710 independently of positive count. 0x82CB3724 skips candidate scanning for count <=0; excluded and selected candidates skip at 0x82CB3734/0x82CB3744. Strict signed values above -1 are eligible; 0x82CB3950 ends the column when no candidate qualifies. Only selected candidates reach 0x82CB39C0. 0x82CB39D0 repeats through columns 0..11; 0x82CB39D8 skips the +24 count loop for nonpositive count. Entry and even normal return therefore do not certify that a particular row +0 was written.",
+    "midRankBoundary": "Only column zero with next rank r29=1, positive year word at 0x82CB3964, and non-null manager +0x10 reaches virtual +0x100 call 0x82CB398C. Its r3 return is unused for rank selection. 0x82CB3994/0x82CB3998/0x82CB399C reload excluded player, manager root, and count before the pending selected write. Capture these separate generations; the initial count/excluded pair does not necessarily govern every write.",
+    "returnBoundary": "The selected ordinal stores finish before 0x82CB39D4; auxiliary stores finish before 0x82CB3A3C. Conditional virtual call 0x82CB3A7C reads returned object +0x0C for a separate stack-value path, and conditional virtual +0x80 call 0x82CB3BCC occurs before epilogue 0x82CB3BD0 and restore-tail branch 0x82CB3BD4. Their complete effects are unexpanded. A copied producer exit and exact caller continuation are required after these boundaries; the last rank write is not the return.",
+    "qualification": "Raw queries establish bounded direct edges, and selected current-image words corroborate the exact generated owners and dispatch arms. They do not assign captured producer invocations to either route or establish enclosing message delivery, refresh frequency, uninterrupted execution, or global writer coverage. Parent zero is observer nesting context, not a guest source caller."
+  },
+  "consumerOwnership": {
+    "savedPlayer": "0x82D1FBE0 reads unsigned row +0 indexed by incoming r3 saved at 0x82D1EAD0 and reloaded at 0x82D1FBD4. 0x82D1FCDC reads the same saved-player row after reload into r27 at 0x82D1FC4C, then 0x82D1FCE4 sign-extends it. Neither row is owned by loop city r25 or an earlier city-owner r27.",
+    "distinctReturns": "Virtual calls 0x82D1FC3C, 0x82D1FCBC, and 0x82D1FD58 separately reload manager global 0x8314EFE0 and receiver +0x10. Their native returned-object +0x0C loads occur at 0x82D1FC40, 0x82D1FCC0, and 0x82D1FD5C. The first supplies an exclusion comparison only. The second supplies signed row +0 at 0x82D1FCD8/0x82D1FCE0. The third supplies unsigned row +0 at 0x82D1FD6C. Null receivers supply -1 at 0x82D1FC48/0x82D1FCC8/0x82D1FD64; the latter two paths still form native addresses from that sentinel. Do not add observer dereferences for these indices.",
+    "conditionalObjectOrigin": "For the accepted manager +0x10 publication through factory 0x82CB12F0, vtable 0x8215FA78 slot +0x100 at 0x8215FB78 selects 0x82A73340, which returns receiver +0x20. Factory call 0x82CB1348 enters initializer 0x82CA5E80 with the retained allocated receiver. 0x82CA5F34 requests 108 bytes; on success 0x82CA5F48 calls constructor 0x82CAA100 and 0x82CA5F54 publishes its return at parent +0x20; allocation failure publishes zero. Constructor 0x82CAA14C initializes child +0x0C to -1, and 0x82CAA12C/0x82CAA134 initialize fields rooted at +0x1C/+0x44 through unexpanded helper 0x822E56C0. This closes a conditional child-allocation origin, not the live +0x0C assignment, player semantics, lifetime, replacement coverage, or validity of a returned row.",
+    "predicateNode": "The alternative human-mask paths at 0x82D1F9E0/0x82D1FA04 and 0x82D1FB60/0x82D1FB84 use the same conditional accessor, but helper 0x821B8CD0 searches using saved-player key and returned container +0x1C. Loads 0x82D1FA30/0x82D1FBB0 read a matched node +0x0C after comparison with container +0x24. These boolean inputs are distinct from the returned container +0x0C rank selectors. Matching offsets do not make the node and container identical.",
+    "qualification": "Every dispatch must retain its own manager, receiver, vtable, target, return pointer, native field value, and validity outcome. The exact publication path must hold at that use. No live child +0x0C writer or complete object lifetime is established; a value in 0..7 alone does not prove player ownership."
+  },
+  "freshnessContract": {
+    "unit": "Track provenance per consumed two-byte cell, keyed by table base, row, column, source image, guest thread/order, and established lifecycle generation. A producer entry starts an attempt; only a copied actual store establishes that cell's write origin. A return closes the attempt, not unwritten cells. A consumer owns its independently validated original selector and address.",
+    "join": "For each actually executed ranking load, require a completed producer attempt on an identified source route, an actual matching 0x82CB39C0 ordinal store or separately classified 0x82CB3710 excluded-row store, and exact copied native value agreement at the read. Require the original signed selector in 0..7 and below a validated count at the relevant write and read, stable ownership/lifecycle, and a complete ordered invalidation interval from write through read. An excluded-row count is not an ordinary selected-player rank. Parent equality is neither required by these source routes nor sufficient for freshness.",
+    "tableInvalidators": "A later producer attempt may partially overwrite cells; mark it in progress until return and track actual per-cell stores rather than replacing all provenance at entry. 0x82CC51B8 can traverse the full [0x830E9200,0x830E9300) span when mode=1 and r6=null. Its helper 0x822DEC88 passes each two-byte destination to unresolved virtual +4 at 0x822DECB8 and conditionally swaps destination bytes at 0x822DED10/0x822DED14. Treat that interval as a possible write/restore or byte-order invalidator until dispatch and actual stores are copied. The mode-zero 0x82CC51DC route uses a native source read; unexpanded dispatch effects remain outside the bound. Non-null auxiliary paths do not directly walk this table.",
+    "identityInvalidators": "Count/excluded-player changes, manager +0x10 or receiver +0x20 replacement, child +0x0C assignment, object destruction/reuse, reset/restore, a lifecycle-generation change, thread interleaving, and gaps or capped/lost events invalidate the claimed join until reestablished. Source-value changes after ranking can also invalidate a stronger claim that the rank represents current inputs; this packet supports cell write provenance, not complete current-score equivalence.",
+    "coverageLimit": "The accepted split-base candidates are not a complete writer inventory. Selected-site observations alone cannot prove no intervening alias, byte, indexed, bulk, or callback write. A freshness test needs complete guest-store coverage for the selected span and ownership globals/fields, or a proved narrower writer closure. Equal snapshots do not rule out intervening writes or object reuse. Without that coverage, report matching copied values with incomplete provenance."
+  },
+  "copiedEventContract": {
+    "common": "Every event: monotonically ordered sequence, source site, guest thread, established lifecycle generation, attempt/invocation ID and actual source caller/return site, completeness/loss status. Retain observer parent separately. Pair native pre/post observations without invoking a helper again; do not raise the capture cap to compensate for unrelated coverage.",
+    "producerAttempt": "At 0x82CB2E48 copy original LR (expected direct continuations 0x82D0C904 or 0x82D25830), thread and nesting context. At 0x82CB2F28 and 0x82CB36DC copy actual count and excluded-player operands with validation. Copy dispatch input +0 and arm when the 0x82CDED9C route is observed, or enclosing 0x82D86A3C caller context on the other route. Pair epilogue 0x82CB3BD0/0x82CB3BD4 with actual caller continuation, including current count/excluded values and invalidation sequence.",
+    "actualStores": "At 0x82CB3710 copy excluded selector, column r30, count r24, base r28, computed destination, old bytes and stored low16 count, paired with post-store state at 0x82CB3714. At 0x82CB39C0 copy selected row r31, column r30, rank r6, base r28, native offset r7, destination, old bytes and actual stored low16 value; pair each pre-store with post-store state at 0x82CB39C4. Keep +24 clear/increment events at 0x82CB39F4/0x82CB3A1C separate, paired at 0x82CB39F8/0x82CB3A20. Record column exits from 0x82CB3724/0x82CB3950 and advancement 0x82CB39C8 so an unwritten cell is distinguishable from a missing event.",
+    "callbacksAndReloads": "Pair 0x82CB398C -> 0x82CB3990 and copy receiver, vtable, +0x100 dispatch, target, native return and the reloaded excluded/count/manager operands at 0x82CB3994..0x82CB399C. Pair 0x82CB3A7C -> 0x82CB3A80 and 0x82CB3BCC -> 0x82CB3BD0 similarly, retaining native field reads and table/ownership invalidation status across each call. Never treat ignored r3 at 0x82CB398C as a Calendar selector.",
+    "consumerReads": "At 0x82D1EAD0 copy saved incoming player and at 0x82D1EC94 copy the actual table base. Pair each of 0x82D1FC3C -> 0x82D1FC40, 0x82D1FCBC -> 0x82D1FCC0, and 0x82D1FD58 -> 0x82D1FD5C with its own receiver/dispatch/result and original +0x0C field. At 0x82D1FBE0, 0x82D1FCD8, 0x82D1FCDC, and 0x82D1FD6C copy only the native load's executed base, original signed selector, offset, destination, unsigned low16 result and applicable sign extension, together with matching cell-write sequence and validity/ownership outcome. Preserve separate pair members. Emit gate or bypass events when a load is not executed; absence of a load does not establish freshness.",
+    "invalidationInterval": "Retain ordered writes overlapping the selected span, including byte/halfword/indexed/bulk stores with site, size, address and before/after bytes, plus producer/serializer entry and exit, serializer mode/r6/receiver/target and native destination cursor, ownership-field publications/destruction, count/excluded changes, lifecycle events and thread interleaving. Any unobserved effect, lost pair, cap, invalid selector/count, failed native read, receiver mismatch or unresolved assignment yields an incomplete diagnostic. Keep credit, predicate-node, rank-entry and rank-write classifications separate."
+  },
+  "transferExtent": {
+    "calls": "0x82CC51B4/0x82CC51D8 pass count 128 with table base r4 to 0x822DE720/0x822DE7A0 in the serializer mode-one/mode-zero branches.",
+    "nullAuxiliary": "When r6 is null, 0x822DE778..0x822DE790 and 0x822DE7F8..0x822DE810 traverse r4 in two-byte steps for the supplied count. The first helper passes each address to 0x822DEC88, whose selected 0x822DECA4..0x822DECB8 dispatch requests two bytes. The second passes each address to 0x822E1338, which reads its source halfword at 0x822E1398.",
+    "span": "This table call traverses 128 halfwords, 256 bytes [0x830E9200,0x830E9300), equivalent to eight stride-32 rows and sixteen halfwords per row. With non-null r6, the helpers use stack +0x50 and transfer between the two buffer receivers instead of walking r4.",
+    "qualification": "This is a transfer extent for the selected null-auxiliary path, not proof of allocation size, complete table ownership, arbitrary-index validity, external save format, restored-value validation, or verified runtime save/load. The serializer retains conditional paths that do not touch this table. freshnessContract identifies the selected possible destination writes without assigning a live restore phase."
+  },
+  "indexBoundary": {
+    "storageRows": "Rows 0 through 7 remain within the selected 256-byte transfer span. A supported observer must independently check 0 <= selector < 8 and, for an active player, selector < validated player count before reading a selected column.",
+    "producerRows": "The ordinal scan uses a runtime count, not a local literal-eight bound. The excluded-row store checks only != -1. Selected windows do not prove the runtime count is in 1 through 8, the excluded row is in range, or every Calendar indirect-return field is a player index.",
+    "calendarReads": "Reuse city-yield-turn-scheduling-inputs.json#/firstCallInputs/halfword and #/laterCallInputs: saved incoming player indexes row +0; later calls compare signed row +0 values and test an unsigned row +0 selected by a distinct indirect return. Do not substitute the loop city index, live reassigned registers, or another indirect result.",
+    "stopCondition": "An invalid/unresolved row, invalid count, failed guest read, receiver mismatch, or missing producer phase is an observation diagnostic. Do not expand the read or infer validity from readable neighboring memory."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No ranking update, Calendar interval, credit event, bonus, or mod activation was observed or changed."
+  },
+  "currentEvidence": {
+    "method": "Four serialized foreground read-only invocations: one positive split-base scan for 0x830E9200 capped at 64, then 23, 15, and 13 radius-32 windows for table and selected claim/input joins. The three word queries emitted 3315 rows covering 2589 unique words; all matched the supported flat image. Narrow exact-function generated metadata located 2303 selected instructions. The remaining words include jump-table data and adjacent-function bytes, which receive no selected-owner semantics.",
+    "locators": [
+      "ghidra/FindSplitConstantCandidates.java:0x830E9200 cap=64 candidates=18 truncated=false",
+      "ghidra/DumpMemoryWords.java:0x82CB36D8,0x82CC51AC,0x82CC51D0 radius=32",
+      "ghidra/DumpMemoryWords.java:0x82CB2F00,0x82CB3480,0x82CB3520,0x82CB39A0,0x82CB39F4,0x822DE720,0x822DE7A0 radius=32",
+      "ghidra/DumpMemoryWords.java:0x82CB2E58,0x82CB3588,0x82CB3788,0x82CB3928,0x82CB39C8,0x822DEC88,0x822E1338 radius=32",
+      "generated:rerevved/sub_82CB2E48:0x82CB2E70,0x82CB2F28,0x82CB3580..0x82CB3A38",
+      "generated:rerevved/sub_82CC4040:0x82CC519C..0x82CC51E0",
+      "generated:rerevved/sub_822DE720:0x822DE738..0x822DE798",
+      "generated:rerevved/sub_822DE7A0:0x822DE7B8..0x822DE818",
+      "generated:rerevved/sub_822DEC88:0x822DECA4..0x822DECB8",
+      "generated:rerevved/sub_822E1338:0x822E1398"
+    ],
+    "qualification": "No unchanged predicate/direct-update census, exact-slot negative, scalar-store search, project repair, new runtime observation, or mutation was performed. The original four-invocation bound was exhausted. Unexpanded virtual destinations remain unresolved.",
+    "nativeBindingRead": {
+      "confidence": "confirmed",
+      "method": "One serialized foreground read-only radius-8 word query for six accepted entry/dispatch/enclosing windows. All 102 emitted rows covering 89 unique words matched the supported flat image. Separate opcode/register decoding checked dispatch loads and bound, retained argument copy, exact enclosing branch targets, Calendar incoming selector save and original LR entry boundary. Narrow exact-function generated windows corroborated the bindings.",
+      "locators": [
+        "ghidra/DumpMemoryWords.java:0x82CDDF18,0x82CDDFF4,0x82CDED8C,0x82D86A34,0x82D1EAD0,0x82CDDF08 radius=8",
+        "generated:rerevved/sub_82CDDF08:0x82CDDF08..0x82CDDF1C,0x82CDDFF4..0x82CDE010,0x82CDED8C..0x82CDEDA0",
+        "generated:rerevved/sub_82D86400:0x82D86A34..0x82D86A40",
+        "generated:rerevved/sub_82D1EAB0:0x82D1EAB0..0x82D1EAD0"
+      ],
+      "qualification": "No new call census, whole-function interpretation, project mutation, runtime observation, writer or ownership closure was performed. These scalar bindings refine the already accepted routes; original enclosing-owner caller identity remains unavailable without its entry."
+    },
+    "provenanceRead": {
+      "method": "Four additional serialized foreground read-only invocations: a raw producer direct-caller query, a raw query for the two caller owners and Calendar, twenty radius-64 phase/selector windows, and ten radius-32 ownership/serializer windows. Both direct queries used cap 32 per target, were not truncated, and were not cancelled. The word queries emitted 3230 rows covering 2697 unique words; all matched the supported image. Separate decoding checked 426 direct branch targets, 507 scalar-memory operands, and 390 immediate loads against narrow exact-function generated metadata. The dispatch table words independently bind arms 46, 47, 48 and 54.",
+      "locators": [
+        "ghidra/FindDirectCallers.java:0x82CB2E48 cap=32 matches=2 truncated=false",
+        "ghidra/FindDirectCallers.java:0x82D0C3E8,0x82D255B8,0x82D1EAB0 cap=32 matches=1,1,4 truncated=false",
+        "ghidra/DumpMemoryWords.java:0x82CB2F18,0x82CB36F0,0x82CB3900,0x82CB3AF0,0x82D0C8F0,0x82D257C0,0x82CDDFF4,0x82CDE094,0x82CDE254,0x82CDE320,0x82CDE4FC,0x82CDE830,0x82CDED9C,0x82CE16AC,0x82D86A3C,0x82CC51B4,0x822DECF0,0x82D1FC40,0x82D1FCA0,0x82D1FD38 radius=64",
+        "ghidra/DumpMemoryWords.java:0x82CB12F0,0x82CA5F38,0x82CAA140,0x82A73340,0x8215FB78,0x82D1F990,0x82D1FBCC,0x822DE778,0x822DE7FC,0x82D256E0 radius=32",
+        "generated:rerevved/sub_82CB2E48:0x82CB2F28,0x82CB36B4..0x82CB3BD4",
+        "generated:rerevved/sub_82D0C3E8:0x82D0C8F0..0x82D0C904",
+        "generated:rerevved/sub_82D255B8:0x82D25744..0x82D25858",
+        "generated:rerevved/sub_82CDDF08:0x82CDDF18,0x82CDDFF4..0x82CDE118,0x82CDE1AC..0x82CDE340,0x82CDE424..0x82CDE500,0x82CDE79C..0x82CDE834,0x82CDED8C..0x82CDEDA0,0x82CE16AC..0x82CE16C4",
+        "generated:rerevved/sub_82D86400:0x82D86A34..0x82D86A40",
+        "generated:rerevved/sub_82D1EAB0:0x82D1FBD4..0x82D1FCE8,0x82D1FD38..0x82D1FD70",
+        "generated:rerevved/sub_82CB12F0:0x82CB1310..0x82CB134C",
+        "generated:rerevved/sub_82CA5E80:0x82CA5F2C..0x82CA5F54",
+        "generated:rerevved/sub_82CAA100:0x82CAA11C..0x82CAA164",
+        "generated:rerevved/sub_822DEC88:0x822DECA4..0x822DECB8,0x822DED00..0x822DED14"
+      ],
+      "qualification": "Exact raw call words have undefined Ghidra containing functions; generated entry boundaries supply their corroborated owners. New-owner claims select eight exact owners: two producer callers, two enclosing routes, factory, initializer, child constructor, and serializer helper. Adjacent bytes and unpromoted generated windows receive no ownership interpretation. Existing Calendar/producer windows and accepted manager publication were reused. Complete dispatch consequences, child +0x0C assignment/lifetime, complete writer coverage and runtime freshness remain outside the exhausted bound."
+    },
+    "consumerGateRead": {
+      "method": "One serialized foreground read-only radius-4 word query for eight accepted Calendar gate windows emitted 72 rows covering 61 unique words; all matched the supported flat image. Separate opcode/register decoding checked seven compares, their seven CR6 equality branches and one unconditional cached-path branch. Narrow exact-function generated windows corroborated native operands and branch destinations.",
+      "locators": [
+        "ghidra/DumpMemoryWords.java:0x82D1FB00,0x82D1FBCC,0x82D1FC50,0x82D1FC60,0x82D1FC88,0x82D1FC94,0x82D1FD30,0x82D1FADC radius=4",
+        "generated:rerevved/sub_82D1EAB0:0x82D1FAD8..0x82D1FAE0,0x82D1FAF8..0x82D1FB08,0x82D1FBC8..0x82D1FBD8,0x82D1FC4C..0x82D1FC68,0x82D1FC84..0x82D1FC9C,0x82D1FD2C..0x82D1FD38"
+      ],
+      "qualification": "These bindings refine the accepted local scheduling gates without a new caller census, global writer query, indirect callee expansion, Ghidra project mutation or runtime observation. The original source and lifecycle/ownership/freshness gaps remain open."
+    }
+  },
+  "guards": [
+    "Do not call these ranks final Gold, Culture, civilization identity, a human-player flag, or a turn counter.",
+    "Do not infer all writers or once-per-turn rank refresh from syntactic base pairs or a producer body.",
+    "Do not substitute producer entry, last write, observer parent zero, value equality, or normal return for a complete per-cell write-to-read freshness join.",
+    "Do not infer safe Calendar selectors from a serialized span or from an indirect result with matching offsets.",
+    "Do not use a repeated calculation entry or cached contribution as a reserve credit event."
+  ],
+  "conclusion": "The selected table has a local ordinal producer, two bounded direct refresh routes outside Calendar, conditional child-object provenance for indirect selectors, and a 256-byte null-auxiliary serializer span with possible destination writes. Producer entry, actual per-cell writes, completed return, and independently owned consumer selectors are distinct events. A freshness test requires copied matching writes/reads and complete intervening invalidation coverage; live selector assignment/lifetime, global writer closure, current-score equivalence, and complete credit cadence remain unresolved.",
+  "consumerGateBindings": {
+    "confidence": "confirmed",
+    "function": "0x82D1EAB0",
+    "common": "Copy only already-loaded native scalar operands and original loop city r25 before the named compare or branch. Preserve the native compare, CR and branch. No guest read or helper replay is needed.",
+    "gates": [
+      {
+        "kind": "saved_player_global_byte",
+        "hookSite": "0x82D1FB00",
+        "branchSite": "0x82D1FB04",
+        "copiedRegisters": [
+          "r11",
+          "r25"
+        ],
+        "condition": "unsigned_eq_zero",
+        "takenTarget": "0x82D1FC0C",
+        "fallthrough": "0x82D1FB08",
+        "selectedRankingLoads": [
+          "0x82D1FBE0"
+        ]
+      },
+      {
+        "kind": "saved_player_predicate",
+        "hookSite": "0x82D1FBCC",
+        "branchSite": "0x82D1FBD0",
+        "copiedRegisters": [
+          "r11",
+          "r25"
+        ],
+        "condition": "unsigned_ne_zero",
+        "takenTarget": "0x82D1FC0C",
+        "fallthrough": "0x82D1FBD4",
+        "selectedRankingLoads": [
+          "0x82D1FBE0"
+        ]
+      },
+      {
+        "kind": "later_return_exclusion",
+        "hookSite": "0x82D1FC50",
+        "branchSite": "0x82D1FC54",
+        "copiedRegisters": [
+          "r27",
+          "r11",
+          "r25"
+        ],
+        "condition": "signed_eq",
+        "takenTarget": "0x82D1FDCC",
+        "fallthrough": "0x82D1FC58",
+        "selectedRankingLoads": [
+          "0x82D1FCD8",
+          "0x82D1FCDC",
+          "0x82D1FD6C"
+        ]
+      },
+      {
+        "kind": "later_excluded_player",
+        "hookSite": "0x82D1FC60",
+        "branchSite": "0x82D1FC64",
+        "copiedRegisters": [
+          "r27",
+          "r11",
+          "r25"
+        ],
+        "condition": "signed_eq",
+        "takenTarget": "0x82D1FDCC",
+        "fallthrough": "0x82D1FC68",
+        "selectedRankingLoads": [
+          "0x82D1FCD8",
+          "0x82D1FCDC",
+          "0x82D1FD6C"
+        ]
+      },
+      {
+        "kind": "later_low_delta_state",
+        "hookSite": "0x82D1FC88",
+        "branchSite": "0x82D1FC8C",
+        "copiedRegisters": [
+          "r11",
+          "r25"
+        ],
+        "condition": "signed_ne_four",
+        "takenTarget": "0x82D1FDCC",
+        "fallthrough": "0x82D1FC90",
+        "selectedRankingLoads": [
+          "0x82D1FCD8",
+          "0x82D1FCDC",
+          "0x82D1FD6C"
+        ]
+      },
+      {
+        "kind": "predicate_reads_state",
+        "hookSite": "0x82D1FC94",
+        "branchSite": "0x82D1FC98",
+        "copiedRegisters": [
+          "r11",
+          "r25"
+        ],
+        "condition": "signed_ne_three",
+        "takenTarget": "0x82D1FD28",
+        "fallthrough": "0x82D1FC9C",
+        "selectedRankingLoads": [
+          "0x82D1FCD8",
+          "0x82D1FCDC"
+        ]
+      },
+      {
+        "kind": "selected_read_state",
+        "hookSite": "0x82D1FD30",
+        "branchSite": "0x82D1FD34",
+        "copiedRegisters": [
+          "r11",
+          "r25"
+        ],
+        "condition": "signed_ne_four",
+        "takenTarget": "0x82D1FDCC",
+        "fallthrough": "0x82D1FD38",
+        "selectedRankingLoads": [
+          "0x82D1FD6C"
+        ]
+      },
+      {
+        "kind": "cached_saved_player_bypass",
+        "hookSite": "0x82D1FADC",
+        "branchSite": "0x82D1FADC",
+        "copiedRegisters": [
+          "r25"
+        ],
+        "condition": "unconditional",
+        "takenTarget": "0x82D1FC18",
+        "fallthrough": null,
+        "selectedRankingLoads": [
+          "0x82D1FBE0"
+        ]
+      }
+    ],
+    "qualification": "A copied local taken/fallthrough decision distinguishes selected rank-load gates from mask/predicate inputs. It is not an executed ranking load, global bypass proof, player/city ownership, callback effect closure or a ranking-write freshness join. Each loop iteration and native read retains its own identity; absence of a gate record remains missing evidence."
+  }
+}

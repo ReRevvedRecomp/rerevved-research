@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0206",
+  "topic": "city-era-building-bit-reader-frontier",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Do the bounded direct-field census and first eight exact city-table-base materializers identify a direct reader of the era-indexed building bits?",
+  "scope": {
+    "producer": "0x82D02090",
+    "producerSites": ["0x82D02158", "0x82D02164"],
+    "cityTable": "0x8314FE28",
+    "cityStride": "0xBC",
+    "fieldOffsets": ["0x14", "0x18", "0x1C", "0x20"],
+    "scanRange": "[0x82D00000,0x82D20000)",
+    "access": "direct register-plus-displacement READ",
+    "siteCap": 32,
+    "materializerFollowup": {
+      "cityTableBase": "0x8314FE28",
+      "baseQuery": { "lookahead": 8, "firstUseWindow": 16, "materializerCap": 64, "scannedInstructions": 654329, "emitted": 31, "truncated": false },
+      "previouslyInspectedFunction": "0x82CEDF90",
+      "candidateFunctionCap": 8,
+      "candidateFunctions": ["0x82CE1C10", "0x82CE1CB0", "0x82CE1F98", "0x82CEF3D8", "0x82CF1148", "0x82CF1AF0", "0x82CF7DE0", "0x82CF7F70"],
+      "fieldAccessCap": 32,
+      "stopCondition": "After reproducing the exact city-table-base materializers, inspect the first eight unique functions after excluding the previously followed 0x82CEDF90 path for direct READ operands at the era-word offsets. Stop at a confirmed city-record field read, ambiguous city-record pointer provenance, the 32-site cap, or the eight-function cap."
+    },
+    "stopCondition": "The original query scans decoded function-owned instructions in the exact interval for direct reads at the four era-word offsets, stopping at the first candidate or the 32-site cap. The materializer follow-up is separately limited to its exact eight-function candidate set.",
+    "boundary": "The original direct-field query and the follow-up over eight city-table-base materializers do not cover indexed or stack-reloaded readers, computed addresses without one of the exact displacements, other materializers, functionless instructions, or code outside the selected functions and interval. They do not establish the field's effect or runtime use."
+  },
+  "dependencies": [
+    { "topic": "building-completion-state-writer", "use": "Establishes the producer of city +0x14 + 4*clampedEra and city +0x10 building bits." },
+    { "topic": "building-postwrite-city-bit-arithmetic", "use": "Distinguishes the known city +0x10 consumer from the separately written era-indexed words." },
+    { "topic": "city-stored-item-id-reader-frontier", "use": "Provides the exact city-table base and bounded materializer set used to select this follow-up's eight functions." }
+  ],
+  "staticResult": {
+    "directReadCheck": "FindFieldAccesses scanned 272 function-owned decoded instructions in [0x82D00000,0x82D20000) for offsets 0x14, 0x18, 0x1C, and 0x20 with access READ. It found zero accesses and did not reach the 32-site cap.",
+    "materializerDirectReadCheck": "After reproducing 31 decoded materializers for city-table base 0x8314FE28 below the cap of 64, FindFieldAccesses scanned 664 function-owned decoded instructions across the first eight unique functions after excluding the previously followed 0x82CEDF90 path. It found zero READ operands at +0x14, +0x18, +0x1C, or +0x20 below the 32-site cap; the query was not truncated.",
+    "fieldBoundary": "Neither the original bounded direct-field census nor the exact eight-function follow-up identifies a direct reader of the era-indexed words. The direct city +0x10 consumer in sub_82D00C78 does not establish a reader of these separately written words. Indexed, computed, stack-reloaded, and other-materializer paths remain unresolved."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No execution, era-word value, consumer, or visible building effect was observed."
+  },
+  "currentEvidence": {
+    "method": "Two foreground read-only canonical-project checks: a direct-field census with four exact offsets, READ filter, exact scan range, and cap 32; then a reproduced city-table-base materializer scan followed by a direct-field scan restricted to the first eight unique functions after excluding the previously followed 0x82CEDF90 path, with cap 32. The follow-up emitted no field candidate for generated-code corroboration.",
+    "entries": [
+      { "role": "bounded era-word direct-read census", "address": "[0x82D00000,0x82D20000)", "result": "Zero READ operands at +0x14, +0x18, +0x1C, or +0x20 across 272 function-owned decoded instructions; cap 32 was not reached." },
+      { "role": "eight exact city-table-base materializers", "address": "0x82CE1C10, 0x82CE1CB0, 0x82CE1F98, 0x82CEF3D8, 0x82CF1148, 0x82CF1AF0, 0x82CF7DE0, 0x82CF7F70", "result": "Zero direct READ operands at the four era-word offsets across 664 function-owned decoded instructions; the 32-site cap was not reached." }
+    ],
+    "locators": [
+      "ghidra/FindFieldAccesses.java:[0x82D00000,0x82D20000) offsets=0x14,0x18,0x1C,0x20 access=READ cap=32",
+      "ghidra/FindGlobalAddressAccesses.java:0x8314FE28 lookahead=8 useWindow=16 maxMatches=64",
+      "ghidra/FindFieldAccesses.java:seeds=0x82CE1C10,0x82CE1CB0,0x82CE1F98,0x82CEF3D8,0x82CF1148,0x82CF1AF0,0x82CF7DE0,0x82CF7F70 offsets=0x14,0x18,0x1C,0x20 access=READ cap=32"
+    ],
+    "qualification": "Both field queries cover decoded direct register-plus-displacement operands only. The follow-up covers exactly the first eight unique city-table-base materializer functions after the previously followed 0x82CEDF90 path. No function in that set directly reads the four offsets, but indexed, computed, stack-reloaded, other-materializer, functionless, and out-of-range readers remain unresolved."
+  },
+  "guards": [
+    "Do not treat the zero direct-operand result as proof that the era-indexed city words have no readers.",
+    "Do not treat the zero result in eight city-table-base materializer functions as a program-wide reader absence claim.",
+    "Do not equate these words with implemented building effects or a supported public modding interface.",
+    "Do not infer runtime behavior from this static query."
+  ],
+  "conclusion": "The bounded decoded-instruction query found no direct READ operand at city offsets +0x14, +0x18, +0x1C, or +0x20 in 272 function-owned instructions. A reproduced exact-base scan found 31 city-table materializers; a follow-up over the first eight unique functions after excluding the previously followed 0x82CEDF90 path found no such direct reads across 664 instructions. These are bounded direct-operand negatives, not a program-wide reader census. Indexed, computed, stack-reloaded, other-materializer, functionless, and out-of-range readers remain unresolved; the era-indexed words' downstream role and effect are unknown."
+}

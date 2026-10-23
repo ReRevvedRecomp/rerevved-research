@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0088",
+  "topic": "city-growth-threshold",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What exact static baseline arithmetic and UEA 8 adjustment does CityGrowthThresholdLookup return, and how does the accepted city-update consumer use that threshold?",
+  "scope": {
+    "functions": ["0x82CF0CB0", "0x82CF1060", "0x82D13978"],
+    "fields": ["city record +0x00", "city record +0x03", "city record +0x10", "city record +0x24", "city record +0x34", "city record +0x3C", "global word 0x830E45C8"],
+    "boundary": "The baseline arithmetic read set is exactly 0x82CF1060..0x82CF1144 and the single data word 0x830E45C8. It reuses the accepted UEA lookup and city-update consumer without expanding either function. It does not recover scalar initialization, flag meanings, progress producers, the complete city table, every caller, presentation, AI, save, scenario, multiplayer, or runtime behavior."
+  },
+  "dependencies": [
+    {
+      "topic": "civilization-bonus-storage",
+      "use": "Provides the accepted cumulative ActiveCivilizationBonusLookup contract and the Zulu/African Medieval placement of UEA 8."
+    }
+  ],
+  "activation": {
+    "ueaId": 8,
+    "effect": "Faster city growth",
+    "lookup": "0x82CF0CB0",
+    "mode": "cumulative",
+    "retailPlacement": { "civilization": "African", "playerFacingCivilization": "Zulu", "era": "Medieval" }
+  },
+  "thresholdOwner": {
+    "function": "0x82CF1060",
+    "semanticName": "CityGrowthThresholdLookup",
+    "input": "city index in r3",
+    "playerField": {
+      "offset": "0x00",
+      "width": "signed byte",
+      "load": "0x82CF10E8",
+      "argumentMove": "0x82CF10F4"
+    },
+    "growthBaselineField": {
+      "offset": "0x03",
+      "width": "signed byte",
+      "load": "0x82CF1098",
+      "signExtension": "0x82CF10A4",
+      "use": "Multiplied into the retained growth-threshold baseline at 0x82CF10B0; the city update separately increments this byte when progress reaches the threshold."
+    },
+    "baseline": {
+      "cityRecord": {
+        "expression": "C = 0x8314FE28 + 188 * cityIndex, with effective addresses taken modulo 2^32",
+        "baseInstructions": ["0x82CF1070", "0x82CF1078"],
+        "indexMultiply": "0x82CF1074"
+      },
+      "inputs": [
+        { "name": "G", "location": "0x830E45C8", "width": "32-bit word, interpreted as signed for arithmetic", "load": "0x82CF1090", "qualification": "The scalar's semantic meaning, producer, initialization, and runtime value are unresolved." },
+        { "name": "P", "location": "C + 0x03", "width": "signed byte", "load": "0x82CF1098", "signExtension": "0x82CF10A4", "meaning": "population" },
+        { "name": "word_10", "location": "C + 0x10", "width": "unsigned 32-bit word", "load": "0x82CF1094", "maskInstruction": "0x82CF10A0", "selectedBit": "0x100", "contribution": "D = 2 when bit 0x100 is set, otherwise 0" },
+        { "name": "half_3C", "location": "C + 0x3C", "width": "unsigned halfword", "load": "0x82CF109C", "maskInstruction": "0x82CF10AC", "selectedBit": "0x2", "branch": "0x82CF10B8" },
+        { "name": "word_24", "location": "C + 0x24", "width": "unsigned 32-bit word", "load": "0x82CF10CC", "maskInstruction": "0x82CF10D0", "selectedBit": "0x40", "branch": "0x82CF10D8" }
+      ],
+      "wordArithmetic": "u32(v) retains the low 32 bits; s32(v) interprets those bits as signed. trunc0 divides with truncation toward zero. No saturation or range clamp precedes the UEA adjustment.",
+      "initial": { "expression": "B0 = s32(s32(G - D) * P)", "subtract": "0x82CF10A8", "multiplyLowWord": "0x82CF10B0" },
+      "reduction": {
+        "expression": "T(v) = trunc0(s32(2 * u32(v) + 1) / 3)",
+        "divisor": { "address": "0x82CF108C", "value": 3 },
+        "first": { "when": "(half_3C & 0x2) != 0", "instructions": ["0x82CF10BC", "0x82CF10C0", "0x82CF10C4"] },
+        "second": { "when": "(word_24 & 0x40) != 0", "instructions": ["0x82CF10DC", "0x82CF10E0", "0x82CF10E4"] },
+        "rounding": "The shift retains a 32-bit doubled value; the following add is consumed as a signed low word by divw. For nonnegative values without overflow, T(v) = floor((2*v + 1)/3)."
+      },
+      "orderedResult": ["B1 = T(B0) if half_3C bit 0x2 is set, otherwise B0", "B = T(B1) if word_24 bit 0x40 is set, otherwise B1"],
+      "qualification": "All baseline terms and both conditional reductions are recovered from exact raw instructions. The three flag meanings and scalar semantics remain neutral. Applying both reductions preserves the intermediate rounding; it is not a single multiplication by 4/9."
+    },
+    "lookupArguments": {
+      "mode": { "address": "0x82CF10EC", "value": 0 },
+      "player": { "address": "0x82CF10F4", "source": "signed city-record byte +0x00" },
+      "ueaId": { "address": "0x82CF10F0", "value": 8 }
+    },
+    "lookupCallsite": "0x82CF10F8",
+    "resultTest": "0x82CF10FC",
+    "inactiveTarget": "0x82CF1130",
+    "adjustment": {
+      "baselineRegister": "r31",
+      "floorCandidate": { "address": "0x82CF1104", "expression": "baseline - 20" },
+      "ordinaryReduction": { "address": "0x82CF1108", "value": 10 },
+      "floorCompare": "0x82CF110C",
+      "selection": ["0x82CF1110", "0x82CF1114"],
+      "returnCalculation": "0x82CF1118",
+      "activeResult": "max(20, baseline - 10)",
+      "inactiveResult": "baseline",
+      "exactWordResult": "Active: s32(B - min_signed(10, s32(B - 20))). Inactive: B.",
+      "qualification": "The max expression describes the accepted ordinary integer domain where B - 20 does not overflow a signed word. The exact word expression also covers wrapped inputs; no runtime input range is established here."
+    },
+    "result": "In the ordinary integer domain without signed-word overflow, active cumulative UEA 8 reduces the retained baseline threshold by 10 but never returns less than 20. The exact word expression preserves the wrapped-input boundary."
+  },
+  "cityUpdateConsumer": {
+    "function": "0x82D13978",
+    "thresholdCalls": ["0x82D163BC", "0x82D163D4"],
+    "storedProgressField": { "offset": "0x34", "width": "signed halfword" },
+    "comparison": "0x82D163C8",
+    "insufficientTarget": "0x82D168AC",
+    "result": "The first call result is compared with signed city halfword +0x34. When progress reaches the threshold, the second result is subtracted from that halfword and city population byte +0x03 is incremented.",
+    "qualification": "This exact consumer establishes threshold semantics and carry-over subtraction. It does not name the progress field beyond the growth contract, prove every population-change path, or identify all surrounding city fields."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only DumpMemoryWords.java checked every word in 0x82CF1060..0x82CF1144 and only the exact data cell 0x830E45C8. Independent encoding matched all 58 words to the exact generated sub_82CF1060 instructions, including each load width, mask, signed arithmetic operation, branch, call, and return. Earlier accepted raw-word and city-update queries retain support for the player/population separation and carry-over consumer. The truncated DumpFunctions.java result is not evidence for baseline arithmetic or branch coverage.",
+    "entries": [
+      { "role": "growth-threshold owner", "address": "0x82CF1060", "confidence": "strong" },
+      { "role": "raw-instruction baseline", "address": "0x82CF1070 through 0x82CF10E4", "result": "A scalar-minus-flag factor multiplies signed population, followed by two independently gated and ordered signed divisions by three of a doubled value plus one.", "confidence": "strong" },
+      { "role": "player and population byte separation", "address": "0x82CF1098 through 0x82CF10F4", "result": "The threshold baseline reads city +0x03, while the UEA player argument reads city +0x00.", "confidence": "strong" },
+      { "role": "UEA 8 lookup", "address": "0x82CF10F8", "confidence": "strong" },
+      { "role": "city-update threshold consumer", "address": "0x82D163BC", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82CF1060..0x82CF1144 radius=0,0x830E45C8 radius=0",
+      "ghidra/DumpMemoryWords.java:0x82CF10BC..0x82CF1134",
+      "ghidra/DumpMemoryWords.java:0x82CF10B0,0x82CF10EC radius=15",
+      "ghidra/DumpMemoryWords.java:0x82D139B0,0x82D163F0 radius=12",
+      "generated:rerevved/sub_82CF1060",
+      "generated:rerevved/sub_82D13978"
+    ],
+    "decompilerBoundary": "DumpFunctions.java at 0x82CF1060 reports bad instruction data and halt_baddata. The raw words identify inline std r31,-16(r1) at 0x82CF1068 and ld r31,-16(r1) at 0x82CF1128 and 0x82CF1140, which save and restore the retained register. No repaired or complete Ghidra function body is claimed. Raw-word coverage and exact generated corroboration independently support the baseline arithmetic and return paths.",
+    "qualification": "No runtime action or Ghidra mutation was performed. The static arithmetic is supported with neutral scalar and flag inputs. Initialization, input ranges, flag semantics, progress producers, and natural execution remain unresolved."
+  },
+  "guards": [
+    "Do not model Faster city growth as a percentage; in the ordinary integer domain the accepted UEA path subtracts 10 from the threshold with a hard floor of 20.",
+    "Do not infer semantic names for global 0x830E45C8 or the selected bits at city +0x10, +0x3C, and +0x24, or their runtime initialization and ranges.",
+    "Do not combine the ordered reductions into an unrounded 4/9 factor or replace signed division toward zero with floor for negative values.",
+    "Do not use the truncated Ghidra decompilation as a complete-function or baseline-coverage claim. The baseline result is supported by the bounded raw instructions and exact generated function.",
+    "Do not extend max(20, baseline - 10) to wrapped signed-word inputs without applying the recorded exact word arithmetic.",
+    "Do not treat city record +0x34 as a complete population or food-state layout.",
+    "Do not claim presentation, AI, save, scenario, multiplayer, or runtime parity from the static owner and one consumer."
+  ],
+  "conclusion": "CityGrowthThresholdLookup at 0x82CF1060 multiplies signed population by global word 0x830E45C8 minus a conditional two selected by city +0x10 bit 0x100. City +0x3C bit 0x2 and then city +0x24 bit 0x40 each independently apply the recorded signed doubled-plus-one division by three. This retained baseline feeds the accepted cumulative UEA 8 adjustment and the accepted stored-progress carry-over consumer. Scalar and flag meanings remain unresolved; the exact arithmetic is a raw-instruction result rather than a complete Ghidra decompilation or runtime claim."
+}

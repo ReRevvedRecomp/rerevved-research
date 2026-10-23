@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0105",
+  "topic": "gfx-child-slot-consumer-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does common slot-0x2C target 0x821FBC38 directly consume either child pointer retained by parent object 0x82214450 at +0x90 or +0x94?",
+  "scope": {
+    "parentStructure": "RVA-STR-0002",
+    "childFields": ["RVA-FLD-0002", "RVA-FLD-0003"],
+    "dispatchTarget": "0x821FBC38",
+    "fieldOffsets": ["+0x90", "+0x94"],
+    "boundary": "This packet tests direct receiver-relative consumption in one exact common slot target. It does not inspect wrappers, callers, callees, neighboring slots, child bodies, destruction, release order, aliasing outside the function, runtime dispatch, or visible GFx behavior."
+  },
+  "dependencies": [
+    { "topic": "gfx-vtable-ownership", "use": "Provides the parent construction, retained child fields, slot-0x2C wrappers, and common target." },
+    { "topic": "gfx-coupled-fill-producer", "use": "Provides the accepted complete generated-body boundary and neutral coupled-fill role for 0x821FBC38." }
+  ],
+  "acceptedSeed": "Parent RVA-STR-0002 retains initialized 0x3C-byte children in RVA-FLD-0002 at +0x90 and RVA-FLD-0003 at +0x94; accepted slot-0x2C wrappers tail-branch to 0x821FBC38.",
+  "receiverProvenance": {
+    "input": "incoming r3",
+    "preservedRegister": "r29",
+    "result": "The complete exact generated body copies incoming r3 to r29 near entry. Its only displacement-144 and displacement-148 memory operations use stack base r1, not receiver base r29. Later copies of r29 to argument registers pass the parent to callees but do not directly access either child field.",
+    "qualification": "Passing the parent receiver to a callee does not prove that callee consumes +0x90 or +0x94."
+  },
+  "boundedNegative": {
+    "result": "Common slot-0x2C target 0x821FBC38 does not directly load or store parent child fields +0x90 or +0x94 in its complete bounded generated body.",
+    "effect": "The two constructed child pointers retain construction-owned containment roles without an accepted slot-0x2C direct-consumer relation.",
+    "falsificationCondition": "The exact current-image body contains a receiver-derived +0x90 or +0x94 load or store, or a separately bounded callee proves a child-field edge."
+  },
+  "currentEvidence": {
+    "method": "One corrected foreground read-only exact-function field-reference query, one exact-function decompilation, and narrow inspection of the already accepted generated body for 0x821FBC38.",
+    "entries": [
+      { "role": "bounded field scan", "address": "0x821FBC38", "result": "The corrected query scanned the two instructions currently modeled for the exact function and found zero +0x90 or +0x94 hits.", "confidence": "strong" },
+      { "role": "modeled function boundary", "address": "0x821FBC38", "result": "Ghidra models the body as a non-returning call to prologue helper 0x827F7C80, so its two-instruction zero-hit result is decode coverage rather than semantic negative evidence.", "confidence": "strong" },
+      { "role": "complete exact-body corroboration", "address": "0x821FBC38", "result": "The complete generated body preserves incoming r3 in r29 and contains no receiver-derived displacement 144 or 148 access; the only such displacements are stack-base r1 stores.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/FindFieldRefs.java:0x90,0x94@0x821FBC38",
+      "ghidra/DumpFunctions.java:0x821FBC38",
+      "generated:rerevved/sub_821FBC38"
+    ],
+    "qualification": "Only the corrected exact-function query supports this packet. The direct-access negative comes from the complete exact generated body, not from the two-instruction Ghidra decode."
+  },
+  "catalogPromotion": {
+    "newEntities": [],
+    "updatedEntities": ["RVA-FLD-0002", "RVA-FLD-0003"],
+    "result": "Both existing child fields gain the bounded direct-consumer qualification; no new relation is added because no child-field edge was proved."
+  },
+  "guards": [
+    "Do not treat stack offsets +0x90 and +0x94 as parent receiver fields.",
+    "Do not infer a callee's field access from parent-receiver argument passing.",
+    "Do not classify slot +0x2C as a child-management operation.",
+    "Do not infer semantic class names, child roles, destruction, release order, exclusive ownership, runtime dispatch, rendering, or visible GFx behavior."
+  ],
+  "conclusion": "Exact common slot-0x2C target 0x821FBC38 contains no direct receiver-derived +0x90 or +0x94 access in its complete generated body. Ghidra's corrected bounded scan found zero hits but models only two instructions, so it supplies decode coverage only. The constructed children remain retained containment fields with no accepted direct consumer in this target; callees, other slots, destruction, lifetime, and runtime behavior remain unresolved."
+}

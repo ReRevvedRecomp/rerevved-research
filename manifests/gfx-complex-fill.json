@@ -1,0 +1,293 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0001",
+  "topic": "gfx-complex-fill",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Why does the coupled-fill selector omit resource mappings for image shapes?",
+  "scope": {
+    "rendererVtable": "0x82169E30",
+    "rendererGetCaps": "0x82302E90",
+    "renderConfigSetRenderer": "0x82245050",
+    "failedQueryReturn": "0x82245130",
+    "successfulQueryReturn": "0x82254900",
+    "coupledFillBuild": "0x822688C0",
+    "textureBind": "0x82302758",
+    "textureBackendEnsure": "0x82305FD8",
+    "boundary": "This packet identifies the renderer capability snapshot that controls complex textured mesh generation and correlates its failed first query with exact image-shape writer selection. It provides no basis for forcing capability bits or patching descriptors."
+  },
+  "dependencies": [
+    {
+      "topic": "gfx-coupled-fill-producer",
+      "use": "current bounded-source, writer-selection, and descriptor-production contract"
+    },
+    {
+      "topic": "gfx-source-count-contract",
+      "use": "authoritative source-array cardinality and selector bounds"
+    },
+    {
+      "topic": "gfx-variant8-tf1-semantics",
+      "use": "static subtype and texture-factor interpretation"
+    },
+    {
+      "topic": "gfx-draw-producer",
+      "use": "current texture-bind and draw boundary"
+    }
+  ],
+  "currentEvidence": {
+    "method": "current generated-code structure followed by foreground read-only Ghidra word, function, and reference queries",
+    "entries": [
+      {
+        "role": "renderer capability query",
+        "address": "0x82302E90",
+        "confidence": "strong"
+      },
+      {
+        "role": "coupled fill build",
+        "address": "0x822688C0",
+        "confidence": "strong"
+      },
+      {
+        "role": "texture bind",
+        "address": "0x82302758",
+        "confidence": "strong"
+      },
+      {
+        "role": "texture backend ensure",
+        "address": "0x82305FD8",
+        "confidence": "strong"
+      }
+    ],
+    "qualification": "The title implementation, Rosetta class layout, and exact-shape runtime samples agree on the render-config and descriptor fields."
+  },
+  "producer": {
+    "class": "GFxRenderConfig",
+    "layout": {
+      "+0x1C": "RenderFlags",
+      "+0x24": "RendererCapBits",
+      "+0x28": "RendererVtxFmts"
+    },
+    "rendererVtable": "Vtable 0x82169E30 slot +0x4 resolves GetRenderCaps to 0x82302E90.",
+    "activeResult": "When renderer byte +0x10 is nonzero, 0x82302E90 returns 1 and writes cap bits 0x330C, vertex formats 0x1B, blend modes 0x36B, and max texture size 8192.",
+    "inactiveResult": "When renderer byte +0x10 is zero, 0x82302E90 returns 0 without populating VertexFormats.",
+    "rosetta": "GFx 2.1.57 GFxRenderConfig::SetRenderer calls GetRenderCaps and copies RenderCaps.VertexFormats into RendererVtxFmts without checking the boolean result.",
+    "result": "A render config created before video-mode activation can permanently snapshot zero vertex-format support."
+  },
+  "selector": {
+    "function": "0x822688C0",
+    "readSite": "0x8226896C",
+    "extractSite": "0x82268978",
+    "behavior": "The coupled-fill build tests RendererVtxFmts bit 0x10, which represents Vertex_XY16iCF32 support. Format 3 is the default; format 4 additionally requires that capability and the mesh latch or a bounded resource-bearing source.",
+    "qualification": "RenderFlags +0x1C and RendererCapBits +0x24 independently gate EdgeAA eligibility.",
+    "descriptorResult": "The simple and complex writer outcomes remain those recorded by gfx-coupled-fill-producer; the bounded title session adds the natural source count and descriptor tuple recorded in runtimeEvidence."
+  },
+  "textureBind": {
+    "function": "0x82302758",
+    "backendField": "+0x28",
+    "readSite": "0x82302780",
+    "ensureCallSite": "0x82302790",
+    "ensureTarget": "0x82305FD8",
+    "behavior": "The bind path reads renderer-texture backend +0x28 and calls the ensure routine only when that field is null, then reloads the field for submission.",
+    "qualification": "The bounded title session did not observe the resolve-image, resolve-output, or texture-bind markers, so it does not establish a resolved image, bind, backend value, or visible result."
+  },
+  "staticQuery": {
+    "mode": "foreground-read-only",
+    "scripts": [
+      "ghidra/DumpFunctions.java",
+      "ghidra/DumpMemoryWords.java",
+      "ghidra/DumpReferences.java"
+    ],
+    "targets": [
+      "0x82169E30",
+      "0x82302E90",
+      "0x822688C0",
+      "0x82268968",
+      "0x82268974",
+      "0x82302758",
+      "0x82302780",
+      "0x82302790",
+      "0x82305FD8"
+    ],
+    "program": "rerevved_image.bin",
+    "result": "Ghidra confirms the renderer vtable and function starts. Generated bodies establish the capability writes, selector test, and lazy backend boundary."
+  },
+  "runtimeEvidence": {
+    "status": "bounded",
+    "session": "title/menu",
+    "date": "2026-08-15",
+    "naturalDescriptor": {
+      "invocation": 55,
+      "index": 0,
+      "sourceCount": 1,
+      "source": "0x527f9e1c",
+      "matchedSource": "0x527f9e1c",
+      "rendererVtxFmts": "0x00000000",
+      "writerResult": 1,
+      "tupleWords": [
+        "0x00000000",
+        "0xffffffff",
+        "0xffffffff",
+        "0xffffffff",
+        "0x00000000"
+      ],
+      "result": "The probe recorded the natural coupled-fill output; the probe itself performed no descriptor write or format override."
+    },
+    "resourceCorrelation": {
+      "filter": [
+        "GFX_MainMenu_logo",
+        "GFX_MainMenu.gfx",
+        "GFX_MainMenu_logo.dds"
+      ],
+      "requests": [
+        {
+          "name": "GFX_MainMenu_logo",
+          "requestKey": 1,
+          "imageName": "GFX_MainMenu_logo.dds",
+          "branch": "type-11-cache",
+          "payload": "0x525d0034",
+          "size": 1048704,
+          "resourceCreated": true
+        },
+        {
+          "name": "GFX_MainMenu.gfx",
+          "branch": "type-11-cache",
+          "payload": "0x400ec674",
+          "size": 20069
+        }
+      ],
+      "filesystemFallbackObserved": false,
+      "qualification": "The exact-name resource/open observations occurred in the same bounded title sessions as the natural descriptor. Dynamic descriptor, resource, image, and output pointers are not promoted as stable identities."
+    },
+    "presentationBoundary": {
+      "lastObserved": "natural descriptor at coupled-fill entry/source 0x527f9e1c",
+      "downstreamMarkers": {
+        "resolveImage": false,
+        "resolveOutput": false,
+        "textureBind": false
+      },
+      "result": "The natural path stopped being observable after descriptor/resource creation and before the first resolver or bind marker. The run then encountered repeated ObjectIcons VFS failures and exited with illegal instruction.",
+      "qualification": "This identifies the first bounded observation boundary, not a causal proof that the boundary caused missing presentation."
+    },
+    "excluded": [
+      "format or descriptor validation writes",
+      "guest-memory changes, injected mappings, forced presentation, shader state, draw results, and visible-output conclusions",
+      "semantic names for the remaining opaque tuple fields"
+    ],
+    "gpuTextureEnumeration": {
+      "status": "bounded",
+      "session": "title/loading-screen",
+      "date": "2026-08-16",
+      "method": "default-off SDK texture-cache log of each distinct key committed to a load, over a bounded 25 second launch",
+      "distinctKeys": 41,
+      "guestUploadShapes": {
+        "64x64": 46,
+        "32x32": 6,
+        "128x128": 4,
+        "16x16": 3,
+        "64x128": 2,
+        "128x64": 2,
+        "1024x256": 1
+      },
+      "gpuKeysByShape": {
+        "64x64": 4,
+        "32x32": 0,
+        "128x128": 0,
+        "16x16": 0,
+        "64x128": 0,
+        "128x64": 0,
+        "1024x256": 0
+      },
+      "tiledRgbaKeys": "Four 64x64 content keys plus two 1280x720 endian-0 presentation surfaces.",
+      "nearestMiss": "1AEA1000:1024:256:1024:0:18:1, an untiled DXT1 key of matching geometry and unrelated format.",
+      "result": "No tiled k_8_8_8_8 endian-2 key outside the 64x64 class was committed to a load. GFx images outside that class do not reach the GPU.",
+      "qualification": "The enumeration is bounded to one session and records key identity only. It does not establish which guest function omits the fetch constant, nor any asset identity for a loaded key.",
+      "scopeCorrection": "The shape table is bounded to the loading screen. A later 95 second interactive session counted 189440 binds at 0x82302758 with no null, unreadable, or bad-reference cases, and recorded 64x64, 16x16, 32x32, and 256x128 bound shapes. Image-sized textures therefore do bind. Do not read this table as a general claim that only 64x64 reaches the GPU.",
+      "survivingClaim": "No 1024x256 tiled k_8_8_8_8 key was committed to a load, and no 1024x256 bind occurred in 189440 counted samples."
+    },
+    "capsInitialization": {
+      "status": "accepted",
+      "date": "2026-08-18",
+      "firstQuery": {
+        "caller": "0x82245130",
+        "rendererActive": 0,
+        "result": 0,
+        "capBits": "0x701CFB80",
+        "vertexFormats": "0x00000000",
+        "blendModes": "0x00000000",
+        "maxTextureSize": 0
+      },
+      "secondQuery": {
+        "caller": "0x82254900",
+        "delayMilliseconds": 109,
+        "sameRenderer": true,
+        "rendererActive": 1,
+        "result": 1,
+        "capBits": "0x0000330C",
+        "vertexFormats": "0x0000001B",
+        "blendModes": "0x0000036B",
+        "maxTextureSize": 8192
+      },
+      "exactShapeCorrelation": "A later exact-shape run observed 22 drawn type-0x41 image sources using RendererVtxFmts zero. All selected the simple writer and emitted no resource selectors.",
+      "result": "GFxRenderConfig::SetRenderer makes the first capability query before video mode is active and retains its zero VertexFormats snapshot even though the same renderer reports full capabilities 109 ms later."
+    },
+    "capsRefreshValidation": {
+      "status": "accepted",
+      "date": "2026-08-18",
+      "repair": "Remember only the config whose query at return 0x82245130 failed, then copy CapBits and VertexFormats from the first successful query by the same renderer.",
+      "drawnSample": 27,
+      "result": "All sampled coupled builds observed CapBits 0x330C and VertexFormats 0x1B, selected the complex writer, resolved one texture, dispatched subtype 2, and drew. The owner reported that all inspected graphics worked."
+    },
+    "rendererBoundary": {
+      "status": "settled",
+      "date": "2026-08-16",
+      "session": "title/menu, interactive",
+      "statement": "The GFx core never offers the missing images to the renderer. Every renderer stage downstream of that handoff is correct.",
+      "site": "0x82303B68",
+      "siteRole": "Textured-fill setter. Writes draw-state kind 2 and copies a nine-word fill descriptor whose word 0 is the texture.",
+      "registerRoles": "Entry is 'or r11,r3,r3' then 'or r9,r4,r4'; 'lwz r7,0x0(r9)' into 'stw r7,0x21f4(r11)' makes descriptor word 0 the texture. Roles read from the instructions at the hook site.",
+      "measurement": {
+        "calls": 81920,
+        "resolvedToRegisteredTexture": 81920,
+        "unregistered": 0,
+        "nullTexture": 0,
+        "unreadableDescriptor": 0,
+        "logoOffered": 0,
+        "distinctShapesOffered": [
+          "64x64",
+          "32x32",
+          "16x16"
+        ],
+        "textureRegistrySize": 562,
+        "textureRegistryDropped": 0
+      },
+      "subjectPresent": "Exactly one 1024x256 upload occurred in the same session, so the absence is a measurement rather than a gap.",
+      "instrumentProof": "All 81920 arguments resolved against the registry, so the site was fully understood rather than merely sampled.",
+      "stateBlocks": "The renderer holds two identical state blocks at +0x21c8 and +0x223c, each carrying its texture at +0x2c. The block the dispatch reads has no field setter: its only static write to +0x2268 is a zero store, so the value arrives by bulk copy.",
+      "uploadedButNeverOffered": [
+        "1024x256",
+        "128x128",
+        "128x64",
+        "64x128"
+      ],
+      "sizeRuleNotEstablished": "An earlier session bound a 256x128 texture, so larger images can reach the renderer under some conditions. No size threshold is claimed.",
+      "eliminatedDownstream": [
+        "decode",
+        "upload",
+        "texture creation",
+        "six-dword fetch template",
+        "bind at 0x82302758",
+        "draw state at 0x82302A50"
+      ],
+      "staticBlocker": "The GFx core producer at 0x822688C0 and the renderer vtable slots decompile only to save-register thunks or halt_baddata; undecoded VMX128 regions prevent a static read of the core side without the mutating repair chain."
+    }
+  },
+  "openBoundary": "Closed for the missing-image symptom: refresh only the config produced by the failed pre-video-mode query, using the first successful capabilities returned by the same renderer.",
+  "guards": [
+    "Do not force RendererVtxFmts bit 0x10, format 4, fill subtype, or source selectors independently.",
+    "Do not treat the inactive GetRenderCaps output record as initialized data.",
+    "Repair must preserve the renderer's own successful capability result 0x1B and refresh or correctly order the GFxRenderConfig snapshot.",
+    "Do not refresh an unrelated config or copy capabilities across renderer instances."
+  ],
+  "conclusion": "ReXGlue reaches GFxRenderConfig capability capture before the guest renderer's video mode is active. Remembering that failed config and refreshing it from the same renderer's first successful result restored VertexFormats 0x1B. All 27 sampled image builds then used the existing complex subtype-2 textured path, and the owner reported the inspected graphics working."
+}

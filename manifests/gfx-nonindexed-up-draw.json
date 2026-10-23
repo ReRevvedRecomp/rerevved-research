@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0160",
+  "topic": "gfx-nonindexed-up-draw",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which direct UP boundary submits the expanded 28-byte GFx triangle vertices?",
+  "scope": {
+    "producer": "0x82303F70",
+    "callsite": "0x82304254",
+    "wrapper": "0x826A3000",
+    "lowerer": "0x826A2B58",
+    "boundary": "The direct call tuple, source copy and completion stores only. No runtime shader, label identity, host execution or resource lifetime is inferred."
+  },
+  "dependencies": [
+    { "topic": "gfx-draw-producer", "use": "GFx graphics state and CPU shader selection contracts" }
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only ghidra/DumpInstructions.java and ghidra/DumpMemoryWords.java queries against the program in image.json, corroborated by the bounded generated bodies of 0x82303F70, 0x826A3000 and 0x826A2B58.",
+    "instructionQuery": { "addresses": ["0x82304238", "0x826A3000", "0x826A2FCC"], "count": 18 },
+    "wordQuery": { "addresses": ["0x82304248", "0x826A301C", "0x826A2FD8"], "radius": 10 },
+    "qualification": "The unrepaired listing skips the requested caller and lowerer tail and omits 0x826A3038..0x826A303C. Exact big-endian image words confirm those sites; no database repair is implied.",
+    "call": {
+      "address": "0x82304254",
+      "word": "0x4839EDAD",
+      "callee": "0x826A3000",
+      "entry": "r3=[renderer+0xB8] graphics pointer, r4=4, r5=three times the truncated r9/3 count, r6=renderer+0x208 source vertices, r7=28-byte stride.",
+      "tupleSites": ["0x82304238", "0x8230423C", "0x82304240", "0x82304244", "0x82304248", "0x8230424C", "0x82304250"]
+    },
+    "wrapper": {
+      "address": "0x826A3000",
+      "lowering": "0x826A3020 calls 0x826A2B58 with the stride moved to r6; r3 is its vertex allocation result. A zero result skips copying and cursor publication.",
+      "copy": "0x826A3034 calls 0x827F8550 with destination returned by the lowerer, the entry r6 source, and entry r5 multiplied by entry r7 bytes. There is no index source or index copy.",
+      "completion": "0x826A3038 word 0x817F3484 loads G+0x3484; 0x826A303C word 0x917F0030 stores it to G+0x30. The final r3 is left by the vertex copy, not an HRESULT."
+    },
+    "lowererOutputs": {
+      "address": "0x826A2FCC",
+      "result": "The successful tail returns r28, stores the pending cursor at G+0x3484, vertex destination at G+0x3488 and vertex word count at G+0x3490.",
+      "stores": [
+        { "address": "0x826A2FDC", "word": "0x917F3484" },
+        { "address": "0x826A2FE0", "word": "0x939F3488" },
+        { "address": "0x826A2FE4", "word": "0x92FF3490" }
+      ]
+    }
+  },
+  "guards": [
+    "Do not identify a runtime shader or visible label from the stride alone.",
+    "Do not infer that other callers of the wrapper have the same tuple.",
+    "Preserve original allocation, copy, dirty-state and cursor effects during input validation."
+  ],
+  "conclusion": "The GFx producer at 0x82303F70 submits expanded 28-byte triangle vertices through the nonindexed UP wrapper 0x826A3000 at 0x82304254. The wrapper copies the caller's vertices and publishes the lowerer's pending cursor. Runtime input correlation is needed to assign this boundary to visible content."
+}

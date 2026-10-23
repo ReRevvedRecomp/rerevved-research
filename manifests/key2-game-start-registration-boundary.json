@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0114",
+  "topic": "key2-game-start-registration-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does one bounded caller register the accepted key-2 state with the frontend state owner, and is the game-start dispatch edge statically explicit?",
+  "scope": {
+    "factory": "0x821B0AF0",
+    "stateKeyOffset": "+0x4",
+    "stateKey": 2,
+    "vtable": "0x8211EBD0",
+    "slot": "+0x4",
+    "slotTarget": "0x82E60F70",
+    "functionCap": 8,
+    "emittedFunctions": ["0x821B0AF0", "0x82E60D50"],
+    "boundary": "The combined exact-reference and aligned-placement set contains two functions. Only those bodies were read; UI behavior, runtime entry, neighboring slots, and broader state-owner discovery remain outside scope."
+  },
+  "dependencies": [{ "topic": "frontend-gameplay-transition", "use": "Provides the accepted key-2 state factory, vtable, and slot-+0x4 target." }],
+  "referenceResults": {
+    "factory": { "target": "0x821B0AF0", "references": 0 },
+    "vtable": { "target": "0x8211EBD0", "references": 2, "rows": [{ "type": "DATA", "source": "0x821B0B28", "function": "0x821B0AF0" }, { "type": "DATA", "source": "0x82E60D60", "function": "0x82E60D50" }] },
+    "slotTarget": { "target": "0x82E60F70", "references": 1, "rows": [{ "type": "DATA", "source": "0x8211EBD4", "function": null }] },
+    "vtablePointerPlacements": 0,
+    "combinedFunctionCount": 2
+  },
+  "bodyResults": [
+    { "function": "0x821B0AF0", "result": "Allocates eight bytes, stores key 2 at +0x4, installs vtable 0x8211EBD0, and returns the object or null. It contains no registration call." },
+    { "function": "0x82E60D50", "result": "Stores key 2 at incoming-object +0x4, installs vtable 0x8211EBD0, and returns. It contains no registration or dispatch call." }
+  ],
+  "boundedNegative": {
+    "result": "No direct key-2 registration owner or statically explicit dispatch caller is modeled in the bounded set. The slot target is represented only by the accepted data word at 0x8211EBD4.",
+    "effect": "The accepted state construction and vtable target remain valid, while owner registration and dynamic invocation remain unresolved.",
+    "falsificationCondition": "A direct caller of the factory, an exact state-owner insertion edge, or a resolved indirect callsite to slot target 0x82E60F70 is independently anchored."
+  },
+  "catalogPromotion": { "newEntities": [], "updatedEntities": ["RVA-VTBL-0018", "RVA-SLOT-0026"], "result": "The existing vtable and slot gain the bounded registration/dispatch qualification; no owner or dispatch relation is added." },
+  "currentEvidence": {
+    "method": "Three sequential foreground read-only Ghidra queries: exact references to all three anchors, aligned vtable pointer placements, and exact bodies for the two emitted functions.",
+    "locators": ["ghidra/DumpReferences.java:0x821B0AF0,0x8211EBD0,0x82E60F70", "ghidra/FindPointerValues.java:0x8211EBD0", "ghidra/DumpFunctions.java:0x821B0AF0,0x82E60D50"],
+    "qualification": "The accepted slot target body is not an emitted caller or placement function. Dynamic callsites, state-owner identity, registration storage, UI behavior, and runtime execution remain unresolved."
+  },
+  "guards": ["Do not infer registration from construction or vtable placement.", "Do not infer runtime dispatch from the table data word alone.", "Do not assign UI action, gameplay success, or state-owner behavior."],
+  "conclusion": "The bounded reference graph exposes two key-2/vtable initializers and the accepted slot-target data word, but no factory caller, registration edge, or resolved dispatch callsite. Registration ownership and static game-start dispatch remain unresolved."
+}

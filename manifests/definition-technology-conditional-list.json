@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0196",
+  "topic": "definition-technology-conditional-list",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "What fields do the paired building and wonder table-base constructions inside 0x82CE77D8 consume?",
+  "scope": {
+    "function": "0x82CE77D8",
+    "buildingPair": "0x82CE7BD4+0x82CE7BDC",
+    "wonderPair": "0x82CE7988+0x82CE7994",
+    "buildingField": "+0x42",
+    "wonderFields": ["+0x44", "+0x46"],
+    "stopCondition": "Resolve the two exact raw candidate pairs, their local field checks, and the complete raw direct-call set below cap 32; stop before classifying distant callers, output presentation, or other table candidates.",
+    "boundary": "This packet covers two local record loops and two static direct callsites. It does not identify a runtime invocation, a text or asset reader, the list's final owner, or gameplay effects."
+  },
+  "dependencies": [
+    { "topic": "building-menu-record-gates", "use": "Identifies building +0x42 as a signed technology ID and the live count initialized to 23 elsewhere." },
+    { "topic": "wonder-outer-gate-record-fields", "use": "Identifies wonder +0x44 and +0x46 as signed technology IDs or -1 sentinels on the generic outer gate." },
+    { "topic": "definition-technology-match-list", "use": "Records a separate technology-field comparison path reached from TechnologyAcquire." },
+    { "topic": "building-wonder-consumer-frontier", "use": "Records the earlier decoded-materializer and text-consumer search limits." }
+  ],
+  "staticResult": {
+    "wonderLoop": "At 0x82CE7988..0x82CE79B0, the function constructs wonder base 0x82F73238 and a pointer to record +0x46. After a nonzero 0x82CF0E28 result and a -1 slot test, 0x82CE79D4 loads signed halfword -2 from that pointer, which is record +0x44, and compares it with selected value r14. When unequal, it calls the ordinary technology ownership query 0x82CEF6A8 with that +0x44 value and skips the candidate on zero. It then reads signed +0x46 at 0x82CE7A08, likewise compares with r14, and on inequality requires a nonzero ownership result for +0x46. The final local check at 0x82CE7A40..0x82CE7A54 requires at least one of the two field values to equal r14 before storing a tagged ordinal. The field pointer advances by 0x14C and the parallel slot pointer by 8, stopping after 33 positions; this local loop addresses initialized wonder IDs 200 through 232.",
+    "buildingLoop": "At 0x82CE7BD4..0x82CE7BE4, the function constructs building base 0x82F71FD8 and adds +0x42. When live count 0x830E45CC is positive, 0x82CE7BFC loads that signed halfword and compares it with r14 at 0x82CE7C04. Unequal values skip the local match path; the pointer advances by 0xCC. The runtime count and full output policy are not established here.",
+    "selector": "The comparison value r14 is selected earlier from an indexed word or caller r6 when r6 is not -1. The policy behind either source and the list's intended display or effect are not established by these field reads.",
+    "textBoundary": "These two loop bodies use numeric technology fields. They do not directly read the accepted definition name, short token, art token, or description offsets; other code and called functions are outside this packet.",
+    "directCallers": "A raw executable branch-and-link scan found exactly two direct calls to 0x82CE77D8 below cap 32, at 0x82CE9520 and 0x82DD8670. In preview/helper function 0x82CE9490, the first call sets r6 to incoming r21 minus 600 after testing r21 in [600,700), and sets r3 to 128. In function 0x82DD8308, the second call passes r3=0, r4=0, r5=0 and r6 loaded as an indexed byte from a pointer reached through r23+0x434. The second call does not use its immediate return value in the inspected window. The conditional list's output consumer and indirect callers are not established."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No runtime invocation of 0x82CE77D8, selected r14, list entry, text use, or building/wonder effect was observed in this packet."
+  },
+  "currentEvidence": {
+    "method": "The prior two-target raw split-constant query reached a global cap of 16 and supplied these two candidate pairs. Three foreground read-only raw-word windows checked their immediate record uses and both wonder halfword branches. A separate raw direct-caller scan below cap 32 found two callsites; their immediate raw words and narrow generated-function windows resolve local arguments. Ghidra's listing gives eight-byte entries and no containing functions at the interior sites.",
+    "entries": [
+      { "role": "wonder candidate pair", "address": "0x82CE7988..0x82CE7994", "result": "Forms base 0x82F73238 in r23 and record +0x46 in r31." },
+      { "role": "wonder field checks", "address": "0x82CE79D4..0x82CE7A54", "result": "Reads signed +0x44 through -2(r31) and signed +0x46 through 0(r31), compares each with r14, and conditionally calls the ordinary ownership query for the other field." },
+      { "role": "building candidate pair", "address": "0x82CE7BD4..0x82CE7BE4", "result": "Forms base 0x82F71FD8 and field pointer +0x42." },
+      { "role": "building field check", "address": "0x82CE7BFC..0x82CE7C08", "result": "Reads and sign-extends building +0x42, compares it with r14, and branches away on inequality." },
+      { "role": "direct callers", "address": "0x82CE9520,0x82DD8670", "result": "Two raw direct branch-and-link sites below cap 32; narrow exact-function windows show r6 from item-minus-600 or an indexed byte, respectively." }
+    ],
+    "locators": [
+      "ghidra/FindSplitConstantCandidates.java:0x82F71FD8,0x82F73238 lookahead=8 cap=16",
+      "ghidra/DumpMemoryWords.java:0x82CE7994,0x82CE7BDC radius=24",
+      "ghidra/DumpMemoryWords.java:0x82CE7A1C radius=24",
+      "ghidra/DumpMemoryWords.java:0x82CE7830,0x82CE7C4C radius=8",
+      "ghidra/DumpFunctionNeighborhood.java:0x82CE7994,0x82CE7BDC radius=0x40",
+      "ghidra/FindDirectCallers.java:0x82CE77D8 cap=32",
+      "ghidra/DumpFunctionNeighborhood.java:0x82CE9520,0x82DD8670 radius=0x20",
+      "generated:rerevved/sub_82CE77D8:0x82CE7988..0x82CE7C4C",
+      "generated:rerevved/sub_82CE9490:0x82CE94D0..0x82CE9528",
+      "generated:rerevved/sub_82DD8308:0x82DD8654..0x82DD8680"
+    ],
+    "qualification": "The raw base search is capped and incomplete. The indexed wonder +0x44 read is -2 from an alias of base +0x46; following only the base register would miss it. The direct-call scan is untruncated but excludes indirect calls. Raw words and narrow generated windows establish the local alias, field checks, and callsite arguments, not the list's runtime purpose."
+  },
+  "guards": [
+    "Do not infer a text or asset consumer from table-base construction or the numeric field comparisons.",
+    "Do not interpret the local 33-position wonder loop as a program-wide valid-ID rule or the building live count as permanently 23.",
+    "Do not identify the list as a player-facing unlock message without a caller and output consumer.",
+    "Do not treat the two direct callsites as proof of runtime invocation or complete call coverage.",
+    "Do not infer gameplay effects from stored descriptions or these technology checks."
+  ],
+  "conclusion": "This function reads building +0x42 and wonder +0x44/+0x46 as numeric technology comparison inputs while forming a conditional list. Two direct callers pass locally derived selector values. Text and asset consumers, list purpose, and runtime behavior remain unresolved."
+}

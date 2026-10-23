@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0250",
+  "topic": "barbarian-contact-messages",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which native paths present the barbarian leader message screen to the human player, can a contact message be told apart from one raised by a barbarian village, and which native skip leaves game state as if each message had not been shown?",
+  "scope": {
+    "functions": [
+      "0x82CCEFA8",
+      "0x82D253B8",
+      "0x82CC85D0",
+      "0x82CE8338",
+      "0x82D1B400",
+      "0x82D08BB8",
+      "0x82D0E340"
+    ],
+    "leaderMessage": "0x82CC85D0 presents a leader message through the advisor show 0x82CE8338 with r3 = leader index + 0x10. A barbarian leader index is the barbarian player word 0x82F700B0 plus a band 0, 1 or 2.",
+    "sites": {
+      "contact": [
+        "0x82CD46C8"
+      ],
+      "barbarianVillageCapture": [
+        "0x82D1B8B4", "0x82D1BA0C", "0x82D1BA38", "0x82D1BBA8", "0x82D1BD98",
+        "0x82D1BF54", "0x82D1C060", "0x82D1C174", "0x82D09138"
+      ]
+    },
+    "boundary": "The barbarian block [0x82CD43B0,0x82CD4790) of 0x82CCEFA8, the barbarian village branch [0x82D1B5C4,0x82D1C570) of 0x82D1B400, the leader message 0x82CC85D0, the show's nesting checks and early-out, and the friendly village handler 0x82D0E340. Other direct callers of 0x82CC85D0 are outside this bound and keep native behavior."
+  },
+  "dependencies": [
+    {
+      "topic": "advisor-show-caller-inventory",
+      "use": "The cleanup early-out 0x82CE87A8 of the advisor show and its -1 return."
+    },
+    {
+      "topic": "advisor-show-result-consumers",
+      "use": "Method for proving that a show result is overwritten before any read."
+    }
+  ],
+  "currentEvidence": {
+    "method": "A local PowerPC decode of the hash-checked flat image, with function bounds from .pdata, direct branch-and-link scans over .text and lis-plus-displacement reference scans for the named globals.",
+    "contactPath": {
+      "entry": "0x82CCEFA8 has one direct caller, 0x82D25598 in 0x82D253B8. After 0x82CCF430 to 0x82CCF450 make r18 the human side, 0x82CCF458 loads 0x82F700B0 and 0x82CCF460 and 0x82CCF468 branch to 0x82CD43B0 when either side is the barbarian player. No other branch enters [0x82CD43B0,0x82CD4790).",
+      "band": "0x82CD43CC calls 0x82CFF528 with the location words 0x83122894 and 0x83122890 and the barbarian player mask to find a barbarian city; -1 exits at 0x82CD478C. 0x82CD43E4 to 0x82CD4440 pick band r25 from the city's distance to the map's middle row (0x82F77448) against 0x82F71FD0 and 0x82F71FD4.",
+      "shownGate": "0x82CD4488 loads 0x830E4550, 0x82CD448C masks it with 8 << band in r26, and 0x82CD4494 branches to 0x82CD473C when the band was already shown. 0x82CD44E0 branches to 0x82CD4738 when the city tile byte in 0x83129FC8 lacks the human player's bit; 0x82CD4738 reloads 0x830E4550 and falls into 0x82CD473C.",
+      "presentation": "Only when both gates fall through: 0x82CD4504 to 0x82CD4600 fill the advisor text, 0x82CD4624 and 0x82CD462C store the city's coordinates to 0x83122894 and 0x83122890, 0x82CD468C sets 0x00800000 in 0x82FFE7C4, 0x82CD4690 sets the human bit in the byte map 0x83129988, 0x82CD46B8 calls slot 0xC of 0x8314F76C, 0x82CD46C8 calls 0x82CC85D0 with 0x82F700B0 + band, 0x82CD46DC sets the band bit in 0x830E4550, and 0x82CD4734 may call slot 0x80 of 0x8314F76C after setting 0x01000000 in 0x82FFE7C4.",
+      "commonTail": "0x82CD473C to 0x82CD4788 run on all three outcomes: while bits 0x38 of 0x830E4550 are not all set they reset both pair entries of the turn matrix 0x830ED1D8 (r22, loaded at 0x82CCF3BC) to -1, then 0x82CD4788 sets bit 4 in the pair word of 0x830ED0D8.",
+      "result": "At 0x82CD4498 r3 holds the 0x82D8A3A0 result from 0x82CD4460 or 0x82CD4470, the same value the native branch at 0x82CD4494 carries into the common tail, which does not write r3."
+    },
+    "villagePath": {
+      "friendlyVillage": "0x82D0E340 handles entering a friendly village. Its outcomes create only player units of types 0, 0x1C and 0x1D through 0x82D11750 and post event 0x1E through 0x82D05210 for an artifact tile; none create barbarian units or call 0x82D253B8. Its call 0x82D0F0AC passes r5 = -1 to 0x82D08BB8, which takes the advisor branch at 0x82D09014 instead of the leader message.",
+      "capture": "Event 0x1B of the dispatcher 0x82CDDF08 calls 0x82D1B400 at 0x82CDF4C8. 0x82D1B5BC compares the captured city's original-owner byte at +1 with 0x82F700B0 and branches to 0x82D1C570 for any other founder, so [0x82D1B5C4,0x82D1C570) runs only for a barbarian village. Its eight leader message calls each pass 0x82F700B0 plus a band and continue at 0x82D1C3AC, where 0x82D1C3B0 overwrites r3; 0x82D1C530 calls 0x82D08BB8 with r5 = 0x82F700B0 plus a band, which reaches the ninth call 0x82D09138, followed by li r3,1 at 0x82D0913C.",
+      "contactInputs": "The contact block has no trigger input. r5 of 0x82CCEFA8 is stored at entry and r23 is reloaded at 0x82CD43B4, so the block reads only the two players, the location words and the shown bits. Neither 0x82D0E340 nor its callees outside the event dispatcher call 0x82D253B8 or post event 0x1F, the dispatcher's case for 0x82D034A0 at 0x82CDF47C.",
+      "discriminator": "A contact message cannot be attributed to a village at the shown gate. The barbarian village messages are separate direct calls of 0x82CC85D0, identified by their return addresses; inside 0x82CC85D0 the entry link register r12 still holds that address after the save thunk 0x827F7C74 at 0x82CC85DC."
+    },
+    "nativeSkips": {
+      "contact": "Branching from 0x82CD4498 to 0x82CD4738 follows the native path for an unseen barbarian city: it skips the text, location stores, flag and byte-map writes, both 0x8314F76C calls, the leader message and the band bit, then runs the common tail. The band stays unshown, as before any native presentation, so a later contact with that band reaches the same gate again.",
+      "village": "Within a 0x82CC85D0 call from a barbarian village site, the show's native early-out 0x82CE87A8 clears 0x830EE988 for 0x7BC bytes and 0x830EE7F8 for 0x18C bytes, which hold the text the callers filled and the word 0x830EE980 they set, clears 0x01800000 in 0x82FFE7C4 and 0x200 in 0x82FFE7C0, the flags the callers and 0x82CC87DC set, and returns -1. 0x82CC85D0 has one exit at 0x82CC8800 and its frame is 0x4C0 bytes, so the show frame plus 0x500 equals the leader message frame for the call at 0x82CC87FC."
+    }
+  },
+  "staticQuery": {
+    "scripts": [
+      "ghidra/DumpMemoryWords.java"
+    ],
+    "mode": "foreground-read-only",
+    "nativeSupport": "Radius-8 word windows at 29 addresses covering the contact gates, presentation and tail, 0x82D25598, the entry and exit of 0x82CC85D0, the show's nesting checks and early-out, the nine village sites, 0x82D1B47C, 0x82D1B5BC, 0x82D1C3AC, 0x82D09014 and 0x82D0F0AC. All 478 distinct words matched the flat image identified by image.json, which supplied every word the local decode walked.",
+    "generatedCorroboration": [
+      "The generated sub_82CCEFA8 branches to loc_82CD4738 from the tile check, and the generated show branches to loc_82CE87A8 from both nesting checks."
+    ],
+    "bounds": "No match cap applies; the direct-caller scans cover every aligned word in .text."
+  },
+  "guards": [
+    "The band bit 8 << band in 0x830E4550 stays clear while a contact message is skipped; another contact with that band reaches the gate again.",
+    "Suppressing a village message keys on the return address of the 0x82CC85D0 call and on the show frame; other leader messages and advisor shows keep native behavior.",
+    "Static evidence only; a runtime probe must confirm that a skipped message leaves play, the camera and later contacts unchanged.",
+    "The walk is bound to this image; another build needs a new walk."
+  ],
+  "conclusion": "The barbarian leader message has two presenting paths. A contact presents it once per band from 0x82CD46C8 in 0x82CCEFA8, whose native skip at 0x82CD4738 leaves the band unshown. The contact block reads no trigger, so a contact cannot be attributed to a village there. Capturing a barbarian village presents it from eight sites in 0x82D1B400 and one in 0x82D08BB8; no friendly village outcome presents it. The village sites are distinguishable by return address, and the show's early-out 0x82CE87A8 undoes the text and flags their callers set; no caller reads the -1 it returns."
+}

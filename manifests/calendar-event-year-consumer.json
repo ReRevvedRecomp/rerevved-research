@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0113",
+  "topic": "calendar-event-year-consumer",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does one exact native consumer compare a scheduled event year against 0x8312B8E0, and what immediate branch follows that comparison?",
+  "scope": {
+    "yearGlobal": "0x8312B8E0",
+    "turnYearOwner": "0x82D1EAB0",
+    "converter": "0x82CEFA20",
+    "functionCap": 8,
+    "emittedFunctions": ["0x82DF9FD0", "0x82CF9588", "0x82D25170", "0x82E08CC8", "0x82CEFC98"],
+    "boundary": "The union of exact references and aligned pointer placements contains five functions. Only those five bodies were read; presentation formatting, runtime cadence, and the broader event system remain outside scope."
+  },
+  "dependencies": [
+    { "topic": "game-calendar-state", "use": "Provides the accepted current-year global, converter, and update owner." }
+  ],
+  "discovery": {
+    "directReferences": {
+      "count": 5,
+      "rows": [
+        { "type": "READ", "source": "0x82DF9FD8", "function": "0x82DF9FD0" },
+        { "type": "READ", "source": "0x82CF9590", "function": "0x82CF9588" },
+        { "type": "WRITE", "source": "0x82D251E0", "function": "0x82D25170" },
+        { "type": "READ", "source": "0x82E08E94", "function": "0x82E08CC8" },
+        { "type": "READ", "source": "0x82CEFD64", "function": "0x82CEFC98" }
+      ]
+    },
+    "pointerPlacements": 0,
+    "unionFunctionCount": 5
+  },
+  "eventYearConsumer": {
+    "function": "0x82DF9FD0",
+    "objectYearField": "+0x444",
+    "yearRead": "0x82DF9FD8",
+    "comparison": "signed object +0x444 != current_year_8312B8E0",
+    "immediateBranch": "The not-equal branch at 0x82DF9FE0 jumps to 0x82DFA038, sets return value 1, and returns.",
+    "sharedReturnBoundary": "A subsequent inequality between object +0x44C and another global reaches the same return-1 block. This packet promotes only the preceding current-year edge.",
+    "result": "The complete body directly compares the scheduled event-year field with the accepted current-year global and rejects a mismatch through the immediate return-1 branch."
+  },
+  "otherCandidates": [
+    { "function": "0x82CF9588", "result": "Truncates immediately on bad instruction data and is not classified." },
+    { "function": "0x82D25170", "result": "Writes the accepted initial year and later truncates; it is not an event-year consumer." },
+    { "function": "0x82E08CC8", "result": "The body truncates and the accepted dependency already classifies it as presentation corroboration; no event relation is promoted." },
+    { "function": "0x82CEFC98", "result": "Its complete body contains another current-year comparison, but this packet requires only one exact consumer and does not expand the event-table model." }
+  ],
+  "catalogPromotion": {
+    "newEntities": ["RVA-SYM-0337", "RVA-REL-0473"],
+    "updatedEntities": ["RVA-SYM-0218"],
+    "result": "Adds one neutral calendar event-year match function and its exact current-year consumption relation."
+  },
+  "currentEvidence": {
+    "method": "Three sequential foreground read-only Ghidra queries followed by narrow generated-code corroboration of only 0x82DF9FD0.",
+    "locators": [
+      "ghidra/DumpReferences.java:0x8312B8E0",
+      "ghidra/FindPointerValues.java:0x8312B8E0",
+      "ghidra/DumpFunctions.java:0x82DF9FD0,0x82CF9588,0x82D25170,0x82E08CC8,0x82CEFC98",
+      "generated:rerevved/sub_82DF9FD0"
+    ],
+    "qualification": "The event-object concrete class, +0x44C meaning, callers, event scheduling, cadence, presentation, and runtime execution remain unresolved."
+  },
+  "guards": [
+    "Do not name the concrete event object or field +0x44C.",
+    "Do not infer scheduling cadence or full event eligibility from the return value.",
+    "Do not generalize this exact mismatch branch to every calendar or event consumer."
+  ],
+  "conclusion": "Function 0x82DF9FD0 directly compares scheduled event-year field +0x444 with current year 0x8312B8E0. A mismatch immediately branches to a return-1 block. The packet proves only that exact read, comparison, and branch relation."
+}

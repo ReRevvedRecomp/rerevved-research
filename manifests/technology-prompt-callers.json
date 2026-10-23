@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0251",
+  "topic": "technology-prompt-callers",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which direct callers of the technology prompt 0x82CECCD8 open it without a player command, which caller is the player's research menu action, and how does a village visit reach the prompt?",
+  "scope": {
+    "functions": [
+      "0x82CECCD8",
+      "0x82D1D1C0",
+      "0x82D0E340",
+      "0x82D1B400",
+      "0x82D259E8"
+    ],
+    "callSites": {
+      "turnStartCheck": ["0x82D1D604"],
+      "villageVisit": ["0x82D0F09C"],
+      "cityChangeTechnologyReward": ["0x82D1C3A8"],
+      "researchMenuAction": ["0x82D29B94"]
+    },
+    "researchSlot": "0x830EDD48 indexed by player * 4; -1 means unset.",
+    "boundary": "Every aligned direct branch to 0x82CECCD8 in .text, the village handler 0x82D0E340 from its entry to its epilogue, the technology reward arm of 0x82D1B400 that ends at 0x82D1C3A8, and the menu action path of 0x82D259E8 from the menu entries to the prompt call. The prompt body, the other village, city change and menu outcomes, and the callers of the four calling functions are outside this bound except where named."
+  },
+  "dependencies": [
+    {
+      "topic": "advisor-show-caller-inventory",
+      "use": "Accepted direct-caller inventory of the advisor show that the prompt and the village handler call."
+    },
+    {
+      "topic": "advisor-show-result-consumers",
+      "use": "A -1 return from the advisor show takes the prompt's dismissal path at the sites that read it."
+    }
+  ],
+  "currentEvidence": {
+    "method": "A local PowerPC decode of the hash-checked flat image with function bounds from .pdata. Scans covered every aligned direct branch to 0x82CECCD8, every lis plus addi or ori split constant of its address, and every word equal to it. Triggers come from the calling code, the jump table that selects it and the text tables it reads by address.",
+    "callers": [
+      {
+        "site": "0x82D1D604",
+        "function": "0x82D1D1C0",
+        "trigger": "Per-player turn-start check: the research slot is -1, 0 or rejected by 0x82CEF6A8.",
+        "instructions": [
+          "0x82D1D514 addi r30,r10,-0x22b8 (with lis r10,-0x7cf1 at 0x82D1D50C)",
+          "0x82D1D558 lwzx r3,r28,r30",
+          "0x82D1D604 bl 0x82CECCD8"
+        ],
+        "classification": "automatic"
+      },
+      {
+        "site": "0x82D0F09C",
+        "function": "0x82D0E340",
+        "trigger": "End of a village visit. Every outcome continues at 0x82D0EFB4; the prompt opens when the actor is the local player and the research slot is -1, whatever the outcome.",
+        "instructions": [
+          "0x82D0EFE4 cmpw cr6,r27,r11",
+          "0x82D0EFE8 bne cr6,0x82D0F0C4",
+          "0x82D0F028 cmpwi cr6,r8,-1",
+          "0x82D0F02C bne cr6,0x82D0F0A0",
+          "0x82D0F09C bl 0x82CECCD8"
+        ],
+        "classification": "automatic"
+      },
+      {
+        "site": "0x82D1C3A8",
+        "function": "0x82D1B400",
+        "trigger": "City change technology reward whose technology equals the new owner's research slot; the compare before the call uses the previous owner and the local player.",
+        "instructions": [
+          "0x82D1B434 extsb r19,r11 (previous owner)",
+          "0x82D1B45C stbx r27,r26,r21 (new owner stored)",
+          "0x82D1C364 cmpw cr6,r30,r11",
+          "0x82D1C374 cmpw cr6,r19,r3",
+          "0x82D1C3A8 bl 0x82CECCD8"
+        ],
+        "classification": "automatic"
+      },
+      {
+        "site": "0x82D29B94",
+        "function": "0x82D259E8",
+        "trigger": "Selection of menu action 0x54, which the research entries of the player's advisor command menu store at 0x82D28A0C, 0x82D28A68, 0x82D28ABC and 0x82D28AE8. The dispatch at 0x82D28D40 reaches 0x82D29B54 through entry 71 at 0x82D28E80, and the call does not read the research slot.",
+        "instructions": [
+          "0x82D28D40 addi r11,r18,-0xd",
+          "0x82D28E80 word 0x82D29B54",
+          "0x82D29B94 bl 0x82CECCD8"
+        ],
+        "classification": "player-invoked"
+      }
+    ],
+    "villageOutcomes": "A category index selects a village outcome through the jump table at 0x82D0EB64: 1 at 0x82D0EEB8, 2 at 0x82D0EB7C, 3 at 0x82D0ECD4, 4 at 0x82D0EDFC (stores -1 into the research slot at 0x82D0EEB0), 5 at 0x82D0EF30 and 6 at 0x82D0EDA4. A random technology reward branch starts at 0x82D0E894. The outcome texts are the table at 0x8214AD74..0x8214B1E0. All branches reach 0x82D0EFB4.",
+    "villageCallers": "0x82CD77DC in 0x82CD69B8, 0x82CDF4B8 in 0x82CDDF08 and 0x82D13FE8 in 0x82D13978."
+  },
+  "staticQuery": {
+    "scripts": [
+      "ghidra/DumpMemoryWords.java"
+    ],
+    "mode": "foreground-read-only",
+    "nativeSupport": "Radius-6 word windows at 29 centers covering the four call sites, their guards, the research slot base, the village and city change callers, the menu entries, the dispatch and the text table addresses. All 377 words matched the flat image identified by image.json, which supplied every word the local decode walked.",
+    "generatedCorroboration": [
+      "generated:rerevved/sub_82D1D1C0:0x82D1D5F8..0x82D1D608",
+      "generated:rerevved/sub_82D0E340:0x82D0F090..0x82D0F0B0",
+      "generated:rerevved/sub_82D1B400:0x82D1C398..0x82D1C3B8",
+      "generated:rerevved/sub_82D259E8:0x82D29B8C..0x82D29B98"
+    ],
+    "bounds": "No match cap applies; the direct-branch scan covers every aligned word in .text. The one word equal to 0x82CECCD8 outside code is its own .pdata entry at 0x8219ADC8."
+  },
+  "guards": [
+    "Static evidence only; whether a local player's city change reaches 0x82D1C3A8 at runtime is not corroborated, since the compare uses the previous owner.",
+    "Classification as automatic means no menu or command selection reaches the call; the visit and the city change are themselves caused by player moves.",
+    "A function that reaches the prompt through a computed address would fall outside this bound; none was found.",
+    "The walk is bound to this image; another build needs a new walk."
+  ],
+  "conclusion": "0x82CECCD8 has four direct callers and no other reference. The turn-start check, the end of every village visit by the local player with research unset, and a city change technology reward open the prompt without a command. Only 0x82D29B94, the advisor command menu research action, is player-invoked, so a village visit opens the prompt whatever its reward because the village handler asks for research whenever the slot is -1."
+}

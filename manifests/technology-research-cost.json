@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0238",
+  "topic": "technology-research-cost",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does the technology cost consumed by ordinary science completion count repeated prerequisite occurrences, weight each direct prerequisite subtree according to its ownership query, and then apply guarded integer scaling?",
+  "scope": {
+    "functions": [
+      "0x82CF0EE8",
+      "0x82CEF7A0"
+    ],
+    "maximumFunctions": 4,
+    "exactBodyWindows": [
+      "0x82CF0EE8..0x82CF105C",
+      "0x82CEF7A0..0x82CEF824"
+    ],
+    "boundary": "Two exact static bodies. Ownership and resolver identities reuse accepted evidence; their interior effects, global producers, actual prerequisite data, multiplier semantics, runtime activation and cadence are not expanded."
+  },
+  "dependencies": [
+    {
+      "topic": "starting-technology-grants",
+      "use": "Accepted technology definition table, ordinary ownership word array and query identity."
+    },
+    {
+      "topic": "playable-game-state-gates",
+      "use": "Accepted human-player classifier and conditional LocalPlayerIdResolve result boundary."
+    },
+    {
+      "topic": "science-completion",
+      "use": "Exact ordinary completion consumer and selected technology/player arguments."
+    },
+    {
+      "topic": "building-wonder-cost-global-transfer",
+      "use": "Existing identity and serialized four-byte transfer of unnamed global 0x82FFE7C8."
+    }
+  ],
+  "inputs": {
+    "technology": "Incoming r3 retained in r25; comparisons interpret low32 as signed.",
+    "player": "Incoming r4 retained in r26 and passed unchanged to ownership query 0x82CEF6A8 and classifier 0x82CD5A70.",
+    "prerequisites": "Three signed halfwords at 0x82F77460 + technology*0x6A + offsets 0x20, 0x22 and 0x24, read in that order.",
+    "countAccumulator": "32-bit global 0x8312CF3C, reset to one separately for every nonsentinel direct prerequisite.",
+    "recursionDepth": "32-bit global 0x83156340, incremented on recursive entry and decremented on exit. The cost helper does not initialize it.",
+    "multiplierIndex": "Signed halfword at 0x830E8FD8; local word array [15, 10, 8, 5]. No local index clamp.",
+    "scalingGlobal": "Signed word at 0x82FFE7C8, retained under its existing unnamed catalog identity."
+  },
+  "formula": {
+    "zeroTechnology": "Technology low32 equal to zero returns 9999 immediately, bypassing prerequisites, conditional scaling and multiplier.",
+    "baseline": "Every other technology starts B at two. Technology -1 skips direct prerequisite traversal but continues into the remaining gates and multiplier.",
+    "directWeights": "For each signed direct prerequisite q other than -1 and 99, set accumulator=1, recurse on q, retain returned accumulator N(q), add N(q) to B, then call TechnologyOwnershipQuery(q, player). Add N(q) again iff that query returns low32 zero. Thus B = low32(2 + sum N(q)*(1 + [query(q,player)==0])) with addition in direct-field order. Query zero is the recovered condition; the accepted query has its own sentinel and selector-17 gates, so zero alone is not an unconditional raw-bit absence assertion.",
+    "subtreeOwnership": "The recursive counter does not query ownership. A direct prerequisite's query result weights its entire rooted occurrence count; each descendant's ownership is not individually tested.",
+    "scalingGate": "In order: byte 0x8314F10B is zero; low byte of 0x82CD5A70(player) is zero; native slw(1, LocalPlayerIdResolve(word 0x8314EFE0)) intersects ownership word 0x830EDC48[technology]; signed 0x82FFE7C8 is greater than one. The ownership read here is direct and does not use TechnologyOwnershipQuery.",
+    "scaledValue": "If all gates pass, n=low32(6*B), d=low32(g+6), Q=truncTowardZero(s32(n)/s32(d)), subject to the native division traps. Otherwise Q=s32(low32(B)). Division precedes final multiplication.",
+    "divisionTraps": "At 0x82CF0FFC, twllei d,0 traps exactly when low32 d is zero. After divw, 0x82CF1014 twlgei traps when low32(d & ~(rol32(n,1)-1)) equals 0xFFFFFFFF, equivalently d=-1 and n=0x80000000. These guard invalid signed division, not add or multiply overflow. For the retained signed g>1 gate, neither trap condition is reachable from d=low32(g+6).",
+    "finalValue": "For a supported multiplier index k in 0..3, return low32([15,10,8,5][k] * Q). The multiplier load and mullw occur at 0x82CF1050 and 0x82CF1054.",
+    "mathematicalDomain": "For ordinary valid technologies 1..47, supported player and prerequisite indices, k in 0..3, nonnegative count without overflow, stable helper-visible state, and 2<=g<=2147483641 when scaling is active: cost = M[k] * truncTowardZero(6*B/(g+6)), or M[k]*B when scaling is inactive. Equality to the unwrapped mathematical expression additionally requires 6*B and final multiplication to fit signed32. The native formula above covers wrapping cases.",
+    "negativeDenominator": "The signed g>1 gate alone permits g in 2147483642..2147483647, making low32(g+6) a negative signed denominator. No positive-cost or overflow-free result follows solely from the gate.",
+    "minusOneBoundary": "Technology -1 is not an immediate return. If the first two scaling gates pass, the native index selects word 0x830EDC44 before testing its mask and g. A universal -1 cost of 2*M[k] therefore needs the scaling gate to fail or separate evidence about that word."
+  },
+  "recursiveCount": {
+    "entry": "0x82CEF7B0..0x82CEF7C0 increments depth, stores low32, then expands only when the incremented depth interpreted signed32 is <=500.",
+    "step": "For each of the same three signed prerequisite fields other than -1 and 99, increment accumulator low32 before recursing on that field. Neither zero nor another out-of-range field is locally excluded.",
+    "return": "The >500 arm decrements the incremented local depth value directly. The expanding arm reloads depth after nested returns, then decrements and stores it. With ordinary returns and exclusive state, initial depth is restored.",
+    "occurrenceMeaning": "N(q) includes q via the caller's initial one, plus every visited prerequisite edge occurrence. Repeated direct fields, diamonds and cycles repeat counts; there is no visited set or unique-technology count.",
+    "depthBoundary": "With initial depth zero and no signed depth wrap, a root expands at depth 1, expansions continue through depth 500, and child occurrences at depth 501 are counted before their recursive call declines expansion. Thus up to 500 edges from the root contribute. The guard limits expansion depth; it is not cycle detection or a total-work bound.",
+    "retainedDirectId": "The caller loads q into r9 at 0x82CF0F3C, passes it in r3 at 0x82CF0F54 and reuses r9 at 0x82CF0F64. The exact recursive body contains no r9 write and calls only itself plus ordinary save/restore thunks; induction preserves the original direct q through recursion under their register-preserving effects."
+  },
+  "consumer": {
+    "owner": "0x82D1EAB0",
+    "contextCall": "At 0x82D1FEF4..0x82D1FF34 the selected city context writer uses cost(selected technology, incoming player) against individual progress.",
+    "completionCalls": "At 0x82D20BBC, ordinary completion compares pooled matching-row progress signed against cost(selected technology, incoming player). It calls the same helper again at 0x82D20BF8 before transferring local excess to Gold.",
+    "qualification": "Two calls can return different values if ownership, prerequisites, scaling inputs, multiplier index or helper-visible state changes between them; equality needs an explicit stability guard."
+  },
+  "currentEvidence": {
+    "method": "Serialized foreground read-only exact-function dumps, canonical raw-word windows and narrow identified-function generated comparison.",
+    "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "entries": [
+      {
+        "role": "input sentinels and prerequisite weighting",
+        "address": "0x82CF0EE8..0x82CF0F88",
+        "confidence": "strong"
+      },
+      {
+        "role": "conditional scaling and division traps",
+        "address": "0x82CF0F8C..0x82CF1014",
+        "confidence": "strong"
+      },
+      {
+        "role": "indexed multiplier",
+        "address": "0x82CF1018..0x82CF105C",
+        "confidence": "strong"
+      },
+      {
+        "role": "recursive occurrence count and depth cap",
+        "address": "0x82CEF7A0..0x82CEF824",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/DumpFunctions.java:0x82CF0EE8,0x82CEF7A0",
+      "ghidra/DumpMemoryWords.java:0x82CF0FE8,0x82CEF8A0 radius=64",
+      "generated:rerevved/sub_82CF0EE8:0x82CF0EE8..0x82CF105C",
+      "generated:rerevved/sub_82CEF7A0:0x82CEF7A0..0x82CEF824"
+    ],
+    "checks": "All 258 returned raw-word rows matched the supported flat image in an independent image-byte check. All 128 exact-body primary opcodes matched the narrow generated mnemonics. Forty-nine native register, immediate, compare, branch and rotate-mask checks established the formula operands. The recursive body has no r9 destination. Synthetic scalar cases discriminate duplicate occurrences, root ownership weighting, depth 500/501, cycles, sentinels, division before multiplication, numerator wrap and negative-denominator wrap; they supply no actual table or runtime values.",
+    "qualification": "The raw windows cover all 94 cost instructions and all 34 recursive instructions. Wider returned spill rows do not establish any further body semantics. Accepted image identity and ownership/resolver/classifier evidence are reused conditionally. No caller inventory completeness or runtime behavior is claimed."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No cost, depth, prerequisite or completion value was observed or changed at runtime."
+  },
+  "guards": [
+    "Use valid stable definition, ownership and player indices; the two bodies provide no general local range check.",
+    "Use multiplier index 0..3 to select the initialized factors; other signed indices access unchecked stack memory.",
+    "Require ordinary save/restore-thunk register effects, nonvolatile ABI retention and successful finite recursive returns.",
+    "Require no intervening or reentrant modification of accumulator/depth and relevant definition data for the closed-form count.",
+    "Initial depth is a parameter; its zero value and absence of signed wrap are not produced by the cost helper.",
+    "Human-player semantics apply to the accepted nonzero-mask classifier branch; mask-zero session fallback remains a separate helper boundary.",
+    "Resolver validity, installed dispatch and readable returned pointer retain the accepted playable-game-state guards. A returned -1 creates a zero native slw mask.",
+    "Do not infer difficulty, game speed, policy meaning, live cost positivity, unique dependencies, all prerequisite producers or runtime cadence."
+  ],
+  "falsification": "Different current-image fields, sentinel compares, r9 clobbers, accumulator increments, ownership-query arguments, depth branch, division operands, trap words or multiplier values would falsify the corresponding formula. A descendant ownership test or visited-set update in either exact body would falsify the occurrence/whole-subtree weighting boundary. Concurrent or opaque helper mutations would deny the stable closed-form join without changing these local instructions.",
+  "conclusion": "The ordinary completion cost starts at two, adds each direct prerequisite's rooted occurrence count once and again when its ownership query returns zero, conditionally applies signed low32 6*B/(g+6) with division traps, then multiplies the truncated result by one of four indexed factors. Prerequisite expansion is bounded by signed depth <=500 and does not deduplicate dependencies."
+}

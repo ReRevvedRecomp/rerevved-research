@@ -1,0 +1,1564 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0061",
+  "topic": "playable-game-state-gates",
+  "status": "closed",
+  "confidence": "confirmed",
+  "image": "image.json",
+  "question": "Which version 1.3 fields can provide a conservative read-only gameplay-availability gate across frontend, modal, and human-turn transitions?",
+  "scope": {
+    "functions": [
+      "0x82E17238",
+      "0x82CD5A70",
+      "0x82D259E8",
+      "0x82D8A3A0",
+      "0x82DE9FD8"
+    ],
+    "globals": [
+      "0x82FFD624",
+      "0x8312B8E8",
+      "0x8312E608",
+      "0x8314F28C"
+    ],
+    "fields": [
+      "frontend_root+0x70",
+      "frontend_state+0x4",
+      "interface_gate+0x5"
+    ],
+    "boundary": "The accepted API gate is a conservative single-player read predicate. It does not call guest code, classify multiplayer fallback behavior, or authorize mutations."
+  },
+  "dependencies": [
+    {
+      "topic": "frontend-gameplay-transition",
+      "use": "key-2 state factory and AudioGameStartInit entry"
+    },
+    {
+      "topic": "gameplay-main-frame-boundary",
+      "use": "proved guest-main-thread frame boundary for the default-off observer"
+    },
+    {
+      "topic": "save-profile-storage",
+      "use": "accepted initial 0x78-byte owner construction and publication at the selected resolver input global"
+    },
+    {
+      "topic": "native-renderer-alternate-resolve-provider",
+      "use": "Accepted registryReceiverProvenance and rawUnresolvedOwnerFieldReceiverBoundary/managerSlot10WriterBoundary identify the exact registry-produced child and installed vptr, under successful matching lookup and no alternate insertion or corruption."
+    },
+    {
+      "topic": "save-profile-owner-lifetime-boundary",
+      "use": "historical bounded exact-global reference inventory and unresolved lifetime, kept separate from the selected +0x10 producer question"
+    },
+    {
+      "topic": "city-yield-ranking-table-boundary",
+      "use": "consumerOwnership/conditionalObjectOrigin owns the accepted conditional factory, 108-byte result allocation, constructor and child +0x20 publication. The resolver join reuses that origin without assigning a live result-word writer or player meaning."
+    },
+    {
+      "topic": "xbox-network-message-root",
+      "use": "wireSerialization owns the accepted BufferReadU32 and NetworkObjectBaseRead identities and qualified four-byte/base-envelope contributions; it supplies no concrete input source or receiver identity for these callers."
+    }
+  ],
+  "currentEvidence": {
+    "method": "combined foreground read-only Ghidra function, reference, instruction, pointer, and bounded-string queries with narrow generated-code corroboration and a default-off transition observer",
+    "entries": [
+      {
+        "role": "frontend gameplay-state check",
+        "address": "0x82E17238",
+        "confidence": "confirmed"
+      },
+      {
+        "role": "human-player classifier",
+        "address": "0x82CD5A70",
+        "confidence": "confirmed"
+      },
+      {
+        "role": "turn-selection update",
+        "address": "0x82D259E8",
+        "confidence": "strong"
+      },
+      {
+        "role": "local-player ID resolver",
+        "address": "0x82D8A3A0",
+        "confidence": "strong"
+      },
+      {
+        "role": "interface-update debug reader",
+        "address": "0x82DE9FD8",
+        "confidence": "confirmed"
+      }
+    ],
+    "qualification": "Runtime coverage confirmed main menu, new-game gameplay, AI and human turns, modal save UI, return to menu, and a load path. Human-player mask zero remains intentionally unavailable because the title's fallback calls session code."
+  },
+  "staticQuery": {
+    "scripts": [
+      "ghidra/DumpFunctions.java",
+      "ghidra/DumpInstructions.java",
+      "ghidra/DumpMemoryWords.java",
+      "ghidra/DumpReferences.java",
+      "ghidra/FindPointerValues.java",
+      "ghidra/DumpStringsInRange.java",
+      "ghidra/FindFieldAccesses.java"
+    ],
+    "mode": "foreground-read-only",
+    "generatedCorroboration": [
+      "generated:rerevved/sub_82E17238",
+      "generated:rerevved/sub_82CD5A70",
+      "generated:rerevved/sub_82D259E8",
+      "generated:rerevved/sub_82D8A3A0",
+      "generated:rerevved/sub_82DE9FD8"
+    ]
+  },
+  "frontendLifecycle": {
+    "rootGlobal": "0x82FFD624",
+    "currentStateOffset": "0x70",
+    "stateKeyOffset": "0x4",
+    "gameplayKey": 2,
+    "check": "0x82E17238",
+    "ingameString": "0x82123070",
+    "result": "The check requires a non-null root-plus-0x70 current-state pointer and state key 2 before producing the self-identifying ingame result. Runtime observed key 1 at the main menu and key 2 during both new-game and loaded gameplay.",
+    "boundary": "Key 2 establishes frontend gameplay lifecycle only; it does not establish a human turn or an unobstructed game interface."
+  },
+  "frontendRootCurrentStateRead": {
+    "function": "0x82E17238",
+    "rootGlobal": "0x82FFD624",
+    "globalLoad": "0x82E17260",
+    "instruction": "0x82E17268",
+    "offset": "0x70",
+    "width": 4,
+    "access": "read",
+    "result": "FrontendInGameStateCheck loads the frontend-root pointer from 0x82FFD624 and reads its current-state pointer at offset 0x70.",
+    "boundary": "The concrete frontend-root class and complete layout remain unresolved. Key 2 remains a frontend lifecycle state rather than a complete gameplay-availability gate."
+  },
+  "frontendStateKeyRead": {
+    "function": "0x82E17238",
+    "instruction": "0x82E17274",
+    "offset": "0x4",
+    "width": 4,
+    "access": "read",
+    "result": "FrontendInGameStateCheck reads the state key at offset 0x4 from the current-state pointer obtained through frontend-root offset 0x70.",
+    "boundary": "The complete frontend-state layout remains unresolved. Key 2 establishes frontend lifecycle only, not human-turn or interface availability."
+  },
+  "interfaceUpdateFieldReadQuery": {
+    "function": "0x82DE9FD8",
+    "candidateOffsets": [
+      "0x5"
+    ],
+    "access": "read",
+    "scannedInstructions": 2,
+    "matchedAccesses": 0,
+    "result": "The bounded depth-zero field-access query recovered no READ-classified access at interface-state offset 0x5.",
+    "boundary": "The configured function exposed only two scanned instructions, so this result does not establish that InterfaceUpdateDebugRead performs no interface-state field read."
+  },
+  "turnOwner": {
+    "activePlayerGlobal": "0x8312B8E8",
+    "humanPlayerMaskGlobal": "0x8312E608",
+    "classifier": "0x82CD5A70",
+    "selectionUpdate": "0x82D259E8",
+    "localPlayerResolver": "0x82D8A3A0",
+    "resolverBoundary": {
+      "inputPointerOffset": "0x10",
+      "dispatchSlotOffset": "0x100",
+      "resultWordOffset": "0xC",
+      "nullResult": -1,
+      "result": "The resolver returns -1 when the input pointer at offset 0x10 is null. Otherwise it passes that pointer as r3, loads its vptr at +0x0, calls the word at vtable +0x100, and loads word +0xC from the returned r3 pointer. There is no result-pointer null check before the +0xC read.",
+      "inputProduction": {
+        "caller": "0x82CD9970",
+        "inputGlobal": "0x8314EFE0",
+        "load": "0x82CDB954",
+        "call": "0x82CDB958",
+        "acceptedConstruction": "save-profile-storage.json#/signInStateOwner",
+        "initializer": "0x82D8D548",
+        "baseInitializer": "0x82D8D430",
+        "baseCall": "0x82D8D650",
+        "initialNullStore": "0x82D8D4F0",
+        "result": "The selected CombatResolve call loads r3 from 0x8314EFE0. The accepted 0x78-byte owner constructor retains the incoming pointer in r31 and passes it to 0x82D8D430. That base initializer sets r30=0 at 0x82D8D458 and stores it to the same owner +0x10 at 0x82D8D4F0. The outer constructor restores r3=r31 at 0x82D8D654 before the publication store at 0x82E2E55C.",
+        "qualification": "This proves the initial null store and selected call input, under valid allocation and normal native ABI returns. Retaining null through later calls requires their effects not to alias owner +0x10. The alternative publisher store at 0x82E2E56C uses current r29 and does not identify a nonnull object producer. Same-address sign-in/network catalog aliases do not establish runtime object or field-role equivalence. No original concrete owner or +0x10 object type is assigned."
+      },
+      "dispatchReturnContract": {
+        "inputLoad": "0x82D8A3AC",
+        "nullBranch": "0x82D8A3B4",
+        "receiverCopy": "0x82D8A3B8",
+        "vptrLoad": "0x82D8A3BC",
+        "slotLoad": "0x82D8A3C0",
+        "indirectCall": "0x82D8A3C8",
+        "resultWordLoad": "0x82D8A3CC",
+        "qualification": "The exact registry-produced child path in nonnullChildProduction selects 0x82A73340 through vptr 0x8215FA78. resultObjectProduction joins the accepted conditional 108-byte result allocation and initialized low32 0xFFFFFFFF through child +0x20 and this +0xC load. Readable objects, installed table, executable target, normal ABI returns and stable nonalias ownership remain required. laterWordAssignmentBoundary bounds the prior selected candidates. resultObjectProduction/laterWordWriterBoundary separately establishes a guarded conditional assignment and its ordinal inputs. Actual invocation, current-word retention, player meaning and compatible returned range remain unresolved."
+      },
+      "boundedProducerSupport": {
+        "method": "Foreground read-only ghidra/DumpMemoryWords.java and ghidra/FindRawGlobalStoreCandidates.java, exact native-word interpretation, and narrow generated windows with label-anchored mnemonic mapping. A separate custom exact-reference query capped the exact-global inventory at 32 rows.",
+        "functions": [
+          "0x82CD9970",
+          "0x82D8A3A0",
+          "0x82E2E3B8",
+          "0x82D8D548",
+          "0x82D8D430",
+          "0x82D8CC28"
+        ],
+        "functionCap": 8,
+        "rawQueries": 4,
+        "queriedDistinctWords": 273,
+        "previouslyAcceptedDistinctWords": 39,
+        "freshDistinctWords": 234,
+        "repeatedWithinQueries": 4,
+        "distinctWordCap": 3072,
+        "priorAcceptedCombatUnionWords": 2739,
+        "acceptedUnionIncludingFreshWords": 2973,
+        "readWindows": [
+          {
+            "start": "0x82CDB948",
+            "endExclusive": "0x82CDB95C",
+            "words": 5
+          },
+          {
+            "start": "0x82CDB990",
+            "endExclusive": "0x82CDB9C4",
+            "words": 13
+          },
+          {
+            "start": "0x82D8A3A0",
+            "endExclusive": "0x82D8A3F4",
+            "words": 21
+          },
+          {
+            "start": "0x82D8CC28",
+            "endExclusive": "0x82D8CD28",
+            "words": 64
+          },
+          {
+            "start": "0x82D8D430",
+            "endExclusive": "0x82D8D660",
+            "words": 140
+          },
+          {
+            "start": "0x82E2E3B8",
+            "endExclusive": "0x82E2E400",
+            "words": 18
+          },
+          {
+            "start": "0x82E2E540",
+            "endExclusive": "0x82E2E570",
+            "words": 12
+          }
+        ],
+        "excludedDataCells": [
+          "0x82D8D544"
+        ],
+        "globalStoreCandidates": {
+          "global": "0x8314EFE0",
+          "cap": 32,
+          "candidates": 2,
+          "truncated": false,
+          "stores": [
+            "0x82E2E55C",
+            "0x82E2E56C"
+          ],
+          "qualification": "The eight-word same-block lis/D-form search covers only its declared syntactic store forms. Its four emitted words are repeated in the raw windows and add no distinct words. It is not a complete publisher or object-field writer inventory."
+        },
+        "globalReferenceBoundary": {
+          "global": "0x8314EFE0",
+          "cap": 32,
+          "emitted": 32,
+          "truncated": true,
+          "result": "No sampled reference owner was expanded. Truncation stops selection of a later nonnull +0x10 writer. The historical complete reference inventory in save-profile-owner-lifetime-boundary.json remains a separate closed read set; neither inventory establishes absence of field writers."
+        },
+        "checks": "All 273 words match image.json size and SHA-256. The 272 instruction words map to exact generated mnemonic windows; zero padding 0x82D8D544 is excluded from code claims. Independent native operand checks bind the caller global, constructor/base call and zero store. Native resolver control/memory execution returns -1 from that zero field without dispatch. A synthetic nonnull dispatch fixture checks receiver/vptr/slot/CTR/result-pointer operands with adverse volatile clobbers; it supplies no object-production evidence. Five mutations detect a wrong initialization offset, vptr offset, dispatch slot, CTR source and result-word offset. Finite readable memory, normal ABI returns and nonalias effects remain conditions.",
+        "qualification": "The bounded read set contains six native-supported functions and eight generated entries. The incidental generated prologue fragments [0x82D990E0,0x82D990F0) and [0x82D98918,0x82D98934) support no claims. The native read set includes the unrelated 64-word 0x82D8CC28 prefix, which establishes no +0x10 object producer. No complete CombatResolve, publisher, unselected helper arm or runtime execution is claimed. The unknown required nonnull writer and truncated exact-global reference inventory close this read set before any vtable cell or target can be selected."
+      },
+      "nonnullChildProduction": {
+        "writerFunction": "0x82D8C570",
+        "store": "0x82D8C600",
+        "operand": "stw r3,16(r31)",
+        "receiverGlobal": "0x8314EFE0",
+        "callerFunction": "0x82D6D9F8",
+        "globalLoad": "0x82D6DAEC",
+        "callerCall": "0x82D6DAF0",
+        "ownerCopy": "0x82D8F25C",
+        "ownerPass": "0x82D8F33C",
+        "setupCall": "0x82D8F340",
+        "setupOwnerCopy": "0x82D8EFFC",
+        "writerCall": "0x82D8F014",
+        "writerOwnerCopy": "0x82D8C584",
+        "producerCall": "0x82D8C5E4",
+        "keyStore": "0x82D8C5F0",
+        "lookupCall": "0x82D8C5F8",
+        "acceptedRegistryGraph": "native-renderer-alternate-resolve-provider.json#/registryReceiverProvenance",
+        "acceptedWriterGraph": "native-renderer-alternate-resolve-provider.json#/rawUnresolvedOwnerFieldReceiverBoundary/managerSlot10WriterBoundary",
+        "installedVptr": "0x8215FA78",
+        "slotCell": "0x8215FB78",
+        "slotTarget": "0x82A73340",
+        "targetPointerLoad": "0x82A73340",
+        "targetPointerOffset": "0x20",
+        "targetReturn": "0x82A73344",
+        "accessorReturnContract": {
+          "question": "What exact native return and retention contract does the installed +0x100 accessor provide?",
+          "target": "0x82A73340",
+          "nativeStart": "0x82A73340",
+          "nativeEndExclusive": "0x82A73348",
+          "nativeWords": 2,
+          "selection": "The enclosing nonnullChildProduction binds vptr0x8215FA78 and +0x100 cell0x8215FB78 to this target on its accepted registry-publication path. The supported image cell was rechecked. Actual current receiver/class/slot identity and retention remain conditions, not consequences of initialized table bytes.",
+          "inputAndReturn": "Let S=low32(entry r3). Require the ordinary four-byte read at low32(S+0x20) to complete, valid executable instructions and a valid incoming LR target.0x82A73340 returns R=zeroExtend32(U32[low32(S+0x20)]) in full64 r3;0x82A73344 returns through unchanged LR. There is no loop, descendant call, stack access/allocation or explicit trap.",
+          "effects": {
+            "memoryWrites": [],
+            "gprs": "Only r3 is assigned. All64 bits of r0..r2 and r4..r31, including SP, remain unchanged.",
+            "otherState": "All FPRs, every CR field, LR, CTR and XER remain unchanged.",
+            "memoryRetention": "Every child/result, caller frame, city, coordinate, index, pointer and global byte is unchanged by this native accessor. No alias exclusion between its read and those bytes, mapped callee stack or ABI preservation assumption is needed. The statement assumes ordinary completing RAM/execution/return semantics without external mutation."
+          },
+          "resultValidity": "R=0 is a normal accessor return when its one load and LR return complete. Nonzero S does not imply nonzero R or a readable result+0xC. The accepted resultObjectProduction supplies a conditional successful108-byte allocation and initialized word; its allocation, publication, lifetime and current-word-retention guards remain separate. No live result word is inferred from its initial low32 0xFFFFFFFF.",
+          "evidence": {
+            "method": "Foreground read-only DumpMemoryWords.java at0x8215FB78 and [0x82A73340,0x82A73348), with exact guarded generated corroboration and independent offline native decode against image.json.",
+            "nativeVerification": "Both accessor words and the one slot data word match the supported flat image. The accessor's two instruction comments match native decoding; no inline data or other native instruction is present in its complete extent.",
+            "generatedSource": {
+              "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
+              "file": "generated/default/rerevved_recomp.56.cpp",
+              "sha256": "85C3F23B4B8D671791189EE2CE12A8A12D1E15903B9D350EEE036316F7167492",
+              "function": "sub_82A73340",
+              "headerLine": 22230,
+              "nextHeaderLine": 22238,
+              "nextFunction": "sub_82A734F8",
+              "spanLines": 8
+            },
+            "locators": [
+              "ghidra/DumpMemoryWords.java:0x8215FB78,[0x82A73340,0x82A73348);4-byte stride;radius0",
+              "generated:rerevved/sub_82A73340"
+            ],
+            "qualification": "Static native contract only. Generated host scaffolding is not a native instruction. Current object production/order/lifetime, caller result dereference and later calls remain separately qualified; no runtime, build, probe, patch, UI or API work was performed."
+          },
+          "falsificationCondition": "A supported-image instruction in the complete two-word extent changes a stated preserved register, writes memory, calls a descendant or returns a value other than the stated zero-extended field load. Invalid reads, execution or incoming LR fall outside the sufficient conditions."
+        },
+        "result": "The caller loads the exact owner from 0x8314EFE0 and passes it through retained nonvolatile registers to 0x82D8C570. The writer stores the matching registry lookup return in that owner +0x10. The accepted successful factory/insertion/lookup path supplies a nonnull child with vptr 0x8215FA78. Its +0x100 cell selects 0x82A73340, which loads child +0x20 into r3 and returns it. LocalPlayerIdResolve then reads that pointer +0xC.",
+        "guards": [
+          "The selected caller reaches 0x82D6DAF0 with a nonnegative r4 argument.",
+          "The F248 route requires owner +0x10 null, owner +0x14 nonnull, both selected +0x44 returns matching retained r30, and its intervening success condition. EFF0 calls the writer only when owner +0x10 remains null.",
+          "The exact factory, primary-map insertion and lookup must succeed without intervening alternate insertion, registry corruption, owner replacement, vptr replacement or aliasing mutation of the relevant fields.",
+          "Compiler save thunks preserve incoming arguments; ordinary calls return normally and preserve nonvolatile registers. Reads and target execution must be valid.",
+          "The child +0x20 pointer must be nonnull and readable at +0xC. resultObjectProduction supplies its accepted conditional allocation and initialization origin; allocation failure still produces zero, and lifetime validity is not established."
+        ],
+        "boundary": "resultObjectProduction joins the accepted conditional child +0x20 allocation and initialized +0xC word to the resolver. Its laterWordWriterBoundary supplies a class-bound conditional assignment and ordinal scalar inputs; actual invocation, compatible current word, value meaning/range and lifetime remain unresolved. Unselected writer callers, alternate registry values, cleanup effects and natural reachability at the selected combat call remain outside this path.",
+        "callerArgumentBoundary": "ai-stat-choice.json#/setupInputBoundary/innerCallGuard"
+      },
+      "boundedChildWriterSupport": {
+        "method": "Foreground read-only ghidra/FindRawFieldStores.java in one declared displacement band, ghidra/FindDirectCallers.java for exact target 0x82D8C570, and three radius-zero ghidra/DumpMemoryWords.java queries. Exact DEFINE_REX_FUNC boundaries and label-anchored generated mnemonics corroborate selected native windows.",
+        "fieldStoreCandidates": {
+          "start": "0x82D8A3A0",
+          "endExclusive": "0x82D8D660",
+          "offset": "0x10",
+          "scanWordPositions": 3248,
+          "scanWordCap": 4096,
+          "resultCap": 32,
+          "returnedCandidates": 3,
+          "truncated": false,
+          "stores": [
+            "0x82D8B854",
+            "0x82D8C600",
+            "0x82D8D4F0"
+          ],
+          "qualification": "These are syntactic displacement candidates. 0x82D8B854 writes selected tree-node r11 rather than the retained incoming-owner register; no binding to 0x8314EFE0 is established. 0x82D8D4F0 is the accepted zero initialization. Only 0x82D8C600 is bound to the selected owner by the exact receiver chain."
+        },
+        "exactWriterCallers": {
+          "function": "0x82D8C570",
+          "resultCap": 8,
+          "returnedCandidates": 2,
+          "truncated": false,
+          "sites": [
+            "0x82D8F014",
+            "0x82D8F3F0"
+          ],
+          "qualification": "The raw direct-call query covers initialized executable aligned words; its scan count is not reported. Only 0x82D8F014 is expanded. The isolated second call word supplies no caller-body or receiver claim."
+        },
+        "selectedFunctions": [
+          "0x82D8A3A0",
+          "0x82D8D430",
+          "0x82D8B768",
+          "0x82D8C570",
+          "0x82D8EFF0",
+          "0x82D8F248",
+          "0x82D6D9F8",
+          "0x82A73340"
+        ],
+        "nativeFunctionsIncludingRepeatedSpill": [
+          "0x82D8A3A0",
+          "0x82D8D430",
+          "0x82D8B768",
+          "0x82D8C570",
+          "0x82D8EFF0",
+          "0x82D8F248",
+          "0x82D6D9F8",
+          "0x82A73340",
+          "0x82D8D548"
+        ],
+        "functionCap": 8,
+        "generatedEntries": 8,
+        "rawQueries": 5,
+        "wordReadQueries": 3,
+        "returnedWordReadRows": 425,
+        "returnedCandidateWordRows": 5,
+        "queriedDistinctWords": 426,
+        "previouslyAcceptedDistinctWords": 161,
+        "freshDistinctWords": 265,
+        "repeatedReturnedWords": 4,
+        "distinctWordCap": 3072,
+        "priorAcceptedCombatUnionWords": 2739,
+        "priorAcceptedPlayableWords": 273,
+        "priorAcceptedUnionWords": 2973,
+        "acceptedUnionIncludingFreshWords": 3238,
+        "readWindows": [
+          {
+            "start": "0x82D8A3A0",
+            "endExclusive": "0x82D8A3F4",
+            "words": 21
+          },
+          {
+            "start": "0x82D8D430",
+            "endExclusive": "0x82D8D660",
+            "words": 140
+          },
+          {
+            "start": "0x82D8B768",
+            "endExclusive": "0x82D8B8E4",
+            "words": 95
+          },
+          {
+            "start": "0x82D8C570",
+            "endExclusive": "0x82D8C6C8",
+            "words": 86
+          },
+          {
+            "start": "0x82D6DAE4",
+            "endExclusive": "0x82D6DAF4",
+            "words": 4
+          },
+          {
+            "start": "0x82D8EFF0",
+            "endExclusive": "0x82D8F024",
+            "words": 13
+          },
+          {
+            "start": "0x82D8F248",
+            "endExclusive": "0x82D8F344",
+            "words": 63
+          },
+          {
+            "start": "0x82A73340",
+            "endExclusive": "0x82A73348",
+            "words": 2
+          },
+          {
+            "start": "0x8215FB78",
+            "endExclusive": "0x8215FB7C",
+            "words": 1
+          },
+          {
+            "start": "0x82D8F3F0",
+            "endExclusive": "0x82D8F3F4",
+            "words": 1
+          }
+        ],
+        "excludedDataCells": [
+          "0x82D8D544"
+        ],
+        "checks": "All 426 emitted distinct words match image.json size and SHA-256. Native operand and branch checks bind the global load, receiver copies, producer/key/lookup arguments, +0x10 store, vptr, +0x100 cell, CTR, target +0x20 return and resolver +0xC read. Native control/memory execution of the selected receiver route and dispatch uses accepted registry calls as guarded ABI fixtures, with adverse volatile clobbers. Null lookup, aliasing clear and null returned pointer controls prevent nonnull or readable-result claims. Eight mutations detect wrong input global, writer receiver, store offset, vptr offset, slot, CTR source, return-pointer field and result-word offset. The fixtures do not establish guest runtime reachability or the producer of child +0x20.",
+        "qualification": "The declared eight-function limit was exceeded by the repeated 70-word outer-initializer spill [0x82D8D548,0x82D8D660) in the reused initialization envelope. All spill words already belonged to boundedProducerSupport and support no new claim. There are nine native entries and eight strictly bounded generated entries, with 353 selected native instruction words mapped to generated mnemonics. The isolated raw callsite 0x82D8F3F0 is not a body expansion. No complete Xenon std/ld-truncated Ghidra body is claimed. Earlier boundedProducerSupport and the historical owner-reference closure retain their original read-set qualifications; their unknown-writer result is not the current cross-manifest frontier. The 3072-word cap applies to this 426-word read set, not the growing historical union."
+      },
+      "resultObjectProduction": {
+        "confidence": "strong",
+        "acceptedOrigin": "city-yield-ranking-table-boundary.json#/consumerOwnership/conditionalObjectOrigin",
+        "acceptedChildPublication": "native-renderer-alternate-resolve-provider.json#/registryReceiverProvenance",
+        "allocationBytes": 108,
+        "constructor": "0x82CAA100",
+        "constructorReceiverRetention": "0x82CAA114",
+        "constructorVptrStore": "0x82CAA128",
+        "constructorVptr": "0x8215F7CC",
+        "initialWordImmediate": "0x82CAA13C",
+        "initialWordStore": "0x82CAA14C",
+        "initialWordOffset": "0xC",
+        "initialWordBits": "0xFFFFFFFF",
+        "initialWordSigned32": -1,
+        "constructorReturnCopy": "0x82CAA154",
+        "childPointerPublication": "0x82CA5F54",
+        "childPointerOffset": "0x20",
+        "accessor": "0x82A73340",
+        "resolverWordLoad": "0x82D8A3CC",
+        "result": "For the accepted successful factory and matching registry publication, the same retained 104-byte child receives the constructor return from its 108-byte result allocation at +0x20. The constructor retains its incoming allocation in r31, stores low32 0xFFFFFFFF at that allocation +0xC, returns the allocation in r3 and restores nonvolatile inputs. The accepted +0x100 accessor returns child +0x20; LocalPlayerIdResolve then loads that same allocation +0xC. Under the stated guards, its initial consumed low32 is 0xFFFFFFFF, signed32 -1.",
+        "registerWidth": "The nonnull lwz result is zero-extended 0x00000000FFFFFFFF in r3. The null arm uses li r3,-1, producing 0xFFFFFFFFFFFFFFFF. They agree in low32 and signed32, not necessarily in the full 64-bit register. The accepted combat cmpw/slw uses concern the low word.",
+        "guards": [
+          "The accepted factory, initializer, registry insertion and matching lookup path must reach the selected owner publication and resolver input without alternate insertion or replacement.",
+          "The 104-byte child and 108-byte result allocation succeed and remain distinct, live, readable and writable for their native accesses. Child +0x20 and result +0xC remain unchanged from publication/initialization to consumption.",
+          "Compiler save/restore thunks preserve incoming arguments. Allocators, sibling constructors, container helper 0x822E56C0 and other intervening calls return normally, preserve nonvolatile registers and do not alias the relevant child/result fields or their save areas.",
+          "The installed child vptr 0x8215FA78 and cell 0x8215FB78 remain valid and select executable 0x82A73340. Result vptr initialization does not prove a later word writer or object lifetime.",
+          "A supplied later fixture word is a memory-mutation control only. It is not a native assignment producer, current player value or naturally reached combat input."
+        ],
+        "failureBoundary": "A zero 104-byte allocation makes the factory return zero. A zero 108-byte allocation skips the result constructor and publishes zero at child +0x20. With that nonnull child installed, the accessor returns zero and the resolver attempts the unchecked read at address 0x0000000C. These branches do not establish a safe result or compatible nonzero combat value.",
+        "liveWordBoundary": {
+          "status": "unresolved",
+          "tableDiscriminator": "The constructor stores vptr 0x8215F7CC, independently decoded from lis r11,-32234 and addi r10,r11,-2100. Among the first 16 declared cells, the two unique targets in the constructor address region were selected as bounded writer leads: +0x2C cell 0x8215F7F8 selects 0x82CA91D0, and +0x3C cell 0x8215F808 selects 0x82CA9158. Exact cells bind these target candidates; address proximity supplies neither receiver identity nor setter role. No complete table extent or actual invocation is established.",
+          "selectedTargets": [
+            {
+              "function": "0x82CA91D0",
+              "result": "No direct result +0xC store in the 30 native words. At 0x82CA91E4 it retains incoming r3 in r31. Loads 0x82CA91EC/0x82CA91F0 read [r31] and then table +0x2C; 0x82CA91F8 dispatches with r3 still the incoming receiver. Afterward 0x82CA9200 reloads [r31] and 0x82CA9204 restores r3=r31 before +0x24 call 0x82CA9218 or +0x20 call 0x82CA922C. If the constructor-installed table persists at invocation, the first cell selects this wrapper itself. No actual invocation on the result allocation, later vptr or dispatched effects are proved."
+            },
+            {
+              "function": "0x82CA9158",
+              "result": "No direct result +0xC store in the 30 native words. At 0x82CA916C it retains incoming r3 in r31. Loads 0x82CA9174/0x82CA9178 read [r31] and then table +0x3C; 0x82CA9180 dispatches with r3 still the incoming receiver. Afterward 0x82CA9188 reloads [r31] and 0x82CA918C restores r3=r31 before +0x34 call 0x82CA91A0 or +0x30 call 0x82CA91B4. If the constructor-installed table persists at invocation, the first cell selects this wrapper itself. No actual invocation on the result allocation, later vptr or dispatched effects are proved."
+            }
+          ],
+          "result": "The wrapper read set ended without an exact later +0xC assignment or its incoming scalar producer. laterWordAssignmentBoundary owns the separate displacement-candidate result. Uninspected methods, aliases, restore paths and replacement remain alternatives. Constructor -1 alone supplies neither a proved live word nor newly proved compatible inputs for the frame +148 nonzero route."
+        },
+        "laterWordAssignmentBoundary": {
+          "status": "unresolved",
+          "field": "result allocation +0xC, four bytes",
+          "selectedCandidates": [
+            {
+              "function": "0x82CAA010",
+              "entryReceiver": "O = incoming r3 retained in r29 at 0x82CAA01C",
+              "vptrStore": "0x82CAA030",
+              "vptr": "0x8215F7CC",
+              "scalar": "r30 = 0 from 0x82CAA024, retained only under normal native ABI",
+              "stores": [
+                {
+                  "instruction": "0x82CAA060",
+                  "operand": "stw r30,12(r31)",
+                  "baseProvenance": "r31 = [[O+0x24]+0x0], then linked next +0x0; no identity with O or the accepted result allocation is proved"
+                },
+                {
+                  "instruction": "0x82CAA0AC",
+                  "operand": "stw r30,12(r29)",
+                  "baseProvenance": "r31=O+0x44 at 0x82CAA080; r29=r31+0x10 at 0x82CAA090; destination O+0x60"
+                },
+                {
+                  "instruction": "0x82CAA0E0",
+                  "operand": "stw r30,12(r29)",
+                  "baseProvenance": "r28=O+0x1C at 0x82CAA074; r29=r28+0x10 at 0x82CAA0C4; destination O+0x38"
+                }
+              ],
+              "result": "The exact result vptr identifies a table installation on O, but does not bind the loaded node to the accepted allocation. The adjusted stores do not use O+0xC. No later consumed-word assignment or live invocation is established."
+            },
+            {
+              "function": "0x82CA9358",
+              "store": "0x82CA9388",
+              "operand": "stb r9,12(r11)",
+              "width": 1,
+              "vptrStore": "0x82CA9370",
+              "vptr": "0x8215F7D0",
+              "scalar": "r9=0 at 0x82CA9378",
+              "baseProvenance": "0x82CA936C sets r11=incoming r3+0x10. Eight iterations increment it by one at 0x82CA938C; the +0xC store destinations are incoming r3+[0x1C,0x24).",
+              "result": "The different installed vptr and loop-adjusted byte destinations do not establish a write to the accepted result allocation +0xC. This candidate initializes an incoming receiver with a different vptr and stores beyond its +0xC. No later consumed-word assignment is established."
+            },
+            {
+              "function": "0x82CA9AB8",
+              "store": "0x82CA9B40",
+              "operand": "stfs f1,12(r30)",
+              "width": 4,
+              "receiverCopy": "0x82CA9AC8",
+              "baseProvenance": "Incoming r3 is retained in r29. 0x82CA9B10 loads [r29+0x24], 0x82CA9B14 loads its first node, and 0x82CA9B20 loads node +0xC into r30. The store uses that payload pointer, not the retained incoming receiver.",
+              "scalarBoundary": "The stored current f1 follows bctrl 0x82CA9B3C. That call uses the 0x82CAAAA8 lookup return retained in r28, its vptr at 0x82CA9B2C and slot +0x128 at 0x82CA9B34. Neither the executable target nor its scalar production is resolved. Normal ABI does not preserve incoming volatile f1 across these calls.",
+              "result": "A four-byte float store can overwrite raw word bits, so its opcode does not reject it. No exact caller, installed result vptr or allocation-retention edge binds r30 to the accepted 108-byte result. Unknown payload identity and dispatch/scalar provenance stop this candidate."
+            }
+          ],
+          "result": "Neither declared displacement band identifies a later consumed-word assignment. Their selected store owners use unbound node/payload or adjusted bases, and the child-neighborhood candidate initializes the child field. The accepted child-owned reader edge supplies no direct consumed-word store. This read set retains that negative; laterWordWriterBoundary separately establishes the class-bound conditional ordinal-exchange writer.",
+          "qualification": "The scans are syntactic inventories only. Exact displacement does not establish receiver identity; table installation does not establish actual invocation. Stores outside the two bands, indexed/vector stores, writes through aliases, restores and replacement remain possible. No current value, player meaning/range, compatible combat return, natural reachability or lifetime is established.",
+          "childOwnedReaderBoundary": {
+            "acceptedClassMethod": "native-renderer-alternate-resolve-provider.json#/rawUnresolvedOwnerFieldReceiverBoundary/managerSlot10WriterBoundary",
+            "childVptr": "0x8215FA78",
+            "methodSlot": "0x44",
+            "methodCell": "0x8215FABC",
+            "function": "0x82CA6500",
+            "receiverCopy": "0x82CA650C",
+            "acceptedAccessor": "0x82A73340 through child slot +0x100",
+            "resultPointerCalls": [
+              {
+                "dispatch": "0x82CA65BC",
+                "scalarPass": "0x82CA65C0",
+                "readerCall": "0x82CA65C4",
+                "scalar": "r30 initialized zero at 0x82CA6598, incremented at 0x82CA6654 and signed-tested below 8 at 0x82CA6668; the retained normal-ABI loop uses indices 0-7"
+              },
+              {
+                "dispatch": "0x82CA660C",
+                "scalarPass": "0x82CA6610",
+                "readerCall": "0x82CA6614",
+                "scalar": "current r25, copied from the 0x82E465F8 return at 0x82CA65FC; its upstream meaning/range is unproved"
+              }
+            ],
+            "reader": "0x82CA9810",
+            "readerReceiverCopy": "0x82CA9828",
+            "scalarStackStore": "0x82CA9824",
+            "readerHelperCall": "0x82CA983C",
+            "readerArguments": "0x82CA982C passes the stack copy of incoming r4 by address in r5; 0x82CA9830 passes retained result +0x1C in r4; 0x82CA9834 passes stack output +0x50 in r3 to 0x821B8CD0.",
+            "readerResult": "0x82CA9840 loads the helper output node; 0x82CA9844 loads result +0x24. Equality selects zero. Otherwise 0x82CA9850 returns the node +0xC payload. None of the direct reader stores targets result +0xC, and no result +0xC address is passed to a writer.",
+            "callerStore": "0x82CA664C is stfs f1,8(r29), where r29 retained the first reader return at 0x82CA65C8. Its four-byte footprint ends at payload +0xC; it does not overwrite payload +0xC.",
+            "guards": "The accepted registry child, child +0x20 result, installed child vptr and +0x100 cell remain unchanged and valid. Calls/thunks return normally, preserve nonvolatile registers and do not alias protected fields or save areas. These conditions bind the reader input, not actual invocation, helper side effects or a later assignment.",
+            "boundary": "The class-bound method supplies an exact result-pointer reader edge, not the required consumed-word writer. Its +0x108/+0x118/+0x128 calls and 0x821B8CD0 effects remain unexpanded. Aliasing effects cannot be inferred absent from this direct-store/address inventory."
+          },
+          "childNeighborhoodCandidate": {
+            "function": "0x82CA5FC8",
+            "receiverCopy": "0x82CA5FD8",
+            "scalarImmediate": "0x82CA5FE0",
+            "vptrImmediate": "0x82CA5FE4",
+            "vptrStore": "0x82CA5FF4",
+            "vptr": "0x8215FA78",
+            "store": "0x82CA5FF8",
+            "operand": "stw r11,12(r31)",
+            "scalar": "low32 0xFFFFFFFF from native li r11,-1",
+            "initializerCall": "0x82CA5FFC",
+            "initializer": "0x82CA5E80",
+            "result": "The exact body retains incoming r3 in r31, installs the accepted child vptr, initializes that receiver +0xC to -1 and passes the same incoming receiver to the accepted result-allocating initializer. It contains no child +0x20 load. This is child-field initialization, not the separate 108-byte result allocation +0xC assignment. Under the accepted distinct-allocation guard those fields cannot be equated. The actual caller/allocation of this constructor is not established."
+          },
+          "reentryDiscriminator": "The two closed bands and prior unchanged wrappers retain their bounded results. laterWordWriterBoundary supplies a separate exact class-bound caller and conditional +0xC writer. Re-entry now needs actual invocation and ordered current-word/scalar provenance through this chain that derives a compatible consumed word, or a different exact alias/assignment or result-vptr replacement bound to the accepted allocation. The float candidate still requires payload identity before its dispatch/scalar edge can be selected. priorWordInvocationBoundary now composes a conditional registered-child/getter/result receiver for two exact producer callers. Re-entry requires current owner-key/child equality, internal Q +0x4 relookup and +0x148 dispatch/value gates, exact scalar/current-word retention, or a new scoped owner +0x88 callsite. The separate wrapper still needs incoming-self/result identity and its +0x190 gate."
+        },
+        "falsification": "A different allocation extent, retained receiver, constructor value/store, publication offset, accessor operand, dispatch target or result-load offset breaks the initial join. Allocation failure, abnormal ABI return, aliasing mutation, replacement, destruction/reuse or an observation gap removes its validity. laterWordWriterBoundary supplies a guarded conditional assignment; actual invocation and compatible current-word provenance remain required.",
+        "laterWordWriterBoundary": {
+          "status": "conditional-native-assignment",
+          "acceptedOrigin": "city-yield-ranking-table-boundary.json#/consumerOwnership/conditionalObjectOrigin",
+          "childClassPlacement": {
+            "vptr": "0x8215FA78",
+            "slot": "0x88",
+            "cell": "0x8215FB00",
+            "function": "0x82CA61F0",
+            "qualification": "The exact cell contains 0x82CA61F0. Its placement on the accepted installed child table establishes a conditional class method, not actual invocation or a complete table extent."
+          },
+          "receiverPass": {
+            "childRetention": "0x82CA6200 retains incoming child r3 in r31",
+            "firstGetter": "0x82CA6204/0x82CA6208 load [r31] and slot +0x100; 0x82CA6210 dispatches with incoming child r3; 0x82CA6214/0x82CA6218 skip the continuation when its return is zero",
+            "secondGetter": "0x82CA621C reloads [r31], 0x82CA6220 restores r3=r31, 0x82CA6224 selects +0x100 and 0x82CA622C dispatches. The accepted cell 0x8215FB78 selects 0x82A73340, returning child +0x20.",
+            "caller": "0x82CA6230 passes the second getter return directly as r3 to 0x82CAA298. There is no second result-null check.",
+            "callerRetention": "0x82CAA2A4 retains that result in r30; 0x82CAA33C passes r3=r30 at direct call 0x82CAA340 to 0x82CAA180.",
+            "writerRetention": "0x82CAA194 retains incoming result r3 in r31. The +0xC load at 0x82CAA20C and stores at 0x82CAA218/0x82CAA228 use that same unadjusted receiver."
+          },
+          "scalarProduction": {
+            "outer": "0x82CAA2A8 initializes r29=0. 0x82CAA2AC reads signed count C from result +0x28; 0x82CAA2B4 skips when C<=0. A nonzero payload from helper 0x821B8CD0 at 0x82CAA2CC skips to the next outer ordinal at 0x82CAA344. Otherwise 0x82CAA2EC sets r31=r29+1. 0x82CAA348 increments r29, and 0x82CAA34C/0x82CAA350 continue while signed r29<C reloaded at 0x82CAA344.",
+            "inner": "0x82CAA300 queries helper 0x821B8CD0 with current r31. Output-node comparison at 0x82CAA30C/0x82CAA310 and node +0xC load/test at 0x82CAA314/0x82CAA318 distinguish missing or zero payload from nonzero payload. A nonzero payload takes 0x82CAA31C to the writer argument passes. Missing/zero payload increments r31 at 0x82CAA320 and retries only when signed r31<8 at 0x82CAA324/0x82CAA328; otherwise the function returns.",
+            "arguments": "0x82CAA334 passes current searched ordinal r31 as r5, 0x82CAA338 passes outer ordinal r29 as r4, and 0x82CAA340 calls the writer. 0x82CAA18C retains incoming r4 as A=r28 and 0x82CAA190 retains incoming r5 as B=r26.",
+            "rangeQualification": "The initial inner probe precedes the signed <8 test, so B<8 is not a universal bound. No actual count, valid lookup extent, payload meaning or legal player range is derived. Stable count, normal ABI and no signed-low-word ordinal overflow are explicit conditions for nonnegative A and positive B. With C=0x7FFFFFFF, the final initial inner ordinal can be 0x7FFFFFFF; missing/zero payload then allows the native increment to wrap to signed 0x80000000 and satisfy <8. The operands expose this alternative without proving valid memory or an executed route."
+          },
+          "wordAssignment": {
+            "field": "result allocation +0xC, four bytes",
+            "load": "0x82CAA20C: lwz r11,12(r31)",
+            "firstComparison": "0x82CAA210 compares current word W with A using cmpw; 0x82CAA214 skips the first store when unequal",
+            "firstStore": "0x82CAA218: stw r26,12(r31), storing low32 B when W==A; 0x82CAA21C bypasses the second comparison",
+            "secondComparison": "0x82CAA220 compares W with B using cmpw; 0x82CAA224 skips the second store when unequal",
+            "secondStore": "0x82CAA228: stw r28,12(r31), storing low32 A when W!=A and W==B",
+            "formula": "W_next = low32(B) if low32(W)==low32(A), else low32(A) if low32(W)==low32(B), else W",
+            "otherDirectStores": "0x82CAA1DC/0x82CAA1F8 write reader-return payload +0x18. 0x82CAA1EC/0x82CAA208 write container-helper return +0x0. 0x82CAA238/0x82CAA248 separately exchange result +0x8. These operands do not identify another direct result +0xC store; external alias effects remain guarded."
+          },
+          "initialWordControl": "If constructor low32 0xFFFFFFFF survives until the comparisons and A/B are the derived nonnegative/no-overflow ordinals, it matches neither and neither direct +0xC store runs. Supplied finite control counts 0-8 check this no-change result; they are fixtures, not observed counts or runtime legality. The conditional writer does not derive an initial -1 to compatible nonzero transition. A different prior assignment, overflow route, aliasing effect or replacement requires independent value and ownership evidence.",
+          "guards": [
+            "Successful accepted child/result allocations, registry insertion and matching lookup supply the same distinct live child and 108-byte result. Invocation uses that child and its installed vptr 0x8215FA78 through exact +0x88 cell 0x8215FB00.",
+            "Both getter invocations retain that child, vptr, +0x100 cell and child +0x20 pointer. A successful first return alone does not guarantee a nonzero or identical second return.",
+            "Compiler thunks and intervening reader/container/helper calls return normally and preserve nonvolatile registers and saved inputs. Lookup outputs and accessed nodes have valid extents. No helper, payload, container, save-area or indirect callback effect aliases protected result fields or replaces/destroys/reuses the allocation.",
+            "Word/scalar provenance through the stores requires the current result and scalar values to survive all earlier helper calls. Retention onward to LocalPlayerIdResolve additionally requires no later callback, alias, replacement or lifetime change; actual invocation and ordering are unobserved."
+          ],
+          "readerCallerControls": [
+            {
+              "function": "0x82D8A638",
+              "result": "0x82D8A64C loads owner +0x10; +0x100 dispatch 0x82D8A664 feeds reader call 0x82D8A66C. Nonzero reader return is read at payload +0x4 at 0x82D8A678, otherwise zero is returned. No direct result +0xC store or pass to the selected writer is present."
+            },
+            {
+              "function": "0x82D8AB00",
+              "result": "Owner +0x10 and first +0x100 return are checked at 0x82D8AB20/0x82D8AB24 and 0x82D8AB3C/0x82D8AB40. A second +0x100 call 0x82D8AB54 feeds reader 0x82CA9810 at 0x82D8AB5C; the function returns that payload or zero, with no direct result +0xC store."
+            }
+          ],
+          "remainingBoundary": "The class-bound conditional caller/writer and its ordinal scalar inputs are established. Actual invocation, ordered current word provenance, a compatible nonzero consumed value, legal count/range, semantic player meaning and lifetime remain unresolved. No new combat stat/array, presentation, transfer or participant-writer continuation follows.",
+          "falsification": "A changed +0x88 or +0x100 cell, receiver copy/pass, count/key operand, ordinal branch or +0xC source/base/store changes the conditional assignment. Abnormal ABI, helper aliasing, child +0x20 replacement or result lifetime change breaks allocation/scalar retention."
+        },
+        "priorWordInvocationBoundary": {
+          "status": "conditional-registered-result-producer-with-unresolved-current-key",
+          "question": "Do the selected setup bodies invoke the accepted child +0x88 swap, and does the exact reader-caller seed bind an earlier compatible result +0xC producer to the accepted allocation?",
+          "priorWordProducer": {
+            "function": "0x82CAA360",
+            "receiverRetention": "0x82CAA36C retains incoming r3 in r27; all direct result +0xC writes below use that unadjusted receiver.",
+            "scalarRetention": "0x82CAA374 retains incoming r4 in r25 and 0x82CAA378 retains incoming r6 in r29. The cmpwi mode/ordinal tests consume signed low32 words; they do not constrain the upper halves of the retained registers.",
+            "gates": "0x82CAA384 supplies retained result receiver Q +0x4 as a zero-extended 32-bit key, and 0x82CAA388 loads the registry root from 0x8314F204 after materialization at 0x82CAA370. Direct lookup 0x82CAA390 must return nonzero (0x82CAA398/0x82CAA39C). Its dispatch through +0x148, selected at 0x82CAA3A8 and called at 0x82CAA3B0, must return a nonzero low byte (0x82CAA3B4/0x82CAA3B8/0x82CAA3BC). Q +0x4 equality to an accepted inserted key/current owner key is unproved; no +0x148 target or return producer is selected. These internal relookup/dispatch gates are separate from the callers' conditional constructed-result binding.",
+            "nonnegativeSource": "0x82CAA3CC/0x82CAA3D0 test signed32 incoming r6; signed32(r6)>=0 sends its retained native register directly to 0x82CAA418. The store consumes low32(r6), with no further upper bound on that arm. This establishes neither a full64 signed range nor a legal player range.",
+            "negativeSource": "signed32(r6)<0 sets r29=0 at 0x82CAA3D4 and queries reader 0x82CA9810 with the retained receiver and key zero at 0x82CAA3E4. Zero return takes 0x82CAA3EC to 0x82CAA414. Nonzero return increments the ordinal at 0x82CAA3F0; 0x82CAA3F4/0x82CAA3F8 fail before another query when ordinal>=8. Subsequent calls at 0x82CAA404 retry while their return is nonzero (0x82CAA408/0x82CAA40C). A finite vacancy therefore derives an ordinal 0..7, conditional on valid reader inputs and returns; no actual vacancy, legal player range or player meaning is established.",
+            "store": "0x82CAA418/0x82CAA41C skip the direct word store when low32(retained incoming r4)!=0. When low32(r4)==0, 0x82CAA424 executes stw r29,12(r27), writing the low32 derived ordinal at receiver +0xC. The additional +0x8 store at 0x82CAA430 requires the negative-input vacancy arm; it is a separate word.",
+            "failureAndReturn": "Null lookup, zero dispatch low byte or a full 0..7 search reaches 0x82CAA4E8 and returns full-register -1 through 0x82CAA4F0 before the direct +0xC store. Normal later completion reaches 0x82CAA698, returning the retained ordinal. Later allocation, dispatch and helper effects are not proved to complete or preserve that stored word."
+          },
+          "exactProducerCallers": [
+            {
+              "function": "0x82CA0BD0",
+              "call": "0x82CA0D28",
+              "receiver": "Lookup return retained at 0x82CA0C10 in r31 selects its slot +0x100 at 0x82CA0D10 and calls at 0x82CA0D18. That return remains r3 at the direct producer call.",
+              "scalars": "Incoming r4 is retained at 0x82CA0BEC in r21 and passed at 0x82CA0D1C. The default r6 argument is -1: 0x82CA0BE8 sets r25=-1 and 0x82CA0C08 sets r26=r25. A guarded alternate +0x10 dispatch at 0x82CA0CF8 can replace r26 at 0x82CA0CFC; 0x82CA0D24 passes current r26 as r6.",
+              "qualification": "The accepted registry producer/insertion/stability guards conditionally bind this +0x100 return to a constructed result, independently of the caller own class. Equality of incoming receiver +0x4 to the current selected owner key is unproved. This selected path also requires its earlier getter return +0x8 word not -1 and equal to +0xC (0x82CA0C2C..0x82CA0C48), so the freshly initialized -1 word cannot establish this caller path. low32(incoming r4)==0 and the alternate ordinal return source remain unproved."
+            },
+            {
+              "function": "0x82CAF2C0",
+              "call": "0x82CAF46C",
+              "receiver": "The nonzero lookup return supplies r3 and its slot +0x100 selection at 0x82CAF454; dispatch 0x82CAF45C returns the r3 passed directly to the producer.",
+              "scalars": "0x82CAF448 zero-extends the 32-bit word into r31 from retained incoming receiver +0x34; 0x82CAF44C zero-extends the 32-bit word into r30 from +0x3C; 0x82CAF450 zero-extends the 32-bit word into r29 from +0x8. 0x82CAF460/0x82CAF464/0x82CAF468 pass those words as r4/r5/r6. The producer store requires this +0x8 word zero and derives its ordinal from the +0x34 word or the negative-input vacancy search.",
+              "qualification": "The accepted registry producer/insertion/stability guards conditionally bind the +0x100 return to a constructed result. Equality of incoming r4 lookup key to the current selected owner key remains unproved. The +0x8/+0x34 source loads are exact, but their actual values and meanings are unproved. Earlier callbacks must preserve the incoming receiver, key-selected child and those source words."
+            },
+            {
+              "function": "0x82CAA6A8",
+              "call": "0x82CAA6FC",
+              "receiver": "0x82CAA6BC retains incoming r3 as self r31. 0x82CAA6C8 supplies self +0x4 as a zero-extended 32-bit key, and 0x82CAA6CC loads registry root 0x8314F204 after materialization at 0x82CAA6C0. Lookup 0x82CAA6D0 must return nonzero. The returned registry value selects +0x190 at 0x82CAA6E0 and calls at 0x82CAA6E8; that target/return and self +0x4 key identity remain unresolved. 0x82CAA6F4 restores r3=self for the direct producer call. No exact incoming-self alias to a constructed result is established for this wrapper.",
+              "scalars": "0x82CAA6C4 retains incoming r4 in r30. 0x82CAA6F0 forces producer r4=0 and 0x82CAA6F8 supplies retained incoming r4 as producer r6. The +0x190 return is r5 at 0x82CAA6EC.",
+              "separateReturnStore": "If that lookup is nonzero, 0x82CAA700 unconditionally writes the producer return low32 to self +0xC, including low32 0xFFFFFFFF on its early failure. The null-lookup branch 0x82CAA6D8 bypasses this store. 0x82CAA704 reads self +0xC for return. This overwrite is distinct from the producer conditional store at 0x82CAA424 and still has no accepted allocation binding."
+            }
+          ],
+          "sparseClassPlacement": {
+            "producerCells": [
+              "0x8219A4C0"
+            ],
+            "callerCells": {
+              "0x82CA0BD0": [
+                "0x821600B8",
+                "0x82199F00"
+              ],
+              "0x82CAF2C0": [
+                "0x8215F470",
+                "0x8219A860"
+              ],
+              "0x82CAA6A8": [
+                "0x8219A4C8"
+              ]
+            },
+            "result": "All six cells contain their exact queried function values, without establishing a class or table extent for these producer/caller functions themselves. Their own placement does not decide the identity of a registry lookup return. registryResultComposition separately binds the CA0BD0/CAF2C0 returned child and +0x100 constructed-result receiver under the accepted insertion guards. The cells establish neither equality to the current owner key/child nor a direct incoming-self alias for CAA6A8."
+          },
+          "setupInvocationBoundary": {
+            "functions": [
+              "0x82D8EFF0",
+              "0x82D8F248",
+              "0x82D8EB00",
+              "0x82D8E798"
+            ],
+            "newDirectEdges": [
+              "0x82D8F068 calls 0x82D8EB00",
+              "0x82D8F208 calls 0x82D8E798"
+            ],
+            "result": "None of these four exact native-supported bodies selects child slot +0x88. The one decoded query in [0x82D8EFF0,0x82D8F398) returns zero slot-load candidates and zero callsites. Its 145 decoded instructions and eight-instruction straight-line matching window do not cover omitted PPC32 instructions or helper bodies; the exact native/generated body checks establish the local absence.",
+            "distinctControl": "0x82D8E798 loads owner +0x14 at 0x82D8E7EC, conditionally calls its +0x4C slot at 0x82D8E80C, reloads owner +0x14 at 0x82D8E810 and writes -1 at that pointer +0xC at 0x82D8E814. No alias to the accepted owner +0x10 child or separate child +0x20 result is established.",
+            "limit": "No absence of +0x88 invocation inside unexpanded direct/indirect callees, elsewhere in the title, or at runtime is inferred."
+          },
+          "guards": [
+            "The CA0BD0/CAF2C0 lookup key must select an entry inserted through accepted 0x82CABC78 -> 0x82CB12F0, without alternate insertion, entry/root replacement or corruption. Successful distinct live child/result allocations and installed child vptr/getter retain the constructed result. A current resolver join additionally requires equality to its selected owner +0x4 key and retention of that same owner +0x10 child and child +0x20 result. Caller own vtable placement is not a guard on the lookup-return class.",
+            "Lookup, dispatched targets, reader inputs, stack/save areas and all accessed objects must be valid. Normal native ABI returns preserve retained nonvolatile registers; Xenon std/ld save/restore words in 0x82CAA6A8 require the explicit 64-bit DS interpretation.",
+            "External/helper/callback effects must not alias protected result fields, mutate scalar sources, replace the retained receiver/vptr/getter result, or destroy/reuse the allocation. A completed direct store alone does not establish retention through the later producer body, swap invocation or resolver read.",
+            "Actual execution, invocation order, valid scalar range/meaning and compatible nonzero combat consumption require their own evidence; supplied branch/control fixtures are not live provenance."
+          ],
+          "remainingDiscriminator": "callerKeyScalarBoundary bounds the CAF2C0 incoming-key and receiver-word ingress: both selected read methods lack a bound receiver/input source, and the helper input +0x4 target remains unresolved. Establish whether 0x82CA0BF0 incoming receiver +0x4 or 0x82CAF2DC incoming r4 equals the current selected owner +0x4 key, with the same primary-map entry/owner +0x10 child and retained child +0x20 result. Then bind Q +0x4 internal lookup at 0x82CAA390, its unresolved +0x148 target/nonzero return gate and the exact r4/r6 source values before the conditional store. For the separate wrapper, first bind incoming self/result identity, self +0x4 lookup at 0x82CAA6D0 and its unresolved +0x190 target/return. Alternatively select one new scoped owner +0x88 callsite beyond the four tested bodies. Conditional registered-result construction is established; compatible current word, actual invocation/order and retention into swap/resolver are not.",
+          "falsification": "A different receiver/source/store operand, branch polarity, table value, alias, ABI return or lifetime breaks the conditional producer. A new accepted-object alias or exact scoped +0x88 invocation can reopen the remaining join; unbound same-offset fields cannot.",
+          "registryResultComposition": {
+            "acceptedRegistry": "native-renderer-alternate-resolve-provider.json#/registryReceiverProvenance: root 0x8314F204 holds the primary-map registry; 0x82CAAAA8 returns matched node value +0xC. The accepted 0x82CABC78 -> 0x82CB12F0 producer inserts a child with installed vptr 0x8215FA78 under its returned key.",
+            "firstCallerLookup": "0x82CA0BDC retains incoming r3 in r28. 0x82CA0BE0 materializes 0x83150000; 0x82CA0BF0 supplies the 32-bit word at incoming receiver +0x4, zero-extended as r4; 0x82CA0BF8 loads r3 from 0x8314F204 using displacement -3580. Direct call 0x82CA0C0C enters 0x82CAAAA8, and 0x82CA0C10 retains its return in r31.",
+            "secondCallerLookup": "0x82CAF2CC materializes 0x83150000 and 0x82CAF2D8 loads r3 from 0x8314F204 using displacement -3580. Direct call 0x82CAF2DC enters 0x82CAAAA8 with unchanged native incoming r4 as key; no source-word load or key-comparison-width claim is added for that argument; 0x82CAF2D4 separately retains that argument in r27. 0x82CAF2E0 retains the lookup return in r31.",
+            "conditionalClassAndAllocationJoin": "If each exact lookup key selects a primary-map entry inserted through the accepted producer, with successful factory/result allocations and stable root/entry/ownership, its nonzero return is that registered child with vptr 0x8215FA78. The installed +0x100 cell 0x8215FB78 selects 0x82A73340 and returns child +0x20, the separately constructed 108-byte result. Calls 0x82CA0D18 and 0x82CAF45C therefore conditionally pass that constructed result directly in r3 to 0x82CAA360 at 0x82CA0D28 and 0x82CAF46C. Caller-owned vtable placement is irrelevant to this returned-child join.",
+            "currentResolverIdentityBoundary": "The accepted publication stores the producer key at the 32-bit word at selected owner +0x4 at 0x82D8C5F0, looks it up at 0x82D8C5F8 and stores that child at owner +0x10 at 0x82D8C600. Binding either caller to the current resolver allocation additionally requires its exact lookup key to equal that current owner key, with the same unchanged registry root/entry and retained owner +0x10 child. No inspected incoming-receiver/global/key producer establishes that equality: 0x82CA0BF0 uses a zero-extended 32-bit word from incoming receiver +0x4; 0x82CAF2DC uses incoming r4. The current fields, invocation/order and onward retention remain unobserved.",
+            "resultOrigin": "city-yield-ranking-table-boundary.json#/consumerOwnership/conditionalObjectOrigin and resultObjectProduction supply the accepted factory/initializer/result-constructor/getter origin. A matching lookup supplies a conditional constructed-result receiver, not an observed current +0xC value."
+          }
+        },
+        "callerKeyScalarBoundary": {
+          "status": "bounded-ingress-and-input-source-unresolved",
+          "question": "Can exact ingress and scalar production for 0x82CAF2C0 bind its key and receiver +0x8/+0x34 words to the selected owner and a compatible consumed result ordinal?",
+          "registryAndArguments": {
+            "key": "0x82CAF2D0 retains incoming receiver in r29, and 0x82CAF2D4 retains incoming r4 in r27. 0x82CAF2CC/0x82CAF2D8 load root 0x8314F204; 0x82CAF2DC calls 0x82CAAAA8 with unchanged incoming r4. The exact raw direct-call inventory returns zero callers, without truncation or cancellation. No upstream incoming-key producer or equality to selected owner +0x4 is established.",
+            "receiverAndScalars": "Lookup return retained in r31 at 0x82CAF2E0 passes the nonnull gate at 0x82CAF2F4/0x82CAF2F8. 0x82CAF440/0x82CAF444 restore that child as r3. 0x82CAF448 loads receiver +0x34 into r31, 0x82CAF44C loads +0x3C into r30, and 0x82CAF450 loads +0x8 into r29, all as zero-extended 32-bit words. +0x100 selection 0x82CAF454 and call 0x82CAF45C conditionally return the constructed result under priorWordInvocationBoundary/registryResultComposition. 0x82CAF460/0x82CAF464/0x82CAF468 supply retained words as producer r4/r5/r6 at 0x82CAF46C. Earlier callbacks and the getter must retain the incoming receiver, selected child and scalar words.",
+            "compatibleStoreBoundary": "The accepted producer requires low32(r4)==0 at 0x82CAA418/0x82CAA41C before store 0x82CAA424. Thus the actual CAF2C0 receiver +0x8 word must be zero. Its receiver +0x34 word supplies signed32(r6)>=0 directly, otherwise the accepted vacancy search. No actual value, legal ordinal, internal result +0x4 key, +0x148 gate or ordered retention is derived."
+          },
+          "sparsePlacement": {
+            "windows": [
+              {
+                "start": "0x8215F430",
+                "endExclusive": "0x8215F480",
+                "words": 20
+              },
+              {
+                "start": "0x8219A820",
+                "endExclusive": "0x8219A870",
+                "words": 20
+              }
+            ],
+            "selectedCells": {
+              "0x8215F46C": "0x82CAEF60",
+              "0x8215F470": "0x82CAF2C0",
+              "0x8219A858": "0x82CAF258",
+              "0x8219A860": "0x82CAF2C0",
+              "0x8219A868": "0x82CAF480"
+            },
+            "readMethodValueCells": [
+              "0x8215F3DC",
+              "0x8219A858"
+            ],
+            "qualification": "The exact 0x82CAF258 value inventory returns two cells below cap 16; both are separately word-confirmed. Sparse adjacent entries identify neither a common receiver nor a table start, extent, slot index, descriptor meaning or registration. No concrete vptr installer is established.",
+            "candidateBase": "0x8215F460 is only a falsifiable base hypothesis from the captured first window: cells +0xC/+0x10 would select 0x82CAEF60/0x82CAF2C0. One exact split-constant query, cap 8 with eight-word lookahead, returns zero candidates without truncation. This closes its lis/addi-or-ori syntactic installer discriminator, not every way to install or reference that value."
+          },
+          "boundedFieldReaders": {
+            "firstMethod": {
+              "function": "0x82CAF258",
+              "receiver": "0x82CAF26C retains incoming r3 in r31; 0x82CAF270 retains incoming input r4 in r30. 0x82CAF274 calls NetworkObjectBaseRead with those incoming arguments.",
+              "scalarRead": "0x82CAF278 restores input as r3, 0x82CAF27C supplies receiver +0x34 as r4, and 0x82CAF280 calls BufferReadU32. +0x38 and +0x3C address passes call 0x82E66CD0 at 0x82CAF28C/0x82CAF298; these targets are unexpanded. Receiver +0x40 pointer calls 0x82CB1A58 at 0x82CAF2A4.",
+              "limit": "No direct raw BL caller is found, without truncation or cancellation. No vptr installation, receiver +0x8 source, lookup-key production or receiver identity with CAF2C0 is established."
+            },
+            "secondMethod": {
+              "function": "0x82CAEF60",
+              "receiver": "0x82CAEF74/0x82CAEF78 retain incoming receiver/input as r31/r30; 0x82CAEF7C calls NetworkObjectBaseRead.",
+              "scalarRead": "0x82CAEF80 restores input as r3, 0x82CAEF84 supplies receiver +0x34 as r4, and 0x82CAEF88 calls BufferReadU32. +0x38 address calls 0x82E66CD0 at 0x82CAEF94; receiver +0x3C pointer calls 0x82CB1A58 at 0x82CAEFA0. These targets are unexpanded.",
+              "limit": "The exact body supplies no vptr installation, receiver +0x8 initialization, registry-key source or receiver identity with CAF2C0."
+            },
+            "adjacentConsumer": "0x82CAF480 retains its incoming receiver at 0x82CAF490 and independently looks up root 0x8314F204 using incoming r4 at 0x82CAF494/0x82CAF498. Its 0x82CAF4C4 +0x34 load supplies a separate +0x104 getter/helper path, not the accepted +0x100 result producer. It supplies no installation, +0x8/+0x34 writer or key producer; no continuation is expanded.",
+            "baseRead": "Accepted NetworkObjectBaseRead at 0x82CB1EC8 retains input/receiver at 0x82CB1EDC/0x82CB1EE0. Its BufferReadU32 calls read a stack word checked against literal 4 at 0x82CB1EF4, then receiver +0x2C/+0x1C/+0x18/+0x14/+0x24/+0x28. It supplies neither receiver +0x8 nor incoming CAF2C0 r4. Failure-helper completion remains qualified by the accepted base-envelope record."
+          },
+          "inputDispatchBoundary": {
+            "function": "0x822D93E8",
+            "arguments": "0x822D93FC/0x822D9400 retain incoming input/output pointers in r30/r31. 0x822D9404 sets r4=4 and 0x822D9408 sets r5=output. 0x822D940C loads input vptr, 0x822D9410 loads its +0x4 target, 0x822D9414 sets CTR and 0x822D9418 dispatches. No exact input allocation, vptr installation, target, source bytes, success or bounds behavior is established.",
+            "byteOrder": "0x822D9420 loads input +0x8 byte-order word; 0x822D941C/0x822D9424 address global 0x82F78854. After its zero-state initialization arm, 0x822D9460/0x822D9464 compare current words. Equality skips reversal; inequality swaps output bytes 0/3 and 1/2 with byte stores at 0x822D9470/0x822D9474/0x822D9480/0x822D9484. All use retained output r31, with offsets 0/3/1/2. This input +0x8 field belongs to the helper input, not a proved alias of the CAF2C0 receiver +0x8 mode source.",
+            "stop": "The required input vptr +0x4 target/source and invocation receiver remain unresolved. BufferReadU32 and NetworkObjectBaseRead are accepted helper identities, not proof of incoming input type/bytes, wire transport or a shared caller receiver."
+          },
+          "guards": [
+            "The CAF2C0 key must equal the selected current owner +0x4 under the accepted primary-map insertion, root/entry stability and successful distinct child/result allocation guards. Installed getter, retained owner +0x10 child and child +0x20 result must remain the same.",
+            "A reader-to-producer join requires a concrete invocation or native installer binding the read-method receiver to the CAF2C0 receiver, with the actual input vptr +0x4 target, valid readable/writable pointers and scalar source bytes. Adjacent values and helper identities do not establish that join.",
+            "Normal native ABI returns retain nonvolatile receiver/input/scalar registers. Explicit Xenon std/ld widths are 64 bits. During scalar production, the identified four-byte read output and conditional reversal writes may update receiver [+0x34,+0x38) once receiver identity is proved. Effects outside that permitted output footprint must not alias other protected pointers, scalar words, result fields or save areas. After production, derived scalar words and the produced result word must survive subsequent callbacks, producer completion and onward consumption without mutation during the required retention.",
+            "No actual invocation, execution order, runtime input, ordinal range/meaning or compatible consumed result word is inferred from the static or synthetic checks."
+          ],
+          "remainingDiscriminator": "Select one concrete dynamic ingress or native installation/retained-object edge for CAF2C0, binding its receiver and incoming r4 to the selected current owner key/child. For a read-method scalar source, first establish the same receiver and actual input allocation/vptr +0x4 target at 0x822D9418, its source bytes and order into the +0x34 load; independently recover actual receiver +0x8 zero. Then retain the accepted result through its +0x4 internal relookup/+0x148 gate, producer store and resolver read. The zero direct-call inventories and tested sparse-base materializer space stay closed without a new exact discriminator.",
+          "falsification": "A different ingress key, receiver/base/source operand, table installation, branch polarity, endian state, byte-store footprint, ABI preservation or alias invalidates a proposed join. A same-offset field or sparse neighboring target cannot substitute for the missing identity/source edge."
+        }
+      },
+      "boundedLaterWordAssignmentSupport": {
+        "method": "Two foreground read-only ghidra/FindRawFieldStores.java queries and four radius-zero ghidra/DumpMemoryWords.java queries. Six strict DEFINE_REX_FUNC extractions with label-mapped addresses corroborate exact native bodies. The accepted registry-child +0x44 method provides the separate result-pointer reader discriminator.",
+        "functions": [
+          "0x82CAA010",
+          "0x82CA9358",
+          "0x82CA9AB8",
+          "0x82CA6500",
+          "0x82CA9810",
+          "0x82CA5FC8"
+        ],
+        "functionCap": 8,
+        "rawQueries": 6,
+        "wordReadQueries": 4,
+        "instructionWords": 257,
+        "returnedCandidateWordRows": 21,
+        "repeatedReturnedWords": 11,
+        "queriedDistinctWords": 267,
+        "previouslyAcceptedDistinctWords": 2,
+        "freshDistinctWords": 265,
+        "distinctWordCap": 3072,
+        "priorAcceptedLineageUnionWords": 3473,
+        "acceptedLineageUnionIncludingFreshWords": 3738,
+        "priorOverlapQualification": "Prior overlap is explicitly the union of the eight ordinary-combat scope inventories and boundedProducerSupport, boundedChildWriterSupport and boundedResultObjectSupport. Fresh relative to that union does not mean new across all Research. The 3072-word cap applies to this packet, not the growing union.",
+        "fieldStoreCandidates": {
+          "start": "0x82CA9158",
+          "endExclusive": "0x82CAA180",
+          "offsets": [
+            "0x8",
+            "0xC"
+          ],
+          "scanWordPositions": 1034,
+          "scanWordCap": 2048,
+          "resultCap": 32,
+          "returnedCandidates": 18,
+          "truncated": false,
+          "cancelled": false,
+          "wordOverlappingCandidates": [
+            "0x82CA9388",
+            "0x82CA9B40",
+            "0x82CAA060",
+            "0x82CAA0AC",
+            "0x82CAA0E0",
+            "0x82CAA14C"
+          ],
+          "nonOverlappingOffset8Candidates": [
+            "0x82CA9290",
+            "0x82CA92B8",
+            "0x82CA92C8",
+            "0x82CA9338",
+            "0x82CA9588",
+            "0x82CA9658",
+            "0x82CA9BC8",
+            "0x82CAA0A8",
+            "0x82CAA0BC",
+            "0x82CAA0DC",
+            "0x82CAA0F0",
+            "0x82CAA150"
+          ],
+          "qualification": "No returned +0x8 store is eight bytes wide or overlaps [+0xC,+0x10). These rows and standalone owner metadata support no body, receiver or semantic claim. 0x82CAA14C is the accepted initial -1 store, not a later assignment."
+        },
+        "readWindows": [
+          {
+            "start": "0x82CAA010",
+            "endExclusive": "0x82CAA0FC",
+            "words": 59
+          },
+          {
+            "start": "0x82CA9358",
+            "endExclusive": "0x82CA9398",
+            "words": 16
+          },
+          {
+            "start": "0x82CA9AB8",
+            "endExclusive": "0x82CA9B5C",
+            "words": 41
+          },
+          {
+            "start": "0x82CA6500",
+            "endExclusive": "0x82CA6680",
+            "words": 96
+          },
+          {
+            "start": "0x82CA9810",
+            "endExclusive": "0x82CA9874",
+            "words": 25
+          },
+          {
+            "start": "0x82CA5FC8",
+            "endExclusive": "0x82CA6018",
+            "words": 20
+          }
+        ],
+        "generatedCorroboration": [
+          "generated:rerevved/sub_82CAA010",
+          "generated:rerevved/sub_82CA9358",
+          "generated:rerevved/sub_82CA9AB8",
+          "generated:rerevved/sub_82CA6500",
+          "generated:rerevved/sub_82CA9810",
+          "generated:rerevved/sub_82CA5FC8"
+        ],
+        "checks": "All 267 distinct returned words match image.json size and SHA-256. Strict function boundaries and labels map 257 instruction addresses; native opcodes corroborate every mapped mnemonic. Fifty-one independent native operand checks establish retained and adjusted bases, zero/loop/child-minus-one scalar sources, signed split vptr constants, field widths, branch polarity, exact reader/initializer call targets and dispatch slot/CTR operands. Thirty-nine mutations reject wrong receiver, field/source operand, adjusted base, table constant, branch, slot or loop scalar. Normal volatile clobbers preserve nonvolatile bases; three adverse nonvolatile ABI, alias and lifetime controls deny retention. These are candidate/reader discrimination controls, not an actual result assignment/accessor/resolver execution proof.",
+        "qualification": "Six exact bodies and 21 syntactic inventory rows are separately accounted. Two candidate rows reuse result-constructor words; eleven duplicate rows already occur in the 257-word bodies. Both declared scans closed without truncation. The store candidates do not establish the required result allocation identity, and the final constructor writes the child field. The class-owned path binds the accepted result to a reader without a direct +0xC writer edge; helper effects retain nonalias guards. No wrapper-body repetition, manager reference inventory, executable-wide field query, new table read, runtime observation or complete object lifetime is added. All three prior playable support inventories and their spill/rejected-data qualifications remain unchanged.",
+        "scannerPositionsTotal": 1368,
+        "childNeighborhoodStoreCandidates": {
+          "start": "0x82CA5FC8",
+          "endExclusive": "0x82CA6500",
+          "offsets": [
+            "0x8",
+            "0xC"
+          ],
+          "scanWordPositions": 334,
+          "scanWordCap": 512,
+          "resultCap": 16,
+          "returnedCandidates": 3,
+          "truncated": false,
+          "cancelled": false,
+          "wordOverlappingCandidates": [
+            "0x82CA5FF8"
+          ],
+          "nonOverlappingOffset8Candidates": [
+            "0x82CA5FF0",
+            "0x82CA64E8"
+          ],
+          "qualification": "The only +0xC candidate belongs to exact constructor 0x82CA5FC8 and initializes its retained child receiver. Both +0x8 stores are four bytes wide and do not overlap [+0xC,+0x10). The standalone 0x82CA64E8 row and its owner metadata support no body or receiver claim; 0x82CA6448 was not expanded. Proximity to the accepted child initializer and method does not establish a result writer."
+        }
+      },
+      "boundedResultObjectSupport": {
+        "method": "Four serialized foreground read-only ghidra/DumpMemoryWords.java radius-zero queries, independently decoded native operands and finite native control/memory execution, with strict DEFINE_REX_FUNC and label-anchored generated corroboration.",
+        "functions": [
+          "0x82CB12F0",
+          "0x82CA5E80",
+          "0x82CAA100",
+          "0x82A73340",
+          "0x82D8A3A0",
+          "0x82CA9158",
+          "0x82CA91D0"
+        ],
+        "generatedEntries": [
+          "0x82CB12F0",
+          "0x82CA5E80",
+          "0x82CAA100",
+          "0x82A73340",
+          "0x82D8A3A0",
+          "0x82CA9158",
+          "0x82CA91D0",
+          "0x82CAEBC8"
+        ],
+        "functionCap": 8,
+        "rawQueries": 4,
+        "queriedDistinctWords": 259,
+        "instructionWords": 226,
+        "dataWords": 33,
+        "previouslyAcceptedDistinctWords": 24,
+        "freshDistinctWords": 235,
+        "distinctWordCap": 3072,
+        "priorAcceptedLineageUnionWords": 3238,
+        "acceptedLineageUnionIncludingFreshWords": 3473,
+        "priorOverlapQualification": "Prior overlap is explicitly the union of the eight ordinary-combat scope inventories and boundedProducerSupport/boundedChildWriterSupport. The accepted city/renderer origin facts are separately reused prerequisites; fresh relative to this lineage union does not mean newly discovered across Research.",
+        "readWindows": [
+          {
+            "start": "0x82CB12F0",
+            "endExclusive": "0x82CB1364",
+            "words": 29
+          },
+          {
+            "start": "0x82CA5E80",
+            "endExclusive": "0x82CA5FC8",
+            "words": 82
+          },
+          {
+            "start": "0x82CAA100",
+            "endExclusive": "0x82CAA180",
+            "words": 32
+          },
+          {
+            "start": "0x82A73340",
+            "endExclusive": "0x82A73348",
+            "words": 2
+          },
+          {
+            "start": "0x82D8A3A0",
+            "endExclusive": "0x82D8A3F4",
+            "words": 21
+          },
+          {
+            "start": "0x82CA9158",
+            "endExclusive": "0x82CA91D0",
+            "words": 30
+          },
+          {
+            "start": "0x82CA91D0",
+            "endExclusive": "0x82CA9248",
+            "words": 30
+          }
+        ],
+        "dataCells": [
+          "0x8215FB78"
+        ],
+        "dataWindows": [
+          {
+            "start": "0x8215F7CC",
+            "endExclusive": "0x8215F80C",
+            "words": 16
+          }
+        ],
+        "rejectedDataWindows": [
+          {
+            "start": "0x8216F7CC",
+            "endExclusive": "0x8216F80C",
+            "words": 16,
+            "qualification": "Wrong-base discriminator cells support no object, type, table or writer claim. They remain included in returned-word accounting."
+          }
+        ],
+        "inventoryCap": 32,
+        "generatedCorroboration": [
+          "generated:rerevved/sub_82CB12F0",
+          "generated:rerevved/sub_82CA5E80",
+          "generated:rerevved/sub_82CAA100",
+          "generated:rerevved/sub_82A73340",
+          "generated:rerevved/sub_82D8A3A0",
+          "generated:rerevved/sub_82CA9158",
+          "generated:rerevved/sub_82CA91D0"
+        ],
+        "checks": "All 259 returned words match the image.json size and SHA-256. Strict generated owners map all 226 instruction words; separate native decoding checks 81 scalar-memory operands and 22 direct branches. Native control/memory execution composes factory allocation, full initializer, result constructor, accepted opaque registry publication, accessor and resolver load under explicit ABI/nonalias/lifetime guards. It models allocator, sibling constructors, container helper and compiler save/restore returns rather than expanding them. Initial low32 0xFFFFFFFF is derived from native constructor stores, not supplied at a resolver checkpoint. Adverse volatile clobbers preserve only ABI-normal nonvolatile inputs. Controls detect wrong allocation extent, publication offset/receiver, constructor value/store offset, accessor/result offsets and allocation-branch polarity. Negative ABI/nonalias controls, 104/108-byte allocation failures, null pointee/pointer replacement and a post-initialization word mutation distinguish initial provenance from current memory.",
+        "qualification": "Seven exact raw-supported entries and eight generated entries exhaust the function bound. The incidental generated-only [0x82CAEBC8,0x82CAEC2C) entry contributes 25 inspected instruction words and no claim or raw query. No inherited overread envelope, complete allocator/helper/wrapper callee, executable-wide field search, live assignment, runtime observation or natural combat reachability is established. The 3072-word cap applies to this 259-word packet, not its growing lineage union. The two earlier support inventories and their spill qualifications remain unchanged."
+      },
+      "boundary": "The exact successful registry publication path binds owner +0x10, installed child vptr 0x8215FA78 and +0x100 target 0x82A73340. resultObjectProduction joins the accepted allocation/publication and initialized low32 0xFFFFFFFF read. Its laterWordWriterBoundary binds child +0x88 method 0x82CA61F0 through the same child +0x20 result to caller 0x82CAA298 and writer 0x82CAA180. The writer conditionally exchanges result +0xC between two derived ordinal arguments. This is a conditional native assignment, not an observed current value or a proved transition from initial -1 to a compatible nonzero return. Actual invocation, ordered word retention, valid scalar range/meaning and lifetime remain unresolved. Alternate registry mutation, cleanup, natural combat reachability, fallback and multiplayer/network semantics remain outside the result. priorWordInvocationBoundary conditionally composes CA0BD0/CAF2C0 registry lookup -> accepted registered child -> +0x100 getter -> constructed result into the ordinal producer 0x82CAA360. Equality to the current owner key/child, Q +0x4 internal relookup and unresolved +0x148 gate, compatible scalar/current word and execution order remain required; the four tested owner bodies supply no child +0x88 invocation. callerKeyScalarBoundary closes the tested exact ingress and sparse-base installer spaces without binding the actual receiver/key or input bytes. It retains the exact +0x34 read address and helper byte-store edges while requiring the receiver/input identity and +0x8 zero source before a compatible result-word join.",
+      "boundedLaterWordWriterSupport": {
+        "method": "Serialized foreground read-only ghidra/DumpMemoryWords.java radius-zero queries, exact ghidra/FindDirectCallers.java and ghidra/FindPointerValues.java inventories, strict DEFINE_REX_FUNC generated extraction, independent native operand/control checks and supported-image word comparison.",
+        "functions": [
+          "0x82CAA180",
+          "0x82D8A638",
+          "0x82D8AB00",
+          "0x82CAA298",
+          "0x82CA61F0"
+        ],
+        "functionCap": 8,
+        "rawQueries": 8,
+        "wordReadQueries": 3,
+        "instructionWords": 197,
+        "dataWords": 4,
+        "returnedWordReadRows": 201,
+        "returnedCandidateWordRows": 40,
+        "repeatedReturnedWords": 9,
+        "queriedDistinctWords": 232,
+        "previouslyAcceptedDistinctWords": 3,
+        "freshDistinctWords": 229,
+        "distinctWordCap": 3072,
+        "priorAcceptedLineageUnionWords": 3738,
+        "acceptedLineageUnionIncludingFreshWords": 3967,
+        "priorOverlapQualification": "Overlap is relative only to the explicit union of the eight ordinary-combat scope inventories and four prior playable support inventories. Fresh relative to that union does not establish novelty across all Research. The 3072-word cap applies to this read set, not the growing lineage union.",
+        "readWindows": [
+          {
+            "start": "0x82CAA180",
+            "endExclusive": "0x82CAA294",
+            "words": 69
+          },
+          {
+            "start": "0x82D8A638",
+            "endExclusive": "0x82D8A69C",
+            "words": 25
+          },
+          {
+            "start": "0x82D8AB00",
+            "endExclusive": "0x82D8AB80",
+            "words": 32
+          },
+          {
+            "start": "0x82CAA298",
+            "endExclusive": "0x82CAA35C",
+            "words": 49
+          },
+          {
+            "start": "0x82CA61F0",
+            "endExclusive": "0x82CA6248",
+            "words": 22
+          }
+        ],
+        "dataCells": [
+          "0x8215FB78",
+          "0x8215FB00",
+          "0x8219A270",
+          "0x8219A4B8"
+        ],
+        "exactDirectCallerInventories": [
+          {
+            "function": "0x82CA9810",
+            "resultCap": 64,
+            "returnedCandidates": 35,
+            "truncated": false,
+            "cancelled": false,
+            "qualification": "Exact raw BL inventory corroborates all 35 generated call rows. Only the selected two initial callers and writer owner are expanded; unselected callsite words have no owner/body or semantic claim.",
+            "sites": [
+              "0x82C9BE84",
+              "0x82CA0EA8",
+              "0x82CA0FF4",
+              "0x82CA13F4",
+              "0x82CA1590",
+              "0x82CA1754",
+              "0x82CA5150",
+              "0x82CA51D8",
+              "0x82CA53D0",
+              "0x82CA54A0",
+              "0x82CA574C",
+              "0x82CA65C4",
+              "0x82CA6614",
+              "0x82CA6F28",
+              "0x82CA7158",
+              "0x82CA8858",
+              "0x82CA8994",
+              "0x82CA98C0",
+              "0x82CA9960",
+              "0x82CAA1A0",
+              "0x82CAA1B0",
+              "0x82CAA3E4",
+              "0x82CAA404",
+              "0x82CAA43C",
+              "0x82CAA75C",
+              "0x82CAC30C",
+              "0x82CAC38C",
+              "0x82CAC40C",
+              "0x82CAD830",
+              "0x82CADBA0",
+              "0x82CAF81C",
+              "0x82D8A66C",
+              "0x82D8AB5C",
+              "0x82E4638C",
+              "0x82E46448"
+            ]
+          },
+          {
+            "function": "0x82CAA180",
+            "resultCap": 32,
+            "returnedCandidates": 1,
+            "sites": [
+              "0x82CAA340"
+            ],
+            "truncated": false,
+            "cancelled": false
+          },
+          {
+            "function": "0x82CAA298",
+            "resultCap": 32,
+            "returnedCandidates": 1,
+            "sites": [
+              "0x82CA6230"
+            ],
+            "truncated": false,
+            "cancelled": false
+          },
+          {
+            "function": "0x82CA61F0",
+            "resultCap": 32,
+            "returnedCandidates": 0,
+            "truncated": false,
+            "cancelled": false,
+            "qualification": "Zero direct BL matches does not exclude indirect invocation."
+          }
+        ],
+        "exactPointerInventory": {
+          "functions": [
+            "0x82CA61F0",
+            "0x82CAA298"
+          ],
+          "wordMask": "0xFFFFFFFF",
+          "resultCapPerValue": 16,
+          "returnedCandidates": 3,
+          "matchedCells": {
+            "0x82CA61F0": [
+              "0x8215FB00",
+              "0x8219A270"
+            ],
+            "0x82CAA298": [
+              "0x8219A4B8"
+            ]
+          },
+          "qualification": "Neither value reaches the cap. The script has no explicit truncation/cancellation footer. All three returned cells are separately word-confirmed; only 0x8215FB00 has the accepted installed-vptr binding. The other two cells support no class, extent or actual invocation claim."
+        },
+        "generatedCorroboration": [
+          "generated:rerevved/sub_82CAA180",
+          "generated:rerevved/sub_82D8A638",
+          "generated:rerevved/sub_82D8AB00",
+          "generated:rerevved/sub_82CAA298",
+          "generated:rerevved/sub_82CA61F0"
+        ],
+        "checks": "All 232 distinct returned words match the supported image size and SHA-256. Strict generated owners account for 197 instructions, with every native primary opcode checked against its mapped mnemonic. Forty-nine native operand, branch and exact-cell checks establish receiver passes, count/ordinal sources, getter/reader/writer targets and consumed-word stores. A native-word swap interpreter checks 189 finite scalar/control cases, including supplied count 0-8 no-change fixtures. Native child-method execution with adverse volatile clobbers retains the second getter return; null-first-return, changed second pointer and adverse nonvolatile ABI controls deny the join. Eleven adverse controls detect wrong scalar/store offset/branch, distinct receiver, supplied prior word change, signed ordinal wrap, pointer replacement or ABI retention failure. Helper effects and runtime validity remain explicit guards.",
+        "qualification": "Five exact bodies and forty candidate rows are separately counted. Six direct-call rows repeat body words and the three pointer rows repeat exact cell reads; accepted getter cell 0x8215FB78 is one additional word. All four prior playable support inventories, their spill/generated-only/wrong-base-data qualifications, and all eight combat inventories remain unchanged. No closed-band/wrapper repetition, generic field/table scan, raw body publication, runtime invocation or compatible nonzero combat route is added."
+      },
+      "boundedPriorWordInvocationSupport": {
+        "method": "Seven serialized foreground read-only Ghidra queries: three radius-zero DumpMemoryWords.java reads, one new exact FindDirectCallers.java inventory, two sparse FindPointerValues.java inventories and one bounded FindVtableSlotCalls.java query. Strict DEFINE_REX_FUNC extraction and native operand/control checks corroborate eight exact bodies.",
+        "functions": [
+          "0x82CAA360",
+          "0x82D8EFF0",
+          "0x82D8F248",
+          "0x82CA0BD0",
+          "0x82CAA6A8",
+          "0x82CAF2C0",
+          "0x82D8EB00",
+          "0x82D8E798"
+        ],
+        "functionCap": 8,
+        "rawQueries": 7,
+        "wordReadQueries": 3,
+        "instructionWords": 1053,
+        "dataWords": 6,
+        "returnedWordReadRows": 1059,
+        "returnedCandidateWordRows": 9,
+        "priorLocatorRepairWordRows": 35,
+        "repeatedReturnedWords": 14,
+        "priorAcceptedLineageUnionWords": 3967,
+        "queriedDistinctWords": 1089,
+        "previouslyAcceptedDistinctWords": 111,
+        "freshDistinctWords": 978,
+        "acceptedLineageUnionIncludingFreshWords": 4945,
+        "distinctWordCap": 3072,
+        "readWindows": [
+          {
+            "start": "0x82CAA360",
+            "endExclusive": "0x82CAA6A4",
+            "words": 209
+          },
+          {
+            "start": "0x82D8EFF0",
+            "endExclusive": "0x82D8F244",
+            "words": 149
+          },
+          {
+            "start": "0x82D8F248",
+            "endExclusive": "0x82D8F398",
+            "words": 84
+          },
+          {
+            "start": "0x82CA0BD0",
+            "endExclusive": "0x82CA10BC",
+            "words": 315
+          },
+          {
+            "start": "0x82CAA6A8",
+            "endExclusive": "0x82CAA720",
+            "words": 30
+          },
+          {
+            "start": "0x82CAF2C0",
+            "endExclusive": "0x82CAF47C",
+            "words": 111
+          },
+          {
+            "start": "0x82D8EB00",
+            "endExclusive": "0x82D8ECC0",
+            "words": 112
+          },
+          {
+            "start": "0x82D8E798",
+            "endExclusive": "0x82D8E844",
+            "words": 43
+          }
+        ],
+        "dataCells": [
+          "0x8219A4C0",
+          "0x821600B8",
+          "0x82199F00",
+          "0x8215F470",
+          "0x8219A860",
+          "0x8219A4C8"
+        ],
+        "exactProducerCallerInventory": {
+          "function": "0x82CAA360",
+          "resultCap": 32,
+          "returnedCandidates": 3,
+          "sites": [
+            "0x82CA0D28",
+            "0x82CAA6FC",
+            "0x82CAF46C"
+          ],
+          "truncated": false,
+          "cancelled": false,
+          "qualification": "All three raw BL rows are native-confirmed within strict generated owners; Ghidra lists their owner metadata as undefined and supports no complete decompiler semantics."
+        },
+        "exactPointerInventory": {
+          "wordMask": "0xFFFFFFFF",
+          "resultCapPerValue": 16,
+          "returnedCandidates": 6,
+          "matchedCells": {
+            "0x82CAA360": [
+              "0x8219A4C0"
+            ],
+            "0x82CA0BD0": [
+              "0x821600B8",
+              "0x82199F00"
+            ],
+            "0x82CAF2C0": [
+              "0x8215F470",
+              "0x8219A860"
+            ],
+            "0x82CAA6A8": [
+              "0x8219A4C8"
+            ]
+          },
+          "qualification": "No value reaches 16. The script has no explicit truncation/cancellation footer. Every returned cell is separately word-confirmed. The cells support only sparse placement of these functions, with no generic table extent or incoming-self alias; they do not decide the registry lookup return class. The conditional registered-child/result composition is established separately under its key/insertion/stability guards."
+        },
+        "exactSetupSlotQuery": {
+          "start": "0x82D8EFF0",
+          "endInclusive": "0x82D8F397",
+          "slot": "0x88",
+          "resultCap": 16,
+          "scannedDecodedInstructions": 145,
+          "straightLineWindowInstructions": 8,
+          "decodedSlotLoadCandidates": 0,
+          "returnedCallsites": 0,
+          "truncated": false,
+          "cancelled": false,
+          "qualification": "Envelope includes the four-byte gap between the two exact setup bodies. Decoded coverage is partial on PPC32; native/generated exact body checks carry the local absence claim."
+        },
+        "priorLocatorRepair": "The previously published 35-reader-call inventory lacked its sites array. Only those 35 locators were mechanically recovered from current generated marker/label/mnemonic metadata and each original-image word revalidated as BL to 0x82CA9810. Count and targets agree. The ordered sites array is the sole augmentation to boundedLaterWordWriterSupport; no query, new body, discovery or semantic claim is added by this repair. These 35 old words count in this packet.",
+        "priorOverlapQualification": "Overlap is relative only to the explicit union of eight combat and five prior playable support inventories, including their returned candidate, data and excluded-word rows. Fresh relative to that 3967-word union does not establish novelty across all Research.",
+        "generatedCorroboration": [
+          "generated:rerevved/sub_82CAA360",
+          "generated:rerevved/sub_82D8EFF0",
+          "generated:rerevved/sub_82D8F248",
+          "generated:rerevved/sub_82CA0BD0",
+          "generated:rerevved/sub_82CAA6A8",
+          "generated:rerevved/sub_82CAF2C0",
+          "generated:rerevved/sub_82D8EB00",
+          "generated:rerevved/sub_82D8E798"
+        ],
+        "checks": "All 1089 distinct words match the supported image; 1053 exact-body instruction words have native primary-opcode and direct-branch checks. Fifty-three detailed operand/register/compare/branch/DS checks bind stores, receiver/scalar passes, exact registry root/lookup/key operands and 64-bit wrapper saves/restores; six exact-pointer-cell checks and four local slot-load absence checks complete the 63 native checks. Twenty-three finite scalar cases distinguish direct signed32(r6)>=0 inputs, unchanged low32 behavior with different upper halves, vacancy ordinals 0..7, search exhaustion and disabled gates; supplied helper returns are explicit fixture guards. Ten adverse controls reject changed source/base/offset/branch operands, nonvolatile ABI loss, alias mutation or failed gates; adverse volatile clobbers preserve the selected retained scalar/receiver. No complete decompiler, helper semantics, compatible live value or runtime order is claimed.",
+        "qualification": "Eight exact bodies exhaust the body cap. Six sparse data cells and nine candidate rows are separately accounted; all nine candidate rows repeat exact body/cell reads, and five locator-repair words repeat new body reads. Five prior playable and eight combat support inventories preserve all existing parsed values; the prior reader sites array is the sole locator augmentation. All previous displacement scans, wrappers, global-reference inventories, guards, checkpoints and runtime facts remain closed and unchanged. A further audit uses only sixteen operand checks of already returned words and the accepted registry/factory evidence, adding no body, word or query. It composes conditional registered-result receivers independently of caller own vtable placement; current-key/child equality and internal dispatch/value gates remain unresolved. No combat stat/array, presentation, transfer or participant-writer expansion is added."
+      },
+      "boundedCallerKeyScalarSupport": {
+        "method": "Nine serialized foreground read-only queries: five radius-zero ghidra/DumpMemoryWords.java reads, two exact ghidra/FindDirectCallers.java inventories, one exact ghidra/FindPointerValues.java inventory and one ghidra/FindSplitConstantCandidates.java discriminator. Six strict DEFINE_REX_FUNC extractions and label-checked mnemonic mapping corroborate native operands.",
+        "functions": [
+          "0x82CAF258",
+          "0x82CAF480",
+          "0x82CAF2C0",
+          "0x82CB1EC8",
+          "0x822D93E8",
+          "0x82CAEF60"
+        ],
+        "functionCap": 8,
+        "rawQueries": 9,
+        "wordReadQueries": 5,
+        "instructionWords": 308,
+        "dataWords": 41,
+        "returnedWordReadRows": 349,
+        "returnedCandidateWordRows": 2,
+        "repeatedReturnedWords": 2,
+        "queriedDistinctWords": 349,
+        "priorAcceptedLineageUnionWords": 4945,
+        "previouslyAcceptedDistinctWords": 113,
+        "freshDistinctWords": 236,
+        "acceptedLineageUnionIncludingFreshWords": 5181,
+        "distinctWordCap": 3072,
+        "readWindows": [
+          {
+            "start": "0x82CAF258",
+            "endExclusive": "0x82CAF2C0",
+            "words": 26
+          },
+          {
+            "start": "0x82CAF480",
+            "endExclusive": "0x82CAF56C",
+            "words": 59
+          },
+          {
+            "start": "0x82CAF2C0",
+            "endExclusive": "0x82CAF47C",
+            "words": 111
+          },
+          {
+            "start": "0x82CB1EC8",
+            "endExclusive": "0x82CB1F74",
+            "words": 43
+          },
+          {
+            "start": "0x822D93E8",
+            "endExclusive": "0x822D94A0",
+            "words": 46
+          },
+          {
+            "start": "0x82CAEF60",
+            "endExclusive": "0x82CAEFBC",
+            "words": 23
+          }
+        ],
+        "dataWindows": [
+          {
+            "start": "0x8215F430",
+            "endExclusive": "0x8215F480",
+            "words": 20
+          },
+          {
+            "start": "0x8219A820",
+            "endExclusive": "0x8219A870",
+            "words": 20
+          }
+        ],
+        "dataCells": [
+          "0x8215F3DC"
+        ],
+        "exactDirectCallerInventories": [
+          {
+            "function": "0x82CAF2C0",
+            "resultCap": 32,
+            "returnedCandidates": 0,
+            "sites": [],
+            "truncated": false,
+            "cancelled": false
+          },
+          {
+            "function": "0x82CAF258",
+            "resultCap": 32,
+            "returnedCandidates": 0,
+            "sites": [],
+            "truncated": false,
+            "cancelled": false
+          }
+        ],
+        "exactPointerInventory": {
+          "function": "0x82CAF258",
+          "wordMask": "0xFFFFFFFF",
+          "resultCapPerValue": 16,
+          "returnedCandidates": 2,
+          "matchedCells": [
+            "0x8215F3DC",
+            "0x8219A858"
+          ],
+          "qualification": "Both returned cells repeat separately read data words. The script lacks explicit truncation/cancellation footers; two below cap 16 is the bounded returned result. No class/extent/invocation identity follows."
+        },
+        "candidateBaseInventory": {
+          "value": "0x8215F460",
+          "resultCap": 8,
+          "lookaheadWords": 8,
+          "returnedCandidates": 0,
+          "returnedHighLowWordRows": 0,
+          "truncated": false,
+          "qualification": "Only syntactic lis followed by compatible addi/ori within eight words is tested. No installer or universal absence is proved."
+        },
+        "priorOverlapQualification": "Overlap is relative only to the reconstructed explicit union of eight combat and six prior playable support inventories, including prior returned data/candidate/repair locators, excluded words and wrong-base data. Fresh relative to that 4945-word lineage does not establish Research-wide novelty. All fourteen existing support objects retain their parsed values.",
+        "generatedCorroboration": [
+          "generated:rerevved/sub_82CAF258",
+          "generated:rerevved/sub_82CAF480",
+          "generated:rerevved/sub_82CAF2C0",
+          "generated:rerevved/sub_82CB1EC8",
+          "generated:rerevved/sub_822D93E8",
+          "generated:rerevved/sub_82CAEF60"
+        ],
+        "checks": "All 349 distinct returned words match the supported image size and SHA-256. Native opcode/register/immediate/DS-width/compare/branch checks corroborate all 308 exact-body instructions, including registry argument, scalar source, getter/producer passes, four-byte input dispatch and byte-store footprint. Twenty-two adverse native operand mutations detect wrong key/base/offset/length/slot/source/branch/width. Four finite synthetic byte cases check only conditional reversal footprint, without supplying live bytes or scalar provenance. Native address-pass checks retain receiver/input across adverse volatile clobbers; two nonvolatile ABI-loss controls and one post-read alias mutation reject the corresponding retention. ABI, alias and receiver/source identity remain explicit join guards.",
+        "qualification": "Six bodies stay below cap 8 and all 349 words below cap 3072. The two function-value candidates repeat data reads; both raw BL inventories are empty, and the sparse-base query returns no high/low rows. No complete PPC32 decompiler body, new receiver class, source bytes, compatible current ordinal or execution order is claimed. The required input +0x4 dispatch and dynamic receiver/key provenance close further expansion. Earlier fourteen support inventories, guards, checkpoints and runtime facts remain unchanged. No combat stat/array, presentation, transfer or participant-writer expansion is added."
+      }
+    },
+    "result": "When the human-player mask is nonzero, 0x82CD5A70 classifies a player by testing its bit. The bounded turn-selection path writes selected player IDs to 0x8312B8E8 and can replace a human selection with the local player ID. Runtime observed player 0 as human, players 1-5 as AI, and restoration to player 0.",
+    "unknownRule": "Mask zero, active player outside 0-31, or an unreadable scalar makes turn ownership unknown and the read API unavailable.",
+    "boundary": "The immediate API must not invoke the classifier's mask-zero session fallback. Multiplayer and network-player semantics remain unresolved."
+  },
+  "interfaceAvailability": {
+    "pointerGlobal": "0x8314F28C",
+    "updateByteOffset": "0x5",
+    "debugReader": "0x82DE9FD8",
+    "debugLabel": "APP->GetGameInterfaceUpdate: ",
+    "debugLabelAddress": "0x82127F3C",
+    "writers": [
+      "0x82DA52A0",
+      "0x82DD8FB8",
+      "0x82DDAE98",
+      "0x82DED098",
+      "0x82E07290",
+      "0x82E40738"
+    ],
+    "result": "The title's own debug reader loads byte 0x5 from the object published through 0x8314F28C. Runtime save-menu transitions cleared the byte and closing the modal restored it.",
+    "boundary": "The byte is an interface-update gate, not a general scene-active or gameplay-lifecycle flag."
+  },
+  "availabilityPredicate": {
+    "expression": "frontend_key == 2 && interface_update && turn_owner_known && human_turn",
+    "readPolicy": "Resolve every pointer and scalar afresh at the proved frame boundary using bounded reads. Cache no guest pointers between frames.",
+    "result": "The predicate was unavailable at the main menu, the first incomplete load frame, AI turns, and save-menu modals; it became available on a known human turn with the interface gate enabled."
+  },
+  "runtimeProbe": {
+    "status": "captured",
+    "date": "2026-08-20",
+    "default": "off",
+    "cvar": "gameplay_state_probe",
+    "frameHook": "0x82C7DF58",
+    "newGameRun": {
+      "humanFrame": 1211,
+      "aiFrames": "3445-3451",
+      "humanResumeFrame": 3452,
+      "modalFrame": 5467,
+      "menuFrame": 7086,
+      "processExitCode": 0,
+      "result": "Key 2, active player 0, mask 1, and interface enabled produced available. Active players 1-5 produced unavailable, player 0 restored available, the modal interface clear produced unavailable, and frontend key 1 kept the predicate unavailable after return to menu."
+    },
+    "loadRun": {
+      "initialLoadFrame": 4463,
+      "availableFrame": 4464,
+      "result": "The load transition first exposed key 2 with unknown player state, then exposed player 0 and became available on the next frame."
+    },
+    "reducedRegressionRun": {
+      "menuFrame": 406,
+      "initialLoadFrame": 781,
+      "availableFrame": 782,
+      "modalTransitions": [
+        824,
+        929,
+        1196,
+        1278,
+        1339,
+        1476
+      ],
+      "returnMenuFrame": 1571,
+      "processExitCode": 0,
+      "ownerObservation": "The owner reported clean text after repeated save-menu transitions and return to the main menu.",
+      "result": "The reduced observer used only the accepted scalar gates, made no register captures or guest writes, and completed the load/save-menu/menu path without the text corruption seen with the broader observer."
+    },
+    "abRegression": {
+      "failure": "A broader observer that dynamically scanned rejected processor and scene owners and emitted high-frequency transitions correlated with severe text corruption after opening the save menu.",
+      "control": "The same binary and path remained clean with the cvar off. After removing the rejected scans and restoring the no-register hook contract, the cvar-on reduced observer remained clean.",
+      "qualification": "The A/B test bounds the unsafe observer design but does not isolate one rejected read or log operation as the sole cause."
+    }
+  },
+  "rejectedLeads": {
+    "sceneActiveGate": {
+      "global": "0x8314F094",
+      "result": "The flag toggled transiently and remained true at the main menu, so it is not a gameplay lifecycle predicate."
+    },
+    "gameInputProcessor": {
+      "global": "0x8314F2A4",
+      "result": "The registry object remained active during AI turns and does not classify the human-turn boundary."
+    },
+    "gameStartByte": {
+      "global": "0x8314EF7C",
+      "result": "The byte is written during game start but no supported teardown clear was found."
+    },
+    "driverOwner": {
+      "result": "The broad frame driver's owner is a rendering/update manager, not a gameplay-session identity."
+    },
+    "importedInGameScreenRun": {
+      "address": "0x82DD32D0",
+      "result": "The imported name belongs to the Hall of Achievements owner and is not a gameplay lifecycle source."
+    }
+  },
+  "guards": [
+    "Resolve the frontend current-state and interface-gate pointers on every read; never retain them across frames or teardown.",
+    "Treat frontend key 2 as lifecycle only and require both a known human turn and interface update for availability.",
+    "When the human-player mask is zero, return unavailable instead of calling the title's session fallback from an immediate read API.",
+    "Do not use the scene-active gate, game-input registry, driver owner, or one-time game-start byte as availability inputs.",
+    "Do not reintroduce broad registry scans or high-frequency transition logging; repeat the save-menu/load/menu A/B regression after changing the observer.",
+    "The probe remains default-off, performs bounded reads only, and writes no guest memory or registers."
+  ],
+  "conclusion": "For version 1.3, a conservative read-only gameplay API is available only when frontend state key 2 is current, the published interface object's update byte is enabled, and the active player is a known member of the nonzero human-player mask. The reduced default-off observer survived new game, AI/human turn changes, save-menu modal transitions, load, and return to menu without retaining guest pointers or reproducing the broader observer's text corruption."
+}

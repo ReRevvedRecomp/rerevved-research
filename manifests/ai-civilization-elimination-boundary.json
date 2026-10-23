@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0252",
+  "topic": "ai-civilization-elimination-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which native path destroys a civilization, which state marks it destroyed, how does Domination count eligible capitals, and which post-setup point lets a title remove non-human civilizations identically on every peer?",
+  "scope": {
+    "functions": [
+      "0x82D0C1E0",
+      "0x82D02390",
+      "0x82D0C3E8",
+      "0x82D25170",
+      "0x82D217C8",
+      "0x82D10FD8",
+      "0x82D1EAB0",
+      "0x82CE1830",
+      "0x82CD59A8"
+    ],
+    "globals": [
+      "0x82F700AC",
+      "0x82F700B0",
+      "0x8312E608",
+      "0x8314F10B",
+      "0x830F2BF0",
+      "0x830E5AD0",
+      "0x830E5650",
+      "0x830ECB40",
+      "0x830ED0D8"
+    ],
+    "boundary": "The destroy routine 0x82D0C1E0 and its three direct callers, the unit kill 0x82D02390, the setup start loop and the new-game init 0x82D25170 around its post-setup recount, the event post routing in 0x82CE1830, the palace counters and the Domination test. Writer of 0x8314F180, a per-turn checksum producer, the load-path reachability of 0x82D25170 and native city destruction are outside this bound."
+  },
+  "dependencies": [
+    {
+      "topic": "player-count-setup-boundary",
+      "use": "Setup owner 0x82D217C8, count and barbarian-index stores, the count-2 override and the human-mask rebuild 0x82CD59A8."
+    },
+    {
+      "topic": "barbarian-contact-messages",
+      "use": "Identifies 0x82F700B0 as the barbarian player and the leader message 0x82CC85D0."
+    },
+    {
+      "topic": "save-slot-ruleset-identity",
+      "use": "Pre-load edge 0x82D84238, which shares a slot table with the load routine 0x82D86400."
+    }
+  ],
+  "currentEvidence": {
+    "method": "A local PowerPC decode of the hash-checked flat image, with function bounds from .pdata, direct branch-and-link scans over .text, lis-plus-displacement reference scans and one-level addi-base scans for the named globals.",
+    "destroy": {
+      "entry": "0x82D0C1E0(p, killer, city) returns for the barbarian player (0x82D0C1FC) and when bit 0x100 of the pair word 0x830ED0D8[(local*8+p)*4] is set, local being 0x82D8A3A0. It then kills every live unit of p: records at 0x830F2BF0 + p*0x5400 + u*0x54 for u below 256 whose byte +0 is not 0xFF and whose word +0xC has bit 31 clear go to 0x82D02390(p, u, 0) at 0x82D0C27C. For p other than local it presents a leader message (0x82D0C3A0 calls 0x82CC85D0), sets the pair bit at 0x82D0C3C8 and appends history code (p << 8) | 0x3000 | p through 0x82D00480 at 0x82D0C3DC; 0x82D00480 skips turn 0.",
+      "destroyedState": "The routine writes no city, palace, count or alive word. A destroyed civilization is one with zero cities and zero units in the per-player statistics that 0x82D11AD8 clears and recounts (0x830E5AD0 and 0x830E5650, stride 0x80).",
+      "unitKill": "0x82D02390 with mode 0 sets bit 31 of unit word +0xC and halfword +0x26 to -1, kills units carried by the unit and clears +0x44 links to it; a nonzero mode calls vtable +0x1A4 of 0x8314F76C instead. It consumes no random number and posts no event.",
+      "callers": [
+        "0x82D1D1B0 in city capture 0x82D1B400 when the victim's city count is zero.",
+        "0x82CDF2D4 in the tail of dispatcher event 0x11, for every player below the count with city count zero; the condition for reaching that tail is not traced.",
+        "0x82D0CB8C in end-of-round 0x82D0C3E8 (event 0x36), for every non-barbarian player below the count with zero cities and either zero units or, only when network byte 0x8314F10B is set, more than 20 turns since start turn 0x8312B8D8."
+      ]
+    },
+    "setup": {
+      "slots": "0x82D217C8 stores count 6 and barbarian player 5 (0x82D22918, 0x82D2291C). A nonzero 0x8314F180 replaces them with 2 and -1 (0x82D22934, 0x82D22938). The selected start arm bypasses the sampled barbarian ordinal (0x82D231BC); additional session/flag/definition guards condition a type-0 unit request through 0x82D11750 (0x82D23258) or a city request through 0x82D18D88 (0x82D23348). These local requests do not prove successful delivery for every player. No separate AI constructor exists; AI is the complement of the human mask 0x8312E608.",
+      "humanMask": "In network games the zero-source path of 0x82CD59A8 sets bit p when 0x82D8AB00 finds ordinal p in the map at +0x1C of the session object reached through 0x8314EFE0 +0x10 and vtable +0x100 (lookup 0x82CA9810).",
+      "routing": "0x82CE1830 sends an event through 0x82D90988 and session vtable +0x44 without running it locally when the network byte is set, the local player is valid and the event's player is human or its id is at least 0x29 (0x82CE18C0 to 0x82CE1938); other events run locally through 0x82CE16C8 (0x82CE1944). Events of non-human players with ids below 0x29 therefore run on every peer.",
+      "postSetup": "0x82D25170 clears turn 0x8312B8DC and start turn 0x8312B8D8, calls setup at 0x82D25254, returns at 0x82D25260 when it yields -1, and otherwise calls the statistics recount 0x82D11AD8(1, 1) at 0x82D2530C."
+    },
+    "domination": {
+      "palaces": "0x830ECB40 holds per-player palace counts and total 0x830ECB60. Handler 0x82D1EAB0 increments the owner's count and the total for a palace city (0x82D1F7D0, 0x82D1F7DC); capture moves one count from victim to capturer (0x82D1C948 to 0x82D1C964).",
+      "test": "Victory evaluation 0x82D10FD8 grants Domination through 0x82D02AB8(p, 1) at 0x82D11284 when palaces[p] is nonzero, palaces[p] is at least the total minus definition halfword +0x16 (0 when 0x82FFE7C4 bit 0x08000000 is set), at least 10 turns have passed since 0x8312B8D8 (0x82D11264) and 0x82CEEA50(1) is nonzero. 0x82CEFC98 and the capture warning at 0x82D1CDC8 use the same comparison.",
+      "result": "A civilization destroyed before founding never adds to the total, so the total counts only existing capitals."
+    },
+    "persistence": "Serializer 0x82CC4040, called by save 0x82D81654 and load 0x82D86674, covers the unit records 0x830F2BF0, the pair matrix 0x830ED0D8, the nine palace words 0x830ECB40 and the count words. Load routine 0x82D86400 and pre-load 0x82D84238 sit in one slot table (0x821387C4, 0x821387CC)."
+  },
+  "staticQuery": {
+    "scripts": [
+      "ghidra/DumpMemoryWords.java"
+    ],
+    "mode": "foreground-read-only",
+    "nativeSupport": "Radius-1 word windows at 26 addresses covering the destroy entry, unit loop, presentation and history calls, all three callers, the end-of-round conditions, setup call and recount, setup stores and start loop, the palace increment and capture transfer, the Domination comparison and turn gate, the post routing, the network byte store, the unit-kill flag store and the history turn guard. All 78 words matched the flat image identified by image.json, which supplied every word the local decode walked.",
+    "generatedCorroboration": [
+      "The generated sub_82D25170 calls the 0x8314F76C slot +0x54 with return 0x82D25304 and then sub_82D11AD8 with r3 = 1 and r4 = 1."
+    ],
+    "bounds": "No match cap applies; the direct-caller scans cover every aligned word in .text. lis-based reference scans do not see stores through registers loaded from memory."
+  },
+  "guards": [
+    "Destroying a civilization changes the simulation; every peer must apply the same rule, so the setting belongs in the pre-join compatibility fingerprint.",
+    "Act only on players outside a nonzero human mask, never on the barbarian player, and only when count and barbarian words hold their ordinary 6 and 5.",
+    "Use the mode-0 unit kill or 0x82D0C1E0 itself; do not clear unit records directly.",
+    "A player that already owns a city is out of scope; native city destruction is not traced here.",
+    "0x82D0C1E0 keys its once-only gate on the local player, so peers set different pair-matrix bits; this is native behavior for any network elimination.",
+    "Static evidence only; a default-off runtime probe must confirm elimination timing, turn continuation, Domination and save/load on one machine and across two System Link peers.",
+    "The walk is bound to this image; another build needs a new walk."
+  ],
+  "conclusion": "0x82D0C1E0 destroys a civilization by killing its units through 0x82D02390 mode 0 and presenting messages; no alive flag exists, and a civilization with no city and no unit is destroyed. The end-of-round pass 0x82D0CB8C calls it for every non-barbarian player in that state. Setup gives every player except the barbarian a start, and AI is the complement of the human mask, which network games build from the session player map. Killing the units of each non-human, non-barbarian player before the post-setup recount at 0x82D2530C leaves only native state, and non-human events run locally on every peer. Domination compares a player's palace count with the total of palaces that came into existence, so civilizations destroyed before founding do not block or instantly decide a two-human game."
+}

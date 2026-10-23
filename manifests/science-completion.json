@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0236",
+  "topic": "science-completion",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which selected-technology progress path in CalendarTurnAdvance reaches TechnologyAcquire, with what threshold, arguments and excess handling?",
+  "scope": {
+    "functions": [
+      "0x82D1EAB0",
+      "0x82D1D1C0",
+      "0x82D09208",
+      "0x82CF0EE8"
+    ],
+    "maximumFunctions": 8,
+    "completionCallsite": "0x82D20C34",
+    "boundary": "One static completion path, its cached city contribution, local context selection, team-pool threshold and Gold excess transfer. Cost-helper interior callees, research selection writers, complete city recomputation, every acquisition caller and runtime cadence remain outside this packet."
+  },
+  "dependencies": [
+    {
+      "topic": "starting-technology-grants",
+      "use": "Accepted generic acquisition, ordinary technology ownership and separate UA/UEA grant boundary."
+    },
+    {
+      "topic": "game-calendar-state",
+      "use": "Accepted CalendarTurnAdvance identity."
+    },
+    {
+      "topic": "city-yield-state-credit",
+      "use": "Accepted city table, retained player context, cached/recomputation split and ordinary Gold reserve identity."
+    },
+    {
+      "topic": "library-city-yield-writers",
+      "use": "Accepted local city +0x44 writer; this completion result adds a selected downstream cached-progress edge without generalizing every modifier."
+    }
+  ],
+  "inputs": {
+    "player": "Incoming r3 to 0x82D1EAB0 is retained at stack +0x1E4; its low32 byte offset player*4 is retained at +0x90.",
+    "selectedTechnology": "Word 0x830EDD48 + player*4, materialized at 0x82D1F6F8 and saved as a base at stack +0xC8.",
+    "progress": "Word 0x830EDD68 + (player*48 + technology)*4. The progress base is materialized at 0x82D1F6F0 and saved at stack +0xEC.",
+    "teamComparison": "Signed halfwords at 0x830E9070 + player*2; base materialized at 0x82D1F700 and saved at +0xF0. This identifies the exact comparison array used for pooling. Team is an interpretation of the grouping role, not an independently established semantic array identity in this packet.",
+    "context": "Word 0x830E3328 + player*4, initially -1 on this path. The base is materialized and saved at stack +0xA4 in 0x82D1F4A8..0x82D1F514.",
+    "completionMarker": "Word 0x830E3348 + player*4, reset to -1 and later assigned selected technology before acquisition.",
+    "supportedInputDomain": "For an ordinary nonzero technology acquisition, assume player and technology are valid supported indices and technology is in 1..47. This range is an input-domain guard, not a recovered local clamp. The selected block tests only technology != 0 before calling acquisition."
+  },
+  "cachedProgressProducer": {
+    "site": "0x82D1FA78..0x82D1FAB4",
+    "operation": "On a continuing cached city path with selected technology != -1, sign-extend city +0x44 and add it to 0x830EDD68[(incoming player*48)+selected technology], storing low32 at 0x82D1FAB4.",
+    "selection": "The surrounding loop uses 128 city positions with stride 0xBC, positive signed city +0x03 and owner != -1. The selected cached branch also lies under equality of city owner and incoming player. Existing cached/recomputation and native-control gates remain required; this is not an unconditional credit event.",
+    "qualification": "This proves one earlier stored-progress producer for the completion consumer. It does not prove the complete recomputing city's persistent science credit, all +0x44 modifiers, or update cadence."
+  },
+  "contextSelection": {
+    "site": "0x82D1FEF4..0x82D1FF34",
+    "operation": "In the selected city loop, call 0x82CF0EE8(selected technology, incoming player), compare the incoming player's individual stored progress using signed cmpw, and, if progress >= returned threshold and context == -1, store the current loop city index into context.",
+    "qualification": "The completion threshold later pools matching team rows. This context writer checks individual progress, so pooled completion does not prove a nonnegative context. A retained -1 is passed through unchanged when the selected local writer does not fill it."
+  },
+  "completion": {
+    "poolSite": "0x82D20B00..0x82D20BB0",
+    "pool": "Initialize low32 sum to zero and iterate indices 0 through the signed count at 0x82F700AC minus one when that count is positive. Add progress[index, selectedTechnology] only when the signed team halfword matches that of incoming player. The selected technology remains the incoming player's selected word for every row, rather than each teammate's choice.",
+    "threshold": "At 0x82D20BBC, call 0x82CF0EE8 with r3 = selected technology and r4 = incoming player. Continue when signed cmpw at 0x82D20BC0 establishes pooled progress >= returned threshold, incoming player differs from word 0x82F700B0, and accepted TechnologyOwnershipQuery(selected technology, incoming player) at 0x82D20BE4 returns zero.",
+    "costRecheck": "The block calls 0x82CF0EE8(selected technology, incoming player) again at 0x82D20BF8 before subtracting its returned value. Exact arithmetic inside the helper remains parameterized here; its prerequisite traversal and conditional modifiers require separate evidence.",
+    "excess": "At 0x82D20C04..0x82D20C18, add low32 pooledProgress - secondThreshold to the incoming player's existing ordinary Gold reserve 0x830ED544[player], store the sum at 0x82D20C14, and write selected technology to completion marker 0x830E3348[player] at 0x82D20C18.",
+    "progressBoundary": "This selected completion block contains no store reducing either the individual's technology progress or the pooled rows. Its demonstrated excess destination is Gold. It does not establish research carryover into the next selected technology, nor absence of later progress writers elsewhere.",
+    "acquisition": {
+      "site": "0x82D20C34",
+      "callee": "0x82D09208",
+      "guard": "selected technology != 0",
+      "r3": "incoming player",
+      "r4": "selected technology from 0x830EDD48[player]",
+      "r5": "retained context from 0x830E3328[player], possibly -1",
+      "r6": "0, source/reason",
+      "r7": "1, phase flag"
+    },
+    "zeroTechnology": "When selected technology is zero and the preceding gates pass, the local excess/marker stores occur but the acquisition call is skipped. This branch is separate from the supported nonzero ordinary-acquisition input domain."
+  },
+  "sourceDistinction": {
+    "ordinaryPath": "This call is selected by accumulated technology progress and a returned cost, with source/reason zero and phase one.",
+    "grants": "Accepted UEA branches in the same turn owner use hard-coded technologies and source/reason six, phase one. Initial UA and setup grants are separate producers.",
+    "qualification": "Shared ownership mutation does not make this a grant/trade/setup rule. The 35-site direct-call inventory is not a semantic classification of every other caller. Source/reason zero is established for this path, not reserved exclusively for science across the whole program."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only direct-call raw-word inventory, repaired disposable exact-function dumps, canonical raw-word windows and narrow identified-function generated comparison.",
+    "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "entries": [
+      {
+        "role": "incoming player and Gold base",
+        "address": "0x82D1EAC4..0x82D1EC9C",
+        "confidence": "strong"
+      },
+      {
+        "role": "context and marker bases/reset",
+        "address": "0x82D1F4A8..0x82D1F514",
+        "confidence": "strong"
+      },
+      {
+        "role": "progress, selection and team bases",
+        "address": "0x82D1F6F0..0x82D1F714",
+        "confidence": "strong"
+      },
+      {
+        "role": "cached city progress credit",
+        "address": "0x82D1FA78..0x82D1FAB4",
+        "confidence": "strong"
+      },
+      {
+        "role": "individual threshold context writer",
+        "address": "0x82D1FEF4..0x82D1FF34",
+        "confidence": "strong"
+      },
+      {
+        "role": "pool, threshold, excess and exact acquire arguments",
+        "address": "0x82D20B00..0x82D20C34",
+        "confidence": "strong"
+      }
+    ],
+    "locators": [
+      "ghidra/FindDirectCallers.java:0x82D09208 cap=64, 35 matches, truncated=false",
+      "ghidra/DumpFunctions.java:0x82D1EAB0,0x82D1D1C0,0x82D09208,0x82CF0EE8",
+      "ghidra/DumpMemoryWords.java:0x82D1EBB0,0x82D1FA80,0x82D20BB0 radius=64",
+      "ghidra/DumpMemoryWords.java:0x82D1EC80,0x82D1F4C0,0x82D20A60,0x82D1F700,0x82D1FF10 radius=32",
+      "generated:rerevved/sub_82D1EAB0"
+    ],
+    "qualification": "Raw selected windows corroborate the described addressing and operations; address spans do not claim every intervening instruction was queried. The flat-image identity matches image.json. A disposable repair reported 40 patched thunk slots, 15 cleared noreturn flags, 8829 rebuilt functions and zero rebuild errors. Four exact functions were inspected within an eight-function cap; no interior cost-helper callee was expanded."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No science, acquisition, excess credit or natural turn cadence was observed or changed."
+  },
+  "guards": [
+    "Use stable supported player/technology indices and array/count state; do not infer local range validation.",
+    "The comparison is signed and arithmetic stores low32. A mathematical nonnegative excess statement requires no signed overflow and a stable helper return across the two calls.",
+    "Do not infer every research choice writer, cost formula, prerequisite traversal, city modifier, government consequence, progress persistence or natural runtime cadence.",
+    "Do not infer every teammate's current research choice from this pool; it uses one selected technology across matching rows.",
+    "Pooling is proved by equality of signed halfwords at 0x830E9070; the semantic team label remains qualified.",
+    "Do not require a valid city context as a local acquisition guard; -1 can remain retained on pooled completion.",
+    "Do not turn the local no-progress-store boundary into a global no-carryover claim."
+  ],
+  "falsification": "Different current-image raw words at the selected base, signed comparison, excess destination or call-argument sites would falsify this path. A later progress writer could extend the carryover result without changing the local Gold excess edge.",
+  "conclusion": "One ordinary selected-technology completion path is recovered: matching-team stored progress reaches a parameterized cost threshold, unowned nonzero technology is acquired with incoming player, retained context, source/reason zero and phase one, and the local excess is credited to the incoming player's Gold reserve. Further research carryover and runtime cadence remain unproved."
+}

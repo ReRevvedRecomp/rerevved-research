@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0093",
+  "topic": "map-list-selection-owner",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does parsed MAPNUMBER feed the numbered MapList selector, and what exact neutral state contract is closed when that producer edge is absent?",
+  "scope": {
+    "functions": ["0x82DADC88", "0x82DAECD0", "0x82DAEFD8", "0x82DAF5E0", "0x82E2B8D0"],
+    "fields": ["+0x134", "+0x138"],
+    "boundary": "This packet closes the neutral selector/update contract and a bounded absence of direct MAPNUMBER dataflow within the five-function read set. It does not prove the producer of either update argument, menu presentation, setup eligibility, map identity, resource acceptance, gameplay, save identity, multiplayer equality, or runtime loading."
+  },
+  "dependencies": [
+    { "topic": "scenario-schema-boundary", "use": "Provides the accepted MAPNUMBER-to-variator-slot-32 parser mapping and 64-slot scenario application copy." },
+    { "topic": "map-authoring-loader-boundary", "use": "Provides the accepted NumberedMapListSelect identity and MapList terminology." }
+  ],
+  "stateUpdate": {
+    "function": "0x82DADC88",
+    "semanticName": "MapListSelectionStateUpdate",
+    "arguments": {
+      "r3": "partial selection-state receiver",
+      "r4": "retained selection input",
+      "r5": "direct result override; zero requests MapList selection"
+    },
+    "inputStore": { "address": "0x82DADCA4", "offset": "0x134", "source": "r4" },
+    "overrideTest": "0x82DADCA0",
+    "zeroOverride": {
+      "selectorCallsite": "0x82DADCB0",
+      "selector": "0x82E2B8D0",
+      "resultStore": "0x82DADCB4"
+    },
+    "nonzeroOverride": {
+      "bypass": "0x82DADCA8",
+      "resultStore": "0x82DADCBC"
+    },
+    "resultOffset": "0x138",
+    "result": "The update always stores r4 at +0x134. A zero r5 calls NumberedMapListSelect and stores its return at +0x138; a nonzero r5 bypasses the selector and is stored directly at +0x138."
+  },
+  "selector": {
+    "function": "0x82E2B8D0",
+    "semanticName": "NumberedMapListSelect",
+    "input": "r4 retained from the update caller",
+    "countCall": "0x82E2B910",
+    "selectionCall": "0x82E2B930",
+    "indexComposition": "unsigned input modulo returned count, plus one",
+    "return": "the value returned by the selected MapList entry helper",
+    "qualification": "The bounded arithmetic does not establish player-facing numbering, a particular map identity, valid count behavior beyond the native trap guard, or runtime selection."
+  },
+  "mapNumberNegative": {
+    "acceptedProducer": "Scenario parser name MAPNUMBER maps to signed variator slot 32; scenario application copies all 64 slots into the active variator block.",
+    "activeSlot": "0x830E9010",
+    "boundedResult": "None of 0x82DAECD0, 0x82DAEFD8, 0x82DAF5E0, 0x82DADC88, or 0x82E2B8D0 passes the parsed slot or active slot to update argument r4 or r5. The exact producer of those arguments therefore remains unresolved.",
+    "qualification": "This is a direct-edge negative inside the five-function read set, not an executable-wide absence. Callers outside the set may mediate the value through another object or field."
+  },
+  "currentEvidence": {
+    "method": "Three sequential foreground read-only Ghidra queries plus narrow generated corroboration of the five selected functions.",
+    "entries": [
+      { "role": "bounded function set", "address": "0x82DAECD0", "result": "Four functions truncate at save-register thunks and NumberedMapListSelect truncates on bad instruction data in the configured project.", "confidence": "strong" },
+      { "role": "active variator copy", "address": "0x82DAEFEC", "result": "Raw words establish active-block base 0x830E8FD0 and the 128-byte halfword copy, placing slot 32 at 0x830E9010.", "confidence": "strong" },
+      { "role": "state update", "address": "0x82DADCA0", "result": "Raw words establish the override test, both +0x138 stores, the +0x134 store, and selector call.", "confidence": "strong" },
+      { "role": "MapList selector arithmetic", "address": "0x82E2B914", "result": "Raw words establish unsigned division/remainder, plus-one argument, and selected-entry helper call.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ghidra/DumpFunctions.java:0x82DAECD0,0x82DAEFD8,0x82DAF5E0,0x82DADC88,0x82E2B8D0",
+      "ghidra/DumpMemoryWords.java:0x82DAEFF0,0x82DAF584",
+      "ghidra/DumpMemoryWords.java:0x82DADCAC,0x82DADCC0,0x82E2B8F0,0x82E2B928",
+      "generated:rerevved/sub_82DAECD0",
+      "generated:rerevved/sub_82DAEFD8",
+      "generated:rerevved/sub_82DAF5E0",
+      "generated:rerevved/sub_82DADC88",
+      "generated:rerevved/sub_82E2B8D0"
+    ],
+    "qualification": "Generated bodies corroborate the exact current-image words hidden by configured-project truncation and bound the direct-edge negative. No runtime probe was performed."
+  },
+  "guards": [
+    "Keep MAPNUMBER variator ownership separate from the unresolved producer of update arguments r4 and r5.",
+    "Do not name +0x134 or +0x138 as MAPNUMBER fields without a producer edge.",
+    "Do not infer menu numbering, map identity, setup eligibility, resource acceptance, gameplay, persistence, multiplayer equality, or runtime behavior."
+  ],
+  "conclusion": "MapListSelectionStateUpdate at 0x82DADC88 stores its retained input at +0x134 and either stores NumberedMapListSelect output or a direct nonzero override at +0x138. NumberedMapListSelect computes unsigned input modulo the current count plus one before selecting an entry. The bounded parser, scenario-apply, scanner, update, and selector set contains no direct MAPNUMBER-to-argument edge, so MAPNUMBER consumption remains unresolved."
+}

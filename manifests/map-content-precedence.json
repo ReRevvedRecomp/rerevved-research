@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0071",
+  "topic": "map-content-precedence",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Where do the version 1.3 named map tile and DDS requests search relative to direct loose files, registered content sources, and the Resource\\Common fallback?",
+  "scope": {
+    "functions": [
+      "0x822D64C0",
+      "0x82C8E150",
+      "0x82D37DC0",
+      "0x82D387E0",
+      "0x82D38C80",
+      "0x82E7FDF8",
+      "0x82E80028",
+      "0x82E802F8",
+      "0x82E80520",
+      "0x82E806E0",
+      "0x82E80880",
+      "0x82E80958"
+    ],
+    "registryGlobals": ["0x8314F0C0", "0x8314F0C4"],
+    "boundary": "This packet proves the common resolver order used by the bare named map resources. It does not prove ReXGlue host-path mapping, runtime reachability, scenario-definition discovery, the provenance of each registered source, base-FPK versus DLC-FPK registration order, archive writing, packaging, or installation."
+  },
+  "currentEvidence": {
+    "method": "foreground read-only Ghidra function, reference, memory, and string queries with narrow generated-code corroboration",
+    "qualification": "The configured project truncates several Xenon functions at unsupported or unrepaired thunk boundaries. Exact calls, initialized strings, global references, and narrow generated bodies agree on the admitted lookup order. No runtime observation was made."
+  },
+  "staticQuery": {
+    "scripts": [
+      "ghidra/DumpDataValues.java",
+      "ghidra/DumpFunctions.java",
+      "ghidra/DumpMemoryWords.java",
+      "ghidra/DumpReferences.java",
+      "ghidra/DumpStringsInRange.java"
+    ],
+    "mode": "foreground-read-only",
+    "generatedCorroboration": [
+      "generated:rerevved/sub_822D64C0",
+      "generated:rerevved/sub_82C8E150",
+      "generated:rerevved/sub_82D37DC0",
+      "generated:rerevved/sub_82D387E0",
+      "generated:rerevved/sub_82D38C80",
+      "generated:rerevved/sub_82E7FDF8",
+      "generated:rerevved/sub_82E80028",
+      "generated:rerevved/sub_82E802F8",
+      "generated:rerevved/sub_82E80520",
+      "generated:rerevved/sub_82E806E0",
+      "generated:rerevved/sub_82E80880",
+      "generated:rerevved/sub_82E80958"
+    ],
+    "truncationGuard": "Generated code corroborates only the admitted functions and exact control-flow windows required to establish resolver order."
+  },
+  "namedResourcePaths": {
+    "mapTile": {
+      "producer": "0x82D0ADE0",
+      "format": "%s.map",
+      "open": "0x82E80520"
+    },
+    "height": {
+      "producer": "0x82C6E188",
+      "format": "Map%s_Heights.dds",
+      "openChain": ["0x822F9888", "0x822D64C0", "0x82E806E0"]
+    },
+    "blend": {
+      "producer": "0x82C6E188",
+      "format": "Map%s_MountainHill_Blends.dds",
+      "openChain": ["0x82C92950", "0x82C8E150", "0x822D64C0", "0x82E806E0"]
+    },
+    "lightmap": {
+      "producer": "0x82C6E188",
+      "format": "Map%s_Lightmap.dds",
+      "openChain": ["0x82C92950", "0x82C8E150", "0x822D64C0", "0x82E806E0"]
+    },
+    "classification": "0x82D37DC0 classifies a name as an explicit path when a global override is active or the string contains a slash or backslash. The named map formats above are bare names when the scenario MAP value contains neither separator."
+  },
+  "resolverOrder": {
+    "bareName": [
+      {
+        "priority": 1,
+        "source": "direct loose-file open",
+        "functions": ["0x82D387E0", "0x82D38C80"],
+        "result": "The map stream and common DDS byte path both attempt a direct open before consulting the registered-source resolver. A successful direct open returns without selecting an archive source."
+      },
+      {
+        "priority": 2,
+        "source": "registered source vector",
+        "function": "0x82E80028",
+        "global": "0x8314F0C0",
+        "result": "The resolver walks registered sources from the last vector entry to the first and accepts the first source that contains the requested name. Later appended sources therefore outrank earlier appended sources."
+      },
+      {
+        "priority": 3,
+        "source": "Resource\\Common fallback",
+        "function": "0x82E80958",
+        "global": "0x8314F0C4",
+        "result": "Initialization creates the fallback source from Resource\\Common. The resolver consults it only after every registered vector source fails."
+      }
+    ],
+    "explicitPath": "A name containing a slash or backslash follows the explicit-path branch. This packet does not generalize the bare-name overlay result to explicit paths."
+  },
+  "registration": {
+    "append": "0x82E7FDF8 appends a source to the registered vector.",
+    "runtimeContent": "0x82E80880 constructs a source from a supplied path, verifies that it opens, and appends it through 0x82E7FDF8.",
+    "orderingRule": "Because 0x82E80028 searches backward, any successfully appended runtime content source outranks sources that were already in the vector.",
+    "unresolvedCategoryOrder": "The common vector does not label entries as base FPK or DLC FPK. The bounded registration callers do not close the complete startup and mount chronology, so this packet does not claim an unconditional DLC-over-base ordering."
+  },
+  "deliveryRuling": {
+    "directLooseOverlay": "Static precedence candidate. Supplying the four bare names through the exact guest-visible direct-open location would outrank registered archives without rewriting them. ReXGlue host mapping, scenario XML delivery, runtime acceptance, immutable identity, and rollback remain separate gates.",
+    "resourceCommon": "Not an override route. Resource\\Common is searched after registered sources and loses a same-name collision to any registered archive source.",
+    "registeredContent": "Conditional. A later appended source wins over earlier vector entries, but a custom package route and the base-versus-DLC registration chronology remain unproved.",
+    "archiveMutation": "Not justified. This result strengthens a non-mutating loose overlay candidate and supplies no reason to rewrite or repack a retail FPK."
+  },
+  "guards": [
+    "Do not claim that any arbitrary host directory is guest-visible to the direct opener.",
+    "Do not treat Resource\\Common as a high-priority loose override directory.",
+    "Do not claim unconditional DLC-over-base precedence from reverse vector iteration alone.",
+    "Do not infer scenario-definition discovery or complete bundle delivery from the four resource-open chains.",
+    "Do not infer archive write, repack, package, installation, or runtime support from read precedence.",
+    "Do not claim successful authored-map loading without a separately scoped default-off runtime probe."
+  ],
+  "conclusion": "For bare named-map resources, the version 1.3 guest attempts a direct loose-file open first, then searches registered sources in reverse append order, then falls back to Resource\\Common. This makes an exact guest-visible loose overlay the least destructive static delivery candidate for the map and three DDS files. The host mapping, scenario-definition route, complete base-versus-DLC chronology, and runtime acceptance remain unproved."
+}

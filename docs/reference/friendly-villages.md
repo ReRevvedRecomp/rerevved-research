@@ -3,16 +3,39 @@
 Friendly villages normally select the lowest of six relative civilization
 scores. Each score is the player's value divided by that metric's aggregate
 total. These are comparison scores, not independent reward probabilities.
-Ties retain the earlier category.
+Ties retain the earlier category. In game-design terms, this is a catch-up
+selector based on relative civilization development: the smallest share wins.
 
-| Metric | Ordinary reward |
-| --- | --- |
-| Population plus another per-player count | Settlers on Chieftain or Warlord, subject to the gates below; otherwise 25 Gold |
-| Unit production values adjusted by unit fields | Map reveal, unless an eligible visiting combat unit receives the earlier rank upgrade |
-| Owned-building production factors | Caravan, subject to eligibility; otherwise 25 Gold |
-| An unnamed per-player statistic | Current research technology when valid; otherwise 25 Gold |
-| Treasury plus a city statistic | 25 Gold |
-| Three other per-player counters | One Spy |
+`share[player, category] = metric[player, category] / aggregate[category]`
+
+| Category | Development metric | Raw player value | Ordinary reward |
+| --- | --- | --- | --- |
+| 1 | Population and settlement-unit presence | `25 * population + 50 * settlement tally` | Settlers on Chieftain or Warlord, subject to the gates below; otherwise 25 Gold |
+| 2 | Military investment | Sum of `trunc(5 * unit production factor * weight * (rank+1) / 2)`; ordinary-name weight 1, army-name weight 3 | Map reveal, unless an eligible visiting combat unit receives the earlier rank upgrade |
+| 3 | Building investment | `5 * sum(building production factors)` | Caravan, subject to eligibility; otherwise 25 Gold |
+| 4 | Technology development | `50 * technology-acquisition tally` | Current research technology when valid; otherwise 25 Gold |
+| 5 | Economic resources | `treasury + sum(cached city trade)` | 25 Gold |
+| 6 | Cultural Victory progress | `owned Wonders + Great People tally + clamp(converted-city credits, 0, 999)` | One Spy |
+
+The sums use the collector's admitted cities and units. Native arithmetic,
+signed caches and floating-point division apply; a zero aggregate has no local
+division guard. Invalid or unordered scores need not select any category.
+
+Category four counts phase-qualified technology acquisitions, including
+eligible grants; it is not science per turn or stored research progress.
+The acquisition writer has no local already-owned check, so arbitrary calls
+need not produce a count of distinct technologies known.
+
+Category six competes normally with the other five. It is not a fallback or a
+measure of culture generated per turn. The Wonder component is a current
+admitted claim recount. Native text names the Great People component, but
+which Great People states contribute remains unresolved. Culture-driven city
+transfers update signed converted-city credits, which need not equal a simple
+count of currently held converted cities.
+
+The settlement tally admits Settlers and FSettler definitions. Its extra
+tile-bucket credit can alias the same statistic, so it is not proved to be a
+plain unit headcount. The city trade cache is distinct from final Gold credit.
 
 Caravan is native unit type 29; Settlers is type 0. The creator's ordinary
 initialization preserves that distinction before later callbacks. A requested

@@ -45,7 +45,10 @@ multiply base directly. Index is unchecked; arithmetic wraps. Division traps do
 not prevent negative denominator after adding six wraps. Technology zero returns
 9999 early; -1 skips prerequisites but retains gates/multiplier.
 
-Difficulty/game-speed meanings and runtime cost remain unproved. Exact domains:
+The selected ordinary setup path can copy difficulty into `0x82FFE7C8`, with
+separate setup overrides and retention limits recorded in the
+[village reward finding](../../manifests/friendly-village-rewards.json#/settlersDifficultyBoundary).
+Multiplier/game-speed meanings and runtime cost remain unproved. Exact domains:
 [cost manifest](../../manifests/technology-research-cost.json).
 
 ## Spaceship launch result

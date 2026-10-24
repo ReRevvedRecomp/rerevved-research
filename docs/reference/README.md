@@ -42,7 +42,7 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 
 ## Networking
 
-- [Xbox network messages](xbox-network-messages.md) - records/queues, dispatch, serialization and wire limits.
+- [Xbox network messages](xbox-network-messages.md) - records/queues, native turn labels, human completion, serialization and wire limits.
 - [Xbox System Link QoS boundary](xbox-system-link-qos.md) - lookup/results, action traces and discovery unknowns.
 
 Keep related strings, names, enums, fields and guards together. Catalogs own

@@ -52,14 +52,40 @@ map. Accepted Xbox names:
 | 6 | Rush | Cost producer/consumer |
 | 17 | Move | Movement lifecycle |
 
-| Neutral case | Static contract |
+Selected turn-command debug labels are independently bound by the native
+mapper and its dispatcher input in
+[`native-human-turn-completion-boundary.json`](../../manifests/native-human-turn-completion-boundary.json#/nativeCommandNames).
+They identify native names, without proving delivery or completed processing.
+
+| Case | Static contract |
 | --- | --- |
 | 25/44 | Shared branch creates special type 30, stores arg2 as Great General carrier link; neither case is named `AddGeneral`. |
-| 46/47 | Each calls `CalendarTurnAdvance`, submits 49 and invokes same player follow-up. 46 has two sites, 47 one: `LocalPlayerIdResolve` -> `arg1`, -1 -> `arg2`/`arg3`, `0x82F7AD00` word -> `arg4`, separate target -1. Static sites prove neither runtime multiplicity nor delivery. |
-| 49 | `slw` mask from `arg1` ORs `0x83157E44`. Case 46 clears before submissions, loops while unequal to human mask; 47 clears or, when `0x8314F1B0` zero, seeds human mask. Shift bit `0x20` yields zero. `BeginTurn`, `EndTurn`, `ImDoneAI`, readiness/completion identities remain unknown. These relations establish no runtime barrier or successful receipt. |
+| 46/47 | `BeginTurn` / `BeginTurnReload`. Each calls `CalendarTurnAdvance`, submits 49 and invokes same player follow-up. 46 has two sites, 47 one: `LocalPlayerIdResolve` -> `arg1`, -1 -> `arg2`/`arg3`, `0x82F7AD00` word -> `arg4`, separate target -1. Static sites prove neither runtime multiplicity nor delivery. |
+| 49 | `BuildDone`. `slw` mask from `arg1` ORs `0x83157E44`. Case 46 clears before submissions, loops while unequal to human mask; 47 clears or, when `0x8314F1B0` zero, seeds human mask. Shift bit `0x20` yields zero. These relations establish no runtime barrier or successful receipt. |
 | 57 | Stores low `arg2` halfword at `0x830E9050 + arg1*2`. Setup supplies player `arg1`/unresolved virtual `arg2`; eight elements reset `-1`, persist both ways and feed cost. Command/policy name unknown. |
-| 48/50-53 | 48 sets `0x4000`, may submit 53. 50 updates mask and gates 48 on human-mask equality; 51 conditionally clears bit, 52 sets bit, 53 stores player argument/receipt mask. No PS3 setup names assigned. |
-| 54/55 | 54 clears mismatch `0x10` and advances turn/calendar. 55 compares data/stored seed, can emit `Synch Err: Data`/`Synch Err: Seed`; neither named `Checksum`, coverage unknown. |
+| 48/50-53 | `BeginTurnAI` / `ImDone` / `ImNotDone` / `AIDone` / `ImDoneAI`. 48 sets `0x4000`, may submit 53. 50 updates mask and gates 48 on human-mask equality; 51 conditionally clears bit, 52 sets bit, 53 stores player argument/receipt mask. No PS3 setup names assigned. |
+| 54/55 | `EndTurn` / `SynchCheck`. 54 clears mismatch `0x10` and advances turn/calendar. 55 compares data/stored seed, can emit `Synch Err: Data`/`Synch Err: Seed`; checksum coverage remains unknown. |
+
+## Local human completion boundary
+
+Owner `0x82D259E8` has a guarded local-human `ImDone` producer at
+`0x82D269B4..0x82D26A70`. Observation at `0x82D26A38` follows the shared
+state/staged checks and second local-player equality; `0x82D26A5C` exposes
+the request arguments. Preserve the complete guest context at these interior
+points. Calling either point as a function would bypass native setup.
+
+A full-owner wrapper could provisionally request completion with a temporary
+status bit `0x40`. Active adoption still needs bit ownership and restoration,
+nested-consumer checks and observed round ordering. The early `0x14000` path
+contains AI/GameOver state; the startup pending word can be discarded without
+submission. Neither supplies a human request, and directly submitting
+`EndTurn` skips the earlier human/AI completion chain.
+
+The [completion manifest](../../manifests/native-human-turn-completion-boundary.json)
+owns the candidate guards and default-off observation contract. A calendar
+increment or a queued request alone does not count a completed world round.
+
+## Turn and synchronization state
 
 Four candidate `0x82F7AD00` writers: three copy object `+0x134` from
 `0x8314EFC8` (one via second parameter); fourth copies record `+0x0C`.

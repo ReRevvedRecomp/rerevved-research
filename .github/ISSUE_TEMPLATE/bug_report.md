@@ -1,27 +1,19 @@
 ---
 name: Bug Report
-about: Report a reproducible problem
-title: "[Bug] "
+about: Report a problem with the research tools or data
+title: "<Replace this with Bug Summary>"
 labels: bug
-assignees: ""
+assignees:
 ---
 
-**I affirm:**
+## Commit and OS
 
-- [ ] I have searched existing issues to make sure this has not already been reported.
-
-## Describe the bug
-
-<!-- Provide a clear and concise description of the problem. -->
+<!-- Commit or branch / Windows 11 / Ghidra version / etc. -->
 
 ## Steps to reproduce
 
-1. 2. 3.
+<!-- Add steps to reproduce here. -->
 
 ## Expected behavior
 
-<!-- Describe what you expected to happen. -->
-
-## Additional context
-
-<!-- Add any other useful details here. -->
+<!-- Add the expected behavior here. -->

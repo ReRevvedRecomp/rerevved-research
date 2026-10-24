@@ -48,9 +48,22 @@ not prevent negative denominator after adding six wraps. Technology zero returns
 Difficulty/game-speed meanings and runtime cost remain unproved. Exact domains:
 [cost manifest](../../manifests/technology-research-cost.json).
 
+## Spaceship launch result
+
+The selected launch dialog returns a signed arrival year or -1. Its caller
+admits only positive results, excluding valid BC dates and year zero before
+that producer submits the launch. The selected arrival evaluator accepts the
+signed date domain, with separate state and victory gates.
+
+The [arrival-year boundary](../../manifests/spaceship-launch-arrival-year-boundary.json)
+records the field chain, native cancellation sentinel and a proposed
+`result != -1` admission contract. This is a static correction contract;
+actual dialog retention, launch delivery and repaired victory remain unobserved.
+
 ## Evidence sources
 
 - [Technology research cost](../../manifests/technology-research-cost.json)
 - [Science completion](../../manifests/science-completion.json)
+- [Spaceship launch arrival year](../../manifests/spaceship-launch-arrival-year-boundary.json)
 - [Starting technology grants](../../manifests/starting-technology-grants.json)
 - [City yield state credits](../../manifests/city-yield-state-credit.json)

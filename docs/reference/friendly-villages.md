@@ -22,7 +22,7 @@ signed caches and floating-point division apply; a zero aggregate has no local
 division guard. Invalid or unordered scores need not select any category.
 
 Category four counts phase-qualified technology acquisitions, including
-eligible grants; it is not science per turn or stored research progress.
+free technologies; it is not science per turn or stored research progress.
 The acquisition writer has no local already-owned check, so arbitrary calls
 need not produce a count of distinct technologies known.
 
@@ -73,3 +73,20 @@ freshness, actual branch delivery and final visible rewards still need runtime
 observation. Metric inputs, request sites, eligibility predicates,
 setup overrides and evidence are in
 [`friendly-village-rewards.json`](../../manifests/friendly-village-rewards.json).
+
+## Consecutive games
+
+A player reported an opening village reward influenced by the preceding game
+on retail Xbox 360. The report has not been reproduced, and the original donor
+save is unavailable.
+
+The selected reset fills bracket the score table. A selected successful load
+publishes scores before recounting, but it can read saved statistics. Indirect
+setup and reset callbacks remain unresolved, so those static observations do
+not establish retained scores from another game.
+
+The [score lifecycle finding](../../manifests/friendly-village-score-lifecycle.json)
+owns the selected native edges and controlled comparison. A correction needs
+the actual retained state and reward branch. Clearing scores alone introduces
+ties; changing the RNG would alter seeded replay without establishing the
+cause.

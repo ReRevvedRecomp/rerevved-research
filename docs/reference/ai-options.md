@@ -67,6 +67,17 @@ valuation. A cumulative UEA lookup can add half a local coefficient before
 later scoring. This does not establish a separate leader personality or
 aggression, diplomacy, army formation, target or research preference.
 
+The selected production score arm advances a local state recurrence and adds a
+scaled contribution to its nonnegative coefficient, then applies four ordered
+flag-dependent adjustments. The state, multiplier and floating scale remain
+symbolic; the recovered arithmetic does not establish a random distribution or
+a universal score range. Its common comparison replaces the retained candidate
+on an equal score as well as a greater one. The unit-filter comparison has a
+separate strict-greater rule. The production update writes local stack state
+and continues candidate iteration; final winner retention, city production
+assignment and execution remain separate gates. Exact arithmetic and provenance
+are in the [score continuation boundary](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/scoreContinuationBoundary).
+
 The [AI boundary findings](../../manifests/ai-options-boundaries.json) own exact
 seams, capacities, the valuation join and runtime qualifications. Starting
 technology ownership and native activation timing remain in

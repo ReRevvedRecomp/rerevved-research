@@ -91,6 +91,54 @@
           "ghidra/DumpMemoryWords.java:0x82CB5A80 radius16;0x82CB5AD8 radius9;0x82CB6698 radius3"
         ]
       },
+      "scoreContinuationBoundary": {
+        "question": "What state recurrence, local score modifiers and tie rule connect the selected candidate103 arm to retained candidate state, without implying city production assignment?",
+        "scope": {
+          "functions": [
+            "0x82CB44E0"
+          ],
+          "maximumFunctions": 1,
+          "windows": [
+            "0x82CB5A0C..0x82CB5AFC",
+            "0x82CB668C..0x82CB66A4",
+            "0x82CB5494..0x82CB54B4"
+          ],
+          "boundary": "Selected post-bonus score arm, comparison/update and immediate iteration continuation only. Existing RVA-F-0330 supplies candidate103 and UEA4 identity. No complete candidate admission, RNG initialization, winner retention, production assignment, command delivery or execution claim."
+        },
+        "inputs": "Let B be incoming r18, C=s32(r31), X=U32(B), M=U32(B+8), A=u32(r15), D=u32(r16), and F=F64(B+16). Retain symbolic input identities, readable memory, nonalias input/frame storage and native arithmetic/FP semantics. Negative C is clamped to zero before the following calculations.",
+        "stateAdvance": "0x82CB5A20..0x82CB5A50 increments U32(B+4) modulo2^32 once, computes X1=low32(X*A+D) and stores it at B. For M!=0, unsigned division/multiply/subtract computes X2=X1 modulo M and stores it at B; M=0 skips division and retains X2=X1. The selected nonzero guard bypasses the zero-divisor trap condition. This recurrence does not establish RNG initialization, period or distribution.",
+        "score": "0x82CB5A54..0x82CB5AA4 forms H=trunc(C/2), converts zero-extended H and X2 to doubles, multiplies (double(H)*double(X2))*F in that order, converts to signed64 with fctidz, takes its low32 T, and forms S=low32(C+T). The mathematical truncation description requires finite representable conversion; native FP rounding and exceptions remain applicable. Neither normalized X2*F nor a universal score interval is established.",
+        "orderedModifiers": [
+          "If U16(r19+low32(r17+0x3C)) bit0x8 is set, add trunc(s32(S)/2) to S with low32 wrapping.",
+          "If r26 bit0x20 is clear, replace S with trunc(s32(S)/2).",
+          "If r26 bit0x8 is set, replace S with trunc(s32(S)/2).",
+          "If U32(r24+low32(4*r20)) bit0x4 is set, replace S with trunc(s32(S)/2)."
+        ],
+        "modifierQualification": "Every halving uses the current signed low32. The halfword, word and register flags remain neutral inputs without gameplay names.",
+        "candidateUpdate": "At0x82CB6690 a signed score less than frame+0x5C branches to0x82CB5494 without update. Otherwise, including equality,0x82CB669C stores r5 to frame+0x5C and0x82CB66A0 stores the word loaded from frame+0x88 to frame+0xA0.0x82CB66A4 branches to0x82CB5494. Thus this local comparison replaces on ties, unlike the separate strict-greater unit-filter comparison.",
+        "continuation": "0x82CB5494..0x82CB54B4 increments frame+0x88, stores it and compares signed against frame+0x24C; less loops to0x82CB4A20. At loop exit, nonzero frame+0x5C branches to0x82CB5520; zero falls through to the separate fallback scorer. This packet stops at those destinations. Local stack selection is not city production assignment or proof of the final returned candidate.",
+        "currentEvidence": {
+          "method": "Primary foreground read-only native word queries; supported flat-image SHA256 and all79 unique words checked; Capstone5.0.7 fixed-four-byte decoding; independent raw/decode coverage and arithmetic/branch inspection against narrow exact-owner generated windows.",
+          "nativeWords": 79,
+          "claimedWindowWords": 77,
+          "locators": [
+            "ghidra/DumpMemoryWords.java:0x82CB5A84 radius30",
+            "ghidra/DumpMemoryWords.java:0x82CB6698 radius4",
+            "ghidra/DumpMemoryWords.java:0x82CB54A4 radius4",
+            "generated:rerevved/sub_82CB44E0:0x82CB5A0C..0x82CB5AFC",
+            "generated:rerevved/sub_82CB44E0:0x82CB668C..0x82CB66A4",
+            "generated:rerevved/sub_82CB44E0:0x82CB5494..0x82CB54B4"
+          ],
+          "qualification": "Comparison query additionally returned0x82CB6688 and0x82CB66A8; neither expands the claim. Generated owner prefix and adjacent context were read without assigning additional semantics. An incidental generated read reached0x82CA5478 and0x82CACAF8; neither was queried or supports a claim. No runtime observation.",
+          "generatedArtifact": {
+            "path": "rerevved:generated/default/rerevved_recomp.114.cpp",
+            "sha256": "DE27F215C6D7858D44DE65FC87395350A8F16BA313EC3D2320CC49A528C07BA1",
+            "owner": "sub_82CB44E0",
+            "titleRevision": "b6b3fb6fe6c5728bcdba009068f30455874ca5be"
+          }
+        },
+        "falsification": "Different native state stores, operand widths, ordered modifiers, signed comparison branch or frame destinations invalidate the corresponding local formula. Actual state identity, FP exceptional inputs, aliasing or later candidate replacement can invalidate a wider interpretation without changing these instruction-local facts."
+      },
       "personalityBoundary": "No separate leader-personality schema or civilization-keyed aggression, diplomacy, army formation, war-target or research-choice policy has been joined. A syntactic absence of one direct civilization-base displacement in this owner cannot exclude aliases, hard-coded comparisons or other owners. Do not invent strategic fields in UEA records or reinterpret Barbarian policy as ordinary civilization behavior.",
       "runtimeObservation": { "status": "not-observed", "required": "Correlate active/inactive UEA4, pre/post coefficient, candidate score, final choice and executed production without changing native inputs." },
       "falsification": "A different native owner/UEA argument or coefficient-to-score dataflow would falsify this valuation join. A separate strategic personality consumer would extend the boundary.",

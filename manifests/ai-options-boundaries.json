@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "family": "ai-options-boundaries",
+  "findings": {
+    "RVA-F-0328": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0328",
+      "topic": "ai-player-save-capacity",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Does the selected serializer use a fixed eight-player backing extent, and does that establish more playable opponents?",
+      "scope": { "functions": ["0x82CC4040"], "maximumFunctions": 1 },
+      "dependencies": [
+        { "topic": "ai-civilization-elimination-boundary", "use": "Accepted ordinary six-slot setup, Barbarian5, masks, per-player256-unit pools and eight-column elimination index." }
+      ],
+      "nativeResult": {
+        "units": "0x82CC4510..0x82CC4550 traverses84-byte records from0x830F2BF0 to base+0x2A000. This is8*256 records; the transfer helper's full effects are not expanded.",
+        "civilizationAndEra": "0x82CC454C..0x82CC45AC supplies count8 for0x830ECD28;0x82CC4930..0x82CC4990 supplies count8 for0x830ECD08 under the selected mode/version gates.",
+        "pairs": "0x82CC4C90..0x82CC4CF0 supplies count64 for0x830ED0D8; the accepted local*8+player index supplies its eight-column interpretation.",
+        "limit": "Backing storage does not establish initialization, turn scheduling, placement, UI or network semantics for ordinary players6/7, or authorize repurposing Barbarian5. Ordinary setup remains six total slots, civilized0..4 and Barbarian5."
+      },
+      "currentEvidence": {
+        "method": "Foreground read-only raw words reconciled to exact serializer generated windows and independently decoded extent arithmetic.",
+        "locators": ["ghidra/DumpMemoryWords.java:0x82CC4530,0x82CC457C,0x82CC4960,0x82CC4CC0 radius12"],
+        "returnedWords": 100,
+        "uniqueAddresses": 94
+      },
+      "runtimeObservation": { "status": "not-observed" },
+      "falsification": "Different serializer loop extent or count operands would falsify the backing capacities. Positive full-lifecycle evidence for additional ordinary players could extend the playable limit without changing this storage result.",
+      "conclusion": "Eight-player save backing is native; additional playable opponents are not verified. No configurable count above the existing maximum is accepted."
+    },
+    "RVA-F-0329": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0329",
+      "topic": "ai-economic-hook-boundaries",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Which selected return instructions expose completed native research and production costs without replacing their formulas?",
+      "scope": { "functions": ["0x82CF0EE8", "0x82CF1148", "0x82CF1278", "0x82CE2B98"], "maximumFunctions": 4 },
+      "dependencies": [
+        { "topic": "technology-research-cost", "use": "Complete accepted research formula, sentinel and retained input contract." },
+        { "topic": "production-cost-ownership", "use": "Unit scalar consumers, non-unit cost composition and native city owner." },
+        { "topic": "player-production-scalar-lifecycle", "use": "Native production scalar lifetime." }
+      ],
+      "nativeResult": {
+        "research": "0x82CF0EF0..0x82CF0F00 retains technology in r25 and player in r26. Final mullw r3,r11,r30 at0x82CF1054 precedes stack restore at0x82CF1058. The tech0 early9999 path bypasses that seam.",
+        "unit": "0x82CF1268 copies completed scalar r28 to r3, before stack restore0x82CF126C. Retained r30 is188*city ordinal and r29 is selected unit. The native city base is0x8314FE28, formed by lis0x8315 plus signed addi-472.",
+        "unitFactor": "0x82CE2BC4..0x82CE2C04 reads unit definition0x82F700D8+148*type+0x44, sign-extends its byte and multiplies by the scalar before signed division by two. This is a scalar adjustment point, not an exact final-cost percentage.",
+        "nonUnit": "0x82CF1278 retains city byte offset in r29 and item-100 in r27. Existing native AI reduction through0x82CF1548 precedes mr r3,r31 at0x82CF154C. Invalid-item branches bypass that assignment to0x82CF1550.",
+        "argumentLifetime": "Exact generated owner assignment scans found only incoming/selected assignments for these retained inputs; the accepted nested callee contracts remain required. Selected raw anchors corroborate the assignments and seams."
+      },
+      "currentEvidence": {
+        "method": "Foreground read-only raw windows and exact generated owner assignment checks;32 selected native anchors across89 new words plus the reused unit-return window.",
+        "locators": [
+          "ghidra/DumpMemoryWords.java:0x82CF0EF8 radius2;0x82CF1048 radius5;0x82CF11A0 radius4;0x82CE2BE4 radius8",
+          "ghidra/DumpMemoryWords.java:0x82CF12A0 radius7;0x82CF12D4 radius5;0x82CF1528 radius10",
+          "ghidra/DumpMemoryWords.java:0x82CF1164,0x82CF1268 radius4"
+        ]
+      },
+      "policyBoundary": "Percentages, floors, AI-only classification, supported item allowlists, freeze/save/load and network exclusion are new title policy. They are not recovered retail settings. Preserve native defaults and sentinel/nonpositive/overflow cases; avoid applying both unit-scalar and wrapper scaling to the same unit.",
+      "runtimeObservation": { "status": "not-observed", "required": "Default parity, completion/excess Gold agreement, unit/non-unit displays and execution, and effective-policy save/load." },
+      "falsification": "Different native assignment, return order or factor interpretation would invalidate the corresponding seam. Actual consumers bypassing these helpers would limit feature coverage.",
+      "conclusion": "Three precise post-composition seams support separately guarded title economic options. Runtime outcome parity and broader consumer coverage remain qualified."
+    },
+    "RVA-F-0330": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0330",
+      "topic": "ai-civilization-bonus-valuation",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Does an accepted civilization/era bonus influence a production-candidate score, and does that identify leader personalities?",
+      "scope": { "functions": ["0x82CB44E0"], "maximumFunctions": 1 },
+      "dependencies": [
+        { "topic": "civilization-bonus-storage", "use": "Complete cumulative UEA lookup and initialized Aztec Medieval UEA4 row." },
+        { "topic": "unit-definitions-ai-evaluation", "use": "Accepted AI production valuation owner; shared stat inputs do not themselves establish strategic preferences." }
+      ],
+      "nativeResult": {
+        "owner": "0x82CB44F0..0x82CB4570 reads current city owner through0x8314FE28 and188*city ordinal into signed retained r20.",
+        "selectedArm": "A conditional candidate103 follows the selected dispatch to0x82CB592C; the inline table cell0x82CB5740 contains that address. This is a conditional value, not an observed chosen item.",
+        "bonus": "0x82CB59E8..0x82CB5A08 calls0x82CF0CB0 with UEA4, player r20 and cumulative selector0. A nonzero result adds signed-truncated r31/2 to r31 with native low32 wrapping.",
+        "score": "0x82CB5A40..0x82CB5AFC includes that coefficient in candidate score r5, followed by other modifiers and branches to0x82CB668C.0x82CB668C..0x82CB66A4 compares it with prior best and conditionally stores score/candidate.",
+        "meaning": "A nonnegative nonoverflowing coefficient receives half again locally. Random contribution, other modifiers, availability, competitors and the final choice/execution still matter."
+      },
+      "currentEvidence": {
+        "method": "Foreground read-only raw queries,26 selected native anchor checks and exact-owner generated corroboration;123 returned rows,119 unique addresses.",
+        "locators": [
+          "ghidra/DumpMemoryWords.java:0x82CB4530 radius16;0x82CB56FC radius10;0x82CB5740 radius0;0x82CB59F8 radius4",
+          "ghidra/DumpMemoryWords.java:0x82CB5A80 radius16;0x82CB5AD8 radius9;0x82CB6698 radius3"
+        ]
+      },
+      "personalityBoundary": "No separate leader-personality schema or civilization-keyed aggression, diplomacy, army formation, war-target or research-choice policy has been joined. A syntactic absence of one direct civilization-base displacement in this owner cannot exclude aliases, hard-coded comparisons or other owners. Do not invent strategic fields in UEA records or reinterpret Barbarian policy as ordinary civilization behavior.",
+      "runtimeObservation": { "status": "not-observed", "required": "Correlate active/inactive UEA4, pre/post coefficient, candidate score, final choice and executed production without changing native inputs." },
+      "falsification": "A different native owner/UEA argument or coefficient-to-score dataflow would falsify this valuation join. A separate strategic personality consumer would extend the boundary.",
+      "conclusion": "Civilization bonuses can affect native AI candidate valuation. Recognizable strategic leader personalities and configurable extensions remain unbound."
+    }
+  }
+}

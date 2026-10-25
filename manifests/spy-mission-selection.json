@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0326",
+  "topic": "spy-mission-selection",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which Spy choices does the native menu dispatch, and does the selected unit-filter path choose a mission other than disrupting defenses?",
+  "scope": {
+    "functions": ["0x82CF39B8", "0x82CF6800", "0x82CBF570", "0x82CFF528"],
+    "maximumFunctions": 8,
+    "menuWindow": "0x82CF3E00..0x82CF42A4",
+    "effectPrefix": "0x82CF6800..0x82CF6A00",
+    "unitFilterWindow": "0x82CC1528..0x82CC1728",
+    "targetHelper": "0x82CFF528..0x82CFF8BC",
+    "boundary": "Selected menu, effect-prefix/dispatch, fresh-Spy request and target-helper windows. Caller censuses provide metadata only. Interior command transport, complete effects, general AI policy and runtime delivery remain outside the result."
+  },
+  "dependencies": [
+    { "topic": "unit-definitions-ai-evaluation", "use": "Spy is native unit28; accepted unit-filter consumer identity." },
+    { "topic": "xbox-network-message-root", "use": "Internal command28 dispatches through0x82CDF4D0/0x82CDF4DC to0x82CF6800; numeric command identity does not establish transport." },
+    { "topic": "wonder-claim-slot-state", "use": "Owner/city claim slots used by one conditional Great Person menu gate." },
+    { "topic": "wonder-record-identity-223", "use": "Scotland Yard item223 identity for that conditional gate; complete protection effects remain qualified." }
+  ],
+  "menuChoices": [
+    { "id": 0, "choice": "Disrupt defensive units", "label": "0x8214F45C", "selectorStore": "0x82CF3ECC..0x82CF3ED4", "effectEntry": "0x82CF69A4" },
+    { "id": 1, "choice": "Sabotage current production", "labels": ["0x8214F48C", "0x8214F4B0", "0x8214F4D4"], "selectorStore": "0x82CF3F74", "effectEntry": "0x82CF6BEC", "qualification": "Unit, building and Wonder labels share one mission selector." },
+    { "id": 3, "choice": "Demolish a building", "label": "0x8214F4F4", "selectorStore": "0x82CF3FA4..0x82CF3FAC", "effectEntry": "0x82CF6E7C" },
+    { "id": 4, "choice": "Kidnap a Great Person", "label": "0x8214F50C", "selectorStore": "0x82CF40F8..0x82CF4100", "effectEntry": "0x82CF6FC8" },
+    { "id": 6, "choice": "Bribe a Great General", "label": "0x8214F528", "selectorStore": "0x82CF415C..0x82CF4164", "effectEntry": "0x82CF71E4" },
+    { "id": 5, "choice": "Steal Gold", "label": "0x8214F544", "selectorStore": "0x82CF41DC..0x82CF41E4", "effectEntry": "0x82CF6C68" },
+    { "id": 7, "choice": "Leave quietly", "label": "0x8214F558", "selectorStore": "0x82CF4204..0x82CF4208", "effectEntry": "0x82CF68B8 bypass", "qualification": "An exit choice, not an additional harmful mission." }
+  ],
+  "localDispatch": {
+    "packing": "0x82CF4290..0x82CF4298 packs mission in bits8 and above with the target city in low8, then submits internal command28 to0x82CE1950.",
+    "effectSelector": "0x82CF6800 extracts the high mission field from r5 and target-city low8. The seven-word table0x82CF6988..0x82CF69A0 maps IDs0..6; ID2 reaches common tail0x82CF7360 and is not offered by the inspected menu. ID7 bypasses the action prefix.",
+    "availability": "Selected menu branches gate production sabotage by current production, demolition by building state, kidnapping by Great Person/owner/protection inputs, bribery by General/tile presence and Gold theft by its threshold. The complex protection predicates are not reduced to unconditional Scotland Yard immunity.",
+    "actorGate": "0x82CF4210/0x82CF4214 compares the acting player with the result of0x82D8A3A0 and exits on inequality. That resolver's complete player meaning and range remain unresolved. Labels and UI calls identify this selected region as an interactive menu; the comparison alone does not classify every actor as human or AI."
+  },
+  "selectedUnitFilter": {
+    "request": "The selected0x82CBF570 path requests a fresh Spy28 through0x82D11750 at0x82CC1650, tests its result against-1, then resolves a target through0x82CFF528 at0x82CC16A4.",
+    "mission": "0x82CC16A8 copies that helper result directly into effect argument r5.0x82CC16B4 calls0x82CF6800 without inserting a mission byte.",
+    "targetRange": "The bounded helper initializes its result to-1, loops over128 city positions in groups of four, and assigns only the four current city ordinals. Under valid normal inputs, its returned candidate is-1 or0..127. Every nonnegative candidate therefore selects mission0 when passed unshifted.",
+    "interpretation": "This is a demonstrated local mission-selection policy. It does not show a missing effect handler or a failed nonzero mission command. The fresh-created-Spy path has not been joined to every ordinary AI Spy arrival."
+  },
+  "boundedInventories": {
+    "rawDirectCallers": "A cap16-per-target raw census found two direct callers each for0x82CF39B8 and0x82CF6800 without truncation: menu sites0x82CD6B9C/0x82CDCA00 and effect sites0x82CC16B4/0x82CDF4DC. These are direct-call metadata, not complete actor or transport classification.",
+    "generatedSubmitForm": "A bounded search of100 direct generated0x82CE1950 call-name sites, below cap128, checked at most16 preceding instructions and stopped at control flow or other r3 writes. Only the known menu site had nearest constant command28. Variable commands, earlier constants, indirect and tail calls remain possible."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only canonical string-range, raw-word and direct-caller queries; exact-function generated windows; byte comparison with the image identified by image.json.",
+    "locators": [
+      "ghidra/FindStrings.java:disrupt,kidnap,espionage,spy,steal,stolen cap120,35matches",
+      "ghidra/DumpStringsInRange.java:0x8214F430..0x8214F57B cap20,12matches",
+      "ghidra/DumpMemoryWords.java:0x82CF3F00,0x82CF4104,0x82CF41A4,0x82CF6900 radius64",
+      "ghidra/FindDirectCallers.java:0x82CF39B8,0x82CF6800 cap16",
+      "ghidra/DumpMemoryWords.java:0x82CC1628,0x82CFF628,0x82CFF7BC radius64",
+      "generated:rerevved/sub_82CF39B8:0x82CF3E00..0x82CF42A4",
+      "generated:rerevved/sub_82CF6800:0x82CF6800..0x82CF6A00",
+      "generated:rerevved/sub_82CBF570:0x82CC1528..0x82CC1728",
+      "generated:rerevved/sub_82CFF528:0x82CFF528..0x82CFF8BC"
+    ],
+    "qualification": "Menu choices and local selector flow are static findings. Complete effect semantics, eligibility-helper returns, native input validity, delivery and retained outcomes are not established by the dispatch table alone."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "required": "Correlate an ordinary AI Spy city entry with actor/unit/city and the packed selector at0x82CF6800; distinguish the two menu ingresses, selected fresh-Spy edge and any variable command28 ingress."
+  },
+  "guards": [
+    "Do not assume missions from another Civilization title.",
+    "Do not describe seven menu choices as seven harmful missions.",
+    "Do not infer that all AI Spies use the selected fresh-Spy edge.",
+    "A broader policy must establish each mission's target predicates and effect termination before choosing nonzero selectors. Generated-only kidnapping/bribery loop observations are leads, not promoted complete-effect contracts.",
+    "No unconditional Spy correction or configurable broader-use feature is accepted from this result."
+  ],
+  "falsification": "Different current-image selector stores, table words, packing, or target-helper assignments would falsify the local mapping. A nonzero mission byte at the selected0x82CC16B4 edge would falsify its mission0 policy; another ordinary AI ingress could extend the result without changing that local policy.",
+  "conclusion": "The native menu offers six harmful missions and a quiet exit. A selected unit-filter path explicitly supplies only a target city, choosing defense disruption. The general ordinary-AI ingress and executed outcomes remain unobserved; no Spy defect has been demonstrated."
+}

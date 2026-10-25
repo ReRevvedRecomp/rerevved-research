@@ -29,6 +29,29 @@ The [placement expansion finding](../../manifests/ai-options-boundaries.json#/fi
 owns these exact joins and limits. Four AI is the current supported ordinary
 setting, not a proved absolute engine ceiling.
 
+## Six AI setup
+
+One human and six AI, retaining Barbarians, needs seven civilizations and
+eight participants. The selected native eight-entry unit, civilization,
+coordinate and relation backing fits this layout. Five AI uses seven
+participants. These layouts keep every participant below index eight and
+avoid the ninth-column and ninth-pool collisions above.
+
+The [setup assignment finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0332)
+binds an early seam after actual human-mask construction, the later ordinary
+count stores and the native AI civilization writer with duplicate retries.
+It preserves the earlier human selection and the separate Barbarian ID.
+The bounded contract keeps the human at slot zero, before every AI in the
+native comparison against earlier civilization IDs.
+This is a concrete offline prototype contract, with valid starts, turns,
+contacts and save/load still unobserved.
+
+Restricted selection flags admit only five civilization IDs. Expansion must
+exclude those modes rather than relying on retries to create enough distinct
+IDs. Game of the Week also changes the duplicate comparison to omit
+civilization zero; the bounded expansion contract excludes that mode as well
+as multiplayer and the native special two-player override.
+
 ## Economic and strategic consumers
 
 Native research and production helpers expose three post-composition seams.

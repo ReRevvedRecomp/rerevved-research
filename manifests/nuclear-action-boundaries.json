@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "family": "nuclear-action-boundaries",
+  "findings": {
+    "RVA-F-0333": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0333",
+      "topic": "nuclear-command-lifecycle",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Does the selected nuclear Move branch distinguish interception, damage, presentation waiting and missile consumption?",
+      "scope": {
+        "functions": ["0x82CDDF08", "0x82CF7428", "0x82CF78D8", "0x82D02390"],
+        "maximumFunctions": 5,
+        "boundary": "Move case0x82CDEDFC through0x82CDF2EC, damage helper0x82CF7428 through its epilogue, alternate helper prefix through0x82CF7BD0 and the accepted mode0 unit-kill helper. Registration owner0x82E888A0 was also queried but supplies no gameplay claim. No complete command ingress, opaque callee/virtual target, alternate-route completion, save persistence or runtime outcome is established."
+      },
+      "dependencies": [
+        {"topic": "unit-movement-lifecycle", "use": "Accepted command17 Move case, unit table/stride, destination fields and separate ordinary-move lifecycle."},
+        {"topic": "ai-civilization-elimination-boundary", "use": "Accepted mode0 unit-kill semantics and later zero-city civilization cleanup; reuse without reclassifying every caller."},
+        {"topic": "building-record-identities-100-122", "use": "Initialized item118 is SDI Defense; its description alone is not the interception proof."},
+        {"topic": "building-completion-state-writer", "use": "Ordinary building118 uses normalized index18 and writes city+0x10 bit0x40000, joining the selected nuclear guard to SDI presence."}
+      ],
+      "admission": {
+        "unit": "Case0x82CDEDFC forms U=0x830F2BF0+84*((player<<8)+unit), loads signed type at U+1 and definition D=0x82F700D8+148*type.0x82CDEE30..38 selects this branch when U32(D+0x50) bit0x20000 is set. Initialized type27 begins at0x82F71074 with name bytes ICBM; its flags at0x82F710C4 are0x00020044. This does not validate arbitrary types, ordinals or live modified definitions.",
+        "targetAndMode": "0x82CDEE3C..80 splits the packed command target by40 into quotient r26 and remainder r27;0x82CDEE84 calls0x82D076D8, then0x82CDEE8C reads0x8314F1AC. Nonzero calls0x82CF78D8(player,unit,r27,r26) at0x82CDEEA8 and leaves this case. Zero reaches0x82CDEEB0. The flag's mode name and the earlier helper's effects remain unbound."
+      },
+      "zeroModeRoute": {
+        "queuedState": "0x82CDEEB0..0x82CDEF00 stores target halfwords at U+0x22/+0x24 and-1 at U+0x18; it sets U+0xC bit0x1 and clears bit0x40. It also writes float target components at0x82F771C4/0x82F772D0. Retained inputs and normal helper returns are premises.",
+        "sdiGuard": "0x82CDEF54..0x82CDF100 checks the center and eight table-derived offsets. Each selected test requires tile halfword bit0x1, a signed tile-owner byte unequal to actor, and the indexed city's+0x10 bit0x40000. Qualifying tests replace r20, initially-1, with that city index and set U+0xC bit0x40. The offset tables, valid coordinate domain and complete retained tile/city coherence are not proved here; do not infer universal range or first-match priority.",
+        "presentationStart": "0x82CDF120..12C ORs0x02200100 into0x82FFE7C4;0x82CDF134 calls receiver0x8314F76C virtual+0x1F4 with r4=0 and retains the result. No actual installed target or displayed effect is identified.",
+        "wait": "0x82CDF144..180 repeats while0x82FFE7C4 bit0x02000000 or0x82FFE7C0 mask0x30000 remains set, calling0x82E2A838. A zero low-byte pump result can also leave the loop. Exit therefore does not prove a completed animation; the later code clears0x100 and0x200000 in0x82FFE7C4.",
+        "damageAndConsumption": "Only r20==-1 calls0x82CF7428 at0x82CDF1A8. Both local outcomes then clear U+0xC bit0x8000 and call0x82D02390(player,unit,0) at0x82CDF1C4. Its mode0 arm marks U+0xC bit31 and writes-1 to U+0x26, with accepted linked-unit cleanup. This is a conditional consumption path after required returns, not proof that every launch reaches it or that damage succeeded.",
+        "postOutcome": "The no-selected-SDI arm writes3000 to0x830E4548 and clears target tile bit0x20; the constant's time units are not assigned. The selected-SDI arm formats the message at0x82157518 using the retained city and calls advisor0x82CE8338 at0x82CDF268. It does not establish a visible message. Both reach virtual+0xC4 at0x82CDF27C, with virtual+0x1F0 at0x82CDF29C conditional on the earlier+0x1F4 result's low byte."
+      },
+      "damageHelper": {
+        "guard": "0x82CF749C..0x82CF7574 independently scans center/table offsets with coordinate arithmetic and checks a populated tile's actual city owner against actor and city+0x10 bit0x40000. A qualifying different-owner city calls0x82D03388 at0x82CF75CC and returns. Unlike the dispatch scan, this guard reads city owner; no blanket equivalence of the two scans is asserted. The scan is not side-effect-free: its other selected arm clears tile bit0x10 and calls virtual+0x104 at0x82CF7560 before continuing.",
+        "state": "On the remaining path,0x82CF7654..0x82CF76F0 changes city population byte+3 with center-versus-offset division and a bit0x1 building exception; further guarded city work and pair-state writes follow.0x82CF7788..0x82CF7824 scans up to256 unit records of the selected tile owner, requires byte+0!=0xFF, dead bit31 clear and matching coordinates, and has an alternating-survivor exception for noncenter city tiles. Qualified records call0x82D02390(mode0) at0x82CF7814. This establishes gameplay-state and kill paths, not a universal kill count or every callee's effects.",
+        "finish": "The selected tail changes center tile state or calls virtual+0x174, then requests recount0x82D11AD8 at0x82CF78AC and increments a player-indexed word. Reaching/returning through this tail is not observed. The local inspected body contains no direct RNG recurrence, but indirect/transitive callees are unexpanded."
+      },
+      "nonzeroModePrefix": {
+        "entry": "0x82CF78D8 retains actor/unit/target, writes2 to0x830E45B8 and float target components, then calls0x82CFADF0. Its selected prefix also tests city SDI state.",
+        "effectRequest": "The selected no-interception arm calls0x8314F76C virtual+0x178 at0x82CF7A50 with kind2, actor and target, retaining the returned value. It later polls virtual+0x17C at0x82CF7AD0 and pumps0x82E2A838. Installed target, token lifetime, actual effect and downstream completion beyond the queried prefix remain unbound. Do not apply the zero-mode consumption proof to this route."
+      },
+      "currentEvidence": {
+        "method": "Serialized foreground read-only canonical Ghidra queries, supported flat-image SHA256 equality,943 unique native words matched to file bytes, fixed-four-byte Capstone5.0.7 decoding and narrow exact-owner generated corroboration. Save-thunk truncation was preserved; no canonical repair.",
+        "locators": [
+          "ghidra/DumpFunctions.java:0x82CDDF08,0x82CF7428,0x82CF78D8,0x82D02390,0x82E888A0",
+          "ghidra/DumpMemoryWords.java:0x82CDEF00,0x82CDF100,0x82CDF200,0x82CF7528,0x82CF7728,0x82CF77D0,0x82CF79D8,0x82CF7AD0,0x82D02490 radius64",
+          "ghidra/DumpMemoryWords.java:0x82CDEDFC,0x82F71074,0x82F710C4 radius0",
+          "generated:rerevved/sub_82CDDF08:0x82CDEDFC..0x82CDF2EC",
+          "generated:rerevved/sub_82CF7428",
+          "generated:rerevved/sub_82CF78D8:0x82CF78D8..0x82CF7BD0",
+          "generated:rerevved/sub_82D02390"
+        ],
+        "qualification": "Read-only words are static evidence. Mode values, receivers, return/alias/lifetime retention, exact save/build and gameplay/display outcomes need a matched runtime observation. Existing ordinary Move observations do not transfer to nuclear actions."
+      },
+      "runtimeObservation": {"status": "not-observed", "required": "Retain actor/unit/command/target and mode; compare before/after unit, SDI city, population and victim records; bind damage/kill calls and presentation wait exit to the same event and video."},
+      "falsification": "Different definition mask, mode branch, SDI predicates, damage-call guard, consume arguments or wait exit invalidate the respective static result. Changed live inputs, opaque calls or later state changes can invalidate a runtime interpretation without changing the instructions.",
+      "conclusion": "A specialized Move branch can consume an ICBM after either selected interception or a conditional damage-helper call. Gameplay consumption, gameplay outcome and visible presentation are separate. Missing pixels alone do not demonstrate a missing gameplay effect; a consumed missile alone does not demonstrate successful damage."
+    },
+    "RVA-F-0334": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0334",
+      "topic": "nuclear-presentation-anchors",
+      "status": "closed",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Which bounded named nuclear asset/settings/exposure sites can seed an actual effect-lifetime trace without claiming a joined render path?",
+      "scope": {"functions": ["0x82C725D8", "0x82DBD668", "0x82E3FA18", "0x82E730D8"], "maximumFunctions": 4, "boundary": "Four exact materialization/use windows only; no callees, factory ingress, render/update/destruction body, shader parameter application or runtime configuration value."},
+      "dependencies": [{"topic": "nuclear-command-lifecycle", "use": "Provides conditional presentation request/wait edges whose actual targets and effect instances remain unjoined to these named sites."}],
+      "anchors": {
+        "asset": "0x82DBD668..0x82DBD6A4 retains incoming r4/r5 at receiver+0x6C/+0x70 and [0x8314EFB8] at+0x78, then calls0x82C63480(receiver,0x82131910,0). That address names Nuke_Crater.xml. This is an asset request anchor, not proof of successful loading, crater creation, lifetime or a missile/explosion draw.",
+        "settingRead": "0x82C72848..0x82C72868 passes the Disable Nuke Post-Process Effect label at0x82163ED8 to0x82C79160 and branches on the result before later helper calls. The binding to a live setting and its pixel effect are unproved; this is not a proposed workaround.",
+        "settingUi": "0x82E40040..0x82E4005C passes the suppress-nuke-effect label0x82165A88 and description0x82165A4C to0x82D359A0 with an output at frame+0x50 and r6=0. Neighboring byte tests/helpers do not establish a current value or a complete suppression consumer.",
+        "exposureName": "0x82E73E88..0x82E73EAC compares receiver+0x15C against the g_fNukeExposure name address0x821634C0; on inequality it calls0x82346F30 with that name, stores the result at+0x15C, and releases the prior local through0x821B0088. This is a name/handle preparation pattern, not a float value write or proof of active shader exposure."
+      },
+      "currentEvidence": {
+        "method": "Bounded string inventory22 matches under cap60; selected split-immediate candidates and exact owner neighborhoods;100 native words matched to the pinned image, including two preceding padding/tail words excluded from the asset claim. Fixed-width PowerPC decoding corroborated by narrow generated windows.",
+        "locators": [
+          "ghidra/FindStrings.java:nuke,nuclear,missile,manhattan",
+          "ghidra/FindSplitConstantCandidates.java:0x82131910,0x821634C0,0x82163ED8,0x82165A4C,0x82165A88",
+          "ghidra/DumpFunctionNeighborhoodBatch.java:0x82C72848,0x82DBD688,0x82E40040,0x82E73E88",
+          "ghidra/DumpMemoryWords.java:0x82C72868,0x82DBD690,0x82E40060,0x82E73EA0 radius12",
+          "generated:rerevved/sub_82C725D8:0x82C72848..0x82C72894",
+          "generated:rerevved/sub_82DBD668:0x82DBD668..0x82DBD6C0",
+          "generated:rerevved/sub_82E3FA18:0x82E40040..0x82E40090",
+          "generated:rerevved/sub_82E730D8:0x82E73E88..0x82E73EB0"
+        ],
+        "qualification": "Canonical instruction/listing truncation means missing direct references do not establish no consumer. Bounded pointer and split-use searches are not absence proofs. No runtime probe or asset capture was performed."
+      },
+      "reentryGate": "Identify the actual nuclear virtual target/effect instance or a first failing draw/resource in a matched event. Bind creation, asset success, update/render, retained bindings, resolve/sample and destruction in that instance. Do not repeat global string/reference searches without a new discriminator.",
+      "guards": ["Do not equate a crater asset with the missile model or all explosion passes.", "Do not set or remove a suppression option from its label alone.", "Do not treat an exposure-name handle as the parameter value consumer.", "Do not infer that native rendering bypasses or fixes a guest effect-lifetime error."],
+      "conclusion": "Named nuclear presentation anchors exist, but the gameplay request-to-scene-instance-to-D3D join remains unresolved. These four sites narrow a future trace without assigning the reported flicker or disappearance to a particular owner."
+    }
+  }
+}

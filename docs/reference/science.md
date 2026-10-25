@@ -28,6 +28,26 @@ no signed overflow, stable cost; no local technology clamp exists. Source `6`
 civilization grants remain separate; shared acquisition proves no common
 policy/reason semantics or cadence.
 
+## First-discovery rewards
+
+Ceremonial Burial selects Temple through the ordinary building reward loop.
+Its recipient score equals city population, while a later gate requires a
+score greater than population. The selected native path therefore chooses no
+Temple recipient. Bypassing that hurdle for Temple retains the existing
+largest-city rule, earlier city-slot ties and missing-Temple check. It does
+not select a capital or create a reward absent from the native machinery.
+
+Egypt's Medieval Irrigation uses the free-technology source. The acquisition
+owner explicitly suppresses first-discovery effects for that source, before
+Irrigation's population scan. A targeted Egypt exception is a change to this
+shipped rule. It can retain the ordinary first-ownership gate and phase-one
+population reward; phase two only presents the result.
+
+The [first-discovery finding](../../manifests/technology-first-discovery-rewards.json)
+records exact branches, recipient filters, duplicate limits and the remaining
+helper and runtime requirements. A reported discovery notice alone does not
+establish delivery.
+
 ## Technology research cost
 
 `TechnologyResearchCost` (`0x82CF0EE8`) starts at two for valid nonzero
@@ -66,6 +86,7 @@ actual dialog retention, launch delivery and repaired victory remain unobserved.
 ## Evidence sources
 
 - [Technology research cost](../../manifests/technology-research-cost.json)
+- [First-discovery rewards](../../manifests/technology-first-discovery-rewards.json)
 - [Science completion](../../manifests/science-completion.json)
 - [Spaceship launch arrival year](../../manifests/spaceship-launch-arrival-year-boundary.json)
 - [Starting technology grants](../../manifests/starting-technology-grants.json)

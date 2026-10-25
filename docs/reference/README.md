@@ -12,7 +12,7 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 - [Ordinary combat boundary](ordinary-combat.md) - stats, stores, presentation and outcome/persistence limits.
 - [Civilization Unique Abilities](civilization-bonuses.md) - leaders, UAs and cumulative 16 by 4 UEAs.
 - [City growth and population bonuses](city-growth.md) - thresholds, carryover and Gold/Irrigation rewards.
-- [Science and technology cost](science.md) - cost, progress, acquisition,
+- [Science and technology cost](science.md) - cost, progress, first-discovery rewards, acquisition,
   excess Gold and the spaceship launch-date admission boundary.
 
 ## Resources, setup, and saves

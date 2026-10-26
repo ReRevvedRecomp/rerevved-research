@@ -16,6 +16,23 @@ findings establish no safe additional-definition API.
 - [Building and wonder fields](#building-and-wonder-record-contract).
 - [Ordinary unit IDs and stats](#unittype-values).
 - [Combat stat roles](#combat-stat-role-boundary).
+- [Native army formation](#native-army-formation).
+
+## Native army formation
+
+Native command 10, `MakeArmy`, calls `0x82D13618`. Its eligibility helper requires
+at least three matching ordinary units on one tile, with additional type,
+definition and player gates. Formation consumes the first two eligible slots
+other than the selected unit, combines their state into the survivor, writes
+its army selector, invokes native callbacks and recounts.
+
+This is a formation path, not just the army-name field. An earlier existing
+Archer on the tile can be consumed before newly created Archers. A first-capital
+army grant therefore still needs an existing-unit preservation contract,
+founding receipt/save policy, allocation handling and actual callback lifetime
+evidence. No such grant or runtime outcome is established here. Exact gates,
+writes and qualifications are in the
+[army formation boundary](../../manifests/army-formation-command-boundary.json).
 
 ## Recovered layout and readers
 
@@ -312,10 +329,16 @@ Masks join completion bits: Bank requires Market, Cathedral Temple, University
 Library; later-tier bits hide earlier items. These local checks prove neither
 complete availability/effects nor runtime completion.
 
-Half-cost branches pair Barracks 101/UEA 19, Library 105/20, Courthouse 114/18;
-Cathedral 111/21 has no accepted retail activation. University 112 and Factory
-116 have neutral-gated reductions. Sequence/common modifiers:
-[`building-wonder-cost-modifier-branches.json`](../../manifests/building-wonder-cost-modifier-branches.json).
+Building half-cost branches pair Barracks 101/UEA 19, Library 105/20 and Courthouse
+114/18; Cathedral 111/21 has no accepted retail activation. University 112 and
+Factory 116 have neutral-gated reductions. The early item-specific tests use a
+shared word-shift mask: initialized Wonder 229 also matches the Barracks mask,
+and 233 matches the Library mask and later three-quarter subtraction. These
+static aliases retain the ordered current-cost arithmetic and retail-composition
+limits in [the modifier record](../../manifests/building-wonder-cost-modifier-branches.json).
+Wonder 229 still requires dynamic bit-two admission and its full outer gate; 233
+is excluded from the ordinary menu and known-vtable city-update route. See
+[the eligibility record](../../manifests/wonder-eligibility.json#/findings/RVA-F-0170).
 
 Final wonder reduction uses `0x82FFE7C8`. In `BroadGameStateSerializer`, null
 auxiliary pointer plus mode one passes it to `BufferReadU32` as destination;
@@ -343,10 +366,13 @@ out-of-interval writers open:
 A 128-position loop at `0x82E8AEC8` writes `0x8314F0A8` to city `+0xB8` and zero
 to `+0xB0`/`+0xB4`; meanings/consumers remain unknown. See the
 [initializer symbol](../../manifests/catalogs/symbols.json).
-Library/University's three-quarter gate `0x830E8FFE` has unknown writer/policy:
-bounded address searches found none, and its consumer is in a Ghidra function
-gap. See the
-[gate frontier](../../manifests/building-wonder-cost-gate-source-frontier.json).
+The shared three-quarter subtraction gate at `0x830E8FFE` can receive authored
+QUARTERPRICELIB through the accepted scenario-slot copy. Actual selection,
+retention, other writers and complete gameplay policy remain unproved. The
+conditional source and initialized mask matches are recorded in
+[the modifier record](../../manifests/building-wonder-cost-modifier-branches.json#/additionalCommonBranches/0).
+Bounded address searches found no writer, and the consumer lies in a Ghidra
+function gap; see [the source frontier](../../manifests/building-wonder-cost-gate-source-frontier.json).
 
 ### Building choices and completion fields
 
@@ -1079,8 +1105,26 @@ A compatible nonzero producer and resolver entry, full transfer and participant
 persistence remain unclosed; no naturally reachable ordinary outcome path is
 proved.
 
+## Loaded-fleet sale value
+
+The selected native sale path adds the carrier's production factor and admitted
+linked passengers' factors, then applies the carrier's army/fleet multiplier
+to the whole sum. It does not use each passenger's own army marker in that sum.
+For the supported Galleon/Spy inputs and the human classifier arm, an empty
+fleet contributes 90 Gold, one loaded Spy brings the total to 165, and ten bring
+it to 840. The cargo contributions are therefore 75 and 750 Gold. These are
+derived native amounts; actual command delivery and reserve changes were not
+observed. [Sale valuation](../../manifests/unit-sale-refund-value-boundary.json)
+records membership, identity, arithmetic and preview/correction limits.
+The native register representation permits a correction at the value producers
+without changing the formatter. Such a correction still needs roster retention
+across the classifier and a guard for nested carriers excluded by removal.
+
 ## Evidence sources
 
+- [Fleet scrap command boundary](../../manifests/fleet-scrap-command-boundary.json):
+  army disbanding and unit deletion use different selected commands. Their
+  inspected paths do not establish loaded-fleet refunds or cargo valuation.
 - [Unique Unit identity selection](../../manifests/unique-unit-identity-selection.json)
 - [AI candidate choice](../../manifests/ai-stat-choice.json)
 - [Unit-definition AI evaluation](../../manifests/unit-definitions-ai-evaluation.json)

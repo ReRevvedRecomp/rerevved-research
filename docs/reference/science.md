@@ -30,6 +30,14 @@ policy/reason semantics or cadence.
 
 ## First-discovery rewards
 
+Literacy matches the Courthouse definition in the generic first-discovery
+building loop. It is a native reward candidate subject to first-discovery,
+source/phase, recipient-score and delivery gates; Greek participation is not
+required for that local match. This does not establish the cause of a reported
+caption or replace the separate science effect. The
+[reward boundary](../../manifests/technology-first-discovery-rewards.json)
+records the retained-recipient and presentation limits.
+
 Ceremonial Burial selects Temple through the ordinary building reward loop.
 Its recipient score equals city population, while a later gate requires a
 score greater than population. The selected native path therefore chooses no

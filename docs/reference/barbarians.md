@@ -48,10 +48,11 @@ records give `C=3` only with fresh rebuild, matching coordinates, no other
 contribution/wrap. Nonzero `+4`, stale plane, invalid city or other records
 invalidate simple headcount; live ownership/displayed hut remain inputs.
 
-Hold also needs source halfword bit 0, valid `0x83128D08` city, `flags&0x87==0`
-and defense nonzero. Marked destination bypasses; attack>defense has support
-bypass, unlike equal-stat barbarian types. Origin 2/4 is separate. Cleared
-target can enter fallback, not guaranteed stillness.
+Hold also needs source halfword bit 0, valid `0x83128D08` city,
+`flags&0x87==0` and defense nonzero. Marked destination bypasses;
+attack>defense has support bypass, unlike equal-stat barbarian types. Origin
+2/4 is separate. A cleared target can enter fallback, so clearing it does not
+guarantee that the unit stays still.
 
 Spawning-only override belongs at eligible CityUpdate fecundity consumer,
 preserving W/mode/production/cost/allocation/scheduling guards; no fixed
@@ -66,10 +67,10 @@ neighbor, holds/fallback and executed command. Eight-function/748-word evidence:
 
 ## City production and rate inputs
 
-Creation selects type 3/4/5 by latitude for barbarian-owned city; CityUpdate
-repeats when both `+0`/`+1` match barbarian word (second meaning unknown). It
-adds 0/1/3 to invested `+0x36`, controlled by `Q+2`, coordinate presence and
-separate mode.
+Creation selects type 3/4/5 by latitude for a barbarian-owned city. CityUpdate
+repeats this selection when both `+0`/`+1` match the barbarian word (the
+second field's meaning is unknown). It adds 0/1/3 to invested `+0x36`,
+controlled by `Q+2`, coordinate presence and separate mode.
 
 Completion compares normal cost, requests `0x82D15AB0 -> 0x82D11750` at city
 coordinates. Types 3..5 factor 1 bypass Settler population gate. `-1` fails;
@@ -86,18 +87,20 @@ order/retention: `recurringProductionBoundary`.
 ## Fecundity and rebuilt presence
 
 `BFECUNDITY` is Q+2: default 1, Beta 2, custom matched bits. Failure application
-`(-1,0)` resets it; earlier preset does not identify later retained value. For
-two aligned inputs, fill clears exactly 128 Q bytes or 1,600 presence bytes,
+`(-1,0)` resets it; an earlier preset does not identify the value retained later.
+For two aligned inputs, fill clears exactly 128 Q bytes or 1,600 presence bytes,
 returning destination. Rebuild adds eligible configured-pool weights 1/3 modulo
 256 at earlier sampled coordinates, not a fresh guard count.
 
-Callback intervenes between coordinates/contribution. Retained root/frame at
-`0x82D12AD4..0x82D12ADC` loads `M=[0x8314EFE0]`, `S=[M+0x10]`; null bypass
+A callback runs between sampling the coordinates and adding the contribution.
+If the root and frame retain their required values, the instructions at
+`0x82D12AD4..0x82D12ADC` load `M=[0x8314EFE0]`, `S=[M+0x10]`; null bypass
 supplies -1 at `0x82D12B00`. Matching registered S/vptr `0x8215FA78` selects
 `+0x100` -> two-instruction `0x82A73340`, returning `[S+0x20]` without
 writes/other register changes. Next `+0xC` must be readable; allocation can
 leave zero. Actual child/class/result, later dispatch, scan retention and
-ordered same-cell `0x82D15408` read remain conditional.
+ordered `0x82D15408` read from the corresponding presence-table entry remain
+conditional.
 
 Fecundity 1 admits presence 0/1, credits 1; 2 admits 0/1/2, credits 3. Zero mode
 suppresses nonzero presence. Speed tests exactly 2, not a linear multiplier;

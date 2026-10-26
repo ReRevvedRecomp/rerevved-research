@@ -1,10 +1,11 @@
 # Civilization Unique Abilities
 
-Each civilization has one UA and four cumulative UEAs: Ancient starts apply
-UA/Ancient UEA; later eras add effects without removing earlier ones. Later-era
-scenario grants retain the gates below. UAs can grant technology/building/unit/
-gold/map state or ongoing rules; they are separate from UEA table `0x82F6F950`:
-16 rows, four 32-bit IDs each, stride `0x10`, total `0x100`.
+Each civilization has one Unique Ability (UA) and four cumulative Unique Era
+Abilities (UEAs). Ancient starts apply the UA and Ancient UEA; later eras add
+effects without removing earlier ones. Later-era scenario grants retain the
+gates below. UAs can grant technologies, buildings, units, Gold or map state,
+or apply ongoing rules; they are separate from UEA table `0x82F6F950`: 16
+rows, four 32-bit IDs each, stride `0x10`, total `0x100`.
 
 Names are recovered, not debug symbols. Effect evidence is static unless stated;
 shared lookup alone proves neither complete effect ownership nor runtime,
@@ -126,12 +127,13 @@ This generic acquisition also serves research, trade, setup, network and UA
 routes. It sets player bit in 48-word `0x830EDC48` and invokes discovery
 gameplay/presentation consumers.
 
-Opportunity is configured start turn or era transition, not continuous. All
-eight use cumulative mode; later-era starts may grant earlier UEAs. Exact mode
-remains uncalled/unclamped. UA grants are separate: Arabian index 11 receives
-Religion 19 when current-start turn equals one, without UEA query. Saved
-ownership omits grant provenance; `0x82CC4040` transfers all 48 words both ways,
-so removing a host rule does not revoke technology.
+The grant opportunity occurs on the configured start turn or an era
+transition, rather than continuously. All eight use cumulative mode; later-era
+starts may grant earlier UEAs. Exact mode remains uncalled/unclamped. UA
+grants are separate: Arabian index 11 receives Religion 19 when current-start
+turn equals one, without UEA query. Saved ownership omits grant provenance;
+`0x82CC4040` transfers all 48 words both ways, so removing a host rule does
+not revoke technology.
 
 UEA40 has no technology branch. Replacing an existing literal changes another
 retail placement; dormant 57 has no accepted placement/presentation/AI meaning.

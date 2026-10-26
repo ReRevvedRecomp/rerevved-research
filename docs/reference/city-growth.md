@@ -1,7 +1,7 @@
 # City growth threshold
 
 `CityGrowthThresholdLookup` (`0x82CF1060`) uses population, a shared scalar and
-three flags; scalar/flag gameplay meanings remain unknown.
+three flags. The gameplay meanings of the scalar and flags remain unknown.
 
 | Input | Storage | Use |
 | --- | --- | --- |
@@ -22,9 +22,10 @@ B1 = T(B0) if half_3C bit 0x2 is set, otherwise B0
 B  = T(B1) if word_24 bit 0x40 is set, otherwise B1
 ```
 
-Without overflow on nonnegative inputs, reduction is `floor((2*v + 1)/3)`; both
-flags apply it twice with intermediate rounding. No pre-bonus clamp. Scalar
-initialization/value, flag meanings and runtime ranges remain unknown.
+Without overflow on nonnegative inputs, reduction is `floor((2*v + 1)/3)`;
+both flags apply it twice with intermediate rounding. There is no clamp before
+the bonus. Scalar initialization and value, flag meanings and runtime ranges
+remain unknown.
 
 When cumulative UEA 8, Faster city growth, is active, the ordinary integer
 result is `max(20, B - 10)`. Otherwise the threshold is `B`. For wrapped signed
@@ -36,12 +37,12 @@ City update compares signed `+0x34`, subtracting threshold and incrementing
 
 ## Population bonus branches
 
-Applying 100-Gold requests type-0 Settlers at first populated reward-player
-city, without capital test. Returning continuation advances threshold marker
-without testing grant success. 2,000-Gold adds +1 below population 31;
-Irrigation first discovery also adds +1 to owned cities with separate
-phase/source/eligibility guards and no below-31 test. Both call `0x82D00C78`
-after writes.
+Applying the 100-Gold reward requests type-0 Settlers at the first populated
+city owned by the reward player, without testing whether it is the capital.
+The returning continuation advances the threshold marker without testing grant
+success. The 2,000-Gold reward adds +1 below population 31; Irrigation first
+discovery also adds +1 to owned cities with separate phase/source/eligibility
+guards and no below-31 test. Both call `0x82D00C78` after the writes.
 
 Classifier's nonzero-mask or zero-mask/null-child arms retain helper state,
 clearing/bypassing unnamed `+0x78`. Nonnull child requires actual receiver/
@@ -59,7 +60,7 @@ insufficient.
 
 ## OCC reward contract
 
-For replacement of applying 100-Gold:
+To replace the application of the 100-Gold reward:
 
 1. Retain reward player; scan 128 slots, match signed owner/population 1 through
    30, increment once and call `0x82D00C78(cityIndex)`. Skip 31; granting 32

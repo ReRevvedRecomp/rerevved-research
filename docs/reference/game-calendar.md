@@ -12,15 +12,16 @@ symbols; runtime observations are distinguished from static dataflow.
 | `TurnToYear` | `0x82CEFA20` | Native piecewise conversion from turn to year |
 | `CalendarTurnAdvance` | `0x82D1EAB0` | Bounded routine that increments the turn, converts it to a year, and stores the year |
 
-Initial turn/year: 0/-4000. Each positive `TurnToYear` step adds 100 while
-year<0, 50 below 1000, 25 below 1700, 10 below 1900, 5 below 1950, then 2.
+The initial turn/year pair is 0/-4000. Each positive `TurnToYear` step adds
+100 while year<0, 50 below 1000, 25 below 1700, 10 below 1900, 5 below 1950,
+then 2.
 
 ## Transition flow
 
 `CalendarTurnAdvance` increments `0x8312B8DC`, calls `TurnToYear`, then stores
 year at `0x8312B8E0`. Initialization/load derive the same pair before
-resumption. Sole writer, full ABI, triggering action/phase and side effects
-remain unproved.
+resumption. The full ABI, triggering action or phase, and side effects remain
+unproved. Whether this is the sole writer is also unproved.
 
 Its exact direct `ActiveCivilizationBonusLookup` call establishes consumption,
 not calendar arithmetic or bonus causation.

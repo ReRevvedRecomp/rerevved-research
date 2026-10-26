@@ -1,17 +1,18 @@
 # Resource definitions
 
 The 22-row table maps **Oxen 0** to technology **4, Horseback Riding**; Cattle
-19 uses 9, Code of Laws. Shared `Cow` token is not unique identity.
-[Manifest](../../manifests/resource-definitions.json) owns image/row/name
-hashes, readers and limits; [placement](resource-placement.md) owns
-creation/refresh/retention.
+19 uses 9, Code of Laws. The shared `Cow` token does not uniquely identify a
+resource. [Manifest](../../manifests/resource-definitions.json) owns
+image/row/name hashes, readers and limits; [placement](resource-placement.md)
+owns creation/refresh/retention.
 
 ## IDs, names and nominal technologies
 
-Reader IDs are zero-based: `-1` absent, `0` valid Oxen. Exact initialized ASCII
-names/tokens prove no UI localization or token consumer. Signed `+0x43` gives
-technology ID; its table supplies names. `-1` bypasses technology ownership,
-retaining tile/context gates.
+Reader IDs are zero-based: `-1` means absent, and `0` is valid Oxen. The exact
+initialized ASCII names and tokens do not establish UI localization or
+identify a token consumer. Signed `+0x43` gives technology ID; its table
+supplies names. `-1` bypasses technology ownership, retaining tile/context
+gates.
 
 | ID | Record name | Secondary token | Technology ID | Technology name | Terrain byte | Remainder |
 |---:|---|---|---:|---|---:|---:|
@@ -47,7 +48,7 @@ excluding units/other content.
 
 Six names differ from tokens: `Silver`/`Sugar`/`Fur`/`Deer` are
 Sulfur/Rubber/Oak/Game cells, not proved aliases; `Cow` serves Oxen/Cattle.
-Name/token lookups differ.
+Name and token lookups differ.
 
 ## Terrain and coordinate lookup
 
@@ -65,9 +66,9 @@ otherwise `3`; 22 rows uniquely cover:
 | 5 | Desert | 3 | 2 Sulfur | 4 Oil | 12 Spices | - |
 | 6 | Mountain | 3 | 7 Uranium | 15 Gems | 21 Gold | - |
 
-Presence cannot choose arbitrary identity; Oxen/Cattle need different
-remainders. This proves no map dimensions, legality, yields, probabilities or
-completed placement. Unread `+0x41` remains unclassified.
+Setting presence cannot choose an arbitrary resource identity; Oxen and Cattle
+need different remainders. This proves no map dimensions, legality, yields,
+probabilities or completed placement. Unread `+0x41` remains unclassified.
 
 ## Identity and player availability
 

@@ -124,13 +124,13 @@ stack stores under its additional conditions.
 `WA=100` loses its first pair: value 1 removes defender bit; `r25=1` increments
 `r29` to 101, whose signed <1000 test reinitializes the array. Eighteen
 eight-byte writes fill `[848,992)` with `0xFF`, replacing both words by
-`0xFFFFFFFF`. Same retry applies for `WA<=998`; larger inputs need separate
-control proof.
+`0xFFFFFFFF`. The same retry applies for `WA<=998`; larger inputs need a separate
+control-flow proof.
 
-Core 10/25 with scalars 100/100 gives `WA=1000`/`WD=2500`, frame 3000/7500. Same
-RNG gives decision 7<3000, ordinal 0; after value 1/ordinal 0, `r29=1001`
-bypasses reset. Array's 144 bytes survive, others `0xFF`; exit publishes third
-state 2756632324 and `low32(C+3)`.
+Core 10/25 with scalars 100/100 gives `WA=1000`/`WD=2500`, frame 3000/7500.
+Same RNG gives decision 7<3000, ordinal 0; after value 1/ordinal 0, `r29=1001`
+bypasses reset. The array's 144 bytes survive, with the other bytes still
+`0xFF`; the exit publishes the third state 2756632324 and `low32(C+3)`.
 
 This requires nonzero human mask with both participant bits clear, consistently
 zero `IsHumanPlayer`, and frame 148 zero at `0x82CDD618`, excluding `0x82CDD734`

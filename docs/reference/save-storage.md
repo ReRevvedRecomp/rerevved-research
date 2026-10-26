@@ -6,14 +6,14 @@ user/device content namespace.
 
 ## Selected content record
 
-Picker has 11 records, stride `0x164`; accepted `SelectedContentRecordCopy`
-(`0x82DDBFF8`) copies `0x13C` bytes to caller:
+The picker has 11 records with stride `0x164`. The accepted
+`SelectedContentRecordCopy` (`0x82DDBFF8`) copies `0x13C` bytes to its caller:
 
 | Offset | Recovered meaning |
 | --- | --- |
 | `0x108` | NUL-terminated internal slot filename read by both manual save and load owners |
 
-Sidecar keys need selected user/device namespace: filenames can repeat. Raw
+Sidecar keys need the selected user/device namespace because filenames can repeat. Raw
 roots `save1` through `save9`, `save0`, `saveb` through `savei` live at
 `0x82F77368`, but use normalized record `0x108`, not localized manual/automatic
 labels.
@@ -56,6 +56,7 @@ sidecar replacement requires nonzero final result.
 
 ## Implementation guard
 
-Host sidecar contains locked ruleset ID/version/configuration hash in native
-slot's user/device namespace. Check before load; atomically replace via
-temporary file after save success. Native save stays unchanged.
+The host sidecar contains the locked ruleset ID, version and configuration
+hash in the native slot's user/device namespace. Check it before loading;
+replace it atomically through a temporary file after a successful save. The
+native save stays unchanged.

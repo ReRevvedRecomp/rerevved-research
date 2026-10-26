@@ -44,11 +44,12 @@ instructions. First handle use, validity, close and release remain unknown.
 input count at `+0x358`, allocates count times four bytes, publishes `+0x350`,
 and inserts existing pointers without constructing entries.
 
-`Audio2DScriptPointerTableReset` (`0x82D4FA30`) walks nonzero table/bound. Each
-non-null entry dispatches first-word slot `+0x8` with entry in `r3`, `1` in
+`Audio2DScriptPointerTableReset` (`0x82D4FA30`) walks the table when its pointer
+and bound are nonzero. Each non-null entry dispatches first-word slot `+0x8`
+with entry in `r3`, `1` in
 `r4`. After return, or for null entries, it reloads the table and clears the
-slot. Reloaded bound requires stable collection state and returning calls to
-visit every original slot.
+slot. Because it reloads the bound, visiting every original slot requires stable
+collection state and returning calls.
 
 It passes nonzero backing storage to `0x82D3D9F0`; return clears `+0x350` then
 `+0x358`. Zero-pointer flow clears only the bound. Populate passes the same

@@ -32,11 +32,11 @@ roots, builds from root-level `dlc.fpk`, and appends the aggregate once.
 `name.txt` is optional identification. Bare scenario/map/DDS entries must be
 inside `dlc.fpk`; adjacent files do not register their directory.
 
-Three named-map DDS suffixes identify height, mountain/hill blend and lightmap.
-Their three string addresses had zero exact references; the inspected map
-consumer was a thunk and terrain-loader body truncated. Dimensions, format,
-mips, byte order, row layout and payload remain unknown; generic texture scale
-is no authoring-byte contract.
+Three named-map DDS suffixes identify height, mountain/hill blend and
+lightmap. Their three string addresses had zero exact references; the
+inspected map consumer was a thunk and the terrain-loader body was truncated.
+Dimensions, format, mips, byte order, row layout and payload remain unknown;
+generic texture scale does not establish a byte-level contract for authoring.
 
 ## Bare-name lookup order
 

@@ -24,10 +24,10 @@ that path selects defense disruption. This is a local selection policy. It
 does not establish that every ordinary AI Spy follows the same route or that
 other mission commands fail.
 
-A broader AI policy needs the actual ordinary Spy ingress and the same
-target-eligibility guarantees as the interactive menu. Choosing arbitrary
-mission IDs would skip those guarantees. No broader-use correction or feature
-is established by the current static result.
+A broader AI policy needs the actual entry path for ordinary AI Spies and the
+same target-eligibility guarantees as the interactive menu. Choosing arbitrary
+mission IDs would skip those guarantees. The current static result does not
+establish a correction or feature for broader AI use.
 
 The [mission-selection finding](../../manifests/spy-mission-selection.json)
 owns exact menu, dispatch, caller and target-range evidence, bounded negatives

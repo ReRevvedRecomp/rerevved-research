@@ -224,6 +224,39 @@ Keep reports in ignored scratch; promote bounded identities only when dump and
 asset are independently identified. Byte matches prove neither draw execution,
 visible output, sampler ownership, render-target state, nor defect causation.
 
+## Screen bounded integer arithmetic
+
+Use [find_divide_multiply.py](../tools/find_divide_multiply.py) to screen
+explicit word ranges exported by `DumpMemoryWords.java`. The tool requires the
+flat image identified by `manifests/image.json`, checks its SHA-256 and every
+dumped word, and rejects missing words in a selected range.
+
+```powershell
+python tools\find_divide_multiply.py `
+  --dump (Join-Path $queryScratch 'cost-words.txt') `
+  --image '<matching-flat-image>' `
+  --image-manifest manifests\image.json `
+  --range 0x82CE2888:0x82CE2938 `
+  --out (Join-Path $queryScratch 'arithmetic-candidates.json')
+```
+
+Repeat `--dump` to combine exports and `--range` to select at most eight
+nonoverlapping half-open ranges, each containing at most 256 aligned words.
+Choose ranges from accepted function or instruction evidence; byte identity
+alone does not establish executable code or reachability.
+
+The scanner follows a `divw` or `divwu` quotient into a later `mullw` or
+`mulli`, including exact register copies, within 16 instruction steps. Branches,
+calls, unknown forms and register overwrites end the corresponding provenance.
+The JSON reports inspected ranges, barriers and candidate addresses. It does
+not analyze paths across branches, shifted division, floating point, complete
+bonus composition or intended rounding. A candidate needs exact operands,
+supported input values and an intended rule before it can establish an error;
+zero candidates do not establish correctness.
+
+Keep raw dumps and reports in ignored scratch. The asset-free scanner checks
+run with `python -B -m unittest discover -s tests -p test_find_divide_multiply.py`.
+
 ## Local canonical-image evidence format
 
 `.github/workflows/checks.yml` is asset-free and does not replay the canonical

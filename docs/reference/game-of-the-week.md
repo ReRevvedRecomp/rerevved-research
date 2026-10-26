@@ -265,6 +265,65 @@ zero-extended `1..0x7FFFFFFF` sufficient week domain and helper/count guards.
 The field is uint32; an explicit nonzero seed bypasses automatic selection
 locally for larger words, but does not certify their other consumers.
 
+## Week limits
+
+The [limit boundary](../../manifests/game-of-the-week-local-generation.json#/weekLimitBoundary)
+separates title policy, native storage, automatic selection and calendar input.
+The selected ReRevved custom-week setting accepts `1..2147483647`. A larger
+string is rejected; invalid launch input falls back to the native week. This
+setting limit does not establish a retail final week.
+
+The native writer stores all 32 week bits without a maximum-week branch.
+For stable count 277, the expanded-range helper compares the low word of the
+ordinal, and the caller stores the low word of its result. The selector's
+sign-extended multiplication therefore does not alone break lookup above
+`0x7FFFFFFF`. This bounded result does not certify all high-week consumers.
+
+The stored maximum is `4294967295`. Supplying `4294967296` without validation
+truncates to zero, which encounters the existing setup sentinel and its
+conditional random/week-one fallbacks. This is not a designed restart at week
+one. The clock recomputes the week for each request rather than incrementing a
+persistent counter. Its unsigned day-count division can return at most
+`613566756`; calendar and clock representation constrain chronological input
+before that mathematical ceiling.
+
+The first future calendar-model week error is Sunday `2704-03-06`: native week
+`36430` skips Gregorian week `36429`. Native week `36472` then repeats across
+the 2704/2705 boundary. Cumulative leap counting uses division by four while
+month lengths use Gregorian century rules. The selected Windows SDK's positive
+signed FILETIME range ends in September 30828, normalizing to week `1503927`;
+beyond that representation, conversion can overflow rather than provide a
+defined future date. These are static/source-model boundaries, with no observed
+future launch, graceful termination or restart. The canonical boundary retains
+the exact dates, source identities and helper/clock qualifications.
+
+## Independent civilization selection
+
+The [civilization boundary](../../manifests/game-of-the-week-local-generation.json#/civilizationOverrideBoundary)
+identifies a conditional override that retains the week and map-seed inputs.
+Immediately before `0x82DADD18`, replace the derived civilization in `r10`;
+the native store publishes it to current setup `r31+0x13C`. Validate an ordinary
+civilization against effective definitions and eligibility. Supported ordinary
+IDs are `0..15`; the Barbarian ID is separate.
+
+Apply the latched policy for the accepted early mode-2 writer, before
+`0x82E76EF4` loads the civilization and `0x82E76F14` publishes it to the player
+map. Reapply at the later new-game writer, which recomputes this field. Preserve
+the existing launch identity, helper/return/retention guards and ordinary/load
+paths; a late setup-field change alone does not establish player selection.
+
+The native AI assignment skips a classified human. In mode 2 its duplicate
+scan starts at player slot one, so it can admit an AI matching the human at
+slot zero. Civilization ID zero is not specially excluded. Changing that
+policy is separate from selecting the human civilization.
+
+Custom civilization selection needs the same outcome/cache/submission isolation
+as other custom GotW inputs, including when it matches the automatic choice.
+This is an insertion contract, not a shipped setting or observed launch.
+Starting units/bonuses, both writer outputs, player assignment and result
+isolation still require paired runtime acceptance; retaining week/seed does not
+prove identical complete games.
+
 ## Ordered MapList and replay lookup
 
 The pinned MapList in source order has a count, length, digest and local

@@ -49,7 +49,7 @@ contacts and save/load still unobserved.
 Restricted selection flags admit only five civilization IDs. Expansion must
 exclude those modes rather than relying on retries to create enough distinct
 IDs. Game of the Week also changes the duplicate comparison to omit
-civilization zero; the bounded expansion contract excludes that mode as well
+player slot zero; the bounded expansion contract excludes that mode as well
 as multiplayer and the native special two-player override.
 
 ## Economic and strategic consumers

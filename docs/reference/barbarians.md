@@ -6,6 +6,30 @@ and completed rebuild/order remain conditions wherever specified below.
 
 ## Raging behavior and implementer contract
 
+The [capital grace feasibility boundary](../../manifests/barbarian-capital-grace-feasibility.json)
+identifies signed-year, capital-marker and selected combat/capture inputs for
+a possible calendar cutoff. It also records the command's return bookkeeping
+and selected Move17/capture continuations. Returning early from the movement
+executor does not cancel its caller's flag updates and linked-unit propagation.
+The selected queue consumer rolls back its read cursor on a zero dispatcher
+result; a nonzero result retains consumption. A permanent refusal cannot simply
+reuse that retry path. Pending routes, AI progression, special arrival helpers
+and defended/undefended coverage remain unbound.
+The selected native candidate-rejection arm clears pending destination X, but
+its successor can retain a live selected unit with movement remaining. An
+identified caller can invoke the decision owner six times without testing its
+return. These local paths do not establish finite turn progression after a
+refused delivered action, so the sentinel store alone is insufficient evidence
+for a safe capital-protection rule.
+Their actual actor is not joined to a Barbarian scheduler, so that selection
+table is not a universal prerequisite. Native Fortify and Sentry have bound
+local flag writes. A selected hold-flag reader can zero movement and request
+selection cleanup, conditional on its result gate, helper comparison and
+retained identities. Its alternative clears a different flag and continues.
+Actual Barbarian applicability, pending-order retirement and wake behavior
+remain unproved; the local finish arm does not establish a safe capital veto.
+The origin-city aggression threshold does not itself protect a target capital.
+
 Spawning can increase departure opportunities but does not reproduce Beta
 aggression. `BAGRESSIVE` and `BFECUNDITY` are separate. Three guards have a
 conditional city hold/release explanation, not a universal hut rule.

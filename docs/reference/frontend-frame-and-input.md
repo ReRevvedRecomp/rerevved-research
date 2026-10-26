@@ -274,6 +274,21 @@ supplies construction/forwarding, not safe popup suppression.
 
 ## Evidence sources
 
+- [Native pause/resume dispatch](../../manifests/native-pause-resume-dispatch-boundary.json):
+  with matching live root and child tables, a selected zero-argument request
+  can reach a global application object's `+0x70` child and its virtual `+0x10`.
+  On the selected key-2 table this constructs a code-17 state message with a
+  zero byte at `+0x34`; the alternative method uses one. Registered sender
+  identity and selected early-return gates are bound. The selected processing
+  method forwards the byte to a root-state consumer whose admitted zero arm
+  clears bit `0x800` and reaches the frontend child's resume callback. An
+  already-clear bit bypasses those effects. A selected `OnAccept` command can
+  reach the zero-request callback through the pause class's current table;
+  the separate `OnPressStart` tail has different guards. Actual input, receipt/invocation,
+  current identity, child presentation and host/peer authority remain unbound.
+  The local-menu getter tests the nested dialog-child marker. A separate
+  receiver-relative event-byte reader still requires a same-singleton and
+  store-before-read join.
 - [Frontend gameplay transition](../../manifests/frontend-gameplay-transition.json)
 - [Playable game state gates](../../manifests/playable-game-state-gates.json)
 - [`playable-interface-gate-ownership-boundary.json`](../../manifests/playable-interface-gate-ownership-boundary.json)

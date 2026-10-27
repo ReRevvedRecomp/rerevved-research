@@ -42,6 +42,10 @@ Keep output and logs in ignored scratch. Output failures raise an error before
   scalar D-form store candidates within the same block for exact addresses;
   register lifetime, ownership, aliases, and other store forms require separate
   confirmation.
+- `FindRawGlobalStoreChains.java` follows bounded raw `lis`-seeded arithmetic
+  candidates to overlapping scalar, indexed or wider stores and exact-pointer
+  call arguments. It leaves other register writes and control flow unchecked;
+  every candidate needs instruction, lifetime and ownership confirmation.
 - `FindGlobalAddressAccesses.java` finds decoded instructions that construct
   exact global addresses from split constants, then identifies their first use
   within the search bounds.

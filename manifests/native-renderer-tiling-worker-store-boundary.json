@@ -227,7 +227,424 @@
       "defaultSites": ["0x826A53B0", "0x826A53B4", "0x826A53B8", "0x826A53C0", "0x826A53C4", "0x826A53C8", "0x826A53CC"],
       "defaultMmioSequence": "A57B8 reads register ordinals0x5D0,0xF26(discarded),0x1C0,0x57B,0x57C,0x57D,0x57A; writes12 to0xC80 at call0x826A5874; then reads0xC81 five times. Address translation is the defaultCallbacks formula. The shown sequence does not restore0xC80.",
       "localStores": "A57B8 directly stores stack+0xA0..+0xAC at0x826A5894/0x826A58A4/0x826A58B4/0x826A58C4 and stack+0x90..+0x98 at0x826A58CC/0x826A58D0/0x826A58D8, in addition to frame/save stores. No direct G store was identified in its body; direct diagnostic-helper and MMIO effects are separate.",
-      "qualification": "The actual G+0x3478 writer/value, complete helper/MMIO effects, timing units and activation remain qualified. A raw direct-LK scan found call0x8268CC68; this is not runtime activation proof. Nonzero custom callback arguments require their own target/effect binding."
+      "qualification": "The actual G+0x3478 writer/value, complete helper/MMIO effects, timing units and activation remain qualified. A raw direct-LK scan found call0x8268CC68; this is not runtime activation proof. Nonzero custom callback arguments require their own target/effect binding.",
+      "recoveryHelper": {
+        "question": "What local helper and caller-return contract follows the selected watchdog recovery stores?",
+        "confidence": "strong",
+        "entry": "0x826A7BE8",
+        "caller": "0x826A5BAC/0x826A5BC0 materializes full r3=0xFFFFFFFF8208F5D8; 0x826A5BCC calls the helper with that retained P. No retail text identity or meaning is inferred from the address.",
+        "localWrites": "With a valid zero-extended, nonwrapping entry stack address S>=352 and local F=S-352, direct writes are BE32[S-8]=low32(LR), BE64[S-16]=full r31, BE32[F]=S and byte[F+80]=0 at 0x826A7BEC/0x826A7BF0/0x826A7BF4/0x826A7C08. More general full-SP contexts need their own exact effect contract. Helpers and physical aliases remain separate effects.",
+        "firstUnresolvedCall": "Fixed fill/copy,current type0 ordinal0x59 import and conditional pinned storage/import-write contract are bounded. rexAppConfigurationBoundary adds the conditional configuration/presentation prefix through a virtual ConstructRuntime request. The title override and actual runtime initialization/load order remain open; no callable target at0x826A7C48 is selected.",
+        "fill255Boundary": {
+          "question": "Does the selected unaligned 255-byte fill retain the adjacent wrapper saves and return normally?",
+          "confidence": "strong",
+          "call": "0x826A7C10 calls 0x827F7BB0 with full r3=D=F+81, r4=0 and r5=255, returning to 0x826A7C14. Reuse the admitted zero-extended, nonwrapping wrapper frame S=F+352; ABI alignment supplies F mod4=0.",
+          "predicates": "Require retained executable/LR state, valid ABI-aligned S>=352, nonwrapping address arithmetic, writable mapped [D,D+255), no interfering writer and no destructive physical alias with protected frame/caller bytes. This is the fixed call, not arbitrary sizes or full-SP contexts.",
+          "prefix": "0x827F7BB0/0x827F7BB4 initializes CTR=256 and 0x827F7BB8 copies D to r6. Alignment testing at 0x827F7BCC/0x827F7BD0 executes the 0x827F7BC4 byte store three times at F+81/F+82/F+83. r5 becomes 252 and r6 becomes F+84; the aligned fourth test exits with CTR=252.",
+          "groupsAndTail": "0x827F7BD8 selects 15 groups. Four scalar BE32 stores at 0x827F7BE8/0x827F7BEC/0x827F7BF0/0x827F7BF4 execute 15 times with a 16-byte step, covering [F+84,F+324). Three residual BE32 stores at 0x827F7C0C/0x827F7C18/0x827F7C24 cover F+324..F+335. At 0x827F7C2C, 252&3=0; CTR becomes zero and 0x827F7C34 returns through LR without a byte tail. Exactly 66 scalar stores write 255 distinct zero bytes in [F+81,F+336), with no vector or cacheline rounding.",
+          "returnEffects": "Full r3 remains D; final r5=252, r6=F+336 and r0=r4=CTR=0. Only GPR r0/r4/r5/r6, CTR and CR0 are assigned. Final CR0 has EQ=1, LT=GT=0 and SO from unchanged XER.SO. Actual r1/SP, full r31, other GPRs, LR, floating/vector registers, XER and other CR fields remain unchanged. The leaf has no data read, stack access, outgoing call or explicit cache operation.",
+          "saveRetention": "The fill excludes byte F+80, backchain [F,F+4), full saved r31 [F+336,F+344) and saved low32 LR [F+344,F+348). Full working r31=P and actual SP=F survive. The live leaf LR is the fill continuation 0x826A7C14; the wrapper's earlier return remains in its saved cell. This closes retention for this call only.",
+          "counterexample": "An independent byte-address model checked four supplied aligned frames, including F=0xFFFFFE90, for exact set equality and save exclusion. Incorrectly retaining original count 255 for post-prefix tails produces 258 bytes and overwrites saved-r31 offsets F+336..F+338. An aligned-only fill theorem therefore cannot justify this unaligned call without the changed count.",
+          "evidence": {
+            "method": "Two serialized foreground tools/run-headless.ps1 -ReadOnly ghidra/DumpMemoryWords.java queries returned 56 unique words matching image.json. Complete generated-delimited leaf 0x827F7BB0..0x827F7C4C has 40 words/160 bytes, SHA256 B89E717560E2A52F7975FF89A362A8301CAB15E05C3D5F90DAC72AF83EADB91A. Captured 0x827F7C50 supplied next-function identity only; 15 wrapper words verified the accepted call/save join. No repaired Ghidra extent is claimed.",
+            "generated": "rerevved:generated/default/rerevved_recomp.110.cpp header 15950, brace 16047, next header 16049; SHA256 B1A115B9B1CBD40E4C267B448E8D08EFF07F7FD9189741CD16A9F178A2F620D5. Exact header/next-header discovery preceded the 99 displayed lines including a trailing blank. Ignored generation provenance and runtime activation remain unproved.",
+            "checks": "Independent bit-field checks classified all 40 instructions, wrapper literals, saved-r31 width and both wrapper call targets. The byte model checked 255 distinct bytes, 66 stores, final pointer/count, save exclusion and the three-byte-overrun counterexample. Prior aligned 84/128/1600/3200-byte contracts were reused without generalizing them. Only this fill owner was newly interpreted."
+          },
+          "falsificationCondition": "Different words, unexpected alignment, invalid executable/LR or writable spans, interfering mutation or destructive aliases invalidate the corresponding conditional result. No larger length, actual invocation, recovery, completion or retirement is established."
+        },
+        "laterLocalSequence": "Under required normal-return/retention predicates, 0x826A7C20 calls 0x827F4390 with full r3=local SP+80, r4=P and r5=256. At 0x826A7C28/0x826A7C2C, read BE32[0x820007E8]=M then BE32[M]=V; both accesses require readability. V=0 supplies zero to the result test. V!=0 loads BE32[V+0x18] and invokes it at 0x826A7C48 with full r3=84 and r4=local SP+80. This is a selected function-pointer call, not a proved object class or installed callback identity.",
+        "conditionalReturn": "On reaching 0x826A7C54 with the required retained frame, low32(r3)!=0 yields full return 0; low32(r3)=0 yields full return 0xFFFFFFFF80004005. V=0 selects the latter scalar. The local epilogue restores SP, saved low32 LR and full saved r31. Descendant return and memory/ABI effects remain conditions.",
+        "watchdogContinuation": "After a normal helper return, 0x826A5BD0 branches to 0x826A5BF0, which overwrites full r3 with 1 before the watchdog restores and returns. The helper's returned scalar does not select this continuation. Under the accepted CBB8 caller/retention predicates, nonzero watchdog status selects full poll return 0 without the zero-watchdog timestamp refresh. This is stop control, not proof of recovery or completion.",
+        "counterexample": "Supply normal descendant return/retention and readable M with V=0. The helper returns 0xFFFFFFFF80004005, the watchdog nevertheless returns 1, and the poll stops. This conditional scalar path does not establish a successful device recovery or an observed activation.",
+        "evidence": {
+          "method": "Three serialized foreground tools/run-headless.ps1 -ReadOnly ghidra/DumpMemoryWords.java queries returned 63 unique words matching image.json. The generated-delimited helper 0x826A7BE8..0x826A7C7C has 38 words/152 bytes, SHA256 536B339D4DE51FF18269F77985B61DAFBF3B89122AE9FFAB7C7BA6DDDC3D0FB4. Caller argument/suffix 0x826A5BAC..0x826A5C04 has 23 words, SHA256 1BF9C8C284AF99632A7EB916CB2B506CC816713FD9EA2EA41E38F447EB703FA1. Two adjacent captured words supplied identity only; no repaired Ghidra extent is claimed.",
+          "generated": "rerevved:generated/default/rerevved_recomp.53.cpp header 12805, brace 12893, next header 12895, file SHA256 513C088291F8AE30946CB1F4C12F74CEC887F6E883AFFCEB1AD1C6FD06CD14CA; .184.cpp header 13258, brace 13373, next header 13375, file SHA256 FA75A0BEB1E483864829EE7EA114324E552D9B673890890E0967CBC0B93745A7. Exact header discovery preceded windows of at most 96 lines. Handwritten revision a2c3e48e950eff4fab64fb446a83e04ab3060f2a does not establish ignored generation provenance; host instrumentation was excluded from native conclusions.",
+          "checks": "Independent decoding checked eight branch forms, 17 operand/immediate tuples and three saved-register doubleword widths; complete local generated/native mapping and source/capture hashes agreed. The V=0 supplied counterexample challenges recovery-success inference. Only the two declared owners were interpreted."
+        },
+        "copy256Boundary": {
+          "question": "Does the selected fixed-count 256-byte copy return normally while retaining the wrapper frame and adjacent saves?",
+          "confidence": "strong",
+          "call": "0x826A7C20 calls 0x827F4390 with full r3=D=F+80, r4=P=0xFFFFFFFF8208F5D8 and r5=256, returning to 0x826A7C24. Reuse fill255Boundary's admitted zero-extended, ABI-aligned, nonwrapping wrapper frame S=F+352 and retained full working r31=P.",
+          "predicates": "Require retained executable/LR state, completing readable selected prefix at low32(P), writable mapped [D,D+256), stable source and no interfering writer. Require physically distinct destination bytes, no destructive physical alias with protected frame/caller/code/return state, and source/destination physical disjointness for claims about original source bytes. These are fixed-call premises, not observed mapping or activation facts.",
+          "copyAndPadding": "If the first zero is at offset z in 0..255, byte load/store sites 0x827F439C/0x827F43A8 execute z+1 times, copying the zero, and r5=256-z. Site 0x827F43C4 sets r10=255-z. For z<255, 0x827F43D8 loads that positive full value into CTR and the 0x827F43DC byte store emits exactly 255-z further zeros; z=255 returns at 0x827F43C8 without a tail. If all first256 bytes are nonzero, the copy executes256 times, r5 becomes0 and 0x827F43C0 returns without another read or store. There is no forced terminator in that case.",
+          "finiteReturn": "Under completing accesses, the fixed leaf returns through unchanged live LR in at most2053 instructions. For z<255 the count is783+5*z; z=255 and all256nonzero each take2053. Every admitted case performs exactly256 ordered distinct one-byte stores at D..D+255, with full final r11=D+256=F+336. There is no stack access, outgoing call, vector operation or explicit cache operation.",
+          "returnEffects": "Let R=z+1 when a zero is found, otherwise R=256. Full r3 remains D and final full r4=P+R. Found-zero final r5=256-z and r10=255-z; all-nonzero final r5=0 and r10 is the last zero-extended source byte. r9 and CTR become0 only for z<255; otherwise their incoming values survive. Only GPR r4/r5/r9/r10/r11, CR0/CR6, XER.CA and conditionally CTR are assigned. Final XER.CA=1. CR0.GT=1 for z<255, otherwise CR0.EQ=1; CR6.GT=1 for a found zero, otherwise CR6.EQ=1, with LT=0, the other GT/EQ bit0 and SO from unchanged XER.SO. Full r1/SP, r31, all other GPRs, LR, other CR fields, XER except CA and floating/vector state remain unchanged.",
+          "saveRetention": "Writes cover [F+80,F+336), excluding backchain [F,F+4), full saved r31 [F+336,F+344) and saved low32 LR [F+344,F+348). Actual SP=F and full working r31=P survive. The earlier fill's byte F+80 may now change. Live LR is the copy continuation0x826A7C24; the wrapper's earlier return remains in its saved cell. Retention depends on the stated physical-alias premises.",
+          "counterexamples": "An independent all-nonzero256-byte Q witness leaves D+255=0x51, falsifying forced NUL termination. A supplied physical alias with unchanged full P but physical(P)=physical(D)-1 turns original A,0,B,... into256 A output bytes: writes destroy the unread zero. Original-prefix content/read-count claims therefore require source disjointness; no actual alias was established.",
+          "evidence": {
+            "method": "One foreground tools/run-headless.ps1 -ReadOnly ghidra/DumpMemoryWords.java query supplied25 flat-equal words matching image.json. The independently decoded complete generated-delimited leaf [0x827F4390,0x827F43EC) has23words/92bytes, BE SHA256 5C93D56B94CA103A367CCD6AD1EBAAC07426A3266B6CC7F9800CA2F8F01AA0E5. Captured0x827F43EC/0x827F43F0 supplied identity context only; no next helper or repaired Ghidra extent is claimed.",
+            "generated": "rerevved:generated/default/rerevved_recomp.89.cpp header16320 through brace16376, exactly57lines, file SHA256 4171704FCD7045B2979D8443466DCF951DA59073FB825A70AA3429AA9152AE43. Next header16378. The exact displayed function's byte SHA256 is0857CC96EA281845B5FE840471B8B857B66BC1173B4EC62D921C000465CEE48D. Ignored generation provenance and runtime activation remain unproved.",
+            "checks": "Independent bit-field re-encoding checked all23words, byte widths, three relative branch displacements/targets, bclr conditions and SPR9. Full64 pointer increments, low32 memory addresses, full CTR assignment/decrement and all CR/XER/GPR assignments were checked; fixed counters0..256 make signed32/signed64 comparisons and carry/nonzero-width distinctions agree. The independent byte model passed first-zero0/5/255 and all256nonzero at four aligned frames including F=0xFFFFFE90, exact256distinct writes, read counts, padding counts, final full pointers, CR/XER/register/save assertions and both counterexamples. All256first-zero offsets were separately checked against the finite bound. Only0x827F4390 was newly interpreted."
+          },
+          "falsificationCondition": "Different authoritative words, invalid frame/code/LR or selected source/destination mappings, interfering mutation or destructive physical aliases invalidate the corresponding conditional result. This proves no actual call, arbitrary length/full-SP case, recovery success, completion or retirement."
+        },
+        "externalRootBoundary": {
+          "question": "Does the stored root or exact metadata identify the external storage and installed function selected at 0x826A7C48?",
+          "confidence": "strong",
+          "storedImageRoot": {
+            "cell": "0x820007E8",
+            "be32Value": "0x30002000",
+            "imageInterval": "[0x82000000,0x83210300)",
+            "imageSizeBytes": 18939904,
+            "qualification": "The one-word foreground read-only query equaled the supported flat. The value lies outside the image and establishes no external mapping, live V, installed function or active root retention."
+          },
+          "analysisMetadata": "DumpDataValues.java at the exact root reports undefined4, length4, value0x30002000. DumpReferences.java reports five READ references, no listed WRITE, and omits the accepted native read at0x826A7C28. These analysis metadata identify no import/export or ordered writer; the references cannot prove writer absence.",
+          "boundedSourceLookup": "Literal820007E8 and30002000 searches, separately case-sensitive and case-insensitive in rerevved:generated/default/rerevved_init.cpp, each found zero rows. Line18484 registers wrapper0x826A7BE8 only. These negatives exclude only the tested forms/file, not a loader/import binding or computed writer.",
+          "countermodel": "The same stored image and analysis metadata admit externally readable M with V=0, distinct nonzero V values with different installed functions, a rewritten active root, or unreadable external storage. No installed function can be chosen from the seed and metadata.",
+          "reentry": [
+            "rexAppConfigurationBoundary owns conditional pinned callback assignment/title-override retention and presentation order through the immediate virtual ConstructRuntime request. Its remainingDiscriminator selects the unopened title ConstructRuntime override,Runtime setup overloads,kernel initialization and same-runtime load order. Completed initialization,active R/M/V/slot and allocation/lifetime/alias bindings remain separate.",
+            "Establish the actual root at0x826A7C28, readable M and an ordered installation/initialization establishing V=BE32[M] at0x826A7C2C. For V!=0 establish readable V+0x18 and the exact installed function/code mapping selected at0x826A7C48. Installation must precede the reads with no intervening incompatible writes, aliases, remapping, retirement or generation/lifetime changes. Static binding alone does not prove the active chain.",
+            "Only then inspect that selected function with full r3=84 and r4=local frame+80. Establish normal return and exact memory/working/saved-state and physical-alias effects before composing the accepted local suffix. A separately authorized runtime observation may supply active-value evidence."
+          ],
+          "locators": [
+            "image.json#/analysisProgram",
+            "ghidra/DumpMemoryWords.java:0x820007E8 radius=0",
+            "ghidra/DumpDataValues.java:0x820007E8",
+            "ghidra/DumpReferences.java:0x820007E8",
+            "rerevved:generated/default/rerevved_recomp.53.cpp:12844-12862 within accepted header12805/brace12893/next12895; rerevved:generated/default/rerevved_init.cpp:18484"
+          ],
+          "sourceIdentityQualification": "Supported flat SHA2565C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680. Generated .53.cpp SHA256513C088291F8AE30946CB1F4C12F74CEC887F6E883AFFCEB1AD1C6FD06CD14CA matches the accepted helper evidence. Generated rerevved_init.cpp SHA2564A3E66DCA4CD52AF74D44380C22DDE8945EF347ACE30EF5F27B34AE0AEF06448 identifies the exact registration file searched. Handwritten revision a2c3e48e950eff4fab64fb446a83e04ab3060f2a does not establish ignored generation provenance. No external M/V/slot/target bytes or referenced owners were inspected.",
+          "baseImportHeaderBoundary": {
+            "question": "What exact base-version root descriptor and title-update decoding boundary can be established before binding current external storage?",
+            "confidence": "strong",
+            "baseVersion": "0.0.0.2",
+            "root": "0x820007E8",
+            "baseOnlyModule": "xboxkrnl.exe",
+            "descriptor": "Pinned sourceXex import header file0x276C length2196 has one matching address entry at file0x28CC, recordIndex69 in library file0x2790, version/minVersion0x201A2200; header SHA256 BFCC62BD3C2155ABFC3A618107B8FEC850F3292CE676ED62C5BD61F29AE12E50.",
+            "titleUpdateBoundary": "Pinned titleUpdate descriptor file0x1D0 maps sourceVersion2 to targetVersion0x302 and LZX-delta transforms header[0,0x3000) using old/new offsets0, uncompressed12288/compressed7438, covering root descriptor. No target header reconstruction/equivalence was established.",
+            "ordinalBoundary": "Import-header entries supply record addresses only. SDK5b7335f56161317a10b46921ccd7489685336c4e xex_module.cpp:1084-1094 reads decoded image BE32[record_addr] for type/ordinal. Base encryption1/basic compression1 and TU encryption1/delta compression3 prevent recovering that word from plaintext metadata alone. Existing flattened seed0x30002000 decodes type0x30 rather than type0/type1 and is not an ordinal binding.",
+            "sourceBoundary": "SDK xex_module.cpp:1100-1114 patches an implemented kVariable resolved by module+ordinal; export_resolver.cpp:66-71 supplies variable_ptr. Video exports0x1BE/0x1BF dynamically allocate/map/zero storage in xboxkrnl_video.cpp:462-477. xboxkrnl_module.cpp:61-88 also allocates/maps ordinal0x59 KeDebugMonitorData with source-selected zero/nonzero alternatives. patchedImportIdentityBoundary selects current ordinal0x59; ordinal59StorageLoaderBoundary owns its conditional pinned source binding. Actual allocation,address,value and installed target remain unbound.",
+            "checks": "Bounded metadata parser and supplied loader/storage countermodels checked unique base slot, entry offset, versions, encryption/compression and TU compressed header coverage; eight inspected SDK source files matched pinned revision text with exact SHA256 receipts. No payload decoding, runtime or callback inspection occurred.",
+            "reentry": "rexAppConfigurationBoundary owns conditional pinned callback assignment/title-override retention and presentation order through the immediate virtual ConstructRuntime request. Its remainingDiscriminator selects the unopened title ConstructRuntime override,Runtime setup overloads,kernel initialization and same-runtime load order. Completed initialization,active R/M/V/slot and allocation/lifetime/alias bindings remain separate.",
+            "qualification": "The result is a base-only module descriptor and precise target-header/ordinal gate, not current-image storage binding or SDK installation/runtime proof. Existing V=0, conditional local failure scalar and watchdog-overwrite counterexample remain. Recovery/completion/retirement remain unproved.",
+            "artifactEvidence": {
+              "inputs": [
+                "image.json#/sourceXex",
+                "image.json#/titleUpdate"
+              ],
+              "method": "Read-only bounded XEX/XEXP header parsing under the pinned SDK header definitions and loader order. Only the selected import slot and patch descriptor were retained; no payload or target header was decoded.",
+              "sdkRevision": "5b7335f56161317a10b46921ccd7489685336c4e",
+              "fileSha256": {
+                "rerevved-sdk:include/rex/system/util/xex2_info.h": "20AC26840BE1A0ECC983C4BB8E871DA102F716D351A8EDAAEA740360AC60073E",
+                "rerevved-sdk:src/system/xex_module.cpp": "AD048F1DB3AFA24BED6989CD44C64A84724C3835B1E5B65FAEBEF36008486E4E",
+                "rerevved-sdk:src/system/lzx.cpp": "CC6AA5F615C6B77A19FB9196C5FC08B037AEBB6D6162D2617D30F3B822B6F117",
+                "rerevved-sdk:src/system/export_resolver.cpp": "CE1BBB33F08823FF468EBB1B9D6075150352A2BEF8E941A20E3A208A04D99C1C",
+                "rerevved-sdk:src/kernel/xboxkrnl/xboxkrnl_module.cpp": "6611458122BD116662FA5E42C43F8337EB582C689A491E48802889DA06B266EA",
+                "rerevved-sdk:src/kernel/xboxkrnl/xboxkrnl_video.cpp": "006EDC5E2B27D21EA2BFF733BF14683ECE5E5DAF02F8456BCB12C85821A2223B",
+                "rerevved-sdk:src/kernel/xboxkrnl/export_table.inc": "EFE1609D2609007E38A905EA8A18CE68228D15610D2BC85D08A6E832FE224950",
+                "rerevved-sdk:src/system/xmemory.cpp": "1EF4DF733A24ECF8AEA02AB0801D3FBC84CDED03AA9F852D65B7833203852F4E"
+              },
+              "locators": {
+                "rerevved-sdk:include/rex/system/util/xex2_info.h": [
+                  "316-325",
+                  "369-376",
+                  "445-468",
+                  "477-550"
+                ],
+                "rerevved-sdk:src/system/xex_module.cpp": [
+                  "196-288",
+                  "448-486",
+                  "536-622",
+                  "900-924",
+                  "972-1010",
+                  "1059-1119"
+                ],
+                "rerevved-sdk:src/system/lzx.cpp": [
+                  "112-146",
+                  "150-195"
+                ],
+                "rerevved-sdk:src/system/export_resolver.cpp": [
+                  "53-71"
+                ],
+                "rerevved-sdk:src/kernel/xboxkrnl/xboxkrnl_module.cpp": [
+                  "61-88"
+                ],
+                "rerevved-sdk:src/kernel/xboxkrnl/xboxkrnl_video.cpp": [
+                  "462-489"
+                ],
+                "rerevved-sdk:src/kernel/xboxkrnl/export_table.inc": [
+                  "103",
+                  "460-461"
+                ],
+                "rerevved-sdk:src/system/xmemory.cpp": [
+                  "792-804"
+                ]
+              },
+              "qualification": "Matching source bytes and declared input identities do not prove SDK compilation, installation, running selection, or current-image derivation."
+            }
+          },
+          "patchedImportIdentityBoundary": {
+            "question": "What exact patched 0.0.3.2 import identity binds root0x820007E8 before import resolution?",
+            "confidence": "strong",
+            "version": "0.0.3.2",
+            "root": "0x820007E8",
+            "module": "xboxkrnl.exe",
+            "type": 0,
+            "ordinal": "0x59",
+            "descriptor": "Patched header imports at file0x276C length2196 has one root address entry at file0x28CC, recordIndex69 of350 in library file0x2790 length1440; nameIndex0, id0x45DC17E0, version0x201B5300 and minVersion0x201A2200. Two libraries contain520 records total.",
+            "headerDecode": "Distinct header delta old/new[0,0x3000), uncompressed12288/compressed7438, window32768, produced exact12288-byte target header with executionVersion0x302.",
+            "orderedImageDecode": "All54 chained block SHA1 checks passed;640 ordered delta records were scanned. Last record639 in block53 is the sole dependency for root and reference: old/new image[0,0x7E38), length32312/compressed2724. No prior delta writes that reference range. Initial source0/target0 image layout does not move or clear selected bytes. Base CBC reference used aligned file[0x3000,0xAE40) and zero initial IV; CBC continuity across basic blocks was independently tested.",
+            "preResolutionWord": "0x00000059",
+            "checks": "Pinned input digests/sizes, source-signature SHA1, patched-key/image-key-source ordering/check, all patch block hashes, exact header and relevant image LZX output lengths, bounds/endianness, current descriptor uniqueness and independent parse, CBC known-answer/random-access/cross-basic-block tests and malformed/duplicate/corrupt falsifiers passed.",
+            "artifactEvidence": {
+              "inputs": [
+                "image.json#/sourceXex",
+                "image.json#/titleUpdate"
+              ],
+              "sdkRevision": "5b7335f56161317a10b46921ccd7489685336c4e",
+              "libmspackRevision": "305907723a4e7ab2018e58040059ffb5e77db837",
+              "headerSha256": "38B2272D81887B9A30D74DBDB8368297F9850E57D8B10ACE7BE1189456188115",
+              "importsSha256": "904B4466E6659EE29FCE7D9DA6D02D80BBE7EC9D31B1E2673E1D8A85A40FC353",
+              "libraryDescriptorSha256": "7F05764F14A40EE619DF06A52EA0F15A69575D2D691680412A0C22E81210C6C8",
+              "selectedImageReferenceSha256": "AAAA68F713D98552100A45EF8B58D51AC6103E659C051F7F6924F669B9317AFC",
+              "selectedImageOutputSha256": "74583369AC459E4EB8E5A889BF25CAB15F21BC0BC27769A6EFBAB768DB49B22D",
+              "rootWordSha256": "B16A7EFA6C4B528ECBE9DB04DF4D2BB4E555EFE819233C9134311FA0A463E5F5",
+              "method": "Standalone offline memory-only helper used pinned SDK XEX/LZX/Rijndael algorithms and the pinned libmspack submodule source. Local SDK files equaled pinned blobs; libmspack local files equaled pinned blobs after CRLF normalization. No runtime, KernelState, LoadContinue, import resolution, game execution or broad decoded payload output was used.",
+              "locators": [
+                "rerevved-sdk:include/rex/system/util/xex2_info.h:350-375,445-466,498-523",
+                "rerevved-sdk:src/system/xex_module.cpp:189-413,536-620,1082-1094",
+                "rerevved-sdk:src/system/lzx.cpp:25-185",
+                "rerevved-sdk:thirdparty/CMakeLists.txt:127-137",
+                "rerevved-sdk:thirdparty/libmspack/libmspack/mspack/lzxd.c",
+                "rerevved-sdk:thirdparty/crypto/rijndael-alg-fst.c"
+              ]
+            },
+            "qualification": "Static import identity only. ordinal59StorageLoaderBoundary separately composes matching pinned source storage and selected import write under explicit completed-init/same-resolver/success/retention premises. The flattened0x30002000 seed is not an ordinal. Actual config/order,allocation/mapping/lifetime,active M/V and readable installed V+0x18 remain unbound; recovery/completion/retirement remain unproved.",
+            "reentry": "rexAppConfigurationBoundary owns conditional pinned callback assignment/title-override retention and presentation order through the immediate virtual ConstructRuntime request. Its remainingDiscriminator selects the unopened title ConstructRuntime override,Runtime setup overloads,kernel initialization and same-runtime load order. Completed initialization,active R/M/V/slot and allocation/lifetime/alias bindings remain separate."
+          },
+          "ordinal59StorageLoaderBoundary": {
+            "question": "Given the accepted current xboxkrnl.exe type-0 ordinal-0x59 descriptor, which pinned storage bytes and ordered import-write event follow under completed initialization and same-resolver premises?",
+            "confidence": "strong",
+            "acceptedInput": {
+              "manifest": "native-renderer-tiling-worker-store-boundary.json",
+              "pointer": "/currentEvidence/watchdogBoundary/recoveryHelper/externalRootBoundary/patchedImportIdentityBoundary",
+              "version": "0.0.3.2",
+              "root": "0x820007E8",
+              "module": "xboxkrnl.exe",
+              "descriptorType": 0,
+              "ordinal": "0x59",
+              "preResolutionWord": "0x00000059",
+              "qualification": "Accepted decoded current metadata reused; no new decoder, artifact read, native query or runtime execution. Flat0x30002000 supplies no allocation or active chain."
+            },
+            "sdkRevision": "5b7335f56161317a10b46921ccd7489685336c4e",
+            "sourceIdentity": "Ten cited current files matched raw pinned Git blobs at the stated SDK revision; exact source locators define the compared bytes. This identifies source only,without installed or running SDK selection.",
+            "interpretedOwners": [
+              "rerevved-sdk:src/kernel/xboxkrnl/xboxkrnl_module.cpp:61-88",
+              "rerevved-sdk:src/system/export_resolver.cpp:66-71",
+              "rerevved-sdk:src/system/export_resolver.cpp:54-63",
+              "rerevved-sdk:src/system/xex_module.cpp:1059-1114"
+            ],
+            "structuralLocators": [
+              "rerevved-sdk:src/kernel/xboxkrnl/export_table.inc:103",
+              "rerevved-sdk:include/rex/kernel/xboxkrnl/debug_monitor.h:23-33",
+              "rerevved-sdk:src/kernel/xboxkrnl/xboxkrnl_module.cpp:44",
+              "rerevved-sdk:include/rex/system/export_resolver.h:49-50,70-93"
+            ],
+            "levels": {
+              "R": "Accepted descriptor/root cell0x820007E8, freshly read before overwrite.",
+              "M": "Nonzero uint32 guest storage address returned by the selected allocation; importer writes M at R.",
+              "V": "True branch only: record address M+4; false branch has BE32[M]=0 and allocates no record.",
+              "S": "True branch only: callback slot address V+0x18=M+0x1C; initial BE32[S]=0.",
+              "function": "No nonzero callback or function identity selected."
+            },
+            "storageAlternatives": [
+              {
+                "flag": false,
+                "allocationBytes": 4,
+                "orderedWrites": [
+                  "BE32[M]=0"
+                ],
+                "afterRetainedImportWrite": "BE32[R]=M and BE32[M]=0"
+              },
+              {
+                "flag": true,
+                "allocationBytes": 40,
+                "recordBytes": 36,
+                "orderedWrites": [
+                  "BE32[M]=M+4",
+                  "zero exactly[M+4,M+40)"
+                ],
+                "callbackOffset": "0x18",
+                "afterRetainedImportWrite": "BE32[R]=M,BE32[M]=V=M+4,BE32[V+0x18]=0 under compatible ordered aliases and retention"
+              }
+            ],
+            "resolver": {
+              "lookup": "Search tables in registration order using the completing utf8_starts_with_case helper; first matching table wins. Out-of-range returns null immediately; an in-range hole returns null. No fallback to later tables.",
+              "exactEntryPremise": "The actual first matching table at both calls must be the intended retained table and have the same nonnull E at ordinal0x59.",
+              "mappingOrder": [
+                "assert_not_null(E) completes",
+                "E.tags |= kImplemented",
+                "E.variable_ptr=M"
+              ],
+              "implementedBit": 0,
+              "variablePtrBytes": 4,
+              "qualification": "SetVariableMapping does not check export type. The retained structural E.type=kVariable premise is required at import; SDK enum kVariable=1 differs from descriptor type0."
+            },
+            "importWrite": {
+              "order": [
+                "Select retained current library entry with record_addr=R; zero addresses are skipped.",
+                "Translate R and freshly read BE32[R]=0x00000059.",
+                "Decode record_type=(word&0xFF000000)>>24 and ordinal=word&0xFFFF; middle byte ignored by decoder.",
+                "For type0 use matching base module name and same retained resolver to obtain E.",
+                "Require E.type=kVariable,implemented bit set and nonzero E.variable_ptr=M.",
+                "Write exactly four big-endian bytes of M at R."
+              ],
+              "stop": "Selected write event at xex_module.cpp:1105; no whole-importer, whole-loop, constructor-continuation or load completion theorem."
+            },
+            "alternatives": [
+              "Missing resolver or missing/function-typed export: no root write in this selected type0 slice.",
+              "Nonzero descriptor type: outside selected type0 slice; no theorem about later type handling.",
+              "Variable export with missing implemented bit or zero variable_ptr: BE32[R]=0xD000BEEF|((E.ordinal&0xFFF)<<16),0xD059BEEF for E.ordinal0x59.",
+              "Early import can write garbage. A later import reads current changed bytes and has no automatic repair theorem.",
+              "Different resolver or intervening export replacement may patch another M. Earlier matching table can shadow intended entry.",
+              "Failure or noncompletion of allocation,translation,assertion,helper or memory operation invalidates the conditional theorem; no invented error handling or recovery is claimed."
+            ],
+            "premises": [
+              "Completed selected initializer before this current importer iteration, with all unexamined constructor and loader work completing and retaining required state.",
+              "Same live resolver,first matching table,E,implemented/variable type and mapped uint32 M at both lookups; registration and helpers populated and retained intended objects.",
+              "Correct current source adapter,library module/header/image/ordinal correspondence and fresh valid pre-resolution word at R; no earlier or duplicate import changes that current descriptor.",
+              "Successful ordinary allocation and translation with nonzero M and valid nonwrapping four- or40-byte guest span; faithful four-byte BE wrappers and 36-byte record layout.",
+              "Faithful completing BE store/read,memset,registration,video helper,string/map/library/loop operations,assertion and relevant profiling/logging/instrumentation; these bodies are premises,not added interpreted owners.",
+              "Stable compatible physical aliases and valid host/guest mappings among descriptor/output/root,M,V,slot,export/table state,metadata,code and live objects; numeric address differences prove no disjointness.",
+              "All required intermediate and final bytes and object identities survive ordered writes and external activity for the claimed lifetime. Compatible overlaps may be allowed; destructive aliases or later mutations invalidate retention."
+            ],
+            "wrapperCitationsOnly": [
+              "rerevved-sdk:src/system/runtime.cpp:170-198",
+              "rerevved-sdk:src/kernel/kernel_init.cpp:25-34",
+              "rerevved-sdk:include/rex/system/kernel_state.h:262-266",
+              "rerevved-sdk:src/system/user_module.cpp:100-128,180-195",
+              "rerevved-sdk:src/system/xex_module.cpp:921-934,972-1010"
+            ],
+            "verification": "A print-only source/byte model passed110 named checks,including raw source pins,structural/order checks and an independent ordered BE-byte oracle for both storage branches and the selected import write. Falsifiers cover high bits,bounds,wrong module/ordinal/type,stale descriptor,early/other resolver,first-match holes/out-of-range,pointer/tag alternatives,allocation/helper failure,physical root/M/V/slot aliases,compatible overlaps,export interference,later mutation and field/width/endian/order/output changes. Supplied states establish no actual initialization,physical mapping or dispatch.",
+            "remainingDiscriminator": "rexAppConfigurationBoundary owns conditional pinned callback assignment/title-override retention and presentation order through the immediate virtual ConstructRuntime request. Its remainingDiscriminator selects the unopened title ConstructRuntime override,Runtime setup overloads,kernel initialization and same-runtime load order. Completed initialization,active R/M/V/slot and allocation/lifetime/alias bindings remain separate.",
+            "guards": [
+              "No actual ReXApp/config.kernel_init/title LoadXexImage binding or runtime initialization/execution claim.",
+              "Commented trampoline installs nothing; neither flag selects a callable handler at0x826A7C48.",
+              "No callback inspection,recovery,completion,consumption,retirement or retail-kernel equivalence claim."
+            ]
+          },
+          "rexAppConfigurationBoundary": {
+            "question": "Which pinned title configuration and conditional presentation edges reach the immediate virtual ConstructRuntime request?",
+            "confidence": "strong",
+            "scope": "Source-only configuration assignment and initialization prefix, stopping before the virtual ConstructRuntime body at SDK rex_app.cpp:195.",
+            "acceptedInput": {
+              "manifest": "native-renderer-tiling-worker-store-boundary.json",
+              "pointer": "/currentEvidence/watchdogBoundary/recoveryHelper/externalRootBoundary/ordinal59StorageLoaderBoundary",
+              "use": "Reuse the accepted four-owner storage/resolver/import contract and decoded xboxkrnl.exe descriptor type0 ordinal0x59. Its completed-initializer, same-resolver, success, alias and retention premises remain unproved.",
+              "qualification": "No source body from those four owners, decoder, native range or storage byte model is reinterpreted. This prefix does not discharge completed initialization or initialization-before-load."
+            },
+            "sourceIdentity": {
+              "sdkRevision": "5b7335f56161317a10b46921ccd7489685336c4e",
+              "titleRevision": "a2c3e48e950eff4fab64fb446a83e04ab3060f2a",
+              "files": [
+                {
+                  "locator": "rerevved-sdk:src/ui/rex_app.cpp",
+                  "sha256": "0B53D0A4C0E4A8A3FB0978E35AF4D71BBCC86C30941DB67A0B952BC9C3299411",
+                  "gitBlob": "0f178f027223a910004c7ab2b0becc326e4642d0"
+                },
+                {
+                  "locator": "rerevved-sdk:include/rex/rex_app.h",
+                  "sha256": "6DA30F427C2667863232C70CC0B849FFE969940800D89B71356C1288F5E17D91",
+                  "gitBlob": "22a34409c3fe872a50ccc33651c74996a0d4bfe6"
+                },
+                {
+                  "locator": "rerevved-sdk:include/rex/runtime.h",
+                  "sha256": "B3E5114665A4FFF0FA59DFCD78AB0C481D08B4598AEE085B016DDCBC7490784D",
+                  "gitBlob": "2e52382c29415a805df02567c775810581f15797"
+                },
+                {
+                  "locator": "rerevved:src/app.cpp",
+                  "sha256": "F3375429204F21F7999633509636173E862D0980A56DA8D260733439D2AEE6E4",
+                  "gitBlob": "7df2afe37964cdb74cbb1f487dde51d2b0712654"
+                },
+                {
+                  "locator": "rerevved:src/app.h",
+                  "sha256": "28E05517D1434A084EA853D8A1C5185B3CFA4B0CCD2865D4C808E40AF6846493",
+                  "gitBlob": "2b3cb3d33c94a7bff691fb0a1dfd4b72f03de1ef"
+                }
+              ],
+              "qualification": "Current tracked file bytes equal the raw blobs at these exact revisions. Source equality does not establish ignored generated output provenance, compilation, SDK installation, running selection or retail equivalence."
+            },
+            "interpretedOwners": {
+              "accepted": [
+                "XboxkrnlModule::XboxkrnlModule",
+                "ExportResolver::SetVariableMapping",
+                "ExportResolver::GetExportByOrdinal",
+                "XexModule::SetupLibraryImports"
+              ],
+              "fresh": [
+                "rerevved-sdk:src/ui/rex_app.cpp:502-587 ReXApp::SetupPresentation",
+                "rerevved:src/app.cpp:631-657 App::OnPreSetup",
+                "rerevved:src/app.cpp:958-1012 App::SetupPresentation",
+                "rerevved-sdk:src/ui/rex_app.cpp:182-199 ReXApp::OnInitialize"
+              ],
+              "total": 8
+            },
+            "structuralLocators": [
+              "rerevved-sdk:include/rex/runtime.h:79-90 RuntimeConfig; kernel_init at86 is std::function<void(Runtime*,system::KernelState*)>",
+              "rerevved-sdk:include/rex/rex_app.h:103 class inheritance;114 virtual OnPreSetup;165 virtual OnFinalizePaths;276-289 virtual init phases;333 MakeResumeCallback;349 OnInitialize override;371 RuntimeConfig config_ member",
+              "rerevved:src/app.h:39 App inherits ReXApp;51 OnPreSetup override;62 SetupPresentation override;64 ConstructRuntime override;66 OnFinalizePaths declaration"
+            ],
+            "configurationEdges": [
+              "SDK503-506 assigns gpu_plugin,audio_factory,input_factory and kernel_init;506 assigns rex::kernel::InitializeKernel before508 passes the same config_ lvalue to virtual OnPreSetup.",
+              "For a live App object dispatching the declared title override, the complete title631-657 body directly assigns game_version and mod_script_host. In its Native branch it resets graphics and clears gpu_plugin. It contains no direct kernel_init write, whole-config replacement, config move/swap or direct whole-config escape beyond its reference parameter.",
+              "After the hook, the SDK body may directly assign config_.graphics at511. No other inspected direct write targets kernel_init or replaces the whole config. This local syntactic fact does not prove effects of callees, callbacks, destructors or aliases.",
+              "Under normal completion, stable same-object/config identity, no incompatible reentry and retained callback value across every opaque operation, config_.kernel_init remains the assigned InitializeKernel callable through the selected request boundary. No callback invocation or callback body is proved."
+            ],
+            "controlEdges": [
+              "SDK183-186 requires normally returned true from SetupEnvironment and virtual SetupPresentation before path finalization. On a live title App, the latter selects title958-1012.",
+              "Title960 explicitly calls SDK base SetupPresentation first. Base false follows the title failure arm and returns false at970, after any applicable developer diagnostic. The base false alternatives include failed plugin selection, failed graphics presentation and failed window creation at SDK518,526,534.",
+              "After a true base result, title Native returns exactly the normally returned setupNativePresentation result at975. The non-Native branch sets application defaults and initializes display aspect; its developer adapter path returns false at1003 on failed resolution or capture. Its final path optionally starts the Xenos frame counter and returns true at1011. All called bodies remain opaque.",
+              "Only title presentation true reaches SDK188 OnFinalizePaths(resolved_defaults_,MakeResumeCallback()). An absent paths result returns true at192; this invocation reaches no immediate ConstructRuntime request. The deferred callback route is outside the theorem.",
+              "A present paths result reaches virtual ConstructRuntime(*paths) at195 after presentation and path finalization. Stop before entering its selected implementation, consuming its return, LaunchModule or any subsequent action."
+            ],
+            "opaqueEffectsAndEscapes": [
+              "Title OnPreSetup calls logging, SetHostDataProvider with a noncapturing callback, CreateModScriptRulesHost and SetBindDefault. The callback body, factory, global activity and destruction of replaced members are uninspected; their completion and compatible effects are premises.",
+              "SDK SetupPresentation calls cvar/backend factories, OnPreSetup, plugin and graphics presentation, app_context, name/window creation, window methods, cvar callback registration, surface queries/updates, presenter/provider/drawer methods, SetupOverlays and OnCreateImmediateDrawer. Calls, conversions, temporary/member destruction, logging/error formatting and hidden macro effects are uninspected.",
+              "SDK541-542 registers this as window listeners;547 registers a callback capturing this. Direct field assignment absence does not exclude later or synchronous reentry through these escapes. Other implicit-this virtual/helper calls can observe or mutate reachable app state.",
+              "Title SetupPresentation calls developer filesystem/stream diagnostics, native presentation, adapter selection, application defaults, display-aspect initialization, capture resolution/start and frame-counter start. OnInitialize calls SetupEnvironment, presentation, MakeResumeCallback and OnFinalizePaths before the stop. Every admitted operation must complete normally and retain the required identities and callable; none receives an inferred preservation contract from its spelling."
+            ],
+            "premises": [
+              "The selected invocation executes these pinned source semantics on the same live App/ReXApp object with correct virtual dispatch, intact object lifetime and the same config_ member. No concurrent or reentrant initialization moves, destroys or replaces that object/config.",
+              "Every call, callback registration, implicit operation, macro, allocator, destructor, filesystem operation and host access preceding the selected stop completes normally on the selected path. Exceptions, nonreturn or side paths are outside the conditional theorem.",
+              "All opaque operations and external activity preserve the assigned callable and required control inputs unless the explicitly modeled direct writes say otherwise. Listener/deferred callback delivery must be absent or compatible, including synchronous callback/reentry possibilities.",
+              "Host mappings and aliases among app/config/callable/window/graphics/path/global/callback state remain valid and compatible for each ordered event. Numeric object/address differences establish no disjointness. Whole-object replacement, moved state, callback overwrite or destructive alias effects invalidate retention.",
+              "The accepted ordinal59 contract's completed selected initializer,same live resolver/entry,successful allocation/import and storage/lifetime premises remain separate. This prefix supplies no actual Runtime or resolver identity to discharge them."
+            ],
+            "verification": {
+              "method": "Print-only source pin and supplied host control model checked against separately derived Boolean reachability and ordered-event obligations.",
+              "checks": 1178,
+              "controlCases": 1024,
+              "sdkBaseGuardCases": 32,
+              "retentionPremiseCases": 64,
+              "sourceMutationsRejected": 12,
+              "mutationFamilies": [
+                "changed assigned callback",
+                "title callback overwrite",
+                "whole-config replacement or move escape",
+                "assignment after hook or missing/reordered presentation",
+                "ignored environment,base,title/native,capture or absent-path returns"
+              ],
+              "qualification": "The supplied-state model establishes the selected source control theorem, not actual host values or opaque callee behavior. Guest bytes, CR/XER, guest ABI and lock tests are not applicable; no native query,decoder,build,runtime,capture or guest execution was performed."
+            },
+            "remainingDiscriminator": "Select title App::ConstructRuntime at app.cpp:928, whose base-call sites941/943 were search locators only, then SDK ReXApp::ConstructRuntime with Setup call402, Runtime::Setup overloads254/133 and kernel_init invocation197-198, then LoadXexImage447 on the same runtime/resolver. Those bodies and retention/order edges require a new owner budget; none is closed here.",
+            "guards": [
+              "No completed initialization,initialization-before-load,whole boot,Runtime construction/setup success or LoadXexImage success claim.",
+              "No callback body,target selection,lifetime,recovery,completion,consumption,retirement or active R/M/V/slot claim.",
+              "The present-path boundary is only the virtual request. It neither interprets title ConstructRuntime as a ninth owner nor substitutes the SDK implementation for its override.",
+              "Ignored generated code,installed SDK,running build and supported retail image are not made equal by tracked source pins."
+            ]
+          },
+          "qualification": "V=0 remains the accepted full 0xFFFFFFFF80004005 local scalar alternative under its prefix/return predicates. The fixed fill/copy and root evidence prove no recovery, completion, consume or storage retirement. The watchdog's return1 overwrite discards the helper scalar; waitPoll stop remains control only. No actual activation, whole helper return or installed callback identity is proved.",
+          "queryDigests": {
+            "rootWord": "8CD99E87CC5681C3152669391081BDF869C884E3D8F36F44F7860477EE4CF191",
+            "definedData": "5601B4303AFD3ACBC68E25544F2B1CECDDDB30EBC0AC79F8742191033D61BA38",
+            "references": "B96DBA0A74A827F1E9F65B16E203FE3703FEFD688D2F28FC8218571641202F34"
+          }
+        },
+        "remainingDiscriminator": "rexAppConfigurationBoundary owns conditional pinned callback assignment/title-override retention and presentation order through the immediate virtual ConstructRuntime request. Its remainingDiscriminator selects the unopened title ConstructRuntime override,Runtime setup overloads,kernel initialization and same-runtime load order. Completed initialization,active R/M/V/slot and allocation/lifetime/alias bindings remain separate.",
+        "falsificationCondition": "Different authoritative words, unreadable frame/pointer spans, changed required full-register/saved state, destructive aliases, nonreturning helpers or a different installed indirect target/effect invalidate the corresponding conditional edge. No actual recovery, consume, completion or storage retirement is proved."
+      }
     },
     "readerSearchBoundary": {
       "method": "ghidra/FindPointerValues.java",

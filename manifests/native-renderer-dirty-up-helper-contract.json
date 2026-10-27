@@ -172,6 +172,31 @@
       "nativeSupport": "979 complete root/growth/helper words in the shared eight-function packet; known shader/cache/copy/pressure contracts were reused rather than re-mined."
     }
   },
+  "pressureProgressBoundary": {
+    "question": "When does the selected AC610 pressure-copy loop make finite progress after a flush?",
+    "confidence": "strong",
+    "owner": "0x826AC610",
+    "notation": "U32 is modulo2^32; S32 is its signed interpretation; W is a BE32 load. G is device, c is cursor, E=W(G+0x34), p is source-minus4, H is header, R is remaining words and d is group divisor. Offsets are hexadecimal; counts are decimal.",
+    "capacity": "0x826AC630..0x826AC658 computes A=(S32(U32(E-c))>>2)-1, then signed q=trunc0(A/d). Native zero-divisor and division-overflow guards remain. q<=0 skips the chunk; positive q selects k=minU32(U32(q*d),R). Group rounding precedes this minimum, so the final k need not be a multiple of d.",
+    "chunk": "0x826AC66C..0x826AC69C decreases remaining by k, emits one BE32 header with the low16(k-1) count shifted 16 and ORed with H, then performs k ordered preincrement source loads and destination stores. It advances p by 4*k, c by 4*(k+1), and H by k, modulo the native widths. No separate 65536-word chunk limit is present; these transfers alone do not establish packet validity.",
+    "retryAndExit": "For nonzero remaining, 0x826AC6A8 publishes c to G+0x30, 0x826AC6B0 calls C588 and 0x826AC6B4 reloads G+0x30 into r4 before retrying. The helper does not directly consume C588's r3. Completion returns actual full64 r4 at 0x826AC6BC without a final G+0x30 store. With entry R=0, a positive q still emits a zero-payload count header before returning; an empty call is not universally a no-op.",
+    "sufficientConditions": [
+      "Initially 1<=R0<=4294967295, full64 r7=Z32(R0), r8=Z32(d), r4=Z32(c), r6=Z32(p), with selected d in{1,4,6,16}. Every loop entry has aligned c/E and ordinary-integer 0<=E-c<=2147483647; all device, source and emitted command extents are valid and nonwrapping.",
+      "The original requested source words survive until their ordered loads. Command, frame and selected helper writes preserve unread source, device fields and retained G/H/p/R/d except their explicit effects; physical aliases and saved restoration bytes are included.",
+      "Save/restore interfaces and every reached C588 finish normally and finitely, preserve required full64 retained registers, frames and readable/writable extents, and retain the selected caller-live ABI. Their accepted ordered effects still occur.",
+      "At every reached C588 return, the reloaded c=W(G+0x30) and E=W(G+0x34) satisfy 4*(d+1)<=E-c<=2147483647, with the alignment, extent and retention predicates still true at the next loop entry. A returned cursor alone does not establish this predicate."
+    ],
+    "termination": "Under these sufficient conditions, positive chunks decrease the natural-number rank ceil(R/d), with k>=d unless completing the remainder. At most ceil(R0/d) productive chunks and at most ceil(R0/d) flushes occur, including a possible initial no-space flush. Exactly R0 payload transfers occur. No wall-time or unconditional helper-return bound follows.",
+    "counterexample": "Supply d=16,R=16,c=0x1000,E=0x1040: 64 bytes give A=15,q=0, below the 68-byte productive minimum. If each finite C588 return restores the same G+0x30/G+0x34 and protected state, cursor/source/header/remaining do not change and the retry can repeat indefinitely. This is a supplied conditional state, not an observed natural hang.",
+    "currentEvidence": {
+      "method": "Foreground tools/run-headless.ps1 -ReadOnly ghidra/DumpMemoryWords.java target0x826AC668 radius23; all 47 words matched image.json. The 46-instruction body0x826AC610..0x826AC6C4 supplied semantics; preceding zero 0x826AC60C supplied identity only. No descendant body was opened.",
+      "bodyBeSha256": "AFF9E1F2D8B02D199100ECBCEC73D0979A9651C9562AF16BFD6DB5BB7D40CF13",
+      "generated": "rerevved:generated/default/rerevved_recomp.88.cpp:12835-12952; exact header/next-header discovery preceded the 118-line read. LF-joined function SHA256 8B7E7AC6CE1693F27D18759FBCEFD4856E8957E3EDD329A667FA1F6DDA8E5FB7; complete-file SHA256 400246CF019D656B79D6BB61773218481D09D6F20E1418606BF877763B83C2A4. Handwritten revision a2c3e48e950eff4fab64fb446a83e04ab3060f2a does not establish ignored generation provenance.",
+      "model": "An independent integer model passed 2048 supplied nonempty cases plus five explicit empty/signed-wrap/trap/null checks. Three insufficient-capacity states reproduced four fixed retries each. Models establish the declared arithmetic, not input reachability or runtime execution."
+    },
+    "remainingDiscriminator": "For a selected root/context/generation, check the actual C588 return's capacity and protected-state predicate. Do not select an allocator, callback or arbitrary-copy descendant from this counterexample alone.",
+    "falsificationCondition": "Different supported native words, a divisor or count outside the stated domain, signed/wrap mismatch, unreadable or overlapping protected extents, changed retained state, nonreturning helper or failed post-flush predicate invalidates the sufficient contract. Failure of a sufficient condition alone does not prove a hang."
+  },
   "replacementObligations": [
     "An allocator-free replay is conditional on an exact selected row with all effects modeled. Compatible hit/no-pressure is smaller than arbitrary miss/copy coverage, but still has cache copies and possible metadata/packet/stamp work. C7A8 fast fit reuses command storage; it does not remove the need to preserve that owned guest extent or later B818 outcomes.",
     "Refuse before mutation for unmodeled branch/copy/cache/import/ABI, unreadable or unbounded metadata/sentinel/patch ranges, command pressure/rollover/wait/dynamic target, missing persistent history or ID/stamp coherence, or unproved later take/commit/retention. These are missing-proof classes, not permanent bans on every nonempty metadata/inline/ID row.",

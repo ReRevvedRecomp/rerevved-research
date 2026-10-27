@@ -7,7 +7,7 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 
 - [Unit definitions](unit-definitions.md) - records, production/cost/AI, Move staging and extension limits.
 - [City Militia and trainable Scout](city-militia-scout.md) - founding/Loyalty/persistence and Scout requirements.
-- [Barbarian spawning and population limits](barbarians.md) - garrisons, AI, BFECUNDITY and rate/limit unknowns.
+- [Barbarian spawning and capital protection](barbarians.md) - garrisons, AI, production and the conditional static capital gate.
 - [Friendly village rewards](friendly-villages.md) - six development metrics, reward identities, priority alternatives and session-lifecycle limits.
 - [Spy missions](spy-missions.md) - native choices, local selection policy and ordinary AI ingress limits.
 - [Ordinary combat boundary](ordinary-combat.md) - stats, stores, presentation and outcome/persistence limits.

@@ -1,4 +1,4 @@
-# Barbarian spawning and population limits
+# Barbarian spawning and capital protection
 
 Evidence terms: findings cover the stated static branches, not observed spawn
 cadence or delivered actions. Returns, live identity, ownership, retained state
@@ -6,29 +6,26 @@ and completed rebuild/order remain conditions wherever specified below.
 
 ## Raging behavior and implementer contract
 
-The [capital grace feasibility boundary](../../manifests/barbarian-capital-grace-feasibility.json)
-identifies signed-year, capital-marker and selected combat/capture inputs for
-a possible calendar cutoff. It also records the command's return bookkeeping
-and selected Move17/capture continuations. Returning early from the movement
-executor does not cancel its caller's flag updates and linked-unit propagation.
-The selected queue consumer rolls back its read cursor on a zero dispatcher
-result; a nonzero result retains consumption. A permanent refusal cannot simply
-reuse that retry path. Pending routes, AI progression, special arrival helpers
-and defended/undefended coverage remain unbound.
-The selected native candidate-rejection arm clears pending destination X, but
-its successor can retain a live selected unit with movement remaining. An
-identified caller can invoke the decision owner six times without testing its
-return. These local paths do not establish finite turn progression after a
-refused delivered action, so the sentinel store alone is insufficient evidence
-for a safe capital-protection rule.
-Their actual actor is not joined to a Barbarian scheduler, so that selection
-table is not a universal prerequisite. Native Fortify and Sentry have bound
-local flag writes. A selected hold-flag reader can zero movement and request
-selection cleanup, conditional on its result gate, helper comparison and
-retained identities. Its alternative clears a different flag and continues.
-Actual Barbarian applicability, pending-order retirement and wake behavior
-remain unproved; the local finish arm does not establish a safe capital veto.
-The origin-city aggression threshold does not itself protect a target capital.
+The [capital gate contract](../../manifests/barbarian-capital-grace-feasibility.json)
+specifies a conditional static design for Raging-only protection of current
+Palace capitals before signed year -3000. Ordinary military actions check the
+current target at new-action admission; eligibility resumes at 3000 BC.
+A fresh capture backstop protects ownership transfer. Nuclear checks use the
+actual addressed damage footprint, including polar aliases, and fresh guards
+before population and victim damage.
+
+A refused order uses native result1 consumption, immediate movement/pending-X
+retirement for a fresh actor, matched selection clears and a scoped producer
+continuation. The linked-unit case preserves the parent's native busy cleanup;
+the ordinary action case skips the later Blitz refill. Native one-shot forced
+selection and bounded budget readers supply local progress alternatives.
+Pending-X alone, queue retry0 and an executor-only return are insufficient.
+
+The manifest's `safeGateContract` owns the exact schemas, supported native
+input/interface premises, sites, write footprint and continuations. This is
+implementation-ready static evidence, without an implemented or observed grace
+rule. Field/noncapital/other-civilization behavior, source-hut departure and the
+selected nonmilitary Spy/Caravan and espionage operations remain native.
 
 Early hut retention has a conditional native garrison explanation: the default
 threshold holds the ordinary current unit through weighted `C<=2`, while

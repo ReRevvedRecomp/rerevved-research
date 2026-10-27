@@ -15,6 +15,7 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 - [Civilization Unique Abilities](civilization-bonuses.md) - leaders, UAs and cumulative 16 by 4 UEAs.
 - [AI configuration boundaries](ai-options.md) - eight-civilization placement, participant storage, economic seams and bonus-aware valuation.
 - [City growth and population bonuses](city-growth.md) - thresholds, carryover and Gold/Irrigation rewards.
+- [Economy bonus correction contracts](economy-bonus-corrections.md) - retain Gold income and growth benefits while removing their cost penalties.
 - [Science and technology cost](science.md) - cost, progress, first-discovery rewards, acquisition,
   excess Gold and the spaceship launch-date admission boundary.
 

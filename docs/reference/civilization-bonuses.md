@@ -157,10 +157,10 @@ project distinct IDs onto all 64 retail cells:
 
 | Owner class | Distinct retail IDs | Retail cells | Boundary |
 | --- | --- | ---: | --- |
-| Shared cumulative lookup | 1, 3, 5, 8, 9, 10, 12, 13, 16, 17, 18, 19, 20, 23, 24, 28, 30, 32, 34, 35, 41, 42, 43, 47, 48, 50, 55, 56, 58, 59, 60 | 44 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
+| Shared cumulative lookup | 1, 3, 5, 8, 9, 10, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 28, 30, 32, 34, 35, 41, 42, 43, 47, 48, 50, 55, 56, 58, 59, 60 | 47 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
 | Direct civilization/effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
 | Mixed companion path | None | 0 | No native retail cell is accepted in this class. |
-| Unknown | 2, 4, 6, 7, 14, 25, 26, 27, 36, 38, 46, 51, 61 | 19 | No accepted evidence packet linking the effect's producer and consumer establishes the native owner. |
+| Unknown | 2, 4, 6, 7, 14, 26, 27, 36, 38, 46, 51, 61 | 16 | No accepted evidence packet linking the effect's producer and consumer establishes the native owner. |
 
 The 95-site inventory requests 44 of 45 retail IDs, offering search guidance,
 not named-effect/full-ownership proof or exclusion of direct companions. Merged
@@ -175,6 +175,7 @@ literal request and has a direct owner.
 | 8 | `CityGrowthThresholdLookup` (`0x82CF1060`) queries at `0x82CF10F8` using city player `+0x00`; [growth threshold](city-growth.md) owns formula/adjustment/progress limits. |
 | 13 | `EffectiveUnitAttackLookup` (`0x82CF2230`) tests `UnitType` Cannon 17 at `0x82CF236C`, queries `0x82CF2380`, adds two at `0x82CF2390` only on success. |
 | 23 | `0x82D13978` adds signed `r18` to indexed `0x830ED484`, queries `0x82D15618`, then adds signed `r18 / 2` toward zero if active: nonnegative total `r18 + floor(r18 / 2)`. Maps Increased Great Person generation arithmetic, not enclosing name/layout or all producers/consumers. |
+| 25 | CityUpdate queries `0x82D148BC` and adds half its reaching Gold intermediate before storing frame `+0x7C`. The income contribution is separate from rush-rate and other AI valuation calls. The [correction contract](economy-bonus-corrections.md#gold-income-without-the-rush-penalty) preserves this income owner. |
 | 42 | `0x82D13978` requires local `0x8` clear/second indexed word zero; query `0x82D15344` can bypass `0x82D15350..0x82D1536C`, preserving four indexed halfwords/locals otherwise zeroed from `r22`. One Anarchy gate; dynamic field/predicate names and other paths remain open. |
 | 47 | `CalendarTurnAdvance` query `0x82D1F484` updates `0x830ED544 + player * 4` by `reserve + (reserve + 25) / 50`, signed truncation: ordinary nonnegative interest 2 percent, nearest/half-up. `0x82CF9F38` query `0x82CF9FE8` adds same term to aggregate without reserve store. [`gold-reserve-interest.json`](../../manifests/gold-reserve-interest.json) owns negative boundary. |
 | 40 | Capture `0x82D1B400` loads new civilization `0x82D1B74C`, tests Mongolian 14 at `0x82D1B758`, calls creator `0x82D1B784` on equality, ordinary reward `0x82D1B8BC` otherwise. Table replacement did not suppress it; Horseback Riding extension became non-retail mixed companion: synthetic shared grant plus separate `0x82D1B758` gate. |

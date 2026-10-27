@@ -35,6 +35,10 @@ City update compares signed `+0x34`, subtracting threshold and incrementing
 `+0x03` on growth; progress producers/full meaning remain unknown. Evidence:
 [city-growth-threshold.json](../../manifests/city-growth-threshold.json).
 
+The active floor can raise a baseline below 20. The proposed
+[economy bonus correction](economy-bonus-corrections.md#zulu-growth-without-increased-food-requirements)
+retains that baseline while preserving the native benefit at larger values.
+
 ## Population bonus branches
 
 Applying the 100-Gold reward requests type-0 Settlers at the first populated

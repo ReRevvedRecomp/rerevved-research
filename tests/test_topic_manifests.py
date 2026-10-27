@@ -235,7 +235,9 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn(1, {entry["ueaId"] for entry in shared})
         self.assertIn(50, {entry["ueaId"] for entry in shared})
         self.assertTrue(
-            {3, 12, 18, 19, 20, 24, 55}.issubset({entry["ueaId"] for entry in shared})
+            {3, 12, 18, 19, 20, 24, 25, 55}.issubset(
+                {entry["ueaId"] for entry in shared}
+            )
         )
         terrain_ids = {16, 28, 30, 32, 41, 56}
         self.assertTrue(terrain_ids.issubset({entry["ueaId"] for entry in shared}))
@@ -255,7 +257,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertNotIn(1, document["retailOwnerClasses"]["unknown"])
         self.assertNotIn(50, document["retailOwnerClasses"]["unknown"])
         self.assertTrue(
-            {3, 12, 18, 19, 20, 24, 55}.isdisjoint(
+            {3, 12, 18, 19, 20, 24, 25, 55}.isdisjoint(
                 document["retailOwnerClasses"]["unknown"]
             )
         )
@@ -266,10 +268,10 @@ class TopicManifestTests(unittest.TestCase):
             document["retailCellProjection"]["counts"],
             {
                 "total": 64,
-                "sharedCumulativeLookup": 44,
+                "sharedCumulativeLookup": 47,
                 "directCivilizationEffectPath": 1,
                 "mixedCompanionPath": 0,
-                "unknown": 19,
+                "unknown": 16,
             },
         )
 

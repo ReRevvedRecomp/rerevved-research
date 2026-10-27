@@ -28,7 +28,7 @@
       "+0x350",
       "+0x358"
     ],
-    "boundary": "Only the two exact functions were interpreted. The indirect slot target, backing-pointer helper and producer helpers were not inspected. Adjacent words in the bounded memory reports supplied no function semantics."
+    "boundary": "The initial reset/rebuild packet interpreted only these two exact bodies,with adjacent words supplying no semantics. outerReturnAndInvalidationBoundary separately composes the accepted shared D3D9F0/E960 contracts and save/restore suffixes; its four fresh reset-frame words close only their named targets/frame. The indirect entry slot and general producer helpers remain uninspected."
   },
   "dependencies": [
     {
@@ -38,6 +38,10 @@
     {
       "topic": "audio-2d-script-entry-lookup",
       "use": "Establishes the paired table/bound and four-byte pointer stride consumed by lookup."
+    },
+    {
+      "topic": "xbox-network-message-root",
+      "use": "Owns shared D3D9F0 routing and the conditional D2E960 call/store/return contract reused by this backing-pointer handoff."
     }
   ],
   "currentEvidence": {
@@ -72,7 +76,113 @@
       "callee": "0x82D3D9F0",
       "r3": "The current owner +0x350 pointer reloaded at 0x82D4FAA4.",
       "guard": "The pointer is nonzero at 0x82D4FAA8; the zero arm branches to 0x82D4FAB8.",
-      "boundary": "Only r3 has a newly bound input here; other volatile argument registers retain path-dependent state. Helper effects and returning behavior are unproved."
+      "boundary": "Only r3 has a newly bound input here; other volatile argument registers retain path-dependent state. conditionalBackingBranch/outerReturnAndInvalidationBoundary composes one complete selected conditional return; actual implementation/state/path selection and general helper effects/return remain unproved."
+    },
+    "conditionalBackingBranch": {
+      "sharedBoundary": "xbox-network-message-root.json#/turnAndSyncAnchors/case55/case53Producers/stackObjectTable/sharedLeadingHelper/followupBoundary",
+      "retention": "For the selected nonzero-pointer handoff to reach invalidation, every invoked call must return to the proper continuation and restore required frame/nonvolatile state, with saved return/owner/zero-register bytes protected and owner O live/writable. Reset r31 must again identify O and low32(r28) must again be zero. The shared follow-up deliberately uses working r28=P and r31=C before restoration; retention is not an untouched-register claim.",
+      "result": "Under those predicates, accepted 0x82D4FAB4 writes the four-byte zero at O+0x350 before 0x82D4FAB8 writes the four-byte zero at O+0x358. Their prior contents need not be preserved merely for these final stores. The shared derived write and opaque calls establish no retained backing allocation, pointee lifetime or successful disposal.",
+      "counterexample": "Branch predicates alone do not exclude the derived four-byte write from saved owner/return bytes. Supplied Q=4 gives d32=0x40 and C64=B64, so the write is at low32(B64+0x18). If that interval aliases the low word of the shared caller's saved original r31 and E1C8 returns a different value, later restoration can change reset's owner. Actual admissibility of this B/Q pair is unproved; this is a symbolic counterexample to inferring preservation from the branch alone. This branch-only case does not satisfy every accepted first-hit predicate: under stable mapping that selected cursor store is byte-idempotent. The complete composition retains compatible aliases and separately excludes destructive saved-byte effects.",
+      "outerReturnAndInvalidationBoundary": {
+        "question": "Under the accepted selected E960 return, which exact restoration and protected-byte conditions reach the audio reset's ordered invalidation and local return?",
+        "confidence": "strong",
+        "image": "image.json",
+        "acceptedInputs": {
+          "sharedBody": "xbox-network-message-root.json#/turnAndSyncAnchors/case55/case53Producers/stackObjectTable/sharedLeadingHelper/followupBoundary",
+          "completeSelectedContracts": [
+            "enterInterfaceBoundary",
+            "firstBackwardHitBoundary",
+            "nonFullEntryBoundary",
+            "leaveInterfaceBoundary"
+          ],
+          "restoreSuffixes": [
+            "ai-stat-choice.json#/setupReturnBoundary/prologueAndRetention/enteredSaveSuffix",
+            "ai-stat-choice.json#/setupReturnBoundary/nullReceiverReturn/restore"
+          ],
+          "queryWriter": "xbox-network-message-root.json#/turnAndSyncAnchors/case55/case53Producers/stackObjectTable/sharedLeadingHelper/followupBoundary/queryOutputBoundary",
+          "resetBody": "audio-pointer-table-reset.json#/scope/exactInstructionExtents/0",
+          "qualification": "Import every predicate of each named selected contract; do not import the AI topic's receiver or handler assumptions. SDK 5b7335f source/export/map binding is source-only, with actual dispatch, mapping, Windows intrinsic selection, atomic result, finite helper/adapter completion and context effects admitted separately."
+        },
+        "selectedPredicates": [
+          "At reset call 0x82D4FAB0 the accepted nonzero-pointer arm is reached, full r31=O, low32(r28)=0 and reset frame SP=S. O identifies live writable mapped owner fields. The reset incoming SP is H with S=H-128. Original full r28..r31 at H-0x28,-0x20,-0x18,-0x10 and original low32 LR at H-8 have survived the prior reset prefix and all admitted traversal callbacks. Earlier reset traversal or disposal is not proved by this boundary.",
+          "At the shared helper entry, original full r30/r31 denote reset's working values, with original r31=O. They are saved at S-24 and S-16; low32 incoming LR=0x82D4FAB4 is saved at S-8; shared SP becomes F=S-112 with low32(S) stored at F. Original working r30 is not necessarily the reset caller's original r30. The shared helper retains P in working r30 at DA04 and B in working r31 at DA0C; those B/P working values are not the saved reset values.",
+          "The accepted nonnull-B and nonzero-query-byte routing, all earlier helper return/ABI predicates, and exact B/P/Q binding hold. Query arguments are B64+0x1080, P64 and F+80. Q is the fresh BE32 load from low32(F+80) at DA38, independent of the query return byte; query success alone does not prove a Q write or Q provenance. The direct audio P from FAA4 is a zero-extended BE32 load.",
+          "All accepted enter, first-hit and non-full E670 predicates hold. Freshly after the entire ordered E670 footprint, L=low32(U64(C64+0x24)) is a valid nonzero aligned nonwrapping 28-byte mapped object with BE owner=stable nonzero G, BE signed recursion=1 and native signed count=0. Do not carry enter state across P, entry or stack aliases. The accepted no-waiter leave source case completes its BE recursion1->0, BE ownerG->0 and native atomic count0->-1 writes in order and returns to E9C0 under its exact finite dispatch/helper/adapter/ABI premises.",
+          "At E960 entry SP=F, matching full r28..r31 saves at F-0x28,-0x20,-0x18,-0x10 and BE32 LR at F-8 retain incoming reset r28/r29 and shared P/B working values plus continuation DA44. E960 SP is F-128. E670's own incoming SP is F-128 and its frame is F-240; its full r30/r31 and BE32 LR saves and every code/read/control dependency retain the values required by its accepted contract.",
+          "Admit ordinary nonwrapping stack arithmetic, completing mapped reads/writes, valid executable continuations and no interfering writer. A sufficient common domain is H=Z32(h), 480<=h<=0xFFFFFFFF, with all required byte spans nonwrapping. This sufficient domain does not claim all other SP representations are invalid.",
+          "Across the entire composed physical write footprint, every required saved value, live context, code and not-yet-consumed input is preserved or separately shown compatible at its read. Include DA78/query admitted effects; shared, E960 and E670 saves/backchains; enter and leave lock writes; E9AC cursor store; E670 P/entry stores; and the final owner stores at O+0x350/O+0x358. Protect the reset caller's original saves through final restore, not merely through FAB4. Distinct guest addresses alone do not prove physical disjointness. O+0x350/O+0x358 need not retain their earlier contents before these final zero stores."
+        ],
+        "finiteRestoreAndEffects": {
+          "E960Return": "Under its complete selected contract, E960 returns to DA44 with SP=F, full r3=L64=U64(C64+0x24), original full r28/r29 and shared working r30=P64/r31=B64 restored. The void leave supplies no kernel success scalar.",
+          "sharedSuffix": "DA44 unconditionally branches to DA50, skipping fallback. DA50 adds 112 to SP; DA54 reloads BE32[S-8] into r12; DA58 copies r12 to LR; DA5C/DA60 reload full saved r30/r31 at S-24/S-16; DA64 returns to FAB4. These seven instructions have three reads totaling 20 bytes, no store, outgoing call or backedge. Full r3=L64 and r28/r29 remain unchanged. Final shared SP=S, full r31=O and low32(r28)=0. r12=LR=Z32(0x82D4FAB4); arbitrary high LR bits were not saved.",
+          "ownerStores": "FAB4 writes exactly four BE zero bytes at low32(O+0x350), then FAB8 writes exactly four BE zero bytes at low32(O+0x358). No intervening instruction reassigns r28/r31. Ordered local instruction effects do not establish observed runtime order or successful backing/pointee disposal.",
+          "resetLocalReturn": "FABC restores SP by 128 to H; FAC0 tail-branches without link to accepted restore28 at 0x827F7CD8. That seven-instruction suffix reads four full saved r28..r31 values and one BE32 saved LR, totaling 36 bytes, restores r12=LR=Z32(saved reset incoming LR), and returns. The final four reset instructions plus seven restore instructions are finite, with no outgoing call or backedge. Full r3=L64 survives. Reset caller original r28..r31 are restored; reset working r31=O is required at the stores, not claimed after the caller restore."
+        },
+        "physicalAliasDiscriminators": [
+          "Retain the existing branch-only Q=4 countermodel: a32=4,d32=0x40,C64=B64 and E9AC writes at low32(B64+0x18). A supplied physical alias to shared saved r31's low word can change restored owner when an admitted branch-only E1C8 result differs. Actual B/Q admissibility is unproved. This does not claim a counterexample satisfying every accepted first-hit predicate: under stable mapping that first hit's cursor write is byte-idempotent, and compatible alias effects are admitted.",
+          "An E670 P halfword physical alias can corrupt the shared saved owner. An independently supplied leave-entry owner physical alias to shared saved LR can satisfy fresh lock admission yet destroy the FAB4 return when owner clears. This local leave countermodel does not claim compatibility with every earlier enter/prefix/save premise. Either alias violates the required protected-save premise.",
+          "An alias from the final bound zero store to the reset caller's saved LR can preserve all nested returns and ordered owner stores yet defeat the reset local return. The protection obligation therefore includes the final owner stores.",
+          "High C/O bits survive in full registers; guest byte effects use low32 mapped addresses. Exact low32 LR is restored; high64 LR preservation is rejected. Low32 zero is sufficient for the final BE32 stores even if a separately admitted r28 high half is nonzero."
+        ],
+        "currentEvidence": {
+          "nativeReuse": "xbox-network-message-root.json followupBoundary/currentEvidence binds 52 unique flat-equal words including DA04..DA64; audio-pointer-table-reset.json currentEvidence binds all 37 reset words. Accepted native words, not old scratch query files, supply the reused suffix/store semantics.",
+          "freshResetFrameQuery": {
+            "script": "ghidra/DumpMemoryWords.java",
+            "addresses": [
+              "0x82D4FA34",
+              "0x82D4FA38",
+              "0x82D4FABC",
+              "0x82D4FAC0"
+            ],
+            "words": 4,
+            "flatEqual": true,
+            "querySha256": "C60C3B05AC0F7DC37A107DCD8551EA55ACE21909D215AF8A46DFA58F0D7B7E5B",
+            "orderedWordBytesSha256": "1D499024E2AD50AAB40F85098386D1CE49579E4586B8D08F04C4C47E509666D9",
+            "method": "Four serialized foreground read-only native words independently decoded/re-encoded for branch opcode/AA/LK/targets, frame opcode/registers/signed immediates; twelve changed fields rejected. No new DA44 suffix or global query."
+          },
+          "generated": [
+            {
+              "path": "rerevved:generated/default/rerevved_recomp.159.cpp",
+              "header": 27860,
+              "nextHeader": 27933,
+              "read": [
+                27860,
+                27932
+              ],
+              "selectedSuffix": [
+                27910,
+                27930
+              ],
+              "sha256": "6D504F85C7A5D08A639B8989145F55234AF7C13EFD3B2F66D9CB3DAD413A119E"
+            },
+            {
+              "path": "rerevved:generated/default/rerevved_recomp.154.cpp",
+              "header": 29927,
+              "nextHeader": 30016,
+              "read": [
+                29927,
+                30022
+              ],
+              "evidenceOnly": [
+                29927,
+                30015
+              ],
+              "selectedReturn": [
+                30001,
+                30012
+              ],
+              "sha256": "7D4D111321FBB51DDB3351553207345A4706AF05249E636EC783A9A35663A56A",
+              "qualification": "The 96-line read incidentally included next header 30016 and six following lines. Those incidental lines supply no semantics. Owner-only evidence covers 89 lines; generated corroboration is not independent native proof or generation/runtime identity."
+            }
+          ],
+          "sourceIdentity": "SDK 5b7335f56161317a10b46921ccd7489685336c4e remains the accepted source-only leave/enter pin. Current hashes of all 8 files recorded in leaveInterfaceBoundary/currentEvidence/fileSha256 and generated init SHA256 4A3E66DCA4CD52AF74D44380C22DDE8945EF347ACE30EF5F27B34AE0AEF06448 match that accepted pin. No compiled, installed or loaded SDK selection was tested.",
+          "checks": "Print-only independent semantic/byte-effect composition passed 15 supplied groups: ordinary/high64, Q home independence, fresh owner/recursion/count rejection, E670 physical P-to-recursion alias, E670 saved-owner alias, leave saved-LR alias, Q4 destructive/compatible aliases, final-store outer-LR corruption, nested save corruption, exact ordered widths and low32-zero stores. Four fresh reset words decode/reencode and 12 mutated fields reject. This is conditional finite contract composition, not guest execution."
+        },
+        "remainingDiscriminator": "The selected shared/audio return remains conditional on every imported source/dispatch/atomic/mapping/frame/save/alias premise. xbox-network-message-root.json#/turnAndSyncAnchors/case55/case53Producers/stackObjectTable/sharedLeadingHelper/followupBoundary/queryOutputBoundary owns a selected E3D0 writer and retained fresh Q read,with separate range,lock and output-retention predicates. Actual B/P/sample/lock/source/state selection,other E1C8/E670/leave paths,call arrival and backing/pointee lifetime/disposal remain unbound. Stop at the accepted local return; closed DA78/fallback/global searches stay closed.",
+        "falsificationCondition": "Changed native words or source/export/map identity, invalid mapping/read/frame/span, unfulfilled selected fresh lock predicates, different atomic result, nonreturning dispatch/helper/adapter, unexpected context effect, invalid owner/continuation, incompatible physical aliases or lost required saved bytes defeats the corresponding conditional result. No general safe release, allocator, contention, transport, runtime-success or complete reset-traversal theorem follows."
+      },
+      "remainingDiscriminator": "outerReturnAndInvalidationBoundary composes selected E960/shared/reset return under every stated predicate. Its linked queryOutputBoundary separately supplies the conditional Q writer/fresh read; successful scalar1 does not by itself retain that output. Actual B/P/sample/lock/source/state selection,other paths,arrival,mappings and backing/pointee lifetime/disposal remain separate; closed DA78/fallback/global searches stay closed.",
+      "falsificationCondition": "A supported native mismatch, different argument mapping, unreadable Q, nonreturning target, altered required saved/register state, invalid owner or destructive protected-state alias defeats the corresponding conditional result."
     },
     "ownerWriteOrder": [
       {
@@ -102,7 +212,7 @@
       {
         "instruction": "0x82D47194",
         "field": "+0x350",
-        "value": "Allocation-helper return in r3 from 0x82D3DBA0 at call instruction 0x82D4718C."
+        "value": "low32 of a supplied normal allocator return R from0x82D3DBA0 at call0x82D4718C; allocationRequestPublicationBoundary owns exact widths and retention limits."
       },
       {
         "instruction": "0x82D47210",
@@ -111,8 +221,114 @@
         "condition": "After the intervening local continuation, current owner +0x350 tests zero at 0x82D47200..0x82D47208; the producer then returns r3=0."
       }
     ],
-    "allocationArguments": "At 0x82D4718C, r3 is low32(count times four) unless the unsigned count exceeds 0x3FFFFFFF, in which case it is low32 -1; r4 is 0x82148A40 and r5 is low32 -1. The count is already published before this call. No helper internals or failure guarantees are claimed.",
+    "allocationArguments": "allocationRequestPublicationBoundary owns the full-width variable request,class gates and conditional post-return BE32 publication at47194. Normal allocator return,valid allocation and retained P remain separate conditions.",
     "entryInsertion": "On the nonzero-table continuation, 0x82D47260 loads the next pre-existing input-range pointer into retained r25. After the uninspected call at 0x82D4727C, 0x82D47280 stores insertion ordinal r29 low16 at entry +0x4 and 0x82D4728C stores r25 into the current owner +0x350 table at the four-byte displacement. The ordinal starts at zero at 0x82D47144 and increments at 0x82D47290. 0x82D47294 reloads input +0x8 before the loop comparison. The entry +0x4 field is not assigned a broader semantic name. The local completion sets r3=1 at 0x82D472A4.",
+    "allocationRequestPublicationBoundary": {
+      "question": "Which supplied audio counts select each local allocator request/class boundary, and what return bits are published before the later reset/query state gates?",
+      "confidence": "strong",
+      "scope": {
+        "freshFunctions": [
+          "0x82D47128",
+          "0x82D3DBA0"
+        ],
+        "acceptedPrefix": "0x82D3DA78",
+        "chargedBodies": 3,
+        "freshRanges": [
+          "[0x82D47164,0x82D47198)",
+          "[0x82D3DBB8,0x82D3DC1C)"
+        ],
+        "stops": "Stop before allocator child 0x82D2E7A8 or fallback continuation 0x82D3DC30. After a separately supplied normal allocator return, stop before 0x82D47198. Fallback descendants, E7A8/EAF0 bodies, initializers and query implementation are not interpreted."
+      },
+      "acceptedInputs": {
+        "producer": "audio-pointer-table-reset.json#/producerConsumerJoin: retained receiver/count prefix only; helper normal return, mapping, frame and saved-state premises remain required",
+        "allocatorEntryAndPrefix": "building-bit-selection.json#/findings/RVA-F-0204/groupedOutputConsumer/helperActionBoundary/matchedEntryCallBoundary/perCellInputBoundary/priorProducerBoundary/callerInputBoundary/predicateHelperBoundary/initializationBoundary: accepted entry/frame and unresolved actual DA78 return S only",
+        "nodeRoute": "ai-stat-choice.json#/setupReceiverProductionBoundary/lookupRegistrationBoundary/insertionContinuationBoundary/nodeAllocationRouteBoundary: size16 is a separate accepted example, not the parameterized proof",
+        "stateAndReturnLimits": "building-bit-selection.json initializationBoundary/globalStateBoundary, xbox-network-message-root.json sharedLeadingHelper/followupBoundary/queryOutputBoundary and audio-pointer-table-reset.json outerReturnAndInvalidationBoundary retain their exact independent guards"
+      },
+      "requestAndPublication": {
+        "inputs": "At 0x82D47164 let full r28=O, full r1=F and n=U32(r11). No actual O, input range or count is selected.",
+        "countStore": "0x82D47168 writes exactly BE32 n to low32(O+0x358) before request construction and call. Subsequent local argument arithmetic uses retained r11, not a fresh count-field read.",
+        "request": "0x82D4716C..0x82D4717C sets full r3=Z32(4*n) for unsigned n<=0x3FFFFFFF, otherwise full r3=0xFFFFFFFFFFFFFFFF. Full r4=0xFFFFFFFF82148A40 and full r5=0xFFFFFFFFFFFFFFFF.",
+        "callAndState": "0x82D4718C is relative AA0/LK1 with displacement -38380 to 0x82D3DBA0 and LR=Z32(0x82D47190). Before the call r9=0x3FFFFFFF,r10=0x3FFF0000,r11=0xFFFFFFFF82150000. CR6 compares unsigned low32 n to 0x3FFFFFFF with SO copied from XER.SO; no local CA, CTR or other CR assignment occurs.",
+        "returnStore": "Only after a supplied normal return with required owner/SP/save retention, 0x82D47190 sets full r10=U64(F+80), then 0x82D47194 writes exactly BE32 low32(R) at low32(O+0x350), preserving full r3=R. This is local publication, not allocation or pointer-validity proof.",
+        "prefixDomain": "The inherited producer prefix separately gives count0 when input+4 is null, retaining incoming CA. Otherwise n=U32(S32(U32(end-start))>>2), with full sign extension and srawi CA iff the signed delta is negative with nonzero low two bits. Its reachable word domain is [0,0x1FFFFFFF] or [0xE0000000,0xFFFFFFFF]. Supplied 0x3FFFFFFF/0x40000000 are local request discriminators outside that inherited domain; negative prefix counts select full li -1."
+      },
+      "parameterizedAllocatorArithmetic": {
+        "freshJustification": "Accepted size16/864 prose did not provide a parameterized theorem. The additional 25 fresh supported-image words independently bind the following generic arithmetic in the same allocator owner.",
+        "lowWordGateAndRounding": "With retained full size A in r31 and actual full normal prefix return S in r3, low32(S)==0 stops at 0x82D3DC30. Otherwise let u=U32(A),rem=u mod4,T=u if rem0 else4*ceil(u/4), allowing T=2^32. The masked word shift uses U32(T), giving q=floor(U32(T)/4) and full class=U64(q-1).",
+        "signedClassGate": "0x82D3DBE0..0x82D3DBE4 stops at 0x82D3DC30 iff S32(class)>=66. q0 gives full class -1 and passes this signed upper comparison, without establishing a valid class.",
+        "candidateAndChild": "A passing class computes C=U64(S+Z32(U32(64*(q-1)))); low32(C)==0 stops at 0x82D3DC30. Otherwise the recomputed child argument is J=U64(S+Z32(U32(16*T))-64). 0x82D3DC18 calls unopened 0x82D2E7A8 with AA0/LK1, displacement -62576 and LR=0x82D3DC1C. Current r4/r5 are not locally reassigned after the prefix and are not assumed to retain the outer arguments.",
+        "positiveAudioCounts": "For supplied n1..66, A=4*n,rem0,class=n-1 and C=J=U64(S+64*(n-1)), conditional on both nonzero low-word gates. n67 has class66 and stops at fallback. n0x3FFFFFFF has A=Z32(0xFFFFFFFC),class0x3FFFFFFE and stops at fallback.",
+        "zeroAndSaturation": "n0 has A0,rem0,T0,q0,class=-1. Every n>0x3FFFFFFF supplies full A=-1,rem3,T=2^32,q0,class=-1. Either case, if the low-word gates pass, tests C=U64(S+0xFFFFFFC0) but passes J=U64(S-0x40). They share low32 but generally differ by2^32 in full64. Z32(0xFFFFFFFF) shares this local low-word arithmetic but is a different full request. No valid zero-size/saturated allocation follows.",
+        "localEffects": "The fresh arithmetic has no stores, at most25 local instructions to its selected stop, preserves all GPRs except r3/r10/r11, and has no local XER.CA/CTR/other-CR assignment. Every CR6 comparison copies XER.SO. Its finite stop proves no child or allocator termination."
+      },
+      "retentionAndAliases": [
+        "The accepted allocator entry saves low32 LR as BE32 at F-8, full caller r31 as BE64 at F-16 and low32(F) as BE32 at F-96. Full normal return, matching save bytes, valid frame/code/mappings and required full owner/SP/register retention are premises, not consequences of request arithmetic.",
+        "Count publication may physically alias future input/save/code bytes, and P publication may alias owner/count/save bytes. Distinct guest addresses do not establish physical disjointness. Allow only byte-compatible effects at each required later read.",
+        "A count-store alias does not retroactively change locally retained n. Physical count/P overlap leaves low32(R) after the later pointer store; equal values can be compatible. Corrupted save/LR bytes can defeat normal return or enclosing restoration. Changed returned r28 publishes to another owner; changed returned SP changes r10.",
+        "Only same live O, same physical O+0x350 cell and exact retention of its four publication bytes through the later reset load give P=Z32(low32(R)). Intervening producer helpers, owner/count writes, resets/rebuilds and allocation lifetime remain unproved."
+      ],
+      "remainingDiscriminator": "Supply actual S or an exact ordered D/G producer, selected implementation, dynamic R and normal return, then same-owner/cell P retention through the later reset load. Later B is a separate actual DA78 result and is not equated with S. Accepted queryOutputBoundary still needs actual nonzero B,C=U64(B+0x1080),P,w0 unsigned range gates,fresh post-enter w1,mapped BE16[C+i],K=U64(C+0x22014) lock initialization and exact source/export/mapping/atomic/ABI predicates,plus Q retention through the fresh caller read. Scalar1 alone can coexist with fresh Q0 or0xFFFFFFFF under admitted output/lock aliases. No actual allocation, B/P/sample/lock state, query arrival, lifetime or complete reset traversal follows; closed DA78/global/caller/store searches remain closed.",
+      "falsificationCondition": "Different supported native words, branch fields, widths, signs, request saturation, class threshold, mapping/code/frame validity, helper completion, owner/save retention or incompatible physical aliases defeats the corresponding conditional result. Stored-image zeros or symbolic supplied states do not bind current D/G/S/B/R/P/query state.",
+      "currentEvidence": {
+        "image": "image.json#/analysisProgram",
+        "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+        "nativeQueries": [
+          {
+            "script": "ghidra/DumpMemoryWords.java",
+            "range": "[0x82D47164,0x82D47198)",
+            "radius": 0,
+            "stride": 4,
+            "words": 13,
+            "flatEqual": true,
+            "querySha256": "290FE3D2179B883CF397F162FD69F714588EE56551A06C3DFFFC049D0831C606",
+            "orderedWordBytesSha256": "BBCF13060CF81E90753CA0D82421837716E70104A42C4E13AC4EAD555CA05AA6"
+          },
+          {
+            "script": "ghidra/DumpMemoryWords.java",
+            "range": "[0x82D3DBB8,0x82D3DC1C)",
+            "radius": 0,
+            "stride": 4,
+            "words": 25,
+            "flatEqual": true,
+            "querySha256": "1A6ABE3ED7E9313AD6D345F29EF77B541FC1795BC627F0AF590482DA953E5113",
+            "orderedWordBytesSha256": "C19CA2F096C09BC56077542FB124CFD92947F75105AB1421430FF9DFC6BF9A0E"
+          }
+        ],
+        "generated": [
+          {
+            "path": "rerevved:generated/default/rerevved_recomp.118.cpp",
+            "header": 30238,
+            "nextHeader": 30464,
+            "reads": [
+              [
+                30238,
+                30277
+              ],
+              [
+                30278,
+                30306
+              ]
+            ],
+            "sha256": "C30CC54EE0DFD2BE4154A4AE976F3F074EB8810FD711F1A684A12E5D74865C8C"
+          },
+          {
+            "path": "rerevved:generated/default/rerevved_recomp.221.cpp",
+            "header": 30225,
+            "nextHeader": 30324,
+            "reads": [
+              [
+                30225,
+                30320
+              ]
+            ],
+            "sha256": "76D253860CD038272661BAF1885FD50C43706BCBB58391DC889C523FFEA29DC8"
+          }
+        ],
+        "historicalGeneratedQualification": "nodeAllocationRouteBoundary's .129.cpp/header27636/next27735/SHA18256AB716C138AB7471839B655AC44A27DBD3066B2C444EE6797CD348A9A705 is an accepted historical pin. Current exact allocator definition is .221.cpp; current .129 supplies no definition. Generated C++ corroborates native words without independently proving semantics or runtime identity.",
+        "method": "Two serialized foreground read-only radius0 native packets matched the supported flat image. Independent field decode/reencode verified all38 words and both report/ordered-byte identities. Print-only instruction-record execution matched separate integer algebra and byte oracles for68 caller,784 allocator,14 accepted-prefix/CA,20 physical-alias and4 accepted frame/save cases;22 semantic/width/order mutations rejected. No helper implementation, actual allocation, runtime/capture or guest execution was observed."
+      }
+    },
     "boundary": "Uninspected producer helper calls at 0x82D471AC, 0x82D47230 and 0x82D4727C, plus writes to adjacent structures, prevent inferring an atomic rebuild, unchanged input range, helper-free insertion or guaranteed allocation success. The ordered collection stores are conditional on reaching their local instructions and retained-register/receiver identity."
   },
   "boundedResult": {

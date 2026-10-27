@@ -30,6 +30,20 @@ Actual Barbarian applicability, pending-order retirement and wake behavior
 remain unproved; the local finish arm does not establish a safe capital veto.
 The origin-city aggression threshold does not itself protect a target capital.
 
+Early hut retention has a conditional native garrison explanation: the default
+threshold holds the ordinary current unit through weighted `C<=2`, while
+Raging's aggression input lowers that threshold to 1. The table below owns the
+exact comparison and its guards. The selected connection into this hold adds
+no separate clock or difficulty test; earlier candidate selection still has
+its own time inputs. No fixed-date departure grace follows.
+
+This source-city hold cannot provide capital-only protection while preserving
+field and noncapital departures. The investigated pair deadline instead has a
+named peace-agreement producer; the selected city predicate uses a reachability
+plane. Neither establishes all-route capital protection. Their bounded evidence
+and the hut-release bridge are in `nativeNormalGraceBoundary` in the feasibility
+manifest.
+
 Spawning can increase departure opportunities but does not reproduce Beta
 aggression. `BAGRESSIVE` and `BFECUNDITY` are separate. Three guards have a
 conditional city hold/release explanation, not a universal hut rule.

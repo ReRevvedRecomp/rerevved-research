@@ -28,6 +28,7 @@ class ReferenceDataTests(unittest.TestCase):
             "data/civilizations.csv",
             "data/era-bonus-definitions.csv",
             "data/achievements.json",
+            "manifests/achievement-unlock-triggers.json",
             "manifests/civilization-bonus-storage.json",
         ]
         if markdown:
@@ -392,6 +393,7 @@ class ReferenceDataTests(unittest.TestCase):
             reference_data.load_reference_data(self.repo)
 
         document["achievements"][0]["unlockTrigger"]["status"] = "mapped"
+        document["achievements"][0]["unlockTrigger"]["evidence"] = []
         path.write_text(json.dumps(document), encoding="utf-8")
         with self.assertRaisesRegex(
             reference_data.ReferenceDataError, "requires resolving evidence"

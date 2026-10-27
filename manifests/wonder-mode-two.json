@@ -120,7 +120,7 @@
         "Do not infer the conditional extra call always executes for item 219 or 220.",
         "Do not equate stored victory descriptions with implemented or observed outcomes."
       ],
-      "conclusion": "The conditional mode-two item-219 or item-220 helper path can reach a terminal block that clears two state bits and sets bit 0x10000 in shared status word 0x82FFE7C4. Follow-up scans found no decoded split-constant materializer for either the status-word base or indexed halfword table base. Three whole-word snapshot functions copy the status word to parameter offset +0x200, but have no exact recorded function references or aligned raw direct calls in initialized executable memory below the 32-match cap, and their output-buffer provenance remains unresolved. The intermediate tail, indirect snapshot callers, bit-specific consumer, indexed-halfword meaning, victory interpretation, and runtime outcome remain unresolved."
+      "conclusion": "The conditional mode-two item-219 or item-220 helper path can reach a terminal block that clears two state bits and sets bit 0x10000 in shared status word 0x82FFE7C4. Follow-up scans found no decoded split-constant materializer for either the status-word base or indexed halfword table base. Three whole-word snapshot functions copy the status word to parameter offset +0x200, but have no exact recorded function references or aligned raw direct calls in initialized executable memory below the 32-match cap, and their output-buffer provenance remains unresolved. RVA-F-0210 and achievement-unlock-triggers.json#/findings/RVA-F-0351 establish the indexed bank's conditional profile-presence serialization. The intermediate tail, indirect snapshot callers, status-bit-specific consumer, gameplay consequences, victory interpretation and runtime outcome remain unresolved."
     },
     "RVA-F-0210": {
       "schemaVersion": 1,
@@ -149,9 +149,9 @@
       ],
       "staticResult": {
         "caller": "At 0x82D17240 through 0x82D17250, the caller loads the receiver vtable, places the receiver in r3, loads slot +0xD0, and performs an indirect call. The indexed halfword update precedes this call on the same player-matched path.",
-        "slotTarget": "Initialized vtable data at 0x82138838 references target 0x82D84560. Its exact 0x18-byte Ghidra function body loads a word from 0x82FFD688 into r3, returns when that word is zero, and otherwise branches directly to 0x82DB82C8. No instruction in this target body reads the indexed halfword or receives the normalized index as a separate argument.",
-        "tailTarget": "The one direct target 0x82DB82C8 has an 8-byte Ghidra function extent containing mfspr r12,LR and a branch-and-link to 0x827F7C6C. The loaded r3 value comes from the unresolved global context field at 0x82FFD688; no relationship from that pointer to 0x830EF348 is established here.",
-        "boundary": "No immediate consumer or forwarder of the indexed counter is proved. The slot target only forwards a nonzero pointer loaded from 0x82FFD688; its identity and provenance are unresolved, so the search stops at that boundary."
+        "slotTarget": "Initialized vtable data at 0x82138838 references target 0x82D84560. Native words at 0x82D84564/568 load R=U32[0x82FFD624], then H=U32[R+0x64] into r3. H zero returns; nonzero H tail-calls 0x82DB82C8. The body does not directly read the indexed halfword or pass its index.",
+        "tailTarget": "The native continuation of 0x82DB82C8 conditionally serializes the profile bank, including presence cells beginning 0x830EF348. Its 8-byte modeled Ghidra extent ends at the save thunk and does not bound the full function. achievement-unlock-triggers.json#/findings/RVA-F-0351 owns the supported serializer, context and load/reset evidence.",
+        "boundary": "With the required context/config pointers present, this dispatch reaches a consumer of the indexed history bank. Serialization admission and asynchronous durable storage remain conditional; no visible Wonder outcome or successful I/O follows from this static join."
       },
       "runtimeObservation": {
         "status": "not-observed",
@@ -162,28 +162,29 @@
         }
       },
       "currentEvidence": {
-        "method": "Foreground read-only canonical-project word inspection at the caller, exact function neighborhoods for 0x82D84560 and its one direct tail target 0x82DB82C8, followed by narrow generated-code corroboration of the slot target's load-and-tail-branch sequence.",
+        "method": "Foreground read-only canonical-project word inspection at the caller, exact function neighborhoods and raw continuation words for 0x82D84560 and 0x82DB82C8, followed by narrow generated-code corroboration. The shared achievement history finding owns the serializer/load evidence.",
         "entries": [
           { "role": "caller and virtual dispatch", "address": "0x82D17220 through 0x82D17250", "result": "After the conditional indexed halfword update, the receiver is passed in r3 and called through slot +0xD0." },
-          { "role": "initialized slot target", "address": "0x82D84560", "result": "The 0x18-byte body reads 0x82FFD688 into r3, returns if zero, or branches to 0x82DB82C8. The target does not directly read 0x830EF348." },
-          { "role": "single direct tail target", "address": "0x82DB82C8", "result": "The bounded Ghidra function extent is 8 bytes. Generated code corroborates that this entry continues into a larger translated function; its incoming pointer provenance remains unresolved." }
+          { "role": "initialized slot target", "address": "0x82D84560", "result": "The 0x18-byte body loads U32[0x82FFD624], then its +0x64 child into r3, returns if that child is zero, or branches to 0x82DB82C8. It does not directly read 0x830EF348." },
+          { "role": "single direct tail target", "address": "0x82DB82C8", "result": "The full native continuation conditionally reads profile history including the bank at 0x830EF348; the 8-byte modeled extent is a listing limitation. See achievement-unlock-triggers.json#/findings/RVA-F-0351." }
         ],
         "locators": [
           "ghidra/DumpMemoryWords.java:0x82D17250 radius=12",
           "ghidra/DumpFunctionNeighborhood.java:0x82D84560 radius=0x40 maxInstructions=64",
           "ghidra/DumpFunctionNeighborhood.java:0x82DB82C8 radius=0x40 maxInstructions=64",
+          "ghidra/DumpMemoryWords.java:0x82D84660,0x82DB8530,0x82DB86B0 radius=64",
           "generated:rerevved/sub_82D84560",
           "generated:rerevved/sub_82DB82C8"
         ],
-        "qualification": "The caller and slot-target instruction words establish this exact dispatch path. The tail-target function extent is only 8 bytes in the current Ghidra listing, while generated code shows a larger translated body; neither the generated decompilation nor an unresolved pointer establishes a counter consumer."
+        "qualification": "The caller, two pointer loads and serializer continuation are supported by native words. Context/config existence and conditional storage admission remain required; no runtime call, successful file completion or visible outcome was observed."
       },
       "guards": [
         "Do not assign meaning to the halfword array at 0x830EF348 from its conditional write or this bounded call path.",
-        "Do not treat the global context word at 0x82FFD688 as an alias of the indexed counter without proving pointer provenance.",
+        "Do not collapse U32[0x82FFD624] followed by its +0x64 field into a direct absolute load from 0x82FFD688.",
         "Do not treat this one slot-target path as a program-wide absence of counter readers.",
         "Do not infer runtime behavior from the static dispatch or generated code."
       ],
-      "conclusion": "The mode-two path for normalized indices 19 and 20 conditionally updates a halfword at 0x830EF348 + 2*index, then calls receiver slot +0xD0. The initialized slot target 0x82D84560 does not directly read that array; it loads a pointer from 0x82FFD688 and, when nonzero, branches to 0x82DB82C8. The loaded pointer's identity and provenance are unresolved, so this bounded path proves no counter consumer or visible effect. The earlier runtime probe observed no relevant completion or terminal write and did not observe this call path."
+      "conclusion": "The mode-two path for normalized indices 19 and 20 conditionally updates a halfword at 0x830EF348 + 2*index, then calls receiver slot +0xD0. Its initialized target 0x82D84560 loads the root at 0x82FFD624 and its +0x64 child, then conditionally reaches the profile serializer 0x82DB82C8. That serializer reads the history bank beginning 0x830EF348. Conditional serialization is established; durable storage and visible outcomes remain unobserved."
     }
   }
 }

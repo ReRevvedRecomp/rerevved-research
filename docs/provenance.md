@@ -51,6 +51,21 @@ nor applicable notices. Those questions remain unverified for every row.
 | `ghidra/SeedGeneratedFunctions.java` | SHA-256 `DBFC19111B814C246EADBE2B31CD95DA3E7EAC84D5443C9DED26006401B2E7C3` | Seeds code and functions from a ReXGlue generated map. | Original authorship, upstream source and notices unverified. |
 | `ghidra/SummarizeRecordBytes.java` | SHA-256 `910C751FEAD5A5B024E1B74312D3F13AFD275053997E455131E376BE2B1431A5` | Counts nonzero bytes in bounded records sized by the stride. | Original authorship, upstream source and notices unverified. |
 
+## Achievement display metadata
+
+`data/achievements.json` preserves the English labels and unlocked/locked
+descriptions returned from the supported title's XDBF/XACH metadata. Source XEX
+and update identities are pinned by `manifests/image.json`; the catalog's
+`source` object records the title ID, language, extractor version and executable
+digest. The rendered reference table is generated from that JSON.
+
+The parser source is ReXGlue SDK
+`2b5efb732e44ef6f1cd790751da0574e9a0f72f8`,
+`src/rexglue/commands/init_command.cpp`, `InitAchievements`, and
+`src/system/util/xdbf_utils.cpp`, `GetAchievements` and `GetStringTableEntry`.
+`GetAchievements` reads metadata entry `0x58414348` (`XACH`). These are retail
+display strings, not independent summaries or recovered native unlock logic.
+
 ## Ability descriptions
 
 The description cells in `data/civilizations.csv` and
@@ -130,8 +145,8 @@ verbatim. Public availability does not establish license permission.
 | `manifests/xbox-system-link-qos-root.json#/hostMessageProducer/contractSources/1/source` | `https://github.com/AdrianCassar/xenia-canary/blob/b5f6f6ed618210ecfbbcb228994418f734cdd850/src/xenia/kernel/xnet.h#L790-L794` | External comparison; no source code included. | Source identity, authorship and notices unverified. |
 | `manifests/xbox-system-link-qos-root.json#/hostMessageProducer/contractSources/2/source` | `https://github.com/pmrowla/hl2sdk-csgo/blob/49e950f3eb820d88825f75e40f56b3e64790920a/public/ixboxsystem.h#L371-L375` | External comparison; no source code included. | Source identity, authorship and notices unverified. |
 | `manifests/xbox-system-link-qos-root.json#/externalGuidance/source` | `https://github.com/AdrianCassar/xenia-canary/blob/9cf5573a62c984f42471afdd2aa0d0a1e6741f5a/src/xenia/kernel/xam/xam_net.cc` | External comparison; no source code included. | Source identity, authorship and notices unverified. |
-| `data/README.md:19` | `https://civilization.fandom.com/wiki/Civilizations_%28CivRev%29` | Wiki interpretation lead; source wording/rights not established. | Source identity, authorship and notices unverified. |
-| `data/README.md:21` | `https://strategywiki.org/wiki/Civilization_Revolution/Civilizations` | Wiki interpretation lead; source wording/rights not established. | Source identity, authorship and notices unverified. |
+| `data/README.md:23` | `https://civilization.fandom.com/wiki/Civilizations_%28CivRev%29` | Wiki interpretation lead; source wording/rights not established. | Source identity, authorship and notices unverified. |
+| `data/README.md:25` | `https://strategywiki.org/wiki/Civilization_Revolution/Civilizations` | Wiki interpretation lead; source wording/rights not established. | Source identity, authorship and notices unverified. |
 | `docs/reference/resource-definitions.md:49` | `https://civilization.fandom.com/wiki/List_of_resources_in_CivRev` | Wiki interpretation lead; source wording/rights not established. | Source identity, authorship and notices unverified. |
 | `docs/reference/native-renderer-frame-pacing.md:130` | `https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/kernel/xboxkrnl/xboxkrnl_threading.cpp#L839-L848` | External comparison; no source code included. | Source identity, authorship and notices unverified. |
 | `docs/reference/native-renderer-frame-pacing.md:131` | `https://github.com/ReRevvedRecomp/rerevved-sdk/blob/05e9bc372a66b651f05e2444f74bd5b31a90fc02/src/system/xobject.cpp#L189-L213` | External comparison; no source code included. | Source identity, authorship and notices unverified. |

@@ -3,8 +3,10 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 CIVILIZATION_HEADERS = (
     "civ_id",
@@ -20,6 +22,36 @@ BONUS_TABLE_BEGIN = "<!-- civilization-bonus-map:begin -->"
 BONUS_TABLE_END = "<!-- civilization-bonus-map:end -->"
 ID_TABLE_BEGIN = "<!-- civilization-era-id-map:begin -->"
 ID_TABLE_END = "<!-- civilization-era-id-map:end -->"
+ACHIEVEMENT_TABLE_BEGIN = "<!-- achievement-catalog:begin -->"
+ACHIEVEMENT_TABLE_END = "<!-- achievement-catalog:end -->"
+ACHIEVEMENT_IDS = tuple(range(5, 55))
+ACHIEVEMENT_ROOT_KEYS = frozenset({"schemaVersion", "image", "source", "achievements"})
+ACHIEVEMENT_SOURCE_KEYS = frozenset(
+    {
+        "titleId",
+        "languageId",
+        "language",
+        "format",
+        "extractor",
+        "extractorVersion",
+        "extractorSha256",
+        "achievementCount",
+        "gamerscoreTotal",
+    }
+)
+ACHIEVEMENT_ROW_KEYS = frozenset(
+    {
+        "id",
+        "name",
+        "description",
+        "unachievedDescription",
+        "gamerscore",
+        "imageId",
+        "unlockTrigger",
+    }
+)
+ACHIEVEMENT_TRIGGER_KEYS = frozenset({"status", "evidence"})
+ACHIEVEMENT_STATUSES = frozenset({"needs_mapping", "mapped"})
 
 
 class ReferenceDataError(ValueError):
@@ -43,10 +75,23 @@ class CivilizationRow:
 
 
 @dataclass(frozen=True)
+class Achievement:
+    achievement_id: int
+    name: str
+    description: str
+    unachieved_description: str
+    gamerscore: int
+    image_id: int
+    trigger_status: str
+    evidence: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class ReferenceData:
     civilizations: tuple[Civilization, ...]
     bonus_effects: dict[int, str]
     manifest_rows: tuple[CivilizationRow, ...]
+    achievements: tuple[Achievement, ...] = ()
 
 
 def _read_csv(
@@ -204,6 +249,198 @@ def _load_manifest_rows(path: Path) -> tuple[CivilizationRow, ...]:
     return tuple(rows)
 
 
+def _resolve_json_pointer(document: Any, pointer: str, location: str) -> Any:
+    if not pointer.startswith("/"):
+        raise ReferenceDataError(f"{location}: evidence JSON pointer must start with /")
+    current = document
+    for token in pointer[1:].split("/"):
+        if "~" in token and not re.fullmatch(r"(?:[^~]|~[01])*", token):
+            raise ReferenceDataError(
+                f"{location}: evidence JSON pointer has invalid escape"
+            )
+        token = token.replace("~1", "/").replace("~0", "~")
+        try:
+            if isinstance(current, list):
+                if not re.fullmatch(r"0|[1-9][0-9]*", token):
+                    raise KeyError(token)
+                current = current[int(token)]
+            elif isinstance(current, dict):
+                current = current[token]
+            else:
+                raise KeyError(token)
+        except (KeyError, IndexError, TypeError, ValueError) as error:
+            raise ReferenceDataError(
+                f"{location}: evidence JSON pointer does not resolve"
+            ) from error
+    return current
+
+
+def _resolve_evidence_locator(locator: str, repo: Path, location: str) -> None:
+    if not locator or "#" not in locator or "\\" in locator:
+        raise ReferenceDataError(
+            f"{location}: evidence locator must be a relative JSON file plus pointer"
+        )
+    relative_file, pointer = locator.split("#", 1)
+    if not relative_file or not pointer.startswith("/"):
+        raise ReferenceDataError(
+            f"{location}: evidence locator must be a relative JSON file plus pointer"
+        )
+    relative_path = Path(relative_file)
+    if relative_path.is_absolute() or relative_path.suffix.lower() != ".json":
+        raise ReferenceDataError(
+            f"{location}: evidence locator must name a relative JSON file"
+        )
+
+    repo_root = repo.resolve()
+    manifests_root = repo_root / "manifests"
+    evidence_path = (repo / "data" / relative_path).resolve()
+    if not evidence_path.is_relative_to(manifests_root):
+        raise ReferenceDataError(f"{location}: evidence file must be in manifests")
+    if not evidence_path.is_file():
+        raise ReferenceDataError(f"{location}: evidence file does not resolve")
+
+    try:
+        document = json.loads(evidence_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ReferenceDataError(
+            f"{location}: evidence file is not valid JSON"
+        ) from error
+    _resolve_json_pointer(document, pointer, location)
+
+
+def _load_achievement_evidence(
+    raw_evidence: Any, repo: Path, location: str
+) -> tuple[str, ...]:
+    if not isinstance(raw_evidence, list):
+        raise ReferenceDataError(f"{location}: evidence must be a list")
+
+    locators: list[str] = []
+    for index, raw in enumerate(raw_evidence):
+        evidence_location = f"{location}[{index}]"
+        if not isinstance(raw, str):
+            raise ReferenceDataError(f"{evidence_location}: locator must be a string")
+        _resolve_evidence_locator(raw, repo, evidence_location)
+        locators.append(raw)
+    return tuple(locators)
+
+
+def _load_achievements(repo: Path) -> tuple[Achievement, ...]:
+    path = repo / "data" / "achievements.json"
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ReferenceDataError(f"{path.name}: invalid JSON") from error
+    if not isinstance(document, dict):
+        raise ReferenceDataError(f"{path.name}: root must be an object")
+    if set(document) != ACHIEVEMENT_ROOT_KEYS:
+        raise ReferenceDataError(f"{path.name}: invalid root fields")
+    if type(document.get("schemaVersion")) is not int or document["schemaVersion"] != 1:
+        raise ReferenceDataError(f"{path.name}: schemaVersion must be 1")
+    if document.get("image") != "../manifests/image.json":
+        raise ReferenceDataError(f"{path.name}: image must be ../manifests/image.json")
+
+    source = document.get("source")
+    if not isinstance(source, dict) or set(source) != ACHIEVEMENT_SOURCE_KEYS:
+        raise ReferenceDataError(f"{path.name}: invalid source metadata")
+    expected_source = {
+        "titleId": "0x545407E5",
+        "languageId": 1,
+        "language": "English",
+        "format": "XDBF/XACH",
+        "achievementCount": 50,
+        "gamerscoreTotal": 1000,
+    }
+    for key, expected in expected_source.items():
+        if source.get(key) != expected or (
+            isinstance(expected, int) and type(source.get(key)) is not int
+        ):
+            raise ReferenceDataError(f"{path.name}: unexpected source.{key}")
+    for key in ("extractor", "extractorVersion"):
+        value = source.get(key)
+        if not isinstance(value, str) or not value.strip():
+            raise ReferenceDataError(f"{path.name}: source.{key} must be nonempty")
+    version = source["extractorVersion"]
+    if any(character.isspace() for character in version):
+        raise ReferenceDataError(
+            f"{path.name}: source.extractorVersion must be a version"
+        )
+    digest = source.get("extractorSha256")
+    if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-fA-F]{64}", digest):
+        raise ReferenceDataError(f"{path.name}: source.extractorSha256 must be SHA-256")
+
+    raw_rows = document.get("achievements")
+    if not isinstance(raw_rows, list) or len(raw_rows) != len(ACHIEVEMENT_IDS):
+        raise ReferenceDataError(f"{path.name}: achievements must contain 50 rows")
+    ids: list[int] = []
+    for index, raw in enumerate(raw_rows):
+        location = f"{path.name}:achievements[{index}]"
+        if not isinstance(raw, dict) or set(raw) != ACHIEVEMENT_ROW_KEYS:
+            raise ReferenceDataError(f"{location}: invalid achievement fields")
+        achievement_id = raw.get("id")
+        if type(achievement_id) is not int:
+            raise ReferenceDataError(f"{location}: id must be an integer")
+        ids.append(achievement_id)
+    if tuple(ids) != ACHIEVEMENT_IDS:
+        raise ReferenceDataError(
+            f"{path.name}: achievement IDs must be unique and ordered 5 through 54"
+        )
+
+    rows: list[Achievement] = []
+    image_ids: set[int] = set()
+    for index, raw in enumerate(raw_rows):
+        location = f"{path.name}:achievements[{index}]"
+        for field in ("name", "description", "unachievedDescription"):
+            value = raw[field]
+            if not isinstance(value, str) or not value:
+                raise ReferenceDataError(f"{location}: {field} must be nonempty text")
+        gamerscore = raw["gamerscore"]
+        if type(gamerscore) is not int or gamerscore <= 0:
+            raise ReferenceDataError(
+                f"{location}: gamerscore must be a positive integer"
+            )
+        image_id = raw["imageId"]
+        if type(image_id) is not int or image_id < 0:
+            raise ReferenceDataError(
+                f"{location}: imageId must be a nonnegative integer"
+            )
+        if image_id in image_ids:
+            raise ReferenceDataError(f"{location}: duplicate imageId {image_id}")
+        if image_id == raw["id"]:
+            raise ReferenceDataError(f"{location}: imageId must differ from id")
+        image_ids.add(image_id)
+
+        trigger = raw["unlockTrigger"]
+        if not isinstance(trigger, dict) or set(trigger) != ACHIEVEMENT_TRIGGER_KEYS:
+            raise ReferenceDataError(f"{location}: invalid unlockTrigger")
+        status = trigger.get("status")
+        if not isinstance(status, str) or status not in ACHIEVEMENT_STATUSES:
+            raise ReferenceDataError(f"{location}: invalid unlockTrigger.status")
+        evidence = _load_achievement_evidence(
+            trigger.get("evidence"), repo, f"{location}:unlockTrigger.evidence"
+        )
+        if status == "mapped" and not evidence:
+            raise ReferenceDataError(
+                f"{location}: mapped unlockTrigger requires resolving evidence"
+            )
+        rows.append(
+            Achievement(
+                achievement_id=raw["id"],
+                name=raw["name"],
+                description=raw["description"],
+                unachieved_description=raw["unachievedDescription"],
+                gamerscore=gamerscore,
+                image_id=image_id,
+                trigger_status=status,
+                evidence=evidence,
+            )
+        )
+    if len(image_ids) != len(ACHIEVEMENT_IDS):
+        raise ReferenceDataError(f"{path.name}: image IDs must be unique")
+    if sum(row.gamerscore for row in rows) != source["gamerscoreTotal"]:
+        raise ReferenceDataError(f"{path.name}: gamerscore total does not match source")
+    return tuple(rows)
+
+
 def load_reference_data(repo: Path) -> ReferenceData:
     civilizations = _load_civilizations(repo / "data" / "civilizations.csv")
     bonus_effects = _load_bonus_effects(repo / "data" / "era-bonus-definitions.csv")
@@ -233,7 +470,8 @@ def load_reference_data(repo: Path) -> ReferenceData:
             "era-bonus-definitions.csv: unused IDs " + ", ".join(map(str, unused_ids))
         )
 
-    return ReferenceData(civilizations, bonus_effects, manifest_rows)
+    achievements = _load_achievements(repo)
+    return ReferenceData(civilizations, bonus_effects, manifest_rows, achievements)
 
 
 def _display_label(civilization: Civilization) -> str:
@@ -272,54 +510,141 @@ def _render_id_table(data: ReferenceData) -> str:
     return "\n".join(lines)
 
 
-def _replace_region(text: str, begin: str, end: str, body: str) -> str:
+def _markdown_cell(value: str) -> str:
+    return (
+        value.replace("\\", "\\\\")
+        .replace("|", "\\|")
+        .replace("\r\n", "<br>")
+        .replace("\r", "<br>")
+        .replace("\n", "<br>")
+    )
+
+
+def _render_achievement_table(data: ReferenceData) -> str:
+    lines = [
+        "| ID | Name | Unlocked description | Locked description | G | Icon ID | Trigger mapping |",
+        "| ---: | --- | --- | --- | ---: | ---: | --- |",
+    ]
+    for row in data.achievements:
+        mapping = row.trigger_status
+        if row.evidence:
+            mapping += "<br>" + "<br>".join(row.evidence)
+        cells = [
+            str(row.achievement_id),
+            row.name,
+            row.description,
+            row.unachieved_description,
+            str(row.gamerscore),
+            str(row.image_id),
+            mapping,
+        ]
+        lines.append("| " + " | ".join(_markdown_cell(cell) for cell in cells) + " |")
+    return "\n".join(lines)
+
+
+def _replace_region(
+    text: str,
+    begin: str,
+    end: str,
+    body: str,
+    document_name: str = "reference document",
+) -> str:
     if text.count(begin) != 1 or text.count(end) != 1:
         raise ReferenceDataError(
-            f"civilization-bonuses.md: expected one {begin} and one {end} marker"
+            f"{document_name}: expected one {begin} and one {end} marker"
         )
     if text.index(begin) >= text.index(end):
         raise ReferenceDataError(
-            f"civilization-bonuses.md: crossed generated markers {begin} and {end}"
+            f"{document_name}: crossed generated markers {begin} and {end}"
         )
     prefix, remainder = text.split(begin, 1)
     current, suffix = remainder.split(end, 1)
     if not current.startswith("\n") or not current.endswith("\n"):
-        raise ReferenceDataError(
-            f"civilization-bonuses.md: malformed generated region {begin}"
-        )
+        raise ReferenceDataError(f"{document_name}: malformed generated region {begin}")
     return prefix + begin + "\n" + body + "\n" + end + suffix
 
 
-def render_document(text: str, data: ReferenceData) -> str:
+def _render_civilization_document(text: str, data: ReferenceData) -> str:
     text = _replace_region(
-        text, BONUS_TABLE_BEGIN, BONUS_TABLE_END, _render_bonus_table(data)
+        text,
+        BONUS_TABLE_BEGIN,
+        BONUS_TABLE_END,
+        _render_bonus_table(data),
+        "civilization-bonuses.md",
     )
-    return _replace_region(text, ID_TABLE_BEGIN, ID_TABLE_END, _render_id_table(data))
+    return _replace_region(
+        text,
+        ID_TABLE_BEGIN,
+        ID_TABLE_END,
+        _render_id_table(data),
+        "civilization-bonuses.md",
+    )
+
+
+def _render_achievement_document(text: str, data: ReferenceData) -> str:
+    return _replace_region(
+        text,
+        ACHIEVEMENT_TABLE_BEGIN,
+        ACHIEVEMENT_TABLE_END,
+        _render_achievement_table(data),
+        "achievements.md",
+    )
+
+
+def render_document(text: str, data: ReferenceData) -> str:
+    if BONUS_TABLE_BEGIN in text or BONUS_TABLE_END in text:
+        text = _render_civilization_document(text, data)
+    if ACHIEVEMENT_TABLE_BEGIN in text or ACHIEVEMENT_TABLE_END in text:
+        text = _render_achievement_document(text, data)
+    return text
 
 
 def check_repository(repo: Path) -> ReferenceData:
     data = load_reference_data(repo)
-    path = repo / "docs" / "reference" / "civilization-bonuses.md"
-    current = path.read_text(encoding="utf-8")
-    expected = render_document(current, data)
-    if current != expected:
-        raise ReferenceDataError(
-            "civilization-bonuses.md: rendered tables are stale; run "
-            "python tools/reference_data.py --write"
-        )
+    documents = (
+        (
+            repo / "docs" / "reference" / "civilization-bonuses.md",
+            _render_civilization_document,
+        ),
+        (
+            repo / "docs" / "reference" / "achievements.md",
+            _render_achievement_document,
+        ),
+    )
+    for path, renderer in documents:
+        current = path.read_text(encoding="utf-8")
+        expected = renderer(current, data)
+        if current != expected:
+            raise ReferenceDataError(
+                f"{path.name}: rendered tables are stale; run "
+                "python tools/reference_data.py --write"
+            )
     return data
 
 
 def write_repository(repo: Path) -> tuple[ReferenceData, bool]:
     data = load_reference_data(repo)
-    path = repo / "docs" / "reference" / "civilization-bonuses.md"
-    current = path.read_text(encoding="utf-8")
-    expected = render_document(current, data)
-    if current == expected:
-        return data, False
-    with path.open("w", encoding="utf-8", newline="\n") as stream:
-        stream.write(expected)
-    return data, True
+    documents = (
+        (
+            repo / "docs" / "reference" / "civilization-bonuses.md",
+            _render_civilization_document,
+        ),
+        (
+            repo / "docs" / "reference" / "achievements.md",
+            _render_achievement_document,
+        ),
+    )
+    rendered: list[tuple[Path, str, str]] = []
+    for path, renderer in documents:
+        current = path.read_text(encoding="utf-8")
+        rendered.append((path, current, renderer(current, data)))
+    changed = False
+    for path, current, expected in rendered:
+        if current != expected:
+            with path.open("w", encoding="utf-8", newline="\n") as stream:
+                stream.write(expected)
+            changed = True
+    return data, changed
 
 
 def main() -> int:
@@ -352,7 +677,9 @@ def main() -> int:
     print(
         "reference-data: "
         f"{action} civilizations={len(data.civilizations)} "
-        f"eraBonuses={len(data.bonus_effects)}"
+        f"eraBonuses={len(data.bonus_effects)} "
+        f"achievements={len(data.achievements)} "
+        f"achievementGamerscore={sum(row.gamerscore for row in data.achievements)}"
     )
     return 0
 

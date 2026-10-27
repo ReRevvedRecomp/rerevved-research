@@ -27,11 +27,17 @@ class ReferenceDataTests(unittest.TestCase):
         inputs = [
             "data/civilizations.csv",
             "data/era-bonus-definitions.csv",
+            "data/achievements.json",
             "manifests/civilization-bonus-storage.json",
         ]
         if markdown:
             (self.repo / "docs" / "reference").mkdir(parents=True)
-            inputs.append("docs/reference/civilization-bonuses.md")
+            inputs.extend(
+                (
+                    "docs/reference/civilization-bonuses.md",
+                    "docs/reference/achievements.md",
+                )
+            )
         for relative in inputs:
             source = REPO / relative
             destination = self.repo / relative
@@ -47,6 +53,13 @@ class ReferenceDataTests(unittest.TestCase):
         data = reference_data.check_repository(REPO)
         self.assertEqual(len(data.civilizations), 16)
         self.assertEqual(len(data.bonus_effects), 45)
+        self.assertEqual(
+            tuple(row.achievement_id for row in data.achievements), tuple(range(5, 55))
+        )
+        self.assertEqual(
+            data.achievements[43].unachieved_description,
+            "Win 20 battles with one unit.\r\n",
+        )
 
     def test_csv_field_guards(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -253,6 +266,194 @@ class ReferenceDataTests(unittest.TestCase):
             reference_data.ReferenceDataError, "rendered tables are stale"
         ):
             reference_data.check_repository(self.repo)
+
+    def test_achievement_row_count_duplicate_and_renumbering_are_rejected(self) -> None:
+        cases = (
+            (
+                "missing",
+                lambda rows: rows.pop(),
+                "achievements must contain 50 rows",
+            ),
+            (
+                "duplicate",
+                lambda rows: rows[1].__setitem__("id", 5),
+                "achievement IDs must be unique and ordered",
+            ),
+            (
+                "renumbered",
+                lambda rows: rows[1].__setitem__("id", 55),
+                "achievement IDs must be unique and ordered",
+            ),
+        )
+        for label, mutate, diagnostic in cases:
+            with self.subTest(case=label):
+                self.prepare_repository()
+                path = self.repo / "data" / "achievements.json"
+                document = json.loads(path.read_text(encoding="utf-8"))
+                mutate(document["achievements"])
+                path.write_text(json.dumps(document), encoding="utf-8")
+                with self.assertRaisesRegex(
+                    reference_data.ReferenceDataError, diagnostic
+                ):
+                    reference_data.load_reference_data(self.repo)
+
+    def test_achievement_metadata_and_field_types_are_rejected(self) -> None:
+        cases = (
+            (
+                "schema",
+                lambda document: document.__setitem__("schemaVersion", 2),
+                "schemaVersion must be 1",
+            ),
+            (
+                "schema type",
+                lambda document: document.__setitem__("schemaVersion", True),
+                "schemaVersion must be 1",
+            ),
+            (
+                "image",
+                lambda document: document.__setitem__("image", "wrong.json"),
+                "image must be",
+            ),
+            (
+                "title",
+                lambda document: document["source"].__setitem__("titleId", "wrong"),
+                "unexpected source.titleId",
+            ),
+            (
+                "extractor",
+                lambda document: document["source"].__setitem__("extractor", ""),
+                "source.extractor must be nonempty",
+            ),
+            (
+                "digest",
+                lambda document: document["source"].__setitem__(
+                    "extractorSha256", "z" * 64
+                ),
+                "source.extractorSha256 must be SHA-256",
+            ),
+            (
+                "language",
+                lambda document: document["source"].__setitem__("languageId", True),
+                "unexpected source.languageId",
+            ),
+            (
+                "score",
+                lambda document: document["achievements"][0].__setitem__(
+                    "gamerscore", True
+                ),
+                "gamerscore must be",
+            ),
+            (
+                "imageId",
+                lambda document: document["achievements"][0].__setitem__(
+                    "imageId", "21"
+                ),
+                "imageId must be",
+            ),
+            (
+                "version",
+                lambda document: document["source"].__setitem__(
+                    "extractorVersion", "not a version"
+                ),
+                "source.extractorVersion must be a version",
+            ),
+            (
+                "duplicate imageId",
+                lambda document: document["achievements"][1].__setitem__("imageId", 21),
+                "duplicate imageId",
+            ),
+            (
+                "matching imageId",
+                lambda document: document["achievements"][0].__setitem__("imageId", 5),
+                "imageId must differ from id",
+            ),
+        )
+        for label, mutate, diagnostic in cases:
+            with self.subTest(case=label):
+                self.prepare_repository()
+                path = self.repo / "data" / "achievements.json"
+                document = json.loads(path.read_text(encoding="utf-8"))
+                mutate(document)
+                path.write_text(json.dumps(document), encoding="utf-8")
+                with self.assertRaisesRegex(
+                    reference_data.ReferenceDataError, diagnostic
+                ):
+                    reference_data.load_reference_data(self.repo)
+
+    def test_achievement_trigger_status_and_mapped_evidence_are_validated(self) -> None:
+        self.prepare_repository()
+        path = self.repo / "data" / "achievements.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+        document["achievements"][0]["unlockTrigger"]["status"] = "unknown"
+        path.write_text(json.dumps(document), encoding="utf-8")
+        with self.assertRaisesRegex(
+            reference_data.ReferenceDataError, "invalid unlockTrigger.status"
+        ):
+            reference_data.load_reference_data(self.repo)
+
+        document["achievements"][0]["unlockTrigger"]["status"] = "mapped"
+        path.write_text(json.dumps(document), encoding="utf-8")
+        with self.assertRaisesRegex(
+            reference_data.ReferenceDataError, "requires resolving evidence"
+        ):
+            reference_data.load_reference_data(self.repo)
+
+        evidence_path = self.repo / "manifests" / "achievement-fixture.json"
+        evidence_path.write_text(
+            '{"finding":{"status":"accepted","rows":[{"value":"first"},{"value":"second"}]}}',
+            encoding="utf-8",
+        )
+        document["achievements"][0]["unlockTrigger"]["evidence"] = [
+            "../manifests/achievement-fixture.json#/finding/status"
+        ]
+        path.write_text(json.dumps(document), encoding="utf-8")
+        data = reference_data.load_reference_data(self.repo)
+        self.assertEqual(data.achievements[0].trigger_status, "mapped")
+
+        document["achievements"][0]["unlockTrigger"]["evidence"] = [
+            {"locator": "../manifests/achievement-fixture.json#/finding/status"}
+        ]
+        path.write_text(json.dumps(document), encoding="utf-8")
+        with self.assertRaisesRegex(
+            reference_data.ReferenceDataError, "locator must be a string"
+        ):
+            reference_data.load_reference_data(self.repo)
+
+        document["achievements"][0]["unlockTrigger"]["evidence"] = [
+            "../manifests/achievement-fixture.json#/finding/missing"
+        ]
+        path.write_text(json.dumps(document), encoding="utf-8")
+        with self.assertRaisesRegex(
+            reference_data.ReferenceDataError, "does not resolve"
+        ):
+            reference_data.load_reference_data(self.repo)
+
+        for pointer in ("/finding/rows/-1", "/finding/rows/01"):
+            with self.subTest(pointer=pointer):
+                document["achievements"][0]["unlockTrigger"]["evidence"][0] = (
+                    f"../manifests/achievement-fixture.json#{pointer}"
+                )
+                path.write_text(json.dumps(document), encoding="utf-8")
+                with self.assertRaisesRegex(
+                    reference_data.ReferenceDataError, "does not resolve"
+                ):
+                    reference_data.load_reference_data(self.repo)
+
+    def test_achievement_markdown_is_stale_and_escapes_multiline_cells(self) -> None:
+        self.prepare_repository(markdown=True)
+        path = self.repo / "data" / "achievements.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+        document["achievements"][43]["unachievedDescription"] = "line one|line two\r\n"
+        path.write_text(json.dumps(document), encoding="utf-8")
+        with self.assertRaisesRegex(
+            reference_data.ReferenceDataError,
+            "achievements.md: rendered tables are stale",
+        ):
+            reference_data.check_repository(self.repo)
+        data = reference_data.load_reference_data(self.repo)
+        rendered = reference_data._render_achievement_table(data)
+        self.assertIn("line one\\|line two<br>", rendered)
+        self.assertNotIn("line one|line two\r\n", rendered)
 
     def test_crossed_generated_markers_are_rejected(self) -> None:
         self.prepare_repository(markdown=True)

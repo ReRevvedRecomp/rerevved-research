@@ -31,6 +31,8 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 
 ## Frontend, content, and rendering
 
+- [Retail achievements](achievements.md) - all 50 IDs, English metadata, gamerscore,
+  icon image IDs and native unlock-trigger mapping status.
 - [Frontend, frame, and input ownership](frontend-frame-and-input.md) - states, timing/callbacks, availability, menus and controllers.
 - [Content staging and source resolution](content-source-resolution.md) -
   staging, registration and lookup/fallback order.

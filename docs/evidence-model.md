@@ -23,3 +23,9 @@ Keep retail descriptions/help/format strings, full selection tables/lossless
 membership, native-code slices and complete operands local. Publish locators,
 counts, lengths, digests and independent summaries. Text digests identify only
 recorded bytes, not an unrecorded terminator or original encoding.
+
+The [retail achievement catalog](../data/achievements.json) is a scoped exception:
+it retains the 50 English achievement names and unlocked/locked descriptions as
+display metadata alongside IDs, gamerscore and icon IDs. This exception does
+not include icon pixels, executable data or unrelated retail text. Metadata
+wording alone does not prove an unlock predicate or its runtime execution.

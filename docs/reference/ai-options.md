@@ -84,3 +84,59 @@ technology ownership and native activation timing remain in
 [starting technology grants](../../manifests/starting-technology-grants.json).
 Arbitrary technology IDs need their actual setup-time acquisition effects
 validated before exposing a starting list.
+
+## Gold, Food and Culture output
+
+Completed native city contributions expose conditional percentage seams before
+cache and owner-state consumers diverge. Each seam needs a register change and
+a matching saved-temporary change; changing a cache or return value alone does
+not reach all known representations. The [city-yield hook finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0343)
+owns exact registers, widths, native overrides and consumer limits.
+
+| Yield | Proposed boundary | Required coherence |
+| --- | --- | --- |
+| Gold | Before `0x82D14ECC`, completed value in `r8` | Replace saved `stack+0x7C` too, before city `+0x46`, mode-zero aggregate and later reserve credit. |
+| Food | Before `0x82D14280`, completed contribution in `r10` | Replace saved `stack+0x90` too, before city `+0x4C`/`+0x40`, mode-zero aggregate and growth input. |
+| Culture | Before `0x82D152E8`, completed value in `r18` | Replace saved `stack+0x78` too, before city `+0x48`, mode-zero aggregate and later owner accumulator. |
+
+Gold and Culture retain signed entry owner in `r17` and mode in `r15`;
+`r31` is the city ordinal times `0xBC`. Food retains the city base in `r21`
+and the same city offset in `r31`, but has no established common owner
+register at its earliest scalar seam. Its hook must read the saved entry owner
+at `stack+0x84`; `r4` can instead hold population on a native branch.
+
+These points preserve native composition, including technology, building,
+Wonder and civilization effects. Subsequent native clearing must still run.
+In particular, the excluded-owner path can clear a credit without rewriting
+an earlier cache, and the UEA 42 path clears Food/Gold but retains Culture.
+A percentage must preserve these distinctions and the native signed-halfword
+cache versus full-word contribution widths.
+
+Food's completed sum is the contribution added to the growth box at city
+`+0x34`. The selected growth path subtracts its native threshold and carries
+the remainder when population increases. Its negative-progress path resets
+the box and decrements population. Scaling that accumulated box would compound;
+scaling the newly composed contribution can affect both growth and population
+loss. This evidence does not recover a separate gross-harvest/maintenance pair,
+so it supports a native growth-contribution option with explicit sign policy,
+not a proved gross-harvest percentage.
+
+Known downstream effects are bounded. Gold reaches an owner aggregate, the
+reserve credit and a selected refresh-then-cache reader. Food reaches its two
+snapshots, an owner aggregate and growth state. Culture reaches an owner
+aggregate, a separate owner accumulator and two signed `+0x48` inputs of the
+border sweep. Complete displays, final-yield AI valuation, trade, rush, Great
+People and Cultural Victory joins remain unbound. The established UEA 25
+rush-rate and valuation formulas are separate from completed city Gold.
+Border-input scaling does not establish a fixed territorial increment.
+
+Reaching a seam proves a composition event, not one event per city per turn.
+Mode one bypasses this yield block; mode minus one refreshes caches then exits
+before selected state credits. Calendar can call mode zero more than once
+for a city and can also consume cached Culture without recomposition.
+Scale each original temporary once per reached composition, never an existing
+reserve, growth box, accumulator or already scaled cache. Policy changes need
+demonstrated cache invalidation and recomputation order. Complete saved-cache
+transfer, load order, policy persistence, capture/resource/technology refresh
+and runtime parity remain acceptance gates. City-founding resource rewards
+are separate from these per-composition contributions.

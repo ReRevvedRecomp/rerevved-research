@@ -29,8 +29,11 @@ not calendar arithmetic or bonus causation.
 An initialization/load continuation repeatedly increments retained turn until
 converted year reaches a signed record-halfword threshold, except zero or values
 <=-4000. It can publish that turn to current/scheduling words before virtual
-dispatch. The scheduling manifest retains bypass-input and intervening
-pointer-store alias guards; callback effects and credit cadence remain unknown.
+dispatch. A frame-slot producer supplies the separate four-byte destination
+`0x8314F17C`. Checking that value at the actual load discharges the intervening
+pointer-store alias guard; unconditional source retention remains unproved.
+The scheduling manifest owns the bypass-input and access guards. Callback
+effects and credit cadence remain unknown.
 
 ## Presentation
 

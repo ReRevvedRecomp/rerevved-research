@@ -10,11 +10,28 @@
       "confidence": "strong",
       "image": "image.json",
       "question": "Does the selected serializer use a fixed eight-player backing extent, and does that establish more playable opponents?",
-      "scope": { "functions": ["0x82CC4040"], "maximumFunctions": 1 },
+      "scope": { "functions": ["0x82CC4040", "0x822D93E8", "0x821D3EA0"], "maximumFunctions": 3 },
       "dependencies": [
         { "topic": "ai-civilization-elimination-boundary", "use": "Accepted ordinary six-slot setup, Barbarian5, masks, per-player256-unit pools and eight-column elimination index." }
       ],
       "nativeResult": {
+        "layoutScalarTransfer": {
+          "owner": "0x82CC4040",
+          "abi": "mode r3 retained r20;primaryStream r4 retained r30;auxiliaryStream r5 retained r29.",
+          "count": {
+            "base": "0x82F700AC",
+            "inputCall": "0x82CC4174",
+            "outputCall": "0x82CC41AC"
+          },
+          "barbarianIndex": {
+            "base": "0x82F700B0",
+            "inputCall": "0x82CC41E0",
+            "outputCall": "0x82CC4218"
+          },
+          "nullAuxiliary": "Mode1 input passes the live global pointer to822D93E8; selected read virtual+4 requests4 bytes at822D9418. Mode0 output passes it to821D3EA0; selected write virtual+8 requests4 bytes at821D3F78, with native endian-conversion arms. Retain current stream/target and complete successful transfer; normal return alone is not I/O success.",
+          "nonNullAuxiliary": "Selected input/output arms transfer a stack scalar between the two streams. They do not establish restoration into these fixed live globals.",
+          "historicalLimit": "Serialization of current layout count/Barbarian index does not prove the accepted initial opponent setting, a stable initial human mask or an unchanged count across every supported mutation/load. Current survivors cannot establish initial opponents."
+        },
         "units": "0x82CC4510..0x82CC4550 traverses84-byte records from0x830F2BF0 to base+0x2A000. This is8*256 records; the transfer helper's full effects are not expanded.",
         "civilizationAndEra": "0x82CC454C..0x82CC45AC supplies count8 for0x830ECD28;0x82CC4930..0x82CC4990 supplies count8 for0x830ECD08 under the selected mode/version gates.",
         "pairs": "0x82CC4C90..0x82CC4CF0 supplies count64 for0x830ED0D8; the accepted local*8+player index supplies its eight-column interpretation.",
@@ -22,9 +39,10 @@
       },
       "currentEvidence": {
         "method": "Foreground read-only raw words reconciled to exact serializer generated windows and independently decoded extent arithmetic.",
-        "locators": ["ghidra/DumpMemoryWords.java:0x82CC4530,0x82CC457C,0x82CC4960,0x82CC4CC0 radius12"],
+        "locators": ["ghidra/DumpMemoryWords.java:0x82CC4530,0x82CC457C,0x82CC4960,0x82CC4CC0 radius12", "ghidra/DumpMemoryWords.java:82CC41A0,82CC4330 radius64;822D93E8,821D3EA0,82CC4070 radius32;821D3F68,822D9418 radius12"],
         "returnedWords": 100,
-        "uniqueAddresses": 94
+        "uniqueAddresses": 94,
+        "scalarTransferValidation": "Additional503 emitted raw word rows covered selected scalar/ABI/helper windows; all matched the supported FILE. This expands transfer-request evidence, not successful I/O or initial-setting history."
       },
       "runtimeObservation": { "status": "not-observed" },
       "falsification": "Different serializer loop extent or count operands would falsify the backing capacities. Positive full-lifecycle evidence for additional ordinary players could extend the playable limit without changing this storage result.",

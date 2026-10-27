@@ -81,11 +81,11 @@ coverage or durable per-game history.
 |---|---|
 | [Unit production](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0354) | Selected post-creator completion and unit-rush joins, including alternate ship coordinates and partial-output guards. |
 | [City founding](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0355) | Successful founding-only origin and current-turn observation, separate from current-city or first-capital history. |
-| [ICBM action](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0356) | Two source-consumption receipts and the distinct early nonzero SDI frontier. |
+| [ICBM action](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0356) | Two source-consumption receipts; selector/address search limits and the exact early-SDI live admission probe. |
 | [Knights Templar](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0357) | Artifact selector identity and same-tile artifact-bit clearing, separate from mounted-unit grants. |
-| [Water depth](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0358) | Fresh coastal/deeper-water discriminator, two Galley checks and one ordinary position-commit seam. |
-| [Combat strength](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0359) | Selected final operative pair and the remaining city/outcome causal join. |
-| [Battle participation](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0360) | Selected opposed mode0 decision and RNG publication, excluding prediction and unopposed entry alone. |
+| [Water depth](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0358) | Native cache semantics, derived read-only current-terrain equivalent, conditional save/load transfer and selected committed-movement origins. |
+| [Combat strength](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0359) | Final operative pair joined conditionally to the local decisive-defensive result through exact queue record/cursor lineage. |
+| [Battle participation](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0360) | Opposed mode0 decision/RNG publication, checked mode2 evaluation exclusions and the later Normal/Fast presentation boundary. |
 | [City capture](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0361) | Current-owner transfer with retained old owner and Palace identity, without a Boolean success return. |
 
 ## Catalog

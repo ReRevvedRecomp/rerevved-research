@@ -130,6 +130,12 @@ People and Cultural Victory joins remain unbound. The established UEA 25
 rush-rate and valuation formulas are separate from completed city Gold.
 Border-input scaling does not establish a fixed territorial increment.
 
+The city Culture aggregate also supplies the separate
+[Culture strength score](../../manifests/resource-definitions.json#/centerResourceBonusBoundary/class4ConsumerBoundary),
+which participates in Cultural Leader ranking and a derived border-influence
+level. The ranking reads the score; border influence also depends on the
+quantized level. Both remain distinct from the Cultural Victory count.
+
 Reaching a seam proves a composition event, not one event per city per turn.
 Mode one bypasses this yield block; mode minus one refreshes caches then exits
 before selected state credits. Calendar can call mode zero more than once

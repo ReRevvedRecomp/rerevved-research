@@ -108,10 +108,10 @@ these native destinations; definition `+0x41` is not this classifier.
 | 8 | Wine | 5 | +10 Gold reserve |
 | 9 | Oak | 1 | +10 Production reserve |
 | 10 | Dye | 5 | +10 Gold reserve |
-| 11 | Incense | 4 | +10 player state; semantic name unresolved |
+| 11 | Incense | 4 | +10 Culture strength score |
 | 12 | Spices | 5 | +10 Gold reserve |
 | 13 | Marble | 1 | +10 Production reserve |
-| 14 | Silk | 4 | +10 player state; semantic name unresolved |
+| 14 | Silk | 4 | +10 Culture strength score |
 | 15 | Gems | 3 | +10 Gold reserve |
 | 16 | Whale | 0 | +10 Food reserve |
 | 17 | Game | 0 | +10 Food reserve |
@@ -128,18 +128,54 @@ arm. No class 2 resource occurs in the 22-row classifier.
 Incense 11 and Silk 14 already have native class 4 entries and a +10 store
 when their founding and availability gates pass. Ceremonial Burial 3 and
 Literacy 12 are their nominal technologies, with the same alternative
-acceptance gates as other resources. The destination is a player-indexed
-word at `0x830ED4E4`, with its semantic name unresolved. This reward does not
-write city `+0x48` Culture income. A selected later Calendar path smooths and
-clamps that player state, so its founding +10 need not survive as an unchanged
-delta. Those operations do not identify the word as Culture or establish why
-a particular display did not change. The evidence supports neither a missing
-classifier entry nor an inference about design intent.
+acceptance gates as other resources. The destination is the player-indexed
+Culture strength score at `0x830ED4E4`. Its concrete consumers are recorded in
+the [class 4 consumer boundary](../../manifests/resource-definitions.json#/centerResourceBonusBoundary/class4ConsumerBoundary).
+This is a summary of its recovered roles, rather than a recovered source name.
+The grant does not directly add 10 to city `+0x48` Culture income. Existing
+entries, the +10 store and the joined consumers do not support a missing-entry
+or locally dropped-consumer diagnosis. Actual state is still needed to explain
+a particular failed gate or display observation; design intent is unproved.
+
+The Cultural Leader presentation reads this exact score and ranks players by
+`1000 * Cultural Victory count + score`. The count uses Wonders, Great People
+and clamped converted-city credits. The score is a remainder below one count
+unit when it has its Calendar range of 0..209, so +10 can alter ranking among
+players with equal counts. It does not itself add a Great Person, Wonder or
+converted-city credit, or directly increase the Cultural Victory count.
+
+Calendar uses the city's Culture contribution differently: it sums contributions
+into a player row and, on the selected update arm, moves the strength score
+toward a value based on Culture per city. For retained inputs and ordinary
+nonoverflowing arithmetic, the update is
+`score - trunc0(score/3) + trunc0(35 * cityCultureSum/cityCount)`.
+It runs only with more than three cities while `currentTurn-startTurn<=20`,
+and with a positive city count afterward. It then clamps the score to 0..209;
+an accepted UEA 11 lookup can impose a floor of 60. A +10 difference can shrink
+to 6 or 7 on one smoothing update, or disappear at a clamp or floor. This is
+not an unchanged permanent balance or an added 10 per turn.
+
+The same Calendar path derives a level from the score, applies separate native
+adjustments, clamps it to 0..6 and clears its low bit, leaving 0, 2, 4 or 6.
+For a nonexcluded player with a neutral subtraction, its score thresholds are
+60, 120 and 180. The culture-border sweep reads that exact owner level and uses
+it in two influence multipliers alongside city `+0x48`. Thus the founding
+grant can affect gameplay inputs beyond ranking when it changes the derived
+level. A grant below a threshold need not change those multipliers immediately.
+Other native factors, arithmetic and overwrites still govern the result; no
+fixed territorial gain or completed city conversion follows from +10 alone.
+
+A separate foreign-city candidate helper also rejects a selected candidate
+when its owner's level exceeds the actor's. Its caller's action and delivered
+effect remain unresolved. Great People threshold/chance effects, complete
+AI/diplomacy uses and save/load cadence were not established. The score,
+derived level, city rate, owner contribution accumulator and Cultural Victory
+count therefore remain distinct values.
 
 Adding another +10 at founding would duplicate an existing grant. The smallest
 action preserving the native lifetime is to keep its gates, consumed presence
-and current rewards. Redirecting class 4 requires a proven intended Culture
-destination and consumer contract.
+and current rewards. Redirecting class 4 into a city rate or another Culture
+counter would change the native reward's meaning.
 
 A recurring +10 city Culture contribution would need a distinct lifetime rule.
 The native path consumes presence, so an unchanged later resource query cannot

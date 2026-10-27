@@ -67,8 +67,9 @@ otherwise `3`; 22 rows uniquely cover:
 | 6 | Mountain | 3 | 7 Uranium | 15 Gems | 21 Gold | - |
 
 Setting presence cannot choose an arbitrary resource identity; Oxen and Cattle
-need different remainders. This proves no map dimensions, legality, yields,
-probabilities or completed placement. Unread `+0x41` remains unclassified.
+need different remainders. This reader proves no map dimensions, legality,
+yields, probabilities or completed placement. Its unread `+0x41` has separate
+[contribution consumers](../../manifests/resource-identity-override-boundary.json).
 
 ## Identity and player availability
 
@@ -80,3 +81,73 @@ remain qualified, so nominal technology is no complete access rule.
 Distinguish valid `0`/absent `-1` and intrinsic identity/player availability.
 Arbitrary-ID setting, safe inverse placement, refresh/runtime retention remain
 unproved.
+
+## Founding-center reward
+
+The selected founding path consumes the accepted center resource and grants
+one reserve/state increment. It does not establish recurring city income.
+The [center-resource boundary](../../manifests/resource-definitions.json#/centerResourceBonusBoundary)
+owns the exact classifier, stores, evidence and remaining limits.
+
+The founding reader uses the owner's ordinary availability context, including
+the nominal technology, UEA39 and civilization fallback described above. It
+also skips the excluded owner. After acceptance, it clears resource presence
+before dispatching the reward. Its separate ordinal classifier determines
+these native destinations; definition `+0x41` is not this classifier.
+
+| ID | Resource | Class | Native founding increment |
+|---:|---|---:|---|
+| 0 | Oxen | 1 | +10 Production reserve |
+| 1 | Iron | 1 | +10 Production reserve |
+| 2 | Sulfur | 1 | +10 Production reserve |
+| 3 | Coal | 1 | +10 Production reserve |
+| 4 | Oil | 1 | +10 Production reserve |
+| 5 | Rubber | 1 | +10 Production reserve |
+| 6 | Aluminum | 1 | +10 Production reserve |
+| 7 | Uranium | 1 | +10 Production reserve |
+| 8 | Wine | 5 | +10 Gold reserve |
+| 9 | Oak | 1 | +10 Production reserve |
+| 10 | Dye | 5 | +10 Gold reserve |
+| 11 | Incense | 4 | +10 player state; semantic name unresolved |
+| 12 | Spices | 5 | +10 Gold reserve |
+| 13 | Marble | 1 | +10 Production reserve |
+| 14 | Silk | 4 | +10 player state; semantic name unresolved |
+| 15 | Gems | 3 | +10 Gold reserve |
+| 16 | Whale | 0 | +10 Food reserve |
+| 17 | Game | 0 | +10 Food reserve |
+| 18 | Fish | 0 | +10 Food reserve |
+| 19 | Cattle | 0 | +10 Food reserve |
+| 20 | Wheat | 0 | +10 Food reserve |
+| 21 | Gold | 3 | +10 Gold reserve |
+
+Food and Production target city reserves `+0x34` and `+0x36`. Classes 3 and 5
+share the player Gold reserve destination. In this suffix, Spices therefore
+credits Gold; a reported Science increment is not explained by this native
+arm. No class 2 resource occurs in the 22-row classifier.
+
+Incense 11 and Silk 14 already have native class 4 entries and a +10 store
+when their founding and availability gates pass. Ceremonial Burial 3 and
+Literacy 12 are their nominal technologies, with the same alternative
+acceptance gates as other resources. The destination is a player-indexed
+word at `0x830ED4E4`, with its semantic name unresolved. This reward does not
+write city `+0x48` Culture income. A selected later Calendar path smooths and
+clamps that player state, so its founding +10 need not survive as an unchanged
+delta. Those operations do not identify the word as Culture or establish why
+a particular display did not change. The evidence supports neither a missing
+classifier entry nor an inference about design intent.
+
+Adding another +10 at founding would duplicate an existing grant. The smallest
+action preserving the native lifetime is to keep its gates, consumed presence
+and current rewards. Redirecting class 4 requires a proven intended Culture
+destination and consumer contract.
+
+A recurring +10 city Culture contribution would need a distinct lifetime rule.
+The native path consumes presence, so an unchanged later resource query cannot
+recover the founding resource from that flag. A future recurring option would
+need durable resource provenance, current-owner availability checks, explicit
+capture/resource-loss semantics, and one composition from the native baseline
+before Culture cache and aggregate writes. Save/load must reconstruct the
+derived contribution without adding it again to an already modified saved
+value. The existing evidence establishes no seam that both recomputes that
+contribution and preserves the native one-shot founding lifetime. No runtime
+observation or complete capture, loss, save/load or display lifecycle was made.

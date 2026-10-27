@@ -290,6 +290,14 @@ policy. Exact gates and unresolved command/dispatch edges are in
 player, condition, definition-flag and civilization reductions. Normal cost is
 signed factor `+0x44` times final scalar, divided by two toward zero.
 
+The [scalar return boundary](../../manifests/production-cost-ownership.json#/effectiveScalar/returnBoundary)
+bounds its local return and stack effects under predicate/lookup retention
+conditions. Optional bonus 5 uses the index-14 predicate's outgoing `r4`;
+assigning it to the entry owner requires that value to survive. The later
+unit-specific lookup freshly reloads the city owner.
+The predicate's selected owner-equal, state-outside-{0,1} true arm supplies
+that retention under its exact stack and protected-memory conditions.
+
 Eight signed halfwords at `0x830E9050` supply the player input; initialization
 sets all eight to `-1`, and broad serialization transfers them both ways. Setup
 `0x82D217C8` submits command 57 with player index and unresolved virtual result;
@@ -747,8 +755,21 @@ Cost consumers: `RushCostCompute` (`0x82CE27F0`) subtracts city `+0x36` before
 rush arithmetic; display `0x82DFFE38` uses current cost and `+0x36`/`+0x42`
 percentages; `0x82D13978` branches away below cost;
 `AIUnitChoiceEvaluate`/`AITurnUnitEvaluation` read `+0x44` and shared scalar.
-This bounds rush display and one completion threshold, not AI scoring, decisions
-or corrected-rush parity. No runtime production test occurred.
+The selected `AITurnUnitEvaluation` unit arm uses the signed normal cost as a
+Gold prerequisite before a command-type 6 call: reserve equal to cost passes.
+The cost register is overwritten before submission; no local debit or completed
+action follows. The [cost manifest](../../manifests/production-cost-ownership.json)
+owns the input, byte-gate, retention and arithmetic qualifications. This bounds
+rush display, one completion threshold and a local AI prerequisite; general AI
+decisions and corrected-rush parity remain unproved. No runtime production test
+occurred.
+
+For a preserved delivered command with amount zero, the selected native unit
+consumer writes back the loaded production and Gold values. It still reaches
+update calls and a later city flag store, so it need not leave all state
+unchanged. The [zero-amount boundary](../../manifests/rush-cost-producer.json#/commandPath/zeroAmountUnitBoundary)
+owns the owner/item, rate, helper-return and retention guards; no natural AI
+transaction or completed production is established.
 
 The same `0x82D13978` routes signed current item `+0x38` >=100 to
 `BuildingWonderProductionCostLookup`. IDs 100 through 199 compare signed

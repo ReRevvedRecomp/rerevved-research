@@ -153,8 +153,16 @@ the counter is not merely used for wording. A subsequent equal-halfword test
 can clear the flag, and later relation, selection, helper and delivery gates
 still apply.
 
-The normalized participant is not proved to be the original AI or nuclear
-actor. Preserve this counter and its consumers when considering AI nuclear
-policy. The next identity question is whether a named ordinary-AI contact
-ingress retains the launcher as p through normalization. Natural nuclear use,
-that matching contact, save retention and peer authority remain unobserved.
+The finding's `actorNormalizationBoundary` binds one named ordinary-AI
+ingress through the wrapper and handler. Three ordered swaps determine p.
+Under retained equal resolver samples, p is the second original participant
+only when that resolver value equals that participant; otherwise p is the
+original actor. In particular, a stable value outside both participants makes
+the wrapper and handler reversals cancel. Applying the handler-only rule to
+the original request would give the wrong attribution in that case.
+
+Changing resolver samples can change which participant's counter is read.
+Preserve the wrapper and handler normalization, counter and later policy
+gates. Actual launcher equality, current resolver values, admitted contact and
+same-generation retention remain observation requirements. Natural nuclear
+use, that matching contact, save retention and peer authority remain unobserved.

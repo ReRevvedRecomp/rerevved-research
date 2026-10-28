@@ -28,8 +28,9 @@
         "gate": "At 0x82D16FE8 the helper requires normalized index one. The unsigned halfword at 0x830E8FE2 must differ from two, and signed word 0x82F700AC must be positive before the loop enters.",
         "loop": "The branch iterates player index i from zero while i is less than the reloaded positive signed bound at 0x82F700AC. The source-city signed owner byte, retained in r21, is player p.",
         "filters": "It skips i when signed halfword 0x830E9070 + 2*i equals that for p, when i equals the excluded-player word at 0x82F700B0, or when word 0x830ED2D8 + 4*(8*p+i) is nonzero.",
-        "writes": "For a passing i, 0x82D17078 and 0x82D1707C store the same value, word 0x830EB8DC minus ten, to 0x830ED1D8 + 4*(8*i+p) and 0x830ED1D8 + 4*(8*p+i). The branch then continues the loop; it makes no direct diplomacy API call in this bounded window.",
-        "qualification": "The symmetric pair writes are static facts. The halfword grouping, pair-table field, stored value, and relationship to the description's peace-offer promise remain semantically unresolved. No valid bound of eight players is inferred from the indexing scale."
+        "writes": "For a passing i, 0x82D17078 and 0x82D1707C store the same value, word 0x8312B8DC minus ten, to 0x830ED1D8 + 4*(8*i+p) and 0x830ED1D8 + 4*(8*p+i). The branch then continues the loop; it makes no direct diplomacy API call in this bounded window.",
+        "qualification": "The symmetric writes supply an elapsed-value condition for a derived diplomacy-contact reader, under the conditions recorded for that reader. Other halfword and pair-field meanings, completed diplomatic actions, retention of the actual cells and runtime behavior remain unproved. The indexing scale does not establish the number of valid players.",
+        "clockInput": "Native instructions D16C40/D16C4C load r31 from 8312B8DC. The selected index 1 path to D16FE8 bypasses the index 2/11/27 bodies without a call or r31 write; D17074 computes r31-10. ai-options-boundaries.json#/findings/RVA-F-0330/strategyDecisionBoundary owns the exact source, read and retention evidence and the derived reader."
       },
       "runtimeObservation": {
         "source": "wonder-eligibility-virtual-target",
@@ -47,11 +48,11 @@
       },
       "guards": [
         "Do not call either pair-table write a peace offer or treaty without its consumer.",
-        "Do not name the 0x830EB8DC word as a turn counter from the minus-ten arithmetic alone.",
+        "Use the exact 8312B8DC source load and the linked reader's evidence. Minus-ten arithmetic alone does not establish a diplomatic deadline or completed action.",
         "Do not infer a fixed valid player count from the eight-wide pair-table index.",
         "Do not claim the stored description proves runtime activation or diplomatic outcome."
       ],
-      "conclusion": "The direct item-201 Great Wall branch can set symmetric entries in a neutral player-pair table after exact local filters. Static evidence does not yet establish that the writes cause peace offers, their timing, or any observed runtime behavior."
+      "conclusion": "The direct Great Wall branch for item 201 can set symmetric civilization-pair entries to the captured 8312B8DC word minus 10 after its local filters. ai-options-boundaries.json#/findings/RVA-F-0330/strategyDecisionBoundary establishes a conditional derived diplomacy-contact reader. Actual peace offers, treaties and runtime activation remain unproved."
     },
     "RVA-F-0207": {
       "schemaVersion": 1,
@@ -90,7 +91,7 @@
           "truncated": false,
           "result": "No decoded split-constant materializer for the exact table-base address was emitted."
         },
-        "fieldBoundary": "Neither exact-base query establishes a consumer or resolves table semantics."
+        "fieldBoundary": "Neither exact-base query identified a reader. ai-options-boundaries.json#/findings/RVA-F-0330/strategyDecisionBoundary owns the separate derived reader, which lies outside those exact-base search patterns."
       },
       "runtimeObservation": {
         "source": "great-wall-player-pair-branch",
@@ -116,7 +117,7 @@
         "Do not infer a fixed player count from the eight-wide pair-table index.",
         "Do not infer runtime behavior from the stored Great Wall description or the symmetric writes."
       ],
-      "conclusion": "The two exact-base queries found no recorded Ghidra references or decoded split-constant materializers for 0x830ED1D8. They do not identify a consumer. Derived, indexed, computed, aliased, indirect, interior, and undecoded readers remain unresolved; the table's meaning and any effect of its writes are unknown."
+      "conclusion": "The two exact-base queries returned no recorded references or decoded address materializations for 830ED1D8; their bounded negative results remain valid. ai-options-boundaries.json#/findings/RVA-F-0330/strategyDecisionBoundary separately establishes a concrete derived diplomacy-contact reader. Other aliases and readers, and actual diplomatic outcomes, remain unproved."
     }
   }
 }

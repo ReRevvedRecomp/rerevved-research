@@ -34,6 +34,8 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 - [Retail achievements](achievements.md) - all 50 IDs, English metadata, gamerscore,
   icon image IDs and native unlock-trigger mapping status.
 - [Frontend, frame, and input ownership](frontend-frame-and-input.md) - states, timing/callbacks, availability, menus and controllers.
+- [Controller glyph families](controller-glyphs.md) - native default-byte producer,
+  selected movie labels, proposed mapping and loading/lifetime limits.
 - [Content staging and source resolution](content-source-resolution.md) -
   staging, registration and lookup/fallback order.
 - [Audio manager and 2D script table](audio-script-table.md) - ownership, lifecycle, lookup and unknowns.

@@ -195,6 +195,261 @@
     "Use the exact default-stream+0x10 transfer qualification in unit-special-upgrades.json; do not infer future-turn March movement, human/AI runtime parity, multiplayer synchronization or asset support.",
     "Do not infer an implementation contract from the feasibility verdict."
   ],
+  "occAiFoundingBoundary": {
+    "status": "conditional-static-disablement-contract",
+    "question": "Can the selected AI city request occur without a current Settler, and where can OCC omit it before its selected side effects while retaining ordinary tile work and scan continuation?",
+    "scope": {
+      "owners": [
+        "0x82CB6E48",
+        "0x82CFF528",
+        "0x82CFF8C0"
+      ],
+      "chargedBodies": 3,
+      "functionCap": 8,
+      "boundary": "Selected AI caller prefix, tile-scan arm and continuation; complete city-distance helper and ordinary-unit-distance helper. Save/restore thunks, score helper and CityCreate are conditional contracts or accepted evidence, not newly expanded bodies. No runtime, implementation or whole-AI caller census."
+    },
+    "selectedPath": {
+      "actor": "The entry low32 r3 is copied to r16 and frame+0x1C4 at82CB6E60..68. The selected scan reloads this p. Require retained canonical frame, 0<=p<8 and p different from the current controller word read through frame+0x5C,+0xB0 at82CBBDCC..82CBBDF8. Accepted AI owner identity does not prove natural execution or an actually loaded OCC setting.",
+      "coordinates": "82CBBD18..82CBBE54 initializes x=r24=1 and y=r29=1, then iterates the interior x<width-1,y<height-1. r22=40*x. These are tile-scan induction variables, not coordinates read from a current unit. The visibility/region/terrain plane names are not inferred merely from byte loads.",
+      "split": "The byte comparison at82CBBE3C and branch82CBBE40 send byte1 to ordinary arm82CBC07C. The separate tile-plane byte comparison82CBBE50 and branch82CBBE54 also send nonzero there. Only the remaining arm reaches82CBBE58. All later local branches in this selected arm end at82CBC3D4 or82CBC3DC, apart from its selected helper and creator calls.",
+      "admission": "Under retained actual state,82CBBE58..74 requires signed native remainder(turn+p,8)==0 with turn U32[8312B8DC]. It requires a zero per-actor/per-tile-group counter and clear selected tile-halfword bits. The first city-distance query excludes p; its distance/candidate-group predicates and score helper82D02530 must admit. The own-mask city-distance query at82CBBF34 must return a city j other than-1. Population and regional comparisons admit before the ordinary-unit-distance query; its stored distance must exceed2, terrain must avoid0/6/7, and the later city-distance query's stored distance must exceed1. Unknown actual inputs remain supplied-state premises.",
+      "sourceCity": "82CFF528 scans exactly128 records C=8314FE28+188*j, considering only signed population C+3>0, current owner C+0!=-1 and an owner bit selected by r5; r6==-1 bypasses its optional plane filter. It returns the first strictly closest accepted ordinal, including0, or-1, and stores its derived distance. The own-mask caller uses r5=1<<p. For valid p0..7, supported owner bytes-1/0..7 and retained records this binds the returned source city current owner to p, independent of original-owner byte C+1. The caller rereads its population and coordinates and decrements that city's C+3 before requesting another city. This selected route therefore already requires a positive-population owned city and is an expansion route; no additional first-city history/count policy is needed to disable it.",
+      "unitQuestion": "82CFF8C0 searches ordinary unit slots by admitted owner mask and writes a selected-distance result. The caller supplies tile X/Y, an owner mask and-1; it supplies no current-unit identity or type and ignores the returned unit ordinal. With positive player count2 and every queried owner1 ordinary-unit slot unoccupied (owner0xFF), the exact helper finitely returns-1 and stores999. That satisfies the caller's distance>2 check. Native admitted caller execution can then request CityCreate without any live ordinary unit in the supplied table. This establishes a conditional unit-independent expansion case, not absence of Settlers in an observed game, a fog-visibility explanation or an executable-wide no-unit theorem.",
+      "creation": "82CBC020..3C decrements the selected source-city population byte, reloads p into r28 from frame+0x1C4 and calls82D18D88(p,x,y,1), returning to82CBC040. The accepted creator searches128 slots, returns-1 on exhaustion and returns a valid city ordinal only on its conditional success path. At the selected AI caller, no result test separates return from the two counter updates. Results0,127 and-1 all take those updates under retained normal-return premises. A creator-only suppression or simulated-1 return would therefore leave unwanted population/cache/counter effects."
+    },
+    "omittedEffects": {
+      "helperRequests": "Three city-distance requests82CBBECC/82CBBF34/82CBC010, score request82CBBF0C, ordinary-unit-distance request82CBBFD4 and CityCreate82CBC03C are all downstream of the selected gate.",
+      "distanceCaches": "Each selected city-distance helper writes U32[830EE53C]. The unit-distance helper writes U32[830EE544] and, when replacing its best candidate, U32[830EE540] with selected owner. Its empty-unit case writes999 to the distance and retains the old selected-owner word. Native save/restore frame effects remain qualified separately.",
+      "population": "82CBC02C stores low8(population-1) at source C+3 before CityCreate, using r31=188*j and r26=8314FE28+3.",
+      "counters": "82CBC068 increments the word at B+4*(32*p+g), where B is retained frame+0x60 (initialized830E5AD0) and g is the current byte from the selected tile plane. 82CBC074 increments B+128*p. Neither update checks the creator result. The model retains a stable supplied g; actual alias/helper retention and live plane values remain premises."
+    },
+    "disablementCandidate": {
+      "site": "0x82CBBE58",
+      "nativeWord": "0x3D608313",
+      "displacedInstruction": "lis r11,-31981",
+      "enabled": "Read the same current frozen game OCC enabled policy used by the reward/production rules through an owning occ::ForGame snapshot. If enabled, transfer control to82CBC3D4 before executing the displaced instruction. This suppresses the entire admitted expansion arm before its helper cache stores, source-population decrement, creator and counters.",
+      "disabled": "Execute the displaced instruction exactly once, then continue at82CBBE5C with native state. The original conditional splits and all native downstream predicates remain operative.",
+      "continuation": "82CBC3D4..D8 reloads width into r31, then joins82CBC3DC. The shared suffix increments y and r16 by1 and2, rereads height and compares y<height-1 before returning to82CBBDC8. End-of-row82CBC3F8..404 increments x and compares x<width-1 before82CBBD8C; otherwise82CBC408 retains the later owner-control work. No call or loop-carried counter/population store is needed to enter this continuation.",
+      "preservation": "Use a supported control-transfer seam with canonical PC and unchanged code identity. Preserve all guest registers, CR/XER, FPR, frame and guest memory except native effects of the chosen continuation; in particular retain x/r24,y/r29,tile pointer/r16, current frame and dimensions. The enabled callback must not execute the displaced lis or any skipped native instruction; the disabled callback must not replace existing native state. Host policy reads must return normally, be nonthrowing and have no guest-memory aliases. Concrete registration/generated insertion and callback preservation still need implementation and inspection.",
+      "exclusions": "The two pre-gate branches to82CBC07C remain unchanged, preserving this scan's ordinary nonfounding arm. Command12 Settle, accepted capture82D1B784 and setup82D23348/82D2378C/82D23904/82D2440C are separate origins and never this exact site. Shared CityCreate, existing city ownership, native load/deserialization and ordinary unit production are not globally suppressed. The existing production restriction remains separately required. No current-human, era, turn0, mode1 or current-city-count surrogate selects OCC."
+    },
+    "conclusion": "The admitted AI tile-scan expansion can request a new city from an existing owned source city without consuming a live ordinary unit in a supplied positive-player-count case. OCC can omit that entire selected arm at82CBBE58 and retain ordinary tile work and shared scan continuation. This is a concrete static disablement candidate, not an explanation proved for the owner's running game.",
+    "nextDiscriminator": "Implement and inspect the exact pre-side-effect control transfer using the same current frozen game OCC policy, with disabled native equivalence and preserved continuation state. Default-off execution must distinguish enabled/disabled expansion requests, source-population/cache/counter preservation, ordinary tile work, setup/capture/load and actual title/loadout identity. Implementation and runtime validation remain outside this static packet.",
+    "confidence": "strong",
+    "image": "image.json#/analysisProgram",
+    "acceptedInputs": [
+      "city-militia-scout-feasibility.json#/foundingMilitiaContract/foundingOnlyInsertion",
+      "achievement-event-boundaries.json#/findings/RVA-F-0355",
+      "occ-settler-production-gates.json#/populationRequirementBoundary",
+      "occ-settler-production-gates.json#/launchLoadoutBoundary"
+    ],
+    "currentEvidence": {
+      "nativeWords": 841,
+      "orderedWordBytesSha256": "38C5576CB6C33E57F51317413D968A24FABC326597C17200F6DAE43A47099F29",
+      "method": "Four serialized foreground read-only word queries, all matched to the hash-verified supported flat image. Three exact generated owners corroborated through windows of at most96 lines. Generic instruction model accepts query reports and pinned accepted JSON baselines; it embeds no native payload.",
+      "modelChecks": 25,
+      "coverage": "Current/original-owner discriminator; source city slot0 and population0/2 rejection; positive-player-count/no-live-units distance path without type reads; exact creator arguments and0/127/-1 results; disabled displaced instruction once; enabled zero-effect skip; inner and outer loop continuation; both ordinary-work diversions; wrong-turn rejection; late-gate counterexample and native store-operand mutation detection.",
+      "limits": "Supplied-state scalar execution with explicit normal save/restore and opaque score/creator return/retention premises. No natural event, complete owner-prefix/helper lifetime theorem, runtime patch or OCC enforcement measurement.",
+      "acceptedResearchRevision": "8a3737363c761bc147fb86041fda265a15f632b3",
+      "nativeRanges": [
+        "[0x82CB6E48,0x82CB6E74)",
+        "[0x82CBA334,0x82CBA440)",
+        "[0x82CBA4F4,0x82CBA528)",
+        "[0x82CBBCFC,0x82CBC07C)",
+        "[0x82CBC3D4,0x82CBC42C)",
+        "[0x82CFF528,0x82CFFD08)"
+      ],
+      "queryMethod": "ghidra/DumpMemoryWords.java:radius0; aligned words in nativeRanges; foreground tools/run-headless.ps1 -ReadOnly",
+      "queries": [
+        {
+          "querySha256": "E386DA703FB7EE1359C80ECFC5E0EEB9A1EC58CEB830E0569237DB4B5519CA5A",
+          "uniqueWords": 150,
+          "orderedWordBytesSha256": "1A2A51BE7FF3EBD554F7177BDA1FBB57DBB9C60F7E942BB3697C995364348FA6"
+        },
+        {
+          "querySha256": "C25376B9C504697F57044D13FFF3A71A3A07F47C392407C8FB74DAC0D3A3AF26",
+          "uniqueWords": 187,
+          "orderedWordBytesSha256": "EF2140E5881F2F5BF9FF90B63679D2044170E7D3B202F8FFAB44906AD5EAD5F4"
+        },
+        {
+          "querySha256": "9ABDF4B130160096417ACD7E45C10213157BF1C9AD65329F65956EAD31FA3A00",
+          "uniqueWords": 253,
+          "orderedWordBytesSha256": "72F8207491C03D63C6B94B4424903539F454C65E368D0B70DC346E3E40B5B0A1"
+        },
+        {
+          "querySha256": "9D17031F87249C2666099CCD2D7168C07BABB1D61F775BAECF1D4871A7CD8272",
+          "uniqueWords": 251,
+          "orderedWordBytesSha256": "08F9D09DD0EF9D7E5D7E9D10846CA75430882386EC4D7ABDCBA2DE3817B0BA72"
+        }
+      ],
+      "generated": [
+        {
+          "file": "rerevved:generated/default/rerevved_recomp.81.cpp",
+          "owner": "0x82CB6E48",
+          "headerLine": 28444,
+          "nextHeaderLine": null,
+          "sha256": "85089E232A8A71490C3980ABD3895FE1795444E0A368E15092BEBEB01BA2ED90",
+          "selectedWindows": [
+            [
+              28444,
+              28539
+            ],
+            [
+              28544,
+              28639
+            ],
+            [
+              35564,
+              35659
+            ],
+            [
+              35660,
+              35755
+            ],
+            [
+              35815,
+              35878
+            ],
+            [
+              38507,
+              38570
+            ],
+            [
+              39046,
+              39141
+            ],
+            [
+              39142,
+              39237
+            ],
+            [
+              39214,
+              39309
+            ],
+            [
+              39238,
+              39333
+            ],
+            [
+              39334,
+              39429
+            ],
+            [
+              39430,
+              39525
+            ],
+            [
+              39526,
+              39621
+            ],
+            [
+              39951,
+              40046
+            ]
+          ]
+        },
+        {
+          "file": "rerevved:generated/default/rerevved_recomp.28.cpp",
+          "owner": "0x82CFF528",
+          "headerLine": 28023,
+          "nextHeaderLine": 28528,
+          "sha256": "886E4147D4039E17734A28838CB01F609FC16DF749EDF7B4EBC6E48F198BFC96",
+          "selectedWindows": [
+            [
+              28023,
+              28118
+            ],
+            [
+              28119,
+              28214
+            ],
+            [
+              28215,
+              28310
+            ],
+            [
+              28311,
+              28406
+            ],
+            [
+              28407,
+              28502
+            ],
+            [
+              28503,
+              28527
+            ]
+          ]
+        },
+        {
+          "file": "rerevved:generated/default/rerevved_recomp.91.cpp",
+          "owner": "0x82CFF8C0",
+          "headerLine": 29545,
+          "nextHeaderLine": 30144,
+          "sha256": "C0A9835523D9EB3FD4837421C03454594FDC09ECF8208630C3F3D677933B4D29",
+          "selectedWindows": [
+            [
+              29545,
+              29640
+            ],
+            [
+              29641,
+              29736
+            ],
+            [
+              29737,
+              29832
+            ],
+            [
+              29833,
+              29928
+            ],
+            [
+              29929,
+              30024
+            ],
+            [
+              30025,
+              30120
+            ],
+            [
+              30119,
+              30143
+            ]
+          ]
+        }
+      ]
+    },
+    "currentSourcePolicy": {
+      "status": "inspected title source and selected generated artifact; execution unobserved",
+      "titleRevision": "a2c3e48e950eff4fab64fb446a83e04ab3060f2a",
+      "frozenPolicy": "An owning occ::ForGame shared pointer reads one mutex-published immutable enabled/minimumPopulation record. FreezeForGame uses the checkbox unless standardRules disables OCC and selects R33 against cap31. New-game/load ingress can replace this record; changing the checkbox alone does not change the current record. Accepted enabled sidecars can restore saved R32..127, so loaded games need not use33.",
+      "policySources": [
+        "rerevved:src/occ_settings.h:11..27",
+        "rerevved:src/occ_settings.cpp:8..39",
+        "rerevved:src/start_resources_runtime.cpp:318..343",
+        "rerevved:src/ai_civilizations_hooks.cpp:200..208",
+        "rerevved:src/save_sidecar_hooks.cpp:243..270",
+        "rerevved:src/save_sidecar.cpp:42..45"
+      ],
+      "existingCoverage": "config/occ_hooks.toml declares candidate threshold82CEC7A8, completion threshold82D15A7C, AI production-choice range guard82CB5544 and100g reward replacement82CF5760. These source contracts concern production/rewards. Existing units/queues are not migrated. The separate Mongol camp gate uses the frozen policy to bypass82D1B784; it does not cover82CBC03C.",
+      "coverageSources": [
+        "rerevved:config/occ_hooks.toml:1..24",
+        "rerevved:src/occ_hooks.cpp:183..235,237..290",
+        "rerevved:src/unique_era_abilities_hooks.cpp:43..76",
+        "rerevved:config/civilization_rules_hooks.toml:8..14",
+        "rerevved:docs/rexglue-runtime.md:603..640"
+      ],
+      "selectedGap": "The inspected declarations have no direct selected autonomous-founding veto. The exact generated82CBC03C call window contains no OCC callback. The post-success82D1A314 founding-unit hook accepts origin82CBC040 and can grant Militia; its source has no OCC read or city-creation veto. This is a bounded source/artifact observation, not proof of an executing build or every possible ingress.",
+      "gapSources": [
+        "rerevved:generated/default/rerevved_recomp.81.cpp:39508..39526",
+        "rerevved:config/city_effect_hooks.toml:1..6",
+        "rerevved:src/city_founding_unit_hooks.cpp:142..147",
+        "rerevved:src/city_founding_unit_rules.cpp:200..256"
+      ],
+      "integration": "The selected native guard must read the same frozen enabled policy through an owning snapshot and preserve guest state. Use the proved pre-side-effect native continuation; production thresholds, the live checkbox, a selected unit or a call-only CityCreate skip do not supply that contract. Declared/generated insertion and enabled/disabled, initial-setup, scan/turn-continuation and same-policy save/load validation remain implementation gates. No title source was changed."
+    }
+  },
   "foundingMilitiaContract": {
     "status": "conditional-static-contract",
     "policyReference": "#/requestedMilitiaPolicy",

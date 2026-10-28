@@ -144,3 +144,17 @@ premises, they preserve the existing human path and later SDI and presentation
 behavior. No single shared flag patch or runtime-safe implementation is
 established. Multiplayer authority, saved policy/actions, peace/UN interactions
 and nuclear-use counter consumers retain their own acceptance requirements.
+
+The finding's `counterConsumerBoundary` resolves one contact-policy effect of
+the post-use word at `0x830ECBC4`. A fresh nonzero sample for the contact
+handler's normalized participant p forces its local policy flag to one at
+`0x82CD00E8..EC`. This can affect a conditional later selection and war request;
+the counter is not merely used for wording. A subsequent equal-halfword test
+can clear the flag, and later relation, selection, helper and delivery gates
+still apply.
+
+The normalized participant is not proved to be the original AI or nuclear
+actor. Preserve this counter and its consumers when considering AI nuclear
+policy. The next identity question is whether a named ordinary-AI contact
+ingress retains the launcher as p through normalization. Natural nuclear use,
+that matching contact, save retention and peer authority remain unobserved.

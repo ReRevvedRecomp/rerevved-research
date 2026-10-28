@@ -53,3 +53,94 @@ repair. Save persistence is another acceptance step.
 The ordinary [Move lifecycle](../../manifests/unit-movement-lifecycle.json) and
 [scene lifecycle](scene-render-lifecycle.md) supply adjacent contracts. Their
 observed or static coverage does not establish this nuclear join.
+
+## AI production and launch policy
+
+The [AI nuclear finding](../../manifests/ai-nuclear-weapon-gates.json)
+separates ordinary unit production, acquisition through the Manhattan Project and
+autonomous launch. These are static boundaries; a natural AI acquisition-to-launch
+chain has not been observed.
+
+Ordinary production of an ICBM (unit type 27) is rejected by the shared human/AI
+candidate list. Its initialized prerequisite tuple is `[0,0,0]`: the required
+first query returns zero and rejects it at `0x82CEC6A0`. A separate nuclear-flag
+test rejects it at `0x82CEC7BC`. Changing only that flag test leaves the first
+rejection intact. This does not establish an AI-only mask or zero valuation.
+
+The Manhattan Project (item 218) provides a separate acquisition path. Its
+accepted native requirement is Atomic Theory (technology 37). The AI evaluator
+can append eligible Wonder IDs. A priority gate and the strategy 0/3 category
+gate can give the Manhattan Project a score of 0, but that does not remove the
+candidate: a valid random fallback can still select it. Actual competing scores,
+the selected ordinal and assignment remain conditions.
+
+After completion publishes the pending reward, Calendar reloads the correct
+city ordinal at `0x82D1D84C` and requests mode 2 at `0x82D1DD54`. With its zero
+fourth argument, equality of current turn `0x8312B8DC` and the start-turn word
+`0x8312B8D8` clears mode 2 at `0x82D16C64`. The selected helper returns before
+creation, while the caller still clears the pending flag at `0x82D1DD60`.
+This shared, conditional suppression is not a demonstrated failure at a natural
+AI completion. Otherwise, the terminal index 18 arm can request creation of
+unit type 27 at `0x82D177A8`, subject to required service/helper returns,
+creator success and retained city/unit state.
+
+The mode 2 service path compares the city owner with a current-context player,
+without establishing that either is human. Its two notification routes call
+advisor show at `0x82D17470` or `0x82D1775C`. Normal returned values, including
+an early-out result, are discarded before the grant paths merge. They do not
+veto the reward locally. Every taken formatter, service, advisor and callback
+must still return with the city, owner, index and saved state retained.
+
+The ordinary creator needs a slot whose owner byte and byte+7 are both 0xFF.
+Exhaustion returns -1; slot 0 is valid. A nonnegative result alone does not
+establish a retained unit object: the accepted object-rejection route stores
+zero to unit+0x3C before a possible normal return. Successful publication at
+`0x82D8029C` instead links the object there, subject to allocation, model
+acceptance, registration and lifetime conditions. This distinction does not
+prove that every logical-unit path requires that object pointer.
+
+The initialized ICBM movement value is 40. With matching returned/captured
+owner, a valid slot and retained type 27/definition, the Manhattan Project
+rewrites the movement value to 120 at `0x82D177F0`, then requests recount at
+`0x82D177FC`. It does not validate those record/object premises before the
+write. No zero-movement or selected human-only grant exclusion was found;
+actual retained AI receipt remains unobserved.
+
+An AI-owned nuclear unit has a dedicated decision arm at `0x82CBF570`.
+It rejects Democracy (government 4), self, Barbarians and nonwar pairs.
+It also requires reverse pair-history bit 0x20. A selected city-capture
+producer can set that bit through the following accumulated chain. For AI
+player p and opponent q, the relevant word is
+`H(q,p)=U32[0x830ED0D8+4*(8*q+p)]`.
+
+| Step | Selected condition and writer |
+|---|---|
+| 0x8 | Wording about backing by nuclear weapons requires a nonzero count of unit type 27 for p; the negotiation suffix stores `H(q,p)\|0x8` at `0x82CC9DFC`. |
+| 0x10 | A later positive negotiation response must avoid retry, have q outside Democracy (government 4), no active kind 1 commitment, a zero Great Wall predicate for p and no taken special-choice alternative. `0x82CCEEC8` adds 0x10 only if sampled 0x8 was already set, then the path requests war relation 0. |
+| 0x20 | q subsequently takes a p-owned city. `0x82D1B474` adds 0x20 only if that same word already had 0x10. |
+
+The count is the type 27 cell of the per-type unit-record tally at
+`0x830E4628+152*p+108`, distinct from the post-use count at `0x830ECBC4`.
+A checked caller can supply the same ordered pair to both negotiation owners;
+actual context identity, a positive UI choice, helper returns and history
+retention remain conditions. Nonhuman p is locally compatible. A prior missile,
+matching negotiation and later city loss therefore provide a concrete selected
+route to launch eligibility. q's Democracy blocks this selected history step
+independently of p's Democracy launch exclusion. This does not prove natural
+reachability, unique writers or the original flag names. Being at war alone
+is insufficient.
+
+The arm chooses the last qualifying opponent, then its largest visible city
+with population greater than 6. It does not retry earlier opponents if that
+one lacks a qualifying city. A conditional local route stages Move 17 and calls
+the existing command ring at `0x82CBF880`; the alternate session route has
+separate delivery gates. A return value or staged record is not a launch
+receipt.
+
+The manifest's conditional title contract separates an AI-only production
+admission seam at `0x82CEC67C` from a launch-history relaxation at
+`0x82CBF668`. Under their explicit identity, policy, retention and return
+premises, they preserve the existing human path and later SDI and presentation
+behavior. No single shared flag patch or runtime-safe implementation is
+established. Multiplayer authority, saved policy/actions, peace/UN interactions
+and nuclear-use counter consumers retain their own acceptance requirements.

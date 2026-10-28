@@ -168,6 +168,15 @@ one Great Wall/current-Democracy negotiation corridor; that does not cover all
 forced-peace effects. Shared-group writes, relation-derived rankings and local
 versus session delivery retain the finding's separate conditions.
 
-The next static question is complete pair visitation after setup, successful
-load and participant changes, before relevant relation/ranking readers. No
-scenario flag transplant, setting or runtime behavior was implemented.
+The finding's `pairVisitationBoundary` binds one native scheduler at
+`0x82D034A0`. Each invocation requires at least one participant to equal its
+supplied context K. With three supplied ordinals and K=0, it excludes both
+orientations of pair 1/2 before later helpers. WARANDPEACE2 preserves that
+restriction, statistics/classification checks and turn-delay gates. The
+wrapper applies further admission before forwarding the pair to contact.
+
+One invocation therefore cannot reconcile all pairs. Later covering K
+invocations and other schedulers remain possible. Two direct caller edges
+supply r31 as K; its actual producer and setup/load/membership ordering before
+relevant relation/ranking readers are the next static question. No scenario
+flag transplant, setting or runtime behavior was implemented.

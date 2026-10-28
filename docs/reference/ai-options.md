@@ -146,3 +146,28 @@ demonstrated cache invalidation and recomputation order. Complete saved-cache
 transfer, load order, policy persistence, capture/resource/technology refresh
 and runtime parity remain acceptance gates. City-founding resource rewards
 are separate from these per-composition contributions.
+
+## Eternal Kombat and Always at War
+
+The [Always at War finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0362/nativeScenarioBoundary)
+binds Eternal Kombat to built-in scenario ordinal 9. Its native preset sets
+`WARANDPEACE` slot 9 to 2 at `0x82DAF43C`. It also changes upgrade rate,
+starting size, attack bonus and display-card inputs. Copying the preset would
+therefore change more than diplomacy.
+
+Selected contact code recognizes that value and stages a native command 38
+request for war, relation 0, for the reached pair. It bypasses the ordinary
+negotiation suffix. Conditional admission supports both AI/AI and human/AI
+pairs; human contact has an additional current-participant restriction.
+Selected availability and negotiation branches also recognize the rule.
+
+This supplies a reusable per-pair mechanism. It does not establish that the
+scenario visits every active pair at initialization or keeps every pair at war
+after every peace request, load or membership change. Selected branches bypass
+one Great Wall/current-Democracy negotiation corridor; that does not cover all
+forced-peace effects. Shared-group writes, relation-derived rankings and local
+versus session delivery retain the finding's separate conditions.
+
+The next static question is complete pair visitation after setup, successful
+load and participant changes, before relevant relation/ranking readers. No
+scenario flag transplant, setting or runtime behavior was implemented.

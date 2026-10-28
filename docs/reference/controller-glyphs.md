@@ -43,10 +43,24 @@ The inspected down-label bindings instead reuse the up image. Replacing names
 by spelling alone could therefore conflict with existing artwork transforms.
 Asset membership and label order do not establish native control mapping.
 
+The finding's `nativeLabelInputBoundary` follows separate native field
+requests. Three selected writers supply a fixed `A` input for `_root.theIcon`
+or `this.theIcon`. They reach a temporary-string constructor and an indirect
+movie-object call at virtual slot `+0x2C`. The copy/publication helper, current
+target and same-movie identity remain unproved. Supplied input is not a
+displayed glyph receipt, and these selected arguments do not read the family
+byte. Another native `SetIcon` producer selects economic labels, showing why
+method-name equality alone cannot identify controller consumers.
+
+A new aligned static pointer-word search found no exact pointer to the family
+byte. Runtime-written pointers, containing-base aliases, unaligned pointers
+and computed forms remain outside that negative result.
+
 ## Feasibility
 
-First bind a read or proven containing-storage alias of `0x82F6E866` to a
-current icon label. If it controls those labels, a startup preference is the
+First bind the selected field request's actual `+0x2C` target and same-movie
+publication, then join a read or proven containing-storage alias of
+`0x82F6E866` to the current label. If it controls those labels, a startup preference is the
 first candidate. Selected load-name redirection is a fallback requiring known
 package availability, dimensions and preserved transforms. A first
 implementation should require restart while the minimum reload boundary is

@@ -193,8 +193,24 @@ four-byte delivery. Eight EOF requests can retain all old history words under
 the explicit endian, nonaliasing and ABI conditions.
 
 Destination-byte effects stop at current service root+0x10. The queried
-initial root is0x82F2FA9C, whose corresponding cell0x82F2FAAC is the next
-target discriminator; actual current mapping and completion remain premises.
+initial root is0x82F2FA9C, whose corresponding cell0x82F2FAAC selects the
+NtReadFile import identified below; actual current mapping and imported
+completion remain premises.
 The192-word packet has189 instructions and three cells. Thirteen supplied
 cases, three eight-request sequences and four mutation controls passed;
 no natural input or save round trip was observed.
+
+## Initial synchronous import
+
+`RVA-F-0363/initialServiceImportBoundary` binds initial cell0x82F2FAAC to
+0x82E92ED4, registered as `__imp__NtReadFile`. Its leading import tags are
+opaque data, with encoded mtctr/bctr tail words; there is no selected generated
+guest read implementation. The19-word packet has13 instruction words,
+four data/opaque words and two neighbors, all pinned-image equal.
+
+The accepted wrapper forwards H/D/N and the protected per-request result
+home. Its pending/wait, EOF/count0 and short-read reporting do not establish
+destination-byte delivery. The actual retained import provider's widths,
+write extent, result production and completed pending request remain the next
+contract. Current root/table/provider identity, handle/frame lifetime and
+alias retention remain conditions. Actor/resolver observation remains parked.

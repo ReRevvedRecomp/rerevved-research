@@ -18,6 +18,8 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 - [Economy bonus correction contracts](economy-bonus-corrections.md) - retain Gold income and growth benefits while removing their cost penalties.
 - [Science and technology cost](science.md) - cost, progress, first-discovery rewards, acquisition,
   excess Gold and the spaceship launch-date admission boundary.
+- [Apollo Program discovery bonuses](apollo-discovery-bonuses.md) - virtual ownership,
+  direct acquisition, first-world eligibility and duplicate/replay boundaries.
 
 ## Resources, setup, and saves
 

@@ -69,8 +69,24 @@ all intervening helpers.
 Descriptor construction still crosses `0x821B7A40` or growth helper
 `0x822F5250`; the initializer's final current virtual+0x5C is also unbound.
 Its literal bounds are independent of caller dimension arguments in this
-selected body. The next question is the fast-path descriptor initializer
-`0x821B7A40` and its retained empty-descriptor contract. Changed dimensions,
+selected body. descriptorInitializationBoundary below owns the fast-path initializer
+`0x821B7A40`; its next gate is current tail-effect retention. Changed dimensions,
 complete generation, rendering, persistence and peer behavior remain unproved.
 
 No game or implementation was run.
+
+## Empty descriptor construction
+
+The finding's `descriptorInitializationBoundary` binds `0x821B7A40`:
+source begin0 selects a finite28-instruction path with no child call. It
+zeros destination+4/+8/+12 and returns the original destination. The first
+four bytes are not written or read by that path. This is twelve zero metadata
+bytes, not a completely zeroed16-byte descriptor.
+
+Selected caller source words at SP+84/+88/+92 are zero only under retained
+r28=0 and frame conditions. With sufficient actual backing and completing
+fast-path iterations, the1024 fixed32 descriptors have equal empty begin/end
+words and reach the accepted visitor's empty return. The current tail
+virtual+0x5C can still mutate them; its target/retention effects before visitor
+ingress are next. Eighty-eight code words matched the image;63 focused checks
+passed. Growth, allocator delivery and complete generation remain separate.

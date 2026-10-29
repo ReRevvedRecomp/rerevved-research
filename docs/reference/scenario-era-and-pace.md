@@ -83,5 +83,23 @@ SPEEDMODE1 store at `0x82DAF2DC`, after selected formatting calls. Actual
 selection/retention remains conditional. All32 instructions of turn-to-year
 converter `0x82CEFA20` use local arithmetic with no memory access or calls;
 it has no direct SPEEDMODE input. Transformed caller input and other economic
-or event readers remain outside that negative. Next select one such bounded
-consumer before claiming a coordinated slower-game rule.
+or event readers remain outside that negative. The direct research-cost continuation below selects one economy reader;
+growth and other consumers remain open.
+
+## Technology neighborhood and research-cost inputs
+
+The starting-era finding's `technologyNeighborhoodRepresentationBoundary`
+binds a144-instruction reader of three direct prerequisites and a selected
+seven-byte-cell display neighborhood. It does not assign technologies to
+eras. Its input grid/group producer and definition+0x26 consumer remain open;
+this does not establish absence of an era field from the whole format.
+
+The pace finding's `directReaderAndResearchCostBoundary` binds the94-instruction
+research-cost body's eight local load sites. Its locally formed scenario
+input is TECHNOLOGYRATE at Q+8; there is no local Q+0x18 SPEEDMODE read.
+Opaque helpers, aliases and other economic/event owners remain outside the
+negative. The raw eight-word exact-target halfword model also returned zero
+candidates, without excluding long-retained bases or computed aliases.
+All238 native words matched;32 focused assertions passed. Next select the
+growth accessor's concrete inputs or a supported alias before broader pacing
+claims. Technology-era membership remains unassigned by these readers.

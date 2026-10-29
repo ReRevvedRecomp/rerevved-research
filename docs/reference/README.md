@@ -40,6 +40,8 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 - [Frontend, frame, and input ownership](frontend-frame-and-input.md) - states, timing/callbacks, availability, menus and controllers.
 - [Controller prompt families](controller-glyphs.md) - restart-required name
   redirect, movie-label alternatives, dimensions and package coverage.
+- [Controller glyph labels](controller-glyph-labels.md) - exact six-sprite
+  inventories, platform pairs, collision classes and loading-tip limits.
 - [Content staging and source resolution](content-source-resolution.md) -
   staging, registration and lookup/fallback order.
 - [Audio manager and 2D script table](audio-script-table.md) - ownership, lifecycle, lookup and unknowns.

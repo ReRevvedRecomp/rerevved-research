@@ -55,7 +55,22 @@ score generation, candidate legality and retained ordering remain conditions.
 Encoded explicit starting coordinates provide a separate location mechanism;
 they do not define terrain preference.
 
-Next bind the allocation and initialization of spatial Q+124, Q+160 and
-Q+164. Complete generation, path/AI/city/unit consumers, camera/minimap/fog,
-save reconstruction and deterministic peer policy remain open. No game or
-implementation was run.
+## Selected spatial backing producer
+
+The finding's `spatialBackingProducerBoundary` now binds a selected Q
+publication/initialization route. Constructor `0x82C783C8` zeros backing
+metadata Q+124/+128/+132. A later `0x82C78B60` call writes literal32 to both
+bounds and1024 to Q+168, then requests1024 descriptors through `0x822F4CB8`.
+The selected allocation helper requests16384 bytes and records the returned
+pointer and end in the vector metadata. This is requested/recorded extent,
+not delivered writable allocation or proof that constructor zeros survived
+all intervening helpers.
+
+Descriptor construction still crosses `0x821B7A40` or growth helper
+`0x822F5250`; the initializer's final current virtual+0x5C is also unbound.
+Its literal bounds are independent of caller dimension arguments in this
+selected body. The next question is the fast-path descriptor initializer
+`0x821B7A40` and its retained empty-descriptor contract. Changed dimensions,
+complete generation, rendering, persistence and peer behavior remain unproved.
+
+No game or implementation was run.

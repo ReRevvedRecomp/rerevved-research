@@ -91,8 +91,8 @@ growth and other consumers remain open.
 The starting-era finding's `technologyNeighborhoodRepresentationBoundary`
 binds a144-instruction reader of three direct prerequisites and a selected
 seven-byte-cell display neighborhood. It does not assign technologies to
-eras. Its input grid/group producer and definition+0x26 consumer remain open;
-this does not establish absence of an era field from the whole format.
+eras. Its input grid/group producer remains open. The selected+0x26 mask
+consumer is bound below; no whole-format absence of an era field follows.
 
 The pace finding's `directReaderAndResearchCostBoundary` binds the94-instruction
 research-cost body's eight local load sites. Its locally formed scenario
@@ -100,6 +100,25 @@ input is TECHNOLOGYRATE at Q+8; there is no local Q+0x18 SPEEDMODE read.
 Opaque helpers, aliases and other economic/event owners remain outside the
 negative. The raw eight-word exact-target halfword model also returned zero
 candidates, without excluding long-retained bases or computed aliases.
-All238 native words matched;32 focused assertions passed. Next select the
-growth accessor's concrete inputs or a supported alias before broader pacing
-claims. Technology-era membership remains unassigned by these readers.
+All238 native words matched;32 focused assertions passed. The separate growth
+input boundary below binds that accessor's local inputs; scalar writers and
+transitive helpers still gate broader pacing claims. Technology-era membership
+remains unassigned by these readers.
+
+## Selected technology mask and growth inputs
+
+`technologyMaskConsumerBoundary` binds one actual definition+0x26 reader at
+0x82CED418/41C: a halfword is sign-extended, -1 bypasses the adjustment, and
+bit overlap with a retained mask plus a separate nonnegative global admits
+local score+50. This is a mask/sentinel use, not an ordered era comparison.
+The mask's upstream meaning, authoritative technology-era membership and
+setup finalization remain open. Native words support the local arithmetic;
+the handwritten host addition adjacent to the generated source is excluded.
+
+`growthInputBoundary` binds all58 instructions of0x82CF1060. Its ten local
+loads are six gameplay inputs and four epilogue restorations. It reads the
+separate global0x830E45C8 and city fields; no local SPEEDMODE alias is formed
+under supported city-index, table, stack and alias guards. The direct helper
+0x82CF0CB0 and that scalar's producer remain open. The shared140-word packet
+has138 instruction and two data words, all independently encoded/replayed.
+Neither result establishes coordinated progression speed or earlier-era grants.

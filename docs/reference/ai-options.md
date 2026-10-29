@@ -176,7 +176,16 @@ restriction, statistics/classification checks and turn-delay gates. The
 wrapper applies further admission before forwarding the pair to contact.
 
 One invocation therefore cannot reconcile all pairs. Later covering K
-invocations and other schedulers remain possible. Two direct caller edges
-supply r31 as K; its actual producer and setup/load/membership ordering before
-relevant relation/ranking readers are the next static question. No scenario
-flag transplant, setting or runtime behavior was implemented.
+invocations and other schedulers remain possible. The finding's
+`kProducerLifecycleBoundary` binds the selected `0x82D1D1C0` edge: entry
+stores its original player P at SP+0x234, `0x82D1E84C` reloads that home into
+r31, and `0x82D1E90C..10` forwards it as K to `0x82D034A0`. Thus K=P under
+the explicit protected-home, normal-return and nonvolatile retention premises.
+The optional suffix includes a current virtual callback, whose effects remain
+conditions.
+
+Accepted local update/presentation calls can supply that player; they do not
+establish every configured player or successful setup/load/membership repair.
+The next question is the exact command and publication/dispatch ingress into
+the ordinary nonhuman sweep at `0x82CDE818`, before relevant relation/ranking
+readers. No scenario flag transplant, setting or runtime behavior was implemented.

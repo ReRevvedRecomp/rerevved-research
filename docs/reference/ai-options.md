@@ -203,3 +203,18 @@ received selector/invocation and same-record lifetime, before lifecycle or
 first-reader coverage. The130-word packet has127 instructions and three
 table cells;125 assertions, five supplied cases and three mutation controls
 passed. This remains conditional delivery evidence, not peer authority.
+
+## Default transport construction
+
+`RVA-F-0362/constructorTransportInitializationBoundary` binds the selected
+CB12F0 call at0x82CB1348 to constructor0x82CA5E80. Its local store at
+0x82CA5EC4 writes zero to S+0x14 before the first allocator call; the complete
+82-word local owner has no later explicit overlapping S-relative store.
+Helper aliases, normal return and the same retained receiver remain conditions.
+
+For a retained zero S+0x14, the accepted sender takes its missing-transport
+bypass. A later nonzero publication/helper effect or a separately established
+current receiver is therefore required before selecting P and its current
+virtual+0x0C at0x82CA45A8. No received invocation, absence of later writers,
+delivery or continuous all-pair war follows. The91-word packet passed native,
+independent encoding, explicit-store and mutation checks.

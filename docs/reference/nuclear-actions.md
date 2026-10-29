@@ -179,5 +179,22 @@ ignore individual reports and do not retry or aggregate success. The scalar
 reader can reverse a mixture of delivered and retained bytes after a short
 request. An admitted missing-child case returns normally after eight
 zero-delivery requests, preserving all old words under its explicit conditions.
-Next bind current child+0x30 target `0x82D38448` and its delivered-byte contract.
+childReadDeliveryBoundary below owns that selected child read and the current
+service+0x10 destination-byte frontier.
 Actual nuclear actor/resolver observation remains parked.
+
+The finding's `childReadDeliveryBoundary` binds selected default child
+`0x82D38448` through `0x82D38360` and synchronous wrapper `0x8280F3F0`.
+Missing handle or a nonzero current predicate returns0; an alternate stream
+uses its own current target. On the default route, EOF status0xC0000011 is
+normal Boolean success with count0. Short input can report2; a selected
+failure can advance the child's count while returning0. None guarantees
+four-byte delivery. Eight EOF requests can retain all old history words under
+the explicit endian, nonaliasing and ABI conditions.
+
+Destination-byte effects stop at current service root+0x10. The queried
+initial root is0x82F2FA9C, whose corresponding cell0x82F2FAAC is the next
+target discriminator; actual current mapping and completion remain premises.
+The192-word packet has189 instructions and three cells. Thirteen supplied
+cases, three eight-request sequences and four mutation controls passed;
+no natural input or save round trip was observed.

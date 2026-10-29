@@ -186,6 +186,10 @@ conditions.
 
 Accepted local update/presentation calls can supply that player; they do not
 establish every configured player or successful setup/load/membership repair.
-The next question is the exact command and publication/dispatch ingress into
-the ordinary nonhuman sweep at `0x82CDE818`, before relevant relation/ranking
-readers. No scenario flag transplant, setting or runtime behavior was implemented.
+The finding's `commandIngressBoundary` binds command48, BeginTurnAI, to that
+sweep and a guarded command50, ImDone, suffix that requests48. Service, mask and
+one-shot gates precede publication; three nonzero-word tests can bypass the
+sweep after dispatch. None establishes actual delivery or mandatory repair
+before setup/load/membership relation readers. Next bind the selected
+`0x82CE1950` current-child virtual+0x44 delivery target into the accepted ring.
+No scenario flag transplant, setting or runtime behavior was implemented.

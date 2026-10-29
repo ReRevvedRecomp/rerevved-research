@@ -190,6 +190,16 @@ The finding's `commandIngressBoundary` binds command48, BeginTurnAI, to that
 sweep and a guarded command50, ImDone, suffix that requests48. Service, mask and
 one-shot gates precede publication; three nonzero-word tests can bypass the
 sweep after dispatch. None establishes actual delivery or mandatory repair
-before setup/load/membership relation readers. Next bind the selected
-`0x82CE1950` current-child virtual+0x44 delivery target into the accepted ring.
+before setup/load/membership relation readers. commandDeliveryBoundary below owns the selected sender/ring bridge and
+remaining received-invocation gate.
 No scenario flag transplant, setting or runtime behavior was implemented.
+
+The finding's `commandDeliveryBoundary` binds the retained factory table's
+child+0x44 to sender `0x82CA6500`. Null info or a missing S+0x14 can return
+before complete serialization. The command object's selected+0x10 target
+`0x82D91C58` separately passes its embedded record at A+0x34 to `0x82CE16C8`.
+No mandatory sender-to-that-processing invocation is proved. Next bind the
+received selector/invocation and same-record lifetime, before lifecycle or
+first-reader coverage. The130-word packet has127 instructions and three
+table cells;125 assertions, five supplied cases and three mutation controls
+passed. This remains conditional delivery evidence, not peer authority.

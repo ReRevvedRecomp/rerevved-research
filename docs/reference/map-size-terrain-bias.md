@@ -90,3 +90,20 @@ words and reach the accepted visitor's empty return. The current tail
 virtual+0x5C can still mutate them; its target/retention effects before visitor
 ingress are next. Eighty-eight code words matched the image;63 focused checks
 passed. Growth, allocator delivery and complete generation remain separate.
+
+## Selected construction-tail candidate
+
+`tailTargetRetentionBoundary` binds installed table0x82120EB0+0x5C,
+cell0x82120F0C, to0x82E10450. Current receiver0x8314F28C is initially zero;
+the reused publisher's later current+0x0C call at0x82E2E504 still gates
+retention. No current target or publication-before-tail ordering follows.
+
+With nonzero cache X at0x8314EF84, the candidate returns U32[X+12] in a
+16-instruction arm without children or loops. It writes only24 stack bytes.
+Under explicit stack/control/map alias exclusions, it restores full64 r30/r31
+and preserves the protected bounds, vector and2048 descriptor words through
+the caller's Q+178=1 store at0x82C78D54. Caller completion and later retention
+to visitor0x821D6340 remain open. Initial X is zero, so the uncached path's
+allocator call0x82E10484 and later child remain separate completion gates.
+The selected69 code and three data words passed replay/encoding checks;
+one initially queried adjacent zero padding word is excluded from that packet.

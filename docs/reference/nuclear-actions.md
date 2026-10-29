@@ -190,7 +190,8 @@ uses its own current target. On the default route, EOF status0xC0000011 is
 normal Boolean success with count0. Short input can report2; a selected
 failure can advance the child's count while returning0. None guarantees
 four-byte delivery. Eight EOF requests can retain all old history words under
-the explicit endian, nonaliasing and ABI conditions.
+a separate no-destination-write premise and the explicit endian, nonaliasing
+and ABI conditions. EOF/count0 alone does not prove an untouched destination.
 
 Destination-byte effects stop at current service root+0x10. The queried
 initial root is0x82F2FA9C, whose corresponding cell0x82F2FAAC selects the
@@ -210,7 +211,27 @@ four data/opaque words and two neighbors, all pinned-image equal.
 
 The accepted wrapper forwards H/D/N and the protected per-request result
 home. Its pending/wait, EOF/count0 and short-read reporting do not establish
-destination-byte delivery. The actual retained import provider's widths,
-write extent, result production and completed pending request remain the next
-contract. Current root/table/provider identity, handle/frame lifetime and
-alias retention remain conditions. Actor/resolver observation remains parked.
+destination-byte delivery. The pinned hosted-source contract below narrows
+argument widths and result production. Actual current provider/backend writes,
+completion, handle/frame lifetime and alias retention remain conditions.
+Actor/resolver observation remains parked.
+
+## Pinned hosted read-provider contract
+
+`pinnedSdkReadProviderBoundary` records SDKd1fa31f7430706513dd6370f0967fd8ad4dd952f,
+also declared by the selected title lock. Its typed import consumes low32
+destination D and length N. It invokes XFile::Read immediately, publishes the
+status/count home, then can return PENDING for a nonsynchronous file. That
+report path is distinct from the selected backend's actual destination write.
+
+XFile passes an admitted mutable n-byte span to the current File::ReadSync.
+The selected generic source neither copies file bytes itself nor establishes
+the concrete backend, terminal completion or count accuracy. Its file event
+can be set after zero-length or locally rejected reads. EOF forces final
+information0, which alone proves no absence of earlier destination effects.
+
+Actual installed/loaded provider, H/object/backend/backing/position, full
+mapping and lifetime, accurate same-request four-byte writes and later
+retention remain required for each of the eight counters. This is a pinned
+hosted-source contract, with retail semantics and actual restoration separate.
+No runtime, title/SDK change, build or implementation was performed.

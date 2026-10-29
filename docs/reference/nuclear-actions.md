@@ -166,3 +166,13 @@ Preserve the wrapper and handler normalization, counter and later policy
 gates. Actual launcher equality, current resolver values, admitted contact and
 same-generation retention remain observation requirements. Natural nuclear
 use, that matching contact, save retention and peer authority remain unobserved.
+
+The finding's `counterResetBoundary` binds a conditional zero baseline.
+`0x82D05D60` assigns r29=0; the selected interval has no other explicit r29
+writer. All taken calls and current context must preserve full r29 and the
+required frame. On reaching `0x82D061D8..E0`, eight completing stores clear
+`[0x830ECBC4,0x830ECBE4)` with no local human/AI test. This does not prove
+natural reset timing, complete owner return, later zero retention or save/load
+delivery. The next static question is whether the mode0 load call at
+`0x82CC58A0` delivers all eight words through `0x822DE570`, including its
+short/failure paths. Actual nuclear actor/resolver observation remains parked.

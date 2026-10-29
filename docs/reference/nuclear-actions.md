@@ -173,6 +173,11 @@ writer. All taken calls and current context must preserve full r29 and the
 required frame. On reaching `0x82D061D8..E0`, eight completing stores clear
 `[0x830ECBC4,0x830ECBE4)` with no local human/AI test. This does not prove
 natural reset timing, complete owner return, later zero retention or save/load
-delivery. The next static question is whether the mode0 load call at
-`0x82CC58A0` delivers all eight words through `0x822DE570`, including its
-short/failure paths. Actual nuclear actor/resolver observation remains parked.
+delivery. `counterTransferBoundary` binds mode1 input at `0x82CC587C`
+through `0x822DE4F0`; mode0 at `0x82CC58A0` is output. The eight-word loops
+ignore individual reports and do not retry or aggregate success. The scalar
+reader can reverse a mixture of delivered and retained bytes after a short
+request. An admitted missing-child case returns normally after eight
+zero-delivery requests, preserving all old words under its explicit conditions.
+Next bind current child+0x30 target `0x82D38448` and its delivered-byte contract.
+Actual nuclear actor/resolver observation remains parked.

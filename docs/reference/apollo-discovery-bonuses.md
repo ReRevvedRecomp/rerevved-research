@@ -41,5 +41,29 @@ safe arbitrary replay theorem.
 
 Eligible first-world rewards and reissuing already-claimed rewards are separate
 policies. No caller, enumeration order, context/source/phase choice or feature
-was implemented. Next bind a selected completion/finalization point and retain
-the native eligibility/flag state through the actual bonus deliveries.
+was implemented. At the selected completion seams below, retained caller/state,
+full return and native eligibility/flag lifetime through actual bonus delivery
+remain required.
+
+## Guarded completion seam and one reward composition
+
+`completionFinalizationBoundary` binds pre-helper0x82D16330 and post-helper
+0x82D16344 conditionally. Native finalization stores the completed item at
+city+0x3A and clears the current item at+0x38 only when the retained second
+entry argument is zero. A retained claim owner also blocks this arm's absent-
+claim gate on a repeat. These are local barriers; complete return, persistence
+and safe partial retries remain open.
+
+At the helper seam r23 is the city and r27 is normalized17. The call's r4 is
+the city; it is not the acquisition player. A supported retained city owner
+must supply p for any separate acquisition. No source, phase or enumeration
+was selected.
+
+For the accepted W0/nonsharing corridor, Irrigation11 supplies one concrete
+conditional witness: an admitted owned city's population7 reaches the byte
+store at0x82D0A3F8 and becomes8, followed by0x82D00C78. This reuses its native
+source/phase/prerequisite/team/player/recipient gates. Generic acquisition also
+writes raw ownership, discoverer and source and increments the odd-phase tally;
+it is not an isolated reward API. Full award delivery and duplicate prevention
+remain unproved. The new72 code words passed both foreground packets and
+independent PPC64 operand checks.

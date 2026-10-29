@@ -87,8 +87,8 @@ Selected caller source words at SP+84/+88/+92 are zero only under retained
 r28=0 and frame conditions. With sufficient actual backing and completing
 fast-path iterations, the1024 fixed32 descriptors have equal empty begin/end
 words and reach the accepted visitor's empty return. The current tail
-virtual+0x5C can still mutate them; its target/retention effects before visitor
-ingress are next. Eighty-eight code words matched the image;63 focused checks
+virtual+0x5C can still mutate them; actual current mapping, completing cold
+construction and retention before visitor ingress remain gates. Eighty-eight code words matched the image;63 focused checks
 passed. Growth, allocator delivery and complete generation remain separate.
 
 ## Selected construction-tail candidate
@@ -107,3 +107,19 @@ to visitor0x821D6340 remain open. Initial X is zero, so the uncached path's
 allocator call0x82E10484 and later child remain separate completion gates.
 The selected69 code and three data words passed replay/encoding checks;
 one initially queried adjacent zero padding word is excluded from that packet.
+
+## Conditional cold-cache construction
+
+`coldCacheConstructionBoundary` binds the zero-cache arm of0x82E10450.
+After a nonzero16-byte allocation and retained child completion, it samples
+V=U32[P+12] at0x82E104B0, then publishes wrapper P at0x82E104B4 to cache
+0x8314EF84. Its return is V; the cache contains P. The null arm reads guest
+address0 before storing cache0, so it supplies no safe-return-zero theorem.
+
+Child0x82E70D28 conditionally constructs separate864- and336-byte objects.
+Its selected+12 replacement at0x82E70E64 re-reads P+8 after any old-object
+release. Nested allocation/constructors, current virtual effects, atomic-loop
+completion and alias/field retention remain gates. Requested extents alone
+prove no storage delivery. Current service/table/cache, caller restore and
+caller-to-visitor ordering remain open; no map-size feasibility follows.
+The261-word packet has255 instructions and six data words, all image-equal.

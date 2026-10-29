@@ -78,8 +78,9 @@ and PS3DPAD242. Frame242 exceeds legend97's timeline. Its vector glyphs
 also use different bounds/transforms, so a numeric-frame offset is not portable.
 
 The action-string negative above remains valid; it did not cover native-built
-HTML. Actual observed tip selection, current HTML resolver/cache/provider and
-runtime acceptance of the axis rewrite remain unobserved.
+HTML. The family manifest records supplied acceptance of the broader eight-name
+builder rewrite. Per-tip attribution, selective caller-LR filtering and current
+HTML resolver/cache/provider remain unobserved.
 
 
 The pair table plus `blank`, `XBOX` and `PS3` accounts for every requested

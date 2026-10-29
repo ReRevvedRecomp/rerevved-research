@@ -198,11 +198,10 @@ The movie forwards it to `Text_txt.htmlText`. No wide string or numeric
 `gotoAndPlay` frame is supplied on this selected path. Current formatter,
 localization, copying, movie and invoke retention remain conditions.
 
-The supplied15 filename mappings also omitted `xboxvertical` and
-`xboxhorizontal`. Adding their equal-size PS3 filename counterparts at the
-existing0x821E3018/r4 seam is another untested candidate, conditional on the
-current HTML resolver reaching that opener. The image-name seam above avoids
-rewriting surrounding tip prose.
+The supplied15 filename mappings omitted `xboxvertical` and `xboxhorizontal`.
+A later owner experiment reported those additional filename swaps firing;
+Xbox LB remained until all eight builder image names were rewritten. The
+image-name seam above separates the selected names from surrounding tip prose.
 
 The conditional HTMLIMG kind1 and constructed final no-op are bound below.
 Current provider/registration, earlier transformations, append/copy/formatter
@@ -211,7 +210,9 @@ effects and actual GFx bytes remain unproved.
 Both selected loading movies export all four exact axis names with64x64
 declarations; markup displays them at36x36. The observed tip index and current
 HTML image resolver/cache/provider were not captured. This static result does
-not identify which axis the owner saw or prove a successful PS3 axis rewrite.
+not identify which axis the owner saw. The supplied eight-name loading-tip
+check records broader runtime acceptance, with exact source/provider and
+per-tip attribution still qualified.
 The [label inventory](controller-glyph-labels.md) owns movie offsets and the
 separate240-versus295-frame legend distinction.
 
@@ -244,3 +245,17 @@ The final localization virtual at0x82E6A358 conditionally selects cell
 local text change. It adds no escaping of its own while that table remains
 current. Earlier transformations and the actual delivered GFx bytes remain
 unproved; no new runtime check was performed.
+
+## Supplied loading-tip image acceptance
+
+The owner-reported experiment at0x82E81F58 rewrote LT/RT/LB/RB,
+XBOXVERTICAL/XBOXHORIZONTAL and L3/R3 to their PS3 image names. Shoulder and
+trigger markup boxes were squared to their smaller side, preserving vspace;
+the owner confirmed PlayStation loading-tip icons at the right size. The
+experiment was removed. This accepts that broader eight-name builder filter,
+with no separate receipt for the two-caller LR filter proposed above.
+
+`runtimeLoadingTipImageCheck` in the canonical manifest owns the observed
+argument sizes and mappings. This static investigation did not replay it.
+Current descriptor/provider identity, full per-tip coverage, actual GFx bytes
+and general escaping remain unproved.

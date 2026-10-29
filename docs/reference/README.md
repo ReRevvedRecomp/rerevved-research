@@ -41,7 +41,7 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 - [Controller prompt families](controller-glyphs.md) - restart-required name
   redirect, movie-label alternatives, dimensions and package coverage.
 - [Controller glyph labels](controller-glyph-labels.md) - exact six-sprite
-  inventories, platform pairs, collision classes and loading-tip limits.
+  inventories, platform pairs, collision classes and loading-tip HTML inputs.
 - [Content staging and source resolution](content-source-resolution.md) -
   staging, registration and lookup/fallback order.
 - [Audio manager and 2D script table](audio-script-table.md) - ownership, lifecycle, lookup and unknowns.

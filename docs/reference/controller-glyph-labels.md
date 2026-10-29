@@ -49,7 +49,37 @@ Named root placements bind buttonIcon1..5 to sprite97: buttonIcon1 at 0x70CD, bu
 
 All 41 buttonLegend action tags (43 decoded function/tag records) were checked; none pushes an exact Xbox/PS3 D-pad label. The exact hoa.FPK:gfx_loadingscreen.gfx entry 1 at index offset 0x36, payload offset 50636, size 15418, SHA-256 E32331E7A6455BA3B7ECBF431E60E650DAD740847D5E7AFE424BA940B6E7A5A8 was also checked: 13 action tags, 73 decoded records, no SetIcon token and no exact D-pad label push. Its only import tag in this parse is gfxfontlib.swf at 0x1C69.
 
-This is a precise bounded negative, not proof of absence of computed names/strings, native calls or another movie. The bytes establish the generic SetIcon consumer, but do not join the owner-observed loading D-pad to it. An AVM label alone does not prove a call to native constructor 0x82D3A6C8.
+The selected native loading-tip route uses HTML image sources rather than
+buttonLegend97. `controller-glyph-family-default-boundary.json` owns the
+native `XBOXVERTICAL`/`XBOXHORIZONTAL` producers and selective
+0x82E81F58/r3 seam. The names differ from timeline labels
+`DVERTICAL`/`DHORIZONTAL`.
+
+Generic loading root SetBoxText at0x161D forwards to textBox.SetText at0x1631;
+placement0x22E3 selects sprite68, whose SetText writes Text_txt.html=true
+at0x227A and htmlText=theString at0x2288. StartGame uses0x1720/0x1734,
+placement0x23C6->sprite75, and html/htmlText writes0x2372/0x2380.
+
+| Source -> PS3 export | Generic tag1001 offsets | StartGame offsets | Declared size |
+|---|---|---|---|
+| XBOXVERTICAL -> PS3VERTICAL | 0x82 ->0x358 | 0x8C ->0x362 | Both64x64 |
+| XBOXHORIZONTAL -> PS3HORIZONTAL | 0xC1 ->0x5BF | 0xCB ->0x5C9 | Both64x64 |
+
+Each first resource string and matching ExportAssets name uses the exact
+identifier above; the second image string appends `.dds`. The native axis
+markup keeps36x36 and vspace-15. Both loading roots have two frames; neither
+uses the legend's glyph timeline. The generic payload is hash-identical in
+hoa/Pregame/Level; the manifest pins the selected StartGame payload separately.
+
+The separate legend97 has240 frames: DPAD starts96, is populated96..101,
+then removes the artwork and stops on102; PS3DPAD starts217, remains
+populated217..224 and stops224. The other five glyph sprites have295 frames
+and PS3DPAD242. Frame242 exceeds legend97's timeline. Its vector glyphs
+also use different bounds/transforms, so a numeric-frame offset is not portable.
+
+The action-string negative above remains valid; it did not cover native-built
+HTML. Actual observed tip selection, current HTML resolver/cache/provider and
+runtime acceptance of the axis rewrite remain unobserved.
 
 
 The pair table plus `blank`, `XBOX` and `PS3` accounts for every requested

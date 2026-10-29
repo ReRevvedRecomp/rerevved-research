@@ -178,9 +178,44 @@ Single letters/common words and short codes require context for constructor
 rewriting. DLEFT-style identifiers have lower spelling risk, not proven
 global safety.
 
-buttonLegend root SetIcon passes caller-supplied reg3 to its selected
-buttonIcon.gotoAndPlay at0xD9. It has no fixed D-pad label in the checked
-action data. The selected loading movie has no SetIcon token or fixed D-pad
-push, so loading-tip attribution and the actual delivered label remain open.
+The selected loading-tip axis route uses HTML image sources, separate from
+the buttonLegend timeline. Native initialization0x82E84908 builds61 cached
+tips. Slots57/58 call0x82E81F58 at0x82E85000/0x82E8503C with image names
+`XBOXVERTICAL`/`XBOXHORIZONTAL`, width36, height36 and vspace-15. The names
+are not `DVERTICAL`, `DHORIZONTAL` or `DPAD`, so the supplied17-name
+whole-string experiment did not test these inputs.
+
+One selective hook candidate is **0x82E81F58/r3**, before its first `mflr r12`.
+Require incoming LR **0x82E85004** with exact `XBOXVERTICAL`, or
+**0x82E85040** with exact `XBOXHORIZONTAL`, and supply `PS3VERTICAL` or
+`PS3HORIZONTAL`. This changes only the selected image-name argument. Keep
+r4/r5/r6 at36/36/-15 and retain readable replacement storage through use.
+The table initialization flag0x8314EF9D makes this a restart-required seam.
+
+The builder places the name in HTML `src`; the complete localized tip goes
+to `SetBoxText` at **0x82E851AC/r6** through a single narrow-string argument.
+The movie forwards it to `Text_txt.htmlText`. No wide string or numeric
+`gotoAndPlay` frame is supplied on this selected path. Current formatter,
+localization, copying, movie and invoke retention remain conditions.
+
+The supplied15 filename mappings also omitted `xboxvertical` and
+`xboxhorizontal`. Adding their equal-size PS3 filename counterparts at the
+existing0x821E3018/r4 seam is another untested candidate, conditional on the
+current HTML resolver reaching that opener. The image-name seam above avoids
+rewriting surrounding tip prose.
+
+The helper-contract check bound the generated markup as the first eight-byte
+localization vararg at0x82E6A46C, but did not bind the HTMLIMG descriptor or
+current localization result. The mandatory service virtual+0x0C at0x82E6A358
+and final formatter0x827F9848 remain unexpanded. Exact substituted bytes,
+escaping and unchanged delivery through that virtual are conditions; no actual
+GFx string bytes were observed.
+
+Both selected loading movies export all four exact axis names with64x64
+declarations; markup displays them at36x36. The observed tip index and current
+HTML image resolver/cache/provider were not captured. This static result does
+not identify which axis the owner saw or prove a successful PS3 axis rewrite.
+The [label inventory](controller-glyph-labels.md) owns movie offsets and the
+separate240-versus295-frame legend distinction.
 
 See [all labels, pairs and collision classes](controller-glyph-labels.md) and the [canonical inventory](../../manifests/controller-glyph-label-inventory.json).

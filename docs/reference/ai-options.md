@@ -213,8 +213,19 @@ CB12F0 call at0x82CB1348 to constructor0x82CA5E80. Its local store at
 Helper aliases, normal return and the same retained receiver remain conditions.
 
 For a retained zero S+0x14, the accepted sender takes its missing-transport
-bypass. A later nonzero publication/helper effect or a separately established
-current receiver is therefore required before selecting P and its current
-virtual+0x0C at0x82CA45A8. No received invocation, absence of later writers,
+bypass. The selected publication below supplies a conditional same-S P/table
+writer. Actual invocation and retention through postpublication initialization
+are still required before selecting current P/virtual+0x0C at0x82CA45A8. No received invocation, absence of later writers,
 delivery or continuous all-pair war follows. The91-word packet passed native,
 independent encoding, explicit-store and mutation checks.
+
+## Selected same-S transport publication
+
+`sameSTransportPublicationBoundary` binds child table+0x18 to0x82CA7720.
+Under the admitted current-call/allocator/helper conditions,0x82CA77B0 installs
+table0x8215FC0C to retained P and0x82CA77C4 publishes it to the same S+0x14.
+Its retained +0x0C cell selects0x82CA0488. Allocation zero also publishes zero;
+the following pointer read has no local null guard, so no failure completion
+claim follows. Actual +0x18 invocation, current S+0x130 and captured-table/
+current-P +0x04 initialization still gate survival to the sender and receipt.
+The57-word packet has54 instructions and three cells, all image-equal.

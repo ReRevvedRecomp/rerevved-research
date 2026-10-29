@@ -70,7 +70,7 @@ producers and publication/consumption remain unjoined.
 | Requested screen | Static selected content | Remaining coverage |
 | --- | --- | --- |
 | City A/B/X/Y/LT/RT | CityScreen dual frames and external bindings; local SetText edge | Actual native caller/provider; trigger dimensions |
-| Unit panel | UnitStack dual frames/bindings; local SetHelp edge | Selected panel only; actual native producer |
+| Unit panel | UnitStack dual frames/bindings; local SetHelp edge | Selected panel; UpdateInfoDisplay route bound below |
 | Main menu | Dual frames/bindings; root-field-to-local-child edge | Actual button request; logo evidence is separate |
 | Popups/combat HUD | StatusPopup, DialogueBox and CombatHUD contain dual families | Complete dynamic label sources and visible coverage |
 | Help | ControllerMap and Civilopedia dual families | Diagram format/selection; full tutorial/rich-text census |
@@ -113,7 +113,7 @@ is recorded in listMovieConsumerBoundary below.
 
 Main has a constructor/table-associated fixed-A field request: r5 before
 `0x82E5171C` into `0x82C7C090`. Actual field consumption remains conditional.
-Unit's actual native SetHelp producer is unjoined. The generic string
+Unit's UpdateInfoDisplay-to-SetHelp route is bound below. The generic string
 constructor `0x82D3A6C8/r4` receives both delivery families and ordinary text;
 no universal icon-only discriminator is established there. No safe single
 label hook covering all three screens or conclusively neither-path consumer
@@ -137,12 +137,50 @@ Before `0x82DFE63C`, r6 supplies RT; before `0x82DFE6E8`, r6 supplies LT.
 Replacing those selected pointers with PS3R2/PS3L2 is a concrete trigger-label
 candidate under retained constructor/base-name/invoke and movie conditions.
 It does not assign these list glyphs to City151, Unit217 or Main149.
-Unit's actual native SetHelp ingress remains the next question.
+Unit's icon-vector writers remain the next Unit question.
 
-The selected Unit callback continuation preserves S through explicit native
-helpers and reaches generic/current-virtual handlers. Its111-word packet
-contains108 instructions and three table cells, all image-equal. The separate
-eight-owner generated search did not join actual Unit SetHelp; it is not a
-complete native absence result. Current callback/update ingress, method format
-and icon-argument position remain the next discriminator. No Unit label hook
-is selected from proximity to a generic SetHelp materializer.
+The selected Unit callback spine preserves S through explicit native helpers
+and generic/current-virtual handlers. Its111-word packet contains108 instructions
+and three table cells, all image-equal. The eight-owner direct SetHelp-name
+model does not follow differently named AVM delegation. UpdateInfoDisplay
+below supplies that selected consumer join; current icon-vector writers,
+helper effects and actual invoke retention remain conditions.
+
+
+## Unit UpdateInfoDisplay ingress
+
+The selected native ingress is **0x82DEB950**, invoking
+`this.unitPanel.UpdateInfoDisplay`. Immediately before that call, the four
+icon pointers are **r9, r10, caller SP+84 and SP+92**. The stack offsets
+are decimal84/92, or **SP+0x54/SP+0x5C**. Their sources are four
+words at r28+0/+4/+8/+12; r28 is loaded from current SP+260 at0x82DEB320.
+The four help-text pointers come from a separate vector in r26. The eleven
+submitted arguments are strings; the first three are name/attack/defense
+display inputs.
+
+In UnitStack sprite246, UpdateInfoDisplay at0x8727 forwards (index,bN,sN)
+at0x8774/0x8791/0x87AE/0x87CB to infoPanel.SetHelp. Placement0x97DE selects
+sprite234; its four named buttonIcon children select glyph sprite217. This
+joins the retained native Unit callback/update spine to the actual movie
+consumer rather than selecting a generic root SetHelp by name.
+
+The72-word packet has52 instructions and20 data words, all image-equal.
+Current vector contents, parser/current invoke target, normal helper return
+and movie/provider identity remain conditions. Next bind the exact writers
+populating the icon vector at current SP+260.
+
+## Complete labels and loading tips
+
+The label inventory records all262 labels across the six requested sprites:
+37 in buttonLegend97 and45 in each other sprite. All Xbox control labels have
+semantic PS3 counterparts; blank and XBOX/PS3 family aliases are separate.
+Single letters/common words and short codes require context for constructor
+rewriting. DLEFT-style identifiers have lower spelling risk, not proven
+global safety.
+
+buttonLegend root SetIcon passes caller-supplied reg3 to its selected
+buttonIcon.gotoAndPlay at0xD9. It has no fixed D-pad label in the checked
+action data. The selected loading movie has no SetIcon token or fixed D-pad
+push, so loading-tip attribution and the actual delivered label remain open.
+
+See [all labels, pairs and collision classes](controller-glyph-labels.md) and the [canonical inventory](../../manifests/controller-glyph-label-inventory.json).

@@ -21,6 +21,10 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 
 ## Resources, setup, and saves
 
+- [Map size and terrain bias](map-size-terrain-bias.md) - fixed32 object indexing,
+  dimensions, climate inputs and civilization start preference.
+- [Starting eras and game pace](scenario-era-and-pace.md) - scenario technology
+  grants, movement input and independent progression surfaces.
 - [Resource definitions](resource-definitions.md) - 22 ordinals, names/tokens, technologies and terrain/remainders.
 - [Resource identity overrides](resource-identity-overrides.md) - type/models, Forest effects, persistence and India ordering.
 - [Resource density and placement](resource-placement.md) - presence, Settler coordinates, Iron and refresh/placement limits.
@@ -34,8 +38,8 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 - [Retail achievements](achievements.md) - all 50 IDs, English metadata, gamerscore,
   icon image IDs and native unlock-trigger mapping status.
 - [Frontend, frame, and input ownership](frontend-frame-and-input.md) - states, timing/callbacks, availability, menus and controllers.
-- [Controller glyph families](controller-glyphs.md) - native default-byte producer,
-  selected movie labels, proposed mapping and loading/lifetime limits.
+- [Controller prompt families](controller-glyphs.md) - restart-required name
+  redirect, movie-label alternatives, dimensions and package coverage.
 - [Content staging and source resolution](content-source-resolution.md) -
   staging, registration and lookup/fallback order.
 - [Audio manager and 2D script table](audio-script-table.md) - ownership, lifecycle, lookup and unknowns.

@@ -204,12 +204,9 @@ existing0x821E3018/r4 seam is another untested candidate, conditional on the
 current HTML resolver reaching that opener. The image-name seam above avoids
 rewriting surrounding tip prose.
 
-The helper-contract check bound the generated markup as the first eight-byte
-localization vararg at0x82E6A46C, but did not bind the HTMLIMG descriptor or
-current localization result. The mandatory service virtual+0x0C at0x82E6A358
-and final formatter0x827F9848 remain unexpanded. Exact substituted bytes,
-escaping and unchanged delivery through that virtual are conditions; no actual
-GFx string bytes were observed.
+The conditional HTMLIMG kind1 and constructed final no-op are bound below.
+Current provider/registration, earlier transformations, append/copy/formatter
+effects and actual GFx bytes remain unproved.
 
 Both selected loading movies export all four exact axis names with64x64
 declarations; markup displays them at36x36. The observed tip index and current
@@ -219,3 +216,31 @@ The [label inventory](controller-glyph-labels.md) owns movie offsets and the
 separate240-versus295-frame legend distinction.
 
 See [all labels, pairs and collision classes](controller-glyph-labels.md) and the [canonical inventory](../../manifests/controller-glyph-label-inventory.json).
+
+## HTMLIMG descriptor and final localization callback
+
+`loadingTipLocalizationDescriptorBoundary` in the canonical glyph manifest
+binds the selected service factory through constructor0x821B17C0 to
+table0x82120DA8. Its initial mode is7 and delimiter64 (`@`). The initializer
+requests `text.ini`, then can run a separate current+0x14 callback; normal
+initialization and retention remain conditions.
+
+The selected Pregame.FPK `text.ini` entry2, payload47892/22837 bytes,
+SHA-256 `92EEA6BEA32528FD71C5B9B7B28F9C6BEB4BA2A4FF79B8605F399FD5960CC6C7`,
+has section `HTMLIMG` at line837 and `Type = __STR` at839. The native
+comparison at0x82E6A710/equality branch0x82E6A718 selects kind1 and stores
+it at descriptor+4 at0x82E6A888; token text is at descriptor+8. The only
+candidate section key that prefixes HTMLIMG is HTMLIMG itself. Later sorting
+leaves the numeric descriptor index symbolic, rather than its input ordinal.
+
+Under this matching input, successful registration and retained mode7, the
+kind1 parser arm consumes the first aligned eight-byte vararg and requests a
+narrow append at0x82E69210. This joins the supplied image markup to the
+selected parser arm; exact append/copy/formatter effects and current provider
+remain conditions.
+
+The final localization virtual at0x82E6A358 conditionally selects cell
+**0x82120DB4 ->0x821D5678**. That target is exactly one `blr` and makes no
+local text change. It adds no escaping of its own while that table remains
+current. Earlier transformations and the actual delivered GFx bytes remain
+unproved; no new runtime check was performed.

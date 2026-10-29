@@ -61,7 +61,27 @@ from native evidence.
 
 The existing [science](science.md), [unit](unit-definitions.md),
 [growth](city-growth.md), and [calendar](game-calendar.md) records own the
-reused surfaces. Next bind an actual nonzero SPEEDMODE preset and one
-economic/calendar consumer. A coordinated speed design needs separate choices
+reused surfaces. The continuation below binds a nonzero preset and closes the
+converter's direct-input question; an economic/event reader remains open. A coordinated speed design needs separate choices
 for costs, yields, movement, calendar and event cadence. No setting or runtime
 behavior was implemented.
+
+## Era tally and preset continuations
+
+The starting-era finding's `tallyEraAndSetupBoundary` binds an ordinary chooser
+using signed acquisition-tally thresholds5/14/24 to request player eras1/2/3,
+with0 below5. This classifies player progress; it does not assign individual
+technologies to eras. Setter `0x82D05A48` writes a changed era before a current
+virtual+0x16C and conditional local-player effects. A selected later setup
+call at `0x82D23050` explicitly requests era0. Complete grant-to-call and
+first-reader ordering remain unbound, so the earlier ownership-grant window
+does not establish safe finalization. Authoritative technology-era membership
+remains the next discriminator.
+
+The pace finding's `presetAndCalendarBoundary` binds built-in ordinal5 to a
+SPEEDMODE1 store at `0x82DAF2DC`, after selected formatting calls. Actual
+selection/retention remains conditional. All32 instructions of turn-to-year
+converter `0x82CEFA20` use local arithmetic with no memory access or calls;
+it has no direct SPEEDMODE input. Transformed caller input and other economic
+or event readers remain outside that negative. Next select one such bounded
+consumer before claiming a coordinated slower-game rule.

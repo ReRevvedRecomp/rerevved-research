@@ -101,8 +101,9 @@ Opaque helpers, aliases and other economic/event owners remain outside the
 negative. The raw eight-word exact-target halfword model also returned zero
 candidates, without excluding long-retained bases or computed aliases.
 All238 native words matched;32 focused assertions passed. The separate growth
-input boundary below binds that accessor's local inputs; scalar writers and
-transitive helpers still gate broader pacing claims. Technology-era membership
+input boundary below binds that accessor's local inputs. The selected calendar
+producer below narrows its writer; caller ordering, retention and transitive
+helpers still gate broader pacing claims. Technology-era membership
 remains unassigned by these readers.
 
 ## Selected technology mask and growth inputs
@@ -119,6 +120,20 @@ the handwritten host addition adjacent to the generated source is excluded.
 loads are six gameplay inputs and four epilogue restorations. It reads the
 separate global0x830E45C8 and city fields; no local SPEEDMODE alias is formed
 under supported city-index, table, stack and alias guards. The direct helper
-0x82CF0CB0 and that scalar's producer remain open. The shared140-word packet
+0x82CF0CB0 remains open. The calendar producer below supplies one scalar writer;
+its actual caller ordering and retention to this accessor remain open. The shared140-word packet
 has138 instruction and two data words, all independently encoded/replayed.
 Neither result establishes coordinated progression speed or earlier-era grants.
+
+## Calendar-derived growth scalar
+
+`growthScalarProducerBoundary` selects local producer0x82D255B8. For sampled
+signed turn T and year Y, its reached prefix writes G at0x830E45C8:
+Y<1000 gives G=10-trunc0(T/25); Y>=1000 gives G=6. The selected arithmetic
+does not overflow for signed32 T. The local literal5 alternative requires
+Y<1000 and Y>=1500 on one retained sample and is unreachable from this entry.
+
+This producer has no local scenario/SPEEDMODE input. Upstream scenario effects
+on sampled calendar state remain possible. Actual caller cadence, coherent
+samples, other writers and retention until the growth reader are open. The
+33-word packet contains30 instructions and three cells; no constant was changed.

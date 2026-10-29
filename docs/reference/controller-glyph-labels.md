@@ -87,3 +87,7 @@ The pair table plus `blank`, `XBOX` and `PS3` accounts for every requested
 label. There are no unpaired Xbox control labels. The four pairs absent in
 buttonLegend are absent on both sides, rather than missing PS3 counterparts.
 The inventory supplies no global constructor-rewrite safety or runtime contract.
+
+The [conditional initializer and narrow append](controller-glyphs.md#conditional-initializer-and-narrow-append)
+record binds later mode selection and admitted markup-byte copying. Current
+provider/mode, compatible resize and final delivery remain separate gates.

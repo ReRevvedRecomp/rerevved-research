@@ -204,8 +204,9 @@ Xbox LB remained until all eight builder image names were rewritten. The
 image-name seam above separates the selected names from surrounding tip prose.
 
 The conditional HTMLIMG kind1 and constructed final no-op are bound below.
-Current provider/registration, earlier transformations, append/copy/formatter
-effects and actual GFx bytes remain unproved.
+The conditional append result below narrows byte effects. Current provider,
+registration/mode, earlier transforms, resize/source retention, final formatting
+and actual GFx bytes remain unproved.
 
 Both selected loading movies export all four exact axis names with64x64
 declarations; markup displays them at36x36. The observed tip index and current
@@ -237,14 +238,33 @@ leaves the numeric descriptor index symbolic, rather than its input ordinal.
 Under this matching input, successful registration and retained mode7, the
 kind1 parser arm consumes the first aligned eight-byte vararg and requests a
 narrow append at0x82E69210. This joins the supplied image markup to the
-selected parser arm; exact append/copy/formatter effects and current provider
-remain conditions.
+selected parser arm. The conditional append result below narrows byte effects;
+resize, current provider/mode and final formatting/delivery remain conditions.
 
 The final localization virtual at0x82E6A358 conditionally selects cell
 **0x82120DB4 ->0x821D5678**. That target is exactly one `blr` and makes no
 local text change. It adds no escaping of its own while that table remains
 current. Earlier transformations and the actual delivered GFx bytes remain
 unproved; no new runtime check was performed.
+
+### Conditional initializer and narrow append
+
+The installed initializer0x821B1980 supplies a zero second argument to
+0x82E6AD10. Numeric selector/region results choose a mode, and a zero low-byte
+validation result falls back to7. The setter writes the selected mode at
+0x82E6AAD4 to S+124 before unresolved current virtual+8. Constructor mode7
+therefore does not establish the later parser's mode. Current selector,
+validation and callback effects remain conditions.
+
+Append0x821B2A60 receives the complete narrow markup in r4, scans to its first
+NUL and supplies that byte count and the destination's old stored length to
+0x82D3ACA0. Under admitted nonoverflowing lengths, valid retained source and
+compatible resize0x82D3A748, the selected insertion/copy owners preserve those
+bytes without escaping or encoding conversion. Resize backing/length/prefix,
+source aliasing and later formatting/delivery remain gates. Append r4 is a
+different argument from image-builder0x82E81F58/r3; this supplies no new
+selective image-name hook. The canonical component pins513 image-equal words,
+502 independent instruction correspondences and5888 synthetic copy cases.
 
 ## Supplied loading-tip image acceptance
 

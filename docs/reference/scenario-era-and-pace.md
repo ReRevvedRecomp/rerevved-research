@@ -91,7 +91,8 @@ growth and other consumers remain open.
 The starting-era finding's `technologyNeighborhoodRepresentationBoundary`
 binds a144-instruction reader of three direct prerequisites and a selected
 seven-byte-cell display neighborhood. It does not assign technologies to
-eras. Its input grid/group producer remains open. The selected+0x26 mask
+eras. The connected producer below supplies prerequisite layers conditionally;
+its live construction and an authoritative era relation remain open. The selected+0x26 mask
 consumer is bound below; no whole-format absence of an era field follows.
 
 The pace finding's `directReaderAndResearchCostBoundary` binds the94-instruction
@@ -137,3 +138,18 @@ This producer has no local scenario/SPEEDMODE input. Upstream scenario effects
 on sampled calendar state remain possible. Actual caller cadence, coherent
 samples, other writers and retention until the growth reader are open. The
 33-word packet contains30 instructions and three cells; no constant was changed.
+
+## Connected technology-grid producer
+
+`technologyNeighborhoodProducerBoundary` connects0x82DD76E8 on the same
+retained receiver to the accepted reader. The selected producer tests whether
+each non-sentinel prerequisite already occurs in published groups, then appends
+the pass's temporary group. With empty initial groups, retained helper effects
+and successful publication, this forms prerequisite layers. It does not supply
+an authoritative ordered technology-era relation.
+
+Seven-byte cell and16-byte outer-group publication remain conditional on
+allocation/insertion and retained current flag-provider effects. No cycle,
+progress, finite completion or current displayed-grid theorem follows. The
+new316 code words passed foreground image equality and independent operand
+checks. STARTERA counts, bulk grants and player-tally eras remain separate.

@@ -10,7 +10,7 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 - [Barbarian spawning and capital protection](barbarians.md) - garrisons, AI, production and the conditional static capital gate.
 - [Friendly village rewards](friendly-villages.md) - six development metrics, reward identities, priority alternatives and session-lifecycle limits.
 - [Spy missions](spy-missions.md) - native choices, local selection policy and ordinary AI ingress limits.
-- [Ordinary combat boundary](ordinary-combat.md) - stats, stores, presentation and outcome/persistence limits.
+- [Ordinary combat boundary](ordinary-combat.md) - stats, random state, save/load requests, presentation and outcome limits.
 - [Nuclear actions](nuclear-actions.md) - AI unit production and launch gates, conditional interception, damage, missile consumption and effect limits.
 - [Civilization Unique Abilities](civilization-bonuses.md) - leaders, UAs and cumulative 16 by 4 UEAs.
 - [AI configuration boundaries](ai-options.md) - eight-civilization placement, participant storage, economic seams and bonus-aware valuation.

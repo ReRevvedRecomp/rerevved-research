@@ -1352,7 +1352,7 @@
     "threefoldBlocks": "Under frameToSelection guards, 0x82CDC38C..0x82CDC394 forms low32(3*WA) and stores it at r1+156. 0x82CDC3D0..0x82CDC3D8 forms low32(3*WD) and stores it at r1+160. The same definition byte 1 selects each tripling arm and excludes byte-6 scaling. Zero participant bytes select both division bypasses.",
     "loadedProducerInputs": "0x82CDC424..0x82CDC458 loads current state S, counter C, unsigned modulus M and double scale Q rooted at 0x82F7AD00, forms multiplier 214013 and increment 2531011, and loads ordinal constant 9.0. The complete inspected mask block retains r3/r4/r5/r6/r8/r28 and f0/f13 through entry 0x82CDC640. Current live generator values are conditions, not observations of initialization or distribution.",
     "producer": "Within the selection checkpoint block, each local step forms the low 32 bits of state*214013+2531011 and, when M is nonzero, subtracts the unsigned quotient times M.",
-    "decision": "0x82CDC674/0x82CDC678 reload low32(3*WA)/low32(3*WD) under frameToSelection. The stepped state is unsigned low32(S*214013+2531011), reduced by unsigned modulus when M is nonzero. 0x82CDC670..0x82CDC6B0 converts that state and the unsigned low-word sum of the two frame words to double, multiplies sum*state*Q, truncates to signed 64-bit and reloads its low word. 0x82CDC6B4/0x82CDC6B8 compares that word signed with low32(3*WA). Less retains r9=1; the other arm sets r9=0. The separately accepted override block at 0x82CDC6C0..0x82CDC6D0 forces 1 when its dereferenced word is nonzero. selectionStoreJoin retains the current +268 pointer and its earlier zero-tested word through this block under explicit native-write and external nonalias conditions. No pointer initialization or global identity is promoted.",
+    "decision": "0x82CDC674/0x82CDC678 reload low32(3*WA)/low32(3*WD) under frameToSelection. The stepped state is unsigned low32(S*214013+2531011), reduced by unsigned modulus when M is nonzero. 0x82CDC670..0x82CDC6B0 converts that state and the unsigned low-word sum of the two frame words to double, multiplies sum*state*Q, truncates to signed 64-bit and reloads its low word. 0x82CDC6B4/0x82CDC6B8 compares that word signed with low32(3*WA). Less retains r9=1; the other arm sets r9=0. The separately accepted override block at 0x82CDC6C0..0x82CDC6D0 forces 1 when its dereferenced word is nonzero. selectionStoreJoin retains the current +268 pointer and its earlier zero-tested word through this block under explicit native-write and external nonalias conditions. The separate overrideCarrierBoundary binds two conditional pointer producers; their reachability and retention into this sampled frame remain unproved.",
     "ordinal": "A second and each retried local step computes double(unsigned state)*Q then multiplies the rounded double by 9.0. fctidz truncates a defined signed 64-bit value, and its low word supplies the ordinal. 0x82CDC72C..0x82CDC73C retries when the native slw bit has no intersection with the comparison-selected mask. slw uses ordinal low six bits and produces zero when bit 5 is set. selectionStoreJoin proves finite success for its concrete examples and preservation across their rejected attempts; it does not prove universal termination.",
     "selectedEffect": "When entry executes 0x82CDC640, r7 starts at r1+848 and is retained through the weighted comparison and ordinal retry. 0x82CDC744 stores r9 at r1+848 and 0x82CDC748 stores the ordinal at r1+920 for the first selected entry. 0x82CDC750 then advances r7 by four for another entry. Under the synthetic checkpoint r9=1 and ordinal zero. 0x82CDC760 subtracts bit 1 from r23, the defender-corresponding local mask under the checkpoint role bindings, changing it from 1 to 0; r24 remains 1. The next local loop guard exits because r23 is zero. These are local stack stores; their contents are not joined to presentation or persistent participant writes.",
     "arithmeticExample": "For synthetic checkpoint weighted words 300/300, state 3, modulus 4294954991 and scale bits 0x3DF0000301109066, the first three stepped states are 3173050, 471647893 and 2756632324. The first decision word is less than 300 and the second ordinal is zero. This checks the local arithmetic without assuming a core-pair continuation or a captured combat.",
@@ -1406,10 +1406,10 @@
     "corePairRetention": "Closed through first selected stack stores 0x82CDC744/0x82CDC748 under coreStatContinuity, frameToSelection and selectionStoreJoin guards. The retained asymmetric route derives frame 300/750, masks 1/1 and value 1/ordinal 0 without a fresh selection checkpoint. Natural reachability remains unproved.",
     "selectionStorePointer": "Closed for the guarded first-store route through 0x82CDC640 and finite ordinal success. selectionPresentationBoundary distinguishes the WA=100 reset, which overwrites the first pair, from its WA=1000 no-reset example, which retains all 144 bytes but takes the frame-148-zero arm to the resolver end block. Presentation reachability remains unproved.",
     "presentationRetention": "Closed locally in conditionalPresenterInputJoin for valid incoming r8=P under nonzero manager +0x18 and explicit ABI/nonalias/text guards, through r24/r7 to transfer-call input. selectionPresentationBoundary keeps the resolver join closed negatively for its reset and no-reset nonhuman subcases; no first-store route is proved to enter presentation.",
-    "transfer": "Given aligned current source/destination and length 144 at the independent transfer checkpoint, 0x827F85CC branches to 0x827F866C. The read prefix ends at 0x827F8684; 0x827F8688 and the transfer stores/return are uninspected. No complete 144-byte publication is promoted.",
+    "transfer": "The accepted aligned prefix reaches0x827F8688 for current source/destination and length144. selectionTransferContinuationBoundary separately closes the selected144-byte copy/local return under backing, alias and saved-return guards; its immediate caller stops at current+0x100 dispatch0x82D66C18. No first-array-to-presentation or participant-writer join follows.",
     "participantWriter": "No selected-entry publication or exact continuing consumer has been joined to a persistent participant +0x52 write. The local r23 subtraction is a register change. The r7-based writes are conditional local stack writes, not participant writes.",
-    "requiredEvidence": "Actual invocation and ordered word/scalar retention through the class-bound conditional +0xC writer in playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/laterWordWriterBoundary must derive a compatible consumed value, or a different independently derived frame +148 nonzero case must first clear nonzeroCompatibilityBoundary. Its nonnegative/no-overflow ordinal inputs do not change the constructed low32 0xFFFFFFFF word. Original incoming r6=-1 does not survive the concrete valid normalization, and the null-return countdown bit test fails. Then establish the actual stat/flag/mask/array continuation through changed nonzero arms. Reuse the separately closed conditional presenter input chain. Complete transfer, persistent participant writer, natural reachability and live meanings retain separate gates. The separate priorWordInvocationBoundary conditionally composes exact CA0BD0/CAF2C0 registry keys through the accepted registered child/getter/constructed result into 0x82CAA360. Current owner-key/child equality, Q +0x4 internal lookup and unresolved +0x148 dispatch/value gate, exact scalar values and retention remain required. The wrapper additionally needs self/result identity and its +0x190 gate. Four tested owner bodies supply no +0x88 invocation; select a new scoped callsite or establish those exact value/order joins. No compatible consumed value or execution order is derived. playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/callerKeyScalarBoundary bounds exact CAF2C0 ingress: zero direct callers and no sparse-base split materializer leave its dynamic receiver/key unbound. Two exact field readers pass +0x34 to accepted BufferReadU32, whose actual input +0x4 target/source bytes and receiver identity remain unresolved; neither supplies +0x8 zero or a compatible result ordinal.",
-    "stop": "The original inventory and resolverLocalSupport remain separate accepted support. coreStatContinuitySupport bounds the additional guarded route to four exact functions and 840 distinct words. Nonzero extent-helper byte and unselected preparation arms are unclosed. The transfer read set remains closed before 0x827F8688. No complete resolver or additional callee coverage is inferred. frameToSelectionSupport adds one exact resolver envelope and seven data words, 572 distinct words including 422 prior words. No helper expansion or claim about the unselected float-adjustment arm is added. selectionStoreJoinSupport reuses 484 prior words in one resolver envelope, with no fresh words or helper expansion. It stops immediately after the first selected stores and pointer increment. selectionPresentationSupport adds 713 distinct words at five exact entries, with 188 prior and 525 fresh words. Its selected resolver tail reaches the accepted end block without presentation; the independent consumer continuation stops at transfer-call input 0x82D66BCC. presentationGateProducerSupport adds two exact functions and 406 distinct words, 181 prior and 225 fresh. Unresolved LocalPlayerIdResolve nonnull dispatch closes helper expansion. The recovered nonzero field condition stops at the 0x82CDD618 discriminator, without a stat/array/presentation reachability join. nonzeroCompatibilitySupport adds 158 distinct words across three exact functions and three queries, including 70 prior and 88 fresh words. It stops at the native normalization/null-countdown conflicts and unresolved nonnull local-player dispatch before new nonzero stat/array or presentation continuation. Those earlier dispatch stops describe their own read sets. playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction closes the accepted conditional allocation, publication and initialized low32 0xFFFFFFFF read join. playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/laterWordAssignmentBoundary bounds three exact displacement-candidate owners and a class-owned result reader without binding a later consumed-word writer or its scalar. Those displacement/reader read sets leave the receiver/scalar edge open; the separate conditional writer join below supersedes that current frontier. Actual invocation, compatible consumed word and stable lifetime/ownership remain required. No new combat continuation is established. The separate laterWordWriterBoundary establishes child slot +0x88 -> 0x82CA61F0 -> child +0x20 -> 0x82CAA298 -> 0x82CAA180 and its conditional ordinal-exchange +0xC stores. This closes the caller-bound assignment/scalar edge under its guards, while actual invocation and a compatible current consumed value remain unresolved. Its guarded initialized -1 no-change result supplies no new nonzero combat route. boundedPriorWordInvocationSupport adds eight exact bodies and 1089 distinct words, 111 prior and 978 fresh, including 35 revalidated prior-reader locators. Its accepted registry/factory prerequisites conditionally bind two caller getter returns to constructed results. It stops at missing equality to the current owner key/child, internal Q +0x4 lookup and unresolved +0x148/+0x190 gates, actual scalar/current-word retention and absent +0x88 dispatch in the four tested owner bodies, without deriving a compatible word, runtime invocation/order or combat continuation. playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/callerKeyScalarBoundary bounds exact CAF2C0 ingress: zero direct callers and no sparse-base split materializer leave its dynamic receiver/key unbound. Two exact field readers pass +0x34 to accepted BufferReadU32, whose actual input +0x4 target/source bytes and receiver identity remain unresolved; neither supplies +0x8 zero or a compatible result ordinal."
+    "requiredEvidence": "Actual invocation and ordered word/scalar retention through the class-bound conditional +0xC writer in playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/laterWordWriterBoundary must derive a compatible consumed value, or a different independently derived frame +148 nonzero case must first clear nonzeroCompatibilityBoundary. Its nonnegative/no-overflow ordinal inputs do not change the constructed low32 0xFFFFFFFF word. Original incoming r6=-1 does not survive the concrete valid normalization, and the null-return countdown bit test fails. Then establish the actual stat/flag/mask/array continuation through changed nonzero arms. Reuse the separately closed conditional presenter input chain. The selected aligned independent-input transfer/local return is conditional on selectionTransferContinuationBoundary. Persistent participant writer, natural reachability and live meanings retain separate gates. The separate priorWordInvocationBoundary conditionally composes exact CA0BD0/CAF2C0 registry keys through the accepted registered child/getter/constructed result into 0x82CAA360. Current owner-key/child equality, Q +0x4 internal lookup and unresolved +0x148 dispatch/value gate, exact scalar values and retention remain required. The wrapper additionally needs self/result identity and its +0x190 gate. Four tested owner bodies supply no +0x88 invocation; select a new scoped callsite or establish those exact value/order joins. No compatible consumed value or execution order is derived. playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/callerKeyScalarBoundary bounds exact CAF2C0 ingress: zero direct callers and no sparse-base split materializer leave its dynamic receiver/key unbound. Two exact field readers pass +0x34 to accepted BufferReadU32, whose actual input +0x4 target/source bytes and receiver identity remain unresolved; neither supplies +0x8 zero or a compatible result ordinal.",
+    "stop": "The original inventory and resolverLocalSupport remain separate accepted support. coreStatContinuitySupport bounds the additional guarded route to four exact functions and 840 distinct words. Nonzero extent-helper byte and unselected preparation arms are unclosed. The original transfer-prefix inventory ends before 0x827F8688; selectionTransferContinuationBoundary records the separately selected continuation and return. No complete resolver or additional callee coverage is inferred. frameToSelectionSupport adds one exact resolver envelope and seven data words, 572 distinct words including 422 prior words. No helper expansion or claim about the unselected float-adjustment arm is added. selectionStoreJoinSupport reuses 484 prior words in one resolver envelope, with no fresh words or helper expansion. It stops immediately after the first selected stores and pointer increment. selectionPresentationSupport adds 713 distinct words at five exact entries, with 188 prior and 525 fresh words. Its selected resolver tail reaches the accepted end block without presentation; the independent consumer continuation stops at transfer-call input 0x82D66BCC. presentationGateProducerSupport adds two exact functions and 406 distinct words, 181 prior and 225 fresh. Unresolved LocalPlayerIdResolve nonnull dispatch closes helper expansion. The recovered nonzero field condition stops at the 0x82CDD618 discriminator, without a stat/array/presentation reachability join. nonzeroCompatibilitySupport adds 158 distinct words across three exact functions and three queries, including 70 prior and 88 fresh words. It stops at the native normalization/null-countdown conflicts and unresolved nonnull local-player dispatch before new nonzero stat/array or presentation continuation. Those earlier dispatch stops describe their own read sets. playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction closes the accepted conditional allocation, publication and initialized low32 0xFFFFFFFF read join. playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/laterWordAssignmentBoundary bounds three exact displacement-candidate owners and a class-owned result reader without binding a later consumed-word writer or its scalar. Those displacement/reader read sets leave the receiver/scalar edge open; the separate conditional writer join below supersedes that current frontier. Actual invocation, compatible consumed word and stable lifetime/ownership remain required. No new combat continuation is established. The separate laterWordWriterBoundary establishes child slot +0x88 -> 0x82CA61F0 -> child +0x20 -> 0x82CAA298 -> 0x82CAA180 and its conditional ordinal-exchange +0xC stores. This closes the caller-bound assignment/scalar edge under its guards, while actual invocation and a compatible current consumed value remain unresolved. Its guarded initialized -1 no-change result supplies no new nonzero combat route. boundedPriorWordInvocationSupport adds eight exact bodies and 1089 distinct words, 111 prior and 978 fresh, including 35 revalidated prior-reader locators. Its accepted registry/factory prerequisites conditionally bind two caller getter returns to constructed results. It stops at missing equality to the current owner key/child, internal Q +0x4 lookup and unresolved +0x148/+0x190 gates, actual scalar/current-word retention and absent +0x88 dispatch in the four tested owner bodies, without deriving a compatible word, runtime invocation/order or combat continuation. playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/callerKeyScalarBoundary bounds exact CAF2C0 ingress: zero direct callers and no sparse-base split materializer leave its dynamic receiver/key unbound. Two exact field readers pass +0x34 to accepted BufferReadU32, whose actual input +0x4 target/source bytes and receiver identity remain unresolved; neither supplies +0x8 zero or a compatible result ordinal."
   },
   "currentEvidence": {
     "method": "foreground read-only ghidra/DumpMemoryWords.java queries with radius zero; exact native word decoding and arithmetic/branch checks; narrow address-delimited generated-code corroboration",
@@ -1441,8 +1441,8 @@
     "coreStatContinuity, frameToSelection and selectionStoreJoin identify the weighted core values through the first selected stores only under their explicit guards. A different branch, non-normal return, aliased memory effect or lost frame/generator operand invalidates that route. Other resolver arms can alter values or route away before selection.",
     "For entry through 0x82CDC640, the local store base is the stack expression r1+848 and then its four-byte increments. An alternate entry bypassing that producer, later content changes, or an unjoined presentation path cannot be inferred to share the same selected contents.",
     "Different checkpoint masks, arithmetic inputs, ordinal retries, flag overrides or exit guards change the local result and state stores. Their ordinary live reachability is unobserved.",
-    "The presentation manager gate can bypass the call. The inspected nonzero arm retains incoming P only under conditionalPresenterInputJoin guards; that local chain does not join the resolver first stores or prove complete transfer. An abnormal ABI return or overlapping native/external write invalidates retention.",
-    "The unread transfer continuation or a later consumer can define publication and participant updates differently than the local mask arithmetic suggests; their exact writers remain required.",
+    "The presentation manager gate can bypass the call. The inspected nonzero arm retains incoming P only under conditionalPresenterInputJoin guards; that local chain does not join the resolver first stores and requires selectionTransferContinuationBoundary for the separate aligned copy/local return. An abnormal ABI return or overlapping native/external write invalidates retention.",
+    "Unselected transfer arms or later consumer effects can define participant updates differently than the local mask arithmetic suggests; their exact writers remain required. The selected aligned independent-input copy/local return is bounded separately.",
     "Current-image bytes contradicting a recorded operand, branch, constant, table cell or store falsify that independent local finding."
   ],
   "guards": [
@@ -1451,7 +1451,7 @@
     "Do not write the neutral flag, generator words, unit fields or local selection stack destinations to force an outcome.",
     "Preserve native presentation target, 0x82CDD938 wait, 0x82CDD958 pump, 0x82CDD978 completion and 0x82CDDEF8 resolver end; accepted participant state changes during that interval."
   ],
-  "conclusion": "The accepted guarded stat-to-first-store join remains intact. Its WA=100 asymmetric example loses the original pair on a native 144-byte 0xFF reset. A new upstream WA=1000/WD=2500 example retains value 1/ordinal 0 and all other initialized array bytes, publishes the third generator state/counter and, under compatible nonhuman-player guards, reaches the resolver end block through the retained frame-148-zero arm without presentation. Separately, the presenter nonzero manager gate retains a valid incoming pointer and conditional 144-byte contents to transfer-call input. No first-store array is joined into that call chain, complete transfer or persistent participant writes. Natural reachability and ordinary live mechanics remain unproved. presentationGateProducer recovers the eleven upstream frame +148 stores and zero-preparation-compatible local one arms. nonzeroCompatibilityBoundary shows that its original-r6-minus-one premise does not survive a concrete valid normalization: the later frame +1596 is the actual helper output. The same null-return countdown alternative fails native slw. The accepted conditional result-object allocation and initial low32 0xFFFFFFFF join establishes no newly proved compatible inputs for the frame +148 nonzero route. The separate class-bound conditional ordinal-exchange writer in playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/laterWordWriterBoundary closes its static assignment/scalar edge under guards. Actual invocation and an ordered compatible current consumed word still stop a different compatible stat/array route; no first-store proof is transferred into the nonzero gate arm. The bounded caller-key/scalar investigation derives no new compatible result word or combat continuation.",
+  "conclusion": "The accepted guarded stat-to-first-store join remains intact. Its WA=100 asymmetric example loses the original pair on a native 144-byte 0xFF reset. A new upstream WA=1000/WD=2500 example retains value 1/ordinal 0 and all other initialized array bytes, publishes the third generator state/counter and, under compatible nonhuman-player guards, reaches the resolver end block through the retained frame-148-zero arm without presentation. Separately, the presenter nonzero manager gate retains a valid incoming pointer and conditional 144-byte contents to transfer-call input. The separate selectionTransferContinuationBoundary closes the aligned independent-input copy/local return. No first-store array is joined into that call chain or persistent participant writes. Natural reachability and ordinary live mechanics remain unproved. presentationGateProducer recovers the eleven upstream frame +148 stores and zero-preparation-compatible local one arms. nonzeroCompatibilityBoundary shows that its original-r6-minus-one premise does not survive a concrete valid normalization: the later frame +1596 is the actual helper output. The same null-return countdown alternative fails native slw. The accepted conditional result-object allocation and initial low32 0xFFFFFFFF join establishes no newly proved compatible inputs for the frame +148 nonzero route. The separate class-bound conditional ordinal-exchange writer in playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/laterWordWriterBoundary closes its static assignment/scalar edge under guards. Actual invocation and an ordered compatible current consumed word still stop a different compatible stat/array route; no first-store proof is transferred into the nonzero gate arm. The bounded caller-key/scalar investigation derives no new compatible result word or combat continuation.",
   "checkpointAssumptions": {
     "nature": "Independent synthetic local examples retain the conditions below. coreStatContinuity, frameToSelection and selectionStoreJoin separately establish composed guarded dataflow without replacing their stat values at a fresh checkpoint. Normal memory access and native execution remain required.",
     "weighting": [
@@ -1473,7 +1473,7 @@
     ],
     "transfer": [
       "At the independent transfer checkpoint, assume a valid eight-byte-aligned current source, destination 0x83024E58 and length 144. conditionalPresenterInputJoin separately retains incoming P and its bytes to that input under the nonzero manager gate, native ABI/nonalias and finite text conditions. No earlier resolver first-store contents reach this input under selectionPresentationBoundary.",
-      "Normal returns and valid memory/string inputs remain conditions. The complete transfer remains outside the retained prefix; no new transfer-body or participant-writer evidence is added."
+      "Normal returns and valid memory/string inputs remain conditions. The retained-prefix assumptions alone do not close the transfer. selectionTransferContinuationBoundary supplies a separate conditional aligned copy/local return; participant-writer identity remains open."
     ]
   },
   "selectionStores": [
@@ -1564,7 +1564,7 @@
       "Masks 1/1 take the nonzero fallthroughs 0x82CDC63C/0x82CDC648, executing 0x82CDC640 with r7=r1+848. 0x82CDC674/0x82CDC678 reload the retained tripled words. The exact first decision is signed(low32(trunc64(double(unsignedLow32(3*WA+3*WD))*double(T)*Q))) < signed(low32(3*WA)), where T=unsignedLow32(S*214013+2531011), reduced modulo M when M!=0. The multiplication has the native two-step double order."
     ],
     "asymmetricExample": "Let accepted core words A=10/D=25 and current composed scalar words X=Y=10, so WA=100/WD=250. These are explicit conditional inputs, not helper-semantic or live-stat claims. The route derives frame 300/750 and masks 1/1 without a new stat checkpoint. With current S=3, M=4294954991 and Q bits 0x3DF0000301109066, T=3173050 and the truncated decision word is 0, less than 300. This proves the first less-than arm under the guards. selectionStoreJoin continues this exact example through the retained zero override word and second stepped state into value 1/ordinal 0 at the first selected stores. Later exit, publication and participant effects retain separate boundaries.",
-    "remainingBoundary": "selectionStoreJoin extends the first decision into first selected stores. selectionPresentationBoundary then proves overwrite for its WA=100 example and array retention to the resolver end block, excluding presentation, for a separate WA=1000 nonhuman subcase. The live producers, natural reachability, preparation-local-float initialization, opaque scalar helper meanings, compatible presentation route, full transfer and persistent participant effects remain unproved.",
+    "remainingBoundary": "selectionStoreJoin extends the first decision into first selected stores. selectionPresentationBoundary then proves overwrite for its WA=100 example and array retention to the resolver end block, excluding presentation, for a separate WA=1000 nonhuman subcase. The live producers, natural reachability, preparation-local-float initialization, opaque scalar helper meanings, compatible presentation route, resolver-array transfer identity and persistent participant effects remain unproved.",
     "falsification": "An operand/branch mismatch, excluded optional adjustment, nonzero predicate result, changed definition/participant byte, violated inequality, extra stat-frame write, lost generator operand, incorrect stat-to-mask transition, abnormal ABI return or aliasing external memory write invalidates this route."
   },
   "selectionStoreJoin": {
@@ -1645,7 +1645,7 @@
       "firstStoredValue": 1,
       "firstStoredOrdinal": 0
     },
-    "remainingBoundary": "The conditional upstream-to-first-store join remains closed. selectionPresentationBoundary supplies the later overwrite and no-reset end-block cases; conditionalPresenterInputJoin is an independent incoming-pointer chain. Natural reachability, supplied-input producers, opaque scalar meanings, a compatible resolver presentation route, complete transfer and persistent participant writes remain unproved.",
+    "remainingBoundary": "The conditional upstream-to-first-store join remains closed. selectionPresentationBoundary supplies the later overwrite and no-reset end-block cases; conditionalPresenterInputJoin is an independent incoming-pointer chain. Natural reachability, supplied-input producers, opaque scalar meanings, a compatible resolver presentation route, resolver-array transfer identity and persistent participant writes remain unproved.",
     "falsification": "An operand or branch mismatch, clobbered +268 slot or pointee, wrong mask choice, lost comparison value or pointer across a rejected retry, abnormal ABI return, aliased external effect, invalid conversion or failure to reach a matching finite ordinal attempt invalidates this first-store route."
   },
   "selectionPresentationBoundary": {
@@ -1667,7 +1667,7 @@
       "0x82CDD398 reloads r27 from frame +148. Its retained zero makes 0x82CDD618 fall through, excluding 0x82CDD734 and the presentation-side continuation. The finite frame +272 loop converges at 0x82CDD658. Both participant-byte branches converge at 0x82CDD6C0 and then 0x82CDD5B4; changed post-store byte values do not reverse this exclusion. Direct frame stores and all stated nonalias effects retain the actual selected array.",
       "0x82CDD608 jumps to 0x82CDDDE4 with zero attacker classification under the nonzero mask. 0x82CDDDEC selects 0x82CDDE80, whose two local arms converge at 0x82CDDEC4/0x82CDDEC8 and then 0x82CDDEEC/0x82CDDEF8 under normal ABI return from 0x82CE1950. This selected route does not execute 0x82CDD8BC or 0x82CDD930 even with resolver mode zero. The separate mask-zero edge 0x82CDD5E8 -> 0x82CDDDC4 calls 0x82D8AB00 and joins 0x82CDDDE4, but its nonzero-result indirect dispatch remains unresolved and is not transferred to this nonhuman subcase."
     ],
-    "remainingBoundary": "The first-store-to-presentation join is bounded negatively for the stated reset and no-reset subcases. A compatible resolver path that retains actual selected contents and reaches presentation remains required. Do not replace retained frame +148 zero, preparation return zero or flags merely to reach the existing argument endpoint. Other human-mask and larger-WA continuations, mask-zero fallback dispatch, natural reachability, full transfer and persistent participant effects remain unproved.",
+    "remainingBoundary": "The first-store-to-presentation join is bounded negatively for the stated reset and no-reset subcases. A compatible resolver path that retains actual selected contents and reaches presentation remains required. Do not replace retained frame +148 zero, preparation return zero or flags merely to reach the existing argument endpoint. Other human-mask and larger-WA continuations, mask-zero fallback dispatch, natural reachability and persistent participant effects remain unproved. The separate aligned independent-input transfer is conditional on selectionTransferContinuationBoundary.",
     "falsification": "Wrong first-store operands, incorrect retry threshold or -1 initialization, an overlapping array/frame write, changed Type 16 flag mask, inconsistent same-player classifier returns, reversed frame-148 branch, abnormal ABI return or aliased external effect invalidates the selected result."
   },
   "conditionalPresenterInputJoin": {
@@ -1686,7 +1686,7 @@
       "The consumer allocates another 272 bytes after its accepted save thunk and three floating-register saves. Its two finite string-copy loops at 0x82D66B60 and 0x82D66B80 use other registers, and no instruction in the prefix reassigns r7. The frame +316 store lies at presenter frame +44, below the hypothetical resolver selection array.",
       "0x82D66BA8 copies the retained incoming r7=P to r4. 0x82D66B98 forms destination r3=0x83024E58; 0x82D66BA0 sets r5=144. The native global stores do not change those argument registers before 0x82D66BCC -> 0x827F8550. Thus the transfer input has r4=P with the conditional original 144 bytes, not merely a matching pointer expression."
     ],
-    "remainingBoundary": "This is a separate conditional incoming-pointer/content chain. The inspected resolver no-reset route never reaches its presentation argument or call. No complete transfer, transfer return, persistent participant writer, live array, natural reachability or runtime mechanics is established.",
+    "remainingBoundary": "This is a separate conditional incoming-pointer/content chain. The inspected resolver no-reset route never reaches its presentation argument or call. selectionTransferContinuationBoundary adds the conditional aligned copy/local return. First-array identity, persistent participant writer, live array, natural reachability and runtime mechanics remain open.",
     "falsification": "A zero manager gate, lost r24 or r7, abnormal ABI return, invalid or nonterminating string, frame/save-area overlap or native/external write into [P,P+144) invalidates retention."
   },
   "presentationGateProducer": {
@@ -1721,7 +1721,7 @@
       ],
       "compatibleCondition": "Preparation return zero can remain unchanged. The concrete valid normalization writes defender player zero to frame +1596, making its later comparison with the null return -1 unequal. The rejected sentinel premise therefore cannot transfer earlier stats, masks, selected bytes or natural control reachability into the nonzero route. This bounds the recovered null-input cases, not every possible nonzero producer."
     },
-    "remainingBoundary": "playable-game-state-gates.json#/turnOwner/resolverBoundary owns the selected input, initial null +0x10 store and bounded later-writer frontier. Its guarded registry-child path binds vptr 0x8215FA78 and +0x100 target 0x82A73340. resultObjectProduction joins the accepted conditional child +0x20 allocation and initial low32 0xFFFFFFFF to the resolver read; laterWordWriterBoundary separately establishes the class-bound conditional ordinal-exchange assignment and its scalar inputs. Actual invocation, ordered retention and a compatible current consumed word remain unresolved. nonzeroCompatibilityBoundary supplies the earlier normalization output and the exact null-return sentinel/countdown conflicts. A different independently derived nonzero case must establish actual stat, flags, masks and selected contents through the nonzero preparation/control arms. Later presentation gates, complete transfer and persistent participant writes remain required.",
+    "remainingBoundary": "playable-game-state-gates.json#/turnOwner/resolverBoundary owns the selected input, initial null +0x10 store and bounded later-writer frontier. Its guarded registry-child path binds vptr 0x8215FA78 and +0x100 target 0x82A73340. resultObjectProduction joins the accepted conditional child +0x20 allocation and initial low32 0xFFFFFFFF to the resolver read; laterWordWriterBoundary separately establishes the class-bound conditional ordinal-exchange assignment and its scalar inputs. Actual invocation, ordered retention and a compatible current consumed word remain unresolved. nonzeroCompatibilityBoundary supplies the earlier normalization output and the exact null-return sentinel/countdown conflicts. A different independently derived nonzero case must establish actual stat, flags, masks and selected contents through the nonzero preparation/control arms. Later resolver-array presentation/transfer identity and persistent participant writes remain required.",
     "falsification": "A changed constant/store source, reversed equality or clear branch, different native preparation field-test polarity, frame/input overlap, r27 clobber, abnormal ABI return, invalid current memory or failure of same-frame control to reach the consumer invalidates the corresponding producer/retention claim."
   },
   "nonzeroCompatibilityBoundary": {
@@ -1746,5 +1746,352 @@
     ],
     "remainingBoundary": "The selected initial-null input adds no compatible nonzero producer. Actual invocation and ordered compatible current-word provenance through the guarded conditional writer in playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/laterWordWriterBoundary, or another independently derived nonzero producer, are required before following a compatible nonzero stat/array route. No actual weighted values, flags, masks, selected bytes, reset/retention outcome or presentation reachability are promoted for the rejected sentinel/null-countdown cases. The nonzero float arm and later side effects retain their existing local support without a newly composed route.",
     "falsification": "A different helper output operand, unchanged -1 after the selected valid match, a different actual defender reload, non-native slw behavior, reversed tested branch, resolved nonnull local-player return, abnormal ABI return or aliasing input write changes the corresponding conflict or frontier."
+  },
+  "overrideCarrierBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "Which global pointer do the two selected direct frame+268 stores form, and what condition joins it to the accepted later override sample?",
+    "producerInstructions": [
+      "0x82CDB790",
+      "0x82CDB798",
+      "0x82CDB79C",
+      "0x82CDB818",
+      "0x82CDB820",
+      "0x82CDB824",
+      "0x82CDB828"
+    ],
+    "conditionalEdge": "Both selected native lis/addi producers form low32 0x830E4554 and store it at frame+268. Conditional on this pointer being retained until 0x82CDBFC4, and then under the accepted selectionStoreJoin pointer/pointee retention guards, the later 0x82CDC6C4 override sample reads the current word at 0x830E4554. Reaching either producer and retaining its pointer through the earlier interval are premises, not a newly walked path.",
+    "acceptedReuse": [
+      "localDataflow/loadedProducerInputs",
+      "localDataflow/decision",
+      "selectionStoreJoin",
+      "selectionPresentationBoundary",
+      "provedPersistentWrites",
+      "achievement-event-boundaries.json#/findings/RVA-F-0360/boundary/selectedCommittedResolutionObserver",
+      "achievement-event-boundaries.json#/findings/RVA-F-0359/boundary/selectedOperativeSnapshot",
+      "achievement-event-boundaries.json#/findings/RVA-F-0359/boundary/ordinaryResultBridge"
+    ],
+    "carrierRefinement": "The already accepted 0x82F7AD00 carrier supplies S at +0, C at +4, M at +8 and double Q at +0x10. Counter/state publication remains the accepted +4/+0 stores. This is an exact-offset refinement of accepted support, not a separate state discovery.",
+    "drawQualification": "A decision draw precedes override sampling. Forcing1 does not refund that draw. Each ordinal attempt, including rejected retries, consumes another draw without resampling the comparison/override. Exit consumption and publication retain the existing selected-route guards.",
+    "guards": [
+      "Reaching either pointer producer and retaining its output to 0x82CDBFC4 are conditions; direct-store inventory does not exclude aliases or external writes.",
+      "The accepted zero initial sample and retention to the late override remain conditional; no actual live word or initialization policy is established.",
+      "Earlier helper effects precede cached carrier sampling; same resolver-entry state alone does not establish same consumed state.",
+      "No selected-array/presentation join, persistent participant outcome, distribution, 1:1 win probability, save/reload or natural-reachability claim is added."
+    ],
+    "overrideWord": "0x830E4554",
+    "priorIdentityQualification": "The accepted provedPersistentWrites store at 0x82CDB7BC already names global 0x830E4554. This extension adds the two frame+268 pointer producers and their conditional identity with the later sample; it does not rediscover that global or prove a new live zero value.",
+    "currentEvidence": {
+      "method": "Foreground read-only ghidra/DumpMemoryWords.java radius0, supported-flat comparison, independent native operand decoding and conditional local models.",
+      "selectedCodeWords": 36,
+      "dataWords": 0,
+      "freshInstructionAddressesRelativeToAcceptedInventory": 0,
+      "querySha256": "36D1973E004F0D29D573405CD55E9A92B07797EFBAE7354F7603AC64A49B030D",
+      "orderedWordBytesSha256": "05B874438DB86D54628128B01AB3345D0F32485E28CE849FFAC565A4C49D85D2",
+      "checks": "36 native word/operand matches;23 supplied local cases;11 instruction mutations and2 broken-retention premises rejected.",
+      "generated": {
+        "path": "rerevved:generated/default/rerevved_recomp.145.cpp",
+        "sha256": "061E0C9D9AF1EA591C7238FA6526E883C5D84A44DFD30D8B195102E133AF69A5",
+        "headerLine": 29356,
+        "closingBraceLine": 38929,
+        "producerWindowsInclusive": [
+          [
+            33460,
+            33555
+          ],
+          [
+            33556,
+            33617
+          ]
+        ],
+        "qualification": "Exact owner ends at the file tail; only bounded windows and locators were interpreted. Injected host calls are excluded from native counting and this original-image contract."
+      },
+      "qualification": "No intervening producer-to-early-sample path, helper effect, live data value, distribution, natural execution or runtime outcome is added."
+    }
+  },
+  "conditionalParticipantProvenanceBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "Which selected local producers replace opaque table/candidate/index/mask premises before the first unqueried helper?",
+    "scope": {
+      "selectedOwner": "0x82D66178",
+      "selectedCodeWords": 84,
+      "selectedDataWords": 0,
+      "bandsHalfOpen": [
+        [
+          "0x82D6619C",
+          "0x82D661BC"
+        ],
+        [
+          "0x82D6649C",
+          "0x82D664A4"
+        ],
+        [
+          "0x82D66598",
+          "0x82D66690"
+        ],
+        [
+          "0x82D66A9C",
+          "0x82D66ACC"
+        ]
+      ],
+      "qualification": "Four independent entry checkpoints except for directly selected producer/skip/tail/backedge control. No execution-order relation across the other gaps, no helper body and no fresh caller census."
+    },
+    "guards": [
+      "Use valid ordinary byte-addressed backing, native low32 effective addresses and normal instruction completion, without external register or memory interference. Protect current frame/source/record extents from local writes when asserting retained input values. Explicit alias controls instead demonstrate which coherence claims fail.",
+      "At 0x82D6619C, the current r31-relative eight-byte floating load and r1-relative four-byte store must be valid. At 0x82D6649C, current T = low32 r31 has valid words at T - 596/-604. Neither reached band certifies earlier invocation or retention to another band.",
+      "At 0x82D66598, current r24/r23 are candidate words P0/P1, N0/N1 are current U32BE[T - 600]/[T - 608], U = low32 r17 and V = low32 r20. Current frame + 80 and frame + 88 have valid words, and all computed byte/halfword extents are valid. The mapping of P candidates to actual participants, U to the accepted current unit table and frame + 88 to an actual definition table remains independently retained identity/lifetime input.",
+      "The candidate-selection frame+80 sample and its later mask-side sample are separate current loads. Preserve that field across the intervening local halfword stores when asserting they select the same side. Protect definition/type/mask storage likewise if asserting sampled values survive local aliases.",
+      "The zero-initialized local loop proof requires exact ordered execution of the selected initializer and only its selected skip/tail/backedges until the first helper frontier or inner exit. It does not continue through the unqueried helper or any later body. Independently reached loop/shift checkpoints retain arbitrary supplied r22.",
+      "Current frame + 324/+332 require explicitly valid writable backing and nonalias with later samples; field offsets alone prove no allocated extent."
+    ],
+    "localContracts": {
+      "tableBaseMaterializer": "The uninterrupted 0x82D6619C..0x82D661B8 band derives low32 r17 = 0x830F2BF0. Its intervening floating load and stack word store do not change the high-base register. Retention to the producer or +0x52 consumer is not proved.",
+      "candidateReload": "The separate 0x82D6649C..0x82D664A0 band samples current T - 596/-604 into low32 r24/r23. The reload-to-selector gap remains unjoined; an earlier sample need not equal a later T word.",
+      "candidateSelection": "At 0x82D66598, zero frame + 80 selects r21 = P0 and r19 = N0; nonzero selects r21 = P1 and r19 = N1. Frame + 324/+332 receive the other P/N pair. The selected index is I = low32(((r21 << 8) & 0xFFFFFF00) + r19); r18 = low32(84*I), and r22 is initialized to zero.",
+      "flagAndLocalRecord": "The signed byte at low32(U + 4 + 84*I) derives count 3 when zero or 9 otherwise. Both are positive, so the selected initial nonpositive-count exit is excluded under valid instruction completion. The local halfword-record pointer becomes low32(V + 40 + 292*I). Each reached prefix requests 0xFFFF at its current pointer + 18 and zero at +180. These records are not assigned outcome or persistence meaning.",
+      "maskSource": "Let D = U32BE[frame + 88], type = S8[low32(U + 1 + 84*I)] and B = S8[low32(D + 72 + 148*type)] as a low32 sign-extended word. The current signed unit + 4 sample controls expansion: zero gives r25 = B; nonzero gives low32(B | (B << 3) | (B << 6)). Negative type values address before D + 72 and require valid backing. Negative B contributes sign-extension bits; B is not silently restricted to 0..7 or called a positive count. Actual definition-table identity remains a D input premise.",
+      "nativeBitAndHelperGate": "At 0x82D66670, r27 is native slw(1, r22): it is zero when low6(r22) has bit 5 set, otherwise 1 << low5(r22). The freshly selected current T - 620/-624 word supplies the processed-mask sample. A set processed bit skips to 0x82D66A9C; a clear processed bit with clear r25 bit also skips. Only a clear processed bit and set r25 bit reach 0x82D66690. The unqueried generated call there names 0x82D5CC98; its native call word, effects and return are outside these 84 words.",
+      "dynamicTail": "At separately reached 0x82D66A9C, sample the current signed byte through r18 + r14, increment low32 r22 by 1 and r29 by 2, derive a fresh count 3/9, then branch to 0x82D66610 exactly when the incremented index is signed-less-than that count. Otherwise reach 0x82D66ACC. Negative or wrapped supplied indices can satisfy this test, so the count alone establishes no input domain.",
+      "selectedLoopInduction": "Starting at the selected zero initializer and following only the selected skip/tail/backedges, each reached bit site has r22 in 0..8 and r27 = 1 << r22, with at most 9 bit sites before the first helper frontier or inner exit. The base is zero, each selected tail increments once, and every fresh bound is at most 9; after index 8 the incremented 9 cannot pass. A changing current flag can extend a prior count 3 to 9 or shrink 9 to 3. This local induction stops at the first helper and proves no posthelper iteration domain."
+    },
+    "compositionBoundary": "The local bands replace opaque register premises only at their own reached outputs. To adopt them at conditionalParticipantFieldRequestBoundary, establish retained U/T/P/N/frame/mask generation, exact inter-band execution and ordered continuation from the first helper through the reached 0x82D66778 consumer. Normal ABI nonvolatile retention alone does not prove the helper's memory effects, branch admission or current field identity. The accepted 52-word request and earlier 16-word paired-buffer reader remain separate components.",
+    "remainingBoundary": "Actual caller/current provider, current 0x82D66C18 target, reader/copy-to-consumer order and same-byte generation, actual participant identity/lifetime, current definition-table mapping and later persistence remain open. No first-resolver-array, winner, damage, experience, whole-battle distribution or save/reload theorem is added.",
+    "falsification": "Changed signed forms, carry sequence, branch polarity/target, candidate/mask operands, native shift, stride, field offsets or loop increment defeat the affected local contract. Unretained frame+80, aliased record/definition storage, changed generations or arbitrary entry indices defeat the corresponding coherence or bounded-domain claim.",
+    "currentEvidence": {
+      "method": "Foreground read-only ghidra/DumpMemoryWords.java radius0 with pinned-file comparison; independent operands and native-word byte-memory/XER-carry/control models.",
+      "querySha256": "515AA487786A69B3053B07F51AAB0556B24343E3F2A1B31F7B4B0AFF04FEE25D",
+      "orderedWordBytesSha256": "210B82D3C95A3265CDFF3318660ED7A25C3F0D0C2DBB67209DCD1B6302DC3DC8",
+      "nativeOperandMatches": 84,
+      "fileMismatches": 0,
+      "producerCases": 3840,
+      "nativeShiftCases": 1024,
+      "dynamicTailCases": 3840,
+      "selectedGraphCases": 8192,
+      "baseReloadGenerationControls": 3,
+      "aliasGenerationControls": 6,
+      "instructionMutationsDetected": 23,
+      "checks": "All256 signed definition byte values paired with a permutation covering all256 signed type values, three side words, five flag bytes, low6 shifts0..63 with four high aliases, processed/eligible extremes, all256 fresh flag bytes with15 signed-index extremes, selected skip-loop graph cases, high-player-bit/index aliases, frame-side and definition destructive aliases, current-flag generation growth/shrink and candidate reload generation separation.",
+      "ownerQualification": "Accepted owner/header and configured bodyBytes0x8/next0x82D66B20 qualifications reused. No fresh caller census or native-body extent claim.",
+      "generated": {
+        "path": "rerevved:generated/default/rerevved_recomp.95.cpp",
+        "sha256": "DB490CBEE3D08D757CD2820AE2DA7EE00B1F1F52F190F8EA9DC7C9085EEE2596",
+        "headerLine": 30471,
+        "nextHeaderLine": 31810,
+        "windowsInclusive": [
+          [
+            30497,
+            30512
+          ],
+          [
+            30910,
+            30913
+          ],
+          [
+            31045,
+            31123
+          ],
+          [
+            31124,
+            31178
+          ],
+          [
+            31735,
+            31761
+          ]
+        ]
+      },
+      "qualification": "Finite supplied inputs and static local contracts, with all selected words pinned-image equal. No runtime or natural-reachability result."
+    }
+  },
+  "conditionalParticipantFieldRequestBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "What does the reached same-owner R-cell consumer conditionally request at the first table-relative +0x52 stores?",
+    "scope": {
+      "selectedOwner": "0x82D66178",
+      "selectedCodeWords": 52,
+      "selectedDataWords": 0,
+      "checkpoint": "0x82D66778",
+      "stop": "0x82D66848",
+      "qualification": "One independent reached consumer checkpoint. Earlier reader admission, intervening execution and current dispatch are not joined."
+    },
+    "guards": [
+      "Reach 0x82D66778 with retained low32 r26 = R, r31 = T, r17 = U and current r21/r22/r25/r27/r29. Valid byte-addressed backing, finite nonwrapping accessed extents, native low32 addresses and normal instruction completion are required.",
+      "Use current U32BE words P0 = [T - 596], N0 = [T - 600], P1 = [T - 604], N1 = [T - 608], M0 = [T - 620], M1 = [T - 624] and F = [T + 180]. Protect later source samples from the local R resets, selected mask/status stores and destination writes. Pairwise disjoint source, R and destination extents suffice; explicit destination equality instead makes the second halfword store final.",
+      "R = 0x82F79FC0 and U = 0x830F2BF0 are optional independently retained checkpoint bindings, not derived by this selected range. The latter table identity, valid player/unit indices and actual participant identity/lifetime are required before assigning persistent unit-record meaning.",
+      "The earlier reader's output equals these cell samples only with an independently established caller/order, retention and same-byte-generation join. Earlier r23/r24 meanings do not transfer: this path reloads them, and current r29 is a halfword pointer."
+    ],
+    "localRequest": {
+      "admission": "The current R + 36 word must equal low32 r21, R + 32 must equal low32 r22, and U16BE[r29] must be at least 0x8000. Any failing test branches to unqueried 0x82D66854 before a selected write.",
+      "cellReset": "The admitted path loads P0/P1 and requests 0xFFFFFFFF in both four-byte R cells. These are local consumptions/resets without recovered participant or outcome labels.",
+      "maskUpdate": "If low32 r21 equals P0, request M0 = low32(M0 | r27); otherwise request the same OR into M1. Current r27 is a supplied mask word here, without a proved index/ordinal producer.",
+      "fieldGate": "If the updated full word equals low32 r25, store F = 0 and enter the field stores. Otherwise enter them only if current F is zero. A nonzero F skips the two field stores after the cell resets and mask update.",
+      "destinations": "Let I0 = low32(((P0 << 8) & 0xFFFFFF00) + N0), with I1 formed likewise. 0x82D6683C requests U16BE[low32(U + 0x52 + 0x54*I0)] = low16(current M0). 0x82D66844 requests the corresponding current M1 halfword at low32(U + 0x52 + 0x54*I1). Both masks are reloaded after the selected OR/store.",
+      "order": "The two halfword requests occur in that order without a helper inside the selected 52 words. Stop before 0x82D66848. High mask bits are discarded; player high bits and different player/unit encodings can alias an index, so valid domains and distinct destinations are separate premises."
+    },
+    "remainingBoundary": "The local request reaches two +0x52 fields conditionally on the current table/index bindings. Actual caller/provider, reader-to-consumer retention/order/generation, cell meanings, exact index/mask producers, participant identity/lifetime and later persistence remain open. This does not resolve 0x82D66C18 or join the first resolver array. F-0063's observed unit-record changes do not identify this invocation. No winner, damage, experience, complete battle, distribution or save/reload theorem is added.",
+    "falsification": "A changed equality/threshold/branch, mask operand, stride, field offset or store width defeats the corresponding request. Invalid or aliased backing, changed generations and unretained checkpoint registers defeat the affected composition or destination claim.",
+    "currentEvidence": {
+      "method": "Foreground read-only ghidra/DumpMemoryWords.java radius0, pinned-file comparison, independent operands and native-word byte-memory models.",
+      "querySha256": "009A4D7BF778DEE86928864381E1220AAEE317D5692B97E60433FFB3A082A0B2",
+      "orderedWordBytesSha256": "3FC8A0C78E796E8DF7EDCD98C9AA447412723611CD135A7A9500B7CB4AC43B8F",
+      "nativeOperandMatches": 52,
+      "fileMismatches": 0,
+      "suppliedInputCases": 72,
+      "aliasAndIndexControls": 5,
+      "generationControls": 1,
+      "instructionMutationsDetected": 19,
+      "checks": "Both mask arms, equality/status gate combinations, both cell mismatch exits,0x7FFF/0x8000/0xFFFF halfwords, high mask bits, shift-discarded player bits, distinct index encodings and exact destination equality, retained P0 despite cell reset, destructive mask alias, changed cell generation, branch polarity/target, operands, width, shift/mask, stride and offset controls.",
+      "ownerQualification": "Accepted exact owner/header reused. Configured bodyBytes0x8 and next0x82D66B20 metadata do not prove native extent or caller census; no fresh caller census was made.",
+      "generated": {
+        "path": "rerevved:generated/default/rerevved_recomp.95.cpp",
+        "sha256": "DB490CBEE3D08D757CD2820AE2DA7EE00B1F1F52F190F8EA9DC7C9085EEE2596",
+        "headerLine": 30471,
+        "nextHeaderLine": 31810,
+        "windowsInclusive": [
+          [
+            31300,
+            31383
+          ],
+          [
+            31384,
+            31463
+          ]
+        ]
+      },
+      "qualification": "Finite supplied values and static requests. No runtime, natural reachability, actual identity or complete-battle result."
+    }
+  },
+  "conditionalPairedBufferReaderBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "What does the independently selected paired-buffer reader request at its reached local checkpoint?",
+    "scope": {
+      "selectedOwner": "0x82D66178",
+      "selectedCodeWords": 16,
+      "selectedDataWords": 0,
+      "readerCheckpoint": "0x82D664C8",
+      "contiguousReaderWords": 10,
+      "stop": "0x82D664F0",
+      "qualification": "One independent owner, not an identified target of the unresolved 0x82D66C18 dispatch. The original finding's read-set counts remain unchanged."
+    },
+    "guards": [
+      "Reach 0x82D664C8 with low32 r31 = G = 0x83024E58, low32 r26 = R = 0x82F79FC0 and retained low32 r29/r23/r24. Construction-to-reader retention and actual invocation are premises.",
+      "Use valid ordinary byte-addressed backing, native low32 effective addresses and no external register/memory interference during the selected block. Loads and stores complete normally.",
+      "Require q = (U32(r29) & 0x3FFFFFFF) < 18 when claiming both complete reads lie inside the accepted 144-byte destination extent. This is an extent condition, not a recovered index-producer bound.",
+      "A/B equal the earlier transferred bytes only with an independently established execution-order, retention and byte-generation join; pointer equality alone is insufficient."
+    ],
+    "localRequest": {
+      "index": "0x82D664C8 derives i = 4*(U32(r29) & 0x3FFFFFFF); 0x82D664CC forms low32 G + 72.",
+      "samples": "0x82D664D0 samples A = U32BE[G + i]; 0x82D664D4 samples B = U32BE[G + 72 + i].",
+      "firstStore": "0x82D664DC requests U32BE[R + 32] = B, mapping to the unlabelled cell 0x82F79FE0 under the checkpoint premises.",
+      "secondStore": "0x82D664D8/0x82D664E0 test A == 0. Zero selects low32 r24 at 0x82D664EC; nonzero selects low32 r23 at 0x82D664E4. Each requests U32BE[R + 36], the unlabelled cell 0x82F79FE4.",
+      "order": "Both four-byte samples precede both stores. There is no helper request inside the ten-word block. Both selected paths next reach unqueried 0x82D664F0; no later return or effect is claimed.",
+      "extent": "The two 72-byte planes admit exactly q 0..17. q 18's second read starts at the exclusive endpoint; q = 0x3FFFFFFF wraps the first read to G - 4. Discarded high two bits of r29 alias, so r29 in 0..17 is sufficient but not necessary."
+    },
+    "prefixQualification": "Selected split constants at 0x82D6618C/0x82D661AC and 0x82D66190/0x82D661B0 form G/R only if the respective high registers are retained. The intervening and constructor-to-reader gaps were not queried. 0x82D664B8 compares current r30 with -1; 0x82D664C4 branches on then-current CR6.EQ, clear to 0x82D66520 and set to C8. Unqueried BC/C0 prevent deriving admission from the B8 comparison.",
+    "remainingBoundary": "Actual caller/current provider, the 0x82D66C18 target, copy-to-reader execution order and same-byte generation, native index producer/domain, first resolver array identity and destination-to-participant +0x52 writer remain unbound. Neither global cell, sampled word nor r23/r24 is assigned a participant, damage, experience, winner or persistent-result meaning. No whole-battle distribution, 1:1 probability, bias or save/reload theorem is added.",
+    "falsification": "Changed mask, offset, load/store operand or width, comparator, branch polarity/target or selected register defeats the local request. Shifted checkpoint bases, out-of-extent q, interference or a changed CR6 across the unqueried gap defeats the corresponding fixed-address, extent, byte-generation or admission claim.",
+    "currentEvidence": {
+      "method": "Foreground read-only ghidra/DumpMemoryWords.java radius0, pinned-flat comparison, independent native operands and finite big-endian byte-memory models.",
+      "querySha256": "2FA45C85E806E0369A60FA36FDABE7FBE5C3C0C55FE169415E0660C1AFDE31F6",
+      "orderedWordBytesSha256": "8F0F83057F948E42F7BE418D0A0B0B91AEB0C296EFC81D62AFFD9C25E1925F43",
+      "nativeOperandMatches": 16,
+      "fileMismatches": 0,
+      "suppliedInputCases": 288,
+      "instructionMutationsDetected": 11,
+      "premiseAttacks": 8,
+      "checks": "18 admitted q values, four discarded-high-bit variants and four zero/nonzero first words; shifted bases, source alias, out-of-extent indices, between-load mutation and unqueried CR6 change were explicit controls. Finite synthetic inputs are not gameplay observations.",
+      "ownerQualification": "Configured bodyBytes0x8 and zero emitted target references are truncated metadata, not a native-body extent or caller census.",
+      "generated": {
+        "path": "rerevved:generated/default/rerevved_recomp.95.cpp",
+        "sha256": "DB490CBEE3D08D757CD2820AE2DA7EE00B1F1F52F190F8EA9DC7C9085EEE2596",
+        "headerLine": 30471,
+        "nextHeaderLine": 31810,
+        "windowsInclusive": [[30471, 30566], [30918, 31013]]
+      },
+      "qualification": "16 selected code rows, with no new/global unique-code coverage claim, live value, natural execution, caller continuation or runtime result."
+    }
+  },
+  "selectionTransferContinuationBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "Does the selected aligned independent-input transfer copy exactly144 bytes and return, and where does immediate consumer tracing stop?",
+    "scope": {
+      "owners": [
+        "0x827F8550",
+        "0x82D66B20"
+      ],
+      "selectedCodeWords": 40,
+      "selectedDataWords": 0,
+      "continuationWords": 8,
+      "returnTailWords": 13,
+      "callerPrefixWords": 19,
+      "boundary": "Selected aligned transfer continuation/tail and immediate caller prefix through current+0x100 dispatch. No bulk128 arm or downstream participant consumer."
+    },
+    "result": "Given the accepted independent incoming P/content chain, fixed destination 0x83024E58, length 144, valid aligned backing and explicit alias/save-slot retention guards, the selected continuation copies five then thirteen consecutive 8-byte chunks into [0x83024E58,0x83024EE8), then restores the saved r3 word and returns via retained LR.",
+    "control": "The accepted fixed destination has low 7 = 0x58. 0x827F8688 derives remaining length 104; 0x827F868C/0x827F8690/0x827F8694/0x827F8698 perform 5 consecutive 8-byte copies. 0x827F86A4 selects 0x827F85DC because 104 >> 7 = 0. The tail 0x827F85F4/0x827F85F8/0x827F85FC performs 13 more copies. Zero remainder selects 0x827F8624/0x827F8628: restore saved full r3 and return through retained LR. The selected continuation makes no helper request.",
+    "callerFrontier": "The immediate 0x82D66BD0 continuation has no explicit destination read/forwarding before the current child/table + 0x100 indirect dispatch at 0x82D66C18. Actual target/effects and r31-store alias exclusion remain conditional; no first participant consumer is bound.",
+    "guards": [
+      "Reuse conditionalPresenterInputJoin and selected aligned-prefix guards; P remains independent of the first resolver selection array.",
+      "P and destination have valid aligned144-byte nonwrapping extents, disjoint from protected save storage, with retained bytes until each load. Use disjoint P/D or exact equality; exclude partial overlap.",
+      "The accepted saved-return word and LR/r1/nonvolatile registers retain the required values; no unexpected external or memory effects intervene."
+    ],
+    "limits": "No actual battle identity, first-array-to-presentation join, live bytes, participant write, winner, distribution or runtime mechanics follows. F-0359 and F-0360 remain separate accepted paths.",
+    "falsification": "Changed load/store width, operands, count arithmetic, update or branch polarity; abnormal return; invalid backing; destructive alias; overwritten source/save storage; or unresolved native decoding defeats the corresponding conditional result.",
+    "currentEvidence": {
+      "method": "Foreground read-only ghidra/DumpMemoryWords.java radius0, pinned-flat comparison, independent native operands including Xenon64 DS load/store update forms and native-word supplied-input execution.",
+      "querySha256": "B802C86DDE3DFEBD67F1F222A635F95C73713380431838A5B1697D7E284C3874",
+      "orderedWordBytesSha256": "1375E19B86F81C9BE20C168AF1CCD5FA7E441E4659DBFA8F71BE2FE0914DBF89",
+      "nativeOperandMatches": 40,
+      "fileMismatches": 0,
+      "nativeReplayCases": 13,
+      "instructionMutationsDetected": 6,
+      "checks": "Distinct immutable144-byte source snapshot, exact18 stores/extent, destination guards, disjoint and identity-alias witnesses, original saved-r3/LR/SP/nonvolatile retention; destructive overlap, source/save mutation and unaligned-source premise controls.",
+      "savePrefixReuse": "Accepted full-width incoming-r3 save at0x827F8550 and unchanged [SP-8,SP) are premises; no new prefix query.",
+      "ownerQualification": "Configured transfer/caller body sizes1/8 are truncated metadata, not complete native bodies. Exact generated owner bounds and matched selected words support the local path. The capped transfer-reference list is not a consumer census.",
+      "accounting": "40 selected replay rows, with prior prefix/tail overlaps. No global/new unique-code count or runtime execution is claimed.",
+      "generated": [
+        {
+          "path": "rerevved:generated/default/rerevved_recomp.211.cpp",
+          "sha256": "30BE9000025B27EC0A06BC405B249EAD56E1DDEAA40FD3C8501A9F83E1C3BBEF",
+          "owner": "0x827F8550",
+          "headerLine": 15797,
+          "nextHeaderLine": 16479,
+          "windowsInclusive": [
+            [
+              15920,
+              16015
+            ],
+            [
+              15875,
+              15932
+            ],
+            [
+              16474,
+              16479
+            ]
+          ]
+        },
+        {
+          "path": "rerevved:generated/default/rerevved_recomp.80.cpp",
+          "sha256": "D77FF08076446522184BC47A49B57C15170F887B16F3B73ABE69773CD7229975",
+          "owner": "0x82D66B20",
+          "headerLine": 31278,
+          "nextHeaderLine": 32122,
+          "windowsInclusive": [
+            [
+              31377,
+              31472
+            ],
+            [
+              32117,
+              32122
+            ]
+          ]
+        }
+      ]
+    }
   }
 }

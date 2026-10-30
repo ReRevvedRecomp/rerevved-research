@@ -12,6 +12,50 @@ native ABI returns and nonalias effects protecting frame/live state. Numerical
 examples are supplied guarded inputs, not observed stats or reachable-combat
 proof.
 
+## Random state and save/reload
+
+The selected resolver uses the main generator record at `0x82F7AD00`: state
+at `+0`, draw counter at `+4`, modulus at `+8` and double scale at `+0x10`.
+These are sampled inputs to a deterministic calculation. The counter records
+draw consumption; it does not enter the selected result comparison.
+
+Two selected frame `+268` pointer builders form `0x830E4554`. If their result
+survives to the accepted samples, this separate word supplies the late override:
+zero retains the comparison, while nonzero forces selection value1. That
+override follows a consumed comparison draw. Its actual live value and the
+producer-to-sample retention remain conditions; its name or gameplay policy
+is not recovered from this pointer identity.
+
+The [save-header boundary](../../manifests/combat-rng-save-reload-boundary.json)
+binds a conditional persistence mechanism. The default mode0 output path in
+`0x82CC29B8` includes the current main-state word. Mode1 input places its
+helper-dependent value in local record `+0xC`. On a later guarded load path,
+`0x82D86854` writes that field back to `0x82F7AD00`.
+
+This header directly transfers the state word rather than a complete generator
+snapshot. Its separate `0x8314F750` field is not the main draw counter. No
+direct header field carries the counter, modulus or scale; other serializers,
+aliases and later initialization remain outside that negative.
+
+The stream must actually deliver the saved bytes, and intervening calls must
+retain the record and restored state. Normal return and a nonzero header size
+do not certify delivery. An omitted state flag can leave the load record's
+initialized zero for restoration; a no-byte read can retain a temporary's live
+value. The manifest retains the exact mode, flag, endian and lifetime premises.
+
+Restoring the same consumed state, compatible parameters and the same ordered
+combat inputs/draws can reproduce the same local calculation. This concerns
+current pseudorandom state, rather than only the initial map seed. Earlier
+helper effects, overrides, retries and other intervening state changes matter.
+Repeated retained-input replays are dependent trials. Equal displayed strengths
+alone establish neither a 50 percent whole-battle win chance nor bias.
+
+The later [combat event boundaries](../../manifests/achievement-event-boundaries.json)
+separately bind final operative weights, a selected mode0 decision/publication
+and a conditional local decisive-defensive result. They preserve their actual
+participant, lifetime and causal-lineage requirements. No complete live
+save-to-battle replay or universal winner formula follows from this section.
+
 ## Guarded stat and selection flow
 
 The accepted pair obtains attacker attack at `0x82CDA214` and defender defense
@@ -186,8 +230,51 @@ Finite text loops and explicit frame/save/ write-exclusion guards retain pointer
 and original 144 bytes, supplying source `P`, destination `0x83024E58`, length
 144 to transfer. The resolver subcase above does not reach this chain.
 
-Prefix stops before `0x827F8688`; full publication/persistent `+0x52` writer
-remain unknown. Preserve presentation/pump/completion:
+The separate `selectionTransferContinuationBoundary` closes the aligned
+144-byte copy and local return. With valid retained input, backing and save
+storage, the selected path copies five then thirteen 8-byte chunks to
+`[0x83024E58,0x83024EE8)`. Source and destination may be disjoint or identical;
+destructive partial overlap is excluded. This leaves the incoming buffer
+independent of the first resolver array above.
+
+Immediate consumer tracing stops at the current child/table `+0x100` dispatch
+at `0x82D66C18`. No explicit destination read or forwarding precedes that stop,
+but the caller's record-relative stores still require alias exclusion. Actual
+target/effects and destination-to-participant `+0x52` writer remain unbound.
+
+An independently selected reader in `0x82D66178` has a conditional local
+contract at `0x82D664C8`. With retained buffer base `0x83024E58`, record base
+`0x82F79FC0` and index q=`low30(r29)<18`, it reads one four-byte word from
+each 72-byte plane. The second word goes to `0x82F79FE0`; a zero first word
+selects `r24`, otherwise `r23`, for `0x82F79FE4`. Both fields remain unlabelled.
+The high two index bits alias. The ten consecutive reader instructions end at
+unqueried `0x82D664F0`; entry-to-reader retention, actual invocation and earlier
+copy-to-reader order/byte identity are not established. This reader does not
+resolve the current `0x82D66C18` dispatch or identify a persistent winner. See
+`conditionalPairedBufferReaderBoundary` in the bounded evidence for the exact
+samples, stores, guards and 16-word native receipt.
+
+The separate `conditionalParticipantFieldRequestBoundary` starts at
+`0x82D66778`. Matching current intermediate cells and a set bit in the high
+halfword admit cell resets and an OR into one working mask. A further status gate
+controls the two halfword stores at `0x82D6683C`/`0x82D66844`. With retained
+unit-table base and valid player/unit bindings, their destinations are the
+two records' `+0x52` fields. High mask bits are discarded; aliases can change
+the result. The earlier reader's order/byte generation, actual participant
+identities and later persistence remain unjoined, so these stores identify no
+complete battle winner.
+
+`conditionalParticipantProvenanceBoundary` supplies separate local producers:
+the unit-table base, two current candidate reloads, candidate/index selection,
+a signed definition-byte mask and native `slw` bit. The selected zero-initializer
+and skip-loop paths bound the bit index to 0..8 before their first helper;
+an independently reached shift or loop tail has no such bound. The mask can
+expand into three shifted copies, with sign-extension bits retained for a
+negative source byte. Current definition-table identity, inter-band retention
+and the unqueried `0x82D66690` helper-to-consumer continuation remain open;
+these producers do not join the earlier reader.
+
+Preserve presentation/pump/completion:
 [combat lifecycle](../../manifests/combat-resolution-lifecycle.json) observed
 participant changes during presentation. No damage/experience/death/
 capture/distribution or human/AI/city/naval/air parity follows. See

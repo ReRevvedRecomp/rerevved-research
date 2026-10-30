@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0372",
+  "topic": "intro-movie-skip-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Where does the shared frontend movie-state entry choose between building its movie and taking its no-movie path, and how can that choice be restricted to the intro state?",
+  "scope": {
+    "functions": ["0x82E551D8", "0x821CABC8", "0x82E54FD8", "0x82E54FF0"],
+    "tables": ["0x82131A18", "0x82121320"],
+    "testWord": "0x82E5522C",
+    "branchWord": "0x82E55230",
+    "boundary": "This packet binds the frontend flag test inside the shared state entry and the two state tables that reach it. It does not name the flag's configuration source, search for its other readers, or bind audio, fade or runtime playback."
+  },
+  "dependencies": [
+    {
+      "topic": "attract-movie-frame-driver",
+      "use": "identifies table 0x82121320 as the key-5 AttractMovie object table"
+    }
+  ],
+  "sharedEntry": {
+    "function": "0x82E551D8",
+    "flagTest": "0x82E55228 (word 0x5549A7FE) extracts bit 0x1000 of frontend U32[U32[0x82FFD624]+4] into r9. 0x82E5522C (word 0x2B090000) is cmplwi cr6,r9,0, and 0x82E55230 (word 0x419A002C) branches to 0x82E5525C when r9 is zero.",
+    "flagSet": "With r9 nonzero, the entry calls object vtable slot +0x1C and stores its result to object +0x8 only when +0x8 is zero; a nonzero +0x8 skips the builder.",
+    "flagClear": "With r9 zero, 0x82E5525C calls object vtable slot +0x18 and skips the builder.",
+    "precedingWork": "Before the flag test, the entry calls 0x82D4C128 only when two globals are nonzero; that call is not part of the flag decision."
+  },
+  "stateTables": [
+    {
+      "table": "0x82131A18",
+      "factory": "0x821CABC8",
+      "entrySlot": "+0x4 = 0x82E551D8",
+      "slot18": "+0x18 = 0x82E54FD8",
+      "slot1C": "+0x1C = 0x82E54FF0",
+      "result": "The factory allocates a 0x10-byte object and stores this table at +0x0. The +0x1C target passes IntroMovie.bik to movie initializer 0x82C5F590. The +0x18 target stores 1 to frontend +0x78."
+    },
+    {
+      "table": "0x82121320",
+      "entrySlot": "+0x4 = 0x82E551D8",
+      "slot18": "+0x18 = 0x82E60348",
+      "slot1C": "+0x1C = 0x82E60360",
+      "result": "The AttractMovie table shares the entry; its +0x18 and +0x1C words name different targets. Their bodies are outside this packet."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra queries for the state-table words, the test and branch words and the bounded factory and intro slot bodies, with narrow generated-code corroboration of the entry, whose configured-project listing is truncated.",
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82131A18",
+      "ghidra/DumpMemoryWords.java:0x82121324",
+      "ghidra/DumpMemoryWords.java:0x82E5522C",
+      "ghidra/DumpFunctions.java:0x821CABC8",
+      "ghidra/DumpFunctions.java:0x82E54FD8",
+      "ghidra/DumpFunctions.java:0x82E54FF0",
+      "generated:rerevved/sub_82E551D8"
+    ],
+    "qualification": "The configured project decodes 0x82E551D8 as bad instruction data, so the entry's control flow rests on the exact image words and the generated owner sub_82E551D8. The object's vtable word at +0x0 distinguishes the intro state from the AttractMovie state."
+  },
+  "guards": [
+    "Do not clear frontend bit 0x1000 to skip only the intro; the AttractMovie state shares this entry and test.",
+    "Do not assign a state meaning to frontend +0x78 or infer that the no-movie path preserves audio, fade or input timing.",
+    "Do not name bit 0x1000's configuration key or infer its retail value from this packet."
+  ],
+  "conclusion": "Shared frontend movie-state entry 0x82E551D8 tests frontend bit 0x1000 at 0x82E5522C. A zero r9 there takes the guest's own no-movie path through vtable slot +0x18. Restricting that to objects whose vtable is 0x82131A18 selects only the IntroMovie.bik state, whose slot +0x18 target 0x82E54FD8 stores 1 to frontend +0x78."
+}

@@ -3,9 +3,9 @@
 The [label inventory](../../manifests/controller-glyph-label-inventory.json)
 records every FrameLabel in buttonLegend sprite97 (37) and MainMenu149,
 Keyboard137, HoA_KeyLegend129, CityScreen151 and UnitStack217 (45 each).
-The five45-label sprites have identical label/frame sequences; exact per-movie
+The five 45-label sprites have identical label/frame sequences; exact per-movie
 tag and label offsets and payload identities remain in the manifest. Frames
-are1-based; exact label case is retained.
+are 1-based; exact label case is retained.
 
 ## Xbox to PS3 pairs
 
@@ -55,26 +55,27 @@ native `XBOXVERTICAL`/`XBOXHORIZONTAL` producers and selective
 0x82E81F58/r3 seam. The names differ from timeline labels
 `DVERTICAL`/`DHORIZONTAL`.
 
-Generic loading root SetBoxText at0x161D forwards to textBox.SetText at0x1631;
-placement0x22E3 selects sprite68, whose SetText writes Text_txt.html=true
-at0x227A and htmlText=theString at0x2288. StartGame uses0x1720/0x1734,
-placement0x23C6->sprite75, and html/htmlText writes0x2372/0x2380.
+Generic loading root SetBoxText at 0x161D forwards to textBox.SetText at 0x1631;
+placement 0x22E3 selects sprite68, whose SetText writes Text_txt.html=true
+at 0x227A and htmlText=theString at 0x2288. StartGame uses 0x1720/0x1734,
+placement 0x23C6 -> sprite75, and html/htmlText writes 0x2372/0x2380.
 
 | Source -> PS3 export | Generic tag1001 offsets | StartGame offsets | Declared size |
 |---|---|---|---|
-| XBOXVERTICAL -> PS3VERTICAL | 0x82 ->0x358 | 0x8C ->0x362 | Both64x64 |
-| XBOXHORIZONTAL -> PS3HORIZONTAL | 0xC1 ->0x5BF | 0xCB ->0x5C9 | Both64x64 |
+| XBOXVERTICAL -> PS3VERTICAL | 0x82 ->0x358 | 0x8C ->0x362 | Both 64x64 |
+| XBOXHORIZONTAL -> PS3HORIZONTAL | 0xC1 ->0x5BF | 0xCB ->0x5C9 | Both 64x64 |
 
 Each first resource string and matching ExportAssets name uses the exact
 identifier above; the second image string appends `.dds`. The native axis
-markup keeps36x36 and vspace-15. Both loading roots have two frames; neither
+markup keeps 36x36 and vspace-15. Both loading roots have two frames; neither
 uses the legend's glyph timeline. The generic payload is hash-identical in
 hoa/Pregame/Level; the manifest pins the selected StartGame payload separately.
 
-The separate legend97 has240 frames: DPAD starts96, is populated96..101,
-then removes the artwork and stops on102; PS3DPAD starts217, remains
-populated217..224 and stops224. The other five glyph sprites have295 frames
-and PS3DPAD242. Frame242 exceeds legend97's timeline. Its vector glyphs
+The separate legend97 has 240 frames: DPAD starts at 96 and is populated at
+96..101, then removes the artwork and stops on frame 102. PS3DPAD starts at
+frame 217, remains populated through frames 217..224 and stops at frame 224.
+The other five glyph sprites have 295 frames and PS3DPAD at frame 242. Frame
+242 exceeds legend97's timeline. Its vector glyphs
 also use different bounds/transforms, so a numeric-frame offset is not portable.
 
 The action-string negative above remains valid; it did not cover native-built
@@ -91,3 +92,16 @@ The inventory supplies no global constructor-rewrite safety or runtime contract.
 The [conditional initializer and narrow append](controller-glyphs.md#conditional-initializer-and-narrow-append)
 record binds later mode selection and admitted markup-byte copying. Current
 provider/mode, compatible resize and final delivery remain separate gates.
+
+The [resize and source-alias contract](controller-glyphs.md#conditional-resize-and-source-aliases)
+narrows the append premise while retaining actual storage/provider and final
+byte-delivery gates. The movie-label inventories are unchanged.
+
+The [Unit icon-vector writer](controller-glyphs.md#unit-icon-vector-writer)
+connects one native B assignment to the existing Unit217 pair. Movie label
+values and runtime observations are unchanged.
+
+The [Unit optional icon writers](controller-glyphs.md#unit-optional-icon-writers)
+connect selected Y/X/LS/A sources to the existing Unit217 pairs. Their
+source/ordinal and current delivery guards are canonical in the native record;
+no movie label or owner runtime observation changed.

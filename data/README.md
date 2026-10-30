@@ -25,3 +25,31 @@ cross-checked against the [StrategyWiki civilization
 reference](https://strategywiki.org/wiki/Civilization_Revolution/Civilizations).
 External references help interpret the retail data. They do not override the
 recovered image assignments.
+
+## Image manifest
+
+[`image-manifest.csv`](image-manifest.csv) records 1,130 images exported from
+retail game content. Image payloads are not included. Each row names the
+exported PNG and the original game archive and resource it came from.
+
+| Column | Meaning |
+|---|---|
+| `category` | Export grouping for browsing related images. |
+| `file` | Relative path of the exported PNG preview. |
+| `width`, `height` | Exported image dimensions in pixels. |
+| `source_archive` | Original game archive containing the resource. |
+| `source_name` | Original resource name, with a character locator for a bitmap embedded in an SWF. |
+
+For example, `Pregame.FPK` and `gfx_mainmenu_logo.dds` identify the game source
+for `ui_external/gfx_mainmenu_logo.png`. In `gfx_groundarrow.swf#character_1`
+the suffix is an export locator for an SWF character ID, not part of the
+archive filename. The `misc` category holds icon and UI resources identified by
+filename, `ui_external` holds images declared externally by GFx movies, and
+`embedded_swf` holds bitmaps stored inside SWF movies. Categories and preview
+filenames are export metadata; the source columns keep the game's names and
+spelling.
+
+The manifest was derived from the image export's `index.csv`. When refreshing
+it, compare every row with the export index and preserve source names, dimensions,
+SWF character locators and row order. An exported PNG path does not establish
+a runtime loader key, payload format or fallback behavior.

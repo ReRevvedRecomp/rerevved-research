@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0379",
+  "topic": "terrain-shader-role-binding-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which retained terrain shader coordinates and component operations are established independently of the still-missing named-map resource-to-sampler join?",
+  "scope": {
+    "boundary": "Two hash-identified retained pixel-program inputs and their paired translations/fetch metadata. Selected guest terrain role stores remain the separate image-bound dependency. No shader payload, texture pixels, material table or new runtime capture is retained here.",
+    "qualification": "Shader arithmetic describes the identified translated programs. Historical paired vertex/fetch metadata is not a proof of a current draw, current host translation, compiled-effect attribution or named-map role binding. Pixel identity uses complete input byte/word digests; paired vertex identity rests on the identified historical record."
+  },
+  "dependencies": [
+    { "topic": "xbox-dds-map-role-texture-contract", "use": "Selected blend and lightmap stores at terrain+0xD4/+0xD8, distinct from sampler slots and fetched components." },
+    { "topic": "terrain-height-grid-consumer-boundary", "use": "Native tile/corner coordinate anchor and the unresolved geometry/provider to texture-coordinate join." },
+    { "topic": "native-renderer-shader-fetch-patch-boundary", "use": "Generic shader/fetch and texture-setter boundary; no terrain-specific role identity follows from it." }
+  ],
+  "programIdentity": {
+    "method": "Complete raw retained microcode and its per-dword-reversed representation were hashed to identify the pixel inputs. Off/on alpha-test specializations reuse each program; they are not additional distinct pixel identities. This finding records program-local arithmetic and historical pairing, without asserting a compiled-container identity.",
+    "pixelPrograms": [
+      { "label": "thirteen-fetch form", "bytes": 552, "byteSha256": "0FE5879A904E2740421EAAA180219D07EF3346534C2B05792BA5759191F33DD4", "wordSha256": "880E386AAB98FD1AE7AD375000A83E26F8FE2886C6486433D937D6B4E331352A", "fetchSlots": [0,1,2,3,4,5,6,7,8,9,10,11,12] },
+      { "label": "eight-fetch form", "bytes": 324, "byteSha256": "136AF65FA1DE7F82578877F54E8DE4BA17400B86F71B6B6C82E146CCB9AF2C7C", "wordSha256": "11BE630A29AC95E8AA0D7806D328CAA64480018C131BE10CCB577FAD8F0E5C1C", "fetchSlots": [0,1,2,3,4,5,6,7] }
+    ],
+    "retainedDrawAnchor": "The identified historical records associate the programs with native caller0x8250C768 and draw entry0x826A39F8. This is an existing observation locator, not a new invocation or a binding from terrain fields to texture slots."
+  },
+  "thirteenFetchForm": {
+    "candidateSlots": "Retained slot11 is2048*2048 format18; slot12 is4096*4096 format18. These make them blend/lightmap candidates only. No retained record joins terrain+0xD4 to11 or terrain+0xD8 to12. Slots8..10 are512*512 format18; slot7 is1024*1024 format6. Dimensions do not name materials.",
+    "coordinates": "Pixel slots11 and12 both sample TEXCOORD3.xy with normalized2D coordinates and zero explicit fetch offset. In the retained paired vertex translation, q is the decoded TEXCOORD0 input after its configured integer/float conversion. The common coordinate is u=clamp(q.x+c16.x,0,32768)/32768, v=1-clamp(q.y+c16.y,0,32768)/32768. The numerical clamp/scale comes from the retained vertex literals; c16 and the q-to-native/world join are not established. This proves no relative vertical flip in the shader between these slots, conditional on their role identity. It supplies no absolute native-map or file-row mapping, texel-centre rule or final filtered edge result.",
+    "guestSampler": "The retained slot11/12 fetch fields decode as unsigned signs, RGBA fetch swizzle, repeat addressing, linear magnification/minification/mip filtering, disabled anisotropy, mip0..0 and zero LOD bias. The pixel fetches at microcode offsets84 and144 use the fetch-constant filters, computed LOD, no register LOD/gradients, and zero X/Y/Z offsets. Final host binding overrides/component mapping remain separate.",
+    "componentUse": "Slot11 logical fetched x drives interpolation toward slot8, y toward slot9, and z toward slot10, in that order. Intermediate color swizzles are explicit; the third result is saturated. These are successive interpolations, not an unordered normalized three-material sum. Slots11/12 use only fetched xyz in this selected pixel program; their sampled alpha is not the output-alpha source.",
+    "materialMeaning": "Which concrete textures/materials occupy8/9/10, their relation to raw DDS R/G/B, and whether bindings depend on climate/era remain unbound. Owner-observed red/green effects do not establish a universal material table.",
+    "candidateLighting": "Let L be slot12 logical fetched xyz, C the blended color, a=c255.x, b=c255.y and t=c255.z. The program compares L.x with t. In the L.x>=t arm it adds a before multiplying C; in the other arm it scales L by b before multiplying C, with the stated swizzle ordering. Slot7 then multiplies that result. Subsequent inverse-square-root/product and constant/interpolant color mixing remain part of the output path. Thus neither a universally straight lightmap multiply, a fixed overbright factor, nor white neutrality follows without the role and effective-constant joins. The program has a multiplicative intermediate, not a complete lightmap-color-space contract."
+  },
+  "eightFetchForm": {
+    "contract": "Only slots0..7 are sampled. The selected program combines squared/swizzled sources0..3 using logical scalar components from4..6, then multiplies by slot7 and applies a later color term. It has no slot11/12 fetch and no2048/4096 candidate in its retained metadata. Do not merge this program's texture/lighting contract with the thirteen-fetch form."
+  },
+  "remainingBlockers": [
+    { "question": "Per-role native orientation and raw blend R/G/B meanings", "address": "0x8269AF10", "needed": "Join each resource produced by0x82C6E2AC/0x82C6E2DC to the same retained texture-setter stage/resource inputs or matched draw binding, then join slots8/9/10 to actual material resources. Include component mapping and any binding override; equal dimensions and matching sampler names are insufficient." },
+    { "question": "Absolute UV axes, half texels and image edges", "address": "0x82C494D8", "needed": "Join native corner/geometry-provider coordinates to decoded paired-VS input q and effective c16. For actual edge results include resource-role identity, DDS-to-resource orientation and sampler state. Shared shader UVs alone cannot identify file row direction." },
+    { "question": "Lightmap scale/bias, alpha, climate and era policy", "address": "0x8250C768", "needed": "Use a matched draw with role/resource identities and effective material/constants to identify slot12 and c255, and compare the selected material/technique assignment across the relevant state. No new runtime execution is authorized by this result." }
+  ],
+  "currentEvidence": {
+    "method": "Read-only complete program hashing, retained translated-code/dataflow inspection and guest fetch/instruction-field decoding against the maintained SDK definitions. Native role-store evidence is reused from the image-bound dependency, not inferred from artifact names.",
+    "tool": "tools/correlate_fxobj_shaders.py:sha256 and swap_dword_bytes",
+    "historicalRecord": { "locator": "native-world-harvest/8250C768-571D6127CBF96DD1-2DEEA7E9B28316E1-D4D3E79B/record.toml", "observationDate": "2026-10-14", "sha256": "D0BEA287E358469596B1B75DA1EF2190CBA903EE71E4FBA28FC09FBE717132C3", "pairedVertexWordSha256": "649B5B4D14082F921187C64F664D1E0C57CD0EAE09697332690802560FFA5D6D", "pairedPixelWordSha256": "880E386AAB98FD1AE7AD375000A83E26F8FE2886C6486433D937D6B4E331352A", "fieldLocators": "record.toml:3,8..9,18,27..28 program association;119..183 texture descriptors;185..205 vertex literal block", "qualification": "Generated observation metadata, not a retail asset or a current runtime result. Exact input retention remains necessary to replay this historical observation." },
+    "eightFetchHistoricalRecord": { "locator": "native-world-harvest/8250C768-DBCF02DFB9E3F8FB-F375BB83352BFB1B-E60C3CA4/record.toml", "observationDate": "2026-10-14", "sha256": "68D03066BAF411542EBFD6117971F13B1BCBD7C62842F7D7FA78417B40BA7E9E", "pairedPixelWordSha256": "11BE630A29AC95E8AA0D7806D328CAA64480018C131BE10CCB577FAD8F0E5C1C", "fieldLocators": "record.toml:3,8..9,19,28 program association;37..123 texture descriptors", "pixelTranslationLocator": "DBCF02DFB9E3F8FB-F375BB83352BFB1B-k0-at0/translation/ps_F375BB83352BFB1B.executable.hlsl:484..518", "pixelTranslationSha256": "6063BAB22037AF151C6EAD2520F461F9BACEFB976E6F663737672E2B133D2AFA" },
+    "sdkFields": ["rerevved-sdk:include/rex/graphics/xenos.h:1173..1275", "rerevved-sdk:include/rex/graphics/format/ucode.h:772..862"],
+    "translationIdentity": { "pairedVertexLocator": "571D6127CBF96DD1-2DEEA7E9B28316E1-k0-at0/translation/vs_571D6127CBF96DD1.hlsl", "pixelLocator": "571D6127CBF96DD1-2DEEA7E9B28316E1-k0-at0/translation/ps_2DEEA7E9B28316E1.executable.hlsl", "pairedVertexSha256": "DE0F9692CBEFC4DAEEE3794A614018723E21545A3715571911A24ABE09A575F9", "pixelSha256": "9DE648B95B42DE03983CE36B4EA13627E3883864440051BE5DBBAF7F8904A5B3", "pairedVertexLines": "503..533,576..579", "pixelLines": "141..145,398..426,494..564", "qualification": "These hashes identify derived source bytes, not a new native/runtime validation. Auxiliary program identity is distinct from the title image identity." },
+    "bindingSchema": "rerevved:src/gpu/diagnostics/draw_capture_frame_inputs.cpp:104..110 defines the per-slot binding/component_mapping/sampler fields missing from the inspected historical role join. Existing guest fetch words nevertheless establish the guest sampler defaults above."
+  },
+  "guards": [
+    "Closed status closes the selected shader read set; all three named-map file-to-native coordinate mappings remain unproved.",
+    "Keep fetched logical components, guest fetch swizzle, raw DDS channels and final host component mapping distinct.",
+    "Do not call source slot8 snow, slot9 grass or slot10 rock without a resource/material binding.",
+    "The shared v complement is a shader-local equation, not a native north/south or camera convention.",
+    "Derived HLSL, historical draw metadata and complete input program hashes establish different evidence boundaries. No current runtime effect is claimed."
+  ],
+  "conclusion": "Two hash-identified retained pixel programs establish selected logical blend and multiplicative/threshold operations. In the thirteen-fetch form the candidate blend/lightmap slots share one normalized UV with a common v complement and guest linear/repeat defaults. Their role/resource/native-axis joins, concrete material names, state dependence and complete lightmap interpretation remain blocked at the named texture-binding and geometry-provider boundaries."
+}

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0378",
+  "topic": "terrain-height-grid-consumer-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Do the selected terrain-byte, corner-record and height-conversion consumers establish a file-height-sample to native-map coordinate mapping?",
+  "scope": {
+    "roots": ["0x82C6E188", "0x82C6E898", "0x82C69850", "0x82C66A80", "0x82C66AC8"],
+    "selectedContinuations": ["0x82C6AEB8", "0x82C675A0", "0x82C6C2E0", "0x82C49768", "0x82C49368", "0x82C48FC8", "0x82C69CA0", "0x822F9E08"],
+    "qualification": "Selected static requests and arithmetic under the original ABI, ordinary helper returns, valid nonalias storage, retained receiver/global identities and nonwrapping arithmetic. Initialized vtable contents do not prove a live mapping. No geometry-provider completion or runtime observation is inferred."
+  },
+  "dependencies": [
+    { "topic": "xbox-map-tile-semantics-boundary", "use": "Native terrain-plane index 40*x+y and file-tile(r,c) to native(x,y)=(r,31-c), for the accepted square32 domain." },
+    { "topic": "xbox-heights-authoring-contract", "use": "Height-image dimensions, extraction row reversal, conditional sample ratios, scale/provider and endian-transfer boundaries." },
+    { "topic": "xbox-dds-map-role-texture-contract", "use": "Height role binding, second row reversal and unsigned16 to float scale expression." }
+  ],
+  "terrainByteAnchor": {
+    "copy": "0x82C6AECC..0x82C6AEE0 supplies stride40 and plane0x8312B288. 0x82C6AF08..0x82C6AF18 requests W*D bytes and records the returned base at T+0xF4, with W=s32[T+0x5C], D=s32[T+0x60]. For each admitted row n, 0x82C6AF28..0x82C6AF54 requests W bytes from plane+40*n to base+W*n through 0x827F8550. No row reversal is requested in this prefix.",
+    "lookup": "Complete leaf0x82C675A0..0x82C67630 bounds r4 against W and r5 against D. For r4==W and nonzero byte U32[0x8314F2C0]+1, it substitutes0; otherwise r4 clamps to0..W-1. r5 clamps to0..D-1. Nonnull base returns signed byte at base+D*r4+r5; null base returns1. Positive dimensions and valid queried global storage are required.",
+    "squareJoin": "When W=D=32 and the copy completes with retained bytes, lookup(r4=x,r5=y) addresses the byte copied from plane+40*x+y. Thus it preserves the dependency's native axes. Copy stride W and lookup stride D differ syntactically; no nonsquare extension is proved."
+  },
+  "cornerRecords": {
+    "dimensions": "0x82C6E9A0..0x82C6E9FC loads W/D and stores W+1 at T+0x64 and D+1 at T+0x68. 0x82C6C2F8..0x82C6C478 iterates the outer count T+0x68 and inner count T+0x64. This gives33*33 records conditional on W=D=32; it is not a 513*513 height-image allocation.",
+    "neighbors": "For inner i and outer j, the calls0x82C6C394,0x82C6C3B0,0x82C6C3D4,0x82C6C3F8 request terrain-byte lookup at(i-1,j-1),(i,j-1),(i-1,j),(i,j). Boundary values follow the lookup clamps/wrap above. The body forms a classification mask using equality to6 and records each object at T+4's array index j*(W+1)+i. These are terrain-byte neighbors, not16-bit height samples.",
+    "coordinateHandoff": "The installed literal table0x82164750 has cell+0xB0 at0x82164800 equal0x82C49768. Call0x82C6C384 supplies i/j to that current slot. Under retained initialized mapping, 0x82C49780/84 stores them at record+0xE8/+0xEC and delegates to0x82C49368,0x82C48FC8 and0x82C62FC0.",
+    "products": "0x82C49424..0x82C494AC freshly reads U32[U32[0x8314F288]+0x34], then fields+0x6C/+0x70. It multiplies those by the retained i/j values, applies a shared scalar offset through fused negative multiply/subtract operations and stores float products at record+0x120/+0x124. The global receiver is not proved identical to the original T. These are coordinate-like products, not a proved texture UV or world-unit contract.",
+    "providerFrontier": "0x82C494D8 invokes current virtual+0x8C of a newly constructed transform object. 0x82C48FC8 gathers neighboring records through0x82C67508 and passes constructed records to0x821CCF90 at0x82C49214/0x82C49258, followed by0x82C48AE8. Vertex layout, completion, subsequent UVs and height-resource consumption across those boundaries remain unbound."
+  },
+  "heightPath": {
+    "conversion": "Reuse the accepted H=T+0x24 binding and reverse-row unsigned16 to float conversion in0x82C69850. The queried suffix0x82C69B20..0x82C69BD8 passes the local converted output through0x8250B7C8 and requests attachment through0x821B2440 at destination T+0xB4. Both helper effects and later resource consumption remain premises.",
+    "ordering": "0x82C6EB90 calls corner construction0x82C6C2E0,0x82C6EBA4 calls0x82C69CA0 and0x82C6EBAC calls0x82C69850. Complete selected owner0x82C69CA0..0x82C6A154 prepares transforms/render state and enters0x822F9E08 at0x82C69E6C. Its direct body contains no T+0x24 read, coordinate-leaf call or unsigned16 height sample. Indirect/helper descendants are not excluded by this negative.",
+    "ratio": "For retained512 image extents and W=D=32, the existing integer ratios are16 samples per dimension unit. This arithmetic is not an established tile-centre, vertex or shared-edge sampling rule. The corner-record +1 grid does not prove a height-image +1 rule.",
+    "coordinateLeaves": "Complete leaves0x82C66A80/0x82C66AC8 convert incoming f1 by the respective ratios involving T+0x70/+0x80 and T+0x6C/+0x7C. The generated/default direct-call search found no direct call to either. Virtual/table/computed callers are not excluded, and no same-T mesh input join is proved."
+  },
+  "remainingBlockers": [
+    { "question": "Height file row/column to native(x,y), centres, edges and filtering", "address": "0x82C494D8", "needed": "Resolve the retained current transform callback and the0x82C49214/0x82C49258 geometry-provider path through0x821CCF90/0x82C48AE8, with a same-instance join from the T+0xB4 float resource to actual sample coordinates. Do not infer this from corner-record indices." },
+    { "question": "512 samples versus shared height vertices", "address": "0x82C69BD4", "needed": "Bind a geometry or vertex-sampler consumer of the attached converted resource and its coordinate/border/filter inputs. The16 ratio and33 corner-record grid are insufficient." },
+    { "question": "World scale and sea-level sample", "address": "0x82C6E95C", "needed": "Bind actual retained TerrainZScale provider value/units and the sea-surface coordinate to the same geometry/sample path. The dependency's scalar conversion alone supplies neither a sea threshold nor a fixed physical scale." }
+  ],
+  "currentEvidence": {
+    "method": "Serialized foreground read-only function/raw-word queries in the canonical project; every selected raw word compared with the pinned flat image; bounded exact-owner generated corroboration. Decompiler stubs/truncation are not body closure.",
+    "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "queryPackets": [
+      { "ranges": ["[0x82C66A80,0x82C66B10)", "[0x82C69850,0x82C69B28)", "[0x82C6E188,0x82C6E358)", "[0x82C6E898,0x82C6EDA0)"], "words": 656, "orderedWordSha256": "48AED2C62DAFFFAD76D2EA250F4E6697CB734F037A647C7AED8E296C688449D4" },
+      { "ranges": ["[0x82C6AEB8,0x82C6AF58)", "[0x82C675A0,0x82C67634)"], "words": 77, "orderedWordSha256": "41E1541B52819A8107004698FD8F99953394A7B7B40F6DBB25C657F539DDCFF8" },
+      { "ranges": ["[0x82C6C2E0,0x82C6C484)", "[0x82C69CA0,0x82C6A158)", "[0x82164800,0x82164804)", "[0x822F9E08,0x822F9EF4)"], "words": 467, "orderedWordSha256": "12B375CD9CC13E30F5BF9FABE0AB5FCBC18E6D74CCFA1422BD65010D164E79E6" },
+      { "ranges": ["[0x82C49768,0x82C4980C)", "[0x82C49368,0x82C4950C)", "[0x82C69B20,0x82C69BDC)", "[0x82C48FC8,0x82C49364)"], "words": 424, "orderedWordSha256": "A270B66D7E27F024239FD8293E5B491947772457EA798134A5811708DA529BD4" }
+    ],
+    "locators": ["ghidra/DumpMemoryWords.java:queryPackets ranges, every aligned word, wordRadius=0", "ghidra/DumpFunctions.java:0x82C66A80,0x82C66AC8,0x82C6E898,0x82C69850,0x82C6E188", "generated:rerevved/sub_82C6AEB8", "generated:rerevved/sub_82C675A0", "generated:rerevved/sub_82C6C2E0", "generated:rerevved/sub_82C49768", "generated:rerevved/sub_82C49368", "generated:rerevved/sub_82C48FC8", "generated:rerevved/sub_82C69CA0", "generated:rerevved/sub_82C69850"],
+    "checks": "All1624 emitted word rows matched the image. Thirteen focused operand assertions and all1024 square32 tile-coordinate cases passed. No runtime, larger-map or native-provider execution is claimed."
+  },
+  "guards": [
+    "Closed status closes this selected consumer read set, not the named-map authoring recipe.",
+    "Keep terrain classification bytes, corner-record indices, DDS samples, GPU float texture coordinates and native map axes separate.",
+    "Do not derive512/513 height dimensions, a texel-centre correction or a world-to-image flip from the33-by33 corner-record grid.",
+    "Do not treat two row reversals or a scale expression as a world/tile sampling proof.",
+    "Generated direct-call absence does not exclude virtual/computed calls."
+  ],
+  "conclusion": "The square32 terrain-byte copy/lookup preserves native axes and feeds a33-by33 shared-neighbor corner-record grid. The height conversion attaches a distinct float resource, but no selected consumer joins it to native/world/UV coordinates. Height texture orientation, shared height edges, filtering and sea scale remain bounded by the named transform/geometry-provider and resource-consumer frontiers."
+}

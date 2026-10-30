@@ -280,11 +280,29 @@ Its current 29-cell branch table selects eight local returns, each between
 `trunc(250*return/denominator)`, with denominator 95 for zero index and 100
 otherwise. This is separate from the later `+0x52` stores. With sampled global
 `0x82FFE7C4` bit `0x4` set, the optional floating update is bypassed and control
-reaches `0x82D66744 -> 0x82D5E568`. That helper's return and memory effects
-remain the exact stop gate. On a normal retained return, the subsequent signed
-matrix-sample/return comparison admits `0x82D66778` only when the sample is at
-least the return. Its cell/mask/status guards still apply. No same-generation
-reader-to-consumer or participant-persistence join follows.
+reaches `0x82D66744 -> 0x82D5E568`.
+
+`conditionalParticipantSecondHelperBoundary` binds a no-child corridor in that
+second helper. It independently samples the indexed unit's signed type byte,
+definition byte through base `0x82F700D8`, and unit `+60` pointer Q. The definition
+byte's parity selects zero for odd values or one for even values. Null Q returns
+1; otherwise a signed count from Q's `+120`/`+124` words returns 1 when it is at
+most that selector. Null `+120` gives count zero. The signed type-byte lookup
+occurs before the null-Q branch and still requires valid backing. These reads
+do not identify the earlier frame `+88` definition pointer.
+
+This corridor writes only the helper's saved LR, saved `r31` and stack
+backchain. With retained current inputs and those writes excluded from later
+source storage, the immediate signed matrix comparison admits `0x82D66778`
+exactly when the sample is at least 1. Zero and negative samples take the
+existing less corridor. Stack aliases can change that sample despite normal
+register restoration; the consumer's cell/mask/status guards still apply.
+
+If the count gate selects a descriptor, a non-sentinel incoming halfword first
+requires `0x82D5E608 -> 0x82D5CFD0`. Halfword `-1` skips that child and reaches
+`0x82D5E614 -> 0x82E59F98` with the descriptor and `-1`. Those exact child returns
+and effects remain stop gates. No supplied child result, same-generation
+reader-to-consumer join, participant persistence or save-delivery claim follows.
 
 Preserve presentation/pump/completion:
 [combat lifecycle](../../manifests/combat-resolution-lifecycle.json) observed

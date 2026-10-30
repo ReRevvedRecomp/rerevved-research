@@ -28,15 +28,140 @@
       "fileSampleOrder": "The retail LE16 observation is recorded at #/retailObservedProfile. The complete file-to-CPU representation change is not bound. Neither an accepted BE16-in-file prescription nor a closed static LE16 transfer contract follows from the selected row-copy operation.",
       "copyBoundary": "0x8258AC18 creates destination from incoming r4 and source from incoming r5. After 0x8258BB50 at 0x8258ACA0, it tries 0x82587F60 at 0x8258ACB0. Equal regions/formats modulo 0x1C0 admit a byte-preserving row copy through 0x827F8550; that local operation does not establish unchanged bytes across surrounding helpers.",
       "formatAndObjects": "0x82596178 masks 0x1C0; both selected source/output words choose the 0x82596738 arm, bpp 16, kind 1 and vtable 0x8205C1D0. Base 0x8258B880 clears only 0x100 from the record format and retains 0xC0; interior 0x8258B928 publishes nonzero-bpp and two-byte stride fields. The preserved numeric field is not by itself proof of a byte swap.",
-      "uploadAndLock": "Ordinary upload 0x82579294..0x82579394 preserves the incoming source pointer and 0xC0 field in its source record and passes destination/source to 0x8258AC18. With selected flags 0, lock wrapper 0x8258B038 calls 0x8269AE80 at 0x8258B424 and publishes the returned pointer/pitch. Thin wrapper 0x8269AE80 forwards to 0x8269A238; the complete resource-lock representation transfer remains open.",
+      "uploadAndLock": "Ordinary upload 0x82579294..0x82579394 preserves the incoming source pointer and 0xC0 field in its source record and passes destination/source to 0x8258AC18. With selected flags 0, lock wrapper 0x8258B038 calls 0x8269AE80 at 0x8258B424 and publishes the returned pointer/pitch. Thin wrapper 0x8269AE80 forwards to 0x8269A238. #/lockBackingTransferBoundary binds conditional backing/pitch publication; resource-effect descendants and complete representation transfer remain open.",
       "objectRelease": "Vtable slot 0 at 0x8205C1D0 targets scalar-deleting destructor 0x825960D8, which calls 0x8258BAF8 and frees through 0x82E29160 when incoming r4&1. Calls at 0x8258AD78/0x8258AD9C pass r4=1 and then clear converter+4/+0 respectively, releasing the two conversion objects.",
       "swapFrontiers": [
         "Parser/preprocessing effects before the incoming upload pointer; record construction alone does not close payload-byte transfer.",
-        "Resource lock path 0x8269AE80 -> 0x8269A238 and cleanup 0x8258AED8, reached by tail thunk 0x8258B030."
+        "Conditional lock backing/pitch and its resource-effect descendants in #/lockBackingTransferBoundary; cleanup 0x8258AED8, reached by tail thunk 0x8258B030, remains a separate transfer frontier."
       ],
       "qualification": "Selected helpers require retained source/destination/resource/stack cells, ordinary returns and the original ABI. The CPU reader independently consumes unsigned BE16. No evidence requires writer processing beyond mirroring the observed retail layout."
     },
     "otherConversions": { "verdict": "open", "boundary": "The fallback conversions after 0x8258AC18's first same-format attempt are not closed. Descriptor membership alone proves neither successful conversion nor its channel/byte-order rule." }
+  },
+  "lockBackingTransferBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "Does the selected level-zero lock child convert sample bytes, or derive backing and pitch before an unresolved resource-effect boundary?",
+    "scope": {
+      "owners": [
+        "0x8269A238",
+        "0x8269A160",
+        "0x82699C98",
+        "0x82698FC8",
+        "0x82697CA0"
+      ],
+      "rangesHalfOpen": [
+        [
+          "0x8269A160",
+          "0x8269A234"
+        ],
+        [
+          "0x82699C98",
+          "0x8269A15C"
+        ],
+        [
+          "0x82698FC8",
+          "0x82699060"
+        ],
+        [
+          "0x82697CA0",
+          "0x82697F34"
+        ],
+        [
+          "0x8269A238",
+          "0x8269A2C8"
+        ]
+      ],
+      "boundary": "Five exact native bodies, with only the ordinary non-tail level-zero geometry corridor composed. Accepted geometry helpers are reused; resource-effect descendants are not expanded."
+    },
+    "guards": [
+      "Reach the selected ordinary same-format lock with the accepted resource geometry, both subresource indices zero, retained format0x28000058 and flags0x1000. The accepted source upload, current resource identity and actual level-zero selection remain premises.",
+      "Original save/restore ABI, normal helper returns and nonvolatile-register retention; valid mapped resource, stack and output storage. Preserve the resource fields and geometry/output homes across all intervening helpers.",
+      "Keep output cells, resource/command metadata and stack writes disjoint from sample bytes when asserting no local payload mutation. A numeric returned address does not prove backing capacity, generation, completed upload or sample-byte identity.",
+      "The fresh offset reload after0x82697CA0 must equal its pre-call sample to cancel that offset. Atomic completion, memory visibility and helper effects remain premises."
+    ],
+    "result": {
+      "geometryDelegation": "Native call0x8269A1B8 selects0x82699C98. Its current resource is retained in r31; selected zero indices bypass the positive-mip/packed-tail traversal. Under the accepted geometry-helper results and protected resource/frame/output homes, the non-tail level-zero arm selects the page base U32BE[resource+0x20]&0xFFFFF000 and the accepted P=64*K pitch. Its direct stores publish stack/output metadata, with no direct sample load, byte-reversed operation or payload loop. This is not a no-effect theorem for its helpers.",
+      "formatFactor": "Complete leaf0x82698FC8 writes two format-derived scalar outputs and makes no call or payload read. Input is resource+0x20 low6; selected0x58 gives index24 and factors1,1. The call at0x8269A1CC therefore leaves the sampled pitch unchanged through the multiplication/store at0x8269A1E4/0x8269A1F0, provided its distinct output homes are retained. These factors are metadata, not sample width or endian conversion.",
+      "backingRequest": "Before call0x8269A21C,0x8269A160 supplies the same resource, original zero r4, masked resource page fields and low32(B-O), where B is the geometry output and O is its current offset-home word. It also supplies the sampled extent and original flags. No raw DDS pointer or file-sample pair is locally read by this tuple construction.",
+      "resourceChild": "Complete0x82697CA0 retains its incoming r9 in r28. With original r4 zero and flags0x1000, the barrier base Q is the original resource C unless current C+0 has low nibble4 and bit0x40000000 set and U32BE[C+0x18] is nonzero; that case selects the latter pointer as Q. The current U32BE[Q+0x0C] sample selects0x8269BE70 at0x82697D90 when nonzero. Under normal return, flags&0x12==0 reaches0x8280DA68 at0x82697DC0. A context comparison mismatch requests0x8269B390; its equality arm can request0x8269C588 before eleven command-word writes and the context+0x30 cursor store. These descendants remain opaque.",
+      "metadataAndReturn": "The remaining direct child operations can update a packed interval at original resource+0x14/+0x18 and atomically add0x100 to original resource+0, with an unbounded reservation retry until success. For flags0x1000, bit0x10 is clear, excluding the local alternate-address transform. With completing instructions and the original ABI,0x82697F28 returns the retained incoming r9. These are resource/command bookkeeping effects, not an established sample conversion or resource cleanup.",
+      "publication": "0x8269A220 freshly reloads O_after and publishes low32(childReturn+O_after). With retained input and ABI return this is low32(B-O_before+O_after), equal to B only when the offset home is retained.0x8269A238 then publishes pitch/pointer at output+0/+4, optionally adding its independently supplied rectangle offset. Numeric equality does not establish that B is the file payload, that helpers preserved sample bytes or that CPU reads consume the same generation.",
+      "boundedNegative": "None of these five bodies directly implements a sample-pair endian conversion. The reached resource-effect children can still affect backing bytes or visibility; the selected file-to-CPU LE16-to-BE16 transfer remains open."
+    },
+    "nextDiscriminator": "For the retained actual resource/level-zero request, bind the selected resource+0x0C barrier sample and0x8269BE70 effects if nonzero, then the reached0x8280DA68/context branch and backing-byte/visibility effects through normal return. Separately retain upload-to-lock-to-extraction resource/backing generation and the unqueried cleanup/parser effects. A helper-free hypothetical flag corridor does not replace actual flags0x1000.",
+    "falsification": "Changed call operands, factor leaf, flags, resource/offset home, helper return, local bit0x10 guard or atomic/store operands defeat the corresponding contract. A helper that changes samples while retaining B and P is compatible with the bounded result and defeats end-to-end byte preservation.",
+    "currentEvidence": {
+      "method": "Foreground read-only ghidra/DumpFunctions.java for owner/truncation metadata and ghidra/DumpMemoryWords.java radius0; selected-word equality against image.json and independent Capstone5.0.7 PPC64 operands against exact-owner generated comments.",
+      "supportedImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "queriedHeightRows": 606,
+      "selectedCodeWords": 597,
+      "excludedTrailingRows": 9,
+      "fileMismatches": 0,
+      "orderedSelectedWordBytesSha256": "93109573B162116BD727A53ACFF4BDA030AB4F5A0E243D7EE5D18F8D39F4E869",
+      "mixedQuerySha256": "33F9AECBF742942C0B928A950CF34111E7AF51B03FD215C8A354CC372AD6E819",
+      "checks": {
+        "nativeOperandMatches": 597,
+        "formatLeafCases": 64,
+        "nativeBoundaryPins": 9,
+        "suppliedPointerPitchCases": 36,
+        "freshOffsetCounterexamples": 36,
+        "representationCounterexamples": 1
+      },
+      "generated": [
+        {
+          "address": "0x8269A160",
+          "stopExclusive": "0x8269A234",
+          "words": 53,
+          "path": "rerevved:generated/default/rerevved_recomp.148.cpp",
+          "sha256": "21C5FBDA33B671EC00E6B76A5973C1CF77C4AEDFB60F324E0517907CE8C99832",
+          "headerLine": 12951,
+          "nextHeaderLine": 13069,
+          "generatedComments": 53
+        },
+        {
+          "address": "0x82699C98",
+          "stopExclusive": "0x8269A15C",
+          "words": 305,
+          "path": "rerevved:generated/default/rerevved_recomp.59.cpp",
+          "sha256": "BC9B3F1472C709EC5DF2BFB748B247A2A7A0B089E22A007253AE88341EE621A5",
+          "headerLine": 12945,
+          "nextHeaderLine": 13617,
+          "generatedComments": 305
+        },
+        {
+          "address": "0x82698FC8",
+          "stopExclusive": "0x82699060",
+          "words": 38,
+          "path": "rerevved:generated/default/rerevved_recomp.220.cpp",
+          "sha256": "567BC9745806E7C9CED1ACBB69AB7008950E24E3D7450EAE2490119AF5390077",
+          "headerLine": 12388,
+          "nextHeaderLine": 12479,
+          "generatedComments": 38
+        },
+        {
+          "address": "0x82697CA0",
+          "stopExclusive": "0x82697F34",
+          "words": 165,
+          "path": "rerevved:generated/default/rerevved_recomp.92.cpp",
+          "sha256": "52D782684E49222AFF8D5E76C958F8623E32787112CB218AEC4005ED11732FCA",
+          "headerLine": 12791,
+          "nextHeaderLine": 13196,
+          "generatedComments": 165
+        },
+        {
+          "address": "0x8269A238",
+          "stopExclusive": "0x8269A2C8",
+          "words": 36,
+          "path": "rerevved:generated/default/rerevved_recomp.89.cpp",
+          "sha256": "4171704FCD7045B2979D8443466DCF951DA59073FB825A70AA3429AA9152AE43",
+          "headerLine": 12929,
+          "nextHeaderLine": 13013,
+          "generatedComments": 36
+        }
+      ],
+      "qualification": "The mixed query has628 rows, including22 separately selected Apollo/thunk rows. Nine trailing height rows are excluded from semantics. Earlier accepted words are reinspected; no cumulative unique coverage is claimed. Configured owner metadata truncates at original save thunks and supplies no complete-body proof; exact native words and generated headers delimit these ranges. No Ghidra repair, runtime observation, actual sample conversion or helper-body closure."
+    }
   },
   "dimensions": {
     "verdict": "open",
@@ -188,7 +313,7 @@
     "qualification": "No project repair or runtime observation. Four earlier captured words after 0x82C6E364 are excluded from semantic evidence. Selected word equality does not prove whole-database identity, helper effects or completeness of truncated body metadata. Retail byte order is an observation, not a statically closed transfer contract."
   },
   "unresolved": [
-    "The native endian transfer between observed LE16 file samples and the unsigned BE16 CPU reader; parser/preprocessing, resource lock path 0x8269AE80 -> 0x8269A238 and cleanup 0x8258AED8 remain open.",
+    "The native endian transfer between observed LE16 file samples and the unsigned BE16 CPU reader; #/lockBackingTransferBoundary narrows lock metadata/return but leaves reached resource-effect descendants, parser/preprocessing and cleanup0x8258AED8 open.",
     "Actual terrain+0x5C/+0x60/+0x6C/+0x70 input delivery and its relation to named-map tiles and world units; unique mandatory dimensions and edge/endpoint convention.",
     "Current resource and returned pitch retention through opaque adjustment helpers; actual runtime sample step and successful creation/upload/generated mips.",
     "Current TerrainZScale provider, actual named-map value/source and units; fresh-provider equality and value lifetime.",

@@ -71,6 +71,23 @@ inside that helper, an earlier helper or a later/deferred path remain possible.
 The actual caller's argument and any acquisition source/phase policy remain
 unbound; this supplies no completed reward.
 
+`completionGrowthContinuationBoundary` joins that zero-argument arm to the
+accepted [city growth threshold](../../manifests/city-growth-threshold.json). The first result
+is compared with signed city progress at +0x34; insufficient progress branches
+to uninspected 0x82D168AC. Otherwise a second query supplies the value subtracted
+from progress, independently of the first result. The local arm clears city+5
+and increments population+3. A separately sampled signed halfword selects a
+limit of 9, 17 or 32; when the incremented signed byte reaches that limit, the
+arm replaces population with limit minus one and clears progress. This does
+not establish a general population cap or current selector value.
+
+Both admitted cap outcomes next request 0x82D00C78(city) at 0x82D16440.
+These native threshold/query and local growth paths request no acquisition
+before that city-update gate or the insufficient-progress branch. The shared
+helper's effects and return, later/deferred paths, actual caller and completed
+bonus delivery remain open. This local growth store is separate from the
+Irrigation reward below.
+
 For the accepted W0/nonsharing corridor, Irrigation11 supplies one concrete
 conditional witness: an admitted owned city's population7 reaches the byte
 store at0x82D0A3F8 and becomes8, followed by0x82D00C78. This reuses its native

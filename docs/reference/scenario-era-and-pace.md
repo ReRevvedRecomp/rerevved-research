@@ -62,7 +62,9 @@ from native evidence.
 The existing [science](science.md), [unit](unit-definitions.md),
 [growth](city-growth.md), and [calendar](game-calendar.md) records own the
 reused surfaces. The continuation below binds a nonzero preset and closes the
-converter's direct-input question; an economic/event reader remains open. A coordinated speed design needs separate choices
+converter's direct-input question. Selected research-cost and growth inputs and
+the writer using year and turn are bound locally; actual input delivery, coherent
+generation and cadence remain open. A coordinated speed design needs separate choices
 for costs, yields, movement, calendar and event cadence. No setting or runtime
 behavior was implemented.
 
@@ -83,8 +85,10 @@ SPEEDMODE1 store at `0x82DAF2DC`, after selected formatting calls. Actual
 selection/retention remains conditional. All32 instructions of turn-to-year
 converter `0x82CEFA20` use local arithmetic with no memory access or calls;
 it has no direct SPEEDMODE input. Transformed caller input and other economic
-or event readers remain outside that negative. The direct research-cost continuation below selects one economy reader;
-growth and other consumers remain open.
+or event readers remain outside that negative. The selected research-cost and
+growth inputs and the writer using year and turn are bound below. Actual input
+delivery, coherent generation, cadence and broader progression policy remain
+open.
 
 ## Technology neighborhood and research-cost inputs
 
@@ -136,8 +140,7 @@ Y<1000 and Y>=1500 on one retained sample and is unreachable from this entry.
 
 This producer has no local scenario/SPEEDMODE input. Upstream scenario effects
 on sampled calendar state remain possible. Actual caller cadence, coherent
-samples, other writers and retention until the growth reader are open. The
-33-word packet contains30 instructions and three cells; no constant was changed.
+samples, other writers and retention until the growth reader are open.
 
 ## Connected technology-grid producer
 
@@ -150,6 +153,66 @@ an authoritative ordered technology-era relation.
 
 Seven-byte cell and16-byte outer-group publication remain conditional on
 allocation/insertion and retained current flag-provider effects. No cycle,
-progress, finite completion or current displayed-grid theorem follows. The
-new316 code words passed foreground image equality and independent operand
-checks. STARTERA counts, bulk grants and player-tally eras remain separate.
+progress, finite completion or current displayed-grid theorem follows.
+STARTERA counts, bulk grants and player-tally eras remain separate.
+
+## Selected load-tail growth request
+
+`growthScalarCallerOrderingBoundary` binds one direct caller: the surviving
+`0x82D86400` load tail requests `0x82D255B8` at `0x82D86A3C` after
+`0x82D58080`.
+This does not establish initial-setup or once-per-turn cadence.
+
+On the selected mode1/null-auxiliary transfer arm, four-byte year input at
+`0x82CC424C` precedes turn input at `0x82CC42B8`. Both stop at the primary stream's
+current virtual+4, so request order alone supplies neither delivered bytes nor
+a coherent saved calendar pair. The producer also crosses a direct helper and
+current virtual+0x54 before sampling year and turn. Actual transfer, retained
+calendar state, reached growth write and retention to `0x82CF1090` remain gates.
+
+## Selected EndTurn growth refresh
+
+`growthScalarEndTurnWriterBoundary` binds another writer of `G=0x830E45C8`
+in `0x82D0C3E8`, which the accepted numeric EndTurn 54 handler requests.
+Reached local inputs are signed low32 turn T and year Y. For Y < 1000, the
+selected arithmetic matches the accepted load producer's `10-trunc0(T/25)`;
+Y >= 1000 selects 6. The apparent 5 fallthrough requires contradictory tests on
+that same Y and is excluded from this selected entry.
+
+The earlier prefix publishes year before an optional loop. That loop retains
+the local T/Y registers, but its writes can alias global memory under supplied
+inputs, so publication alone does not prove a coherent retained calendar pair.
+After the growth store, the helper at `0x82D0C54C` retains the separate
+post-store boundary below.
+Actual delivery, invocation frequency, later overrides and order before the
+growth reader remain open. This is a conditional selected EndTurn connection,
+rather than proof that every turn refreshes G or a coordinated pace policy.
+
+`growthScalarPostStoreHelperBoundary` closes the selected `0x82D022F0`
+body and native save/restore tails. It samples a signed count after its stack
+writes. A nonpositive sample returns without scanning or calling; preserving
+G/calendar still requires explicit stack nonalias and retained frame/control.
+The positive arm scans 256 records per row and resamples the row bound.
+A qualifying record requests current virtual `+0x1A4` at `0x82D0235C`.
+Only after its retained return are a halfword and byte marker stored.
+Neither normal callback return nor register preservation proves memory
+retention; cleanup can alias protected storage too. Actual invocation inputs,
+callback effects and ordering before the growth reader remain open.
+
+## Optional prerequisite exclusion closure
+
+`prerequisiteExclusionClosureBoundary` binds `0x82CE2280..0x82CE23FC`.
+The configured Ghidra project has no containing function there. The accepted
+direct caller, internal branches and sole final return independently close the
+native body; no decompiler closure is claimed.
+
+A six-iteration zero-store loop initializes 48 workspace bytes, then seeds
+index 0. Repeated 48-row scans mark a row when any non-sentinel prerequisite is
+exceptional or already marked. With stable definitions, supported indices and
+retained valid workspace, marks only change 0->1 and at most 48 scans are needed.
+The returned byte is 0/1. CE2C50 optionally rejects nonzero before its other
+eligibility checks; zero is not the entire eligibility result.
+
+The complete body reads prerequisite halfwords, not a player-era relation.
+Earlier-era membership and safe setup finalization remain separate gates.
+Current definition-domain and runtime delivery are conditional.

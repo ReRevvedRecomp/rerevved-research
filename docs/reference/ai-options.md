@@ -228,4 +228,80 @@ Its retained +0x0C cell selects0x82CA0488. Allocation zero also publishes zero;
 the following pointer read has no local null guard, so no failure completion
 claim follows. Actual +0x18 invocation, current S+0x130 and captured-table/
 current-P +0x04 initialization still gate survival to the sender and receipt.
-The57-word packet has54 instructions and three cells, all image-equal.
+
+## Conditional transport queue and payload copy
+
+`selectedTransportQueueCopyBoundary` binds selected `0x82CA0488` and payload
+initializer `0x82C9FA10`. Nonzero low32 routing input requests `0x82A087A8`; zero
+requests separate payload E and node J, then publishes J to the local
+P+116/P+120 head/tail and increments P+64. The node stores E rather than the
+original serialized-buffer pointer.
+
+Under supported chunk/count, storage, clear/copy and alias/lifetime premises,
+E contains the selected source bytes plus zero padding. Clear-before-copy can
+destroy aliased source bytes, and node/control aliasing can alter resampled
+tail state. Actual storage delivery, retained queue/payload and one connected
+consumer/parser/factory/message-processing edge remain open. A copy request or
+queue append proves no command48 receipt, authority or continuous all-pair war.
+The append interpretation requires coherent prior links and a fresh node.
+
+## Selected transport method frontier
+
+`selectedTransportMethodFrontierBoundary` binds installed table+0x10 cell
+`0x8215FC1C` to `0x82CA0080` and its direct helper `0x82C9FF68`. Their selected
+global-backed comparisons can reach current Q=U32[P+4] virtual+0x18 and
+other external requests. Those targets, storage/lifetime and meanings remain
+unresolved.
+
+Neither complete local body explicitly reads P+64/+116/+120 or J+0. There is
+no selected invocation joining this slot's second argument V to queued E/J,
+or defining a returned payload. Transitive/alias effects remain possible;
+the local absence supplies no actual nonconsumption or release policy. One
+connected queue consumer and received processing remain open.
+
+### Transport constructor context
+
+`transportConstructorContextBoundary` binds `0x82CA07DC`: the selected helper
+stores its retained second argument at P+4, after two opaque helper requests.
+The accepted publication path supplies Q=U32[S+0x18]. This narrows the later
+current Q+0x18 frontier to a retained constructor argument; the word alone
+does not bind Q's table, effects or lifetime. Later initializer/current-call
+retention and any queued-E/received-command identity remain open.
+
+### Transport context-child argument path
+
+`selectedTransportContextChildBoundary` binds the conditional installed
+Q+0x18 method `0x82CA08D8`. It looks up T from Q+4, obtains R through captured
+T-table+0x100, then looks up low32(V) at R+68. The helper's zero or node+12
+word U becomes the second argument to captured-table+0x64; full V is not that
+callback argument. Current registry/map/table/node lifetime remains required.
+
+For an independently retained default child/table, the selected callback
+prefix distinguishes null U and signed U+24 before further requests. No actual
+T=S, queued-E identity, payload ownership or command48 receipt follows.
+The constructor path retains the original thunk/current-state/finite-return
+qualifications.
+
+### Conditional default processing prefix
+
+`selectedTransportDefaultDispatchPrefixBoundary` binds table `0x8215FA78`
+slot `+0xDC` at `0x8215FB54` to `0x82CA58A0`. The selected prefix retains
+full incoming T/U/F, samples key `U32[U+0x8]`, requests the freshly sampled
+current table's `+0x100` target, then passes its return and the cached key to
+the accepted `0x82CA97A8` lookup. Its zero or payload result controls a local
+low32 branch. The prefix does not identify a command or delivered bytes.
+
+Using the accepted default `+0x100` result additionally requires fresh current
+table equality, beyond equality at an earlier `+0xDC` dispatch. Current map,
+sentinel, node, frame and argument retention remain conditions. The selected
+prefix ends at
+the result gate; the separate continuation below retains its exact guards.
+
+`selectedTransportDefaultProcessingRequestBoundary` binds the nonzero
+fallthrough's fresh `+0x118` request at `0x82CA58F8`. It supplies T in r3;
+r4/r5 retain the lookup's actual exit values. It caches `U32[O+0x18]` before
+the request. Only after that unbound target's retained normal return does
+`0x82CA5908` request `0x82E463D0` with the preceding return, U, cached word
+and F. Earlier table equality supplies no later provider identity. Both effects
+and actual received U, `+0x10`
+invocation, command48, K, peer authority and all-pair war remain open.

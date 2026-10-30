@@ -7,14 +7,61 @@
   "image": "image.json",
   "question": "Do the selected terrain-byte, corner-record and height-conversion consumers establish a file-height-sample to native-map coordinate mapping?",
   "scope": {
-    "roots": ["0x82C6E188", "0x82C6E898", "0x82C69850", "0x82C66A80", "0x82C66AC8"],
-    "selectedContinuations": ["0x82C6AEB8", "0x82C675A0", "0x82C6C2E0", "0x82C49768", "0x82C49368", "0x82C48FC8", "0x82C69CA0", "0x822F9E08"],
-    "qualification": "Selected static requests and arithmetic under the original ABI, ordinary helper returns, valid nonalias storage, retained receiver/global identities and nonwrapping arithmetic. Initialized vtable contents do not prove a live mapping. No geometry-provider completion or runtime observation is inferred."
+    "roots": [
+      "0x82C6E188",
+      "0x82C6E898",
+      "0x82C69850",
+      "0x82C66A80",
+      "0x82C66AC8"
+    ],
+    "selectedContinuations": [
+      "0x82C6AEB8",
+      "0x82C675A0",
+      "0x82C6C2E0",
+      "0x82C49768",
+      "0x82C49368",
+      "0x82C48FC8",
+      "0x82C69CA0",
+      "0x822F9E08",
+      "0x8234A668",
+      "0x8234A6E8",
+      "0x821CCF90",
+      "0x821B3F90",
+      "0x8234B528",
+      "0x823550C8",
+      "0x82C48AE8",
+      "0x8250B7C8",
+      "0x821B2440",
+      "0x82515E70",
+      "0x8251DBA8"
+    ],
+    "qualification": "Selected static requests and arithmetic under the original ABI, ordinary helper returns, valid nonalias storage, retained receiver/global identities and nonwrapping arithmetic. Constructed vptr and literal slot contents resolve the selected callback under unchanged mapping; dynamic geometry/material and global-manager receivers remain unbound. No runtime observation is inferred."
   },
   "dependencies": [
-    { "topic": "xbox-map-tile-semantics-boundary", "use": "Native terrain-plane index 40*x+y and file-tile(r,c) to native(x,y)=(r,31-c), for the accepted square32 domain." },
-    { "topic": "xbox-heights-authoring-contract", "use": "Height-image dimensions, extraction row reversal, conditional sample ratios, scale/provider and endian-transfer boundaries." },
-    { "topic": "xbox-dds-map-role-texture-contract", "use": "Height role binding, second row reversal and unsigned16 to float scale expression." }
+    {
+      "topic": "xbox-map-tile-semantics-boundary",
+      "use": "Native terrain-plane index 40*x+y and file-tile(r,c) to native(x,y)=(r,31-c), for the accepted square32 domain."
+    },
+    {
+      "topic": "xbox-heights-authoring-contract",
+      "use": "Height-image dimensions, extraction row reversal, conditional sample ratios, scale/provider and endian-transfer boundaries."
+    },
+    {
+      "topic": "xbox-dds-map-role-texture-contract",
+      "use": "Height role binding, second row reversal and unsigned16 to float scale expression."
+    },
+    {
+      "topic": "nif-scene-transform-contract",
+      "use": "Accepted NiNode table/type identities for the constructed scene callback, separate from native-map axes."
+    },
+    {
+      "topic": "xbox-dds-map-role-consumer-boundary",
+      "use": "The ordinary successful type-7 creation path also uses the refcounted resource wrapper and assignment helpers."
+    },
+    {
+      "topic": "native-renderer-d3d-runtime-surface",
+      "use": "Accepted D3D resource AddRef, type, level-count and level-description helper identities."
+    }
   ],
   "terrainByteAnchor": {
     "copy": "0x82C6AECC..0x82C6AEE0 supplies stride40 and plane0x8312B288. 0x82C6AF08..0x82C6AF18 requests W*D bytes and records the returned base at T+0xF4, with W=s32[T+0x5C], D=s32[T+0x60]. For each admitted row n, 0x82C6AF28..0x82C6AF54 requests W bytes from plane+40*n to base+W*n through 0x827F8550. No row reversal is requested in this prefix.",
@@ -26,30 +73,179 @@
     "neighbors": "For inner i and outer j, the calls0x82C6C394,0x82C6C3B0,0x82C6C3D4,0x82C6C3F8 request terrain-byte lookup at(i-1,j-1),(i,j-1),(i-1,j),(i,j). Boundary values follow the lookup clamps/wrap above. The body forms a classification mask using equality to6 and records each object at T+4's array index j*(W+1)+i. These are terrain-byte neighbors, not16-bit height samples.",
     "coordinateHandoff": "The installed literal table0x82164750 has cell+0xB0 at0x82164800 equal0x82C49768. Call0x82C6C384 supplies i/j to that current slot. Under retained initialized mapping, 0x82C49780/84 stores them at record+0xE8/+0xEC and delegates to0x82C49368,0x82C48FC8 and0x82C62FC0.",
     "products": "0x82C49424..0x82C494AC freshly reads U32[U32[0x8314F288]+0x34], then fields+0x6C/+0x70. It multiplies those by the retained i/j values, applies a shared scalar offset through fused negative multiply/subtract operations and stores float products at record+0x120/+0x124. The global receiver is not proved identical to the original T. These are coordinate-like products, not a proved texture UV or world-unit contract.",
-    "providerFrontier": "0x82C494D8 invokes current virtual+0x8C of a newly constructed transform object. 0x82C48FC8 gathers neighboring records through0x82C67508 and passes constructed records to0x821CCF90 at0x82C49214/0x82C49258, followed by0x82C48AE8. Vertex layout, completion, subsequent UVs and height-resource consumption across those boundaries remain unbound."
+    "providerFrontier": "0x82C494D8 resolves through the constructed NiNode vptr0x8200A7B8 and cell0x8200A844(+0x8C) to0x8234A6E8. This selected target performs reference/collection bookkeeping at receiver+0xB0; it is not an identified q/height sampler. The0x82C49214/0x82C49258 path is a scene traversal with dynamic geometry-property dispatch, detailed in sceneProviderBoundary."
+  },
+  "sceneProviderBoundary": {
+    "constructedCallback": "0x82C49368 allocates208 bytes and calls0x8234A668, which installs NiNode vptr0x8200A7B8. The initialized+0x8C cell0x8200A844 contains0x8234A6E8. At0x82C494D8, r3 is that constructed node, r4 the selected scene object and r5=0. The target retains/releases references and operates on receiver+0xB0. Its bounded body contains no direct converted-height or vertex-stream access; helper descendants are not excluded.",
+    "traversal": "0x821CCF90 tests ancestry against NiGeometry descriptor0x82F8E32C and NiNode descriptor0x82F8E10C through0x821CAA40. Geometry leaves call0x821B3F90(context,geometry). Node recursion uses vector+0xB4 and count+0xBA; these are decimal180/186, not offsets0x180/0x186.",
+    "propertyDispatch": "0x821B3F90 calls0x8234B528(geometry,8). The selector walks geometry+0xA4 linked-list entries and tests each candidate through virtual+0x48. The selected property+0x2C vector/count supplies a context-indexed entry; missing entries request16-byte allocation/initialization. 0x823550C8 replaces the indexed entry and releases the previous entry through its virtual0; that call is cleanup, not an identified q producer. The selected geometry/property identity and current selector target remain unresolved. No direct T+0x24/T+0xB4 sample or vertex-layout access is established in these bodies.",
+    "indexedProvider": "For index i other than14,0x82C48AE8 loads manager=[0x8314F288], table=[manager+0x34], receiver=[table+0x18*i+0x22C], then calls receiver virtual+0x48/+0x4C and stores four float outputs. Index14 uses defaults. The actual index/receiver and initialized targets, their coordinate meaning and same-terrain identity remain unbound.",
+    "axisBoundary": "These continuations resolve scene/property traversal and indexed output dispatch, not the vertex producer for paired-shader input q. Coordinate-like products at record+0x120/+0x124 cannot be equated to q or native(x,y) from this read set."
   },
   "heightPath": {
-    "conversion": "Reuse the accepted H=T+0x24 binding and reverse-row unsigned16 to float conversion in0x82C69850. The queried suffix0x82C69B20..0x82C69BD8 passes the local converted output through0x8250B7C8 and requests attachment through0x821B2440 at destination T+0xB4. Both helper effects and later resource consumption remain premises.",
+    "conversion": "Reuse the accepted H=T+0x24 binding and reverse-row unsigned16-to-float conversion in0x82C69850. At0x82C69BC8,0x8250B7C8 wraps the converted resource; at0x82C69BD4,0x821B2440 assigns its refcounted wrapper to T+0xB4. This is a resource-object attachment, not a raw CPU float-array field. The same owner subsequently reads the field and dispatches a global-manager method, detailed in convertedResourceBoundary.",
     "ordering": "0x82C6EB90 calls corner construction0x82C6C2E0,0x82C6EBA4 calls0x82C69CA0 and0x82C6EBAC calls0x82C69850. Complete selected owner0x82C69CA0..0x82C6A154 prepares transforms/render state and enters0x822F9E08 at0x82C69E6C. Its direct body contains no T+0x24 read, coordinate-leaf call or unsigned16 height sample. Indirect/helper descendants are not excluded by this negative.",
     "ratio": "For retained512 image extents and W=D=32, the existing integer ratios are16 samples per dimension unit. This arithmetic is not an established tile-centre, vertex or shared-edge sampling rule. The corner-record +1 grid does not prove a height-image +1 rule.",
     "coordinateLeaves": "Complete leaves0x82C66A80/0x82C66AC8 convert incoming f1 by the respective ratios involving T+0x70/+0x80 and T+0x6C/+0x7C. The generated/default direct-call search found no direct call to either. Virtual/table/computed callers are not excluded, and no same-T mesh input join is proved."
   },
+  "convertedResourceBoundary": {
+    "assignment": "0x8250B7C8 receives r3=destination holder,r4=context,r5=resource candidate. It allocates a56-byte wrapper through0x825160E8/0x822EFDE8, installs vptr0x82161FF0 and initializes through0x82515E70. 0x821B2440 assigns the holder pointer, decrements/releases the prior destination reference and increments the new object+4 reference count. At the selected call the destination is T+0xB4.",
+    "nestedObject": "0x82515E70 allocates a100-byte nested object initialized by0x8251CD10 and installs final vptr0x82047280. Its virtual+0x58 cell0x820472D8 contains0x8251DBA8. The initializer retains the D3D resource at nested+0x58 and links the nested object through wrapper+0x24/+0x30/+0x34. The RTTI getter0x82353EF0 returns descriptor0x82F8E2B8; no original class name is asserted.",
+    "metadataConsumer": "0x8251DBA8 requests resource level count through0x8269A908 and type through0x826979B8; selected types request texture/volume level descriptions through0x8269AB88/0x8269AAC8. It stores descriptor outputs at nested+0x0C/+0x10 and level count at+0x5C. These are resource metadata operations, not reads of height sample coordinates or mesh vertices.",
+    "immediateConsumer": "0x82C69C48 reads the attached wrapper;0x82C69C6C and0x82C69C94 pass it in r4 to [0x8314F28C] virtual+0xB8. The current initialized manager pointer/vptr and slot target remain unbound. Initial BSS bytes do not prove a runtime receiver.",
+    "interpretation": "The successful ordinary-DDS type-7 path independently uses0x8250B7C8/0x821B2440, and0x82515E70 calls accepted D3DResource AddRef0x82698160. Together with the nested metadata consumer, this identifies a refcounted GPU/resource attachment. Exact shader/surface use and geometry/sample provenance remain open; it is not a proved CPU vertex buffer."
+  },
   "remainingBlockers": [
-    { "question": "Height file row/column to native(x,y), centres, edges and filtering", "address": "0x82C494D8", "needed": "Resolve the retained current transform callback and the0x82C49214/0x82C49258 geometry-provider path through0x821CCF90/0x82C48AE8, with a same-instance join from the T+0xB4 float resource to actual sample coordinates. Do not infer this from corner-record indices." },
-    { "question": "512 samples versus shared height vertices", "address": "0x82C69BD4", "needed": "Bind a geometry or vertex-sampler consumer of the attached converted resource and its coordinate/border/filter inputs. The16 ratio and33 corner-record grid are insufficient." },
-    { "question": "World scale and sea-level sample", "address": "0x82C6E95C", "needed": "Bind actual retained TerrainZScale provider value/units and the sea-surface coordinate to the same geometry/sample path. The dependency's scalar conversion alone supplies neither a sea threshold nor a fixed physical scale." }
+    {
+      "question": "Height file row/column to native(x,y), centres, edges and filtering",
+      "address": "0x82C69C6C",
+      "needed": "Resolve the initialized receiver at0x8314F28C and its current vtable+0xB8 target at0x82C69C6C/0x82C69C94, carrying r4=T+0xB4 wrapper into a concrete coordinate/sample or geometry owner. A registration/binding-only target would still not close the sampling join."
+    },
+    {
+      "question": "Paired vertex q to native axes through scene geometry",
+      "address": "0x821B3F90",
+      "needed": "Identify the selected NiGeometry object and property returned by0x8234B528(geometry,8), including its current+0x48 selector. 0x823550C8 replaces a property entry and releases its prior occupant; its virtual0 is not an identified vertex producer. Independently resolve the index/receiver and current+0x48/+0x4C targets in0x82C48AE8. Join the actual vertex-stream producer to q; the resolved0x8234A6E8 node callback is bookkeeping, not that producer."
+    },
+    {
+      "question": "512 samples versus shared height vertices",
+      "address": "0x82C69C94",
+      "needed": "Bind the attached resource to an actual height sampler with coordinate/border/filter inputs. The16 ratio and33 corner-record grid do not establish centres, shared edges or resampling."
+    },
+    {
+      "question": "World scale and sea-level sample",
+      "address": "0x82C6E95C",
+      "needed": "Bind actual retained TerrainZScale provider value/units and the sea-surface coordinate to the same geometry/sample path. The dependency's scalar conversion alone supplies neither a sea threshold nor a fixed physical scale."
+    }
   ],
   "currentEvidence": {
-    "method": "Serialized foreground read-only function/raw-word queries in the canonical project; every selected raw word compared with the pinned flat image; bounded exact-owner generated corroboration. Decompiler stubs/truncation are not body closure.",
+    "method": "Completed foreground read-only function/raw-word queries in the canonical project; every selected raw word compared with the pinned flat image; bounded exact-owner generated corroboration. Decompiler stubs/truncation are not body closure.",
     "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
     "queryPackets": [
-      { "ranges": ["[0x82C66A80,0x82C66B10)", "[0x82C69850,0x82C69B28)", "[0x82C6E188,0x82C6E358)", "[0x82C6E898,0x82C6EDA0)"], "words": 656, "orderedWordSha256": "48AED2C62DAFFFAD76D2EA250F4E6697CB734F037A647C7AED8E296C688449D4" },
-      { "ranges": ["[0x82C6AEB8,0x82C6AF58)", "[0x82C675A0,0x82C67634)"], "words": 77, "orderedWordSha256": "41E1541B52819A8107004698FD8F99953394A7B7B40F6DBB25C657F539DDCFF8" },
-      { "ranges": ["[0x82C6C2E0,0x82C6C484)", "[0x82C69CA0,0x82C6A158)", "[0x82164800,0x82164804)", "[0x822F9E08,0x822F9EF4)"], "words": 467, "orderedWordSha256": "12B375CD9CC13E30F5BF9FABE0AB5FCBC18E6D74CCFA1422BD65010D164E79E6" },
-      { "ranges": ["[0x82C49768,0x82C4980C)", "[0x82C49368,0x82C4950C)", "[0x82C69B20,0x82C69BDC)", "[0x82C48FC8,0x82C49364)"], "words": 424, "orderedWordSha256": "A270B66D7E27F024239FD8293E5B491947772457EA798134A5811708DA529BD4" }
+      {
+        "ranges": [
+          "[0x82C66A80,0x82C66B10)",
+          "[0x82C69850,0x82C69B28)",
+          "[0x82C6E188,0x82C6E358)",
+          "[0x82C6E898,0x82C6EDA0)"
+        ],
+        "words": 656,
+        "orderedWordSha256": "48AED2C62DAFFFAD76D2EA250F4E6697CB734F037A647C7AED8E296C688449D4"
+      },
+      {
+        "ranges": [
+          "[0x82C6AEB8,0x82C6AF58)",
+          "[0x82C675A0,0x82C67634)"
+        ],
+        "words": 77,
+        "orderedWordSha256": "41E1541B52819A8107004698FD8F99953394A7B7B40F6DBB25C657F539DDCFF8"
+      },
+      {
+        "ranges": [
+          "[0x82C6C2E0,0x82C6C484)",
+          "[0x82C69CA0,0x82C6A158)",
+          "[0x82164800,0x82164804)",
+          "[0x822F9E08,0x822F9EF4)"
+        ],
+        "words": 467,
+        "orderedWordSha256": "12B375CD9CC13E30F5BF9FABE0AB5FCBC18E6D74CCFA1422BD65010D164E79E6"
+      },
+      {
+        "ranges": [
+          "[0x82C49768,0x82C4980C)",
+          "[0x82C49368,0x82C4950C)",
+          "[0x82C69B20,0x82C69BDC)",
+          "[0x82C48FC8,0x82C49364)"
+        ],
+        "words": 424,
+        "orderedWordSha256": "A270B66D7E27F024239FD8293E5B491947772457EA798134A5811708DA529BD4"
+      },
+      {
+        "ranges": [
+          "[0x821CCF90,0x821CD040)",
+          "[0x8250C498,0x8250C840)",
+          "[0x8269AF10,0x8269B090)",
+          "[0x82C48AE8,0x82C48C20)",
+          "[0x82C48FC8,0x82C49510)"
+        ],
+        "words": 790,
+        "orderedWordSha256": "60861C67E1B5DD8AE2B44368EAEFA90878DA9FBF2D9176B1A6CA107C1824C722"
+      },
+      {
+        "ranges": [
+          "[0x8200A7B8,0x8200A850)"
+        ],
+        "words": 38,
+        "orderedWordSha256": "2D7D9DF66E83FF7EA983DF7806538093A75617C389D4440CFD950AC816E8B221"
+      },
+      {
+        "ranges": [
+          "[0x821B3F90,0x821B40B8)",
+          "[0x821CAA40,0x821CAAB0)",
+          "[0x8234A668,0x8234A858)",
+          "[0x8234B528,0x8234B598)",
+          "[0x823550C8,0x823551A8)"
+        ],
+        "words": 310,
+        "orderedWordSha256": "4A6136CA805799BA17A713C6BBD09BCED164433370E75256104DC9FF1D297A1E"
+      },
+      {
+        "ranges": [
+          "[0x821B2440,0x821B2500)",
+          "[0x8250B7C8,0x8250B8B0)"
+        ],
+        "words": 106,
+        "orderedWordSha256": "86E70EB508D55C0841D731BFD0E1937A9FF0588100B8A84C252FFD0E55D18858"
+      },
+      {
+        "ranges": [
+          "[0x82047280,0x820472E4)",
+          "[0x82161FF0,0x82162030)",
+          "[0x822EFDE8,0x822EFE28)",
+          "[0x82515E70,0x82515F40)",
+          "[0x825160E8,0x82516138)",
+          "[0x8251CD10,0x8251CD70)",
+          "[0x82C69BDC,0x82C69CA0)"
+        ],
+        "words": 202,
+        "orderedWordSha256": "81F198D375860094CB05D1DEDAE2A90F14D909FD2873DBC8DE57AC1283B9876F"
+      },
+      {
+        "ranges": [
+          "[0x82353EF0,0x82353F00)",
+          "[0x8251DBA8,0x8251DC80)"
+        ],
+        "words": 58,
+        "orderedWordSha256": "0833AE6FA42272A3EFEA5228C00D302656DCF214FD63A29C646A5AF7E426013E"
+      },
+      {
+        "ranges": [
+          "[0x82C69BB8,0x82C69BDC)"
+        ],
+        "words": 9,
+        "orderedWordSha256": "80F3FCA51508A8657E64A4054807F2733384E662EA05A4BAEB299879297A6CCF"
+      }
     ],
-    "locators": ["ghidra/DumpMemoryWords.java:queryPackets ranges, every aligned word, wordRadius=0", "ghidra/DumpFunctions.java:0x82C66A80,0x82C66AC8,0x82C6E898,0x82C69850,0x82C6E188", "generated:rerevved/sub_82C6AEB8", "generated:rerevved/sub_82C675A0", "generated:rerevved/sub_82C6C2E0", "generated:rerevved/sub_82C49768", "generated:rerevved/sub_82C49368", "generated:rerevved/sub_82C48FC8", "generated:rerevved/sub_82C69CA0", "generated:rerevved/sub_82C69850"],
-    "checks": "All1624 emitted word rows matched the image. Thirteen focused operand assertions and all1024 square32 tile-coordinate cases passed. No runtime, larger-map or native-provider execution is claimed."
+    "locators": [
+      "ghidra/DumpMemoryWords.java:queryPackets ranges, every aligned word, wordRadius=0",
+      "ghidra/DumpFunctions.java:0x82C66A80,0x82C66AC8,0x82C6E898,0x82C69850,0x82C6E188",
+      "generated:rerevved/sub_82C6AEB8",
+      "generated:rerevved/sub_82C675A0",
+      "generated:rerevved/sub_82C6C2E0",
+      "generated:rerevved/sub_82C49768",
+      "generated:rerevved/sub_82C49368",
+      "generated:rerevved/sub_82C48FC8",
+      "generated:rerevved/sub_82C69CA0",
+      "generated:rerevved/sub_82C69850",
+      "ghidra/DumpFunctions.java:0x8234A668,0x8234A6E8,0x821CCF90,0x821B3F90,0x8234B528,0x823550C8,0x821CAA40",
+      "ghidra/DumpFunctions.java:0x8250B7C8,0x821B2440,0x82515E70,0x825160E8,0x8251CD10,0x822EFDE8,0x8251DBA8,0x82353EF0",
+      "generated:rerevved/sub_8234A6E8",
+      "generated:rerevved/sub_821CCF90",
+      "generated:rerevved/sub_821B3F90",
+      "generated:rerevved/sub_82C48AE8",
+      "generated:rerevved/sub_82515E70",
+      "generated:rerevved/sub_8251DBA8"
+    ],
+    "checks": "The original1624 word rows and the additional1513 selected word rows matched the pinned image; overlaps are counted as emitted rows. Original square32 coordinate checks remain separate from the added callback/wrapper/dispatch assertions. No runtime, larger-map or native-provider execution is claimed."
   },
   "guards": [
     "Closed status closes this selected consumer read set, not the named-map authoring recipe.",
@@ -58,5 +254,5 @@
     "Do not treat two row reversals or a scale expression as a world/tile sampling proof.",
     "Generated direct-call absence does not exclude virtual/computed calls."
   ],
-  "conclusion": "The square32 terrain-byte copy/lookup preserves native axes and feeds a33-by33 shared-neighbor corner-record grid. The height conversion attaches a distinct float resource, but no selected consumer joins it to native/world/UV coordinates. Height texture orientation, shared height edges, filtering and sea scale remain bounded by the named transform/geometry-provider and resource-consumer frontiers."
+  "conclusion": "The square32 terrain-byte copy/lookup preserves native axes and feeds a33-by33 classification-neighbor corner grid. The alleged transform callback resolves to NiNode collection bookkeeping; provider continuations resolve to dynamic scene/property and indexed-manager dispatch. Converted heights are retained in a refcounted GPU/resource wrapper with an immediate consumer at global0x8314F28C virtual+0xB8. Neither that current target nor an actual height sampler/vertex producer is joined. Native texture orientation, shared height edges, filtering and sea scale remain open at these precise frontiers."
 }

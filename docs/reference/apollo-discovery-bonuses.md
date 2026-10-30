@@ -59,6 +59,18 @@ the city; it is not the acquisition player. A supported retained city owner
 must supply p for any separate acquisition. No source, phase or enumeration
 was selected.
 
+`completionContinuationGateBoundary` binds the immediate post-helper split.
+Retained Apollo17 bypasses the second mode2 helper request at 0x82D16374
+for either value of the byte gate. After the pending-bit store, 0x82D16388
+reloads the original second entry argument from frame + 0x17C. A nonzero
+word takes the epilogue and original restore leaf to the caller, under intact
+frame/save and valid return-target conditions. Zero instead reloads the saved
+city into r3 and reaches its first further call, 0x82CF1060 at 0x82D163BC.
+Neither immediate path requests acquisition before that boundary. Effects
+inside that helper, an earlier helper or a later/deferred path remain possible.
+The actual caller's argument and any acquisition source/phase policy remain
+unbound; this supplies no completed reward.
+
 For the accepted W0/nonsharing corridor, Irrigation11 supplies one concrete
 conditional witness: an admitted owned city's population7 reaches the byte
 store at0x82D0A3F8 and becomes8, followed by0x82D00C78. This reuses its native

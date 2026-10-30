@@ -1812,7 +1812,7 @@
   "conditionalParticipantProvenanceBoundary": {
     "status": "closed",
     "confidence": "strong",
-    "question": "Which selected local producers replace opaque table/candidate/index/mask premises before the first unqueried helper?",
+    "question": "Which selected local producers replace opaque table/candidate/index/mask premises before the first helper call?",
     "scope": {
       "selectedOwner": "0x82D66178",
       "selectedCodeWords": 84,
@@ -1851,11 +1851,11 @@
       "candidateSelection": "At 0x82D66598, zero frame + 80 selects r21 = P0 and r19 = N0; nonzero selects r21 = P1 and r19 = N1. Frame + 324/+332 receive the other P/N pair. The selected index is I = low32(((r21 << 8) & 0xFFFFFF00) + r19); r18 = low32(84*I), and r22 is initialized to zero.",
       "flagAndLocalRecord": "The signed byte at low32(U + 4 + 84*I) derives count 3 when zero or 9 otherwise. Both are positive, so the selected initial nonpositive-count exit is excluded under valid instruction completion. The local halfword-record pointer becomes low32(V + 40 + 292*I). Each reached prefix requests 0xFFFF at its current pointer + 18 and zero at +180. These records are not assigned outcome or persistence meaning.",
       "maskSource": "Let D = U32BE[frame + 88], type = S8[low32(U + 1 + 84*I)] and B = S8[low32(D + 72 + 148*type)] as a low32 sign-extended word. The current signed unit + 4 sample controls expansion: zero gives r25 = B; nonzero gives low32(B | (B << 3) | (B << 6)). Negative type values address before D + 72 and require valid backing. Negative B contributes sign-extension bits; B is not silently restricted to 0..7 or called a positive count. Actual definition-table identity remains a D input premise.",
-      "nativeBitAndHelperGate": "At 0x82D66670, r27 is native slw(1, r22): it is zero when low6(r22) has bit 5 set, otherwise 1 << low5(r22). The freshly selected current T - 620/-624 word supplies the processed-mask sample. A set processed bit skips to 0x82D66A9C; a clear processed bit with clear r25 bit also skips. Only a clear processed bit and set r25 bit reach 0x82D66690. The unqueried generated call there names 0x82D5CC98; its native call word, effects and return are outside these 84 words.",
+      "nativeBitAndHelperGate": "At 0x82D66670, r27 is native slw(1, r22): it is zero when low6(r22) has bit 5 set, otherwise 1 << low5(r22). The freshly selected current T - 620/-624 word supplies the processed-mask sample. A set processed bit skips to 0x82D66A9C; a clear processed bit with clear r25 bit also skips. Only a clear processed bit and set r25 bit reach 0x82D66690. conditionalParticipantHelperContinuationBoundary separately binds its native call to 0x82D5CC98 and the selected local continuation; those words remain outside this 84-word producer packet.",
       "dynamicTail": "At separately reached 0x82D66A9C, sample the current signed byte through r18 + r14, increment low32 r22 by 1 and r29 by 2, derive a fresh count 3/9, then branch to 0x82D66610 exactly when the incremented index is signed-less-than that count. Otherwise reach 0x82D66ACC. Negative or wrapped supplied indices can satisfy this test, so the count alone establishes no input domain.",
       "selectedLoopInduction": "Starting at the selected zero initializer and following only the selected skip/tail/backedges, each reached bit site has r22 in 0..8 and r27 = 1 << r22, with at most 9 bit sites before the first helper frontier or inner exit. The base is zero, each selected tail increments once, and every fresh bound is at most 9; after index 8 the incremented 9 cannot pass. A changing current flag can extend a prior count 3 to 9 or shrink 9 to 3. This local induction stops at the first helper and proves no posthelper iteration domain."
     },
-    "compositionBoundary": "The local bands replace opaque register premises only at their own reached outputs. To adopt them at conditionalParticipantFieldRequestBoundary, establish retained U/T/P/N/frame/mask generation, exact inter-band execution and ordered continuation from the first helper through the reached 0x82D66778 consumer. Normal ABI nonvolatile retention alone does not prove the helper's memory effects, branch admission or current field identity. The accepted 52-word request and earlier 16-word paired-buffer reader remain separate components.",
+    "compositionBoundary": "The local bands replace opaque register premises only at their own reached outputs. To adopt them at conditionalParticipantFieldRequestBoundary, establish retained U/T/P/N/frame/mask generation and exact inter-band execution. conditionalParticipantHelperContinuationBoundary closes the first leaf helper and one selected continuation to the next helper at 0x82D66744, whose effects/return and postcall signed comparison remain the consumer-admission gate. Normal ABI nonvolatile retention alone does not prove that helper's memory effects or current field identity. The accepted 52-word request and earlier 16-word paired-buffer reader remain separate components.",
     "remainingBoundary": "Actual caller/current provider, current 0x82D66C18 target, reader/copy-to-consumer order and same-byte generation, actual participant identity/lifetime, current definition-table mapping and later persistence remain open. No first-resolver-array, winner, damage, experience, whole-battle distribution or save/reload theorem is added.",
     "falsification": "Changed signed forms, carry sequence, branch polarity/target, candidate/mask operands, native shift, stride, field offsets or loop increment defeat the affected local contract. Unretained frame+80, aliased record/definition storage, changed generations or arbitrary entry indices defeat the corresponding coherence or bounded-domain claim.",
     "currentEvidence": {
@@ -1902,6 +1902,91 @@
         ]
       },
       "qualification": "Finite supplied inputs and static local contracts, with all selected words pinned-image equal. No runtime or natural-reachability result."
+    }
+  },
+  "conditionalParticipantHelperContinuationBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "Does the native first helper preserve the participant-consumer inputs, and where does its selected continuation next require unresolved effects or a return?",
+    "scope": {
+      "selectedOwners": [
+        "0x82D66178",
+        "0x82D5CC98"
+      ],
+      "bandsHalfOpen": [
+        [
+          "0x82D5CC98",
+          "0x82D5CD6C"
+        ],
+        [
+          "0x82D66690",
+          "0x82D66778"
+        ]
+      ],
+      "selectedCodeWords": 82,
+      "selectedDataWords": 29,
+      "qualification": "One direct leaf callee, its embedded branch table, and the same-owner local continuation. The second helper call word is selected; its body is not. Existing producer, paired-buffer reader and 52-word consumer remain separate accepted read sets."
+    },
+    "guards": [
+      "Use the supported image, retained selected helper code/table, valid ordinary byte-addressed backing, native low32 addresses and normal instruction completion. Protect later source samples from the local halfword store and from external/reentrant writes when asserting unchanged values.",
+      "At 0x82D66690, incoming low32 r3 is t and low32 r26 is R. Composing the accepted producer additionally requires ordered retention of its signed unit-type byte in r3, r22 index, r25 mask, r27 bit, r29 pointer and the other current table/candidate/frame inputs. Its pre-first-helper index bound 0..8 is reused only with that producer's initializer/skip-loop guards.",
+      "The selected corridor samples global word 0x82FFE7C4 with bit 0x4 set. This bypasses the optional floating-point update at 0x82D666DC..0x82D6672C; no equivalent memory-effect or numeric contract is asserted for that arm.",
+      "Any post-second-helper statement requires its normal native ABI return, nonvolatile r1/r16/r17/r19/r20/r21/r22/r25/r26/r27/r29/r31 retention and valid current memory. Preservation of earlier cell/mask/table/participant generations additionally requires explicit exclusion of that helper's aliases and memory effects; ABI retention alone is insufficient."
+    ],
+    "localContracts": {
+      "firstCallAndLeaf": "The native linked branch at 0x82D66690 selects 0x82D5CC98. Its unsigned low32 input test defaults when t > 28; otherwise the 29 current table cells in [0x82D5CCB8,0x82D5CD2C) select eight local immediate-return blocks. Every selected edge ends in blr, with no store or nested call. The helper assigns only r0/r3/r12, CR6 and CTR, preserving the other GPRs and memory; the linked call supplies the return LR. No configured body extent or caller census is inferred.",
+      "scalarReturn": "Let H be the returned low32 scalar. All selected branches give 40 <= H <= 100; signed-negative unit-byte inputs take the unsigned default. The accepted type16 input returns 75. H is assigned no recovered gameplay meaning.",
+      "firstLocalStore": "0x82D66694..0x82D666C8 derives denominator 95 when low32 r22 is zero, otherwise 100, and requests U16BE[low32(r29 + 18)] = trunc(250*H/denominator). The numerator is positive and at most 25000, the quotient lies 100..263, and the two subsequent native trap conditions are false for these returned values. Type16 therefore requests 197 for index zero or 187 for a nonzero index. This local halfword is distinct from the later table-relative +0x52 stores.",
+      "selectedSecondCallInput": "The sampled global bit 0x4 selects 0x82D666D8 -> 0x82D66730. Before the next call, the only selected memory write after the first helper is the r29 + 18 halfword. The second native linked branch at 0x82D66744 selects 0x82D5E568 with r3 = r21, r4 = r19, r5 = sign-extended current U16BE[r29], and r6 = -1. Its return and memory effects remain unbound; no store-free continuation through it is claimed.",
+      "conditionalPostcallAdmission": "If that helper returns under the stated retention conditions, 0x82D66748..0x82D66760 samples A = U32BE[low32(r20 + 4 + 4*low32(73*r16 + r22))] and branches to 0x82D66778 exactly when signed32(A) >= signed32(returned r3). A signed-less sample exits the selected corridor: current R + 40 != -1 selects 0x82D66A94; equality selects 0x82D66854. Neither less arm admits the accepted 52-word consumer. Its own cell equality/high-halfword/status/mask guards still apply after admission."
+    },
+    "stopGate": "Next bind the exact 0x82D5E568 invocation's returned scalar and effects, including retained matrix/cell/mask/table storage, then discriminate the signed comparison at 0x82D6675C. No actual second-helper result, same-generation consumer admission or +0x52 store is derived by supplying an opaque return.",
+    "remainingBoundary": "Current caller and 0x82D66C18 dispatch, actual definition-table mapping, paired-buffer copy/reader-to-consumer order and byte generation, actual participant identities/lifetime, first-resolver-array identity and later persistence remain open. The local store and bounded leaf add no winner, damage, experience, complete battle, distribution or save/reload theorem.",
+    "falsification": "A changed linked target, unsigned range test, table cell, local return, numerator/divisor/carry/shift, store width/offset, global branch or signed postcall comparison defeats the affected contract. Unretained code/table, destructive aliases, changed generations or abnormal second-helper return defeat the corresponding composition.",
+    "currentEvidence": {
+      "method": "Serialized foreground read-only ghidra/DumpMemoryWords.java radius0, pinned-flat-image comparison, independent Capstone PPC64 big-endian instruction/operand decoding against exact-owner generated comments, branch-table comparison and finite arithmetic/control checks.",
+      "querySha256": "3AA88FE18D88CD894F899CBD45989ADE5BCC86A91BDC061827EEC3B6AE8E2D5C",
+      "orderedWordBytesSha256": "EEC5E9B6C181639ED1307A9EBB9AA5A59A135FE9CBDB35373F4FD86352F03449",
+      "nativeOperandMatches": 82,
+      "branchTableCellsMatched": 29,
+      "fileMismatches": 0,
+      "arithmeticCases": 3840,
+      "signedComparisonCases": 75,
+      "instructionMutationsDetected": 12,
+      "tableMutationsDetected": 3,
+      "checks": "All256 signed type bytes with15 zero/nonzero/index-boundary aliases, native carry/denominator/quotient/trap conditions, signed matrix/return extremes and three R+40 alternatives; linked-target, range/shift/load/return, arithmetic/store, global-gate, argument and comparison mutations. No optional floating-arm or second-helper model.",
+      "generated": {
+        "digestConvention": "UTF-8 owner header through line before next header, LF with final LF; identity does not imply every owner line was interpreted.",
+        "owners": [
+          {
+            "owner": "0x82D5CC98",
+            "path": "rerevved:generated/default/rerevved_recomp.146.cpp",
+            "headerLine": 31007,
+            "nextHeaderLine": 31128,
+            "ownerSpanSha256Lf": "E4DD6D24710FDA52FB18391DCD7EC83F14A91A743E7B596C755FECDF62A7D744",
+            "windowsInclusive": [
+              [
+                31007,
+                31127
+              ]
+            ]
+          },
+          {
+            "owner": "0x82D66178",
+            "path": "rerevved:generated/default/rerevved_recomp.95.cpp",
+            "headerLine": 30471,
+            "nextHeaderLine": 31810,
+            "ownerSpanSha256Lf": "F47609962D16C8AC3DE5F1753916AC328A609E8BBEAB464D1C895A9E0CF732B0",
+            "windowsInclusive": [
+              [
+                31179,
+                31302
+              ]
+            ]
+          }
+        ]
+      },
+      "qualification": "111 selected query words are image-equal; the query digest also covers an unrelated disjoint read set. Exact-owner generated identity and selected leaf graph do not establish native whole-owner extent, caller inventory, natural execution or runtime behavior."
     }
   },
   "conditionalParticipantFieldRequestBoundary": {

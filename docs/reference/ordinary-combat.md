@@ -270,9 +270,21 @@ a signed definition-byte mask and native `slw` bit. The selected zero-initialize
 and skip-loop paths bound the bit index to 0..8 before their first helper;
 an independently reached shift or loop tail has no such bound. The mask can
 expand into three shifted copies, with sign-extension bits retained for a
-negative source byte. Current definition-table identity, inter-band retention
-and the unqueried `0x82D66690` helper-to-consumer continuation remain open;
-these producers do not join the earlier reader.
+negative source byte. Current definition-table identity and inter-band retention
+remain open; these producers do not join the earlier reader.
+
+`conditionalParticipantHelperContinuationBoundary` binds native
+`0x82D66690 -> 0x82D5CC98` to a bounded leaf with no stores or nested calls.
+Its current 29-cell branch table selects eight local returns, each between
+40 and 100. The continuation writes a local halfword at `r29 + 18` using
+`trunc(250*return/denominator)`, with denominator 95 for zero index and 100
+otherwise. This is separate from the later `+0x52` stores. With sampled global
+`0x82FFE7C4` bit `0x4` set, the optional floating update is bypassed and control
+reaches `0x82D66744 -> 0x82D5E568`. That helper's return and memory effects
+remain the exact stop gate. On a normal retained return, the subsequent signed
+matrix-sample/return comparison admits `0x82D66778` only when the sample is at
+least the return. Its cell/mask/status guards still apply. No same-generation
+reader-to-consumer or participant-persistence join follows.
 
 Preserve presentation/pump/completion:
 [combat lifecycle](../../manifests/combat-resolution-lifecycle.json) observed

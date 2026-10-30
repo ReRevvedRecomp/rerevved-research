@@ -46,6 +46,38 @@ Runtime observations: turn 61 -> 1025 AD; 62 -> 1050 AD. No universal formatter
 is identified. Separate BC/AD/year-zero strings exist, but final year-zero
 wording remains unknown. Do not derive era and year from each other.
 
+## Deadline admission
+
+Victory evaluator `0x82D10FD8` has a separate deadline arm at
+`0x82D11378..0x82D11438`. Its local admission requires:
+
+- Signed current year >=2100.
+- The selected player's unsigned ranking halfword at
+  `0x830E9200+32*p` equals zero, under retained loop/frame state.
+- Scenario word `0x8312B8D4` equals exactly -1, or signed low32
+  `currentTurn-startTurn` >=200.
+
+Admission requests `0x82D02AB8(p,1)`, the shared result writer also used by
+ordinary Domination. Its initial stores publish player rank/type and sampled
+turn/year in the result block. The deadline has its own admission; the ordinary
+palace-based Domination condition retains its elapsed-ten-turn and
+enabled-victory gates. Earlier victories and evaluator/iteration guards still
+apply. A preceding warning tests year2090 or scenario elapsed195 separately.
+
+The converter yields turn192=2098, turn193=2100 and turn194=2102. These are
+static arithmetic witnesses, not observed endgame dates. The deadline consumes
+calendar state; changing displayed dates alone does not establish more play.
+
+The smallest candidate policy changes only this deadline admission and retains
+its bypass to `0x82D1143C`. A higher cap and unlimited turns remain unselected.
+Other victories, shared result handling and ordinary calendar/turn flow must
+remain intact. Warning policy, current rank/calendar/scenario retention,
+callback effects, peer compatibility and save/load of a continued game remain
+requirements. The first selected post-result virtual request at `0x82D113F0`
+uses current object `0x8314F76C` slot `+0x1C4`; its actual target and effects
+remain unresolved. These local predicates and stores do not prove a completed
+game ending or continued play.
+
 ## Evidence boundaries
 
 - Dataflow establishes no cadence, sole/save/load ownership or complete side effects.
@@ -56,6 +88,7 @@ wording remains unknown. Do not derive era and year from each other.
 ## Evidence sources
 
 - [Game calendar state](../../manifests/game-calendar-state.json)
+- [Game turn-limit boundary](../../manifests/game-turn-limit-boundary.json)
 - [City yield scheduling
   producers](../../manifests/city-yield-scheduling-producer-boundary.json)
 - [Civilization Unique Ability storage](../../manifests/civilization-bonus-storage.json)

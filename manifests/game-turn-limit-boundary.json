@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0380",
+  "topic": "game-turn-limit-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which selected native deadline predicate requests a victory result separately from ordinary victory conditions, and what limits a candidate extension?",
+  "scope": {
+    "evaluator": "0x82D10FD8",
+    "deadline": "0x82D11378..0x82D11438",
+    "resultPrefix": "0x82D02AB8..0x82D02B2C",
+    "directExpansionCount": 1,
+    "boundary": "Exact evaluator entry, rank-pointer setup and loop advance, deadline admission and immediate continuation, plus the shared result writer's initial stores. Result-writer completion, selected callback implementations, exhaustive deadline/writer coverage and runtime ending are outside this bound."
+  },
+  "dependencies": [
+    {
+      "topic": "game-calendar-state",
+      "use": "Current turn/year scalars, native converter and selected transition producer."
+    },
+    {
+      "topic": "ai-civilization-elimination-boundary",
+      "use": "Separate ordinary Domination palace and elapsed-ten-turn conditions."
+    },
+    {
+      "topic": "city-yield-ranking-table-boundary",
+      "use": "Zero-based ordinal producer and conditional transfer of the stride-32 ranking table; current rank freshness remains separate."
+    },
+    {
+      "topic": "xbox-live-mode-entry-invite-contract",
+      "use": "Identity of 0x8312B8D4 as the selected scenario identifier, including the exact -1 sentinel; no current runtime value is inferred."
+    }
+  ],
+  "deadlinePredicate": {
+    "year": "0x82D1137C reads signed32 current year 0x8312B8E0. Compare 0x82D11380 and branch 0x82D11384 bypass this arm to 0x82D1143C when year<2100; equality and larger signed years continue.",
+    "rank": "0x82D11388..0x82D11394 requires unsigned16[Q]==0. Selected setup 0x82D110B8/0x82D110CC supplies frame+0x78 with Q=0x830E9200; 0x82D11710..0x82D11730 advances Q by32 with the player loop. Under retained loop/frame state, Q=0x830E9200+32*p. The accepted ordinal producer gives this column a zero-based rank role, not a calendar or elapsed-turn role.",
+    "scenario": "The sampled 0x8312B8D4 word reaches 0x82D11398. Exactly 0xFFFFFFFF bypasses the elapsed check. Every other value requires signed32(currentTurn-startTurn)>=200 at 0x82D113A0..0x82D113B0, using 0x8312B8DC and 0x8312B8D8. The subtraction is native low32 arithmetic, followed by a signed compare.",
+    "request": "If all three local gates pass, 0x82D113B4..0x82D113BC requests 0x82D02AB8(p,1). This arm does not locally call victory-setting helper 0x82CEEA50(1), which gates the separate ordinary Domination arm.",
+    "entryAndIteration": "The evaluator first bypasses work when 0x82FFE7C4 bit0x80 is set, and returns1 when sampled byte 0x8314EF9F is nonzero. A positive player count is required for the loop, which skips the sampled barbarian ordinal. Earlier victory arms, helpers and callbacks can prevent a selected iteration from reaching this deadline. These local guards do not establish active membership or invocation cadence.",
+    "warning": "The preceding local-player warning arm tests year==2090 with scenario==-1, or elapsed==195 with scenario!=-1. It is separate from the deadline admission and is not a completion or deadline-setting producer."
+  },
+  "inputAndResultBoundary": {
+    "calendarProducer": "The accepted transition 0x82D1EAB0 increments 0x8312B8DC, calls converter 0x82CEFA20 and stores 0x8312B8E0. No deadline literal or replacement value is supplied by that converter. Coherent values and retained publication to this evaluator remain necessary.",
+    "localStores": "With valid p and ordinary prefix completion, 0x82D02AF4 stores rank1 at 0x83122898+4*p and 0x82D02AFC stores supplied type1 at 0x831228B8+4*p. Stores 0x82D02B08/0x82D02B10 snapshot the sampled turn/year at 0x831228DC/0x831228E0. The following bounded loop copies eight score words into the result block. These stores precede later result-writer helpers and do not certify its completed return or a visible game ending.",
+    "continuation": "After the result request and conditional local-player helper, 0x82D113F0 requests the current slot+0x1C4 through the object at 0x8314F76C. Requests through its freshly read slot+0x80 follow at 0x82D1140C and 0x82D11428. Installed targets, helper returns, object/frame retention and delivered effects are unresolved. The later flag-bit0x80 test can return1 or continue to the next victory arm.",
+    "nextDiscriminator": "For a reached deadline iteration, bind the original p, sampled year/rank/scenario/turn/start, completed 0x82D02AB8 return and actual current 0x8314F76C/table/slot+0x1C4 at 0x82D113F0. A prefix write or a configured callback address alone does not establish ending or continued play."
+  },
+  "candidateIntervention": {
+    "smallestScope": "A candidate policy can change only this deadline arm's admission, with its bypass destination 0x82D1143C, while preserving the other evaluator arms. A higher threshold and disabling this deadline remain unselected alternatives; no replacement value or implementation is chosen.",
+    "preservation": "Keep ordinary palace-based Domination and its elapsed-ten-turn/enabled-victory gates, the other victory conditions, shared result writer, native calendar conversion, ordinary turn-transition flow and peer-authoritative state consistent. Changing the converter, shared result writer or all type1 results would affect separate behavior.",
+    "remainingRequirements": "The separate warning needs an explicit policy decision if the deadline changes. Actual evaluator dispatch, coherent calendar/rank/scenario inputs, helper/callback retention, other ending paths, supported arithmetic domains, save/load persistence of a continued game and peer compatibility remain requirements. Static evidence here proves no complete feature or retention theorem."
+  },
+  "checks": {
+    "predicateWitnesses": "Twelve static cases cover years below/at/above 2100, zero/nonzero/0xFFFF rank, exact -1 versus other scenario values, elapsed 199/200/201, a signed-negative year and native wrapped signed subtraction. The zero-rank and sentinel conditions cannot be dropped.",
+    "calendarWitnesses": "Replaying the accepted converter yields turn192=2098, turn193=2100 and turn194=2102. This is arithmetic corroboration, not observed play at those dates. The separate scenario elapsed200 gate must not be substituted for this turn193 calendar crossing.",
+    "aliasQualification": "The rank formula requires the selected frame+0x78 base, successive +32 advances, retained p and valid backing. Helper or computed alias writes can invalidate that mapping or freshness; numeral equality alone does not establish the same generation. Result-block stores also require valid nonaliasing player/index/frame state."
+  },
+  "currentEvidence": {
+    "method": "Serialized foreground read-only Ghidra function metadata and radius-zero native word queries, independent supported-flat-image hash/word comparison and operand decoding, narrow exact-owner generated corroboration and static arithmetic checks.",
+    "nativeWindows": [
+      "0x82D10FD8..0x82D1102C",
+      "0x82D1107C..0x82D1115C",
+      "0x82D11304..0x82D11438",
+      "0x82D11708..0x82D11740",
+      "0x82D02AB8..0x82D02B2C"
+    ],
+    "verification": "All 202 queried words in these windows matched the flat image pinned by image.json. The loop-entry read supplied four words at 0x82D11150..0x82D1115C; the other windows supplied 198 words. Independent opcode/register/immediate/branch assertions checked 31 critical native words against the flat image. They checked signed year/elapsed compares, unsigned rank load/compare, exact sentinel branch, rank-pointer setup/advance, barbarian exclusion, result request and initial result/snapshot stores. Twelve predicate cases and three converter witnesses passed.",
+    "scripts": [
+      "ghidra/DumpFunctions.java",
+      "ghidra/DumpMemoryWords.java"
+    ],
+    "generatedCorroboration": [
+      "generated:rerevved/sub_82D10FD8:0x82D10FD8..0x82D11170,0x82D11304..0x82D1143C,0x82D11708..0x82D11750",
+      "generated:rerevved/sub_82D02AB8:0x82D02AB8..0x82D02B2C",
+      "generated:rerevved/sub_82D1EAB0:0x82D1EC3C..0x82D1EC50",
+      "generated:rerevved/sub_82CEFA20:0x82CEFA20..0x82CEFA9C"
+    ],
+    "qualification": "The configured Ghidra models truncate the evaluator and result writer after save-register thunks. Their metadata identifies entries only; native words and narrow generated windows support the stated local contracts, not complete function closure. No new runtime observation was made."
+  },
+  "guards": [
+    "A native year>=2100 arm is supported independently of any reported playthrough; the report alone does not establish the owner's executed path.",
+    "Do not conflate displayed calendar progression, scenario elapsed turns, ranking freshness or the ordinary Domination minimum with this deadline predicate.",
+    "No complete game-ending, sole deadline, successful dispatch, save/load, multiplayer or unlimited-turn result follows from these static windows.",
+    "Runtime acceptance must cover play before, at and beyond the previous deadline, unchanged ordinary victories, and reload/resumption of the continued game."
+  ],
+  "conclusion": "The selected evaluator has a separate deadline result request: signed currentYear>=2100, selected player's zero ranking halfword, and either scenario==-1 or signed elapsedTurns>=200. It requests the same type1 result writer used by ordinary Domination, through a distinct admission arm. This is a bounded intervention candidate; actual ending/continuation, current dispatch, retention and persistence remain unproved."
+}

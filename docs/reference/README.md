@@ -32,7 +32,7 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 - [Resource density and placement](resource-placement.md) - presence, Settler coordinates, Iron and refresh/placement limits.
 - [Save storage and slot identity](save-storage.md) - filenames, namespaces and sidecar seams.
 - [Game calendar state](game-calendar.md) - turn/year conversion, transitions,
-  and presentation limits.
+  deadline admission and presentation limits.
 - [Game of the Week seed selection](game-of-the-week.md) - weekly/manual inputs, replay and result isolation.
 
 ## Frontend, content, and rendering

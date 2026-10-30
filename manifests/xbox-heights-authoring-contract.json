@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0376",
+  "topic": "xbox-heights-authoring-contract",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which source encoding, image geometry, sample step and numeric scale can a named-map heights DDS writer select without assuming that a 32-by-32 tile map is a 32-by-32 height image?",
+  "scope": {
+    "boundary": "Selected ordinary 2D same-format DDS creation, level-zero extraction, terrain ratios and scalar height-image preprocessing, plus read-only observations of retail numbered-map files. Current provider identity, complete sample-byte transfer, opaque helper effects and world-coordinate sampling remain explicit premises or frontiers.",
+    "qualification": "Accepted static claims mean bounded arithmetic or selected field requests for the supported image, conditional on the original save/restore ABI, normal helper return, valid storage, retained inputs and the stated nonalias/effect conditions. Retail observations have their own scope and do not prove a mandatory format, successful runtime loading or a complete named-map authoring profile."
+  },
+  "dependencies": [
+    { "topic": "xbox-dds-map-role-texture-contract", "use": "Classic header parsing, ordinary linear payload, equal-region byte-preserving copy, default output sizing/counts and the bound BE16 CPU reader.", "locators": ["xbox-dds-map-role-texture-contract.json#/ordinaryHeader", "xbox-dds-map-role-texture-contract.json#/ordinaryPayload", "xbox-dds-map-role-texture-contract.json#/dimensionsAndMips", "xbox-dds-map-role-texture-contract.json#/heightCpuConsumption"] },
+    { "topic": "xbox-dds-map-role-consumer-boundary", "use": "Named height role ingress and the separate type7 cold-creation frontier." },
+    { "topic": "xbox-map-tile-semantics-boundary", "use": "The map tile record and its orientation are separate from a height-image sample domain." },
+    { "topic": "game-of-the-week-local-generation", "use": "The existing configuration publisher/current-target frontier prevents treating a statically published default provider as the actual current provider.", "locators": ["game-of-the-week-local-generation.json#/configurationTargetBindingBoundary", "game-of-the-week-local-generation.json#/configurationPublisherBoundary"] }
+  ],
+  "sourceFormat": {
+    "verdict": "accepted",
+    "descriptor": { "address": "0x82F1896C", "zeroBasedIndex": 15, "tableEntries": 39, "word": "0x28000158", "parsedWord": "0x28000058" },
+    "uniqueness": "Of the 39 format words at 0x82F18750 with stride 36, exactly this entry equals 0x28000058 after clearing layout bit 0x100; exactly this entry also matches the copy admission mask that clears 0x1C0. This does not exclude conversion from other descriptors.",
+    "canonicalPixelFormat": { "size": 32, "flags": "0x20000", "fourCC": 0, "bitCount": 16, "redMask": "0xFFFF", "greenMask": 0, "blueMask": 0, "alphaMask": 0 },
+    "predicateQualification": "At sub_82584F48:0x82585034..0x8258515C, flags 0x20000 activates red-mask equality but not the file bit-count or unused mask equalities; see xbox-dds-map-role-texture-contract.json#/formatMapping/comparison. Bit count 16 and the zero unused fields are canonical writer choices matching the descriptor, rather than additional admission checks.",
+    "payload": {
+      "verdict": "open",
+      "acceptedLayout": "The selected ordinary single-level 2D source record has 2*W tightly packed bytes per row beginning at file+128. Header words are little-endian. Do not pre-tile or pad source rows to the native lock pitch.",
+      "fileSampleOrder": "The retail LE16 observation is recorded at #/retailObservedProfile. The complete file-to-CPU representation change is not bound. Neither an accepted BE16-in-file prescription nor a closed static LE16 transfer contract follows from the selected row-copy operation.",
+      "copyBoundary": "0x8258AC18 creates destination from incoming r4 and source from incoming r5. After 0x8258BB50 at 0x8258ACA0, it tries 0x82587F60 at 0x8258ACB0. Equal regions/formats modulo 0x1C0 admit a byte-preserving row copy through 0x827F8550; that local operation does not establish unchanged bytes across surrounding helpers.",
+      "formatAndObjects": "0x82596178 masks 0x1C0; both selected source/output words choose the 0x82596738 arm, bpp 16, kind 1 and vtable 0x8205C1D0. Base 0x8258B880 clears only 0x100 from the record format and retains 0xC0; interior 0x8258B928 publishes nonzero-bpp and two-byte stride fields. The preserved numeric field is not by itself proof of a byte swap.",
+      "uploadAndLock": "Ordinary upload 0x82579294..0x82579394 preserves the incoming source pointer and 0xC0 field in its source record and passes destination/source to 0x8258AC18. With selected flags 0, lock wrapper 0x8258B038 calls 0x8269AE80 at 0x8258B424 and publishes the returned pointer/pitch. Thin wrapper 0x8269AE80 forwards to 0x8269A238; the complete resource-lock representation transfer remains open.",
+      "objectRelease": "Vtable slot 0 at 0x8205C1D0 targets scalar-deleting destructor 0x825960D8, which calls 0x8258BAF8 and frees through 0x82E29160 when incoming r4&1. Calls at 0x8258AD78/0x8258AD9C pass r4=1 and then clear converter+4/+0 respectively, releasing the two conversion objects.",
+      "swapFrontiers": [
+        "Parser/preprocessing effects before the incoming upload pointer; record construction alone does not close payload-byte transfer.",
+        "Resource lock path 0x8269AE80 -> 0x8269A238 and cleanup 0x8258AED8, reached by tail thunk 0x8258B030."
+      ],
+      "qualification": "Selected helpers require retained source/destination/resource/stack cells, ordinary returns and the original ABI. The CPU reader independently consumes unsigned BE16. No evidence requires writer processing beyond mirroring the observed retail layout."
+    },
+    "otherConversions": { "verdict": "open", "boundary": "The fallback conversions after 0x8258AC18's first same-format attempt are not closed. Descriptor membership alone proves neither successful conversion nor its channel/byte-order rule." }
+  },
+  "dimensions": {
+    "verdict": "open",
+    "acceptedRatios": "0x82C6E2F8..0x82C6E304 stores qW=trunc_s32(W/T) at terrain+0x7C, with W=s32(H+8) and T=s32(terrain+0x5C). 0x82C6E320..0x82C6E32C similarly stores qV=trunc_s32(V/U) at +0x80, with V=s32(H+4) and U=s32(terrain+0x60). Half-ratios are stored at +0x4C/+0x50.",
+    "localGuards": "0x82C6E2F0/0x82C6E2F4 trap only zero unsigned denominators. 0x82C6E31C/0x82C6E348 trap unsigned 0xFFFFFFFF after their selected operations; these instructions are not divisibility, positive-domain or power-of-two validation.",
+    "laterConstraint": "On the reached selected arm of 0x82C6E898, after its preceding helpers, 0x82C6EC1C..0x82C6EC84 derives s=trunc_s32(qW/8) and traps when s is zero before divisions. With positive retained W,T and retained qW, W>=8*T is necessary. If T is 32 this gives W>=256, not a proof of a unique required size or a globally safe minimum.",
+    "sampleDomain": "0x82C69868..0x82C69B1C traverses zero-based row and column over positive H dimensions and writes scalar floats at outData+4*(trunc_s32(outPitch/4)*row+column). Its BE16 sample address is H.buffer+(V-1-row)*H.pitch+column*H.step. The earlier extraction reversal and this reversal cancel for the selected source-row association; no world axis or tile-edge convention follows.",
+    "coordinateHelpers": "0x82C66A80 and 0x82C66AC8 compute integer conversions of float inputs divided by ratios derived from terrain+0x70/+0x80 and +0x6C/+0x7C respectively. Their selected expressions do not bind an actual same-terrain world-height caller or endpoint convention.",
+    "fieldProducerFrontier": "At reached 0x82C6BCCC, the prefix through 0x82C6BD54 stores incoming r6, r7, r4 and r5 to receiver+0x5C, +0x60, +0x6C and +0x70 respectively, without an intervening call. In reused caller 0x82C7E128, 0x82C7E5C4..0x82C7E5E4 requests four outputs through current-global 0x8314F28C virtual+0x6C, with r4, r5, r6 and r7 pointing to SP+88, +84, +80 and +92. After intervening helpers, 0x82C7E6F0..0x82C7E700 reloads these in the constructor's order. If the provider initializes those four cells and their words survive the intervening calls, the fields receive those four provider-written words in order. Actual provider writes remain unproved. 0x82C7E70C publishes the constructor return to wrapper+0x34; return identity and retention through the unqueried constructor remainder remain premises. Neither a literal 32 value nor physical semantics is established.",
+    "nonPotAndMismatch": "Reuse 0x8257B1E0..0x8257B278: default output dimensions round parsed dimensions up to powers of two, subject to validation/capability changes. A source width 33 can therefore request output 64; this is not header rejection. Unequal regions fail the selected direct-copy premise, and successful resampling or safe later mismatch behavior is open.",
+    "required32MapProfile": "OPEN: neither 32 nor 33 is established as the required sample width. The selected constraints do not uniquely choose a height-image size from the tile record. Terrain dimension-field delivery, actual world/sample joins and later consumer requirements remain to be bound."
+  },
+  "pixelStep": {
+    "verdict": "accepted",
+    "extraction": "0x822F99A0/0x822F99B8 publishes H.step=trunc_s32(P/W), with P=returned pitch and W=descriptor width. For positive retained P,W, step==2 exactly when 2*W<=P<3*W. This quotient predicate alone is insufficient for safe extraction storage; see #/pixelStep/extractionStorage.",
+    "extractionStorage": {
+      "verdict": "accepted",
+      "allocation": "0x822F99AC and 0x822F99C8 form mullw step*V then *W; 0x822F99D8 requests the low32 product from 0x82D3DBA0. W=descriptor width, V=descriptor height and P=lock pitch are sampled at 0x822F998C..0x822F9998.",
+      "copy": "For positive retained V and normal copy-helper effects, 0x822F99F8..0x822F9A28 requests V rows through 0x827F8550, each length P, destination B+i*P and source L+(V-1-i)*P, with B=allocation return and L=locked source buffer. The requested destination footprint is V*P, including final-row padding.",
+      "shortfall": "With positive retained W,V,P and no product/address wrap, write P=step*W+R, 0<=R<W. The requested allocation is step*V*W; the full-pitch copies exceed it by V*R when R>0. Actual allocator rounding is unproved and does not make this a safe writer contract.",
+      "localChecks": "0x822F99D0 traps W==0 after division. 0x822F99A4/0x822F99BC/0x822F99C4/0x822F99D4 test a derived all-ones value, not a remainder or product overflow. No local check enforces P==step*W or a nonzero allocation return.",
+      "writerRelation": "Adjacent two-byte samples plus matching extraction storage require P==2*W. P==step*W alone also holds for nominal widths 32/64 with incorrect steps 8/4. Under nominal P=256*ceil(W/128), P==2*W holds exactly for positive widths divisible by 128.",
+      "qualification": "Require positive retained dimensions/pitch, valid nonalias backing, original ABI, allocation success, copy effects honoring the requested length, nonwrapping products/addresses and valid source extent V*P. This closes a necessary local size relation, not complete resource or runtime safety."
+    },
+    "pitchChain": "0x8269A9D0 -> 0x8269A238 -> 0x8269A160, with 0x82699C98/0x82698FC8, supplies the selected descriptor/lock geometry. The format byte at 0x8208EA41 is 16. For the ordinary non-tail level-zero arm, 0x8269A0DC derives P=4*K*16=64*K from K=(U32[resource+0x1C]>>22)&511; the factor at 0x8269A160 is 1 rather than a two-byte sample size.",
+    "conditionalGeometry": "For ordinary kind 3/D1, format 0x28000058, border 0, depth 1, explicit-pitch 0, the producer's raw-base arm and retained geometry, 0x8269A378 -> 0x82699208 -> 0x826990E8 aligns X=128*ceil(W/128). Header K=4*ceil(W/128), so nominal P=256*ceil(W/128). The raw-base condition includes both dimensions greater than 16; POT widths give the same aligned-width result. The A378 packing selector 2 normalizes to an output-count>1 flag in 0x8269A410..0x8269A420; that flag can retain an initially rounded width with a small axis, so the formula is not asserted for arbitrary rectangles. It is distinct from 0x826990E8's r8 kind mode 1 for kind 3 and r9 layout 0. The selected 0x826996D0 level-zero descriptor corridor retains base W/H; positive-mip placement and packed header fields remain separate.",
+    "actualCreationPrefix": "After its opaque allocation request, reached 0x8269AB90..0x8269AC1C forwards normalized kind/W/H/depth/output-count/flags/format to 0x8269A378; 0x8269ABF0 supplies r10=2 as its packing selector, with stack arguments border 0, extra 0 and explicit-pitch 0. Nonzero allocated storage and original ABI/nonvolatile retention are required. The full-chain output examples W=256/count=9 and W=512/count=10 therefore normalize the count>1 packing flag; a one-level source does not change that output tuple. This selector is not 0x826990E8's mode argument.",
+    "minimums": {
+      "alignedStrideComponentMinimum": 128,
+      "widthRule": "Under the stated nominal geometry, require a positive multiple of 128 for P==2*W. POT width 128 is only the smallest power-of-two satisfying this local stride/allocation component; it is not a safe named-map size or a global minimum.",
+      "unsafeQuotientExamples": "Square widths 86 and 171 give step 2 but nonzero pitch remainders: requested copy extents exceed requested allocations by 7224 and 29070 bytes respectively. They are unsafe writer choices, not minima.",
+      "qualification": "Default POT output sizing, equal source/output regions, terrain ratios, actual resource/effect retention and later geometry constraints are independent."
+    },
+    "packingArgumentLocators": "0x8269ABF0 -> 0x8269A3A8 binds the A378 selector; 0x8269A39C/0x8269A410..0x8269A420 binds the output-count flag passed as 0x82699208 r10 at 0x8269A46C. Kind 3 becomes mode 1 at 0x8269A428/0x8269A478, saved at 0x82699214 and passed as 0x826990E8 r8 at 0x82699344/0x8269935C. Format layout is separately passed through r9 at 0x8269A470/0x82699340.",
+    "retentionBoundary": "Actual flags0x1000 reach opaque 0x8280DA68 in 0x82697CA0 because flags&0x12 is zero; resource+0x0C may also select 0x8269BE70, and returned/current context may select 0x8269B390/0x8269C588. 0x8269A378 does not locally zero resource+0x0C. Actual resource, context, packet, stack and pitch retention/nonalias effects remain required; no helper-free actual-height corridor or observed lock pitch is claimed."
+  },
+  "scale": {
+    "verdict": "open",
+    "acceptedRequest": "0x82C6E950/0x82C6E954 selects the 13-byte ASCII key TerrainZScale at 0x8216433C, first NUL at 0x82164349. 0x82C6E958 calls 0x82C79050 and 0x82C6E95C stores returned f1 at terrain+0x58.",
+    "delivery": "0x82C7906C..0x82C790A4 makes two fresh current-global 0x8314F28C virtual+0x50 requests. The first result+12 and key go through 0x822E9A38; the second result and returned key handle go through 0x82C78FB8. Its found branch 0x82C79034..0x82C79044 copies node+16/+20, and the caller loads the first word as f1. Provider equality, current virtual target, key/value retention and actual named-map configuration remain open.",
+    "missingEntry": "The missing branch explicitly zeros only the first temporary word before opaque insertion/relookup helpers. A universal zero default, initialized second word and successful missing-entry recovery are not established.",
+    "valueEncoding": "For retained Z=F32[terrain+0x58], the selected CPU path computes f32(f32(f32(n)*Z)*(255/65536)) for n in0..65535. Ideal real examples:0 ->0,32768 ->127.5*Z,65535 ->254.9961090087890625*Z. A writer must use the native rounding model when exact float parity matters; no fixed Z or physical height unit is assigned.",
+    "namedMapValueOrSource": "OPEN: the key is bound; actual current provider, loaded named-map value and physical units are not. A retail global-configuration declaration is a candidate source, not proof of the sampled current provider or retained value.",
+    "retailConfigurationCandidate": {
+      "verdict": "open",
+      "observation": "Read-only inspection of retail global configuration found exactly one TerrainZScale declaration in the inspected candidate, typed float with value 2.3. No per-map override or actual provider/load join is bound.",
+      "qualification": "Do not substitute 2.3 for current terrain+0x58 or derive fixed physical height units from this declaration. Named-map delivery and runtime acceptance remain open."
+    }
+  },
+  "earlierUseAndShortInput": {
+    "verdict": "open",
+    "earlierPrefix": "0x82C6E898 calls 0x82C69CA0 at 0x82C6EBA4 before 0x82C69850 at 0x82C6EBAC. The reached 0x82C69CB8..0x82C69D40 prefix forms floats from the signed low32 integer products of terrain+0x6C*+0x5C and +0x70*+0x60, then reaches opaque 0x82351EF0. Multiplication wraps to low32 before sign extension and float conversion; this is not general float multiplication of the input fields. No H/sample read is bound before that helper; this does not close absolute chronological first use.",
+    "type7": "The heights role has its distinct ingress. Safe rejection through the type7 metadata preprocessor for a truncated DDS remains the existing separate frontier; the ordinary parser's 128-byte header extent checks must not be generalized across that earlier path."
+  },
+  "retailObservedProfile": {
+    "verdict": "accepted",
+    "scope": "Read-only header, entry-length and role census of 277 retail numbered-map files per role. These observations describe the inspected shipped files, not a mandatory loader requirement or runtime acceptance test.",
+    "heights": {
+      "width": 512,
+      "height": 512,
+      "header": "Classic DDS with little-endian header words and pixel-format fields at #/sourceFormat/canonicalPixelFormat.",
+      "headerMipCount": 0,
+      "headerFlags": "0x1007",
+      "headerPitch": 0,
+      "headerDepth": 0,
+      "layout": "Linear, tight rows; one supplied level, no authored extra mip payload.",
+      "sampleEncoding": "Unsigned LE16, observed from spatial smoothness; complete native endian transfer remains open at #/sourceFormat/payload.",
+      "rowBytes": 1024,
+      "payloadBytes": 524288,
+      "totalBytes": 524416
+    },
+    "otherRoles": "All 277 inspected blends are 2048x2048 DXT1; all 277 lightmaps are 4096x4096 DXT1. Both have header mip count 0 and one tight supplied level. Lightmap header variants include flags 0x81007 with pitch field 8388608 and flags 0x1007 with pitch field 0; the ordinary parser does not use that field for payload stride. These are observed role profiles, not proved required sizes.",
+    "sampleOrderEvidence": "Each rerun of the two supplied 20-map adjacent-difference checks made the LE16 interpretation about 42 times smoother than BE16. The full 277-file census established matching headers and lengths; the order statistic sampled 20 maps per check and does not prove a native swap instruction.",
+    "geometryCheck": "For W=V=512 and nominal P=1024, step 2 gives equal 524288-byte allocation and copy extents. W>=8*T also holds if T=32. Actual pitch, actual T and world/sample joins remain separate gates.",
+    "recommendedRetailLayout": "The C3 candidate should mirror this retail layout: classic LE header, 512x512, the recorded 16-bit pixel format, LE16 linear samples, header mip field 0 and no extra authored mips. This matches every shipped file in the inspected census; it is not a proved requirement or complete accepted writer recipe."
+  },
+  "authoringRecipe": {
+    "verdict": "open",
+    "completeRecipeAvailable": false,
+    "recommendation": "Use #/retailObservedProfile as the recommended candidate layout because it matches every shipped file in the inspected census. Keep the writer gated on the unresolved native endian transfer, dimension/world joins, actual scale/provider and resource/runtime acceptance. A complete directly implementable heights-role contract is not yet accepted.",
+    "acceptedComponents": [
+      {
+        "component": "Classic header and pixel-format admission",
+        "contract": "#/sourceFormat",
+        "prerequisite": "Reuse the ordinary non-volume, non-cube DDS header contract in xbox-dds-map-role-texture-contract.json#/ordinaryHeader. No DX10 or Xbox extension."
+      },
+      {
+        "component": "Linear single-level byte extent",
+        "contract": "#/sourceFormat/payload/acceptedLayout",
+        "prerequisite": "For accepted W,V, one supplied face/level has 2*W*V payload bytes and 128+2*W*V total bytes. Retail header mip field 0 is normalized to one supplied parser record; it does not determine output mip count. File sample endian transfer remains open."
+      },
+      {
+        "component": "Combined extraction stride/allocation relation",
+        "contract": "#/pixelStep/extractionStorage",
+        "prerequisite": "P==2*W, accepted actual resource geometry, positive retained dimensions/pitch, sufficient backing, no product/address wrap and original ABI/helper effects."
+      },
+      {
+        "component": "Symbolic numeric mapping",
+        "contract": "#/scale/valueEncoding",
+        "prerequisite": "Accepted current Z, physical units and a separate supported quantization/range policy."
+      }
+    ],
+    "blockedFields": [
+      "Native file-to-CPU sample endian transfer",
+      "Required width/height and world/tile sample endpoints",
+      "Actual named-map scale value/provider and physical units",
+      "Actual resource/pitch delivery, creation/copy success and runtime acceptance"
+    ],
+    "decision": "Recommend the observed 512 profile rather than deriving 32 or 33 from the map tile count. Positive width multiples of 128 close only the nominal pitch/sample/allocation relation; W>=8*T is independently necessary on the selected terrain arm. No evidence shows additional writer processing beyond mirroring retail or requires a title/SDK change. C3 step 2 remains gated."
+  },
+  "currentEvidence": {
+    "method": "Sequential read-only foreground selected-word queries against one disposable project copy; raw field/branch decoding and arithmetic models; selected words equal the pinned flat image. Generated owner excerpts corroborate interpretation. Separate read-only retail header/length census, adjacent-difference reruns and exact configuration-key inspection support observation-scoped claims.",
+    "supportedImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "generatedRevision": "rerevved@9b17cddd38e6de897db623f291986fbf36dedd84",
+    "locators": [
+      "ghidra/DumpMemoryWords.java:0x82F18750,0x82F1896C,0x82F18CCC,0x8208EA40",
+      "ghidra/DumpMemoryWords.java:0x8269A9D0,0x8269A238,0x8269A160,0x82699C98,0x82698FC8,0x8269A0DC",
+      "ghidra/DumpMemoryWords.java:0x826979B8,0x82698E10,0x826990E8,0x8269A378,0x82697CA0,0x82699208,0x826996D0,0x8269AB90",
+      "ghidra/DumpMemoryWords.java:0x82C6E2F0,0x82C6E2F8,0x82C69868,0x82C69940,0x82C69AA8,0x82C6EC1C,0x82C66A80,0x82C66AC8,0x82C69CB8",
+      "ghidra/DumpMemoryWords.java:0x82C6BCCC,0x82C7E5C4,0x82C7E6CC",
+      "ghidra/DumpMemoryWords.java:0x82C6E950,0x82C79050,0x82C78FB8,0x822E9A38,0x8216433C",
+      "generated:rerevved/sub_8269A238",
+      "generated:rerevved/sub_82699208",
+      "generated:rerevved/sub_826996D0",
+      "generated:rerevved/sub_8269AB90",
+      "generated:rerevved/sub_82C6E188",
+      "generated:rerevved/sub_82C6E898",
+      "generated:rerevved/sub_82C69850",
+      "generated:rerevved/sub_82C69CA0",
+      "generated:rerevved/sub_82C79050",
+      "generated:rerevved/sub_82C78FB8",
+      "generated:rerevved/sub_82C6BCC0",
+      "generated:rerevved/sub_82C7E128",
+      "generated:rerevved/sub_82584F48:0x82585034..0x8258515C",
+      "ghidra/DumpMemoryWords.java:0x822F9964..0x822F9A28",
+      "ghidra/DumpMemoryWords.java:0x82587F60,0x8258AC18,0x82596178,0x8258B880,0x8258BB50,0x82578E00,0x8258B030,0x8258B038,0x8205C1D0",
+      "generated:rerevved/sub_822F9888:0x822F99A0,0x822F99AC,0x822F99C8,0x822F99D8,0x822F99F8..0x822F9A28",
+      "generated:rerevved/sub_82587F60",
+      "generated:rerevved/sub_8258AC18",
+      "generated:rerevved/sub_82596178",
+      "generated:rerevved/sub_8258B880",
+      "generated:rerevved/sub_8258BB50",
+      "generated:rerevved/sub_82578E00",
+      "generated:rerevved/sub_8258B030",
+      "generated:rerevved/sub_8258B038",
+      "ghidra/DumpMemoryWords.java:0x8205C1D0,0x825960D8..0x8259612C,0x8258AD5C..0x8258ADAC",
+      "generated:rerevved/sub_825960D8"
+    ],
+    "qualification": "No project repair or runtime observation. Four earlier captured words after 0x82C6E364 are excluded from semantic evidence. Selected word equality does not prove whole-database identity, helper effects or completeness of truncated body metadata. Retail byte order is an observation, not a statically closed transfer contract."
+  },
+  "unresolved": [
+    "The native endian transfer between observed LE16 file samples and the unsigned BE16 CPU reader; parser/preprocessing, resource lock path 0x8269AE80 -> 0x8269A238 and cleanup 0x8258AED8 remain open.",
+    "Actual terrain+0x5C/+0x60/+0x6C/+0x70 input delivery and its relation to named-map tiles and world units; unique mandatory dimensions and edge/endpoint convention.",
+    "Current resource and returned pitch retention through opaque adjustment helpers; actual runtime sample step and successful creation/upload/generated mips.",
+    "Current TerrainZScale provider, actual named-map value/source and units; fresh-provider equality and value lifetime.",
+    "Other descriptor conversions, unequal-region resampling and safe size-mismatch behavior.",
+    "Earlier geometry helper consumption, chronological first height use and safe short-DDS type7 preprocessing.",
+    "Runtime acceptance and a complete authoring profile; the partial recipe does not close these gates."
+  ],
+  "guards": [
+    "Apply scope.qualification to every accepted statement. Stride minima and observed retail profiles are not complete safe named-map recipes.",
+    "Keep LE header scalars, observed LE16 file samples, BE16 CPU consumption and the unresolved native representation transfer separate. Local byte-preserving copy is not an end-to-end byte-order proof.",
+    "Require P==2*W for the combined adjacent-sample and extraction-storage relation. A quotient2 alone can underallocate; source row bytes are distinct from native aligned pitch.",
+    "Do not infer terrain dimension fields from another object's literal 32 spatial bounds.",
+    "Keep source one-level declarations, requested output mip0/full chain and packed native header flags separate.",
+    "Do not turn missing caller/target evidence into a global impossibility or non-derivability theorem."
+  ],
+  "conclusion": "The same-format source descriptor is fixed, but complete sample-byte transfer is open. The observed retail 512x512 LE16, mip-field 0 profile is the recommended candidate, not a proved requirement. Extraction requires P==2*W for adjacent samples and matching storage; nominal geometry therefore requires positive width multiples of 128. Current terrain inputs, world/sample joins, actual scale/provider and resource/runtime effects still gate the writer."
+}

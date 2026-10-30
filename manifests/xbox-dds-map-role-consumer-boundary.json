@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0371",
+  "topic": "xbox-dds-map-role-consumer-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which distinct resource-creation paths and DDS properties can be bound to the three named-map texture roles in the version 1.3 image?",
+  "scope": {
+    "roleOwner": "0x82C6E188",
+    "heightConsumer": "0x822F9888",
+    "resourceRequest": "0x82C92950",
+    "type7Load": "0x82C8E150",
+    "creationWrapper": "0x8257B8A8",
+    "creationOwner": "0x8257B080",
+    "ddsParser": "0x82584F48",
+    "boundary": "Selected static role-to-creation and DDS-parser paths. Cached resources, current provider dispatch, format-table membership, validation helpers and upload conversion remain explicit frontiers. No retail DDS bytes or runtime evidence."
+  },
+  "dependencies": [
+    { "topic": "map-authoring-loader-boundary", "use": "RVA-F-0070 supplies terrain owner, role format-string addresses and selection contract." },
+    { "topic": "xbox-dds-map-authoring-consumer-boundary", "use": "RVA-F-0112 records the earlier exact-body/reference negative. Raw-word and exact-owner evidence here narrows a distinct consumer chain without treating that earlier search as exhaustive." }
+  ],
+  "roles": [
+    {
+      "role": "heights",
+      "verdict": "accepted",
+      "request": "0x82C6E1D8..0x82C6E1F4 formats the role using 0x821642F0 and calls 0x822F9888 with receiver U32[terrain+0x24]. A zero byte result returns 0 at 0x82C6E204.",
+      "fileToCreation": "0x822F98B8 calls 0x822D64C0 for the file; the nonnull buffer and its prefix length at buffer-4 reach 0x8257B8A8 at 0x822F991C. 0x8257B908 forwards to 0x8257B080.",
+      "fixedArguments": "0x822F98D0..0x822F991C supplies width 0, height 0, mip argument 0, usage 0 and format literal 0x28000058; the two filter literals on the stack are 1. 0x8257B8B8..0x8257B904 forwards the format to its child stack+0x54 and fixes the generic resource-type argument to 3.",
+      "cpuExtraction": "On successful creation, 0x822F9970 queries level 0 through 0x8269AB88 and 0x822F9988 requests level 0 through 0x8269A9D0 with flag 0x1000. The returned descriptor dimensions and pitch populate receiver+8, +4 and +16, with pitch/dimension at +12. 0x822F99F8..0x822F9A28 calls 0x827F8550 for each row with source=level0-data+(rowCount-1-row)*pitch and destination advanced by pitch. It then calls 0x82698F48 and 0x826981D8.",
+      "dimensionUse": "0x82C6E2F8..0x82C6E32C divides receiver+8/+4 by terrain+0x5C/+0x60 into terrain+0x7C/+0x80. There is no local fixed role-dimension equality check in 0x82C6E188.",
+      "qualification": "The fixed format is a requested conversion/output argument, not proof that the file must already use that encoding. The row-copy call pattern binds CPU extraction from level0; helper success, actual pitch, format name, channel meaning and final created mip count remain unproved."
+    },
+    {
+      "role": "mountain-hill blends",
+      "verdict": "accepted",
+      "request": "0x82C6E280..0x82C6E2AC formats the role using 0x82164310 and requests 0x82C92950(manager, terrain+0xD4, 7, path, 0, 0).",
+      "consumer": "The shared type 7 cold-load chain below reaches 0x82C8E150. The selected ordinary creation branch calls 0x82C8DB20, then 0x8257B8A8 with format literal -1, usage 0 and dimension arguments -1, -1.",
+      "qualification": "No blend-specific format constant, dimension equality, channel mapping or mip requirement is fixed in the role owner. Cache hits and header-selected alternate branches are separate conditions."
+    },
+    {
+      "role": "lightmap",
+      "verdict": "accepted",
+      "request": "0x82C6E2B0..0x82C6E2DC formats the role using 0x8216432C and requests 0x82C92950(manager, terrain+0xD8, 7, path, 0, 0).",
+      "consumer": "This request supplies the same type and zero flags/auxiliary argument as blends and shares the conditional type7 cold-load and ordinary creation chain below.",
+      "qualification": "Identical request arguments do not prove identical installed cache objects, actual file properties, channel meaning or role-specific authoring constraints."
+    }
+  ],
+  "type7CreationBoundary": {
+    "requestDispatch": "0x82C92A04 obtains the type map; 0x82C92A24 checks for an existing resource. On the missing-resource arm, 0x82C92A80 calls 0x82C91E38 with type 7. Its inline dispatch entry 0x82C91E94 selects 0x82C91F64, which allocates 0x1C bytes and installs vtable 0x821610D0 at 0x82C91FA0. Table cell 0x821610D4 fixes load slot+4 to 0x82C8E150; 0x82C92AC0 invokes that slot with path and zero role flags/auxiliary input.",
+    "fileLoad": "0x82C8E1A8..0x82C8E1C0 first queries the current provider slot 8 and can return a cached object. Otherwise 0x82C8E280 calls 0x822D64C0; nonnull, nonempty loaded bytes reach a filename/header classifier 0x82C8DEC8 at 0x82C8E2AC.",
+    "headerSelectedArms": "0x82C8DEC8 conditionally tests bit 0x200 of a byte-order-adjusted file word at +0x70 after its filename test. A true classifier result selects 0x82C8DCD0 at 0x82C8E2F4. A false result, with the role's null auxiliary argument, selects 0x82C8DB20 at 0x82C8E34C. The full filename test and alternate creation/upload contract are not closed here.",
+    "ordinaryCreation": "0x82C8DB6C builds metadata through 0x82C40EB0; 0x82C8DB70..0x82C8DBB8 passes buffer, prefix length, dimension arguments -1, -1, metadata-derived mip argument, usage 0 and format literal -1 to 0x8257B8A8. Successful creation is wrapped by 0x8250B7C8 at 0x82C8DC04 and published through 0x821B2440. 0x82C8E374..0x82C8E3A4 can register the result with current provider slot 0xC.",
+    "qualification": "This is a conditional ordinary DDS creation chain, not an unconditional current-vptr theorem. Allocation, interning, provider methods, reference-count helpers, metadata retention and upload success are required boundaries."
+  },
+  "sharedDdsParser": {
+    "verdict": "accepted",
+    "admission": "0x8257B150 calls 0x82586070 with the file bytes and length. Its nine-parser dispatch includes case 4 calling 0x82584F48. That parser tests the four DDS magic bytes at 0x82584F58..0x82584F8C, then requires 124 available bytes after the magic at 0x82584F90..0x82584F9C.",
+    "header": "0x82584FAC copies 124 header bytes and 0x82584FB8 calls 0x82584D18. The selected scalar normalizer byte-swaps header offsets 0..0x44 and 0x68..0x78 and delegates the pixel-format subrecord at +0x48 to 0x82584BF0. Thus the observed dimension, depth, mip-count and caps scalar reads consume little-endian file words; payload byte order does not follow from this.",
+    "dimensions": "0x82584FBC..0x82584FF8 publishes normalized header dimensions at +0xC/+8 and depth at +0x14, with absent/zero depth replaced by 1. The selected creation owner has branches deriving power-of-two dimensions for incoming 0/-1 arguments at 0x8257B1E0..0x8257B278, followed by the unclosed validation/selection helper 0x82579E50 at 0x8257B450. No per-role fixed size is proved.",
+    "formatSelection": "0x82585034..0x8258515C scans 36-byte format descriptors rooted at 0x82F18750 and compares pixel-format fields. Unmatched sentinel format reaches failure 0x825853D8. This packet does not publish descriptor membership, table length or interpret the role's output literal as a required input format.",
+    "mipsAndFaces": "0x82585020..0x82585030 uses the header mip count with zero replaced by 1. 0x82584FFC..0x82585020 accepts cube-face mask 0 or the complete mask 0xFC00, selecting one or six faces and rejecting a partial mask. 0x82585248..0x825853C0 iterates declared mips per face, links records at +0x4C, computes per-level byte sizes, checks remaining payload at 0x82585374..0x8258537C and advances the file cursor; dimensions above 1 halve for the next level.",
+    "resourceAndUpload": "0x8257B4D8..0x8257B4F8 selects the type 3 resource-creation call 0x8269AB90. 0x8257B538..0x8257B6B0 traverses parsed mip records bounded by the selected output level count and reaches 0x82578E00 for the type 3 transfer. 0x8257B788..0x8257B7B8 can call 0x8257AC50 when additional output levels are selected. The exact conversion, endian, tiling and generated-mip rules in those callees are unresolved.",
+    "qualification": "These are selected parser/control facts. There is no complete validation of header size fields, every format, DX10 extensions, volume topology, overflow behavior or every upload path in this packet. A file reaching a branch has not been shown to create a usable texture."
+  },
+  "currentEvidence": {
+    "method": "Sequential foreground read-only exact-function and raw-word queries, supported-image equality checks and narrow exact-owner generated corroboration.",
+    "supportedImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "locators": [
+      "ghidra/DumpFunctions.java:0x82C6E188,0x822F9888,0x82C92950,0x82C91E38,0x82C8E150,0x82C8DEC8,0x82C8DB20,0x8257B8A8,0x8257B080,0x82586070,0x82584F48,0x82584D18",
+      "ghidra/DumpMemoryWords.java:0x82C6E288,0x822F9988,0x822F99E8,0x82C92A50,0x82C92C00,0x82C91E90,0x82C91F70,0x821610D0,0x82C8E250,0x82C8E3D0,0x82C8DC20,0x8257B8F0",
+      "ghidra/DumpMemoryWords.java:0x8257B180,0x8257B380,0x8257B580,0x8257B780,0x8257B880,0x82586170,0x82584E18,0x82584F88,0x82585088,0x82585170,0x82585248,0x82585348",
+      "generated:rerevved/sub_82C6E188",
+      "generated:rerevved/sub_822F9888",
+      "generated:rerevved/sub_82C92950",
+      "generated:rerevved/sub_82C91E38",
+      "generated:rerevved/sub_82C8E150",
+      "generated:rerevved/sub_82C8DEC8",
+      "generated:rerevved/sub_82C8DB20",
+      "generated:rerevved/sub_8257B8A8",
+      "generated:rerevved/sub_8257B080",
+      "generated:rerevved/sub_82584F48",
+      "generated:rerevved/sub_82584D18"
+    ],
+    "repairQualification": "A disposable project repaired [0x827F7C50,0x827F7CF0) with 40 patched slots, 15 noreturn flags cleared and zero rebuild errors. Selected words outside repaired thunks matched the pinned image. Decompilation still truncates at other modeled noreturn calls and unsupported instructions; no complete decompiler body is inferred from successful repair. Original ABI, helper return, valid storage and retained inputs remain conditions."
+  },
+  "boundedNegative": {
+    "roleOwner": "The complete 0x82C6E188 owner contains no fixed dimension equality or role-specific pixel-format/channel/mip test for blends or lightmap. Heights fixes a distinct requested conversion literal. This negative does not cover downstream creation or upload validation.",
+    "dependencyLimit": "Empty exact references and truncated bodies in RVA-F-0112 do not exclude split-address role requests or the raw-word chains recorded here. Its bounded observation is not falsified."
+  },
+  "unresolved": [
+    "Complete installed provider/cache identity and the alternate header-selected creation path for each actual role file.",
+    "Complete allowed DDS input-format descriptor set and its length; exact name/channel interpretation of output 0x28000058.",
+    "Final per-role dimensions, created mip count, filtering, complete-chain requirements and generated-mip behavior after validation helpers.",
+    "Pixel-format subrecord conversion closure, DX10/other header acceptance, volume/cube authoring suitability and unsupported topology rules.",
+    "Payload byte order, tiling/swizzle flags, source row pitch, block alignment, face layout, padding and conversion behavior in 0x82578E00 and related upload helpers.",
+    "Height value normalization and scale, blend channel packing and lightmap interpretation by later terrain/shader consumers."
+  ],
+  "guards": [
+    "Role filename identity does not establish successful loading or a safe DDS writer specification.",
+    "Role labels heights, mountain-hill blends and lightmap are taken from the requested filename format strings only; the code does not otherwise name the roles.",
+    "The height conversion/output literal does not establish the required source-file format.",
+    "Scalar header byte order does not determine payload byte order or tiling.",
+    "Level0 CPU extraction does not prove that source or created textures contain only one mip.",
+    "All results cover the pinned version1.3 image statically; no runtime, other-platform or shipped-content property is inferred."
+  ],
+  "conclusion": "Heights has a distinct temporary-texture and reverse-row level-0 CPU-extraction path with output-format argument 0x28000058. Blends and lightmap share type-7 requests and a conditional ordinary DDS creation chain using default-format argument -1. A shared DDS parser fixes a 124-byte little-endian scalar-header path, declared-mip traversal and payload-length checks, while format membership, final dimensions/mips and upload endian/tiling semantics remain unresolved."
+}

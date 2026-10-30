@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0374",
+  "topic": "xbox-map-tile-edge-and-length-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which grid-edge write and endpoint-lookahead conditions, and which short/trailing-file checks, are fixed by the selected version 1.3 named-map tile loader?",
+  "scope": {
+    "loader": "0x82D0ADE0",
+    "edgePlane": "0x8311F690",
+    "edgePlaneClear": "[0x8311F690,0x8311FCD0)",
+    "sourceBuffer": "SP+416 with one 1024-byte request",
+    "streamRead": "0x82D38448 -> conditional 0x82D38360 -> 0x8280F3F0",
+    "boundary": "Selected 32-by-32 conversion, edge/endpoint phases and returning read path. No assets or runtime execution.",
+    "claimQualification": "Every accepted claim is static evidence for the pinned version 1.3 image, qualified by the supplied disposable-copy thunk repair, original save/restore ABI, normal returning helpers, valid nonaliasing storage and retained inputs. Calculated access bounds are not successful authored-map loading or universal memory-safety proof."
+  },
+  "dependencies": [
+    {
+      "topic": "xbox-map-tile-semantics-boundary",
+      "use": "RVA-F-0370 fixes file coordinates, edge-plane identity, paired stores and the single-read boundary.",
+      "locators": ["xbox-map-tile-semantics-boundary.json#/orientation", "xbox-map-tile-semantics-boundary.json#/highBits/edgePairs", "xbox-map-tile-semantics-boundary.json#/lengthBoundary"]
+    },
+    {
+      "topic": "map-authoring-loader-boundary",
+      "use": "RVA-F-0070 supplies named-map loader admission and supported dimension constants.",
+      "locators": ["map-authoring-loader-boundary.json#/mapTileLoader", "map-authoring-loader-boundary.json#/dimensions"]
+    },
+    {
+      "topic": "xbox-dds-map-role-consumer-boundary",
+      "use": "RVA-F-0371 separates named-map texture creation from one-byte tile delivery; DDS rules do not fill the tile-buffer lookahead.",
+      "locators": ["xbox-dds-map-role-consumer-boundary.json#/roles", "xbox-dds-map-role-consumer-boundary.json#/sharedDdsParser"]
+    }
+  ],
+  "edgeWrites": {
+    "verdict": "accepted",
+    "coordinates": "File index j=32*r+c maps to internal y=31-c and i=40*r+y. Here row means r and column means internal y; no display orientation is assigned.",
+    "initialStores": "0x82D0AFC0..0x82D0B01C maps file 0x40 to E[i]|=2,E[i+40]|=8 and file 0x80 to E[i]|=4,E[i-1]|=1. There is no local clipping, wrapping or invalid-bit rejection.",
+    "lastRow": "For r=31, E[i+40] is E[1280+y], inside the 1600-byte span cleared at 0x82D0AF2C..0x82D0AF40 but outside the 32-row content grid. This proves a padding-row write, not intended edge geometry or a globally safe 0x40 authoring rule.",
+    "columnZero": "For y=0 and r>0, E[i-1] reaches the preceding physical row's padding column 39. At r=0 it reaches E[-1], outside the cleared span. Adding file 0x40 does not suppress the 0x80 store; 0xC0 still writes E[-1] at that cell.",
+    "qualification": "These are initial-store bounds only. Endpoint stores can also reach neighboring padding or E[-1], and the endpoint phase unconditionally reads E[i-1] even with clear file high bits. No blanket safe edge-mask combination follows."
+  },
+  "endpointLookahead": {
+    "verdict": "accepted",
+    "incidence": "0x82D0B06C..0x82D0B0C4 computes N=[E[i]&2!=0]+[E[i]&4!=0]+[E[i+40]&4!=0]+[E[i-1]&2!=0]. Only N==1 enters the endpoint block; endpoint-added bits 0x10/0x20/0x40/0x80 do not change these four predicates.",
+    "readEquations": [
+      { "address": "0x82D0B0D0..0x82D0B0E0", "condition": "N==1 and E[i]&2", "sourceIndex": "(r+2)*32-y" },
+      { "address": "0x82D0B11C..0x82D0B12C", "condition": "N==1 and E[i]&4", "sourceIndex": "(r+2)*32-y" },
+      { "address": "0x82D0B170..0x82D0B180", "condition": "N==1 and E[i+40]&4", "sourceIndex": "(r+1)*32-y" },
+      { "address": "0x82D0B1BC..0x82D0B1D0", "condition": "N==1 and E[i-1]&2", "sourceIndex": "(r+2)*32-y-1" }
+    ],
+    "lastRowCondition": "On initialized padding row 32, bit 4 is zero: initial 0x40 writes only bit 8 there and endpoint additions use higher bits. Thus r=31 and N==1 always selects an index beyond 1023. The local condition N!=1 avoids these source-buffer reads on that row.",
+    "penultimateRowCondition": "At r=30,y=0, N==1 with a current bit 2 or 4 reads index 1024. At that cell a sole lower-neighbor bit 4 reads 992 and a sole previous-neighbor bit 2 reads 1023. For r<=29 or r=30,y>0, the listed endpoint source indices are within 0..1023.",
+    "combinedBits": "Setting 0xC0 gives both current incidence terms and guarantees N>=2 at that cell, skipping its endpoint block. It can still create an isolated incidence at another cell and retains both initial neighbor writes. This is a local discriminator, not a safe global content recipe.",
+    "boundedNegative": "No predicate in this endpoint block enforces the derived source-index limits. No file read supplies indices 1024..1056. Values outside the requested source span are unspecified stack state, not an optional file footer.",
+    "qualification": "The last-row condition relies on successful zero initialization and retained edge storage. E[-1] is outside that initialization, so global edge-plane memory safety and geometry remain unresolved even when the source-index conditions hold."
+  },
+  "lengthBoundary": {
+    "verdict": "bounded-negative",
+    "loader": "0x82D0AF44..0x82D0AF80 requests 1024 bytes through either 0x82E48590 or 0x82D38448. It does not compare the returned count before 0x82D0AF84. The complete owner contains no direct second read, footer read, expected-length equality check or trailing-byte rejection.",
+    "archiveArm": "The accepted 0x82E48590 boundary clamps to recorded entry bytes remaining and dispatches seek/read through current child slots 0x2C/0x30. Current child targets, size metadata truth and delivery remain unresolved; this packet does not infer zero filling.",
+    "selectedStreamArm": "0x82D38448 can dispatch current child slot 8 or call 0x82D38360. At 0x82D383C0..0x82D383D8 the latter passes the request and an output-count cell to 0x8280F3F0 with null asynchronous context. 0x82D3840C..0x82D3841C advances its position by the returned count; failed wrapper status reaches the assertion path and a zero return at 0x82D38424..0x82D38438.",
+    "reportedCompletion": "0x8280F4C4..0x8280F52C calls current provider slot 0x10, handles pending status 0x103 through 0x82E92CD4 and reports the completion count on nonnegative status. 0x8280F530..0x8280F548 maps 0xC0000011 to success with count 0. The warning-status arm at 0x8280F54C..0x8280F568 (0x8xxxxxxx) stores the count but returns 0, so 0x82D38360 takes its assertion path after advancing its position by that count. Neither arm asserts count==request nor initializes the destination remainder in this wrapper.",
+    "shortFile": "The selected stream wrapper can distinguish/report a short count or the zero-count 0xC0000011 branch, but the map owner discards that result. If the selected callees return normally, fixed-grid conversion proceeds with no local guarantee for undelivered bytes. This is not deterministic short-file rejection or padding.",
+    "trailingBytes": "The selected owner does not request bytes after 1024, even though its endpoint phase may read beyond the requested stack span. File trailing bytes cannot be treated as delivered lookahead or a required footer. Actual open/provider admission may impose additional checks.",
+    "qualification": "No installed-provider or current child identity is proved, and no host/runtime I/O result is imported. The status 0xC0000011 is retained numerically; actual EOF delivery is not observed. Exceptions, assertion behavior, archive size truth and upstream admission can change whether conversion is reached."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only exact-function/raw-word queries, prior accepted complete loader closure and exact-owner generated corroboration; arithmetic enumeration checks only the recorded access equations.",
+    "supportedImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "locators": [
+      "ghidra/DumpFunctions.java:0x82D38360,0x8280F3F0",
+      "ghidra/DumpMemoryWords.java:0x82D383C0,0x8280F480,0x82D0AF84,0x82D0B0C0,0x82D0B1C0,0x8311F690",
+      "generated:rerevved/sub_82D0ADE0",
+      "generated:rerevved/sub_82D38448",
+      "generated:rerevved/sub_82D38360",
+      "generated:rerevved/sub_8280F3F0",
+      "generated:rerevved/sub_82E48590"
+    ],
+    "repairQualification": "The supplied disposable-copy repair patched 40 slots in [0x827F7C50,0x827F7CF0), cleared 15 noreturn flags and reported zero rebuild errors. No repair was repeated; selected query words outside repaired thunks matched the pinned image. Remaining noreturn/unsupported-instruction truncation does not establish decompiler closure."
+  },
+  "unresolved": [
+    "A globally safe set of directional masks and the intended geometry of writes into padding or E[-1].",
+    "All backing-storage owners and consumers of E[-1], padding row 32 and physical padding columns.",
+    "Installed stream/archive child/provider identity, actual delivery, implicit padding, exceptions and upstream size admission.",
+    "Deterministic short-file behavior or successful loading of a file with trailing bytes.",
+    "Runtime reachability, rendered orientation, save behavior and peer parity."
+  ],
+  "guards": [
+    "Apply scope.claimQualification to every accepted property; local access equations do not certify a map writer.",
+    "Distinguish content-grid bounds from the 1600-byte cleared edge plane and from adjacent readable memory.",
+    "A 0xC0 cell can skip its own endpoint branch while retaining an out-of-grid or E[-1] initial write.",
+    "A zero-count completion case in a callee is not a caller rejection check.",
+    "A file suffix beyond 1024 is not delivered merely because a stack-buffer expression exceeds 1023."
+  ],
+  "conclusion": "The selected path fixes exact padding/E[-1] stores and endpoint source-index predicates, but proves no universally safe grid-edge combination. The inspected stream branch reports completion counts and a zero-count status case, while the map loader ignores them and performs no local trailing-byte check. Short-file determinism and successful trailing-byte admission remain unresolved.",
+  "prePlaneInitializationSearchBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "Does the bounded exact-global store model select a prior pre-plane initializer, and what do the initialized byte and selected OR1 effect establish?",
+    "scope": {
+      "byte": "0x8311F68F",
+      "alignedWord": "0x8311F68C",
+      "wordRange": "[0x8311F68C,0x8311F690)",
+      "dataBytesRead": 4,
+      "newFunctionOwners": 0,
+      "lookaheadWords": 32,
+      "matchCap": 8,
+      "scannerDomain": "Configured program initialized executable blocks; raw nonzero-register lis-seeded tracked chains, modeled scalar/indexed/wider store overlap and exact-target direct-BL argument candidates."
+    },
+    "result": {
+      "initialByte": "The radius-0 word is 0x00000000 and matches the pinned flat image, so its byte 0x8311F68F is initially 0. This establishes no runtime initializer, reset or retained value at any loader invocation.",
+      "discovery": "FindRawGlobalStoreChains.java returned 0 candidates, not truncated or cancelled. No prior initializer or connecting caller was selected; only this stated syntax/window/block model was exhausted.",
+      "callLimit": "Call candidates require a known r3..r10 exactly equal to aligned target 0x8311F68C. A call receiving byte pointer 0x8311F68F, a different start with a covering extent, or an earlier materializer can be missed. Destination-interval coverage is not searched.",
+      "modelLimits": "No exclusion of unknown/current/other-base pointers, unmodeled forms, chains beyond 32 words, indirect calls or covering clears/copies with unmodeled arguments. Some wider stores are modeled; this is not a scalar-only negative or universal bulk-clear absence. Register-kill/control-flow modeling remains absent.",
+      "consumedBit": "For every 8-bit x, ((x|1)&2)==(x&2). The accepted selected E[-1]|=1 store preserves the incidence bit 0x2, while 128 byte values change. A reached store still defeats a literal no-intervening-write claim even if its byte value happens to remain equal."
+    },
+    "currentEvidence": {
+      "method": "Serialized foreground read-only ghidra/DumpMemoryWords.java radius 0 and ghidra/FindRawGlobalStoreChains.java, exact report/terminal checks and selected-word comparison with the supported flat image.",
+      "scannerSha256": "67AAC33391D79D7A2191AB496E48339228772DC4AA087AC95C3BA4E9B1F5AEBB",
+      "scanQuerySha256": "86CC62AAF81351EE40CFE1B6834D67517793646962601E91BAA08616EB0F457C",
+      "wordQuerySha256": "A25D13B7A291A5B65CB0B697D0E2DC2DB48613228171F70B74D612D7D954BD12",
+      "candidates": 0,
+      "truncated": false,
+      "cancelled": false,
+      "selectedWordFileMismatches": 0,
+      "or1ByteCases": 256,
+      "qualification": "Configured program retains known BLR replacements in the first thunk range. The scan describes that configured model, not an unqualified whole-flat-image writer census. No new owner body or runtime was inspected."
+    },
+    "remaining": "Prior initializer/caller/order, same storage, relevant-bit retention and all other intervening writers remain unresolved. Neither the file zero nor OR1 algebra joins them. The accepted clear still excludes this byte. Re-entry requires a new exact source-supported discriminator; no global safe-map, geometry, dimension, payload, save/peer or live-map conclusion follows."
+  }
+}

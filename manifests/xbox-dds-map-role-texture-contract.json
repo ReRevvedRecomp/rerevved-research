@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0373",
+  "topic": "xbox-dds-map-role-texture-contract",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which header, format, layout, dimension, mip and first-consumer properties can be fixed statically for the three named-map DDS roles in the version 1.3 image?",
+  "scope": {
+    "roleOwner": "0x82C6E188",
+    "parser": "0x82584F48",
+    "creationOwner": "0x8257B080",
+    "validationHelper": "0x82579E50",
+    "uploadOwner": "0x82578E00",
+    "heightCpuReader": "0x82C69850",
+    "boundary": "Selected ordinary DDS cold creation and one bound CPU height reader. Provider/cache hits, the header-selected alternate resource arm, other image-parser candidates and conversion-kernel success are separate boundaries.",
+    "claimQualification": "Every accepted claim is static evidence for the pinned version 1.3 image, conditional on the recorded disposable-copy thunk repair, original save/restore ABI, normal returning helpers, valid storage and retained arguments. No runtime execution was observed. Retail observations and the still-open native height endian transfer are bounded separately in xbox-heights-authoring-contract.json#/retailObservedProfile and xbox-heights-authoring-contract.json#/sourceFormat/payload."
+  },
+  "dependencies": [
+    {
+      "topic": "xbox-dds-map-role-consumer-boundary",
+      "use": "RVA-F-0371 fixes distinct role requests, type7 cold dispatch and the shared parser/upload frontier.",
+      "locators": ["xbox-dds-map-role-consumer-boundary.json#/roles", "xbox-dds-map-role-consumer-boundary.json#/type7CreationBoundary", "xbox-dds-map-role-consumer-boundary.json#/sharedDdsParser"]
+    },
+    {
+      "topic": "xbox-map-tile-semantics-boundary",
+      "use": "RVA-F-0370 keeps the tile grid, file-byte flags and texture samples separate.",
+      "locators": ["xbox-map-tile-semantics-boundary.json#/orientation", "xbox-map-tile-semantics-boundary.json#/highBits"]
+    },
+    {
+      "topic": "map-authoring-loader-boundary",
+      "use": "RVA-F-0070 supplies named-map selection and the three role-name anchors.",
+      "locators": ["map-authoring-loader-boundary.json#/textureLoader", "map-authoring-loader-boundary.json#/dimensions"]
+    }
+  ],
+  "roles": [
+    {
+      "role": "heights",
+      "chain": "0x82C6E1F4 -> 0x822F9888 -> 0x8257B8A8 -> 0x8257B080 -> 0x82586070 case 4 -> 0x82584F48; type3 upload -> 0x82578E00; extraction -> 0x822F99F8; selected CPU reader -> 0x82C69850.",
+      "headerAcceptance": { "verdict": "accepted", "contract": "#/ordinaryHeader", "qualification": "This fixes the selected DDS parser, not all nine parser-dispatch candidates or successful creation of every admitted descriptor." },
+      "formatMapping": { "verdict": "accepted", "contract": "#/formatMapping", "fact": "0x822F98D0/0x822F98E4 requests output 0x28000058; this is not a source-file restriction. Descriptor 0x82F1896C supplies one source form which becomes that same word after the parser clears 0x100." },
+      "payloadLayout": { "verdict": "accepted", "contract": "#/ordinaryPayload", "qualification": "The parser supplies linear records and the selected copy operation preserves bytes locally. File sample byte order is not fixed by that operation: the complete native transfer remains open in xbox-heights-authoring-contract.json#/sourceFormat/payload; its retail observation is LE16." },
+      "dimensionsAndMips": { "verdict": "accepted", "contract": "#/dimensionsAndMips", "fact": "Width 0, height 0 and mip 0 at 0x822F98F4..0x822F9904 select default output sizing/count. With the sampled capability values, dimensions round up to powers of two and clamp to 8192; mip 0 selects the full bit-length count. Level 0 extraction does not imply a one-mip file or output." },
+      "channelMeaning": { "verdict": "accepted", "contract": "#/heightCpuConsumption", "qualification": "Unsigned 16 numeric consumption is bound; an RGB channel name, arbitrary conversion-channel selection and chronological first use are not." }
+    },
+    {
+      "role": "mountain-hill blends",
+      "chain": "0x82C6E2AC -> 0x82C92950(type7) -> conditional cold load 0x82C8E150 -> ordinary arm 0x82C8DB20 -> 0x8257B8A8 -> 0x8257B080 -> 0x82584F48 -> 0x82578E00.",
+      "headerAcceptance": { "verdict": "accepted", "contract": "#/ordinaryHeader", "qualification": "Applies after cache/provider bypass and false header classifier with null auxiliary input. The alternate creation arm is unresolved." },
+      "formatMapping": { "verdict": "accepted", "contract": "#/formatMapping", "fact": "0x82C8DB90 supplies format-1; the selected generic branch takes the parsed format, subject to its explicit exceptional remaps and validation." },
+      "payloadLayout": { "verdict": "accepted", "contract": "#/ordinaryPayload", "qualification": "The parser supplies linear records. Native layout and same-format copy are bound; complete per-format byte interpretation and conversion success remain unresolved." },
+      "dimensionsAndMips": { "verdict": "accepted", "contract": "#/dimensionsAndMips", "fact": "0x82C8DB70..0x82C8DBB8 supplies dimensions-1,-1 and the metadata count at +668. Header count 0 becomes 1; this role does not request a full chain unconditionally." },
+      "channelMeaning": { "verdict": "unresolved", "boundary": "Role storage at terrain+0xD4 is fixed, but a shader sample/component interpretation is not bound by the selected creation chain." }
+    },
+    {
+      "role": "lightmap",
+      "chain": "0x82C6E2DC -> 0x82C92950(type7) -> conditional cold load 0x82C8E150 -> ordinary arm 0x82C8DB20 -> 0x8257B8A8 -> 0x8257B080 -> 0x82584F48 -> 0x82578E00.",
+      "headerAcceptance": { "verdict": "accepted", "contract": "#/ordinaryHeader", "qualification": "Applies after cache/provider bypass and false header classifier with null auxiliary input. The alternate creation arm is unresolved." },
+      "formatMapping": { "verdict": "accepted", "contract": "#/formatMapping", "fact": "The ordinary creation arguments are identical to blends, including format-1. This does not prove identical actual file encodings or installed resources." },
+      "payloadLayout": { "verdict": "accepted", "contract": "#/ordinaryPayload", "qualification": "The parser supplies linear records. Native layout and same-format copy are bound; complete per-format byte interpretation and conversion success remain unresolved." },
+      "dimensionsAndMips": { "verdict": "accepted", "contract": "#/dimensionsAndMips", "fact": "The ordinary branch uses dimensions-1,-1 and normalized header count, subject to the same output adjustments as blends." },
+      "channelMeaning": { "verdict": "unresolved", "boundary": "Role storage at terrain+0xD8 is fixed; sampled components, color space and lighting composition remain unbound." }
+    }
+  ],
+  "ordinaryHeader": {
+    "verdict": "accepted",
+    "magicAndExtent": "0x82584F58..0x82584F9C requires at least 4 magic bytes equal to DDS followed by space, then 124 available header bytes; the byte-swapped magic constant is 0x20534444. 0x82584FAC copies 124 bytes and 0x82584FB8 normalizes them.",
+    "byteOrder": "0x82584D18 normalizes scalar header words, and 0x82584BF0 swaps all eight pixel-format words. These fields are little-endian in the file. This does not specify payload byte order.",
+    "usedFields": [
+      { "fileOffsets": ["0x08", "0x0C", "0x10", "0x18"], "address": "0x82584FBC..0x82584FF8", "fact": "Dimensions are width at 0x10 and height at 0x0C; flag 0x800000 enables depth at 0x18, otherwise depth 1, with zero also replaced by 1." },
+      { "fileOffsets": ["0x1C"], "address": "0x82585020..0x82585030", "fact": "Mip count is read without testing the header mip flag; count 0 becomes 1." },
+      { "fileOffsets": ["0x70"], "address": "0x82584FFC..0x82585020", "fact": "Caps2 masked by 0xFC00 must be 0 or 0xFC00; partial face masks fail, and the complete mask selects six faces." },
+      { "fileOffsets": ["0x4C", "0x50", "0x54", "0x58", "0x5C", "0x60", "0x64", "0x68"], "address": "0x82585034..0x8258515C", "fact": "The normalized pixel-format subrecord selects a descriptor using size, effective flags and conditional FourCC/bitcount/mask equality." }
+    ],
+    "boundedNegative": [
+      "In complete 0x82584F48, the header's own size field at file+4 is not compared to 124. The 124-byte read extent is a separate requirement.",
+      "Header pitch/linear-size, reserved words, caps1 and caps2 bits outside 0xFC00 do not control payload stride or an extension skip in this parser.",
+      "The 39-entry scan has no FourCC 0x30315844 for DX10. No DX10 extension record or Xbox extension record is consumed or skipped by this parser; its ordinary payload begins at file+128, except that the palette-class branch first consumes 1024 bytes (see ordinaryPayload.orderingAndLength). Other dispatch candidates and the type7 alternate arm are outside this negative.",
+      "No zero-remaining-bytes check follows the declared mip/face traversal at 0x825853B8..0x825853C4; this parser can leave trailing bytes unconsumed."
+    ],
+    "qualification": "Header admission is weaker than successful upload. Arithmetic overflow, hostile dimensions/counts, non-2D suitability and other parser-dispatch candidates are not closed."
+  },
+  "formatMapping": {
+    "verdict": "accepted",
+    "table": { "base": "0x82F18750", "stride": 36, "descriptorCount": 39, "sentinel": "0x82F18CCC", "sentinelWord": "0xFFFFFFFF", "nonFourCcCount": 22, "fourCcCount": 17 },
+    "comparison": {
+      "address": "0x82585034..0x8258515C",
+      "pixelSize": 32,
+      "effectiveFlags": "F=(flags&4)?4:flags; F must equal descriptor+8.",
+      "conditionalEquality": { "FourCC": "F&0x4", "bitCount": "F&0xC4462", "redMask": "F&0xE4040", "greenMask": "F&0xC4440", "blueMask": "F&0xC4040", "alphaMask": "F&0x80003" },
+      "failure": "A scan reaching the masked sentinel returns 0x80004005 at 0x825853D8. Ignored mask fields need not equal the representative values below."
+    },
+    "representativeEntries": [
+      { "address": "0x82F18750", "flags": "0x41", "bitCount": 32, "masksRGBA": ["0x00FF0000", "0x0000FF00", "0x000000FF", "0xFF000000"], "descriptorWord": "0x18280186" },
+      { "address": "0x82F18798", "flags": "0x40", "bitCount": 16, "masksRGBA": ["0xF800", "0x07E0", "0x001F", "0"], "descriptorWord": "0x28280144" },
+      { "address": "0x82F1896C", "flags": "0x20000", "bitCount": 16, "masksRGBA": ["0xFFFF", "0", "0", "0"], "descriptorWord": "0x28000158", "parsedWord": "0x28000058" },
+      { "address": "0x82F18AF8", "flags": "0x4", "fourCC": "0x31545844", "descriptorWord": "0x1A200152", "parsedWord": "0x1A200052" },
+      { "address": "0x82F18B40", "flags": "0x4", "fourCC": "0x33545844", "descriptorWord": "0x1A200153", "parsedWord": "0x1A200053" },
+      { "address": "0x82F18B88", "flags": "0x4", "fourCC": "0x35545844", "descriptorWord": "0x1A200154", "parsedWord": "0x1A200054" }
+    ],
+    "membershipBoundary": "The complete 39-descriptor read supports the bounded counts and DX10 negative. The full lossless selection table remains excluded from this public record under docs/evidence-model.md; examples do not replace the exact table locators or establish conversion support for every entry.",
+    "requestedFormat": "0x8257B348..0x8257B408 recognizes the masked-1 sentinel for from-file selection. 0x82579EBC..0x82579EE4 calls descriptor lookup 0x82578398 and 0x825785F8. 0x82578398 is also called at 0x82585164 on the uncleared table word; an exact hit returns its entry and a miss returns the default entry at 0x8205A1F8. 0x825785F8 returns the word unchanged and uses its 0x18280186 fallback only for the sentinel. For source descriptor 0x82F1896C the exact entry is 0x8205A6A0, whose word at +8 is 16; 0x8205A6C4 holds the linear height output word 0x28000058.",
+    "wordFields": {
+      "address": "0x8269A460..0x8269A470,0x8269A59C..0x8269A674",
+      "numericLayout": "The constructor passes word&0x3F as the format index, (word>>8)&1 as the layout selector, and preserves (word>>6)&3 in the resource format field. 0x82578E00 tests the 0x100 layout bit before untile/tile paths.",
+      "heightWord": "0x28000058 gives index 0x18, field(word>>6)&3=1, layout bit 0. No name for index 0x18 or swap mode 1 is assigned solely from the number.",
+      "qualification": "The supplied SDK utility correlates tiling arithmetic, but does not define this D3DFORMAT word's enum or endian field names. Higher swizzle/sign fields and universal endian-mode names remain unresolved."
+    }
+  },
+  "ordinaryPayload": {
+    "verdict": "accepted",
+    "linearRecords": "0x82585350 computes source row pitch;0x82585370 clears 0x100 from the descriptor word while retaining 0xC0. 0x82578F40/0x82578F78 therefore bypasses the pre-tiled-source arm for ordinary DDS records. A writer cannot substitute an already Xbox-tiled payload based on a tiled descriptor word in the table.",
+    "sizing": "0x825852A4..0x82585348 selects packed-pair, block or ordinary format sizing. The DXT1 word uses 8*ceil(width/4) bytes per block row and ceil(height/4) rows; DXT2/3 and DXT4/5 use 16 instead of 8. The ordinary arm uses descriptor bits-per-pixel/8 times width, then height and depth. Header pitch is not used. These formulas have no overflow-safety theorem here.",
+    "orderingAndLength": "0x825851BC..0x825853C0 walks each face's declared mip sequence, advances by computed level bytes and halves each dimension unless already 1. Each level requires enough remaining payload at 0x82585374/0x8258537C. The selected palette-class branch first consumes 1024 bytes at 0x82585194..0x825851B4; no claim of reachable palette membership is made.",
+    "nativeTiling": "0x82578E00 can untile source through 0x826B8060->0x826B7920 when source 0x100 is set, or tile a destination temporary through 0x826B7E00->0x826B7550 at 0x8257948C. The ordinary DDS source bit is clear. Source pitch and native destination pitch are distinct, and native 32-block/page alignment is not a DDS file-padding requirement.",
+    "bytePreservingArm": "0x8258AC18 creates conversion objects through 0x82596178, calls pre-copy helper 0x8258BB50, then tries 0x82587F60. Admission at 0x82587F78..0x82587FDC requires equal regions and formats equal modulo mask 0x1C0; row copies at 0x82588098..0x825880CC require object+12 nonzero. Interior 0x8258B928 of base owner 0x8258B880 sets that field from nonzero bits-per-pixel; zero takes DXT-only aligned arm 0x825879F0. The admitted row-copy operation is byte-preserving. This does not close parser, lock or cleanup representation effects surrounding the copy.",
+    "heightEncodingConsequence": "OPEN: the local same-format row copy does not establish file-to-CPU sample byte identity. Retail numbered-map files exhibit LE16 samples, while 0x82C69850 consumes unsigned BE16. The native representation transfer remains unbound; do not prescribe BE16 file samples from the CPU load alone. See xbox-heights-authoring-contract.json#/sourceFormat/payload for swap frontiers and xbox-heights-authoring-contract.json#/retailObservedProfile for the observed writer candidate.",
+    "unresolved": [
+      "Native same-format file-to-CPU height sample endian transfer; see xbox-heights-authoring-contract.json#/sourceFormat/payload.",
+      "All cross-format conversion kernels, channel replication/selection and their byte swaps;0x8258AC18 exposes ten fallback candidates beyond the bounded child expansion.",
+      "Complete endian interpretation of every accepted input format, including compressed block fields.",
+      "Complete alternate resource upload, packed native mip placement and actual lock/pitch values for installed resources."
+    ]
+  },
+  "dimensionsAndMips": {
+    "verdict": "accepted",
+    "defaultDimensions": "0x8257B1E0..0x8257B278 rounds nonnegative parsed dimensions up from 1 to the next power of two for incoming 0/-1;-2 is a distinct exact-dimension option, not supplied by these roles. No role-to-role size equality or grid-ratio equality test is present in 0x82C6E188.",
+    "outputValidation": "0x82579F78..0x82579F8C changes zero output dimensions to 1. For type3,0x8257A000..0x8257A058 clamps width/height to sampled limits and aspect ratio; capability-dependent POT rounding is at 0x8257A0C0..0x8257A11C. DXT output indices 0x1A200012..0x1A200014 align width and height to multiples of 4 at 0x8257A11C..0x8257A134. These are output adjustments, not a proof that non-POT source headers are rejected.",
+    "sampledCapabilities": "0x8269F570 copies 304 bytes from 0x8208F040. Initial words 0x8208F098/0x8208F09C are 8192,0x8208F0A8 is 8192 and texture caps 0x8208F07C is 0x1EC45. With these values the additional type3 POT-cap bit 2 is clear and mip-cap 0x4000 is set. Initial bytes and the copy do not prove the table is immutable at runtime.",
+    "outputMipCount": "0x8257A138..0x8257A230 can force count 1 when mip capability/conditional-POT requirements fail; otherwise count 0 or an excessive count becomes bitlength(max(width,height)) for type3. A positive smaller requested count is retained. This is the count passed into 0x8269AB90 at 0x8257B4F8, conditional on helper success.",
+    "roleMipInputs": "Height caller 0x822F98F4 supplies 0. For blends/lightmap,0x82C8DB78 loads metadata+668.0x82C40FA4->0x82C40D00 swaps the 124-byte header by words;0x82C410D8..0x82C410F8 copies header mip count there and replaces 0 with 1.",
+    "providedAndMissingLevels": "0x8257B538..0x8257B610 uploads parsed records only while below the output count. All declared records have already passed parser byte checks. When more output levels are selected,0x8257B6B4..0x8257B7B8 either reuses the last supplied record or calls 0x8257AC50 from the last supplied level. 0x8257AEFC/0x8257AF88 attempts type3 surface-to-surface filling for later levels; low filter 2/5 advances the source surface after each level. Successful generation and filter quality are not observed.",
+    "qualification": "No universal maximum source-header dimensions, input mip-count cap, successful generated chain, source/output equality or fixed per-role texture size is proved. Declaring absent payload mips still fails the parser; requesting extra output levels is a different operation."
+  },
+  "heightCpuConsumption": {
+    "verdict": "accepted",
+    "binding": "0x82C6EA8C..0x82C6EAAC constructs H and stores it at terrain+0x24;0x82C6E1F4 loads the named height file into H. After role-loader success,0x82C6EBAC calls 0x82C69850, which reads that same pointer at 0x82C69868 and 0x82C69988.",
+    "sample": "0x82C69998..0x82C699B8 loads H+16 row pitch, H+12 pixel step and H+0 buffer;lhzx reads an unsigned native BE16 pair at buffer+(height-1-row)*pitch+column*step. The scalar tail repeats this at 0x82C69ABC..0x82C69AE4. It does not select one byte of a four-channel pixel.",
+    "pixelStepBoundary": "0x822F99A0/0x822F99B8 sets H+12 to returned pitch divided by descriptor width using signed integer division. Step 2 alone is insufficient: extraction allocates the truncated step*height*width but requests full-pitch row copies. The combined adjacent-sample/storage relation is pitch==2*width under retained positive inputs and no wrap; see xbox-heights-authoring-contract.json#/pixelStep/extractionStorage for arithmetic, exact locators and guards.",
+    "scale": "0x82C699CC..0x82C699D8 and 0x82C69AF8..0x82C69B04 compute float(sample)*F32[terrain+0x58]*F32[0x8216A4FC]. The last word is 0x3B7F0000, exactly 255/65536. Terrain+0x58 is populated from 0x82C79050 at 0x82C6E958/0x82C6E95C; no fixed value for it is inferred.",
+    "rows": "0x822F99F8..0x822F9A28 reverses level 0 rows into H. This selected CPU reader reverses H rows again; the two reversals cancel for its source-row association. No display-axis claim follows.",
+    "qualification": "This is the first bound numeric CPU reader in the inspected closure. Earlier geometry virtual calls are not closed, so chronological first use is unresolved. Native 16 output consumption does not prove which component every arbitrary source format converts into that value."
+  },
+  "currentEvidence": {
+    "method": "Sequential foreground read-only Ghidra function, raw-word and bounded field queries; exact-owner generated instruction corroboration; selected query-word equality against the supported flat image.",
+    "supportedImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "locators": [
+      "ghidra/DumpFunctions.java:0x82584F48,0x82584D18,0x82584BF0,0x82579E50,0x82C40EB0,0x82578E00,0x8257AC50,0x82578398,0x825785F8,0x8258AC18,0x82587F60,0x8269A378,0x82C69850",
+      "ghidra/DumpMemoryWords.java:0x82F18750,0x82F18850,0x82F18950,0x82F18B50,0x82F18D50,0x82585088,0x82585170,0x82584C70,0x82579E50,0x8257A050,0x8257A200",
+      "ghidra/DumpMemoryWords.java:0x82578E00,0x82579000,0x82579200,0x82579400,0x8257AD50,0x8257AF50,0x8269F570,0x8208F07C,0x8205A6C4,0x8269A470,0x8269A630,0x82588030,0x825880D0",
+      "ghidra/DumpMemoryWords.java:0x82C69980,0x82C69B00,0x8216A4FC,0x82C40D00,0x82C410D0,0x82C412D0,0x82C6E950,0x82C6EA80,0x82C6EB80",
+      "ghidra/FindFieldAccesses.java:offsets 0xD4,0xD8,[0x82C66000,0x82C6EE00)",
+      "ghidra/DumpMemoryWords.java:0x82C6B730,0x82C6B780,0x82C6B9F8",
+      "generated:rerevved/sub_82584F48", "generated:rerevved/sub_82584BF0", "generated:rerevved/sub_8257B080", "generated:rerevved/sub_82579E50", "generated:rerevved/sub_825785F8", "generated:rerevved/sub_82578E00", "generated:rerevved/sub_8257AC50", "generated:rerevved/sub_8258AC18", "generated:rerevved/sub_82596178", "generated:rerevved/sub_82587F60", "generated:rerevved/sub_8269A378", "generated:rerevved/sub_8269F570", "generated:rerevved/sub_82C40EB0", "generated:rerevved/sub_82C40D00", "generated:rerevved/sub_82C6E898", "generated:rerevved/sub_82C69850"
+    ],
+    "repairQualification": "The disposable copy carried the supplied repair of [0x827F7C50,0x827F7CF0): 40 slots, 15 noreturn flags cleared, zero rebuild errors. No repair was repeated. Queried words outside replaced thunks matched the pinned image; unrelated noreturn/unsupported-instruction truncation persists, so complete decompiler closure is not assumed."
+  },
+  "externalReference": {
+    "identity": "Xenia-derived SDK texture utility",
+    "locator": "rerevved-sdk@main:src/graphics/pipeline/texture/util.cpp:GetTiledOffset2D:424,GetGuestTextureLayout:202",
+    "sha256": "C16FB6F11FBFE4327D8E648353B8F10F661D5F3B7520EF831CFC67CE1569B81D",
+    "use": "Correlates 32-by-32 native tile addressing and distinguishes native linear row alignment from DDS payload pitch.",
+    "qualification": "External reference only; title-specific admission and byte order come from guest code. This file does not define the D3DFORMAT word layout. Its header identifies Xenia, Ben Vanik and BSD licensing; broader provenance was not independently verified."
+  },
+  "boundedNegative": {
+    "roleFieldScan": "Modeled field reads of 0xD4/0xD8 in[0x82C66000,0x82C6EE00) inspected only 2 listing instructions and returned 0 matches without truncation. The seeded owner/caller query inspected 0. A bounded raw lwz scan in the same band found 0x82C6B718,0x82C6B760 and 0x82C6B9E4; exact generated owners 0x82C6B300/0x82C6B938 and raw windows bind those loads to reference-count release paths. These observations bind no texture sample and exclude neither other addressing forms nor consumers outside the band.",
+    "formatNames": "No RGB channel name, compressed-block endian recipe or SDK enum name is inferred from a numeric format word."
+  },
+  "unresolved": [
+    "Installed provider/cache identities and successful current file delivery for each role.",
+    "Complete header-selected alternate/cube creation and its format, size, mip and upload constraints.",
+    "Safe short-DDS rejection through type7 metadata preprocessing, which precedes the ordinary parser's extent gates.",
+    "Complete cross-format conversion and per-format byte-order/channel contracts; parser table membership is not upload support.",
+    "Blend/lightmap shader identity, sampled component meanings, color space and lighting composition.",
+    "Chronological first height use through earlier geometry virtual calls and the runtime value of terrain+0x58.",
+    "Runtime success, actual current file delivery, title-update derivation, save behavior and peer parity."
+  ],
+  "guards": [
+    "Apply scope.claimQualification to every accepted property; closed status closes this bounded static read set, not all authoring unknowns.",
+    "Keep little-endian header scalars, linear payload addressing and per-format sample byte order separate.",
+    "Do not pre-tile an ordinary DDS payload because table words contain 0x100; the parser clears that bit.",
+    "Do not declare absent mip bytes expecting output-mip generation to supply them.",
+    "Do not require one source format merely because heights requests 0x28000058.",
+    "Do not treat output clamping/rounding as source-header rejection or a successful authoring validator."
+  ],
+  "conclusion": "The ordinary path fixes a little-endian classic DDS header, bounded 39-descriptor matching, tightly computed linear payload records, declared-mip byte checks and adjustable output dimensions/counts. The selected CPU height reader consumes unsigned BE16 scaled by terrain+0x58 and 255/65536; that does not prescribe file sample byte order. Retail LE16 observations, native swap frontiers and extraction-storage constraints are bounded in xbox-heights-authoring-contract.json. Complete conversion support, alternate resources and blend/lightmap channel meaning remain open."
+}

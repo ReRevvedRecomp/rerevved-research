@@ -124,7 +124,7 @@
       "address": "0x8216432C",
       "value": "%s_Lightmap.dds"
     },
-    "selection": "The loader formats one base name as Map%d when no named-map selector is active and as Map%s when the selector is active, then requests the height, blend, and lightmap names through the same resource path.",
+    "selection": "The loader formats one base name as Map%d when no named-map selector is active and as Map%s when the selector is active, then requests the height name through 0x822F9888 and the blend and lightmap names through the shared 0x82C92950 path, so heights use a distinct resource path (RVA-F-0371).",
     "failureBoundary": "Failure to open the height resource returns false. The terrain owner clears its prebuilt flag before continuing through the alternate construction path.",
     "derivedScale": "The loader divides the loaded height texture dimensions by terrain-object dimensions at offsets 0x5C and 0x60 and stores the resulting per-tile values at offsets 0x7C and 0x80. This derived texture scale does not make the gameplay grid dimensions content-driven.",
     "ddsAuthoringBoundary": "Follow-on packet xbox-dds-map-authoring-consumer-boundary finds zero exact references to all three DDS format strings, a thunk-only named-map consumer body, and a truncated terrain-loader body. It proves no role-specific dimensions, format, mip behavior, byte order, or payload rule."
@@ -141,8 +141,8 @@
       "terrainType": "bits 0 through 3 are copied to the internal terrain grid",
       "bit0x10": "sets internal bit 0x400 and conditionally internal bit 0x10; the semantic name remains unresolved",
       "bit0x20": "records the tile coordinate in an eight-entry side table while capacity remains; the semantic name remains unresolved",
-      "bit0x40": "expands to paired internal directional bits 0x2 and 0x8",
-      "bit0x80": "expands to paired internal directional bits 0x4 and 0x1"
+      "bit0x40": "expands to paired internal directional bits written to neighboring cells: 0x2 in the tile's own cell and 0x8 in the cell one 40-byte row later (RVA-F-0370)",
+      "bit0x80": "expands to paired internal directional bits written to neighboring cells: 0x4 in the tile's own cell and 0x1 in the immediately preceding cell (RVA-F-0370)"
     },
     "orientation": "File bytes are consumed sequentially in dimension-sized rows. Each row is copied into a 40-byte-stride internal grid while the destination column counts downward. The equal 32-by-32 dimensions prevent this packet from assigning a player-facing row, column, or display orientation beyond that exact conversion.",
     "trailingBytes": "The supported-image path requests exactly width times height bytes. It does not establish a required footer or safe acceptance of trailing data."

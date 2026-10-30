@@ -67,3 +67,119 @@ writes raw ownership, discoverer and source and increments the odd-phase tally;
 it is not an isolated reward API. Full award delivery and duplicate prevention
 remain unproved. The new72 code words passed both foreground packets and
 independent PPC64 operand checks.
+
+### Technology4 exception and sharing
+
+`technology4ExceptionBoundary` binds the current sample q at 0x82F700B0.
+For retained W == 0 and p, q in 0..7, q == p leaves one ownership bit, while
+q != p adds a second bit to technology 4's raw word at 0x830EDC58. The
+sentinel -1 skips that extra store. The initialized image value 7 does not
+establish current q.
+
+The selected 16-bit count admits sharing for the two-bit case when its current
+player bound is positive. Source 5 recursive calls at 0x82D094BC/0x82D0951C
+can replace F, which the outer loop does not save or restore. Their context is
+the current post-helper r5. Same-bit and sentinel bypasses retain the accepted
+local no-call corridor before native suppressors. Actual recursion, award
+delivery, caller/source/phase policy and persistent duplicate prevention remain
+open.
+
+### Nonrecursive query preservation
+
+`localQueryFlagPreservationBoundary` covers the selected sharing stores and
+complete ownership queries. When both recursive admissions are false at every
+reached iteration, F = 1 is retained to 0x82D09548 under the explicit
+frame/spill, original-thunk, current-state and finite-bound guards. The resolver
+at 0x82D094C8 is also excluded because its path first requests recursion.
+
+A conditional phase 1 example executes positive-N queries for technology 4 while
+each visited player virtually owns it through active Apollo 17. This excludes
+the first recursion; a clear phase mask 0x2 excludes the second independently.
+It is a static case, not observed player/team state or a selected grant policy.
+Native suppressors, actual recursion, award delivery and persistent
+duplicate/retry gates remain.
+
+### Acquisition records precede award completion
+
+`acquisitionRecordReceiptBoundary` binds exact PC 0x82D093A4, immediately after
+the odd-phase tally store. Under the accepted p = 0..7, t = 11, source = 0,
+phase = 1, whole-word W = 0 and helper/state-retention conditions, ownership is
+1 << p, discoverer is p, source is 0, tally is low32(K + 1) and F is 1. This
+invocation has not yet executed its later local Irrigation population store at
+0x82D0A3F8.
+The raw ownership store is 0x82D0937C; 0x82D09378 computes the phase bit.
+
+Those current records, even with F = 1, cannot alone certify this invocation's
+completed award. This is a local instruction-order limit; it says nothing
+about awards by other invocations or historical/global state equivalence.
+Source 6 writes the early records before clearing F; exact phase 2 writes
+ownership and source without incrementing the odd tally or executing that
+Irrigation store. No completed-call convergence or replay policy is proved.
+Full return, actual delivery and duplicate/retry gates remain.
+
+### Context and weighted SDI recipient scoring
+
+`acquisitionContextScoringBoundary` binds the local building scan under retained
+r15 = z at 0x82D09BEC. Normalized 18 / SDI Defense matches technology 46. Its
+score includes the signed population at 0x82D0A138 through seed offset 188*z,
+multiplied by the candidate's low16 building-bit count. The initial best score
+0 does not cancel this term. After a winner replaces the seed offset, its stored
+best score can still carry the earlier seed dependence.
+
+Two complete static 128-city replays on the same mapped snapshot, differing
+only in valid owned seed-city input, select different recipients when no
+eligible bit 0 candidate exists. Under separately supplied seed/candidate
+population bounds 0..31 / 1..31, non-bit 0 scores are at most 527 and eligible
+bit 0 scores are at least 1001. A unique eligible bit 0 candidate therefore wins
+in both context traces. The bounds, existence and uniqueness are premises;
+no native population cap or capital invariant is established.
+
+K = 0 cancels numerically while the memory load still executes. The separate
+`acquisitionContextIngressBoundary` binds the saved-context reload to this seed
+for retained technology 46 fields and admitted local gates. The separate
+entry-retention boundary below supplies one conditional original-context route.
+Actual caller and reached helper/home retention remain required. No context
+choice, ordinary-caller defect, delivered reward, full return or safe
+retry/reissue policy follows.
+
+### Retained context ingress for technology 46
+
+At 0x82D09754 the acquisition reloads saved context from frame + 0x1F4. Under
+the retained initialized fields, the fixed 38-unit scan has zero qualifying
+technology 46 matches, excluding type 27. The first 18 building fields also
+do not match; normalized 18 / item 118 / SDI Defense is the first match. Thus no
+earlier match replaces context on this admitted local route.
+
+The building mismatch branch 0x82D09BD0 goes directly to 0x82D0A2E4,
+bypassing the frame + 0xA4 store. Its loop compares a signed pointer against
+the captured base + 4758 endpoint; the preceding global load is not a live
+loop count. With the supported retained base, that endpoint admits the SDI
+field. The route reaches 0x82D09BEC with the saved context and 188*c offset,
+zero initial best score, and no executed call or store in 575 local operations.
+
+These initialized fields and captured bounds must hold currently.
+This scan result alone does not bind the earlier context producer. The separate
+entry-retention result below supplies one conditional route. Actual Apollo
+invocation, reward delivery, full return and retry/reissue policy remain open.
+
+### Original context through acquisition entry
+
+`acquisitionContextEntryRetentionBoundary` binds incoming context `r5` through
+the selected technology 46/source 0/phase 1 corridor. Original save thunk
+`0x827F7C50` preserves `r5` and the incoming stack pointer. The store at
+`0x82D09218` saves only low32(context) at frame `+0x1F4`, which is incoming
+stack pointer `+0x24`: a caller-backed parameter home. The reload at
+`0x82D09754` zero-extends that retained word into `r15`.
+
+Whole raw ownership W = 0 and supported player p = 0..7 give the admitted count
+1 sharing
+bypass for technology 46. The original save-thunk stores are disjoint from the
+context home, and no selected direct store after its producer overlaps it.
+The required `0x82D8A3A0` call and any reached current `+0x1C0` callback must
+return with the actual frame, required state and home bytes intact. ABI register
+preservation alone does not prove memory nonalias. No body call occurs between
+the selected post-sharing prefix and the reload.
+
+This composes with the retained unit/building scan above under all its current
+field, pointer-bound and valid-city premises. It does not identify an Apollo
+caller or preserve a recursive descendant's context.

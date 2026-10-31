@@ -52,6 +52,28 @@ IDs. Game of the Week also changes the duplicate comparison to omit
 player slot zero; the bounded expansion contract excludes that mode as well
 as multiplayer and the native special two-player override.
 
+## Multiplayer AI difficulty
+
+The [difficulty boundary](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0381)
+binds a selected network-setup write at `0x82D221EC`: global difficulty
+`0x82FFE7C8` becomes 2, with King display identity. This direct store precedes
+the later manager predicate. Ordinary setup instead conditionally copies
+setup `+0xF8` through the initialized root's `+0x9C` getter.
+
+The shared word is broader than AI difficulty. Selected local-player Culture
+composition and combat modifiers use it, alongside separate AI-classified
+readers. Research's difficulty discount also requires a zero network byte,
+so changing its difficulty operand alone does not enable that SP effect in
+the selected MP path. A separate per-player production array at `0x830E9050`
+receives command57 values from the root's `+0xA0` getter; it is not a proved
+AI difficulty array. Human values and ordinary mode gates need preservation.
+
+Named views bind 0..3 to Chieftain, Warlord, King and Emperor. Other values,
+including 4, select Deity; that fallback is not a legal-range check. Complete
+reader coverage, current MP classification and deterministic peer application
+remain conditions for a host-selected AI-only option. No setting or runtime
+behavior is established by this static finding.
+
 ## Economic and strategic consumers
 
 Native research and production helpers expose three post-composition seams.

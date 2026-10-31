@@ -205,14 +205,53 @@ Latch manual origin independently of checkbox changes. Result namespace uses
 week `+0x134`; property `0x20000038` label "Seed" means week, not `+0x138`.
 Guard local score/week caches and base/victory-child submissions from
 classifying custom results as shared challenge. Final host filtering alone does
-not prove local protection. Retain session/failure cleanup and save policy;
-custom save/load/profile persistence is unproved. No leaderboard support is
-required.
+not prove local protection. Retain session/failure cleanup. The selected
+[save/load boundary](#saving-and-loading) separates native record requests
+from unproved custom-origin/rules/profile persistence. No leaderboard support
+is required.
 
 Gates/revisions/locators:
 [`game-of-the-week-local-generation.json`](../../manifests/game-of-the-week-local-generation.json),
 `manualMapSeedBoundary`, `settingsSeedContract`,
 `configurationPublisherBoundary.constructorImportBoundary.nativeReturnBoundary`.
+
+## Saving and loading
+
+The selected manual save restriction is explicit. In Special Functions
+`0x82D06398`, setup mode 2 clears eligibility at `0x82D0648C..0x82D06494`,
+selecting the alternate list without Save or Load. Network byte `0x8314F10B`,
+restriction halfword `0x8314F1CC`, device and sign-in conditions also apply.
+Full row 1 maps to action 83 and `0x82D00550`; under the retained default
+frontend table, its picker and writer are `0x82D83208` and `0x82D82510`.
+A second mode-2 exclusion at `0x82D1D320` gates an optional manual Save
+prompt, not an automatic save. These are selected gates, not an exhaustive
+alias/upstream inventory.
+
+The header requests week from setup `+0x134`; the body requests current RNG,
+actual player civilizations, calendar fields and logical terrain/flag/edge
+planes. Requests do not prove delivered bytes or a complete GotW round trip.
+At `0x82D8685C`, the reached load continuation supplies the saved week and
+seed argument zero, re-deriving setup seed `+0x138` and civilization `+0x13C`.
+It does not restore setup mode or host policy. The accepted load origin had
+mode 3. Under the retained default initializer table and arguments, one direct
+map-constructor call is bypassed; later helpers, first-reader retention and
+statistics/cache effects remain unresolved.
+
+Automatic saving uses a separate default-table `+0x70` wrapper,
+`0x82D83E80`. Its selected storage/record path invokes common writer
+`0x82D82510` through `+0x74`. Rate/predicate-gated requests were identified at
+`0x82CC8B9C`, `0x82CDED18`, `0x82D1F434` and `0x82D00898`. No GotW-specific
+automatic-save exclusion was established. Upstream rate/mode writers,
+selected-user virtual dispatch and actual ingress remain open; this is not
+proof that GotW always autosaves. The wrapper can return 1 after skipping a
+save, so only the actual common-writer/finalization path can establish output.
+
+Native fields, deciding sites, word-span digests and limits are canonical in
+[`saveLoadBoundary`](../../manifests/game-of-the-week-local-generation.json#/saveLoadBoundary).
+The existing [slot contract](save-storage.md) supplies namespaced manual
+identity/finalization evidence; it does not certify custom GotW metadata,
+automatic-slot behavior or resumed-game result isolation. No game was launched
+for this static boundary.
 
 ## Exact replay and the week input
 

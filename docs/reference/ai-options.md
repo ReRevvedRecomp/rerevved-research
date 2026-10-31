@@ -204,6 +204,31 @@ first-reader coverage. The130-word packet has127 instructions and three
 table cells;125 assertions, five supplied cases and three mutation controls
 passed. This remains conditional delivery evidence, not peer authority.
 
+The [peace-writer audit](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0362/peaceWriterAuditBoundary)
+extends the selected contact closure to nine command-38 peace calls and four
+direct store blocks, including `0x82CC9078`. Technology/Gold requests and unit
+removal can precede contact peace, so guarding only its final store leaves
+partial effects. The four post-choice decisions are conditional admission
+candidates; normal refusal and repeat-contact readiness remain unproved.
+
+Command 39 independently writes the supplied relation at
+`0x82CE0088/0x82CE008C`. Event selector 11 in `0x82D17AE0`, identified by its
+stored Tesla's Peace Ray caption, writes peace from war at
+`0x82D18AC4/0x82D18ADC`. Selector 7, Tower of Babel, writes peace from the
+tested reset value. Both enumerate pairs containing repeatedly resolved K;
+neither caption proves global pair coverage. Producers and coherent admission
+before earlier event effects remain unbound.
+
+The bounded literal scan found 52 distinct low sites, but native materializers
+17 and 10 instructions apart fall outside its eight-word lookahead. It cannot
+prove an exhaustive writer inventory. Selected new-game group masks precede
+`0x82D2530C` recount, while ordinary contact also has a separate direct peace
+block at `0x82CCFB98/0x82CCFBA4`. Complete active-pair admission, successful
+load input and reconciliation before the first relevant reader remain gates.
+The conditional load candidate remains immediately before `0x82D2582C`
+ranking, preserving its following recount. Single-player implementation still
+requires those proofs; multiplayer authority and peer enforcement are separate.
+
 ## Default transport construction
 
 `RVA-F-0362/constructorTransportInitializationBoundary` binds the selected

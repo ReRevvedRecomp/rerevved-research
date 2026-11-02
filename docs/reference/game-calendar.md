@@ -19,9 +19,10 @@ then 2.
 ## Transition flow
 
 `CalendarTurnAdvance` increments `0x8312B8DC`, calls `TurnToYear`, then stores
-year at `0x8312B8E0`. Initialization/load derive the same pair before
-resumption. The full ABI, triggering action or phase, and side effects remain
-unproved. Whether this is the sole writer is also unproved.
+year at `0x8312B8E0`. Initialization has converter-derived paths; selected
+deserialization separately requests saved year and turn. Recomputing the pair
+on every load is not established. The full ABI, triggering phase, side effects
+and sole-writer status remain unproved.
 
 Its exact direct `ActiveCivilizationBonusLookup` call establishes consumption,
 not calendar arithmetic or bonus causation.
@@ -43,8 +44,43 @@ compares event-year `+0x444` with `0x8312B8E0`; inequality branches to
 eligibility remain unknown.
 
 Runtime observations: turn 61 -> 1025 AD; 62 -> 1050 AD. No universal formatter
-is identified. Separate BC/AD/year-zero strings exist, but final year-zero
-wording remains unknown. Do not derive era and year from each other.
+is identified. Complete `0x82CF3920..0x82CF39B0` selects negative, positive or
+zero presentation by the signed year argument. Its positive arm requests
+magnitude formatting without a local 2100 clamp or year-indexed table.
+Chart-label owner `0x82DF7648` passes a converter return to that formatter at
+`0x82DF7690`; GotW also has a separately recorded consumer. Formatter
+descendants, ordinary HUD ownership and final wording remain unknown.
+Do not derive era and year from each other.
+
+## Calendar beyond 2100
+
+The complete 32-instruction converter has no memory read or call, so speed and
+scenario state cannot directly change its mapping. The selected transition
+passes current turn plus one unchanged. Scenarios can select a starting turn
+through the initialization year-threshold search; cadence, other writers and
+later overwrites are separate questions.
+
+Turn 118 is 1950. Until the first signed year wrap, the late curve is
+`year = 2*turn + 1714`. There is no 2100 or 2500 clamp in the converter.
+
+| Year | Absolute turn | Five-turn lead year | Lead turn |
+| ---: | ---: | ---: | ---: |
+| 2100 | 193 | 2090 | 188 |
+| 2200 | 243 | 2190 | 238 |
+| 2300 | 293 | 2290 | 288 |
+| 2500 | 393 | 2490 | 388 |
+
+These are arithmetic witnesses, not observed endgame dates or a replacement
+deadline policy. Scenario elapsed turns are counted from a separate start turn.
+Selected save/load requests carry four-byte current-year and current-turn
+values; successful delivery, complete reload and retained coherence remain
+unproved for a continued game.
+
+At turn 1073740966 the year is 2147483646. The next turn stores low32
+`0x80000000`, interpreted as -2147483648; later signed tests leave the simple
+two-year curve. Signed nonpositive turn inputs return -4000. Conversion also
+loops once per positive input turn. Removing a deadline therefore supplies
+neither infinite integer storage nor arbitrary-turn consumer correctness.
 
 ## Deadline admission
 
@@ -62,21 +98,32 @@ ordinary Domination. Its initial stores publish player rank/type and sampled
 turn/year in the result block. The deadline has its own admission; the ordinary
 palace-based Domination condition retains its elapsed-ten-turn and
 enabled-victory gates. Earlier victories and evaluator/iteration guards still
-apply. A preceding warning tests year2090 or scenario elapsed195 separately.
+apply. The local-player warning separately tests year 2090 at `0x82D11320`
+with scenario -1, or elapsed 195 at `0x82D1133C` with another scenario value.
+The selected warning resource promises a five-turn lead. Its request does not
+establish delivered presentation.
 
 The converter yields turn192=2098, turn193=2100 and turn194=2102. These are
 static arithmetic witnesses, not observed endgame dates. The deadline consumes
 calendar state; changing displayed dates alone does not establish more play.
 
-The smallest candidate policy changes only this deadline admission and retains
-its bypass to `0x82D1143C`. A higher cap and unlimited turns remain unselected.
-Other victories, shared result handling and ordinary calendar/turn flow must
-remain intact. Warning policy, current rank/calendar/scenario retention,
+Changing only the 2100 compare leaves both old warning tests unchanged.
+Bypassing from `0x82D11304` to `0x82D1143C` skips the complete warning/deadline
+arm. A finite extension instead needs a coherent warning policy, including
+the separate scenario elapsed-200 gate. Other victories, shared result
+handling and ordinary calendar/turn flow must remain intact. Current inputs,
 callback effects, peer compatibility and save/load of a continued game remain
 requirements. The first selected post-result virtual request at `0x82D113F0`
 uses current object `0x8314F76C` slot `+0x1C4`; its actual target and effects
 remain unresolved. These local predicates and stores do not prove a completed
 game ending or continued play.
+
+A bounded aligned-immediate census found five signed comparisons with 2100
+and one with 2090 in the tested forms. Only the selected deadline/warning
+comparisons are established current-year limit readers. Other hits include
+incoming-argument predicates and address/code construction. This does not
+exclude computed constants, resource/advisor text, aliased or indirect readers,
+other opcode forms or other ending paths. A global replacement is unsupported.
 
 ## Evidence boundaries
 
@@ -89,6 +136,7 @@ game ending or continued play.
 
 - [Game calendar state](../../manifests/game-calendar-state.json)
 - [Game turn-limit boundary](../../manifests/game-turn-limit-boundary.json)
+- [Scenario preset and selected load widths](../../manifests/scenario-speedmode-movement-boundary.json)
 - [City yield scheduling
   producers](../../manifests/city-yield-scheduling-producer-boundary.json)
 - [Civilization Unique Ability storage](../../manifests/civilization-bonus-storage.json)

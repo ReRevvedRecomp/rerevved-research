@@ -23,8 +23,8 @@ policy.
 
 A separate STARTERA4 arm writes a common mask to ownership words1..46,
 excluding words0 and47. It sets selected player-era words to3 and uses prior
-tally[0]+46 for its tally value. The mask comes from a retained frame-object
-field and is not independently proved to identify active players.
+tally[0]+46 for its tally value. The configured-Barbarian mask and its supported ordinary-layout
+interpretation are bound in the Beta Centauri section below.
 
 These selected setup instructions use direct writes; they do not locally
 call ordinary acquisition `0x82D09208`. That distinction does not characterize
@@ -40,6 +40,56 @@ The [starting-grant](../../manifests/starting-technology-grants.json) and
 contracts retain those distinctions, along with save and peer requirements.
 The generated setup body ending at EOF is excluded as semantic closure;
 selected native words support these local claims.
+
+## Native STARTERA input and ordering
+
+`0x82D22980` forms active Q and `0x82D22988` saves it at frame+0x68.
+`0x82D22A78` reads STARTERA at Q+0x1C, then sign-extends it. Values 1/2/3
+replace the base grant count with 5/14/24. The base count comes from nonzero
+signed Q+0x1A or a retained fallback; STARTERA 0 does not itself force zero
+grants.
+
+The selected player loop excludes the sampled Barbarian ordinal. It stores a
+positive STARTERA as that player's era before granting technologies. Each
+success requires eligibility and an absent ownership bit, then increments
+both a local success counter and the acquisition tally. Thus 5/14/24 counts
+additional successful writes; it is not a fixed technology list, final total
+or final-era guarantee. Rejected candidates have no local attempt cap. The
+selected candidate factor is 48.0, but the current RNG scale, candidate domain,
+eligible supply and eventual progress remain unproved.
+
+After a player's completed grant loop, `0x82D22BFC` rereads Q+0x1C. Later
+players and the separate value-4 bulk discriminator use the reloaded value.
+A one-time register substitution cannot replace every read. Scenario
+publication can also clear and copy the whole Q block; a write before a later
+publication can be replaced. STARTERA, STARTYEAR and game pace remain separate
+inputs.
+
+The grant paths join a later player-initialization loop. Its selected paths
+cross unresolved current dispatches, including `0x82D22D5C` and mandatory
+`0x82D2301C`, before `0x82D23050` requests era 0. The zero store at
+`0x82D23034` uses `0x830EDD48`, not acquisition tally `0x830EDD08`.
+The ordinary tally chooser can subsequently request eras 0/1/2/3 using
+thresholds 5/14/24. Retained inputs, reached first-turn processing and actual
+ability effects remain requirements; these local instructions do not establish
+complete grant-to-first-reader finalization.
+
+## Active scenario save/load requests
+
+The selected serializer discriminator >=14 arm requests all 64 scenario
+halfwords: mode 1 at `0x82CC6208`, mode 0 at `0x82CC6228`. With a null auxiliary
+stream, the array helpers advance by two bytes, so element 14 addresses
+STARTERA at `0x830E8FEC`. Scalar input requests two bytes through the current
+stream's slot+4 at `0x822DECB8`; output requests two bytes through slot+8 at
+`0x822E1400`. Conditional endian conversion and current stream effects remain
+part of the transfer boundary.
+
+These requests include the effective native input. They do not establish byte
+delivery, complete retained reload, an explicit override/default choice,
+provider identity or GotW origin. The older discriminator 8..13 path uses a
+different temporary/copy sequence. Existing ownership/discovery transfers
+separately carry granted state; loading does not justify replaying startup
+grants from a current preference.
 
 ## Coordinated slower progression
 
@@ -76,9 +126,10 @@ with0 below5. This classifies player progress; it does not assign individual
 technologies to eras. Setter `0x82D05A48` writes a changed era before a current
 virtual+0x16C and conditional local-player effects. A selected later setup
 call at `0x82D23050` explicitly requests era0. Complete grant-to-call and
-first-reader ordering remain unbound, so the earlier ownership-grant window
-does not establish safe finalization. Authoritative technology-era membership
-remains the next discriminator.
+first-reader retention remain conditional across the dispatches above, so the
+earlier ownership-grant window does not establish safe finalization.
+Authoritative technology-era membership is a separate unresolved relation;
+the count policy does not supply it.
 
 The pace finding's `presetAndCalendarBoundary` binds built-in ordinal5 to a
 SPEEDMODE1 store at `0x82DAF2DC`, after selected formatting calls. Actual
@@ -216,3 +267,32 @@ eligibility checks; zero is not the entire eligibility result.
 The complete body reads prerequisite halfwords, not a player-era relation.
 Earlier-era membership and safe setup finalization remain separate gates.
 Current definition-domain and runtime delivery are conditional.
+
+## Beta Centauri and STARTERA 4
+
+The built-in Beta Centauri selector is ordinal 4. Its branch at `0x82DAF240`
+writes STARTERA 4 and STARTYEAR 2025, together with separate Barbarian,
+victory, space-race and display inputs. The complete explicit preset stores
+and their common defaults are recorded in the starting-era finding's
+`futureEraPresetBoundary`. Copying the entire preset is different from reusing
+its technology input.
+
+The selected setup bulk arm replaces ownership words 1 through 46. Its mask
+is `low32(slw(1,E)-1)`, where E is the configured Barbarian ordinal at
+`0x82F700B0`. With supported contiguous ordinary players below E and
+N=E+1, this covers ordinary players and excludes the Barbarian bit. Words 0
+and 47 remain untouched. STARTERA 4 leaves the earlier base grant count
+unchanged, so positive native base grants can consume RNG before bulk.
+Count zero is a condition for strict prebulk parity, not for the reached
+bulk ownership result.
+
+The setup year search stops at the first converted year at least as large as
+the requested year. Native two-year steps after 1950 give turn 155 = 2024
+and turn 156 = 2026. With a reaching turn below 156 and retained loop state,
+requested 2025 therefore resolves to turn 156, year 2026.
+
+The selected bulk arm bypasses generic first-discovery rewards. Technology 47
+is Future Technology: the reached acquisition tail clears its ownership bit,
+and the selected empty research-choice fallback stores 47. These local
+continuations do not establish completed setup, first-turn effects, AI
+cadence, save delivery or multiplayer behavior.

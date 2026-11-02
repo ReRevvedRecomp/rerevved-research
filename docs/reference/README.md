@@ -6,6 +6,7 @@ player setup instructions. Proposed hooks/features retain stated conditions.
 ## Units, cities, and civilization
 
 - [Unit definitions](unit-definitions.md) - records, production/cost/AI, Move staging and extension limits.
+- [Unit movement presentation](unit-movement.md) - translation timing, native snap and conditional acceleration seams.
 - [City Militia and trainable Scout](city-militia-scout.md) - founding/Loyalty/persistence and Scout requirements.
 - [Barbarian spawning and capital protection](barbarians.md) - garrisons, AI, production and the conditional static capital gate.
 - [Friendly village rewards](friendly-villages.md) - six development metrics, reward identities, priority alternatives and session-lifecycle limits.

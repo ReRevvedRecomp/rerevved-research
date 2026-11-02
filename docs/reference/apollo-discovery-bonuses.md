@@ -1,214 +1,349 @@
 # Apollo Program technology and discovery bonuses
 
 The [canonical finding](../../manifests/apollo-technology-discovery-bonuses.json)
-records the selected Apollo ownership shortcut and direct-acquisition prefix.
-It establishes conditional static feasibility, with caller ordering, current
-state and actual bonus delivery still open.
+records Apollo's virtual ownership shortcut, guarded completion and direct
+acquisition semantics. Its selected native provider, technology4 returned F,
+all46 reward rows and conditional native return are resolved. A deferred
+per-entry grant/presentation candidate is specified separately. Its scheduling,
+save/load and common-peer acceptance contracts are not an implemented feature
+or proof of natural reward delivery.
 
-## Virtual ownership
+## Virtual ownership and raw first-world eligibility
 
-Apollo is Wonder217/normalized17, independently identified by its record.
-Selected completion publishes the claim and pending state under the retained
-completion/helper gates. Active-Wonder query0x82CEF4E8 reads that claim and
-applies current setting, owner/team and expiration conditions. Apollo's selected
-expiration halfword is-1.
+Apollo is item217/normalized Wonder17, independently identified by its record.
+Selected completion publishes owner/city at0x830E51D0/0x830E51D4. Active-Wonder
+query0x82CEF4E8 rejects absent owner-1 and applies current setting, owner/team
+and expiration gates. Apollo's expiration halfword is-1. Under the supported
+current state, it is active for player-1, its owner or the owner's current team;
+the extra city comparison for Wonders4/9/13 does not apply to17.
 
-Technology query0x82CEF6A8 calls the active17 query at0x82CEF704. A nonzero
-result makes supported technologies1..46 return owned before reading their
-raw ownership words. Technology47 keeps the ordinary bit path;0 returns false
-and the sentinel-1 returns true. Neither complete query calls acquisition
-0x82D09208. No separate Apollo materialization producer is established here.
+Technology query0x82CEF6A8 calls that query at0x82CEF704. Active Apollo makes
+supported technologies1..46 return owned before the raw ownership read.
+Technology47 retains the ordinary bit path;0 returns false and sentinel-1
+returns true. Neither complete query requests acquisition0x82D09208. This
+does not establish a separate retail mass-materialization producer.
 
-## Direct acquisition and first-world eligibility
+Generic acquisition reads the entire raw word
+`W=U32[0x830EDC48+4*t]` at0x82D09318 and ORs player p's bit at0x82D0937C,
+without an early Apollo virtual-ownership veto. Required resolver and reached
+source0 callback effects precede the read. For W==0 and t!=47 it writes first
+discoverer p at0x82D0932C and shared F=1 at0x82D09330. Source is written at
+0x82D09384; phase lowbit1 increments the acquisition tally at0x82D093A0 even
+when p's raw bit was already present. Ordinary science avoids that repeat
+through its virtual-ownership guard; direct acquisition is not an isolated,
+idempotent reward API.
 
-The selected generic ingress reads raw W at0x82D09318 and ORs p's bit at
-0x82D0937C without an early Apollo virtual-ownership veto. Required resolver
-and optional source0 callback effects still precede that read. For W==0 and
-t!=47 it records p as discoverer and sets shared F at0x82D09330.
+The unclaimed candidate admits ascending t1..46 only when the whole raw word
+is0, rechecking immediately before each phase1 call and retaining that premise
+through the native read. W!=0 is excluded even if only another civilization
+owns it, or source6 suppression, recipient failure or another native rule
+prevented an earlier reward. Raw ownership, discoverer, source and tally are
+not completed-award receipts. The W0 criterion is not a historical ledger
+covering external state changes or another timeline; it supplies no authority
+to repair or reissue a raw-claimed bonus.
 
-Repeated odd-phase calls increment the acquisition tally even when p already
-owns the raw bit. Ordinary science avoids this with its virtual-ownership
-guard; an Apollo policy would need its own raw-unowned discriminator. The
-native W==0 criterion is not a separate historical receipt proving that a
-reward was never delivered after external state changes or in another timeline.
+Source6 writes the early records before clearing F. Exact phase2 also writes
+raw ownership and source, without the odd-phase tally or Irrigation store.
 
-Recursive source5 acquisitions precede the native suppressors and F gate and
-can overwrite shared F. A narrower supported W==0, p0..7, t1..46 except4
-corridor leaves one ownership bit and bypasses the sharing loop without a body
-call between F1 and the suppressor/gate. Source6 and prerequisite suppressors,
-player and per-bonus delivery gates still apply. This is not a once-only or
-safe arbitrary replay theorem.
-
-Eligible first-world rewards and reissuing already-claimed rewards are separate
-policies. No caller, enumeration order, context/source/phase choice or feature
-was implemented. At the selected completion seams below, retained caller/state,
-full return and native eligibility/flag lifetime through actual bonus delivery
-remain required.
-
-## Guarded completion seam and one reward composition
+## Completion, caller and growth ordering
 
 `completionFinalizationBoundary` binds pre-helper0x82D16330 and post-helper
-0x82D16344 conditionally. Native finalization stores the completed item at
-city+0x3A and clears the current item at+0x38 only when the retained second
-entry argument is zero. A retained claim owner also blocks this arm's absent-
-claim gate on a repeat. These are local barriers; complete return, persistence
-and safe partial retries remain open.
+0x82D16344. The reached Wonder arm retains city c and normalized17, debits
+production, copies item217 to city+0x3A and clears current item+0x38 only when
+the saved second entry argument is0. The helper call is
+`0x82D16BA0(17,c,1,0)`. Its r4 is a city, not an acquisition player; p must come
+from the supported retained city owner and agree with the published claim.
+The absent-claim gate and conditional item clear are local repeat barriers,
+not a universal safe partial-retry theorem.
 
-At the helper seam r23 is the city and r27 is normalized17. The call's r4 is
-the city; it is not the acquisition player. A supported retained city owner
-must supply p for any separate acquisition. No source, phase or enumeration
-was selected.
+Retained17 bypasses the second mode2 helper at0x82D16374 for either byte-gate
+value, then publishes city+0x24 pending Wonder bit0x1000. At0x82D16388 the
+original second argument is reloaded from frame+0x17C. Nonzero reaches the
+original restore/return under intact frame and return-target guards; zero
+reloads the city and calls0x82CF1060 at0x82D163BC. Neither selected prefix
+requests acquisition.
 
-`completionContinuationGateBoundary` binds the immediate post-helper split.
-Retained Apollo17 bypasses the second mode2 helper request at 0x82D16374
-for either value of the byte gate. After the pending-bit store, 0x82D16388
-reloads the original second entry argument from frame + 0x17C. A nonzero
-word takes the epilogue and original restore leaf to the caller, under intact
-frame/save and valid return-target conditions. Zero instead reloads the saved
-city into r3 and reaches its first further call, 0x82CF1060 at 0x82D163BC.
-Neither immediate path requests acquisition before that boundary. Effects
-inside that helper, an earlier helper or a later/deferred path remain possible.
-The actual caller's argument and any acquisition source/phase policy remain
-unbound; this supplies no completed reward.
+The selected calendar caller0x82D1FC14 supplies second argument0 to
+0x82D13978. The city loop uses stride188 and positive signed population;
+the callee saves city at frame+0x174, second argument at+0x17C and samples its
+signed owner. This is a conditional native caller, not observed human/AI/peer
+completion or a census of every caller.
 
-`completionGrowthContinuationBoundary` joins that zero-argument arm to the
-accepted [city growth threshold](../../manifests/city-growth-threshold.json). The first result
-is compared with signed city progress at +0x34; insufficient progress branches
-to uninspected 0x82D168AC. Otherwise a second query supplies the value subtracted
-from progress, independently of the first result. The local arm clears city+5
-and increments population+3. A separately sampled signed halfword selects a
-limit of 9, 17 or 32; when the incremented signed byte reaches that limit, the
-arm replaces population with limit minus one and clears progress. This does
-not establish a general population cap or current selector value.
+`completionGrowthContinuationBoundary` joins the zero arm to the accepted
+[city growth threshold](../../manifests/city-growth-threshold.json). One query
+is compared with signed progress+0x34; a separately requested result supplies
+the subtraction. The admitted arm clears city+5 and increments population+3.
+A separately sampled halfword chooses limit9,17 or32; reaching the limit
+replaces population with limit-1 and clears progress. Both cap outcomes next
+request0x82D00C78 at0x82D16440. These are conditional local limits, not a
+general population cap or a claim about the current selector.
 
-Both admitted cap outcomes next request 0x82D00C78(city) at 0x82D16440.
-These native threshold/query and local growth paths request no acquisition
-before that city-update gate or the insufficient-progress branch. The shared
-helper's effects and return, later/deferred paths, actual caller and completed
-bonus delivery remain open. This local growth store is separate from the
-Irrigation reward below.
+The insufficient-progress successor0x82D168AC reads unsigned progress and
+branches below0x8000 to0x82D1697C. Otherwise it clears progress, decrements
+population at0x82D168C8 and requests0x82D00C78 at0x82D168CC. The selected
+growth prefixes request no acquisition; they do not prove universal absence
+inside other helpers or later paths. This city growth is distinct from the
+Irrigation reward.
 
-For the accepted W0/nonsharing corridor, Irrigation11 supplies one concrete
-conditional witness: an admitted owned city's population7 reaches the byte
-store at0x82D0A3F8 and becomes8, followed by0x82D00C78. This reuses its native
-source/phase/prerequisite/team/player/recipient gates. Generic acquisition also
-writes raw ownership, discoverer and source and increments the odd-phase tally;
-it is not an isolated reward API. Full award delivery and duplicate prevention
-remain unproved. The new72 code words passed both foreground packets and
-independent PPC64 operand checks.
+## Sharing, provider and returned technology4 F
 
-### Technology4 exception and sharing
+For W0 and t!=4, the admitted one-bit corridor bypasses sharing before native
+suppressors. Technology4 additionally samples q at0x82F700B0. Supported q==p
+leaves one raw bit, q!=p adds a second at0x830EDC58, and sentinel-1 skips the
+extra store. Initialized q=7 is not evidence of its current value. With a
+positive supported player bound, the selected16-bit count can admit source5
+recursion at
+0x82D094BC/0x82D0951C. Exact phase1 excludes the second arm, not necessarily
+the first; outer F is not saved/restored around recursion.
 
-`technology4ExceptionBoundary` binds the current sample q at 0x82F700B0.
-For retained W == 0 and p, q in 0..7, q == p leaves one ownership bit, while
-q != p adds a second bit to technology 4's raw word at 0x830EDC58. The
-sentinel -1 skips that extra store. The initialized image value 7 does not
-establish current q.
+The first selected recursive tuple is `(j,4,-1,5,1)`. Exact argument moves,
+complete query and original save25/restore25 suffixes retain r5=-1; ordinary
+ABI rules alone would not preserve that volatile register. The accepted
+nonrecursive-query case still retains F1 to0x82D09548 when both admissions
+are false. Active Apollo can make the visited ownership query true and exclude
+the first recursion; a clear phasebit2 independently excludes the second.
+These are conditional static cases, not observed player/team state.
 
-The selected 16-bit count admits sharing for the two-bit case when its current
-player bound is positive. Source 5 recursive calls at 0x82D094BC/0x82D0951C
-can replace F, which the outer loop does not save or restore. Their context is
-the current post-helper r5. Same-bit and sentinel bypasses retain the accepted
-local no-call corridor before native suppressors. Actual recursion, award
-delivery, caller/source/phase policy and persistent duplicate prevention remain
-open.
+At0x82D0A778 use M for manager, S for child and Q for result:
 
-### Nonrecursive query preservation
+`M=U32[0x8314EFE0]`, `S=U32[M+0x10]`, `Q=U32[S+0x20]`.
 
-`localQueryFlagPreservationBoundary` covers the selected sharing stores and
-complete ownership queries. When both recursive admissions are false at every
-reached iteration, F = 1 is retained to 0x82D09548 under the explicit
-frame/spill, original-thunk, current-state and finite-bound guards. The resolver
-at 0x82D094C8 is also excluded because its path first requests recursion.
+The accepted registered child S has installed vptr0x8215FA78; its+0x100 cell
+0x8215FB78 targets the complete two-word accessor0x82A73340. It returns Q,
+writes no memory and changes only r3. Q is the constructed108-byte result,
+not the manager. The class-bound0x82CA7720 path calls this getter at0x82CA78CC
+then0x82CAA6A8(Q,-1) at0x82CA78D4. The wrapper forces producer mode0 and
+unconditionally stores returned low32 toQ+0x0C, including failure-1. A successful
+negative-input vacancy scan before8 yields a compatible ordinal0..7.
 
-A conditional phase 1 example executes positive-N queries for technology 4 while
-each visited player virtually owns it through active Apollo 17. This excludes
-the first recursion; a clear phase mask 0x2 excludes the second independently.
-It is a static case, not observed player/team state or a selected grant policy.
-Native suppressors, actual recursion, award delivery and persistent
-duplicate/retry gates remain.
+Default child+0x148/+0x190 target0x82CA3D38/0x82CA39E0. Retained null child+0x2C
+supplies gate1/scalar0; nonnull backend targets retain their supported current
+dispatch and normal-return contracts. Nonnegative supplied input has no
+producer upper-bound check. Require the same live M/S/Q/table, successful
+compatible ordinal and retained result-word generation with no later failed
+or supplied overwrite. Constructor-1 alone is insufficient:0x82D0A788..794
+uses teams[L] before the phase2 gate.
 
-### Acquisition records precede award completion
+Exact phase1 bypasses all38 phase2 unit-caption bodies before this provider.
 
-`acquisitionRecordReceiptBoundary` binds exact PC 0x82D093A4, immediately after
-the odd-phase tally store. Under the accepted p = 0..7, t = 11, source = 0,
-phase = 1, whole-word W = 0 and helper/state-retention conditions, ownership is
-1 << p, discoverer is p, source is 0, tally is low32(K + 1) and F is 1. This
-invocation has not yet executed its later local Irrigation population store at
-0x82D0A3F8.
-The raw ownership store is 0x82D0937C; 0x82D09378 computes the phase bit.
+Every admitted first recursive arm requires a previously absent raw bit and
+publishes it before descendants. Under retained configured N<=8 and supported
+p/q and no incompatible intervening mutation, this strict bit growth bounds
+the reached phase1 recursion; finite
+replays have maximum6 descendants. Native technology4 prerequisites at
+0x82F77628/2A/2C are all0xFFFF. The suppressor0x82D09584 clears F after sharing
+regardless descendant-returned F. All38 native old-tech+0x4C fields differ
+from4, so civilization4 admits no unit-conversion callback for this path.
+Actual loops, getter, terminal stores and original save14/restore14 therefore
+return every reached phase1 technology4 descendant and the outer invocation
+with F0, under the stated current-state, storage, helper and frame guards.
+No forced F, sharing bypass or opaque conversion-callback purity is needed.
 
-Those current records, even with F = 1, cannot alone certify this invocation's
-completed award. This is a local instruction-order limit; it says nothing
-about awards by other invocations or historical/global state equivalence.
-Source 6 writes the early records before clearing F; exact phase 2 writes
-ownership and source without incrementing the odd tally or executing that
-Irrigation store. No completed-call convergence or replay policy is proved.
-Full return, actual delivery and duplicate/retry gates remain.
+The same all-FFFF suppressor applies to technologies1,2,5. Matching unit or
+building definitions for1,2,4,5 do not establish a first-discovery entitlement.
+Source6 suppression and all other native player/team/recipient/phase gates
+remain intact.
 
-### Context and weighted SDI recipient scoring
+## Complete native grant and return coverage
 
-`acquisitionContextScoringBoundary` binds the local building scan under retained
-r15 = z at 0x82D09BEC. Normalized 18 / SDI Defense matches technology 46. Its
-score includes the signed population at 0x82D0A138 through seed offset 188*z,
-multiplied by the candidate's low16 building-bit count. The initial best score
-0 does not cancel this term. After a winner replaces the seed offset, its stored
-best score can still carry the earlier seed dependence.
+The canonical matrix covers every t1..46: prerequisites, unit+0x4A first-reward
+matches, separate unit+0x4E availability captions, old-type+0x4C matches,
+building+0x42 matches, actual special target, government offer and obsolete
+Wonder. It is complete conditional native dispatch coverage, not a claim that
+every technology grants a reward or every allocation succeeds.
 
-Two complete static 128-city replays on the same mapped snapshot, differing
-only in valid owned seed-city input, select different recipients when no
-eligible bit 0 candidate exists. Under separately supplied seed/candidate
-population bounds 0..31 / 1..31, non-bit 0 scores are at most 527 and eligible
-bit 0 scores are at least 1001. A unique eligible bit 0 candidate therefore wins
-in both context traces. The bounds, existence and uniqueness are premises;
-no native population cap or capital invariant is established.
+- Units scan38 definitions, excluding type27. Recipient selection scans128
+  cities with matching nonnegative owner and positive population; definition
+  flag2 additionally requires city+0x24 flag2. It strictly maximizes population
+  plus `((buildingWord<<2)&8)`, preserving earlier ties. Positive best and
+  phasebit1 request0x82D11750. Exhaustion-1 writes native success0. Movement,
+  veteran and type29 continuation remain. Matched types19/21/22/23 use the
+  accepted alternate0x82CF4C40; positive requests bypass its negative-input
+  recursion and only21 can request secondary Militia7. All19 matched retained
+  definitions clear creator flag0x80, excluding its optional achievement arm.
+- Buildings match23 normalized definitions and exclude t44. Native score must
+  exceed both current best and population. Only normalized4/6/7/17/18 have
+  nontrivial score terms, permitting positive branches for t14/10/7/9/46.
+  Other native matches fail that hurdle. Existing Temple/Egypt correction,
+  Literacy Courthouse suppression and stale-caption policy remain distinct.
+  Positive phase1 delivery sets the bit, calls0x82D02090 and publishes shared
+  recipient R=0x830E3434 only after return. Phase2 skips new delivery and uses
+  native R/existing-building fallback. At most one first-reward unit and one
+  building match exist per technology; t14 may independently deliver both.
+- t11/39 increment each owned positive-population city and recount; t18/22
+  preserve the exact native culture-threshold-derived credit; t20/45 add100/500
+  ordinary Gold. These mutations require phasebit1. t44 reveal-plane ORs run
+  in both phases and are idempotent only with retained planes/geometry. Other
+  special targets retain their formatting behavior.
+- Current civilization0x830ECD28[p]==4 independently enables native conversion
+  after the F group. Pair new+0x4A and old+0x4C matches, retaining the finite
+  count/256 scans, alive/type/flags and phase predicates. Phase1 calls current
+  +0x1A4 removal0x82D7D9B0, changes type, calls+0x1A0 registration0x82D7FE40
+  and+0x1B4 no-op0x821D5678, then optional+0x1BC snapshot0x82D81BA0. Removal
+  copies84 bytes, destroys a nonnull/non-1 object through+0x0C(1) and clears
+  matching references. Phase2 formats only admitted captions; converted types
+  can fail its old-type filter. Normal supported object/ABI contracts apply.
+- Terminal0x82D0AD70/74 clears0x830E33F0[p]/0x830E3410[p]. Optional frame+0xA4
+  refresh city starts-1 and differs from input context+0x1F4. Its reached
+  phase1 recount and original return at0x82D0ADD4/ADD8 are retained. No
+  normalized success Boolean is inferred.
 
-K = 0 cancels numerically while the memory load still executes. The separate
-`acquisitionContextIngressBoundary` binds the saved-context reload to this seed
-for retained technology 46 fields and admitted local gates. The separate
-entry-retention boundary below supplies one conditional original-context route.
-Actual caller and reached helper/home retention remain required. No context
-choice, ordinary-caller defect, delivered reward, full return or safe
-retry/reissue policy follows.
+The Irrigation witness remains valid: an admitted owned city with population7
+reaches0x82D0A3F8, becomes8 and requests0x82D00C78. At earlier PC0x82D093A4,
+raw/discoverer/source/tally may already be recorded before that award. Those
+records still do not certify completed delivery by this invocation or exclude
+effects by another invocation.
 
-### Retained context ingress for technology 46
+## Completing-city context and SDI scoring
 
-At 0x82D09754 the acquisition reloads saved context from frame + 0x1F4. Under
-the retained initialized fields, the fixed 38-unit scan has zero qualifying
-technology 46 matches, excluding type 27. The first 18 building fields also
-do not match; normalized 18 / item 118 / SDI Defense is the first match. Thus no
-earlier match replaces context on this admitted local route.
+The accepted SDI result remains substantive. Technology46 matches normalized18
+/item118. At0x82D0A138 its weighted score reads seed-city signed population
+through188*c and multiplies it by the candidate's low16 building-bit count.
+Initial best0 does not cancel the term. Winner replacement changes the seed
+offset but its stored best can retain earlier context dependence.
 
-The building mismatch branch 0x82D09BD0 goes directly to 0x82D0A2E4,
-bypassing the frame + 0xA4 store. Its loop compares a signed pointer against
-the captured base + 4758 endpoint; the preceding global load is not a live
-loop count. With the supported retained base, that endpoint admits the SDI
-field. The route reaches 0x82D09BEC with the saved context and 188*c offset,
-zero initial best score, and no executed call or store in 575 local operations.
+Two full128-city replays on the same mapped snapshot, differing only in valid
+owned seed city, select different recipients without an eligible bit0 candidate.
+Under supplied seed/candidate population bounds0..31/1..31, non-bit0 scores
+are at most527 and eligible bit0 scores at least1001. A unique eligible bit0
+candidate therefore wins in both traces. Population bounds, existence and
+uniqueness are premises; no native population cap or capital invariant follows.
+K=0 cancels numerically while its population load still executes.
 
-These initialized fields and captured bounds must hold currently.
-This scan result alone does not bind the earlier context producer. The separate
-entry-retention result below supplies one conditional route. Actual Apollo
-invocation, reward delivery, full return and retry/reissue policy remain open.
+`acquisitionContextEntryRetentionBoundary` binds incoming r5 low32 through
+original save0x827F7C50 to frame+0x1F4, which is incoming SP+0x24, a caller-backed
+parameter home.0x82D09754 zero-extends it into r15. Required resolver and any
+current+0x1C0 callback must retain those home/frame bytes; ABI register rules
+alone do not prove memory nonalias. W0 technology46 follows the count1 bypass.
 
-### Original context through acquisition entry
+Under retained fields the38-unit scan has no qualifying technology46 match
+and the first18 building fields do not match. Building mismatch0x82D09BD0
+branches to0x82D0A2E4 without the frame+0xA4 store. The captured base+4758
+signed-pointer endpoint, not a live global count, admits SDI. The selected575
+local operations reach0x82D09BEC with saved c,188*c and best0, without a call
+or store. Current fields/bounds and supported home/helper retention remain
+conditions. Valid completing city c is therefore an explicit candidate input;
+player index or-1 is not substituted merely because another caller uses it.
 
-`acquisitionContextEntryRetentionBoundary` binds incoming context `r5` through
-the selected technology 46/source 0/phase 1 corridor. Original save thunk
-`0x827F7C50` preserves `r5` and the incoming stack pointer. The store at
-`0x82D09218` saves only low32(context) at frame `+0x1F4`, which is incoming
-stack pointer `+0x24`: a caller-backed parameter home. The reload at
-`0x82D09754` zero-extends that retained word into `r15`.
+## Deferred per-entry presentation candidate
 
-Whole raw ownership W = 0 and supported player p = 0..7 give the admitted count
-1 sharing
-bypass for technology 46. The original save-thunk stores are disjoint from the
-context home, and no selected direct store after its producer overlaps it.
-The required `0x82D8A3A0` call and any reached current `+0x1C0` callback must
-return with the actual frame, required state and home bytes intact. ABI register
-preservation alone does not prove memory nonalias. No body call occurs between
-the selected post-sharing prefix and the reload.
+Completion marker0x830E3348[p] and context0x830E3328[p] differ from selected
+research0x830EDD48[p] and recursive marker0x830E3430. Ordinary phase1 publishes
+one technology and later0x82D1D460..47C consumes one source0/phase2 request.
+Two phase1 entries cannot both survive that scalar slot. Shared R can also
+be overwritten at0x82D0A208 before its0x82D0A214 reader. Normal delayed sweeps
+therefore cannot preserve a batch.
 
-This composes with the retained unit/building scan above under all its current
-field, pointer-bound and valid-city premises. It does not identify an Apollo
-caller or preserve a recursive descendant's context.
+Immediate grants at0x82D16344 have another concrete defect. Apollo's pending
+Wonder bit0x1000 owns city+0x3A until0x82D1DD3C..54 reads item217, subtracts200
+and calls Wonder mode2. Only its full return permits0x82D1DD58..60 to clear
+the bit. A free building in that city first overwrites217 with100+b. Completing
+the new gift's phase2 does not consume the original pending Wonder.
+
+The candidate records only the actual completion tuple at0x82D16344 and lets
+native finalization/growth/presentation finish. It drains after a correlated
+completed calendar presentation sweep and outer command return, depth0, with
+no unresolved native marker/context generation or eligible city pending item
+bits0x1100, including the completing Apollo city's original pending Wonder.
+Common0x82CE16AC alone is insufficient because0x82D10FD8 can bypass
+the reader. The command-depth word0x83156344 is bookkeeping, not a proven
+reentrancy lock; native nested command dispatch remains possible.
+
+Marker values alone cannot establish readiness. Reset0x82D1F4EC writes-1,
+which the literal nonzero reader still admits; a consumed positive marker can
+retain identical bits. Track actual0x82D20C18 publications, select the generation
+at0x82D1D460 and consume only it when its0x82D1D47C request fully returns at
+0x82D1D480. A newer nested publication remains pending. Direct batch phase2
+is not a native marker-consumption receipt. A bypassed/filtered consumer
+defers drain until actual completion; all-mode eventual drain is not proved.
+
+For each ascending fresh W0 entry, run `(p,t,c,0,1)` to full native return,
+then `(p,t,c,0,2)` to full native return before t+1. Recheck current game,
+Apollo claim owner/city, valid owned c, pending generations/item flags and W0
+before the next entry. Keep ordinary marker/context untouched. Preserve RAM
+effects and original guest execution context; do not restore old F, recipients,
+city items or terminal clears. No phase3 equivalence is selected.
+
+Ordinary positive gift buildings are<=18, so0x82D02090 creates no Wonder or
+spaceship pending item flag. It writes building/era bits, recounts, writes
+latest item100+b and deduplicates/appends b in city+0x87..0xA2; full-list
+no-insert remains native. Recount ORs low dirty flags1/2 while preserving the
+high pending flags. The separate spaceship bit0x100 also consumes+0x3A with
+its native owner/part/range gates and gameplay continuation. Multiple same-city
+ordinary gifts retain their bit union and list outcomes, while each own R/
+explicit-building caption completes before the next entry. If a nested modal
+command creates a new pending item, finish the started pair and defer the rest.
+
+Native R and first-unit success are read before the main modal. The formatter
+uses initialized buffer0x82FFD7C0/capacity4096;0x82E2F1A0 copies its bytes into
+owned frame+0x50 via0x821B1500 at0x82E2F218.0x82E2F350 passes that carrier to
+0x82E07290 and0x82E057F8 makes another owned copy at0x82E05810 before pumping.
+Accepted distinct-source copy/resize/NUL/backing contracts and owned lifetimes
+apply. Later F is freshly read at0x82D0A948, not restored after modal work.
+
+Phase2 preserves native government offers/choices and command2, first-reward
+captions, t44 notice,33-Wonder obsolescence, advisors, packed history
+`(p<<8)|5000|t` through0x82D00480 and admitted civilization4 text. Availability
+captions use separate unit+0x4E matches and native0x830E3410[p]!=0; phase1's
+terminal clear is retained. No synthetic flag or extra source6 acquisition
+manufactures them. Source0 local-player/non-sentinel/nonzero-turn achievement
+request0x82D09314 ordinal2/retail7 has no phase gate; preserve both native
+requests and existing platform delivery/deduplication conditions.
+
+Deferral changes timing: eligibility, recipients, population/culture samples
+and helper/RNG order occur after remaining calendar work and presentation.
+Intervening native claims make W!=0 and are skipped. This timing requires
+acceptance; immediate0x82D16344 or whole-calendar equivalence is not asserted.
+
+## Save/load and peer acceptance obligations
+
+A transient pending completion can be lost if a save occurs before drain.
+Current title schema5 save metadata stores no Apollo tuple. Its selected
+0x82D82510/0x82D829E8 path can disable metadata or merely warn after native
+success; it does not prove a quiescent-pair save contract.
+
+The minimal durable gameplay payload is a versioned ordered array of admitted
+`(p,c)` tuples, Apollo17 implicit, bound to the native slot/device/file digest.
+Array order preserves FIFO order. No per-reward ledger or next-t cursor is
+needed: saves between complete pairs retain W, so fresh W0 tests skip completed
+or interveningly claimed entries. Save serialization also requires native
+acquisition/presentation staging quiescent, with no unresolved marker or city
+item consumer. A modal nested Save must defer rather than wait on its own
+pair. Capture the queue snapshot at the matching native-save boundary and
+prevent drain advancement during that snapshot transaction.
+
+Before native-file mutation, a durable authoritative REQUIRED/PREPARED marker
+must identify the user/device/slot and save transaction. Failure prevents native
+writing. After native finalization, write the frozen tuple payload bound to
+native digest D, then COMMITTED(D,payloadDigest). Accept only after all receipts;
+native and metadata files are not assumed atomic. Before deserialization,
+known-managed saves require the committed marker, supported version, payload
+and matching native/transaction identity. Missing, unreadable, prepared-only
+or mismatched required state rejects load; it must not become an empty legacy
+queue. Only positively identified legacy saves may load empty without the new
+metadata. No old Apollo claim is scanned to invent a completion. Required-marker
+storage, legacy discrimination and failure handling are implementation obligations.
+
+Validated tuples restore after load reset and before gameplay resumes. Old
+process/UI/command identities are discarded; resumed drain needs a fresh
+quiescent native receipt and current claim/city/W checks. Existing optional
+sidecar behavior alone does not implement that guarantee.
+
+For multiplayer, peer-local UI completion or marker readiness is not grant
+authority. Require an already accepted common authoritative native command/
+barrier/order and matching FIFO, per-entry W/claim/city/stage receipts on all
+peers. They must admit or defer the same entry in the same gameplay order and
+produce matching deterministic ownership/discoverer/source/tally, unit/city/
+culture/Gold/history and gameplay-command effects. Native local UI/achievement
+differences remain native. Current new-game policy synchronization, member UI
+readiness and local append/dispatch do not prove that common barrier or shared
+multiplayer-save restore. No custom command protocol is specified.
+
+Game of the Week remains native through the title's authoritative current/origin
+classification before enqueue. No new settings UI or GotW policy is selected.
+Human/AI natural completion, all reward/UI/achievement effects, same-city and
+nested-pending cases, save failure/reload boundaries and common-peer execution
+remain runtime acceptance work. The canonical finding pins the native image,
+14 selected receipts/1,666 distinct words, finite discriminators and six audited
+title sources. Those static proofs do not establish an implemented all-mode
+grant loop or delivered reward.

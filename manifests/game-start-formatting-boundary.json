@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0385",
+  "topic": "game-start-formatting-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which state, setup and string-argument boundaries enclose the selected rejected-start continuation, and which native refusal and frontend-request edges are proved?",
+  "scope": {
+    "gameStart": "0x82E60F70",
+    "setup": "0x82D25170",
+    "presentation": "0x82DBACE0",
+    "formatArgumentProducer": "0x82E225D0",
+    "formatWrapper": "0x82D38DD0",
+    "formatter": "0x82D3B830",
+    "stateOwner": "0x82E2B138",
+    "frontendRequest": "0x82E54FD8",
+    "managerReset": "0x82D8B6C8",
+    "managerCleanup": "0x82D8E798",
+    "boundary": "Selected state transitions, setup continuation, two string argument slots and native refusal/reset routes. Complete late cancellation, platform teardown and runtime crash attribution remain outside the proved boundary."
+  },
+  "dependencies": [
+    {
+      "topic": "player-count-setup-boundary",
+      "use": "accepted inner setup call and -1 bypass of the outer setup's remaining initialization"
+    },
+    {
+      "topic": "frontend-gameplay-transition",
+      "use": "accepted AudioGameStartInit owner and create/load ingress qualifications"
+    },
+    {
+      "topic": "frontend-root-publication-mask-init",
+      "use": "application global and application-vtable identity"
+    },
+    {
+      "topic": "xbox-live-mode-entry-invite-contract",
+      "use": "session-listener refusal route, manager identity and frontend controller IDs"
+    },
+    {
+      "topic": "xbox-live-session-search-contract",
+      "use": "event 3 status 9 for the non-single-result search outcome"
+    }
+  ],
+  "postSetupContinuation": {
+    "objects": "APP = U32[0x82FFD624], G = U32[0x8314EFC8], M = U32[0x8314EFE0], I = U32[0x8314F28C]. APP is the application, G is the game setup, M is the multiplayer manager and I supplies a virtual callback. These are distinct global roots.",
+    "setupCall": "0x82E610A0 directly calls 0x82D25170. After return 0x82E610A4, the caller loads APP at 0x82E610AC, tests U32[APP+0x60] and the separate U32[G+0x12C], and does not compare the setup return in r3.",
+    "selectedCall": "0x82E610D4 calls 0x82D8A3A0(M); its result, not setup's, is compared with -1. I's vtable +0x24 call at 0x82E610F4 must return a zero low byte. 0x82E61108 then loads r3 = U32[APP+0x60] and 0x82E6110C calls 0x82DBACE0. The passed value is not G+0x60 or the address APP+0x60.",
+    "qualification": "A -1 inner setup result skips the outer setup's remaining local initialization but does not by itself prevent this caller's presentation continuation. The selected path still needs valid objects, its local guards and callback returns. This is not a proved safe cancellation path or new-game-only ingress."
+  },
+  "formatArgumentBoundary": {
+    "presentationCall": "After its initial byte guard, 0x82DBACE0 separately calls 0x82D8A3A0(M) at 0x82DBAD0C and 0x82DBAD24. Call their results L1 and L2. Kind = U32[0x830ECD08+4*L1]; civilization = U32[0x830ECD28+4*L2]; index = S8[0x82F773E9+low32(2*civilization)]. Equality of L1 and L2 is not a static premise. 0x82DBB14C calls 0x82E225D0 with r3=kind, r4=presentation-frame SP+0x80, r5=sign-extended index and r6=-1.",
+    "producer": "0x82E225D0 admits unsigned kinds 0..3; other kinds clean up and return zero without formatting. Each admitted kind builds a temporary at producer-frame SP+0x70 through 0x821B2AD8. Calls 0x82E22658, 0x82E226A0, 0x82E226E8 and 0x82E22758 pass r4=0x82121CF0, r5=U32[producer SP+0x70] and r6=U32[0x82F773C0+low32(4*index)]. Incoming r6 only selects the kind-3 temporary builder; the selected caller's -1 chooses its default arm. No local index bound is checked.",
+    "formatIdentity": {
+      "address": "0x82121CF0",
+      "bytesIncludingNul": 14,
+      "sha256IncludingNul": "8D65D6418642143C878468381675FF8C8BA91FC7B1EF6B56FBF35612559828B7",
+      "argumentClassesInOrder": ["narrow-string", "narrow-string"],
+      "qualification": "Only token classes and byte identity are retained; the retail format literal is excluded. Static format identity does not establish the incident's live format cursor or consumed slot."
+    },
+    "wrapper": "0x82D38DD0 saves 64-bit incoming r5 at entry SP+0x20 and r6 at entry SP+0x28, creates a 0x60-byte frame and passes entry SP+0x20 as the argument cursor to 0x82D3B830. Under the pinned format and ordinary sequential cursor consumption, the first narrow-string word is the temporary pointer in saved r5 slot+4 and the second is the indexed table word in saved r6 slot+4.",
+    "read": "0x82D3BC24 aligns r29 to eight bytes, advances r29 to aligned slot+8 and loads r10 = U32[aligned slot+4]. Zero takes a separate path. Nonzero sets r11=r10 and 0x82D3BC78 reads U8[r11], incrementing r11 while scanning. Thus r10 is the initial pointer, r11 the current byte address, r29-8 the slot and r29-4 its word address. The scan has no local guest-address validation.",
+    "sentinelFalsifier": "An index of -1 selects 0x82F773BC in 32-bit arithmetic. Its initial-image word is 0x8211EC34, not 0x0002FFFF. This does not identify a live table word or exclude a different index, first argument, mutation or corrupted cursor.",
+    "qualification": "Static evidence does not identify runtime kind, index, local player, civilization, argument slot or pointed bytes. Lack of a local bounds/address check does not prove that a supported native caller supplies invalid input."
+  },
+  "stateTransitionBoundary": {
+    "owner": "APP vtable 0x82121100 slot +4 points to 0x82E2B138. APP+0x70 is current state, +0x74 pending state and +0x78 requested key. State+4 contains its key. Key-2 vtable 0x8211EBD0 has destructor 0x821B0C30, entry +4 = 0x82E60F70 and update +8 = 0x82E60D38; key-1 table 0x82131088 has entry +4 = 0x82E7F820.",
+    "order": "0x82E2B164 first invokes current state update +8. At 0x82E2B16C onward, a zero low-byte result skips transitions. Otherwise the owner compares current key to APP+0x78 and checks APP+0x74. A changed key or non-null pending object destroys the old current state at 0x82E2B1BC. With no pending object it calls keyed factory 0x82E7FA70 at 0x82E2B1DC; otherwise it adopts the pending object's key. It moves pending to current, clears pending and calls entry +4 at 0x82E2B224, then refreshes M via 0x82D8ACB0.",
+    "frontendRequest": "0x82E54FD8 loads APP and writes APP+0x78=1 at 0x82E54FE4, then returns. It is a deferred frontend-key request, not cleanup. If current key is already 1 and pending is null at the subsequent owner comparison, matching keys bypass state destruction/creation. A non-null pending object overrides that simple cancellation premise.",
+    "falseReturn": "The owner retains entry's result and returns zero when its low byte is zero. 0x82E29170 repeats APP vtable +4 only while its result's low byte is nonzero; zero leaves that loop. After the loop, 0x82E83EA8 skips its initialization-failure destructor arm and returns zero. A bare false return from 0x82E60F70 is therefore not a menu-cancel or cleanup contract.",
+    "lateExit": "Key-2 destructor 0x821B0C30 calls 0x82E60D68, which touches multiple game/presentation roots and conditionally calls broad cleanup 0x82E2C010 at 0x82E60F1C. Pointer guards do not establish that all preceding game-entry initialization can be omitted safely."
+  },
+  "nativeRefusalBoundary": {
+    "joinRefusal": "0x82D8A088 event r5=3/status r6=0 requires a non-null registry record. Nonzero low-byte 0x82D8AA60(M) bypasses join and takes the success continuation; otherwise the record's +0x44 virtual result supplies the index for 0x82D8EFF0(M,index). In D8EFF0, false 0x82D8EB00 content preparation selects a refusal message, resets scenario and M+0x1C, then calls 0x82D8E798 at 0x82D8F208 and returns status 3. A later service result other than 1 also takes cleanup and returns that result; an existing M+0x14 object is conditionally notified through +0x4C. Only result 1 from D8EFF0 takes its successful continuation.",
+    "setupFailure": "0x82D8F398 calls D8E798 when the created service object's setup call returns other than 1. Failure to create that object instead returns its initial status without this cleanup. This is not an all-timeout cleanup proof.",
+    "managerCleanup": "0x82D8E798 conditionally calls D8FB38/D8FA68 on U32[0x8314EFDC], calls DADD28(G,i) for all eight slots and clears the byte at M+0x5C. If M+0x14 is non-null it calls that object's +0x4C, then reloads M+0x14 at 0x82D8E810 and writes the reloaded pointer's +0x0C=-1 without another null check. The callback's preservation/replacement of that pointer is not established. It passes registry key M+4 to CAAD20, clears the word M+0x10, sets M+4=-1 and calls DAEFD8(-1). Transitive callee effects are not a full cleanup proof. It does not itself clear M+0x14 or directly prove platform session deletion or socket closure.",
+    "pairedReset": "0x82D8B6C8 writes the current M+0x10 child's +8=-1, passes registry key M+8 to CAAB10, sets M+8=-1 and clears M+0x14. Its ordering relative to D8E798 changes which conditional callback remains possible.",
+    "frontendReturn": "0x82E6AFF8 retains its controller receiver, calls D8B6C8(M), then D8E798(M), then invokes that controller's vtable +0x1C with r4=10. The dependency maps ID 10 to the game-selector controller. This is an existing cleanup-then-frontend-request shape, not a method callable with APP or an arbitrary active controller.",
+    "timeoutStop": "Search status 9 denotes the non-single-result outcome. For event 3 and nonzero status, D8A088 first requires a non-null active-screen manager at U32[0x8314F2E4]; only then does it dispatch event 17 for status 1 or event 16 for other statuses, including 9, via C56478. A null manager exits without dispatch. This bounded pass did not join the event's actual receiving controller to cleanup. A universal refusal/timeout return path remains unproved.",
+    "lateCancellationLimit": "No proved edge joins a title refusal inside D25170 to a compatible late key-2 destructor, matched frontend controller and complete session retirement. The earlier current-key-1/pending-null owner comparison is a conditional admission boundary that avoids entering key 2; it is not proof that every incident attempt reaches those preconditions."
+  },
+  "currentEvidence": {
+    "method": "Serialized foreground read-only exact-function queries, selected raw-word comparison to image.json, and narrow exact-owner generated corroboration.",
+    "scripts": [
+      "ghidra/DumpFunctions.java",
+      "ghidra/DumpMemoryWords.java"
+    ],
+    "selectedWordRanges": [
+      "[0x82E610A0,0x82E61110)",
+      "[0x82D25210,0x82D25294)",
+      "[0x82D3BC10,0x82D3BCF4)",
+      "[0x82E225D0,0x82E22794)",
+      "[0x82DBACE0,0x82DBAE24)",
+      "[0x82DBB0F0,0x82DBB174)",
+      "[0x82D38DD0,0x82D38E18)",
+      "[0x82E2B138,0x82E2B2A8)",
+      "[0x82E29170,0x82E291C4)",
+      "[0x82E83EA8,0x82E83F64)",
+      "[0x82E54FD8,0x82E54FEC)",
+      "[0x821B0C30,0x821B0C94)",
+      "[0x82E60D68,0x82E60F28)",
+      "[0x82D8A088,0x82D8A178)",
+      "[0x82D8EFF0,0x82D8F244)",
+      "[0x82D8F398,0x82D8F548)",
+      "[0x82D8B6C8,0x82D8B72C)",
+      "[0x82D8E798,0x82D8E848)",
+      "[0x82E6AFF8,0x82E6B044)"
+    ],
+    "selectedDataRanges": [
+      "[0x82121100,0x82121108)",
+      "[0x8211EBD0,0x8211EBE8)",
+      "[0x82131088,0x82131090)",
+      "[0x82121CF0,0x82121D00)",
+      "[0x82F773BC,0x82F773C0)"
+    ],
+    "generatedOwners": "rerevved:generated/default/rerevved_recomp.120.cpp (E60F70), .197.cpp (D25170), .7.cpp (DBACE0), .92.cpp (E225D0), .162.cpp (D38DD0), .104.cpp (D3B830), .107.cpp (E2B138), .130.cpp (E29170), .158.cpp (E83EA8), .80.cpp (E54FD8), .31.cpp (821B0C30), .172.cpp (E60D68), .225.cpp (D8A088), .125.cpp (D8EFF0), .169.cpp (D8F398), .63.cpp (D8B6C8), .149.cpp (D8E798), .1.cpp (E6AFF8). Read only the named exact-owner windows.",
+    "qualification": "Configured second-thunk and bad-data decoding truncate many owners, including presentation, producer, formatter and state cleanup. Exact entries, exported native words and bounded branch/operand decoding support the local facts; decompiler closure and empty call/reference lists do not. Full native transitive cleanup and indirect controller/session identity remain unproved."
+  },
+  "guards": [
+    "Do not infer that setup failure necessarily takes the presentation branch or causes an invalid string read.",
+    "Do not bypass loadout validation or patch a general formatter merely because it can read a caller-supplied pointer.",
+    "Do not assign a public runtime, resync, transport, save/load or reconnect guarantee to this static boundary.",
+    "Do not replace an inner -1 with a whole-entry false, invoke a controller method on APP, or destroy a key-2 state whose required initialization has been skipped.",
+    "Frontend key 1 is not controller ID 10. A requested key does not itself dispose a pending object, reset multiplayer state or prove menu presentation.",
+    "The complete late cancellation, all-timeout cleanup and state-restoration contract remains unjoined."
+  ],
+  "conclusion": "The selected caller ignores setup's return and can reach two narrow-string argument slots through its guarded continuation. The application +0x60 value is separate from the game-setup object. Native refusal cleanup, a matched controller-return shape and deferred frontend-key request are bounded; the state-owner comparison before old-state destruction supplies an earlier conditional admission seam. Neither inner -1 nor whole-entry false proves safe late cancellation. The incident's consumed slot and a retry-safe late teardown still require identified runtime state."
+}

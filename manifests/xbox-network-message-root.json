@@ -15,7 +15,9 @@
   "dependencies": [
     { "topic": "combat-resolution-lifecycle", "use": "accepted Xbox command 0 Combat case" },
     { "topic": "rush-cost-producer", "use": "accepted Xbox command 6 Rush case" },
-    { "topic": "unit-movement-lifecycle", "use": "accepted Xbox command 17 Move case and existing submit/consumer identities" }
+    { "topic": "unit-movement-lifecycle", "use": "accepted Xbox command 17 Move case and existing submit/consumer identities" },
+    { "topic": "combat-rng-save-reload-boundary", "use": "identifies the compared 0x82F7AD00 word as current main RNG state with conditional save/load transfer" },
+    { "topic": "spaceship-part-presentation-boundary", "use": "bounds the scalar projection and conditional nested command-drain phase" }
   ],
   "currentEvidence": {
     "method": "foreground read-only Ghidra string, pointer, function, raw-word, and dispatch-table queries against the pinned image, with narrow generated-code corroboration only after exact function identification",
@@ -245,7 +247,8 @@
         { "function": "0x82E2E078", "store": "0x82E2E2CC", "source": "The +0x134 word of the object referenced by neutral pointer global 0x8314EFC8." }
       ],
       "localRecordTransition": "Caller 0x82D86400 passes a local record at r1+0xA0 with mode 1 to 0x82CC29B8. On a flag-guarded path, the builder seeds a temporary from 0x82F7AD00, applies helper 0x822DE438, and writes the result to record +0x0C; the caller later copies that field to 0x82F7AD00.",
-      "qualification": "This is the bounded generated candidate-writer set, not an executable-wide reference closure. The builder's outer flag branch can skip its field write. The pointer, object, helper, local record, and stored word remain semantically unnamed; no checksum, seed-generation, readiness, authority, synchronization, runtime-ordering, delivery, lockstep, resynchronization, framing, transport, or coverage claim follows."
+      "currentStateIdentity": "combat-rng-save-reload-boundary.json#/headerStateTransferBoundary identifies 0x82F7AD00 as current main RNG state and bounds its conditional header save/load transfer. It does not identify this value as an immutable initial map seed.",
+      "qualification": "This is the bounded generated candidate-writer set, not an executable-wide reference closure. The builder's outer flag branch can skip its field write. Other pointer, object, helper and local-record meanings remain unresolved. Current RNG-state identity proves neither complete generator restoration nor checksum coverage, delivery or resynchronization."
     },
     "case48": {
       "type": 48,
@@ -559,8 +562,36 @@
       },
       "dataComparison": "0x82CDEC64 calls 0x82CD4CF0 and 0x82CDEC68 compares its return with record arg1. Mismatch emits the exact Xbox string 'Synch Err: Data'.",
       "seedComparison": "0x82CDEC90 loads the stored word rooted at 0x82F7AD00 and 0x82CDEC94 compares it with record arg2. Mismatch emits the exact Xbox string 'Synch Err: Seed'.",
-      "mismatchState": "Either mismatch sets bit 0x10 in 0x82FFE7C4.",
+      "mismatchState": "Case entry 0x82CDEC54..0x82CDEC5C first clears bit 0x10 in 0x82FFE7C4. Sampled byte 0x8314F10B must be nonzero to enter either comparison. Either unequal comparison sets the bit. Equal, unequal and comparison-skipped branches converge at 0x82CDECB4.",
+      "returnSubmissionBoundary": {
+        "join": "After a bounded optional presentation path, all normal local branches join at 0x82CDED24. Its virtual callback and direct helpers must return with the retained context and storage intact.",
+        "sampling": "0x82CDED24 takes a fresh 0x82CD4CF0 scalar; 0x82CDED34 calls 0x82D8A3A0 with the network-manager pointer. Its return is copied into r4 before 0x82D038E8 at 0x82CDED40. That complete leaf neither calls another function nor writes r4.",
+        "submission": "0x82CDED58 calls 0x82CE1950 with type 60, arg1 equal to that index result, arg2 equal to the fresh scalar, arg3 -1, arg4 equal to the current word at 0x82F7AD00, and separate target -1.",
+        "qualification": "This is a new sample, not an echo of the received scalar or evidence that a mismatch was repaired. No all-peer acknowledgement, arrival order, snapshot or return-to-play semantic is assigned."
+      },
+      "indexObjectConsumerBoundary": {
+        "entry": "0x82D8FCC8",
+        "caller": "Accepted table-slot consumer 0x82D91BD0 supplies manager 0x8314EFDC and object +0x34.",
+        "routing": "0x82D8FCE0..0x82D8FD1C selects the distinct network manager's +0x10 child. A nonnull child supplies virtual +0x100 and its returned +0xC value; null selects -1. Equality with the incoming index selects optional child virtual +0x4 with zero, while inequality selects optional virtual +0x8 with index and zero, followed by opaque notification helpers.",
+        "publication": "Both local branches converge at 0x82D8FE30. Helper 0x82D8F800 receives original receiver, index and one, obtains a pointer through 0x822DF948(receiver +0x4, &index), and writes one through it at 0x82D8F82C. Then 0x82D8FE4C calls 0x822DF948(receiver +0x2C, &index) and 0x82D8FE54 writes two through that returned pointer.",
+        "stateIdentity": "The writer's diagnostic at 0x82136AC0 names the indexed state as hotjoin progress. Its value-one label is selected by pointer word 0x82F7BAC0 and describes pending state at 0x821369A8. The separate receiver +0x2C value-two store has no label identity from this relation.",
+        "qualification": "The returned storage, active child/callbacks, finite normal returns and retained nonalias frame are conditions. The selected local body has no direct bulk-state copy, mismatch-bit test or type-60 submit. Opaque callees can have additional effects. No disconnect, resync, reconnect, ownership or complete recovery semantic is assigned."
+      },
       "qualification": "The two producer sites and predicate are static bounded relations. They do not establish runtime reachability, multiplicity, ordering, delivery, a Checksum name, checksum coverage, readiness, completion, authority, lockstep, resynchronization, framing, or transport."
+    },
+    "case60": {
+      "type": 60,
+      "target": "0x82CDED60",
+      "receiptStateBoundary": "0x82CDED6C..0x82CDED80 ORs slw(1,arg1) into 0x83157E40; 0x82CDED84 writes arg2 at 0x8312E5C0 plus the low-word index displacement (arg1 rotated left two and masked with 0xFFFFFFFC). This is the same array read by the accepted case-53 data-inequality scans.",
+      "qualification": "Shift operand bit 0x20 yields a zero slw mask. The local stores neither test mismatch bit 0x10 nor prove a valid index, complete peer participation, bulk snapshot application, acknowledgement or successful repair. Guest arrival-to-ring append, delivery and ordering remain unjoined."
+    },
+    "hotjoinProgressBoundary": {
+      "reader": "0x82D8F700 looks up the index in receiver +0x4 through 0x821B8CD0, compares the result with receiver +0xC, returns zero for that sentinel and otherwise reads result +0xC. The lookup helper's complete semantics remain opaque.",
+      "transferAttempt": "Exact entry 0x82D8FF78 has a selected per-index branch requiring a non-sentinel entry with state one. At 0x82D90084 it calls 0x82D8CB28 with the network-manager pointer, a native memory stream and the index. At 0x82D90094 it calls 0x82D8F800(receiver,index,2), without testing the preceding helper return. Pointer word 0x82F7BAC4 selects the transferring-state label at 0x82136998 for value two. Snapshot production and transfer-result semantics are owned by xbox-hotjoin-transfer-restore-boundary.json#/snapshotProducer and /queueOutcome.",
+      "selectedRemovalTail": "On the unequal-local-index branch of 0x82D906D0, 0x82D90834 and 0x82D90848 read the indexed state. Prior state two or three selects a local flag. 0x82D90868 writes state zero through 0x82D8F800; only the flagged path calls 0x82D901B0 at 0x82D9087C. Local presentation and numeric-command helper effects remain separately guarded.",
+      "conditionalTurnRequest": "0x82D901B0 first requires a nonzero low byte from 0x82D8AA60. It scans indices from zero while signed-less-than the reloaded word at 0x82F700AC and suppresses its final request if any non-sentinel receiver +0x4 entry has state two or three. Missing entries and a nonpositive bound do not set that suppressing condition. If unsuppressed, 0x82D90278 calls 0x82D038E8 and 0x82D90298 submits numeric 46 with arguments one through three and separate target -1, and current 0x82F7AD00 as argument four.",
+      "nativeEntryEvidence": "xbox-hotjoin-transfer-restore-boundary.json#/nativeEntry establishes 0x82D8F878 from exact PE Exception metadata and its separate wrapper while preserving the configured containing-function limitation.",
+      "qualification": "Native labels and indexed progress do not prove player-facing admission or runtime recovery. State two follows an unchecked call. The conditional BeginTurn request does not verify restored world bytes, queued-command reconciliation or complete peer participation. xbox-hotjoin-transfer-restore-boundary.json owns the positive static stream, receive/restore and completion-control joins, plus their remaining admission, delivery and return-to-play limits."
     },
     "case54": {
       "type": 54,
@@ -569,7 +600,18 @@
       "mismatchState": "0x82CDED90..0x82CDED98 clears bit 0x10 in 0x82FFE7C4 before 0x82CDED9C directly calls 0x82D0C3E8.",
       "calendarDataflow": "Within 0x82D0C3E8, 0x82D0C400 loads current turn 0x8312B8DC, 0x82D0C470 directly calls TurnToYear at 0x82CEFA20, and 0x82D0C490 stores the result at current year 0x8312B8E0."
     },
-    "qualification": "These are static numeric-case roles; selected native debug labels are separately bound by nativeTurnNameEvidence. They do not identify case 54 as the unverified PS3 comparison Checksum message, reveal checksum coverage, or prove readiness, completed processing, runtime lockstep, ordering, resynchronization, delivery, outer wire framing, or transport."
+    "projectionAndPhaseEvidence": "spaceship-part-presentation-boundary.json#/worldActorSaveSyncProjectionBoundary bounds 0x82CD4CF0's scalar projection and selected unit contribution; its worldActorSnapshotPhaseBoundary binds conditional nested drain before actor retirement. These are scalar samples and phase edges, not a bulk recovery snapshot or all-peer barrier.",
+    "continuationEvidence": {
+      "scripts": ["ghidra/DumpFunctions.java", "ghidra/DumpMemoryWords.java"],
+      "functions": ["0x82CDDF08", "0x82D8FCC8", "0x82D8F800", "0x822DF948", "0x82D038E8"],
+      "selectedWordRanges": ["[0x82CDEC48,0x82CDED8C)", "[0x82D8FCC8,0x82D8FE60)", "[0x82D8F800,0x82D8F874)", "[0x82D038E8,0x82D0392C)"],
+      "hotjoinFunctions": ["0x82D8F700", "0x82D906D0", "0x82D901B0", "0x82D8FF78"],
+      "hotjoinWordRanges": ["[0x82D8F700,0x82D8F754)", "[0x82D906D0,0x82D90888)", "[0x82D901B0,0x82D902A8)", "[0x82D8FF78,0x82D901B0)"],
+      "hotjoinLabelLocators": ["0x82136AC0", "0x82F7BAC0", "0x821369A8", "0x82F7BAC4", "0x82136998"],
+      "identity": "Selected exported words were checked against the flat image identified by image.json. Exact-owner generated windows corroborate the same local instructions.",
+      "qualification": "Canonical decompilation truncates the dispatcher and index consumer at the known second thunk block, and the two storage helpers at bad data. Empty emitted caller/callee sets are not completeness evidence. No project repair or runtime observation is implied."
+    },
+    "qualification": "These are static numeric-case roles; selected native debug labels are separately bound by nativeTurnNameEvidence. They do not identify case 54 as the unverified PS3 comparison Checksum message, reveal complete checksum coverage, or prove readiness, completed processing, runtime lockstep, ordering, resynchronization, delivery, outer wire framing, or transport."
   },
   "setupStateAnchors": {
     "sharedPlayerMask": {

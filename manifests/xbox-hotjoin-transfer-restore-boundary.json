@@ -1,0 +1,450 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0386",
+  "topic": "xbox-hotjoin-transfer-restore-boundary",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Does native hotjoin send and restore a game snapshot, and which completion, admission and command-reentry boundaries are actually established?",
+  "scope": {
+    "boundary": "Static snapshot production, transfer queue, received-stream restoration and guarded control continuation. Fresh disconnected-player admission, slot/XUID reassignment, successful runtime recovery and complete command reconciliation remain open.",
+    "hotjoinOwner": "U32[0x8314EFDC], abbreviated H; indexed progress map +0x4, separate indexed control map +0x2C, deferred received-transfer ID +0x54.",
+    "networkOwner": "U32[0x8314EFE0], abbreviated M; +0x10 resolves the service, while +0x44 holds a distinct listener object.",
+    "servicePremise": "Resolved live service uses vptr 0x8215FA78. Its +0x104 slot at 0x8215FB7C is 0x8222DE40, returning service +0x28, the bulk manager. Its +0x10 listener must be the matching initialized listener; neither numeric registry keys nor an initialized table prove runtime lifetime.",
+    "headerPremise": "Static game-header object 0x8314F76C uses vptr 0x82138768; +0x6C selects 0x82D81560 and +0x5C selects 0x82D86400. These initialized relations require the retained live vptr at dispatch."
+  },
+  "dependencies": [
+    {
+      "topic": "xbox-network-message-root",
+      "use": "Indexed reader/writer, removal tail, five-word command record, local queue and numeric turn request."
+    },
+    {
+      "topic": "combat-rng-save-reload-boundary",
+      "use": "Conditional header transfer of current main RNG state; no complete RNG or draw-counter restoration claim."
+    },
+    {
+      "topic": "always-at-war-feasibility",
+      "use": "RVA-F-0362 header-backed PE Exception directory and descriptor interpretation."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Serialized foreground tools/run-headless.ps1 -ReadOnly on the canonical program, using DumpFunctions.java, DumpMemoryWords.java, FindPointerValues.java and FindDirectCallers.java; exact-owner generated/default windows corroborate only queried native owners.",
+    "qualification": "Configured decompilation truncates at the known second Xenon thunk block and contains 0x82D8F878 under entry 0x82D8C8E0. No project repair occurred. Selected exported words match the pinned flat image; neither empty call sets nor generated function labels establish complete reachability, lifetime, allocation success or runtime behavior.",
+    "extentConvention": "Half-open selected word ranges, not inferred function extents. Range digests identify original big-endian image bytes.",
+    "selectedWordRanges": [
+      {
+        "start": "0x82D8CB28",
+        "endExclusive": "0x82D8CB9C",
+        "sha256": "DA477FC7D3FB136EEA21F39792AA9FA1815C2B4F6B8691490BE50EB8246F666A"
+      },
+      {
+        "start": "0x82D8FF78",
+        "endExclusive": "0x82D901B0",
+        "sha256": "9A985DF2BCCDD43F5B57009C3930D34E91E5105A644E6F70B81B077409C9088B"
+      },
+      {
+        "start": "0x82E65BF8",
+        "endExclusive": "0x82E65CE8",
+        "sha256": "17DCF01B07EA194E07EB487A8C09550EBEF6B14DBDE972A9826C4222FFF96E0D"
+      },
+      {
+        "start": "0x82E658A8",
+        "endExclusive": "0x82E65928",
+        "sha256": "905B01427DB57D1B7BA357C17D33E59F1F8ED9184421779AFFF8C68D590CBD5E"
+      },
+      {
+        "start": "0x82D81560",
+        "endExclusive": "0x82D81800",
+        "sha256": "5C8A982FE932BAFE20223996A4A136C18C3AE0CD0A000D2F21C8E60FD81E6E7B"
+      },
+      {
+        "start": "0x82CA2640",
+        "endExclusive": "0x82CA2788",
+        "sha256": "180B53226928C1162539594DDBF9D790E6C148DE2F11A004838BFAEE8A91FEA9"
+      },
+      {
+        "start": "0x82CA2088",
+        "endExclusive": "0x82CA2548",
+        "sha256": "5B259B3CDF324B5AAB1456DB1FEFA6533B4E9CE50D708CF37A201AB227198F7E"
+      },
+      {
+        "start": "0x82E65CE8",
+        "endExclusive": "0x82E65F08",
+        "sha256": "06AF33F4AA72DE6633C9C1613922AE9816028D718B64EA7DD472CEB4DE2D10C5"
+      },
+      {
+        "start": "0x82D8C8E0",
+        "endExclusive": "0x82D8C8FC",
+        "sha256": "39AF223B590139B91DB6E9457C06EF013E876B2C0EDE10B68783E9390BDDCBDD"
+      },
+      {
+        "start": "0x82D8F878",
+        "endExclusive": "0x82D8F9A0",
+        "sha256": "478D5049541B5D9A1F0308A7EC8CED1A62AAD750B137270DAA189F567EA5E5A2"
+      },
+      {
+        "start": "0x82D8F9A0",
+        "endExclusive": "0x82D8FA88",
+        "sha256": "B3507391642C74981DDA306C398003C912D0EFE77E57C667BA3BCDA14E27485C"
+      },
+      {
+        "start": "0x82D8B1D0",
+        "endExclusive": "0x82D8B240",
+        "sha256": "9A935F2F3C73007FE3F9241A119F9A1B53F05269B65E95B26568B41DB9E5E9F6"
+      },
+      {
+        "start": "0x82D8B5F0",
+        "endExclusive": "0x82D8B660",
+        "sha256": "E27B8EBE04F255F9623AB587FC2C12418CA3FAD6EC20E82825D25BC7240857EB"
+      },
+      {
+        "start": "0x82D86400",
+        "endExclusive": "0x82D868E0",
+        "sha256": "AB2ED2FF1564AFAC94F10DB0473763EDE7D34A3E46A70165B818DC3DD5E32E1A"
+      },
+      {
+        "start": "0x82D21A90",
+        "endExclusive": "0x82D21AD4",
+        "sha256": "880D8271431D51DC797F224B6C28DBB16E7299953C132A8C7D87A6694B3C6482"
+      },
+      {
+        "start": "0x82D895B8",
+        "endExclusive": "0x82D895D8",
+        "sha256": "350A8ECFFE611B982196449CA1675763184909C6564D040DF6E0ABE47036CA14"
+      },
+      {
+        "start": "0x82D89AB0",
+        "endExclusive": "0x82D89AD8",
+        "sha256": "D89671AC09056D99E8B093EA1573190D95A39C42238AE1729479C2625B1B0E7F"
+      },
+      {
+        "start": "0x82D902A8",
+        "endExclusive": "0x82D906D0",
+        "sha256": "C4B371CBDF3C6407793FB8A92F0AE542B0499BDFF907B45AEA0D92A571935833"
+      },
+      {
+        "start": "0x82D901B0",
+        "endExclusive": "0x82D902A8",
+        "sha256": "5458708F8522263EB994BFF2C13BBCE53A518EDABBF393AD29287CFBF4C3DA7A"
+      },
+      {
+        "start": "0x82D8FE60",
+        "endExclusive": "0x82D8FF78",
+        "sha256": "2F3D96C35F8932775BED87D6092C1DD232D235C7135F6982900E1B66E568D52B"
+      },
+      {
+        "start": "0x82D8FCC8",
+        "endExclusive": "0x82D8FE60",
+        "sha256": "37AE044661115C3CC8B129FE3C72AB8DB8BDDB6E2893BFED79D5F658B1FCB7D3"
+      },
+      {
+        "start": "0x82D908D0",
+        "endExclusive": "0x82D90988",
+        "sha256": "370091EA849E5E27F5AD1A46B99F304EB502E0B54D851EC6BDD1E253B10CB849"
+      },
+      {
+        "start": "0x82D91C80",
+        "endExclusive": "0x82D91CE8",
+        "sha256": "66E01BCAED35CA4111CF67193984BA832975C7EC6C75C51ADE0A1CE3E30E9894"
+      },
+      {
+        "start": "0x82E660C0",
+        "endExclusive": "0x82E66238",
+        "sha256": "8B86A8085DC7411BEF696429BF61DF71AA4EA2BE6AD0CE1D5C5ECA8AC9F88A55"
+      },
+      {
+        "start": "0x82E64CC0",
+        "endExclusive": "0x82E64D38",
+        "sha256": "79DBFEFED2D0E489BFF25C5FDF3EDA297F4F1BD6BC824B469C758DE592C8F0E9"
+      },
+      {
+        "start": "0x82CAF480",
+        "endExclusive": "0x82CAF570",
+        "sha256": "1FBEBBCEDC0AB6F4FB9612075B07948E64A9A020B9332D7F32327AF519551090"
+      },
+      {
+        "start": "0x82CAE0E0",
+        "endExclusive": "0x82CAE1D0",
+        "sha256": "804105C3C00374D9843FA05B25E771EEA4A59B744CA970B0B05250411E2F4A1D"
+      },
+      {
+        "start": "0x82E64AD0",
+        "endExclusive": "0x82E64B38",
+        "sha256": "FAFB6DF00046E95502BC0A02738BB962400EB8128FDAAF0C0308217DDAF91C07"
+      },
+      {
+        "start": "0x82E64BB0",
+        "endExclusive": "0x82E64CC0",
+        "sha256": "469DE885045AE7CB7DFC1F3A25736E4BD7DDB8BEC4D9FC2F07F4FF30FC091DBD"
+      },
+      {
+        "start": "0x82C9FB38",
+        "endExclusive": "0x82C9FBA0",
+        "sha256": "C062222A95D1CD488A9F85D2E701B83A3AC0B081659E72A25EA61FE07B1BBE54"
+      },
+      {
+        "start": "0x82CA0B58",
+        "endExclusive": "0x82CA0BC8",
+        "sha256": "AFE407653B99BFAAE2D9B965AA5E2E6DF06D2D5F6A4B1AC4B55F5781B9910DF8"
+      },
+      {
+        "start": "0x82CB2318",
+        "endExclusive": "0x82CB2388",
+        "sha256": "65CFFA0EFFBAF0E4E92A39563AB2C15E138314587FFB4F11AF0D5D7446F00D6A"
+      },
+      {
+        "start": "0x82CB20E8",
+        "endExclusive": "0x82CB2300",
+        "sha256": "EA5164B810C0375AE6314A0003549D3A22F3ACD87310BBFFD8CAAC3862E746E3"
+      },
+      {
+        "start": "0x82CA58A0",
+        "endExclusive": "0x82CA5B00",
+        "sha256": "C8D4EB238A41E2F7C9DED2920861CA4004FAE553DB6B45190D3FFF670D400035"
+      },
+      {
+        "start": "0x82CA4AE8",
+        "endExclusive": "0x82CA4C00",
+        "sha256": "44EC9B083D1E200B344A490FA6522ECBF7786F8C429BC42DCD32E0061F7350AE"
+      },
+      {
+        "start": "0x82CB1B28",
+        "endExclusive": "0x82CB1B90",
+        "sha256": "CD27CFDE49AD3C61225543E907EF586C445C99D5AA48297E02AEB34DFCD53087"
+      },
+      {
+        "start": "0x82D91C58",
+        "endExclusive": "0x82D91C80",
+        "sha256": "B9EDCB69E3F525CBEBD33DFE91ECA75F051FF037B9A4D43C593DF6E5DA32F260"
+      },
+      {
+        "start": "0x82D8C570",
+        "endExclusive": "0x82D8C6C8",
+        "sha256": "2974A1A0A61D2B0D1C5F23359081A98ACE25931FF8E12AA5E28E5BBC115B3E85"
+      },
+      {
+        "start": "0x82CABDB8",
+        "endExclusive": "0x82CABEB0",
+        "sha256": "61E2D6A31C0411A030AB9C0BC9CC967B5E8845996799EE6EBA8309887D068D2D"
+      },
+      {
+        "start": "0x82E65928",
+        "endExclusive": "0x82E659F8",
+        "sha256": "09E7F9E5CBF849A82B7ABE7C440C1F911225C7EE4EEB34A4EE72798944A3F153"
+      },
+      {
+        "start": "0x82CAEB58",
+        "endExclusive": "0x82CAEC30",
+        "sha256": "DE50B7C671618B3A72243A777E6A61C2B0AA9EDC656E22D350BA4FDD971C19D5"
+      },
+      {
+        "start": "0x82138768",
+        "endExclusive": "0x821387E0",
+        "sha256": "1AAE608BF1AE05A94571367C151D5FB763168173AA6C6766BD60E2C7FADBF789"
+      },
+      {
+        "start": "0x82137570",
+        "endExclusive": "0x821375D0",
+        "sha256": "3E25B55CC42F0F4C9174AF31CE85313808B778DED2471CFD5A3AAB480D47EFCE"
+      },
+      {
+        "start": "0x82136958",
+        "endExclusive": "0x8213696C",
+        "sha256": "081D24919183D25A0A65DE5F9C11D82B9E307A071D9F26AE4C4D409EF34DCB42"
+      },
+      {
+        "start": "0x8219D638",
+        "endExclusive": "0x8219D640",
+        "sha256": "2FC907FBAE38E1A9F96FB7ECC4ECE0326E09F15E5DBB0EE455EDDBB8D4AF4326"
+      },
+      {
+        "start": "0x8215FA78",
+        "endExclusive": "0x8215FB80",
+        "sha256": "B6D3FE120DD5498C4F5A480ABBDA0BFB545FFDA0C1C059F547B2673BFF963E22"
+      },
+      {
+        "start": "0x821600AC",
+        "endExclusive": "0x821600C0",
+        "sha256": "9C79E4929239D6432997E3E188A4479D02C541302B44B1EC6A263EDDAEE74313"
+      },
+      {
+        "start": "0x8215F588",
+        "endExclusive": "0x8215F600",
+        "sha256": "46326A5E37FC8FB10763B63A431CE7BBEF3CB1472FEE40B7B5A0887E65696930"
+      },
+      {
+        "start": "0x821368E0",
+        "endExclusive": "0x821368F4",
+        "sha256": "3EE259ABB789E196D82E8D0C4D7B849706D64483E3070A60E1E3EDBF5081516A"
+      },
+      {
+        "start": "0x82137398",
+        "endExclusive": "0x821373AC",
+        "sha256": "69B4E04A5B0FA4422D947E25214B78361E2F9AF1FA80DBD54897657D20C96C0A"
+      },
+      {
+        "start": "0x82CA0798",
+        "endExclusive": "0x82CA0980",
+        "sha256": "CFA0353311DF8A98E749E5D2240799187350564EC556957E02D3F177E9F6B507"
+      },
+      {
+        "start": "0x82CA5E80",
+        "endExclusive": "0x82CA5F60",
+        "sha256": "0AE15424A84B882448826748C4EB4661FE2D74BA1565D739341C4585566DEE46"
+      },
+      {
+        "start": "0x82CA73D8",
+        "endExclusive": "0x82CA75A0",
+        "sha256": "51BD722E7C404B98186E561ACE2B60F7AF5649979F9C7E97E2EACA8C62B0CD06"
+      },
+      {
+        "start": "0x82D89AE0",
+        "endExclusive": "0x82D89B00",
+        "sha256": "49CA5DED9E146EFD69C4A543B477557D39E4789A2A2B030D035A2ED98E865653"
+      },
+      {
+        "start": "0x82D8C9B8",
+        "endExclusive": "0x82D8CA80",
+        "sha256": "50D5C84D22C9BE72A907115C2197C23EC875DA1DD686017E768216E6F3F8FF3C"
+      },
+      {
+        "start": "0x82CC29B8",
+        "endExclusive": "0x82CC2B00",
+        "sha256": "D39A2E2A202053B2386C6BD7BB1D48906CCC5B5699B5A474735E7C0DA89B39E0"
+      },
+      {
+        "start": "0x82CC4040",
+        "endExclusive": "0x82CC4240",
+        "sha256": "0B6A2C24A8683286EB58B6A04055A353468AB6D39CF3E5D3613CD0030B8EE54B"
+      },
+      {
+        "start": "0x82E65F08",
+        "endExclusive": "0x82E65F58",
+        "sha256": "E1523648B83E1FD6A895CB121C444AA4D1D4A1CF1D6B881E6F9EA59B83230FEB"
+      },
+      {
+        "start": "0x82CA2548",
+        "endExclusive": "0x82CA2598",
+        "sha256": "D3A2B21086DA55BA8DF694983ED6E4AB96B37031953A433213C38F5DBE1FA43A"
+      }
+    ],
+    "wordVerification": {
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "distinctQueriedWords": 7888,
+      "completelyExportedRanges": 59,
+      "result": "All selected range words and every parsed query word matched the pinned flat image. Explicit branch, transfer-ID, vtable-slot, entry-descriptor and equality-mask assertions passed."
+    }
+  },
+  "nativeEntry": {
+    "entry": "0x82D8F878",
+    "wrapper": "0x82D8C8E0 guards a negative incoming index, loads H and tail-branches at 0x82D8C8F8 to the separate native entry.",
+    "metadata": {
+      "row": "0x8219D638",
+      "entryWord": "0x82D8F878",
+      "descriptorAddress": "0x8219D63C",
+      "descriptor": "0x40004A03",
+      "bytes": 296,
+      "prologInstructions": 3,
+      "endExclusive": "0x82D8F9A0"
+    },
+    "qualification": "The row lies in the accepted PE Exception directory [0x8216B800,0x821A2E08). Exact metadata, prologue and wrapper establish the native entry; the configured containing-function model remains unchanged."
+  },
+  "snapshotProducer": {
+    "owner": "0x82D8FF78",
+    "selection": "Scans eight indexed entries; a non-sentinel state-one entry selects a transfer attempt. A native memory stream rooted at stack +0x80 uses vptr 0x82136B28.",
+    "writer": "The call at 0x82D90064 selects game-header virtual +0x6C -> 0x82D81560. That owner calls shared header codec 0x82CC29B8 with mode zero at 0x82D815E0, shared body codec 0x82CC4040 with mode zero at 0x82D81654, and compression 0x82D91EF8 at 0x82D8168C. It writes length words and compressed body bytes to the output stream.",
+    "transfer": "0x82D90084 is a callsite, not a function entry. It calls 0x82D8CB28(M, stream, index), then 0x82D90094 calls 0x82D8F800(H,index,2) without testing the preceding result. The writer result is also not used as a success gate here.",
+    "shape": "A native save-style header and compressed game-body snapshot, using the ordinary save/load codecs. This is implemented world-state transfer, distinct from lobby settings or the five-word command object. It is not raw process memory or a complete host-side runtime snapshot.",
+    "qualification": "A normal nonzero 0x82D8FF78 result establishes that at least one attempt was issued, not that serialization, delivery, peer restore or resumed play succeeded. All native serialized fields and their exclusions are not exhaustively inventoried here."
+  },
+  "queueOutcome": {
+    "entry": "0x82D8CB28",
+    "explicitFailure": "Returns -1 when M +0x10 is null or the first service virtual +0x104 result is null. The service is queried again on the normal arm; that second result is not separately checked before 0x82E65BF8 at 0x82D8CB88.",
+    "normalResult": "0x82E65BF8 creates or finds an 84-byte per-index queue record and calls 0x82E658A8. The latter creates a 52-byte transfer through 0x82CA2640, appends it and returns transfer +0x10 at 0x82E6590C. With the constructor's retained resolved-registry premise, this is a transfer identifier, not a boolean or HRESULT. A null constructor registry lookup skips the ID store; this path does not establish a valid ID result.",
+    "ownedBytes": "0x82CA2640 reads input stream virtual +0x34 size and +0x38 data, copies bytes into owned storage at transfer +0x30, stores length at +0x20 and computes a check word at +0xC. Base 0x82CA2290 initializes internal state +0x14 to zero and stores the +0x10 ID at 0x82CA2310 only after its registry lookup resolves; the null branch at 0x82CA22E4 skips that store.",
+    "callerEffects": "Both explicit -1 and normal transfer-ID returns reach the same indexed state-two write. Allocation-null arms can fault rather than return a defined failure result; do not invent a complete error enum or treat every nonpositive result as failure.",
+    "qualification": "No-queue failure, successful enqueue, completed send and successful received restore are separate events. ID uniqueness/wrap and all allocation/lifetime invariants are not closed."
+  },
+  "bulkProtocol": {
+    "sendStates": [
+      {
+        "state": 0,
+        "owner": "0x82CA2480",
+        "effect": "Builds begin object class 1150 through 0x82CAEC30, then selects internal state one."
+      },
+      {
+        "state": 1,
+        "owner": "0x82CA2548",
+        "effect": "Wait state. Request class 1151 consumer 0x82CAEBC8 -> 0x82E65B88 -> 0x82E657F0 changes the matching ID to state two."
+      },
+      {
+        "state": 2,
+        "owner": "0x82CA2170",
+        "effect": "Sends class 1152 with ID/length and selects state three."
+      },
+      {
+        "state": 3,
+        "owner": "0x82CA2348",
+        "effect": "Constructs class 1153 chunks through 0x82CAE338, at most 1024 bytes each; advances offset/counter and selects three or four."
+      },
+      {
+        "state": 4,
+        "owner": "0x82CA2088",
+        "effect": "Runs a completion callback and selects terminal state five. Failure/cancellation can select six."
+      }
+    ],
+    "sendCompletion": "0x82E65F08 services the queue through 0x82E65CE8 at 0x82E65F3C. Nonterminal transfers are requeued. Terminal five emits class 1154 with ID/check word; terminal six emits 1155. At 0x82E65ED0 service +0x10 listener virtual +0x50 receives registry key r4, transfer ID r5, player index r6, and success r7=(state==5), before transfer disposal.",
+    "beginReceive": "Begin table 0x8215F588 +0x10 -> 0x82CABDB8 resolves the service and calls listener +0x54. Initialized listener 0x82137570 +0x54 -> 0x82D89AE0 -> 0x82D8C9B8 -> 0x82E65928 creates an owned memory stream indexed by transfer ID in the bulk manager's +0x54 map, with separate kind value two at +0x2C. Admission, callbacks and allocation remain guarded.",
+    "chunkReceive": "Chunk table 0x8215F5C4 +0x10 -> 0x82CAE0E0 obtains the bulk manager through service +0x104 and calls 0x82E64CC0 at 0x82CAE140, with r4=ID from object +0x34, r5=data pointer from +0x44, r6=length from +0x38. 0x82E64CC0 looks up 0x82E64AD0(ID), invokes stream +0x8 with length/data, compares the written count to length, and removes the stream through 0x82E64BB0 on failure.",
+    "receiveCompletion": "Class-1154 table 0x8215F5D8 +0x10 -> 0x82CAF480 calls 0x82E660C0 at 0x82CAF4E0 with ID, source index and check word. That helper requires a matching stream, distinguishes kind one/two, conditionally checks the nonzero supplied check word, finalizes the stream and calls service +0x10 listener +0x58 at 0x82E66228 with r5=ID, r6=source index, r7=success. Table slot 0x821375C8 -> 0x82D895B8 writes r5 into H +0x54 only when low8(r7) is nonzero.",
+    "replyAndFailure": "0x82CAF480 replies with class 1156 carrying the completion boolean. Class-1155 consumer 0x82CACB58 calls 0x82E64A68, notifying the same listener +0x58 with false. Class-1156 table 0x82137398 +0x10 -> 0x82CAEB58 acts on a false reply through 0x82E65B18; a true reply is not proof that 0x82D86400 ran successfully. Chunk-write failure also sends class 1156 false.",
+    "qualification": "Bulk states zero through six differ from indexed hotjoin progress zero through four. Initialized tables, decoded object class, matching service/ID, routing, listener installation and normal returns are runtime premises. Sender terminal five is not remote-load acknowledgement. No complete GT2 packet grammar, delivery, retry/timeout guarantee or all-peer barrier is established."
+  },
+  "restore": {
+    "entry": "0x82D217C8 reads H +0x54 and, on its nonnegative branch, calls 0x82D8F9A0 at 0x82D21AC4 before continuing setup.",
+    "lookup": "0x82D8F9A0 calls 0x82D8B1D0(M,ID), which obtains the bulk manager and calls 0x82E64AD0. For a nonnull returned stream, 0x82D8FA00 dispatches the static game-header virtual +0x5C -> 0x82D86400, with r4=stream, r5=1, r6=0, r7=-1, r8=0.",
+    "sharedLoader": "0x82D86400 calls 0x82CC29B8 mode one at 0x82D8645C and, after its header/content/stream guards, 0x82CC4040 mode one at 0x82D86674. These are the same codecs used by snapshot writing, with opposite modes. The loader contains resume/RNG/turn continuation, including 0x82DADC88 and 0x82D7F550. Ordinary file loading instead reaches this loader through outer 0x82D84238.",
+    "cleanup": "0x82D8F9A0 does not test the loader result. It calls 0x82D8B5F0 -> 0x82E64BB0, clears H +0x54 to -1, and writes local indexed progress zero through 0x82D8F800. Cleanup also runs when ID lookup is empty; cleared state is not successful load.",
+    "qualification": "Native received-stream restoration is positively implemented. Header/content/stream rejection, missing stream and loader failure remain distinct. The body codec's raw r3 return is not assigned success/failure semantics and is not tested by this loader. Complete field coverage, pending-command treatment, replay cutoff, world replacement generation and accepted player-facing resume remain open."
+  },
+  "indexedProgress": {
+    "states": [
+      {
+        "value": 0,
+        "writers": "0x82D8F878 false mode, 0x82D906D0 selected removal, 0x82D8F9A0 restore cleanup, and 0x82D8FB38 state-four cleanup",
+        "role": "Reset/idle in these paths; not proof of success."
+      },
+      {
+        "value": 1,
+        "writers": "0x82D8FCC8 via object consumer 0x82D91BD0, and 0x82D8FE60 via 0x82D91C00",
+        "role": "Pending. Both compare incoming index with service current index and route optional notifications. They also write separate indexed H +0x2C values two/one respectively, not additional writes to progress map +0x4."
+      },
+      {
+        "value": 2,
+        "writers": "0x82D8FF78 after 0x82D90084",
+        "role": "Transferring label; follows an unchecked attempt, not confirmed enqueue/delivery."
+      },
+      {
+        "value": 3,
+        "writers": "0x82D8F878 nonzero mode through 0x82D8F800",
+        "role": "Completion-side progress. Listener +0x50 -> 0x82D89AB0 rejects false r7 or negative r6; successful r6/r7 maps to index/mode for 0x82D8F878. A false transfer callback does not take its mode-zero reset path."
+      },
+      {
+        "value": 4,
+        "writers": "0x82D902A8 through 0x822DF948",
+        "role": "Control continuation after the bool-mask object dispatch; later 0x82D8FB38 can clear it."
+      }
+    ],
+    "completionMask": "After writing three, 0x82D8F878 first stops when any of eight entries is two. Otherwise state-minus-three, cntlzw and rotate/mask produce one exactly for state THREE. 0x82D908D0 packages the eight bytes with vptr 0x82136958; +0x10 slot 0x82136968 -> 0x82D91C80 fans each selected index to 0x82D902A8, which writes FOUR and conditionally reaches 0x82D901B0.",
+    "turnRequest": "0x82D901B0 requires a nonzero readiness low byte and no present indexed entry in state two or three before numeric-46 BeginTurn submission. Missing entries do not suppress the request. This is a request edge, not evidence that all peers restored or a turn completed.",
+    "admissionLimit": "The observed request/index-equality gates and case-53 mismatch path establish recovery machinery, not assignment of a fresh disconnected player's slot/XUID. No complete fresh-association admission path or UI join-in-progress acceptance is proved."
+  },
+  "receiveToCommand": {
+    "callback": "0x82CA0798 initializes network callbacks including 0x82C9FB38. With retained connection user data and owner/listener, 0x82C9FB38 invokes listener +0x10 at 0x82C9FB90. Listener vptr 0x821600AC +0x10 -> 0x82CA0B58; 0x82CA5E80 installs this table in service +0x18 and 0x82CA73D8 passes it to network construction.",
+    "decode": "0x82CA0B58 calls 0x82CB2318 -> 0x82CB20E8, which wraps/reads the received bytes and uses factory 0x82E7DB10 followed by object reader +0xC. A nonnull decoded object reaches service +0xDC -> 0x82CA58A0.",
+    "routing": "After its routing/record/filter branches, 0x82CA58A0 can call service +0xE0 -> 0x82CA4AE8. That helper sends class >=1000 directly to 0x82CB1B28; lower classes require listener +0x4C -> 0x82D895D8 -> 0x82CB1B28.",
+    "consume": "0x82CB1B28 requires object byte +0x30 zero, invokes object +0x10 at 0x82CB1B5C, then sets that byte. If the decoded object uses accepted command vptr 0x821368E0, +0x10 -> 0x82D91C58 -> 0x82CE16C8(object+0x34). The queue helper appends the five-word record only when its first word is not -1; -1 only drains existing queued records. Drain dispatches through 0x82CDDF08.",
+    "qualification": "This joins an actual installed receive-callback corridor to conditional local command append. Live factory registration/class/vptr, routing guards, association identity and delivery are premises, not observed facts. It does not close the leading-value-77 factory-registration question or a complete wire, sequence, duplicate-suppression or recovery-queue policy."
+  },
+  "conclusion": "Native hotjoin includes a compressed save-style transfer, receiver stream writes, completion notification, deferred shared mode-one load and guarded turn-request continuation. A new save-stream transfer feature is not required to explain this native recovery path. Static evidence does not establish successful disconnected-player rejoin, a complete admission protocol, or any particular observed failure cause. Title-specific restore policy and SDK reachability require their own source/runtime evidence."
+}

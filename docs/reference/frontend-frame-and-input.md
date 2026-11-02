@@ -263,6 +263,18 @@ and key 2 does not distinguish create/load. New-game-only ingress and safe
 civilization omission remain unproved. See
 [setup boundary](../../manifests/player-count-setup-boundary.json).
 
+The inner -1 setup bypass does not establish cancellation of its enclosing
+game-start state. `0x82E60F70` does not compare the outer setup return before
+its guarded presentation continuation. That path can reach `0x82E225D0`'s
+indexed string argument and `0x82D3B830`'s narrow-string byte scan. Valid native
+inputs may satisfy this contract; invalid input and crash causation are not
+established by missing local checks. The
+[formatting boundary](../../manifests/game-start-formatting-boundary.json)
+owns exact branches, the application +0x60 identity, two argument slots,
+current/pending/requested-state transitions and bounded native refusal/reset
+routes. Its deferred frontend request is distinct from controller cleanup;
+safe late cancellation and the actual invalid slot remain unproved.
+
 ## Advisor presentation entry
 
 Advisor constructor passes name address to base before initialization. Two

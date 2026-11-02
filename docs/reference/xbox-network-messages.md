@@ -90,8 +90,27 @@ increment or a queued request alone does not count a completed world round.
 Four candidate `0x82F7AD00` writers: three copy object `+0x134` from
 `0x8314EFC8` (one via second parameter); fourth copies record `+0x0C`.
 Flag-guarded record builder seeds temporary from old word, applies `0x822DE438`,
-then stores before later copy. Pointer/object/helper/record/word meanings and
-image-wide writer closure remain unknown.
+then stores before later copy. The
+[RNG transfer contract](../../manifests/combat-rng-save-reload-boundary.json#/headerStateTransferBoundary)
+identifies this word as current main RNG state, with conditional save/load
+transfer. It does not prove complete generator restoration or identify an
+immutable map seed. Other object meanings and writer closure remain unknown.
+
+`SynchCheck` first clears mismatch bit `0x10`. A nonzero sampled network byte
+admits the scalar and RNG comparisons; unequal comparisons set that bit.
+Skipped, equal and unequal branches share a normal-return continuation that
+samples a fresh scalar and submits numeric 60 with local index, scalar, -1 and
+current RNG state. This is not an echo or proof of repair. Numeric 60 ORs an
+index-derived mask into `0x83157E40` and writes the scalar into the indexed
+`0x8312E5C0` array later read by case 53. No acknowledgement name, valid-index
+guarantee, complete peer receipt or arrival order is established. Exact gates:
+[case 55](../../manifests/xbox-network-message-root.json#/turnAndSyncAnchors/case55/returnSubmissionBoundary)
+and [case 60](../../manifests/xbox-network-message-root.json#/turnAndSyncAnchors/case60).
+
+The [scalar/phase contract](../../manifests/spaceship-part-presentation-boundary.json#/worldActorSaveSyncProjectionBoundary)
+owns the selected unit contribution and sample timing. Its conditional nested
+command drain can run before actor retirement. A scalar projection is not a
+bulk game-state recovery snapshot.
 
 Case 53 has two type-55 sites (current-data arg1/stored-word arg2), with zero
 `0x82F77454` selecting alternate. Optional path's first scan starts at zero only
@@ -117,6 +136,30 @@ object-relative `[+0,+0x38)`; this is not a declared allocation extent,
 recovered type, serialization layout or lifetime model. Child, indirect-call and
 literal-one roles remain unnamed. Runtime cardinality, reachability and
 helper/element semantics remain unknown.
+
+The index object's consumer `0x82D8FCC8` selects equal/unequal child callbacks
+and conditionally publishes helper-returned values at receiver-associated
+storage. Its local body supplies no direct snapshot application, mismatch-bit
+test or numeric-60 submission. Opaque calls remain open; this is not a
+disconnect or completed resync identification. A diagnostic binds the writer's
+receiver-associated value one to hotjoin pending state; the separate `+0x2C`
+store is not identified by that label. A selected state-one consumer calls a
+network-manager helper, then writes transferring state two without testing the
+helper return. A selected removal tail clears the indexed state; its conditional
+turn helper submits `BeginTurn` only when its scan finds no state two/three.
+Missing entries do not count as active transfer. The
+[consumer boundary](../../manifests/xbox-network-message-root.json#/turnAndSyncAnchors/case55/indexObjectConsumerBoundary)
+and [progress boundary](../../manifests/xbox-network-message-root.json#/turnAndSyncAnchors/hotjoinProgressBoundary)
+own those effects, conditions and lifetime premises.
+
+The [hotjoin transfer/restore boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json)
+owns the native compressed save-style snapshot, transfer-ID queue result,
+received-stream writes, shared mode-1 loader, completion mask and conditional
+receive-callback-to-command-append corridor. Exception metadata establishes
+`0x82D8F878` as a native entry despite its configured containing-function model.
+This is implemented world-state recovery machinery. Successful delivery,
+fresh disconnected-player admission, command reconciliation and accepted
+return-to-play remain unproved.
 
 | Table/helper | Bounded structure/dataflow and limit |
 | --- | --- |

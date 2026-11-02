@@ -17,6 +17,8 @@
     "frontendRequest": "0x82E54FD8",
     "managerReset": "0x82D8B6C8",
     "managerCleanup": "0x82D8E798",
+    "waitingControllerFactory": "0x821DC228",
+    "waitingControllerTable": "0x8213B3C4",
     "boundary": "Selected state transitions, setup continuation, two string argument slots and native refusal/reset routes. Complete late cancellation, platform teardown and runtime crash attribution remain outside the proved boundary."
   },
   "dependencies": [
@@ -54,7 +56,10 @@
       "address": "0x82121CF0",
       "bytesIncludingNul": 14,
       "sha256IncludingNul": "8D65D6418642143C878468381675FF8C8BA91FC7B1EF6B56FBF35612559828B7",
-      "argumentClassesInOrder": ["narrow-string", "narrow-string"],
+      "argumentClassesInOrder": [
+        "narrow-string",
+        "narrow-string"
+      ],
       "qualification": "Only token classes and byte identity are retained; the retail format literal is excluded. Static format identity does not establish the incident's live format cursor or consumed slot."
     },
     "wrapper": "0x82D38DD0 saves 64-bit incoming r5 at entry SP+0x20 and r6 at entry SP+0x28, creates a 0x60-byte frame and passes entry SP+0x20 as the argument cursor to 0x82D3B830. Under the pinned format and ordinary sequential cursor consumption, the first narrow-string word is the temporary pointer in saved r5 slot+4 and the second is the indexed table word in saved r6 slot+4.",
@@ -75,8 +80,16 @@
     "managerCleanup": "0x82D8E798 conditionally calls D8FB38/D8FA68 on U32[0x8314EFDC], calls DADD28(G,i) for all eight slots and clears the byte at M+0x5C. If M+0x14 is non-null it calls that object's +0x4C, then reloads M+0x14 at 0x82D8E810 and writes the reloaded pointer's +0x0C=-1 without another null check. The callback's preservation/replacement of that pointer is not established. It passes registry key M+4 to CAAD20, clears the word M+0x10, sets M+4=-1 and calls DAEFD8(-1). Transitive callee effects are not a full cleanup proof. It does not itself clear M+0x14 or directly prove platform session deletion or socket closure.",
     "pairedReset": "0x82D8B6C8 writes the current M+0x10 child's +8=-1, passes registry key M+8 to CAAB10, sets M+8=-1 and clears M+0x14. Its ordering relative to D8E798 changes which conditional callback remains possible.",
     "frontendReturn": "0x82E6AFF8 retains its controller receiver, calls D8B6C8(M), then D8E798(M), then invokes that controller's vtable +0x1C with r4=10. The dependency maps ID 10 to the game-selector controller. This is an existing cleanup-then-frontend-request shape, not a method callable with APP or an arbitrary active controller.",
-    "timeoutStop": "Search status 9 denotes the non-single-result outcome. For event 3 and nonzero status, D8A088 first requires a non-null active-screen manager at U32[0x8314F2E4]; only then does it dispatch event 17 for status 1 or event 16 for other statuses, including 9, via C56478. A null manager exits without dispatch. This bounded pass did not join the event's actual receiving controller to cleanup. A universal refusal/timeout return path remains unproved.",
+    "timeoutStop": "Search status 9 denotes the non-single-result outcome. For event 3 and nonzero status, D8A088 first requires a non-null active-screen manager at U32[0x8314F2E4]; only then does it dispatch event 17 for status 1 or event 16 for other statuses, including 9, via C56478. A null manager exits without dispatch. waitingOverlayEventBoundary closes the selected controller-15 event-sixteen cleanup edge and distinguishes its event-seventeen fallback. Other live controllers, full platform retirement and a universal refusal/timeout return remain unproved.",
     "lateCancellationLimit": "No proved edge joins a title refusal inside D25170 to a compatible late key-2 destructor, matched frontend controller and complete session retirement. The earlier current-key-1/pending-null owner comparison is a conditional admission boundary that avoids entering key 2; it is not proof that every incident attempt reaches those preconditions."
+  },
+  "waitingOverlayEventBoundary": {
+    "delivery": "0x82D8A140 and 0x82D8A170 call 0x82C56478 with the active-screen manager, numeric event and r5=-1. The latter reads manager +0x4, exits if null, takes separate 0x82C56388 behavior when the controller byte +0xC is nonzero, otherwise calls controller virtual +0x10 at 0x82C564B8. Only a zero result low byte admits a reloaded controller's virtual +0x14 at 0x82C564E0 with the original event/argument.",
+    "controller": "Factory 0x821DC228 passes ID15 to 0x82D6C6F8 and installs vptr 0x8213B3C4. Initialized +0x10 word 0x8213B3D4 is 0x82D6DB20; +0x14 word 0x8213B3D8 is 0x82D6DB38. This binds one constructed waiting-overlay controller, not the runtime active-controller inventory.",
+    "event16": "For event16, 0x82D6DB20 returns zero without calling the generic predicate. Handler 0x82D6DB38 bounds event-minus15 and uses its embedded table: index1 at 0x82D6DB78 is 0x82D6DCDC. That arm calls 0x82D8E798(M) at 0x82D6DCE4. Only normal cleanup return reaches 0x82D6D8F0(controller) at 0x82D6DCEC; the cleanup's callback can invalidate its reloaded M+0x14 pointer before an unchecked store, as qualified in nativeRefusalBoundary.",
+    "continuation": "With retained valid controller, setup and descriptor roots after cleanup, 0x82D6D8F0 copies selected descriptor +0x230/+0x228 words to setup +0xFC/+0x104/+0x100/+0x108 and calls 0x82D8F398(M,1) at 0x82D6D944. Its result-three arm presents a message and conditionally invokes controller +0x4 child virtual +0x18; other results leave that local body. This is a conditional setup continuation, not a proved frontend return, accepted retry or complete platform recreation. The literal-one parameter is not assigned a new semantic name.",
+    "event17": "For event17, 0x82D6DB20 tail-branches to 0x82D70D28, whose selected path skips its event6/event16 work and returns zero. Handler table index2 at 0x82D6DB7C selects 0x82D6DD88 and falls through the non-event5 path to 0x82D70880 at 0x82D6DDA8. That owner's event-minus2 table index15 at 0x82D708F0 selects epilogue 0x82D70D1C. Thus this selected event17 path contains no cleanup call; no general failure return value is inferred from the void handler.",
+    "qualification": "These relations require the constructed vptr, manager/controller lifetime, byte/predicate guards, retained ordinary ABI and no concurrent replacement before the reloaded virtual dispatch. The same native listener can serve other controllers. Cleanup transitive effects and callback preservation retain nativeRefusalBoundary's limits. Neither event16 nor event17 establishes the incident's actual active controller, root cause, safe late key-two cancellation, fresh SDK generation, native slot admission or successful retry. The common handler's configured containing entry is 0x82D6C780; exact exported words support only the selected native gate, without a project-model repair."
   },
   "currentEvidence": {
     "method": "Serialized foreground read-only exact-function queries, selected raw-word comparison to image.json, and narrow exact-owner generated corroboration.",
@@ -113,7 +126,69 @@
       "[0x82F773BC,0x82F773C0)"
     ],
     "generatedOwners": "rerevved:generated/default/rerevved_recomp.120.cpp (E60F70), .197.cpp (D25170), .7.cpp (DBACE0), .92.cpp (E225D0), .162.cpp (D38DD0), .104.cpp (D3B830), .107.cpp (E2B138), .130.cpp (E29170), .158.cpp (E83EA8), .80.cpp (E54FD8), .31.cpp (821B0C30), .172.cpp (E60D68), .225.cpp (D8A088), .125.cpp (D8EFF0), .169.cpp (D8F398), .63.cpp (D8B6C8), .149.cpp (D8E798), .1.cpp (E6AFF8). Read only the named exact-owner windows.",
-    "qualification": "Configured second-thunk and bad-data decoding truncate many owners, including presentation, producer, formatter and state cleanup. Exact entries, exported native words and bounded branch/operand decoding support the local facts; decompiler closure and empty call/reference lists do not. Full native transitive cleanup and indirect controller/session identity remain unproved."
+    "qualification": "Configured second-thunk and bad-data decoding truncate many owners, including presentation, producer, formatter and state cleanup. Exact entries, exported native words and bounded branch/operand decoding support the local facts; decompiler closure and empty call/reference lists do not. Full native transitive cleanup and indirect controller/session identity remain unproved.",
+    "waitingOverlayEvidence": {
+      "method": "Serialized foreground read-only function/word queries; all parsed words checked against the pinned flat image and exact-owner generated windows corroborated.",
+      "selectedWordRanges": [
+        {
+          "start": "0x82D8A088",
+          "endExclusive": "0x82D8A178",
+          "sha256": "CBE40EC7B55D7FBEC537F1787359252E66F0E906230934ACCD2E62F642873DA6"
+        },
+        {
+          "start": "0x82C56478",
+          "endExclusive": "0x82C564FC",
+          "sha256": "58D72688635129C4003057011EDA2C7F3C560EFE4FF74D233D9D6B3AB0DA3DF0"
+        },
+        {
+          "start": "0x821DC228",
+          "endExclusive": "0x821DC2A4",
+          "sha256": "12ED5603E6A5DEF8107D1BF97BA2441FF2DF614A27FC0BD527C2E855BFCFE177"
+        },
+        {
+          "start": "0x8213B3D4",
+          "endExclusive": "0x8213B3DC",
+          "sha256": "6A0271869F11679C726D89ED4C8400B036C96C3A3F347C857E13C20834E7596F"
+        },
+        {
+          "start": "0x82D6DB20",
+          "endExclusive": "0x82D6DB38",
+          "sha256": "4CF5391F4226FF9EC4945AB8F05B5CEABE0F75F31CD27D84B5A5CE59F19D4A3D"
+        },
+        {
+          "start": "0x82D6DB38",
+          "endExclusive": "0x82D6DDBC",
+          "sha256": "FB9545EC9B55A949BCB3978B6E7F5F200EAD91898298B09E74FCB0C934A6BB45"
+        },
+        {
+          "start": "0x82D6D8F0",
+          "endExclusive": "0x82D6D9F8",
+          "sha256": "377E21CA1352DAFE0AE362F41C7DB7D1C164C92090F9FB02F2890913F9EE7F0D"
+        },
+        {
+          "start": "0x82D70880",
+          "endExclusive": "0x82D70D28",
+          "sha256": "5D8F30A0E04EB6FD375E422AC55CB5304AF6578F79771EF9F69068BDE26BCD3C"
+        },
+        {
+          "start": "0x82D70D28",
+          "endExclusive": "0x82D70EF0",
+          "sha256": "D2915CAC31CEAFA966DD0F6A60357F80756650132D6E4CE03ECECFFE2361B630"
+        }
+      ],
+      "distinctQueriedWords": 1354,
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "generatedOwners": [
+        "generated:rerevved/sub_82C56478:0x82C56478..0x82C564FC",
+        "generated:rerevved/sub_821DC228:0x821DC228..0x821DC2A4",
+        "generated:rerevved/sub_82D6DB20:0x82D6DB20..0x82D6DB38",
+        "generated:rerevved/sub_82D6DB38:0x82D6DB38..0x82D6DDBC",
+        "generated:rerevved/sub_82D6D8F0:0x82D6D8F0..0x82D6D9F8",
+        "generated:rerevved/sub_82D70880:0x82D70880..0x82D70D28",
+        "generated:rerevved/sub_82D70D28:0x82D70D28..0x82D70EF0"
+      ],
+      "qualification": "Selected ranges are half-open byte-check corridors, not inferred function extents. Configured decompilation contains 0x82D70D28 under 0x82D6DB20 and 0x82D70880 under 0x82D6C780; table data and second-thunk/bad-data truncation preclude a closure claim. No repair or runtime observation occurred."
+    }
   },
   "guards": [
     "Do not infer that setup failure necessarily takes the presentation branch or causes an invalid string read.",

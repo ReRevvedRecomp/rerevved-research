@@ -272,7 +272,10 @@ established by missing local checks. The
 [formatting boundary](../../manifests/game-start-formatting-boundary.json)
 owns exact branches, the application +0x60 identity, two argument slots,
 current/pending/requested-state transitions and bounded native refusal/reset
-routes. Its deferred frontend request is distinct from controller cleanup;
+routes, including the selected waiting-overlay event-16 cleanup and guarded
+setup continuation. That continuation requires normal cleanup return and
+retained roots; it is not an accepted retry. Its deferred frontend request is
+distinct from controller cleanup;
 safe late cancellation and the actual invalid slot remain unproved.
 
 ## Advisor presentation entry

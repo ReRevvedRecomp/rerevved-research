@@ -24,8 +24,9 @@ B  = T(B1) if word_24 bit 0x40 is set, otherwise B1
 
 Without overflow on nonnegative inputs, reduction is `floor((2*v + 1)/3)`;
 both flags apply it twice with intermediate rounding. There is no clamp before
-the bonus. Scalar initialization and value, flag meanings and runtime ranges
-remain unknown.
+the bonus. Selected scalar initialization/calendar stores are recorded in the
+[capacity finding](../../manifests/city-population-cap-boundary.json#/growthBoundary).
+Flag meanings, complete writer coverage and runtime ranges remain unknown.
 
 When cumulative UEA 8, Faster city growth, is active, the ordinary integer
 result is `max(20, B - 10)`. Otherwise the threshold is `B`. For wrapped signed
@@ -79,3 +80,21 @@ To replace the application of the 100-Gold reward:
 This conditional native-call contract proves no actual mask, full return or
 all-city execution. Exact guards/alternatives:
 [occ-gold-population-reward.json](../../manifests/occ-gold-population-reward.json).
+
+## Population capacity
+
+Population is a signed byte at city+3. City records start at 0x8314FE28 with stride 188. Positive 127 is representable, but is not a safe population cap.
+
+CityUpdate clamps signed population at least 32 to 31. Ordinary food growth additionally selects ceilings 9, 17 or 32 from a signed definition halfword, storing ceiling minus one. Hanging Gardens and Statue of Liberty clamp their grants to 31; the economic reward admits populations 1 through 30. Irrigation has no local below-31 guard, so this evidence does not establish a universal invariant across every transient writer.
+
+The population refresh helper reads/writes one assignment byte for each reached citizen ordinal, starting at city+0x58, and tests a citizen-ordinal lock bit. The separate word at city+0x78 follows a 32-byte interval. A reached ordinal-32 assignment overlaps that word. CityUpdate, assignment counting/matching/classification and command8 have additional population-length assignment accesses. Bounding only the refresh store leaves other accesses unsafe.
+
+Native unassigned behavior has another capacity: helper0x82CE1C10 clears eight output words but indexes them by floor(ordinal/6). Population127 needs22 buckets. Cost helper0x82CF7E30 initializes33 population-indexed entries0..32; higher populations read outside those initialized entries. A byte-preserving larger-city design must specify both policies and their callers. Thirty-two or48 fitting one capacity is not a safe-cap result.
+
+The growth formula uses arithmetic rather than a population-indexed food table. For nonnegative unmodified factorF, population127 requiresF<=258 to keep127*F within32767. Stored growth progress is signed16, so accumulation needs its own interval. Food growth and Irrigation can narrow127+1 to0x80/signed-128 before a later upper clamp; raising a ceiling alone does not prevent that wrap.
+
+The selected city stream requests one population byte,32 assignment-byte primitives and a separate four-byte lock word. A selected UI row sends signed population to decimal formatting. Completed file/wire delivery, three-digit graphical capacity and named surplus-citizen semantics remain unproved. The whole mapped-owner candidate pass missed an independently identified command8 assignment write; it is not a complete semantic reader/writer census.
+
+A population near 500 requires wider population access semantics, expanded or relocated assignment storage, coherent cap/grant rules and validation of formulas, AI, presentation, save and network formats. Those complete contracts and runtime safety remain unproved. The selected construction comparisons already use signed 32-bit threshold operands; threshold width is separate from population storage.
+
+Evidence: [city-population-cap-boundary.json](../../manifests/city-population-cap-boundary.json), RVA-F-0384, and its accepted mutation/growth dependencies.

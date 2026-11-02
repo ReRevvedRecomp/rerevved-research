@@ -19,9 +19,10 @@ for draw objects, bindings, dirty masks, commands and lifetime fields.
 | Sampler shadow | Partial stage record | +0x0C and +0x10; its setter updates device +0x18 | RVA-STR-0064 |
 | Draw command state view | Partial, at least +0x3498 | Cursor at device base +0x30, limit +0x38, commit words +0x3484..+0x3494 | RVA-STR-0065 |
 
-Declaration scan advances 12 bytes until 16-bit 0xFF. Copying n records from
-+0x34 omits that terminator; 0x38+12*n allocation leaves four extra bytes.
-Subfields/API semantics remain unknown.
+The declaration scan advances 12 bytes at a time until it finds the 16-bit
+value 0xFF. Copying n records from +0x34 omits that terminator; the 0x38+12*n
+allocation leaves four extra bytes. Subfield meanings and API semantics remain
+unknown.
 
 Parent-backed surfaces store the parent at +0x18; AddRef/Release recurse under
 count/type/flag guards. Standalone packed +0x18 has no proved parent role;
@@ -45,8 +46,9 @@ flush, wrapper and ring state; discard/masking remains unproved.
 
 ## Limits
 
-Static bounded fields establish no complete C++ layout, frequency, draw order or
-safe snapshot mask; manifest records unresolved ranges/readers.
+These statically identified fields do not establish a complete C++ layout,
+access frequency, draw order or safe snapshot mask. The manifest records
+unresolved ranges and readers.
 
 - [D3D runtime surface](../../manifests/native-renderer-d3d-runtime-surface.json): wider device state.
 - [Resource contract](../../manifests/native-renderer-resolve-resource-contract.json): qualified six-word texture descriptors.

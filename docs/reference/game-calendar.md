@@ -12,9 +12,9 @@ symbols; runtime observations are distinguished from static dataflow.
 | `TurnToYear` | `0x82CEFA20` | Native piecewise conversion from turn to year |
 | `CalendarTurnAdvance` | `0x82D1EAB0` | Bounded routine that increments the turn, converts it to a year, and stores the year |
 
-The initial turn/year pair is 0/-4000. Each positive `TurnToYear` step adds
-100 while year<0, 50 below 1000, 25 below 1700, 10 below 1900, 5 below 1950,
-then 2.
+The initial turn/year pair is 0/-4000. Each positive `TurnToYear` step advances
+the year by 100 while year < 0, 50 below 1000, 25 below 1700, 10 below 1900,
+5 below 1950, and 2 thereafter.
 
 ## Transition flow
 
@@ -70,8 +70,9 @@ Turn 118 is 1950. Until the first signed year wrap, the late curve is
 | 2300 | 293 | 2290 | 288 |
 | 2500 | 393 | 2490 | 388 |
 
-These are arithmetic witnesses, not observed endgame dates or a replacement
-deadline policy. Scenario elapsed turns are counted from a separate start turn.
+These dates follow from the arithmetic; they are not observed endgame dates
+or a replacement deadline policy. Scenario elapsed turns are counted from a
+separate start turn.
 Selected save/load requests carry four-byte current-year and current-turn
 values; successful delivery, complete reload and retained coherence remain
 unproved for a continued game.
@@ -103,9 +104,10 @@ with scenario -1, or elapsed 195 at `0x82D1133C` with another scenario value.
 The selected warning resource promises a five-turn lead. Its request does not
 establish delivered presentation.
 
-The converter yields turn192=2098, turn193=2100 and turn194=2102. These are
-static arithmetic witnesses, not observed endgame dates. The deadline consumes
-calendar state; changing displayed dates alone does not establish more play.
+The converter yields turn 192 = 2098, turn 193 = 2100 and turn 194 = 2102.
+These results come from static arithmetic, not observed endgame dates. The
+deadline consumes calendar state; changing displayed dates alone does not
+establish more play.
 
 Changing only the 2100 compare leaves both old warning tests unchanged.
 Bypassing from `0x82D11304` to `0x82D1143C` skips the complete warning/deadline

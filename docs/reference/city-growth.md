@@ -32,8 +32,10 @@ When cumulative UEA 8, Faster city growth, is active, the ordinary integer
 result is `max(20, B - 10)`. Otherwise the threshold is `B`. For wrapped signed
 inputs, the exact active result is `s32(B - min_signed(10, s32(B - 20)))`.
 
-City update compares signed `+0x34`, subtracting threshold and incrementing
-`+0x03` on growth; progress producers/full meaning remain unknown. Evidence:
+City update compares the signed value at `+0x34` with the first threshold-helper
+result. On growth, it subtracts a separately queried result and increments
+population at `+0x03`. The two results can differ if their inputs change. The progress
+producers and the field's full meaning remain unknown. Evidence:
 [city-growth-threshold.json](../../manifests/city-growth-threshold.json).
 
 The active floor can raise a baseline below 20. The proposed
@@ -49,19 +51,21 @@ success. The 2,000-Gold reward adds +1 below population 31; Irrigation first
 discovery also adds +1 to owned cities with separate phase/source/eligibility
 guards and no below-31 test. Both call `0x82D00C78` after the writes.
 
-Classifier's nonzero-mask or zero-mask/null-child arms retain helper state,
-clearing/bypassing unnamed `+0x78`. Nonnull child requires actual receiver/
-target binding. Mask rebuild copies nonzero source or folds session predicates;
-source-store/materializer and displacement/overlap searches found no producer,
-excluding neither aliases, bulk copies nor all writers. Image zeros/call sites
-prove no live mask or ordered retention.
+The classifier's nonzero-mask and zero-mask/null-child branches retain helper
+state while clearing or bypassing the unnamed field at `+0x78`. A nonnull child
+requires the actual receiver and call target to be identified. Mask rebuild
+copies a nonzero source or combines session predicates. Searches for source
+stores, address construction and displaced or overlapping accesses found no
+producer, but did not exclude aliases, bulk copies or all writers. Zeros in the
+image and known call sites do not establish the live mask or retention across
+calls.
 
-Helper's save14/restore14 at `0x82D019E8/0x82D019EC` can restore outer owner,
-ordinal and loop pointer despite reused `r31`, conditional on saved and city/
-marker bytes surviving every child. It updates workers/tiles/flags, without
-direct owner/population store; divisors, extents, finite counters/returns remain
-guards. Five later classifiers resample mask, so first-nonzero proof is
-insufficient.
+The helper's save14/restore14 at `0x82D019E8/0x82D019EC` can restore the outer
+owner, ordinal and loop pointer despite reuse of `r31`, provided every child
+preserves the saved bytes and the city and marker bytes. It updates workers,
+tiles and flags without directly storing owner or population. Valid divisors,
+extents, finite counters and returning calls remain required. Five later
+classifiers read the mask again, so an initial nonzero mask is insufficient.
 
 ## OCC reward contract
 
@@ -87,13 +91,24 @@ Population is a signed byte at city+3. City records start at 0x8314FE28 with str
 
 CityUpdate clamps signed population at least 32 to 31. Ordinary food growth additionally selects ceilings 9, 17 or 32 from a signed definition halfword, storing ceiling minus one. Hanging Gardens and Statue of Liberty clamp their grants to 31; the economic reward admits populations 1 through 30. Irrigation has no local below-31 guard, so this evidence does not establish a universal invariant across every transient writer.
 
-The population refresh helper reads/writes one assignment byte for each reached citizen ordinal, starting at city+0x58, and tests a citizen-ordinal lock bit. The separate word at city+0x78 follows a 32-byte interval. A reached ordinal-32 assignment overlaps that word. CityUpdate, assignment counting/matching/classification and command8 have additional population-length assignment accesses. Bounding only the refresh store leaves other accesses unsafe.
+The population refresh helper reads/writes one assignment byte for each reached citizen ordinal, starting at city+0x58, and tests a citizen-ordinal lock bit. The separate word at city+0x78 follows a 32-byte interval. A reached ordinal-32 assignment overlaps that word. CityUpdate, assignment counting/matching/classification and command 8 have additional population-length assignment accesses. Bounding only the refresh store leaves other accesses unsafe.
 
-Native unassigned behavior has another capacity: helper0x82CE1C10 clears eight output words but indexes them by floor(ordinal/6). Population127 needs22 buckets. Cost helper0x82CF7E30 initializes33 population-indexed entries0..32; higher populations read outside those initialized entries. A byte-preserving larger-city design must specify both policies and their callers. Thirty-two or48 fitting one capacity is not a safe-cap result.
+Native handling of unassigned citizens has a separate capacity limit. Helper
+0x82CE1C10 clears eight output words but indexes them by floor(ordinal/6).
+Population 127 needs 22 buckets. Cost helper 0x82CF7E30 initializes 33
+population-indexed entries, 0..32; higher populations read outside those
+initialized entries. A larger-city design that preserves the byte layout must
+specify both policies and their callers. A population of thirty-two or 48
+fitting one capacity does not establish a safe cap.
 
-The growth formula uses arithmetic rather than a population-indexed food table. For nonnegative unmodified factorF, population127 requiresF<=258 to keep127*F within32767. Stored growth progress is signed16, so accumulation needs its own interval. Food growth and Irrigation can narrow127+1 to0x80/signed-128 before a later upper clamp; raising a ceiling alone does not prevent that wrap.
+The growth formula uses arithmetic rather than a population-indexed food
+table. For a nonnegative unmodified factor F, population 127 requires F<=258
+to keep 127*F within 32767. Stored growth progress is signed 16-bit, so
+accumulation needs its own interval. Food growth and Irrigation can narrow
+127+1 to 0x80, interpreted as signed -128, before a later upper clamp. Raising
+a ceiling alone does not prevent that wrap.
 
-The selected city stream requests one population byte,32 assignment-byte primitives and a separate four-byte lock word. A selected UI row sends signed population to decimal formatting. Completed file/wire delivery, three-digit graphical capacity and named surplus-citizen semantics remain unproved. The whole mapped-owner candidate pass missed an independently identified command8 assignment write; it is not a complete semantic reader/writer census.
+The selected city stream requests one population byte, 32 assignment-byte primitives and a separate four-byte lock word. A selected UI row sends signed population to decimal formatting. Completed file/wire delivery, three-digit graphical capacity and named surplus-citizen semantics remain unproved. The whole mapped-owner candidate pass missed an independently identified command 8 assignment write; it is not a complete semantic reader/writer census.
 
 A population near 500 requires wider population access semantics, expanded or relocated assignment storage, coherent cap/grant rules and validation of formulas, AI, presentation, save and network formats. Those complete contracts and runtime safety remain unproved. The selected construction comparisons already use signed 32-bit threshold operands; threshold width is separate from population storage.
 

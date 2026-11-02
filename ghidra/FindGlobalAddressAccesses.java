@@ -1,4 +1,5 @@
-// Ghidra post-script. Finds bounded decoded PowerPC global-address materializers.
+// Ghidra post-script. Finds decoded PowerPC instructions that construct global
+// addresses within bounded windows.
 // Environment:
 //   REREVVED_TARGET_VAS   comma-separated exact 32-bit values, max 8
 //   REREVVED_LOOKAHEAD    optional split-constant window, default 8

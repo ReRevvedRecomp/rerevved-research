@@ -2,9 +2,9 @@
 
 The 22-row table maps **Oxen 0** to technology **4, Horseback Riding**; Cattle
 19 uses 9, Code of Laws. The shared `Cow` token does not uniquely identify a
-resource. [Manifest](../../manifests/resource-definitions.json) owns
-image/row/name hashes, readers and limits; [placement](resource-placement.md)
-owns creation/refresh/retention.
+resource. The [manifest](../../manifests/resource-definitions.json) records
+image, row and name hashes, readers and limits. The [placement
+reference](resource-placement.md) covers creation, refresh and retention.
 
 ## IDs, names and nominal technologies
 

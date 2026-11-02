@@ -1,6 +1,6 @@
 # Scene render-tree lifecycle
 
-Scene tree, application scene-update helper and audio receiver are distinct.
+The scene tree, application scene-update helper and audio receiver are distinct.
 Names are recovered, not debug symbols; evidence is static unless stated.
 
 ## Tree publication and layout
@@ -36,10 +36,11 @@ globals remain distinct.
 
 ## Teardown
 
-`SceneRenderTreeTeardown` (`0x82D51EC0`) processes the tree, clearing
-`0x8314F08C` at `0x82D51F20`; wider shutdown/helper semantics remain open.
-`0x82D55834` is a `SceneNodeRenderWrap` fallthrough, not a function or proved
-teardown target. Proximity/generated shape establishes no relation.
+`SceneRenderTreeTeardown` (`0x82D51EC0`) processes the tree and clears
+`0x8314F08C` at `0x82D51F20`. The wider shutdown and helper behavior remain
+unresolved. `0x82D55834` is a fallthrough within `SceneNodeRenderWrap`, not a
+function or an established teardown target. Address proximity and generated
+code shape do not establish a relationship.
 
 ## Retained scene-root content reference
 

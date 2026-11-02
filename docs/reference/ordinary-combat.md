@@ -8,92 +8,97 @@ transfer input. The early-protection continuation also binds a selected final
 mask generation to conditional persistent source defeat. Natural combat
 reachability and displayed-stat parity remain unproved.
 
-Evidence terms: every continuation below requires its stated inputs, normal
-native ABI returns and nonalias effects protecting frame/live state. Numerical
-examples are supplied guarded inputs, not observed stats or reachable-combat
-proof.
+Every continuation below requires the stated inputs, normal returns under the
+native ABI, and no aliasing effects that corrupt the frame or live state.
+Numerical examples use supplied inputs under those conditions. They are not
+observed combat stats or proof that such a battle can occur.
 
 ## Early-game two-to-one protection
 
 The selected native resolver explicitly tests current turn <=20 at
-`0x82CDC138..0x82CDC140`. On the ordinary calendar, turn20 is2000BC, so the
-boundary includes that turn. It tests turn, rather than displayed year.
+`0x82CDC138..0x82CDC140`. On the ordinary calendar, turn 20 is 2000 BC, so the
+protection includes that turn. The test uses the turn, rather than the displayed
+year.
 
-For positive overflow-safe internal operands A/D, A>=2*D sets attacker
+For positive internal operands A/D without overflow, A>=2*D sets attacker
 protection and D>=2*A sets defender protection. These operands include the
-selected weighted/mask reductions; equivalence to displayed values is unproved.
-The tests do not directly restrict human/AI, difficulty or network mode.
-Earlier admission and later flag clearing remain conditions: both flags set
-clears both, and native defender type7 (Militia) clears defender protection.
+selected weighting and mask reductions; equivalence to displayed values is
+unproved. The tests do not directly restrict human or AI control, difficulty or
+network mode. Earlier eligibility checks and later flag clearing still apply:
+if both protection flags are set, both are cleared, and native defender type 7
+(Militia) clears defender protection.
 
 The consumer rejects a selection that exhausts its protected side's mask,
-restores saved participant halfwords, clears history bit0x2 and retries with
-advanced RNG state. `0x82CDC444` initializes its shared counter to0; the
-protection retry tests1000 at `0x82CDC7D4`. Other rejection/cardinality paths
-share or bypass that threshold, so it is not a draw count or a global bound.
-This is a real early2:1 protection mechanism. It neither proves a reachable
-cap-loss nor proves every supported PRNG/mask state must yield a protected
-persistent winner. First temporary pairs are not final battle results.
+restores saved participant halfwords, clears history bit 0x2 and retries with
+advanced RNG state. `0x82CDC444` initializes its shared counter to 0; the
+protection retry tests 1000 at `0x82CDC7D4`. Other rejection and cardinality
+paths share or bypass that threshold, so it is not a draw count or a global
+bound. This establishes early 2:1 protection, but does not prove that a battle
+can reach the retry cap and lose, or that every supported PRNG/mask state must
+produce a protected winner in persistent state. The first temporary pairs are
+not final battle results.
 
 ### Final selection and retry-cap continuation
 
 The selected ordinary suffix writes definition bits XOR final remaining masks
 to actual participant `+0x52` halfwords at `0x82CDD690..0x82CDD72C`. Army
-definitions repeat at bit offsets0/3/6. The separate `0x82CDD574` restoration
+definitions repeat at bit offsets 0/3/6. The separate `0x82CDD574` restoration
 arm is excluded. Required ordinary branch inputs, normal ABI/nonalias effects
 and a zero helper return at `0x82CDD4B0` when reached remain conditions.
 
 At `0x82CDD5B4..0x82CDD5D8`, the result payload carries actor casualties in
-low12, defender casualties in high12 and `0x01000000`. The accepted local
-command1/42 bridge delivers it to `0x82CD7A60`. Its consumer converts army
+the low 12 bits, defender casualties in the high 12 bits and `0x01000000`. The accepted local
+command 1/42 bridge delivers it to `0x82CD7A60`. Its consumer converts army
 casualty counts, tests actor exhaustion at `0x82CD7E68..0x82CD7EE8`, and
 conditionally reaches original-actor retirement at `0x82CD83D8`. This requires
 the same record, actual participants and unit generations, retained frame and
-normal ABI/helper returns. Defender equality0 alone does not prove survival.
+normal ABI/helper returns. Defender equality to 0 alone does not prove survival.
 
-A complete conditional replay from counter0 reaches1000 rejections using
+A complete conditional replay from counter 0 reaches 1000 rejections using
 file S7, M4294954991 and scale bits `0x3DF0000301109066`. Supplied comparison
-weights0/1 and constructed masks0x49/7 finish at masks0/7 after19680 draws
+weights 0/1 and constructed masks 0x49/7 finish at masks 0/7 after 19680 draws
 through publication. The selected suffix makes payload `0x01000049`; army
-conversion by3 makes actor casualties1, reaching original-actor defeat.
+conversion by 3 gives 1 actor casualty, reaching original-actor defeat.
 
 This is a conditional loop/suffix exhaustion test. The positive, overflow-safe
-definition1 army proof below excludes its supplied zero comparison weight.
+definition 1 army proof below excludes its supplied zero comparison weight.
 Legal source bounds outside that domain, retained current generator fields and
-the required suffix/helper results remain separate gates. A finite50176-case corpus with2/1,1/2,3/1 and1/3 comparison weights and
-selected history settings reached no cap, with maximum rejection counter213. That finite corpus
-is not an all-state guarantee. Exact guards and packet identities are in
-`earlyProtectionOutcomeContinuation` of the outcome manifest.
+the required suffix/helper results remain separate conditions. A finite corpus
+of 50176 cases with 2/1, 1/2, 3/1 and 1/3 comparison weights and selected
+history settings reached no cap; its maximum rejection counter was 213. That
+finite corpus is not an all-state guarantee. Exact guards and packet identities
+are in `earlyProtectionOutcomeContinuation` of the outcome manifest.
 
 ### Positive inputs and displayed strengths
 
 The supplied zero-weight cap tuple does not follow from its own positive,
-overflow-safe definition1 army inputs. Its wound0 leaves the early operand
-equal to weighted WA; late tripling and army division3 restore WA>0. Supported
-Knight type13 has definition byte6. With valid wounds and positive early
-A>=2*D, its safe weighted WA is at least2, so its late army weight is also
+overflow-safe definition 1 army inputs. Its wound value of 0 leaves the early operand
+equal to weighted WA; late tripling and army division by 3 restore WA>0. Supported
+Knight type 13 has definition byte 6. With valid wounds and positive early
+A>=2*D, its safe weighted WA is at least 2, so its late army weight is also
 positive. These guarded exclusions do not prove all legal stat bounds or
-all-seed protection. A further1088 correlated conditional cases reached no cap.
+all-seed protection. A further 1088 correlated conditional cases reached no cap.
 
 The battle-panel number path is distinct from the type-preview formatter.
-Resolver mode2 passes raw and wound-reduced strengths into paired records.
+Resolver mode 2 passes raw and wound-reduced strengths into paired records.
 The two selected unit-number requests consume record `+12`, the reduced value,
-through `0x82DF9EF0`. Matching that value to the later mode0 ratio requires
+through `0x82DF9EF0`. Matching that value to the later mode 0 ratio requires
 unchanged participants, wounds, modifiers and weighted words. The both-zero
 replacement and later zeroing arms prevent universal equality. These displayed
 totals also differ from the later definition/army-normalized RNG weights.
 
-For nonnegative strength in hundredths, the numeric child requests at most two
-decimals below10, one below100 and none from100 upward, suppressing zero
-suffixes. It omits low digits rather than rounding to nearest. Thus supplied
-internal2000/1001 can request strength text20/10 while failing2000>=2*1001.
-The rule tests exact internal integers. This establishes an intended numeric
-precision mismatch; legal early-game production of that pair, actual formatter
-output and delivery to visible text remain unproved. Neither evaluation scalar
+For nonnegative strength stored in hundredths, the numeric child requests at
+most two decimal places below 10, one below 100 and none from 100 upward,
+suppressing zero suffixes. It omits low digits rather than rounding to nearest.
+Thus supplied internal strengths 2000/1001 can request strength text 20/10
+while failing 2000>=2*1001. The rule tests exact internal integers. This
+establishes a mismatch in the requested numeric precision; whether that pair
+can occur in a legal early-game battle, the actual formatter output and
+delivery to visible text remain unproved. Neither evaluation scalar
 return is a proved whole-battle win probability.
 
 Exact guards, signed formulas, read sets and checks are in
-`legalRatioAndDisplayBoundary` of the outcome manifest. No legal early2:1
+`legalRatioAndDisplayBoundary` of the outcome manifest. No legal early 2:1
 cap-loss counterexample or all-legal-state guarantee was established.
 
 ## Random state and save/reload
@@ -111,7 +116,7 @@ producer-to-sample retention remain conditions; its name or gameplay policy
 is not recovered from this pointer identity.
 
 The [save-header boundary](../../manifests/combat-rng-save-reload-boundary.json)
-binds a conditional persistence mechanism. The default mode0 output path in
+binds a conditional persistence mechanism. The default mode 0 output path in
 `0x82CC29B8` includes the current main-state word. Mode1 input places its
 helper-dependent value in local record `+0xC`. On a later guarded load path,
 `0x82D86854` writes that field back to `0x82F7AD00`.
@@ -135,7 +140,7 @@ Repeated retained-input replays are dependent trials. Equal displayed strengths
 alone establish neither a 50 percent whole-battle win chance nor bias.
 
 The later [combat event boundaries](../../manifests/achievement-event-boundaries.json)
-separately bind final operative weights, a selected mode0 decision/publication
+separately bind final operative weights, a selected mode 0 decision/publication
 and a conditional local decisive-defensive result. They preserve their actual
 participant, lifetime and causal-lineage requirements. No complete live
 save-to-battle replay or universal winner formula follows from this section.
@@ -249,14 +254,14 @@ stack stores under its additional conditions.
 
 ## Stored contents and presentation
 
-The first protected rejection starts with retry counter0, independent of
-weighted attack. It increments to1 and resets the array through18 eight-byte
-stores over[848,992), replacing the first pair with0xFFFFFFFF words.
-Increasing WA from100 to1000 does not avoid this reset: `0x82CDC444` has
+The first protected rejection starts with retry counter 0, independent of
+weighted attack. It increments to 1 and resets the array through 18 eight-byte
+stores over [848,992), replacing the first pair with 0xFFFFFFFF words.
+Increasing WA from 100 to 1000 does not avoid this reset: `0x82CDC444` has
 replaced r29's earlier strength meaning with the new counter.
 
 Independent suffix reasoning can supply a real post-threshold array/counter,
-consistent nonhuman mask and frame148 zero that bypass presentation. It does
+consistent nonhuman mask and frame 148 zero that bypass presentation. It does
 not establish an initialized-resolver path to that checkpoint, retention of
 the first pair or the final published generator state. A compatible final
 selection/presentation/persistent-result join remains unproved.

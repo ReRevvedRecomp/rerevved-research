@@ -1,7 +1,9 @@
 # Recovered game reference
 
-System pages summarize canonical manifests/catalogs, not independent evidence or
-player setup instructions. Proposed hooks/features retain stated conditions.
+These pages summarize findings from the canonical manifests and catalogs.
+They are references for contributors and modders, not independent evidence or
+player setup instructions. Proposed hooks and features retain their stated
+conditions.
 
 ## Units, cities, and civilization
 

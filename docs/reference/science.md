@@ -13,20 +13,23 @@ suggests teams, but full comparison-array identity remains qualified.
 | Acquisition context | `0x830E3328[player]` |
 | Completion marker | `0x830E3348[player]` |
 
-Cached city path adds signed `+0x44` under native selection/cache gates, not
-unconditionally per city/turn. Completion needs pooled progress>=cost, player
-!=`0x82F700B0`, technology unowned. Valid nonzero technology reaches
-`0x82D20C34` -> `TechnologyAcquire` with player, technology, retained context,
+The cached-city path adds signed `+0x44` only when the native selection and
+cache conditions hold, rather than once per city per turn unconditionally.
+Completion requires pooled progress >= cost, the incoming player to differ from
+the word at `0x82F700B0`, and a technology the player does not own. Valid nonzero technology
+reaches `0x82D20C34` -> `TechnologyAcquire` with player, technology, retained context,
 source `0`, phase `1`. Context starts at `-1`; the first city whose individual
 progress meets the cost fills it, so pooled completion can still use `-1`.
 
-The block calls cost again, adds pooled-minus-second-cost to Gold at
-`0x830ED544[player]`, then marks completion before nonzero-tech test; zero skips
-acquisition. It neither subtracts progress nor proves next-tech carryover.
-Stores keep low32, comparisons signed: nonnegative excess needs valid indices,
-no signed overflow, stable cost; no local technology clamp exists. Source `6`
-civilization grants remain separate; shared acquisition proves no common
-policy/reason semantics or cadence.
+The block calls the cost function again, adds pooled progress minus that
+second cost to Gold at `0x830ED544[player]`, then marks completion before
+testing for a nonzero technology. Technology zero skips acquisition. The block
+does not subtract progress, and it does not establish carryover to the next
+technology. Stores keep the low 32 bits and comparisons are signed.
+Nonnegative excess requires valid indices, no signed overflow and a stable
+cost; there is no local technology clamp. Source `6` civilization grants remain
+separate. Sharing the acquisition function does not establish common policy,
+reason-code meanings or timing.
 
 ## First-discovery rewards
 
@@ -62,9 +65,10 @@ establish delivery.
 technology. Each of the three nonsentinel prerequisites adds the occurrence
 count rooted at that prerequisite, and adds it again if its ownership query is
 zero.
-Descendant ownership is untested; repeated paths count repeatedly. There is no
-visited set: initial depth zero expands through 500 and counts children at 501.
-The helper does not initialize depth; the guard bounds depth, not total work.
+The helper does not test descendant ownership, and it counts repeated paths
+each time. There is no visited set: starting at depth zero, it expands through
+500 and counts children at 501. The helper does not initialize depth. Its guard
+limits recursion depth, not total work.
 
 Four gates enable signed low32 `6*base` / signed low32 `global_82FFE7C8+6`,
 truncated toward zero: byte `0x8314F10B`, classifier, local-player mask in
@@ -101,18 +105,18 @@ and native cleanup at `0x82CE87A8` supply a conditional notice-filter boundary.
 That cleanup clears the caller's presentation bit and returns through the
 matching frame; a bare return is not equivalent.
 
-Both owner-equality and foreign-notice paths then request a type24 logical
-unit at `0x82D1DED8`. A successful slot gets marker0 at unit+0x22 and sets
-`0x82FFE7C4` bit0x02000000. The caller pumps application work until that bit
+Both owner-equality and foreign-notice paths then request a type 24 logical
+unit at `0x82D1DED8`. A successful slot gets marker 0 at unit+0x22 and sets
+`0x82FFE7C4` bit 0x02000000. The caller pumps application work until that bit
 clears or the pump returns zero, requests retirement, then resumes the later
 spaceship handling. Exact allocation failure instead rejoins at
 `0x82D1DF60` before starting this actor/wait.
 
-The selected type24 updater calls `0x82D5E660`, which publishes focus inputs
-at `0x82D5E778/780`, sets a separate focus flag and requests selector37.
-Native completion stores marker0xFFFF at `0x82D5E898`, publishes a float
-constant, requests selector14 and invokes object/child completion callbacks.
-The inactive0xFFFF arm returns earlier and omits that completion work;
+The selected type 24 updater calls `0x82D5E660`, which publishes focus inputs
+at `0x82D5E778/780`, sets a separate focus flag and requests selector 37.
+Native completion stores marker 0xFFFF at `0x82D5E898`, publishes a float
+constant, requests selector 14 and invokes object/child completion callbacks.
+The inactive 0xFFFF arm returns earlier and omits that completion work;
 forcing an active marker or globally clearing busy is not equivalent.
 
 This supplies a separate world-actor boundary. It does not prove a safe
@@ -122,12 +126,12 @@ consumers remain qualified. The pre-advisor helper also changes selected
 visibility/discovery state and must not be removed as a camera-only shortcut.
 
 Creation omission does not reproduce every logical record byte at immediate
-`0x82D1DF60`: mode0 retirement marks the row and retains its owner, while
+`0x82D1DF60`: mode 0 retirement marks the row and retains its owner, while
 omission leaves the free row unchanged. Selected native save field requests
 include its owner and lifecycle word; actual saved bytes and timing remain
 separate. Camera-only suppression leaves the busy wait. A late branch from
 the initialized comparison at `0x82D5E868` to `0x82D5E888` reaches native
-marker/selector14/object completion requests, but follows the focus work and
+marker/selector 14/object completion requests, but follows the focus work and
 can change queued-input consumption. This is a conditional control-flow
 boundary, not proof of no camera pull, zero wait or per-peer safety.
 
@@ -143,7 +147,7 @@ The constructed view table selects `0x82E0E4B8`; its zero-delta update still
 publishes transforms. Under retained frame/interface/recipient mappings, input
 dispatch precedes the same actor updater and possible queue pop. One AI-turn
 snapshot at `0x82CDE8B8` follows returned actor retirement. A separate admitted
-pre-update drain can reach command55's snapshot at `0x82CDEC64` inside the pump.
+pre-update drain can reach command 55's snapshot at `0x82CDEC64` inside the pump.
 The two phases must stay distinct when assessing differing player preferences.
 
 The selected output corridor writes a 16-float matrix and can sequentially
@@ -154,7 +158,7 @@ byte through the same info getter. Its actual incoming value and order before
 the drain read remain unproved.
 
 The shared spaceship screen also returns launch results. Positive results
-from its automatic callers can request command32 at `0x82D1DFA4` or
+from its automatic callers can request command 32 at `0x82D1DFA4` or
 `0x82D1E000`. Refusing the whole screen or pending-part branch can therefore
 alter gameplay. Arrival presentation uses another wrapper of the same class.
 The [part-presentation boundary](../../manifests/spaceship-part-presentation-boundary.json)

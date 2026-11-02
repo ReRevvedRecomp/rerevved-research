@@ -51,10 +51,11 @@ with entry in `r3`, `1` in
 slot. Because it reloads the bound, visiting every original slot requires stable
 collection state and returning calls.
 
-It passes nonzero backing storage to `0x82D3D9F0`; return clears `+0x350` then
-`+0x358`. Zero-pointer flow clears only the bound. Populate passes the same
-manager before publishing count/allocation. Entry destructor semantics and
-backing-helper freeing effects remain unknown.
+It passes nonzero backing storage to `0x82D3D9F0`. After that call returns,
+it clears `+0x350` and then `+0x358`. A zero pointer skips the call and clears
+only the bound. Populate passes the same manager before publishing the count
+and allocation. The entry destructor behavior and whether the backing helper
+frees storage remain unknown.
 
 ## Bounded lookup and handoff
 

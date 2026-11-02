@@ -1,4 +1,5 @@
-// Raw bounded exact-global store discovery; every candidate needs confirmation.
+// Finds raw store candidates for exact global addresses within bounded windows.
+// Every candidate needs confirmation.
 // Environment:
 //   REREVVED_TARGET_VAS   selected word addresses, maximum 8
 //   REREVVED_MAX_MATCHES  output cap, default 16, maximum 64

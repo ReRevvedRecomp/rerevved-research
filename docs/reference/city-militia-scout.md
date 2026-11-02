@@ -1,9 +1,10 @@
 # City Militia and trainable Scout feasibility
 
-Proposed behavior: one extra ordinary type-7 Militia with Loyalty per successful
-new human/AI founding, retaining native/scenario defenders. Capture,
-reconstruction, loads and civilization-specific definitions are excluded.
-Separate five-Production Scout needs title support/evidence.
+The proposal grants one extra ordinary type-7 Militia with Loyalty whenever a
+human or AI successfully founds a new city, retaining native and scenario
+defenders. It excludes capture, reconstruction, loads and civilization-specific
+definitions. A separate Scout costing five Production needs title support and
+evidence.
 
 The [packet](../../manifests/city-militia-scout-feasibility.json) owns image,
 locators, hashes and static qualifications; it adds no runtime observation. The

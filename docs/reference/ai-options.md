@@ -1,7 +1,7 @@
 # AI configuration boundaries
 
-Ordinary setup has five civilized slots and Barbarian slot 5. With one human,
-the existing opponent control can retain up to four AI civilizations. The
+Ordinary setup has five slots for civilizations and Barbarian slot 5. With one
+human, the existing opponent control can retain up to four AI civilizations. The
 serializer traverses eight player pools and civilization/era entries, plus a
 64-entry relation array. Those backing extents do not establish playable
 additional slots: initialization, turn order, placement, UI and networking for

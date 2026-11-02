@@ -1,9 +1,10 @@
 # Resource density and placement
 
-Presence writers include terrain conversion, two record-coordinate operations
-and a setup arm beside an initial Settler request. Conversion uses fixed `4.0`
-with mutable RNG/normalization. Scenario `RESOURCEDENSITY` has no proved
-connection; `3` does not establish increased resources.
+Resource-presence flags are written during terrain conversion, by two
+operations using record coordinates, and by a setup branch beside an initial
+Settler request. Conversion uses the fixed value `4.0` with mutable RNG and
+normalization state. No connection to scenario `RESOURCEDENSITY` is proved;
+setting it to `3` does not establish increased resources.
 
 Evidence terms: these are static, conditional contracts. Selected paths do not
 prove actual inputs, completed setup or runtime effects; claim-specific return,

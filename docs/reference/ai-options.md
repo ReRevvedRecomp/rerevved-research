@@ -52,6 +52,42 @@ IDs. Game of the Week also changes the duplicate comparison to omit
 player slot zero; the bounded expansion contract excludes that mode as well
 as multiplayer and the native special two-player override.
 
+## Multiplayer AI count
+
+The selected ordinary network setup publishes six participant slots with
+Barbarian ordinal5. For a valid ordinary human mask, its configured AI count
+is five minus the human count. The eight-slot backing supplies a necessary
+free-slot bound, not an expanded network-layout or zero-AI acceptance proof.
+Mask rebuilding can itself read count before the later setup seam. The
+selected command48 loop visits configured nonhuman ordinals, including
+retained Barbarians, rather than a separate ordinary-AI count.
+F-0332 `multiplayerCountBoundary` records the exact scope and peer/reader limits.
+
+### Native roster publication and earlier setup admission
+
+The default membership map has a connected native ordinal producer. Selected
+`0x82CAA598` publishes its payload in the ordinal-keyed map; payload `+0x18`
+retains the assigned ordinal. Reply1200 carries that ordinal at `+0x44`, and
+the received path uses it for membership publication. Request1209 compares map
+size with expected membership; its received executor marks one member ready
+and invokes the lobby callback. That request is not an immutable-map barrier.
+
+A conditional title protocol can copy all eight native ordinals in the first
+host-provider capture, validate the complete map cardinality and peer mask,
+and retain the authenticated copied tuple outside guest reset state. Its new
+early publication location is `0x82D217E4`, immediately after the native reset
+returned. Matching late `0x82D22918/1C` values preserve the tuple across the
+ordinary bypass and retry paths. This avoids depending on frontend flag-clear
+ordering. Special-mode exclusion, coherent source/current mappings, ordinary
+helper retention, native civilization-ID delivery and gameplay/peer/cancel
+acceptance remain conditions. No MP0..5 implementation is claimed.
+
+F-0332 `multiplayerPostResetFrozenRosterCandidateBoundary` owns the exact
+publication, wire, callback, source/API and conditional setup evidence. The
+older `multiplayerRosterEarlyAdmissionBoundary` retains the frontend getter
+and bit-clear facts; its unbound clear-before-setup edge is not required by
+the revised post-reset candidate.
+
 ## Multiplayer AI difficulty
 
 The [difficulty boundary](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0381)
@@ -73,6 +109,13 @@ including 4, select Deity; that fallback is not a legal-range check. Complete
 reader coverage, current MP classification and deterministic peer application
 remain conditions for a host-selected AI-only option. No setting or runtime
 behavior is established by this static finding.
+
+Setup already reads the shared difficulty at `0x82D2293C`, before the
+post-setup recount. The selected setter/getter do not validate a native enum.
+The Wonder-cost branch compares difficulty with2; supplied operands0..2
+retain that reduction state, while3/4 admit its guarded half reduction.
+These local results do not close every alias, active participant or all-peer
+execution. F-0381 `nativeClosingBoundary` owns the closing packet and limits.
 
 ## Economic and strategic consumers
 
@@ -172,84 +215,140 @@ are separate from these per-composition contributions.
 ## Eternal Kombat and Always at War
 
 The [Always at War finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0362/nativeScenarioBoundary)
-binds Eternal Kombat to built-in scenario ordinal 9. Its native preset sets
-`WARANDPEACE` slot 9 to 2 at `0x82DAF43C`. It also changes upgrade rate,
-starting size, attack bonus and display-card inputs. Copying the preset would
-therefore change more than diplomacy.
+binds Eternal Kombat to scenario ordinal9 and `WARANDPEACE` slot9 value2.
+Its preset also changes upgrade rate, starting size, attack bonus and display
+inputs. Its contact branch requests war, relation0, for the reached pair;
+copying the complete preset would change more than diplomacy.
 
-Selected contact code recognizes that value and stages a native command 38
-request for war, relation 0, for the reached pair. It bypasses the ordinary
-negotiation suffix. Conditional admission supports both AI/AI and human/AI
-pairs; human contact has an additional current-participant restriction.
-Selected availability and negotiation branches also recognize the rule.
+The native scheduler `0x82D034A0` is centered on context K. With K=0 and
+three supplied ordinals it excludes pair1/2 in both orientations. The selected
+`0x82D1D1C0` edge retains its original player through stack+0x234 and forwards
+K=P at `0x82D1E90C`. Command48 can request that sweep, subject to service,
+mask, one-shot and delivered-command gates. These are conditional contact
+paths; they do not reconcile every pair before setup or load readers. Existing
+ingress/delivery boundaries retain their sender, processing and lifetime limits.
 
-This supplies a reusable per-pair mechanism. It does not establish that the
-scenario visits every active pair at initialization or keeps every pair at war
-after every peace request, load or membership change. Selected branches bypass
-one Great Wall/current-Democracy negotiation corridor; that does not cover all
-forced-peace effects. Shared-group writes, relation-derived rankings and local
-versus session delivery retain the finding's separate conditions.
+The [selected closure boundary](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0362/selectedAlwaysAtWarClosureBoundary)
+binds the named remaining relation generations, normal refusal continuations
+and construction/load seams. The relation matrix is `0x830ED2D8`, stride8.
+War is0; a forbidden gameplay departure includes any nonzero replacement.
+Reset, input replacement, elimination and actual member publication require
+separate admission. Diagonal, unused and dynamic Barbarian cells are excluded
+from ordinary active-pair projection.
 
-The finding's `pairVisitationBoundary` binds one native scheduler at
-`0x82D034A0`. Each invocation requires at least one participant to equal its
-supplied context K. With three supplied ordinals and K=0, it excludes both
-orientations of pair 1/2 before later helpers. WARANDPEACE2 preserves that
-restriction, statistics/classification checks and turn-delay gates. The
-wrapper applies further admission before forwarding the pair to contact.
+The retained contact home at stack+0xC8 exposes three additional symmetric
+non-war pairs: `0x82CD11EC/F0` store3, `0x82CD1654/58` and
+`0x82CD2044/48` store1. Their complete selected home version and six register
+generations are native pinned. The other named retained homes and readers,
+including the UN19 path, are classified under explicit protected-frame,
+ordinary ABI and matching-current-target conditions. UN19's terminal flag
+`0x10000` at `0x82FFE7C4` is separate from relation peace. Recount's nearby
+stores target derived table `0x830E3AD8`, not the relation matrix.
 
-One invocation therefore cannot reconcile all pairs. Later covering K
-invocations and other schedulers remain possible. The finding's
-`kProducerLifecycleBoundary` binds the selected `0x82D1D1C0` edge: entry
-stores its original player P at SP+0x234, `0x82D1E84C` reloads that home into
-r31, and `0x82D1E90C..10` forwards it as K to `0x82D034A0`. Thus K=P under
-the explicit protected-home, normal-return and nonvolatile retention premises.
-The optional suffix includes a current virtual callback, whose effects remain
-conditions.
+Normal refusal is path-sensitive. The three `0x82CC9FF8` choosers route
+native result-1 to the native war continuation; under retained symmetric war0
+this bypasses `0x82CC9078`, preserves pairflag4 and completes normally.
+`0x82CC9078` has a pre-effect candidate at `0x82CC90EC` leading to its
+existing result0/frame suffix. Cancelling its later notification is too late:
+that return is ignored. The two early stack+0xC8 contact branches also need
+pre-notification guards; the Gold chooser's native nonzero result instead
+branches before transfer and retains its war/completion continuation.
 
-Accepted local update/presentation calls can supply that player; they do not
-establish every configured player or successful setup/load/membership repair.
-The finding's `commandIngressBoundary` binds command48, BeginTurnAI, to that
-sweep and a guarded command50, ImDone, suffix that requests48. Service, mask and
-one-shot gates precede publication; three nonzero-word tests can bypass the
-sweep after dispatch. None establishes actual delivery or mandatory repair
-before setup/load/membership relation readers. commandDeliveryBoundary below owns the selected sender/ring bridge and
-remaining received-invocation gate.
-No scenario flag transplant, setting or runtime behavior was implemented.
+Current Democracy forces accepting response0 even after UI cancellation.
+The conditional policy candidate selects native protocol response1 at its
+actual response producer, preserving the native war0, command34
+acknowledgement99, queue consumption and `0x82CCD458` completion. It bypasses
+the technology-negotiation arm. This is a native protocol value, not a new UI
+row. The offered vector comes from ordered LF-separated strings; unmatched4
+is not a supported refusal token.
 
-The finding's `commandDeliveryBoundary` binds the retained factory table's
-child+0x44 to sender `0x82CA6500`. Null info or a missing S+0x14 can return
-before complete serialization. The command object's selected+0x10 target
-`0x82D91C58` separately passes its embedded record at A+0x34 to `0x82CE16C8`.
-No mandatory sender-to-that-processing invocation is proved. Next bind the
-received selector/invocation and same-record lifetime, before lifecycle or
-first-reader coverage. The130-word packet has127 instructions and three
-table cells;125 assertions, five supplied cases and three mutation controls
-passed. This remains conditional delivery evidence, not peer authority.
+The constructed dialog's native cancel target `0x82E053E8` requires ready+11
+and clear+0x434, marks closed before close work and publishes result-1 after
+callbacks. Entering the native cancel-request branch retains AnimateExit,
+the current+4 update loop and ordinary completion suffix. Completion remains
+conditional on the same retained dialog/script and finite exit action as
+ordinary native cancellation. No policy write to animation-state bytes is
+implied, and depth bookkeeping does not exclude modal command reentry.
 
-The [peace-writer audit](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0362/peaceWriterAuditBoundary)
-extends the selected contact closure to nine command-38 peace calls and four
-direct store blocks, including `0x82CC9078`. Technology/Gold requests and unit
-removal can precede contact peace, so guarding only its final store leaves
-partial effects. The four post-choice decisions are conditional admission
-candidates; normal refusal and repeat-contact readiness remain unproved.
+Command39 independently writes the supplied relation at `0x82CE0088/8C`.
+A guard after the dispatch depth increment and before its first effects can
+consume a forbidden delivered record with the balanced native result1 suffix;
+return0 would roll the queue head back. This defense does not undo earlier
+producer effects. Selected builders retain the supplied tag; wrapper
+`0x82CE1AD8` suppresses61/62 and admits39 unchanged. Four apparent builder
+function pointers belong to the PE Exception directory, not application
+dispatch. Direct-call/literal navigation and those metadata facts do not
+prove a universal indirect-producer or earlier-effect absence theorem.
 
-Command 39 independently writes the supplied relation at
-`0x82CE0088/0x82CE008C`. Event selector 11 in `0x82D17AE0`, identified by its
-stored Tesla's Peace Ray caption, writes peace from war at
-`0x82D18AC4/0x82D18ADC`. Selector 7, Tower of Babel, writes peace from the
-tested reset value. Both enumerate pairs containing repeatedly resolved K;
-neither caption proves global pair coverage. Producers and coherent admission
-before earlier event effects remain unbound.
+Event30's producer applies eligibility before timestamp staging and emission.
+Actual event selection uses `0x821C6548`. Tower of Babel selector7 changes
+tested reset-1 to1; Tesla's Peace Ray selector11 changes tested war0 to1.
+The conditional guard belongs before each forbidden coupled pair body,
+retaining independent discovery history, Wonder presentation, achievement8
+and native tile consumption/callback completion with honest refusal text.
+An early whole-event return can leave the tile retriggerable.
 
-The bounded literal scan found 52 distinct low sites, but native materializers
-17 and 10 instructions apart fall outside its eight-word lookahead. It cannot
-prove an exhaustive writer inventory. Selected new-game group masks precede
-`0x82D2530C` recount, while ordinary contact also has a separate direct peace
-block at `0x82CCFB98/0x82CCFBA4`. Complete active-pair admission, successful
-load input and reconciliation before the first relevant reader remain gates.
-The conditional load candidate remains immediately before `0x82D2582C`
-ranking, preserving its following recount. Single-player implementation still
-requires those proofs; multiplayer authority and peer enforcement are separate.
+An outer post-setup repair is too late for CityCreate's `0x82D1A310` refresh:
+its relation reader can commit unit displacement or deletion. The conditional
+ordinary SP setup plan projects distinct intended participants immediately
+after late count/Barbarian publication and before start callbacks. Before the
+first provisional write, validate coherent frozen intended/removal inputs and
+exclude participants scheduled for AI removal. Setup command38(-1) keeps native
+bookkeeping, then projects after its group stores at `0x82D1AAE8`, before
+recount. Its -1 arm bypasses the peace-only displacement block. Final repair
+belongs after actual AI removal/start-resource effects and immediately before
+the original post-setup recount, with fresh raw admission.
+
+Admission requires coherent configured identity and a populated owned city OR
+any occupied nondead unit. Settler-only survival is insufficient for a
+military-only civilization. Dynamic Barbarian is excluded separately. After
+any provisional mutation, a failed start or missing/extra raw member must
+reject the whole candidate setup generation before gameplay and enter native
+cancellation/reset or fresh initialization that discards that candidate world.
+Turning the policy off cannot make the mutated candidate safe. This required
+abort/rebuild integration is an implementation and runtime acceptance condition;
+the inspected APIs do not establish it. Declare the effective policy active
+only after a successful ordinary epoch. Preserve inactive native cells in
+accepted generations; use no rollback ledger or stale matrix restoration.
+Actual city-owner publication at `0x82D1B45C` supplies
+a conditional later re-admission seam at `0x82D1B460` if supported input needs it.
+
+On actual successful same-generation load, repair remains immediately before
+the original single `0x82D2582C` ranking call, preserving `0x82D25848` recount
+and subsequent refresh. Constructed input now has selected bounded copy and
+callback/count wiring. A positive report or native1 alone is insufficient;
+matching successful completion, bounded count, buffers and retained raw state
+remain conditions. Failed/short input and undelivered callbacks do not arm
+repair.
+
+These static implementation seams do not establish runtime acceptance. The named relation-storage generations are
+classified separately from producer refusal. The selected producer graph now
+has pinned tag/call blocks and alternate-ingress checks, excluding39
+from the selected ordinary compiler-controlflow source family. Foreign calls,
+dynamic code changes and arbitrary computed interior entry remain outside
+that supported contract.
+The proposed scope stays single player, default off, frozen for the next game,
+restored from validated saved effective policy, and excludes Game of the Week.
+Multiplayer peer enforcement remains a separate later gate.
+
+### Automatic AI contacts
+
+`aiContactSilenceBoundary` classifies eight literal-base WARANDPEACE loads in
+seven owners. Value2 bypasses selected ordinary negotiation, adds5 to contact
+age delay and conditionally sets transient status10000000 at82FFE7C4, read by
+the native D253B8 no-contact gate. It also changes a city threshold, Great Wall
+eligibility/effects and response history, so it is broader than contact silence.
+The special999999 demand can still reach presentation; universal silence does
+not follow. UpdateD1EAB0 clears the status bit, and ordinary negotiation can
+also set it.
+
+A conditional SP AAW guard can extend reached D25580 to its existing D255B0
+native return for a validated current-local-human/active non-Barbarian AI pair.
+The native gate already requires c0 and a known relation. Identified explicit
+c1 routes and independent command33/CCBED0 dispatch remain separate. Preserve
+native/default-off completion and original branch state; actual first-contact,
+UI/turn and saved-policy behavior require runtime acceptance. The finding owns
+the full reader table, input/persistence limits and scoped hook contract.
 
 ## Default transport construction
 

@@ -1,14 +1,14 @@
 # City Militia and trainable Scout feasibility
 
-The proposal grants one extra ordinary type-7 Militia with Loyalty whenever a
-human or AI successfully founds a new city, retaining native and scenario
+The proposal would grant one extra ordinary type-7 Militia with Loyalty whenever
+a human or AI successfully founds a new city, while retaining native and scenario
 defenders. It excludes capture, reconstruction, loads and civilization-specific
 definitions. A separate Scout costing five Production needs title support and
 evidence.
 
-The [packet](../../manifests/city-militia-scout-feasibility.json) owns image,
-locators, hashes and static qualifications; it adds no runtime observation. The
-following contracts remain conditional on their stated return/lifetime gates.
+The [packet](../../manifests/city-militia-scout-feasibility.json) records the
+image, locators, hashes and static limits. It adds no runtime observation.
+The requirements below remain conditional on the stated returns and lifetimes.
 
 ## Feasibility verdict
 
@@ -50,9 +50,9 @@ The 29-type public catalog has Militia 7, no Scout.
 additional rows/end, no safe free slot. The 256 player unit records are
 instances, not definition capacity.
 
-Cost is signed factor*composed scalar/2, truncated. Factor five is not cost
-five; factor one yields five only for some scalars. Percentage rules neither
-register Scout nor express absolute cost.
+Cost is signed factor*composed scalar/2, truncated. A factor of five does not
+mean a cost of five. A factor of one yields five only for some scalars.
+Percentage rules neither register Scout nor express absolute cost.
 
 ## Title implementer contract
 

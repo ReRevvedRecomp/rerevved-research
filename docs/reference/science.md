@@ -2,8 +2,9 @@
 
 One `CalendarTurnAdvance` path pools progress toward the selected technology
 from rows whose signed comparison halfword matches the incoming player. It
-compares that progress with the cost returned by `0x82CF0EE8`. The grouping
-suggests teams, but full comparison-array identity remains qualified.
+compares that progress with the cost returned by `0x82CF0EE8` . The grouping
+suggests teams, but the full identity of the comparison array is not
+established.
 
 | State | Address and indexing |
 | --- | --- |
@@ -22,14 +23,14 @@ source `0`, phase `1`. Context starts at `-1`; the first city whose individual
 progress meets the cost fills it, so pooled completion can still use `-1`.
 
 The block calls the cost function again, adds pooled progress minus that
-second cost to Gold at `0x830ED544[player]`, then marks completion before
+second cost to Gold at `0x830ED544[player]` , then marks completion before
 testing for a nonzero technology. Technology zero skips acquisition. The block
-does not subtract progress, and it does not establish carryover to the next
-technology. Stores keep the low 32 bits and comparisons are signed.
-Nonnegative excess requires valid indices, no signed overflow and a stable
-cost; there is no local technology clamp. Source `6` civilization grants remain
-separate. Sharing the acquisition function does not establish common policy,
-reason-code meanings or timing.
+does not subtract progress. It does not establish that excess progress carries
+over to the next technology. Stores keep the low 32 bits and comparisons are
+signed. Nonnegative excess requires valid indices, no signed overflow and a
+stable cost; there is no local technology clamp. Source `6` civilization
+grants remain separate. Sharing the acquisition function does not establish
+common policy, reason-code meanings or timing.
 
 ## First-discovery rewards
 
@@ -150,12 +151,12 @@ snapshot at `0x82CDE8B8` follows returned actor retirement. A separate admitted
 pre-update drain can reach command 55's snapshot at `0x82CDEC64` inside the pump.
 The two phases must stay distinct when assessing differing player preferences.
 
-The selected output corridor writes a 16-float matrix and can sequentially
-publish three words through view+0xA0; actual destination/engine use and current
-child/list effects remain open. The drain info byte has an initial zero writer
-and selected setter `0x82CA4A18` (child virtual+0x10), writing incoming r4's low
-byte through the same info getter. Its actual incoming value and order before
-the drain read remain unproved.
+The selected output path writes a 16-float matrix and can publish three words
+in sequence through view+0xA0. Actual destination and engine use, and the
+effects of the current child and list, remain unresolved. The drain info byte
+has an initial zero writer and selected setter `0x82CA4A18` (child
+virtual+0x10), writing incoming r4's low byte through the same info getter.
+Its actual incoming value and order before the drain read remain unproved.
 
 The shared spaceship screen also returns launch results. Positive results
 from its automatic callers can request command 32 at `0x82D1DFA4` or

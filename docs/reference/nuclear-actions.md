@@ -132,10 +132,10 @@ is insufficient.
 
 The arm chooses the last qualifying opponent, then its largest visible city
 with population greater than 6. It does not retry earlier opponents if that
-one lacks a qualifying city. A conditional local route stages Move 17 and calls
-the existing command ring at `0x82CBF880`; the alternate session route has
-separate delivery gates. A return value or staged record is not a launch
-receipt.
+one lacks a qualifying city. A conditional local route stages Move 17 and
+calls the existing command ring at `0x82CBF880` ; the alternate session route
+has separate delivery gates. A return value or staged record does not prove
+that a launch occurred.
 
 The manifest's conditional title contract separates an AI-only production
 admission seam at `0x82CEC67C` from a launch-history relaxation at
@@ -179,16 +179,16 @@ ignore individual reports and do not retry or aggregate success. The scalar
 reader can reverse a mixture of delivered and retained bytes after a short
 request. An admitted missing-child case returns normally after eight
 zero-delivery requests, preserving all old words under its explicit conditions.
-childReadDeliveryBoundary below owns that selected child read and the current
-service+0x10 destination-byte frontier.
+childReadDeliveryBoundary below records that selected child read and the
+remaining question of destination-byte writes through current service+0x10.
 Actual nuclear actor/resolver observation remains parked.
 
 The finding's `childReadDeliveryBoundary` binds selected default child
 `0x82D38448` through `0x82D38360` and synchronous wrapper `0x8280F3F0`.
-Missing handle or a nonzero current predicate returns0; an alternate stream
-uses its own current target. On the default route, EOF status0xC0000011 is
-normal Boolean success with count0. Short input can report2; a selected
-failure can advance the child's count while returning0. None guarantees
+A missing handle or nonzero current predicate returns 0. An alternate stream
+uses its own current target. On the default route, EOF status 0xC0000011 is
+normal Boolean success with count 0. Short input can report 2. A selected
+failure can advance the child's count while returning 0. None guarantees
 four-byte delivery. Eight EOF requests can retain all old history words under
 a separate no-destination-write premise and the explicit endian, nonaliasing
 and ABI conditions. EOF/count0 alone does not prove an untouched destination.
@@ -197,7 +197,7 @@ Destination-byte effects stop at current service root+0x10. The queried
 initial root is0x82F2FA9C, whose corresponding cell0x82F2FAAC selects the
 NtReadFile import identified below; actual current mapping and imported
 completion remain premises.
-The192-word packet has189 instructions and three cells. Thirteen supplied
+The 192-word evidence set has 189 instructions and three cells. Thirteen supplied
 cases, three eight-request sequences and four mutation controls passed;
 no natural input or save round trip was observed.
 
@@ -206,8 +206,8 @@ no natural input or save round trip was observed.
 `RVA-F-0363/initialServiceImportBoundary` binds initial cell0x82F2FAAC to
 0x82E92ED4, registered as `__imp__NtReadFile`. Its leading import tags are
 opaque data, with encoded mtctr/bctr tail words; there is no selected generated
-guest read implementation. The19-word packet has13 instruction words,
-four data/opaque words and two neighbors, all pinned-image equal.
+guest read implementation. The 19-word evidence set has 13 instruction words,
+four data/opaque words and two neighbors, all equal to the pinned image.
 
 The accepted wrapper forwards H/D/N and the protected per-request result
 home. Its pending/wait, EOF/count0 and short-read reporting do not establish

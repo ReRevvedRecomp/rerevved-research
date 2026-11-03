@@ -2,7 +2,7 @@
 
 Preload, downloadable-content staging, registered sources and bare-name
 resolution are separate static boundaries. Names are recovered, not debug
-symbols; this lookup contract proves neither runtime delivery nor acceptance.
+symbols. This lookup contract proves neither runtime delivery nor acceptance.
 
 ## Separate frontend stages
 

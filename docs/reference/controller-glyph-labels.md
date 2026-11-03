@@ -3,9 +3,9 @@
 The [label inventory](../../manifests/controller-glyph-label-inventory.json)
 records every FrameLabel in buttonLegend sprite97 (37) and MainMenu149,
 Keyboard137, HoA_KeyLegend129, CityScreen151 and UnitStack217 (45 each).
-The five 45-label sprites have identical label/frame sequences; exact per-movie
-tag and label offsets and payload identities remain in the manifest. Frames
-are 1-based; exact label case is retained.
+The five 45-label sprites have identical label/frame sequences. The manifest
+retains exact tag and label offsets and payload identities for each movie.
+Frames are 1-based, and exact label case is retained.
 
 ## Xbox to PS3 pairs
 
@@ -84,8 +84,8 @@ builder rewrite. Per-tip attribution, selective caller-LR filtering and current
 HTML resolver/cache/provider remain unobserved.
 
 
-The pair table plus `blank`, `XBOX` and `PS3` accounts for every requested
-label. There are no unpaired Xbox control labels. The four pairs absent in
+The pair table, together with `blank`, `XBOX` and `PS3`, accounts for every
+requested label. There are no unpaired Xbox control labels. The four pairs absent in
 buttonLegend are absent on both sides, rather than missing PS3 counterparts.
 The inventory supplies no global constructor-rewrite safety or runtime contract.
 

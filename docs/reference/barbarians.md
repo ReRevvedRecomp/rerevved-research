@@ -1,8 +1,9 @@
 # Barbarian spawning and capital protection
 
-Evidence terms: findings cover the stated static branches, not observed spawn
-cadence or delivered actions. Returns, live identity, ownership, retained state
-and completed rebuild/order remain conditions wherever specified below.
+These findings cover the stated static branches. They do not establish an
+observed spawning rate or delivered actions. The conditions below still require
+the specified returns, live identity, ownership, retained state, completed
+rebuilds and ordering.
 
 ## Raging behavior and implementer contract
 
@@ -34,16 +35,17 @@ exact comparison and its guards. The selected connection into this hold adds
 no separate clock or difficulty test; earlier candidate selection still has
 its own time inputs. No fixed-date departure grace follows.
 
-This source-city hold cannot provide capital-only protection while preserving
-field and noncapital departures. The investigated pair deadline instead has a
-named peace-agreement producer; the selected city predicate uses a reachability
-plane. Neither establishes all-route capital protection. Their bounded evidence
-and the hut-release bridge are in `nativeNormalGraceBoundary` in the feasibility
-manifest.
+Holding units in their source city cannot protect only capitals while
+preserving departures into the field or toward other cities. The investigated
+pair deadline instead has a named peace-agreement producer; the selected city
+predicate uses a reachability plane. Neither establishes all-route capital
+protection. Their bounded evidence and the hut-release bridge are in
+`nativeNormalGraceBoundary` in the feasibility manifest.
 
-Spawning can increase departure opportunities but does not reproduce Beta
-aggression. `BAGRESSIVE` and `BFECUNDITY` are separate. Three guards have a
-conditional city hold/release explanation, not a universal hut rule.
+More spawning can give units more opportunities to leave, but does not
+reproduce Beta Centauri's aggression. `BAGRESSIVE` and `BFECUNDITY` are
+separate. Three guards have a conditional city hold/release explanation, not a
+universal hut rule.
 
 | Question | Verdict and native boundary |
 | --- | --- |
@@ -142,9 +144,9 @@ failure. Global latch set before helpers/request blocks later candidates/ cities
 after suppression/failure; reset schedule unknown. Tables rebuild afterward, so
 guards consume earlier weighted bytes, not proved fresh counts.
 
-No local random draw/threshold was identified; helper is no proved probability
-gate. This neighboring-barbarian Militia request establishes neither recurring
-barbarian spawning nor population limit.
+No local random draw or threshold was identified. The helper is not a proved
+probability check. This neighboring-barbarian Militia request establishes
+neither recurring barbarian spawning nor population limit.
 
 ## Turn-selection creation request
 

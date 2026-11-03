@@ -5,10 +5,10 @@ ordinary catalog covers records 0 through 28. Runtime unit byte `0x1` in each
 `0x54`-byte record indexes it. Names are recovered semantic labels, not debug
 symbols.
 
-Evidence terms: findings cover the stated static paths and read sets. "Accepted"
-identifies supported evidence; it implies neither runtime execution nor complete
-consumer coverage. Return, ownership and alias limits remain explicit. These
-findings establish no safe additional-definition API.
+These findings cover the stated static paths and memory reads. "Accepted"
+means that the evidence supports the claim. It does not imply runtime execution
+or coverage of every consumer. Return, ownership and aliasing limits remain
+explicit. These findings establish no safe API for adding unit definitions.
 
 - [Native count and storage limits](#native-count-and-end-boundary).
 - [Settler production gates](#settler-production-gates).
@@ -26,13 +26,14 @@ definition and player gates. Formation consumes the first two eligible slots
 other than the selected unit, combines their state into the survivor, writes
 its army selector, invokes native callbacks and recounts.
 
-This is a formation path, not just the army-name field. An earlier existing
-Archer on the tile can be consumed before newly created Archers. A first-capital
-army grant therefore still needs an existing-unit preservation contract,
-founding receipt/save policy, allocation handling and actual callback lifetime
-evidence. No such grant or runtime outcome is established here. Exact gates,
-writes and qualifications are in the
-[army formation boundary](../../manifests/army-formation-command-boundary.json).
+This path forms an army; it does more than change the army name. An Archer
+already on the tile can be consumed before newly created Archers. Granting an
+army when the first capital is founded therefore still needs a way to preserve
+existing units, proof that founding completed, a save policy, allocation
+handling and evidence of actual callback lifetimes. No such grant or runtime
+outcome is established here. Exact gates, writes and qualifications are in the
+[army formation boundary](../../manifests/army-formation-command-boundary.json)
+.
 
 ## Recovered layout and readers
 
@@ -61,7 +62,8 @@ UnitType 10 selects UEA 12, and Warrior UnitType 6 selects UEA 55. Each active
 cumulative lookup adds one to retained movement.
 
 One special return path uses an unresolved constant instead of the composed
-value, so the packet does not claim every movement return, consumer, or AI path.
+value. The finding therefore does not cover every movement return, consumer
+or AI path.
 The exact branches are in
 [`unit-movement-stat.json`](../../manifests/unit-movement-stat.json).
 
@@ -125,8 +127,9 @@ compares against `B + 39*148 + 0x4A` while reading pairs covering IDs 0 through
 37. Neither scan reads the live count. Production enumeration does read it and
 refreshes it only after admitting an entry.
 
-These are distinct contracts; routing below 100 and a 100-word scratch array do
-not prove safe definition capacity.
+These limits apply to different structures. Routing below 100 and a 100-word
+scratch array do not prove that the definition table can safely hold that many
+records.
 
 A compatible relocation of the existing 38 records requires all reaching base
 producers and aliases to retain a coherent storage identity, valid guest
@@ -136,7 +139,7 @@ matter. No safe allocation or publication protocol was proved.
 
 The maintained host catalog independently supports 29 public IDs and passes
 scalar or runtime-unit contexts to the sampled hooks; moving native data does
-not extend that metadata or establish a API for registering definitions.
+not extend that metadata or establish an API for registering definitions.
 
 Extending production admission is a separate decision from growing fixed scans.
 Keeping the defender range fixed could exclude a future Scout outside that range
@@ -202,8 +205,8 @@ consumer/count inventory.
 A
 [broader raw-inventory attempt](../../manifests/unit-definition-base.json#/findings/RVA-F-0300/rawInventoryMemoryIdentityObservation)
 stopped before scanning: canonical RAM failed the full supported-image digest
-guard. Zero counters prove no absence; the report omitted the observed digest
-and cause. A
+guard. Zero counters do not prove that no matches exist. The report omitted
+the observed digest and cause. A
 [verified-file observation](../../manifests/unit-definition-base.json#/findings/RVA-F-0300/rawNativeFileInventoryObservation)
 completed the declared address models against the full supported native-file
 buffer. Independent reconstruction matched every candidate/control. Saved RAM
@@ -221,8 +224,8 @@ base/alias/interior/count coverage and safe Scout registration remain open.
 
 ## Settler production gates
 
-The human menu and three AI-turn-evaluator call sites share a candidate
-generator. With the Settlers definition retained, it requires population at
+The human production menu and three AI turn-evaluation call sites share a
+candidate generator. With the Settlers definition retained, it requires population at
 least three, or two when cumulative UEA 45 is active or the owner-indexed word
 equals five. Both inputs retain neutral meanings. FSettler fails its first
 prerequisite and is not an interchangeable buildable entry.
@@ -254,14 +257,14 @@ scale. Retained inputs and `0<=prefix<total<=100` give a random ordinal within
 the populated suffix. Excluding Settlers does not prove another candidate or
 valid ranges for every scoring choice.
 
-With an empty suffix, fallback computes `prefix`; `0x82CB5544` then reads
+With an empty suffix, fallback computes `prefix` ; `0x82CB5544` then reads
 outside it without a range check. OCC reachability/crashing is unproved, but
 unconditional safe fallback is excluded. The caller accepts `-1` at
-`0x82CECBBC/0x82CECBC0`, skipping assignment; native empty flow does not use
-that exit. Guard before the first unsafe read and validate a no-choice exit, or
-prove every relevant range nonempty. A post-return check is too late; stall-free
-turn continuation needs runtime evidence. Grants through the shared creator
-remain separate from construction.
+`0x82CECBBC/0x82CECBC0` , skipping assignment; native empty flow does not use
+that exit. Guard before the first unsafe read and validate a no-choice exit,
+or prove every relevant range nonempty. A check after return is too late.
+Runtime evidence is needed to show that the turn continues without stalling.
+Grants through the shared creator remain separate from construction.
 
 The title's cost-scalar hook demonstrates pre-instruction typed register
 callbacks; its Lua contract/hook corpus exposes neither population policy nor
@@ -333,20 +336,23 @@ factor `+0x41`, description `+0x4C`. IDs 123 through 199 remain unvalidated; see
 Menu gates read signed technology `+0x42`, required building mask `+0x44` and
 forbidden mask `+0x48`; all 23 records are in
 [`building-menu-record-gates.json`](../../manifests/building-menu-record-gates.json).
-Masks join completion bits: Bank requires Market, Cathedral Temple, University
-Library; later-tier bits hide earlier items. These local checks prove neither
+The masks correspond to completion bits: Bank requires Market, Cathedral
+requires Temple, and University requires Library. Bits for later buildings
+hide earlier items. These local checks prove neither
 complete availability/effects nor runtime completion.
 
-Building half-cost branches pair Barracks 101/UEA 19, Library 105/20 and Courthouse
-114/18; Cathedral 111/21 has no accepted retail activation. University 112 and
-Factory 116 have neutral-gated reductions. The early item-specific tests use a
-shared word-shift mask: initialized Wonder 229 also matches the Barracks mask,
-and 233 matches the Library mask and later three-quarter subtraction. These
-static aliases retain the ordered current-cost arithmetic and retail-composition
-limits in [the modifier record](../../manifests/building-wonder-cost-modifier-branches.json).
-Wonder 229 still requires dynamic bit-two admission and its full outer gate; 233
-is excluded from the ordinary menu and known-vtable city-update route. See
-[the eligibility record](../../manifests/wonder-eligibility.json#/findings/RVA-F-0170).
+Building half-cost branches pair Barracks 101/UEA 19, Library 105/20 and
+Courthouse 114/18; Cathedral 111/21 has no accepted retail activation.
+University 112 and Factory 116 have neutral-gated reductions. The early
+item-specific tests use a shared word-shift mask: initialized Wonder 229 also
+matches the Barracks mask, and 233 matches the Library mask and later
+three-quarter subtraction. These static aliases retain the ordered arithmetic
+for the current cost and the limits on retail cost composition in
+[the modifier record](../../manifests/building-wonder-cost-modifier-branches.json)
+. Wonder 229 still requires dynamic bit-two admission and its full outer gate;
+233 is excluded from the ordinary menu and known-vtable city-update route. See
+[the eligibility record](../../manifests/wonder-eligibility.json#/findings/RVA-F-0170)
+.
 
 Final wonder reduction uses `0x82FFE7C8`. In `BroadGameStateSerializer`, null
 auxiliary pointer plus mode one passes it to `BufferReadU32` as destination;
@@ -399,11 +405,12 @@ otherwise `0x822D1150` owns unresolved growth/allocation/failure. The
 not validate allocation or pointer invariants.
 
 After sufficient production, `0x82D02090` writes ordinary building bits,
-including a bank indexed by clamped player era. Spaceship items 119-122 instead
-conditionally set city `+0x24` bit `0x100` under a player-indexed gate. Both
-store item ID at `+0x3A` and check a bounded city byte list. These
+including a bank indexed by clamped player era. Spaceship items 119-122
+instead conditionally set city `+0x24` bit `0x100` under a player-indexed
+gate. Both store item ID at `+0x3A` and check a bounded city byte list. The
+writes in
 [`building-completion-state-writer.json`](../../manifests/building-completion-state-writer.json)
-prove neither described effects nor runtime execution.
+prove neither the described effects nor runtime execution.
 
 Negative searches below cover decoded function-owned operands only. Indexed,
 computed, aliased, indirect, functionless and out-of-interval readers remain
@@ -589,9 +596,9 @@ Its two direct callers pass a selector computed as the item minus 600 from the
 preview helper or an indexed byte from another function. Its list output and
 runtime use remain unresolved.
 
-These are partial layouts, with no supported meaning for unlisted bytes. Editing
-a known signed factor can change the accepted static cost calculation for an
-initialized ID, subject to its later modifiers; it does not establish a final
+These are partial layouts, with no supported meaning for unlisted bytes.
+Editing a known signed factor can change the supported static cost calculation
+for an initialized ID, subject to later modifiers. It does not establish a final
 in-game price. Building menu masks and wonder technology cells are known inputs
 to local gates, not a complete buildability policy.
 
@@ -663,8 +670,9 @@ remain open, and no runtime list filter was observed. See the
 
 ### Post-threshold effect branches
 
-Descriptions prove no implemented effects. The five direct mode-one indices in
-`0x82D16BA0` have these static contracts; runtime effects remain unobserved:
+Descriptions do not prove that their stated effects are implemented. The five
+direct mode-one indices in `0x82D16BA0` have these static contracts; runtime
+effects remain unobserved:
 
 | Item | Branch and limit | Evidence |
 | --- | --- | --- |
@@ -858,7 +866,8 @@ independent AI-side functions also call both readers:
 For base attack and defense, a table change reaches both combat simulation and
 the AI evaluation paths through the same effective accessors.
 
-This is not general AI parity for a Unique Unit modification. Costs, movement,
+This does not prove that every AI path handles a Unique Unit modification
+the same way as combat. Costs, movement,
 abilities, flags, production weights, and naval or air special behavior require
 independent producer-consumer mapping before mutation.
 
@@ -968,9 +977,9 @@ array). Type 38 maps to 38/army 102 in existing presentation space; Scout needs
 a separate route preserving those identities.
 
 `0x82D9B6E0` stores name pointer at +132, component at +136: relocated names
-need lifetime through model use. Allocation tag is no model token; assets/icons,
-child ownership/lifetime remain open. Two adapters pass lengths/pointers to
-`0x82D3B798`; its copy/alias behavior is unbound.
+need lifetime through model use. The allocation tag is not a model token.
+Assets, icons, child ownership and lifetime remain unresolved. Two adapters
+pass lengths/pointers to `0x82D3B798` ; its copy/alias behavior is unbound.
 
 Signed +0x44 factor times final scalar /2 truncates toward zero: factor 1 and
 scalar 10 or 11 yield 5. Scout scalar 10 must reach every cost consumer after
@@ -1088,8 +1097,9 @@ opponent-present path, derives the accepted defender player and unit before
 reaching the ordered attack-side then defense-side core pair. The AI caller
 tests the returned value against evaluation thresholds.
 
-This is one resolver-backed prediction path, not general role parity for the
-other AI evaluators, early returns, or every resolver outcome.
+This is one prediction path through the combat resolver. It does not prove
+that other AI evaluators, early returns or every resolver outcome use the same
+combat roles.
 
 The [ordinary combat boundary](ordinary-combat.md) records separate local
 weighting and checkpoint-selection blocks with conditional generator-word

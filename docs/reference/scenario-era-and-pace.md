@@ -1,10 +1,12 @@
 # Starting eras and game pace
 
-Native scenarios provide starting technologies and separate rule inputs.
-They do not establish that a player owns all technologies from earlier eras,
-or that one setting slows the whole game. The [starting-era finding](../../manifests/scenario-start-era-grant-boundary.json)
-and [SPEEDMODE finding](../../manifests/scenario-speedmode-movement-boundary.json)
-own the new conditional native boundaries.
+Native scenarios provide starting technologies and separate rule inputs. They
+do not establish that a player owns all technologies from earlier eras, or
+that one setting slows the whole game. The
+[starting-era finding](../../manifests/scenario-start-era-grant-boundary.json)
+and
+[SPEEDMODE finding](../../manifests/scenario-speedmode-movement-boundary.json)
+record the conditional native behavior and its limits.
 
 ## Starting technology grants
 
@@ -31,15 +33,16 @@ call ordinary acquisition `0x82D09208`. That distinction does not characterize
 the whole setup. Native count selection and candidate eligibility do not
 prove every technology assigned to an earlier era is granted.
 
-An all-earlier-era feature still needs an authoritative technology-era
-assignment and a setup point before dependent readers. Ownership alone does
+A feature that grants all technologies from earlier eras still needs an
+authoritative assignment of technologies to eras and a setup point before
+code reads the granted state. Ownership alone does
 not prove derived unlocks, initial/cumulative civilization abilities,
 government, city bonuses, discovery rewards and notifications are coherent.
 The [starting-grant](../../manifests/starting-technology-grants.json) and
 [first-discovery](../../manifests/technology-first-discovery-rewards.json)
 contracts retain those distinctions, along with save and peer requirements.
-The generated setup body ending at EOF is excluded as semantic closure;
-selected native words support these local claims.
+The generated setup body ends at EOF and cannot prove the behavior of the
+whole function. Selected native words support these local claims.
 
 ## Native STARTERA input and ordering
 
@@ -51,12 +54,12 @@ grants.
 
 The selected player loop excludes the sampled Barbarian ordinal. It stores a
 positive STARTERA as that player's era before granting technologies. Each
-success requires eligibility and an absent ownership bit, then increments
-both a local success counter and the acquisition tally. Thus 5/14/24 counts
-additional successful writes; it is not a fixed technology list, final total
-or final-era guarantee. Rejected candidates have no local attempt cap. The
-selected candidate factor is 48.0, but the current RNG scale, candidate domain,
-eligible supply and eventual progress remain unproved.
+success requires eligibility and an absent ownership bit, then increments both
+a local success counter and the acquisition tally. Thus 5/14/24 counts
+additional successful ownership writes. It does not specify a fixed technology
+list, final total or guaranteed final era. Rejected candidates have no local
+attempt cap. The selected candidate factor is 48.0, but the current RNG scale,
+candidate domain, eligible supply and eventual progress remain unproved.
 
 After a player's completed grant loop, `0x82D22BFC` rereads Q+0x1C. Later
 players and the separate value-4 bulk discriminator use the reloaded value.
@@ -109,14 +112,14 @@ from native evidence.
 | Calendar/events | Piecewise turn-to-year conversion and separate year/turn readers | Calendar changes can affect events without slowing economic progress |
 | Presentation | Native Normal/Fast animation timing | Separate from game-rule progression |
 
-The existing [science](science.md), [unit](unit-definitions.md),
-[growth](city-growth.md), and [calendar](game-calendar.md) records own the
-reused surfaces. The continuation below binds a nonzero preset and closes the
-converter's direct-input question. Selected research-cost and growth inputs and
-the writer using year and turn are bound locally; actual input delivery, coherent
-generation and cadence remain open. A coordinated speed design needs separate choices
-for costs, yields, movement, calendar and event cadence. No setting or runtime
-behavior was implemented.
+The existing [science](science.md) , [unit](unit-definitions.md) ,
+[growth](city-growth.md) , and [calendar](game-calendar.md) records own the
+reused surfaces. The continuation below identifies a nonzero preset and
+establishes whether the converter reads that input directly. Selected
+research-cost and growth inputs and the writer using year and turn are bound
+locally; actual input delivery, coherent generation and cadence remain open. A
+coordinated speed design needs separate choices for costs, yields, movement,
+calendar and event cadence. No setting or runtime behavior was implemented.
 
 ## Era tally and preset continuations
 
@@ -203,9 +206,10 @@ and successful publication, this forms prerequisite layers. It does not supply
 an authoritative ordered technology-era relation.
 
 Seven-byte cell and 16-byte outer-group publication remain conditional on
-allocation/insertion and retained current flag-provider effects. No cycle,
-progress, finite completion or current displayed-grid theorem follows.
-STARTERA counts, bulk grants and player-tally eras remain separate.
+allocation/insertion and retained current flag-provider effects. This does not
+establish whether cycles are possible, whether the process always advances or
+finishes, or what the current displayed grid contains. STARTERA counts, bulk
+grants and player-tally eras remain separate.
 
 ## Selected load-tail growth request
 
@@ -283,8 +287,8 @@ is `low32(slw(1,E)-1)`, where E is the configured Barbarian ordinal at
 N=E+1, this covers ordinary players and excludes the Barbarian bit. Words 0
 and 47 remain untouched. STARTERA 4 leaves the earlier base grant count
 unchanged, so positive native base grants can consume RNG before bulk.
-Count zero is a condition for strict prebulk parity, not for the reached
-bulk ownership result.
+A count of zero is required to preserve the state before the bulk grant
+exactly. It is not required for the reached bulk ownership result.
 
 The setup year search stops at the first converted year at least as large as
 the requested year. Native two-year steps after 1950 give turn 155 = 2024

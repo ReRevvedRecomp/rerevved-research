@@ -1,8 +1,9 @@
 # Map size and terrain bias
 
-The recovered gameplay grid initializes to 32 by 32. Different land coverage
-inside that grid is a candidate; complete smaller or larger native dimensions
-are not established. The [object-grid finding](../../manifests/map-dimension-object-grid-boundary.json)
+The recovered gameplay grid initializes to 32 by 32. Changing the amount of
+land inside that grid is a possible approach. Complete support for smaller or
+larger native dimensions is not established. The
+[object-grid finding](../../manifests/map-dimension-object-grid-boundary.json)
 owns the additional fixed 32 constraint and climate boundary. The
 [authored-map loader](../../manifests/map-authoring-loader-boundary.json) and
 [resource placement finding](../../manifests/resource-density-generation-boundary.json)
@@ -110,8 +111,8 @@ allocator call 0x82E10484 and later child remain separate completion gates.
 `coldCacheConstructionBoundary` binds the zero-cache arm of 0x82E10450.
 After a nonzero 16-byte allocation and retained child completion, it samples
 V=U32[P+12] at 0x82E104B0, then publishes wrapper P at 0x82E104B4 to cache
-0x8314EF84. Its return is V; the cache contains P. The null arm reads guest
-address 0 before storing cache 0, so it supplies no safe-return-zero theorem.
+0x8314EF84. It returns V; the cache contains P. The null arm reads guest address 0
+before storing cache 0, so it does not prove that returning zero is safe.
 
 Child 0x82E70D28 conditionally constructs separate 864- and 336-byte objects.
 Its selected +12 replacement at 0x82E70E64 re-reads P+8 after any old-object
@@ -163,7 +164,8 @@ Across 2077 source lines in 22 bounded windows, neither owner contained the
 selected 932/936/940 or hexadecimal field tokens. Same-receiver generation
 still requires retention across interleaved calls.
 
-This is source navigation, not a native absence or composition theorem.
+This source search does not prove the absence of native readers or establish
+how terrain is composed.
 Adjusted bases, indexed/computed access, aliases, globals and callees remain
 outside the negative. Re-entry requires an exact tied reader or address/call
 discriminator. No additional native query or broader terrain census followed.

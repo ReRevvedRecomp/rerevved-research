@@ -16,6 +16,10 @@ generated output only through its generator/canonical input.
 - Use ASCII, short declarative sentences and ordinary noun phrases; retain
   established technical hyphens, avoiding invented modifier chains.
 - Prefer periods, commas or lists; use semicolons only when clearer.
+- Use ordinary Civilization Revolution and game terms for established behavior.
+  Describe what setup and the first turn do in natural language. Keep technical
+  terms where they identify code, storage or network behavior precisely; do not
+  give unresolved fields or Xbox message cases invented gameplay meanings.
 - Separate observation/interpretation; retain image, locator and tool where needed.
 - State uncertainty; do not promote candidate names/behavior.
 - Apply [contribution policy](README.md) to tracked Markdown/records.

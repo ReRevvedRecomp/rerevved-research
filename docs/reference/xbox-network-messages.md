@@ -13,8 +13,8 @@ This page separates three layers:
 
 Game-layer message type numbers are not PowerPC instruction opcodes and are not
 Xbox 360 GPU PM4 packet opcodes. The latter two describe CPU instructions and
-graphics command packets, respectively; neither identifies a CivRev game
-message.
+graphics command packets, respectively. Neither identifies a Civilization
+Revolution game message.
 
 ## Internal record and local queue
 
@@ -41,10 +41,10 @@ and directly calls `NetworkCommandDispatch` at `0x82CDDF08`.
 
 ## Dispatcher and accepted types
 
-Unsigned 0 through 65 pass bound `0x82CDDFF4`, dispatch `0x82CDE010` through
-66-entry `0x82CDE014`.
-[Manifest](../../manifests/xbox-network-message-root.json) owns the full numeric
-map. Accepted Xbox names:
+Unsigned values 0 through 65 pass the bound check at `0x82CDDFF4`.
+The dispatch at `0x82CDE010` uses the 66-entry table at `0x82CDE014`.
+[Manifest](../../manifests/xbox-network-message-root.json) records the full
+numeric map. Supported Xbox names:
 
 | Type | Name | Evidence |
 | --- | --- | --- |
@@ -87,10 +87,10 @@ increment or a queued request alone does not count a completed world round.
 
 ## Turn and synchronization state
 
-Four candidate `0x82F7AD00` writers: three copy object `+0x134` from
-`0x8314EFC8` (one via second parameter); fourth copies record `+0x0C`.
-Flag-guarded record builder seeds temporary from old word, applies `0x822DE438`,
-then stores before later copy. The
+Four candidate writers of `0x82F7AD00` are identified. Three copy object
+`+0x134` from `0x8314EFC8` (one via the second parameter). The fourth copies
+record `+0x0C` . A flag-guarded record builder seeds a temporary from the old
+word, applies `0x822DE438` , then stores it before the later copy. The
 [RNG transfer contract](../../manifests/combat-rng-save-reload-boundary.json#/headerStateTransferBoundary)
 identifies this word as current main RNG state, with conditional save/load
 transfer. It does not prove complete generator restoration or identify an
@@ -152,14 +152,15 @@ Missing entries do not count as active transfer. The
 and [progress boundary](../../manifests/xbox-network-message-root.json#/turnAndSyncAnchors/hotjoinProgressBoundary)
 own those effects, conditions and lifetime premises.
 
-The [hotjoin transfer/restore boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json)
+The
+[hotjoin transfer/restore boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json)
 owns the native compressed save-style snapshot, transfer-ID queue result,
 received-stream writes, shared mode-1 loader, completion mask and conditional
-receive-callback-to-command-append corridor. Exception metadata establishes
-`0x82D8F878` as a native entry despite its configured containing-function model.
-This is implemented world-state recovery machinery. Successful delivery,
-fresh disconnected-player admission, command reconciliation and accepted
-return-to-play remain unproved.
+path from a receive callback to a command append. Exception metadata
+establishes `0x82D8F878` as a native entry despite its configured
+containing-function model. This is implemented world-state recovery machinery.
+Successful delivery, fresh disconnected-player admission, command
+reconciliation and accepted return-to-play remain unproved.
 
 | Table/helper | Bounded structure/dataflow and limit |
 | --- | --- |
@@ -189,18 +190,19 @@ neutral; shared targets prove no shared meaning.
 
 ## Native transport sequence boundary
 
-The [selected native receive helpers](../../manifests/xbox-network-message-root.json#/nativeTransportReceiveBoundary)
+The
+[selected native receive helpers](../../manifests/xbox-network-message-root.json#/nativeTransportReceiveBoundary)
 establish more than raw UDP: a header-bearing path compares 16-bit modular
 sequence fields, skips older records, buffers later records with an equality
 check, and drains buffered records matching the next expected field. Separate
 control inputs retire a stored prefix or select stored records by an incoming
-sequence field/range; they do not establish a retry time interval.
-The expected field advances before the dispatch outcome is known. When numeric
-type seven reaches `0x82A123F8`, that dispatcher returns one without a type
+sequence field/range; they do not establish a retry time interval. The
+expected field advances before the dispatch outcome is known. When numeric
+type seven reaches `0x82A123F8` , that dispatcher returns one without a type
 handler. This does not guarantee a true enclosing receive result. A true
-transport result is not a world-write receipt. The type-101 retry parser also reads
-two bytes before its length check; its exact declared-payload bound and proposed
-pre-read guard belong to the manifest.
+transport result does not prove that world state was written. The type-101
+retry parser also reads two bytes before its length check; its exact
+declared-payload bound and proposed pre-read guard belong to the manifest.
 
 The [selected send path](../../manifests/xbox-network-message-root.json#/nativeTransportSendBoundary)
 reaches `NetDll_sendto` through a proved native shim. Its outer nonzero result
@@ -225,8 +227,8 @@ The hotjoin manifest's
 [connection callback boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary)
 identifies the installed vector and selected listener slots. The
 [connection-index boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary)
-follows selected raw callback corridors into guarded native index allocation
-and disconnect forwarding. A native connection index is not an established
+follows selected raw callback paths into guarded native index allocation and
+disconnect forwarding. A native connection index is not an established
 XUID/game-player binding. Transport sequence handling and this allocation path
 do not establish fresh returning-player admission or successful recovery.
 
@@ -346,11 +348,13 @@ callback-before-erase sequence. Actual target binding, existing-backing growth
 and callback ownership remain active before a completed container transfer or
 a failure-safe retry.
 
-The [selected growth/copy target contract](../../manifests/xbox-network-message-root.json#/nativeConnectionGrowthCopyBoundary)
+The
+[selected growth/copy target contract](../../manifests/xbox-network-message-root.json#/nativeConnectionGrowthCopyBoundary)
 joins the configurable growth slot and its initial target to the allocator's
 conditional zero-return path. The forward-copy routine has local return paths
-and a bounded span/storage contract. These facts support a growth-guard proposal;
-actual title binding and complete failure ownership still need proof.
+and a bounded span/storage contract. These facts support a proposed guard for
+growth. The actual title binding and complete responsibility for handling
+failure still need proof.
 
 The [selected constructor/callback contract](../../manifests/xbox-network-message-root.json#/nativeConnectionContainerConstructionBoundary)
 binds the constructed buckets and separate list to four-byte strides, distinct
@@ -428,11 +432,13 @@ leaves a pointer-shaped register for a signed native check, which is not a
 packet receipt. Actual entry, listener/object generations, downstream helpers
 and the voice backend remain open.
 
-The [notification-worker and privilege-entry contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeIdentityWorkerPrivilegeEntryBoundary)
+The
+[notification-worker and privilege-entry contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeIdentityWorkerPrivilegeEntryBoundary)
 maps selected poll/wrapper callers and their timer, status/output and terminal
-requests. SDK clock conversion and the separate callback/cancellation frontier
-do not establish an observed cadence or completed shutdown. Actual signal/wait,
-listener/object publication and downstream policy helpers remain open.
+requests. SDK clock conversion and the separate limits on callback and
+cancellation analysis do not establish an observed cadence or completed
+shutdown. Actual signal/wait, listener/object publication and downstream
+policy helpers remain open.
 
 The [signal/wait and listener-retirement contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeIdentitySignalWaitRetirementBoundary)
 connects selected constructor publications, local stop writes and cleanup
@@ -484,11 +490,12 @@ refresh uses its comparison word where the builder uses the row key. That gives
 a bounded title correction candidate; complete cache publication, sink behavior
 and current-instance ownership remain open.
 
-The [presentation adapter and storage contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeQueryPresentationEffectsBoundary)
+The
+[presentation adapter and storage contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeQueryPresentationEffectsBoundary)
 separates nested-owner readiness, method-result words, queue-erasure requests
-and row-storage publication. A formatter's raw return cannot serve as a general
-invocation receipt. Insertion copies row fields; rotation, callbacks and the
-comparison-cache writer remain separate contracts.
+and row-storage publication. A formatter's raw return does not generally prove
+that an invocation completed. Insertion copies row fields; rotation, callbacks
+and the comparison-cache writer remain separate contracts.
 
 The [pre-build and row-movement contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativePresentationPrebuildRotationBoundary)
 binds selected field-update requests and conditional three-word rotation. The
@@ -533,10 +540,12 @@ records relative advance, conditional header-range restoration and growth/error
 requests. Current failure policy, exceptional continuation and complete transport
 capture remain active; no standalone repair or runtime acceptance is inferred.
 
-The [direct connection-send contract](../../manifests/xbox-network-message-root.json#/nativeDirectConnectionSendCaptureBoundary)
+The
+[direct connection-send contract](../../manifests/xbox-network-message-root.json#/nativeDirectConnectionSendCaptureBoundary)
 records callback versus empty-callback routes, conditional byte capture and
-local status categories. Actual callbacks/storage/failure policy remain active;
-local0 and lower-send acceptance are not peer capture or delivery receipts.
+local status categories. Actual callbacks/storage/failure policy remain
+active; local 0 and acceptance by the lower send layer do not prove that a
+peer captured or received the data.
 
 The [send-capacity and fallback contract](../../manifests/xbox-network-message-root.json#/nativeConnectionSendCapacityFallbackBoundary)
 records capacity/scalar effects, pending-record count checks and selected

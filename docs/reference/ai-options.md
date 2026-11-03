@@ -1,11 +1,11 @@
 # AI configuration boundaries
 
 Ordinary setup has five slots for civilizations and Barbarian slot 5. With one
-human, the existing opponent control can retain up to four AI civilizations. The
-serializer traverses eight player pools and civilization/era entries, plus a
-64-entry relation array. Those backing extents do not establish playable
-additional slots: initialization, turn order, placement, UI and networking for
-players 6 and 7 remain unverified.
+human, the existing opponent control can retain up to four AI civilizations.
+The serializer traverses eight player pools and civilization/era entries, plus
+a 64-entry relation array. That storage capacity does not prove that
+additional slots are playable. Initialization, turn order, placement, UI and
+networking for players 6 and 7 remain unverified.
 
 ## Eight civilization target
 
@@ -13,7 +13,7 @@ Eight civilizations means one human and seven AI. Keeping Barbarians as a
 separate participant suggests count 9 with Barbarian slot 8. The selected
 placement loop has eight permutation entries and skips the Barbarian before
 writing coordinates, so eight civilization starts fit its coordinate rows.
-That is a useful positive capacity result; actual starts remain unobserved.
+The coordinate rows have enough capacity, but actual starts remain unobserved.
 
 Several consumers need structural changes. The placement preference histogram
 scores every participant with eight player columns before excluding Barbarians.
@@ -25,17 +25,18 @@ Earlier setup work uses the count before the ordinary count stores, so changing
 the two late setup constants alone does not establish added civilization
 initialization.
 
-The [placement expansion finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0331)
-owns these exact joins and limits. Four AI is the current supported ordinary
-setting, not a proved absolute engine ceiling.
+The
+[placement expansion finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0331)
+records these connections and limits. Four AI is the current supported
+ordinary setting, not a proved absolute engine ceiling.
 
 ## Six AI setup
 
 One human and six AI, retaining Barbarians, needs seven civilizations and
-eight participants. The selected native eight-entry unit, civilization,
-coordinate and relation backing fits this layout. Five AI uses seven
-participants. These layouts keep every participant below index eight and
-avoid the ninth-column and ninth-pool collisions above.
+eight participants. The native storage for eight unit pools, civilizations,
+coordinate pairs and relations fits this layout. Five AI uses seven
+participants. These layouts keep every participant below index eight and avoid
+the ninth-column and ninth-pool collisions above.
 
 The [setup assignment finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0332)
 binds an early seam after actual human-mask construction, the later ordinary
@@ -56,12 +57,13 @@ as multiplayer and the native special two-player override.
 
 The selected ordinary network setup publishes six participant slots with
 Barbarian ordinal5. For a valid ordinary human mask, its configured AI count
-is five minus the human count. The eight-slot backing supplies a necessary
-free-slot bound, not an expanded network-layout or zero-AI acceptance proof.
-Mask rebuilding can itself read count before the later setup seam. The
+is five minus the human count. The eight slots limit the available capacity.
+They do not prove that an expanded network layout or a game with zero AI
+works. Mask rebuilding can itself read count before the later setup seam. The
 selected command48 loop visits configured nonhuman ordinals, including
-retained Barbarians, rather than a separate ordinary-AI count.
-F-0332 `multiplayerCountBoundary` records the exact scope and peer/reader limits.
+retained Barbarians, rather than a separate ordinary-AI count. F-0332
+`multiplayerCountBoundary` records the exact scope, including limits on peer
+behavior and the code that reads these values.
 
 ### Native roster publication and earlier setup admission
 
@@ -73,7 +75,7 @@ size with expected membership; its received executor marks one member ready
 and invokes the lobby callback. That request is not an immutable-map barrier.
 
 A conditional title protocol can copy all eight native ordinals in the first
-host-provider capture, validate the complete map cardinality and peer mask,
+host-provider capture, validate the complete map size and peer mask,
 and retain the authenticated copied tuple outside guest reset state. Its new
 early publication location is `0x82D217E4`, immediately after the native reset
 returned. Matching late `0x82D22918/1C` values preserve the tuple across the
@@ -110,12 +112,13 @@ reader coverage, current MP classification and deterministic peer application
 remain conditions for a host-selected AI-only option. No setting or runtime
 behavior is established by this static finding.
 
-Setup already reads the shared difficulty at `0x82D2293C`, before the
+Setup already reads the shared difficulty at `0x82D2293C` , before the
 post-setup recount. The selected setter/getter do not validate a native enum.
-The Wonder-cost branch compares difficulty with2; supplied operands0..2
-retain that reduction state, while3/4 admit its guarded half reduction.
-These local results do not close every alias, active participant or all-peer
-execution. F-0381 `nativeClosingBoundary` owns the closing packet and limits.
+The Wonder-cost branch compares difficulty with 2. Supplied operands 0..2
+retain that reduction state, while 3/4 admit its guarded half reduction. These
+local results do not cover every alias, every active participant or execution
+on all peers. F-0381 `nativeClosingBoundary` records the final evidence and
+its limits.
 
 ## Economic and strategic consumers
 
@@ -123,9 +126,9 @@ Native research and production helpers expose three post-composition seams.
 Research exposes the completed technology cost. Unit production exposes a
 scalar that the native factor subsequently multiplies and divides by two;
 building and Wonder production expose a final cost after existing reductions.
-An option at these points needs distinct rounding, positive minima, AI
-classification and effective-policy persistence. Percentages are title policy,
-not recovered retail difficulty fields.
+An option at these points needs separate rounding rules, positive minimum
+costs, AI classification and persistence of the policy actually used.
+Percentages are title policy, not recovered retail difficulty fields.
 
 Civilization bonuses already influence one native production-candidate
 valuation. A cumulative UEA lookup can add half a local coefficient before
@@ -143,8 +146,8 @@ and continues candidate iteration; final winner retention, city production
 assignment and execution remain separate gates. Exact arithmetic and provenance
 are in the [score continuation boundary](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/scoreContinuationBoundary).
 
-The [AI boundary findings](../../manifests/ai-options-boundaries.json) own exact
-seams, capacities, the valuation join and runtime qualifications. Starting
+The [AI boundary findings](../../manifests/ai-options-boundaries.json) record
+the exact hook points, capacities, connection to valuation and runtime limits. Starting
 technology ownership and native activation timing remain in
 [starting technology grants](../../manifests/starting-technology-grants.json).
 Arbitrary technology IDs need their actual setup-time acquisition effects
@@ -152,10 +155,11 @@ validated before exposing a starting list.
 
 ## Gold, Food and Culture output
 
-Completed native city contributions expose conditional percentage seams before
-cache and owner-state consumers diverge. Each seam needs a register change and
-a matching saved-temporary change; changing a cache or return value alone does
-not reach all known representations. The [city-yield hook finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0343)
+The completed city contributions offer possible hook points for percentage
+adjustments before the values reach caches and civilization state. Each hook
+must change both a register and its saved temporary. Changing a cache or
+return value alone does not reach all known copies. The
+[city-yield hook finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0343)
 owns exact registers, widths, native overrides and consumer limits.
 
 | Yield | Proposed boundary | Required coherence |
@@ -178,13 +182,13 @@ A percentage must preserve these distinctions and the native signed-halfword
 cache versus full-word contribution widths.
 
 Food's completed sum is the contribution added to the growth box at city
-`+0x34`. The selected growth path subtracts its native threshold and carries
-the remainder when population increases. Its negative-progress path resets
-the box and decrements population. Scaling that accumulated box would compound;
-scaling the newly composed contribution can affect both growth and population
-loss. This evidence does not recover a separate gross-harvest/maintenance pair,
-so it supports a native growth-contribution option with explicit sign policy,
-not a proved gross-harvest percentage.
+`+0x34` . The selected growth path subtracts its native threshold and carries
+the remainder when population increases. Its negative-progress path resets the
+box and decrements population. Scaling the accumulated growth box would
+compound the adjustment. Scaling the newly calculated contribution can affect
+both growth and population loss. This evidence does not recover a separate
+gross-harvest/maintenance pair, so it supports a native growth-contribution
+option with explicit sign policy, not a proved gross-harvest percentage.
 
 Known downstream effects are bounded. Gold reaches an owner aggregate, the
 reserve credit and a selected refresh-then-cache reader. Food reaches its two
@@ -201,24 +205,26 @@ which participates in Cultural Leader ranking and a derived border-influence
 level. The ranking reads the score; border influence also depends on the
 quantized level. Both remain distinct from the Cultural Victory count.
 
-Reaching a seam proves a composition event, not one event per city per turn.
-Mode one bypasses this yield block; mode minus one refreshes caches then exits
-before selected state credits. Calendar can call mode zero more than once
-for a city and can also consume cached Culture without recomposition.
-Scale each original temporary once per reached composition, never an existing
+Reaching one of these hook points proves that a contribution was calculated.
+It does not prove that this happens once per city per turn. Mode one bypasses
+this yield block; mode minus one refreshes caches then exits before selected
+state credits. Calendar can call mode zero more than once for a city and can
+also consume cached Culture without recomposition. Scale each original
+temporary once when its contribution is calculated. Do not scale an existing
 reserve, growth box, accumulator or already scaled cache. Policy changes need
 demonstrated cache invalidation and recomputation order. Complete saved-cache
 transfer, load order, policy persistence, capture/resource/technology refresh
-and runtime parity remain acceptance gates. City-founding resource rewards
-are separate from these per-composition contributions.
+and runtime parity remain acceptance gates. City-founding resource rewards are
+separate from these per-composition contributions.
 
 ## Eternal Kombat and Always at War
 
-The [Always at War finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0362/nativeScenarioBoundary)
-binds Eternal Kombat to scenario ordinal9 and `WARANDPEACE` slot9 value2.
-Its preset also changes upgrade rate, starting size, attack bonus and display
-inputs. Its contact branch requests war, relation0, for the reached pair;
-copying the complete preset would change more than diplomacy.
+The
+[Always at War finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0362/nativeScenarioBoundary)
+identifies Eternal Kombat as scenario ordinal 9, with `WARANDPEACE` slot 9 set
+to value 2. Its preset also changes upgrade rate, starting size, attack bonus
+and display inputs. Its contact branch requests war, relation0, for the
+reached pair; copying the complete preset would change more than diplomacy.
 
 The native scheduler `0x82D034A0` is centered on context K. With K=0 and
 three supplied ordinals it excludes pair1/2 in both orientations. The selected
@@ -228,13 +234,14 @@ mask, one-shot and delivered-command gates. These are conditional contact
 paths; they do not reconcile every pair before setup or load readers. Existing
 ingress/delivery boundaries retain their sender, processing and lifetime limits.
 
-The [selected closure boundary](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0362/selectedAlwaysAtWarClosureBoundary)
+The
+[selected closure boundary](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0362/selectedAlwaysAtWarClosureBoundary)
 binds the named remaining relation generations, normal refusal continuations
-and construction/load seams. The relation matrix is `0x830ED2D8`, stride8.
-War is0; a forbidden gameplay departure includes any nonzero replacement.
-Reset, input replacement, elimination and actual member publication require
-separate admission. Diagonal, unused and dynamic Barbarian cells are excluded
-from ordinary active-pair projection.
+and construction/load seams. The relation matrix is `0x830ED2D8` , stride8.
+War is 0. Any nonzero replacement would violate the proposed Always at War
+rule. Reset, input replacement, elimination and actual member publication
+require separate admission. Diagonal, unused and dynamic Barbarian cells are
+excluded from ordinary active-pair projection.
 
 The retained contact home at stack+0xC8 exposes three additional symmetric
 non-war pairs: `0x82CD11EC/F0` store3, `0x82CD1654/58` and
@@ -321,8 +328,9 @@ matching successful completion, bounded count, buffers and retained raw state
 remain conditions. Failed/short input and undelivered callbacks do not arm
 repair.
 
-These static implementation seams do not establish runtime acceptance. The named relation-storage generations are
-classified separately from producer refusal. The selected producer graph now
+These possible implementation points have not passed runtime acceptance.
+The named versions of relation storage are classified separately from the
+paths that can refuse a relation change. The selected producer graph now
 has pinned tag/call blocks and alternate-ingress checks, excluding39
 from the selected ordinary compiler-controlflow source family. Foreign calls,
 dynamic code changes and arbitrary computed interior entry remain outside
@@ -334,13 +342,13 @@ Multiplayer peer enforcement remains a separate later gate.
 ### Automatic AI contacts
 
 `aiContactSilenceBoundary` classifies eight literal-base WARANDPEACE loads in
-seven owners. Value2 bypasses selected ordinary negotiation, adds5 to contact
-age delay and conditionally sets transient status10000000 at82FFE7C4, read by
-the native D253B8 no-contact gate. It also changes a city threshold, Great Wall
-eligibility/effects and response history, so it is broader than contact silence.
-The special999999 demand can still reach presentation; universal silence does
-not follow. UpdateD1EAB0 clears the status bit, and ordinary negotiation can
-also set it.
+seven owners. Value 2 bypasses selected ordinary negotiation, adds 5 to the
+contact age delay and conditionally sets transient status 10000000 at
+82FFE7C4. The native D253B8 no-contact gate reads that status. It also changes
+a city threshold, Great Wall eligibility/effects and response history, so it
+is broader than contact silence. The special 999999 demand can still be
+presented, so this does not silence every contact. UpdateD1EAB0 clears the
+status bit, and ordinary negotiation can also set it.
 
 A conditional SP AAW guard can extend reached D25580 to its existing D255B0
 native return for a validated current-local-human/active non-Barbarian AI pair.
@@ -361,9 +369,10 @@ Helper aliases, normal return and the same retained receiver remain conditions.
 For a retained zero S+0x14, the accepted sender takes its missing-transport
 bypass. The selected publication below supplies a conditional same-S P/table
 writer. Actual invocation and retention through postpublication initialization
-are still required before selecting current P/virtual+0x0C at0x82CA45A8. No received invocation, absence of later writers,
-delivery or continuous all-pair war follows. The91-word packet passed native,
-independent encoding, explicit-store and mutation checks.
+are still required before selecting current P/virtual+0x0C at0x82CA45A8. No
+received invocation, absence of later writers, delivery or continuous all-pair
+war follows. The 91 native words passed comparison, independent encoding,
+explicit-store and mutation checks.
 
 ## Selected same-S transport publication
 
@@ -410,7 +419,7 @@ connected queue consumer and received processing remain open.
 `transportConstructorContextBoundary` binds `0x82CA07DC`: the selected helper
 stores its retained second argument at P+4, after two opaque helper requests.
 The accepted publication path supplies Q=U32[S+0x18]. This narrows the later
-current Q+0x18 frontier to a retained constructor argument; the word alone
+current Q+0x18 call target to a retained constructor argument; the word alone
 does not bind Q's table, effects or lifetime. Later initializer/current-call
 retention and any queued-E/received-command identity remain open.
 

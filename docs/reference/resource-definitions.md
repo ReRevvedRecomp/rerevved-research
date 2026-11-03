@@ -1,7 +1,7 @@
 # Resource definitions
 
-The 22-row table maps **Oxen 0** to technology **4, Horseback Riding**; Cattle
-19 uses 9, Code of Laws. The shared `Cow` token does not uniquely identify a
+The 22-row table maps **Oxen 0** to technology **4, Horseback Riding**.
+Cattle 19 uses 9, Code of Laws. The shared `Cow` token does not uniquely identify a
 resource. The [manifest](../../manifests/resource-definitions.json) records
 image, row and name hashes, readers and limits. The [placement
 reference](resource-placement.md) covers creation, refresh and retention.
@@ -66,8 +66,8 @@ otherwise `3`; 22 rows uniquely cover:
 | 5 | Desert | 3 | 2 Sulfur | 4 Oil | 12 Spices | - |
 | 6 | Mountain | 3 | 7 Uranium | 15 Gems | 21 Gold | - |
 
-Setting presence cannot choose an arbitrary resource identity; Oxen and Cattle
-need different remainders. This reader proves no map dimensions, legality,
+Setting presence cannot choose an arbitrary resource. Oxen and Cattle need
+different coordinate remainders. This reader proves no map dimensions, legality,
 yields, probabilities or completed placement. Its unread `+0x41` has separate
 [contribution consumers](../../manifests/resource-identity-override-boundary.json).
 
@@ -78,9 +78,9 @@ technology, then may pass UEA39 or player word `10`; prior selector-17 gate is
 separate from technology 17, Feudalism. Callee return/effects/player retention
 remain qualified, so nominal technology is no complete access rule.
 
-Distinguish valid `0`/absent `-1` and intrinsic identity/player availability.
-Arbitrary-ID setting, safe inverse placement, refresh/runtime retention remain
-unproved.
+Distinguish valid `0` from absent `-1`, and the resource's identity from a
+player's ability to use it. Setting arbitrary IDs, placing a chosen resource
+safely, refreshing it and retaining it at runtime remain unproved.
 
 ## Founding-center reward
 
@@ -120,9 +120,9 @@ these native destinations; definition `+0x41` is not this classifier.
 | 20 | Wheat | 0 | +10 Food reserve |
 | 21 | Gold | 3 | +10 Gold reserve |
 
-Food and Production target city reserves `+0x34` and `+0x36`. Classes 3 and 5
+Food and Production target city reserves `+0x34` and `+0x36` . Classes 3 and 5
 share the player Gold reserve destination. In this suffix, Spices therefore
-credits Gold; a reported Science increment is not explained by this native
+credits Gold. A reported Science increment is not explained by this native
 arm. No class 2 resource occurs in the 22-row classifier.
 
 Incense 11 and Silk 14 already have native class 4 entries and a +10 store

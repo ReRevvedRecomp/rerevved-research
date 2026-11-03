@@ -1,18 +1,20 @@
 # Controller prompt families
 
-The [controller prompt finding](../../manifests/controller-glyph-family-default-boundary.json)
-owns the static name and label boundaries for a proposed restart-required
-**Button Prompts: Xbox / PlayStation** option. No setting or hook was implemented.
-An owner-reported startup experiment forced the native family byte to zero
-while observed city prompts stayed Xbox. That byte is excluded as the
-implementation route. A second owner-reported experiment at `0x821E3018/r4`
-fired all 15 selected equal-size redirects and showed clean city PlayStation
-face prompts. Xbox LT/RT remained unchanged. It also requested native PS3
-shoulder names; this establishes availability, not the visible frame selector.
+The
+[controller prompt finding](../../manifests/controller-glyph-family-default-boundary.json)
+records the static name and label paths for a proposed restart-required
+**Button Prompts: Xbox / PlayStation** option. No setting or hook was
+implemented. An owner-reported startup experiment forced the native family
+byte to zero while observed city prompts stayed Xbox. That byte is excluded as
+the implementation route. A second owner-reported experiment at
+`0x821E3018/r4` fired all 15 selected equal-size redirects and showed clean
+city PlayStation face prompts. Xbox LT/RT remained unchanged. It also
+requested native PS3 shoulder names; this establishes availability, not the
+visible frame selector.
 
 ## Preferred filename redirect
 
-On external-image kind2, `0x821E300C` forms filename `r4`. Immediately before
+For external-image kind 2, `0x821E300C` forms the filename in `r4`. Immediately before
 the opener dispatch at **`0x821E3018`**, that pointer is the narrow redirect
 candidate. The selected name equation is `D=[request+0xC]`, `B=[D+0x18]`,
 `name=B+0xC`; the installed opener is `0x82E87B28`. Rewriting r4 before its
@@ -141,12 +143,13 @@ It does not assign these list glyphs to City151, Unit217 or Main149.
 Unit's selected writers are bound below; current source/storage and delivery
 remain conditional.
 
-The selected Unit callback spine preserves S through explicit native helpers
-and generic/current-virtual handlers. Its 111-word packet contains 108 instructions
-and three table cells, all image-equal. The eight-owner direct SetHelp-name
-model does not follow differently named AVM delegation. UpdateInfoDisplay
-below supplies that selected consumer join; current source/vector retention,
-helper effects and actual invoke retention remain conditions.
+The selected Unit callback path preserves S through explicit native helpers
+and generic handlers or current virtual targets. Its 111-word packet contains
+108 instructions and three table cells, all image-equal. The eight-owner
+direct SetHelp-name model does not follow differently named AVM delegation.
+UpdateInfoDisplay below supplies that selected consumer join; current
+source/vector retention, helper effects and actual invoke retention remain
+conditions.
 
 
 ## Unit UpdateInfoDisplay ingress
@@ -154,7 +157,7 @@ helper effects and actual invoke retention remain conditions.
 The selected native ingress is **0x82DEB950**, invoking
 `this.unitPanel.UpdateInfoDisplay`. Immediately before that call, the four
 icon pointers are **r9, r10, caller SP+84 and SP+92**. The stack offsets
-are decimal84/92, or **SP+0x54/SP+0x5C**. Their sources are four
+are decimal 84/92, or **SP+0x54/SP+0x5C**. Their sources are four
 words at r28+0/+4/+8/+12; r28 is loaded from current SP+260 at 0x82DEB320.
 The four help-text pointers come from a separate vector in r26. The eleven
 submitted arguments are strings; the first three are name/attack/defense
@@ -163,8 +166,8 @@ display inputs.
 In UnitStack sprite246, UpdateInfoDisplay at 0x8727 forwards (index,bN,sN)
 at 0x8774/0x8791/0x87AE/0x87CB to infoPanel.SetHelp. Placement 0x97DE selects
 sprite234; its four named buttonIcon children select glyph sprite217. This
-joins the retained native Unit callback/update spine to the actual movie
-consumer rather than selecting a generic root SetHelp by name.
+connects the retained native Unit callback and update path to the actual
+movie consumer. It does not rely on selecting a generic root SetHelp by name.
 
 The 72-word packet has 52 instructions and 20 data words, all image-equal.
 Current vector contents, parser/current invoke target, normal helper return
@@ -203,8 +206,8 @@ are complementary. The accepted B plus optional insertions fit cells 0..3;
 changed gate values can request cell 4, and no selected capacity check prevents
 it. Reuse the existing Unit217 label pairs and constructor/copy/storage guards.
 Current source/backing and invoke/movie/provider delivery remain conditional.
-This is selected native input coverage, without a runtime display or global
-single-letter-rewrite safety claim.
+This covers the selected native inputs. It does not establish a runtime
+display result or prove that rewriting single letters globally is safe.
 
 ## Complete labels and loading tips
 

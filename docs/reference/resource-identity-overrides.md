@@ -1,9 +1,10 @@
 # Resource identity overrides without terrain stores
 
-Oak/Oxen/Fish same-terrain overrides have conditional hooks/fresh-model routes.
-Oak also changes Forest child flags; retained terrain does not ensure identical
-drawing. Title freezes Resources before setup, allowing pending Balanced to
-control India, but publishes tiles at recount after native object attempts.
+Oak, Oxen and Fish can be selected without changing terrain through
+conditional hooks and paths that create new models. Oak also changes Forest
+child flags, so keeping the terrain does not ensure the same appearance. The
+title freezes Resources before setup, allowing pending Balanced to control
+India, but publishes tiles at recount after native object-creation attempts.
 
 The
 [override boundary](../../manifests/resource-identity-override-boundary.json)
@@ -51,10 +52,10 @@ The
 [runtime qualification](../../manifests/resource-identity-override-boundary.json#/runtimeEvidence/mixedIdentityObservation)
 records Balanced Oxen on native Cattle-remainder Grassland: it behaved as Oxen
 while Romans/Code of Laws also received Cattle food. Universal identity
-agreement remains open despite the direct census. Trace must distinguish stale
-bits/credits, independent formula, bypass or hook/context/order error; cause is
-unknown. Legendary retains this gate; presence-only Abundant can keep native
-identity.
+agreement remains open despite the direct census. A trace must distinguish
+stale bits or credits, an independent formula, a bypass, or an error in the
+hook, context or ordering. The cause is unknown. Legendary retains this gate;
+presence-only Abundant can keep native identity.
 
 ## Override and fresh visual creation
 
@@ -102,11 +103,11 @@ erase them: recount `0x82D11BD4..0x82D11BF0` applies `0xF4FB`, clearing
 alias/reader/writer census certify no spare bit/plane/ padding. Alternate
 streams/reconstruction remain separate.
 
-Sufficient sidecar: schema, frozen policy, rule/config identity, sorted unique
-`(tileIndex U16, ordinal U8)`; three records use nine payload bytes before
-header/save identity. Fixed Oak/Oxen/Fish roles could use three U16 indices plus
-absence encoding, not a proved native format/minimum. Multiple starts need
-conflict handling.
+A sufficient sidecar contains a schema, frozen policy, rule/configuration
+identity and sorted unique `(tileIndex U16, ordinal U8)` records. Three
+records use nine payload bytes before the header and save identity. Fixed
+Oak/Oxen/Fish roles could use three U16 indices plus absence encoding, not a
+proved native format/minimum. Multiple starts need conflict handling.
 
 [Save seams](save-storage.md): selected user/device namespace and normalized
 `+0x108` filename; before `bctrl 0x82D844C8` (return `0x82D844CC`), after final
@@ -151,11 +152,11 @@ Title freezes/stages Resources before native setup, consults pending Balanced at
 store hook, publishes tiles later. Publication alone cannot repair earlier
 object identity.
 
-Whole-arm removal changes RNG: counter `0x82D2328C`, state `0x82D2329C`,
+Removing the whole branch changes RNG state: counter `0x82D2328C`, state `0x82D2329C`,
 possible reduced state `0x82D232B4`. Pre-`0x82D23324` jump to `0x82D23330` ->
 count reload `0x82D23938` skips store/refresh `0x82D2332C`, retaining
 draw/offset. Call-only skip leaves presence; store-only skip still refreshes.
-`r3` is unused before merge, needing no invented success.
+`r3` is unused before the paths merge, so no synthetic success value is needed.
 
 This proves local flow, not omitted callback writes/transitive RNG/full-setup
 equivalence. Preserve player/coordinates/count/frame/save state and validate

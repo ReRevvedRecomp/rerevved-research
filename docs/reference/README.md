@@ -7,32 +7,32 @@ conditions.
 
 ## Units, cities, and civilization
 
-- [Unit definitions](unit-definitions.md) - records, production/cost/AI, Move staging and extension limits.
+- [Unit definitions](unit-definitions.md) - unit records, production costs, AI evaluation, Move commands and limits on adding definitions.
 - [Unit movement presentation](unit-movement.md) - translation timing, native snap and conditional acceleration seams.
-- [City Militia and trainable Scout](city-militia-scout.md) - founding/Loyalty/persistence and Scout requirements.
+- [City Militia and trainable Scout](city-militia-scout.md) - grants when founding cities, Loyalty, saved state and Scout requirements.
 - [Barbarian spawning and capital protection](barbarians.md) - garrisons, AI, production and the conditional static capital gate.
-- [Friendly village rewards](friendly-villages.md) - six development metrics, reward identities, priority alternatives and session-lifecycle limits.
+- [Friendly village rewards](friendly-villages.md) - six development measures, reward choices, priority rules and limits across games.
 - [Spy missions](spy-missions.md) - native choices, local selection policy and ordinary AI ingress limits.
 - [Ordinary combat boundary](ordinary-combat.md) - stats, random state, save/load requests, presentation and outcome limits.
 - [Nuclear actions](nuclear-actions.md) - AI unit production and launch gates, conditional interception, damage, missile consumption and effect limits.
 - [Civilization Unique Abilities](civilization-bonuses.md) - leaders, UAs and cumulative 16 by 4 UEAs.
-- [AI configuration boundaries](ai-options.md) - eight-civilization placement, participant storage, economic seams and bonus-aware valuation.
+- [AI configuration boundaries](ai-options.md) - placement of eight civilizations, participant storage, possible economy hooks and valuation of bonuses.
 - [City growth and population bonuses](city-growth.md) - thresholds, carryover and Gold/Irrigation rewards.
 - [Economy bonus correction contracts](economy-bonus-corrections.md) - retain Gold income and growth benefits while removing their cost penalties.
 - [Science and technology cost](science.md) - cost, progress, first-discovery rewards, acquisition,
   excess Gold and the spaceship launch-date admission boundary.
 - [Apollo Program discovery bonuses](apollo-discovery-bonuses.md) - virtual ownership,
-  direct acquisition, first-world eligibility and duplicate/replay boundaries.
+  direct acquisition, eligibility for first-discovery rewards and limits on repeats.
 
 ## Resources, setup, and saves
 
-- [Map size and terrain bias](map-size-terrain-bias.md) - fixed32 object indexing,
+- [Map size and terrain bias](map-size-terrain-bias.md) - object indexing with a fixed width of 32,
   dimensions, climate inputs and civilization start preference.
 - [Starting eras and game pace](scenario-era-and-pace.md) - scenario technology
   grants, movement input and independent progression surfaces.
-- [Resource definitions](resource-definitions.md) - 22 ordinals, names/tokens, technologies and terrain/remainders.
+- [Resource definitions](resource-definitions.md) - 22 resource entries, names and tokens, required technologies, terrain and coordinate remainders.
 - [Resource identity overrides](resource-identity-overrides.md) - type/models, Forest effects, persistence and India ordering.
-- [Resource density and placement](resource-placement.md) - presence, Settler coordinates, Iron and refresh/placement limits.
+- [Resource density and placement](resource-placement.md) - resource-presence flags, Settler coordinates, Iron and limits on placement and refresh.
 - [Save storage and slot identity](save-storage.md) - filenames, namespaces and sidecar seams.
 - [Game calendar state](game-calendar.md) - turn/year conversion, transitions,
   deadline admission and presentation limits.
@@ -62,7 +62,7 @@ conditions.
 
 ## Networking
 
-- [Xbox network messages](xbox-network-messages.md) - records/queues, native turn labels, human completion, serialization and wire limits.
+- [Xbox network messages](xbox-network-messages.md) - command records and queues, native turn labels, human turn completion, serialization and wire limits.
 - [Xbox System Link QoS boundary](xbox-system-link-qos.md) - lookup/results, action traces and discovery unknowns.
 
 Keep related strings, names, enums, fields and guards together. Catalogs own

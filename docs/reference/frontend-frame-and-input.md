@@ -1,9 +1,9 @@
 # Frontend, frame, and input ownership
 
 Frontend lifecycle, timing, application callbacks, availability and input have
-separate owners. Names are recovered, not debug symbols. Static continuations
-require their stated identities, normal ABI returns and stable nonalias state;
-runtime observations are identified explicitly.
+separate owners. Names are recovered, not debug symbols. The static paths
+require the stated identities, normal ABI returns and stable state without
+harmful aliasing. Runtime observations are identified explicitly.
 
 ## Frontend state identity
 
@@ -253,15 +253,16 @@ gates:
 
 ## Player-count setup
 
-`0x82D217C8` stores six at `0x82F700AC`, five at excluded-player `0x82F700B0`;
-nonzero `0x8314F180` overrides count to two/excluded index to retained r16.
-Override meaning/full provenance remain unknown. Initialization skips excluded
-ordinal; count, civilization, human status and capacity differ. Game-start
-reaches setup through a direct call chain. Human-mask helper clears, then copies
-nonzero source or folds player predicates. Clear bits do not prove ordinary AI,
-and key 2 does not distinguish create/load. New-game-only ingress and safe
-civilization omission remain unproved. See
-[setup boundary](../../manifests/player-count-setup-boundary.json).
+`0x82D217C8` stores six at `0x82F700AC` , five at excluded-player `0x82F700B0`
+; nonzero `0x8314F180` overrides count to two/excluded index to retained r16.
+Override meaning/full provenance remain unknown. Initialization skips the
+excluded ordinal. Count, civilization, human status and storage capacity are
+distinct. Game-start reaches setup through a direct call chain. The human-mask
+helper clears the mask, then copies a nonzero source or combines player
+predicates. Clear bits do not prove ordinary AI, and key 2 does not
+distinguish create/load. New-game-only ingress and safe civilization omission
+remain unproved. See
+[setup boundary](../../manifests/player-count-setup-boundary.json) .
 
 The inner -1 setup bypass does not establish cancellation of its enclosing
 game-start state. `0x82E60F70` does not compare the outer setup return before

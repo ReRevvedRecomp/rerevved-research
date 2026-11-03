@@ -3,12 +3,12 @@
 Resource-presence flags are written during terrain conversion, by two
 operations using record coordinates, and by a setup branch beside an initial
 Settler request. Conversion uses the fixed value `4.0` with mutable RNG and
-normalization state. No connection to scenario `RESOURCEDENSITY` is proved;
-setting it to `3` does not establish increased resources.
+normalization state. No connection to scenario `RESOURCEDENSITY` is proved.
+Setting it to `3` does not establish that more resources appear.
 
-Evidence terms: these are static, conditional contracts. Selected paths do not
-prove actual inputs, completed setup or runtime effects; claim-specific return,
-ownership and alias guards remain explicit.
+These findings describe static paths under stated conditions. They do not
+prove actual inputs, completed setup or runtime effects. Each claim retains
+its conditions on returns, ownership and aliasing.
 
 - [Density boundary](../../manifests/resource-density-generation-boundary.json): setting/search limits.
 - [Writer boundary](../../manifests/resource-density-generation-boundary.json#/placementWriterBoundary): locators and retention.
@@ -29,15 +29,16 @@ retention.
 | `2` | Record/local setup default |
 | Other signed16 values | Storage/copy only; gameplay effects/support unknown |
 
-No value maps to Sparse, Abundant, Legendary Start or Strategic Balance. Closed
-bounded negative searches do not prove the field unused.
+No value is identified as Sparse, Abundant, Legendary Start or Strategic
+Balance. Searches within the recorded limits do not prove that the field is
+unused.
 
 ## Presence, identity and the selected writer
 
-`0x82CF1558` requires presence `0x20`, clear `0x1001`, then matches
+`0x82CF1558` requires presence `0x20` , clear `0x1001` , then matches
 terrain/coordinate remainder against 22 definitions; player/context gates are
-separate. No per-tile ID plane is read. Definitions map identity; Iron's case
-follows below.
+separate. No per-tile ID plane is read. The definitions determine which
+resource is present. Iron's case follows below.
 
 Five stores in `0x82D0F0D0` convert old terrain `2`/`5` to `1`/`3` and
 conditionally OR `0x20`. Positive visitation count `2..8` and a second RNG
@@ -50,16 +51,18 @@ state/counter.
 The
 [count boundary](../../manifests/resource-density-generation-boundary.json#/placementWriterBoundary/componentCountBoundary)
 binds label traversal: each visited cell increments its class once; outer-seed
-terrain zero negates the count afterward, otherwise retains positive.
-Eligibility 2 through 8 is neither requested count nor map quota. Traversal can
-clear `7` to `0` while retaining cached terrain sign; later reads see changes.
-This visitation snapshot is not generally current/immutable component size;
-eight displacement pairs lack decoded geometry.
+terrain zero negates the count afterward, otherwise retains positive. The
+eligible range of 2 through 8 is not a requested resource count or map quota.
+Traversal can clear `7` to `0` while retaining cached terrain sign; later
+reads see changes. This count records the traversal and need not remain the
+current component size. The geometry of eight displacement pairs is
+unresolved.
 
-Producer-to-reader retention requires valid dimensions, disjoint planes/frames,
-bounded intermediate indices and finite helpers. Loaded bits stay in f31 through
-six copy sites to presence on such a continuation. Earlier value/initializer
-remain unknown: neither quarter-probability nor tuning knob is proved.
+Producer-to-reader retention requires valid dimensions, disjoint
+planes/frames, bounded intermediate indices and finite helpers. Loaded bits
+stay in f31 through six copy sites to presence on such a continuation. The
+earlier value and initializer remain unknown. This proves neither a
+one-in-four probability nor a usable setting for adjusting it.
 
 Copy preserves RNG/floating registers, writing destination and eight-byte
 below-stack save slot; valid disjoint ranges and saved-pointer retention must
@@ -219,11 +222,12 @@ remain separate gates.
 
 The
 [spawn-relative case](../../manifests/resource-density-generation-boundary.json#/initialSettlerSpawnBoundary/ironPlacementCaseBoundary)
-follows `0x82D23258` when civilization `0x830ECD28+4*p` equals `10`, identified
-as `Indian` by
-[row 10](../../manifests/civilization-bonus-storage.json#/storage/rows/10).
+follows `0x82D23258` when civilization `0x830ECD28+4*p` equals `10` ,
+identified as `Indian` by
+[row 10](../../manifests/civilization-bonus-storage.json#/storage/rows/10) .
 Creator result is unchecked; normal failure can still reach the writer under
-frame/register/input retention. Presence proves no successful Settler.
+frame/register/input retention. A resource-presence flag does not prove that a
+Settler was created successfully.
 
 RNG conversion scale `8.0` selects an offset. Retained table and index `0..7`
 yield `(0,1), (1,1), (1,0), (1,-1), (0,-1), (-1,-1), (-1,0), (-1,1)`. After
@@ -233,9 +237,10 @@ Normalization/index bounds, geometry/legal placement and full64 callback
 interpretation remain required; negative offsets mean low-word minus one. Scale
 proves no probability.
 
-This selects a tile, not ID; terrain/remainder determine identity, and OR may
-leave an existing resource unchanged. India's availability fallback follows
-technology/UEA39 calls and does not place resources; see the
+This selects a tile, not a resource ID. Terrain and coordinate remainder
+determine the resource, and the OR may leave an existing resource unchanged.
+India's availability fallback follows technology/UEA39 calls and does not
+place resources; see the
 [reader boundary](../../manifests/resource-definitions.json#/readerBoundary).
 
 Conditional Iron case: index `0`, `(a,b)=(X[p],Y[p]+1)`, `0<=X[p]<=39`,
@@ -253,18 +258,19 @@ inputs, actual admitted candidate and completed positive refresh.
 
 The
 [Iron/capital case](../../manifests/resource-density-generation-boundary.json#/ironCapitalCaseBoundary)
-binds ordinal `1`, record `0x82F6FB14`, name/token `Iron`. In domain `0..39` per
-coordinate, context `-1` returns it exactly for presence, clear `0x1001`, Hill
-`4`, and signed sum remainder zero modulo `3`, under memory/retention guards.
-Domain proves neither dimensions nor legality; ordinary players need
-availability gates. Presence cannot force Iron anywhere; conversion produces
-`1`/`3`, not `4`.
+binds ordinal `1` , record `0x82F6FB14` , name/token `Iron` . In domain
+`0..39` per coordinate, context `-1` returns it exactly for presence, clear
+`0x1001` , Hill `4` , and signed sum remainder zero modulo `3` , under
+memory/retention guards. Domain proves neither dimensions nor legality;
+ordinary players need availability gates. Setting presence cannot force Iron
+onto any tile. Conversion produces `1` /`3`, not `4` .
 
-Founding `0x82D18D88` conditionally marks a palace city and stores coordinates.
-`0x82D1A11C` reads that center; retained nonbarbarian player and result !=`-1`
-permit `0x82D1A148` clearing presence before rewards. This consumes center
-resource, not nearby placement. Counter/mask/input/entry/helper guards prevent
-treating the marker as unique current-capital resolver or observed instance.
+Founding `0x82D18D88` conditionally marks a palace city and stores
+coordinates. `0x82D1A11C` reads that center; retained nonbarbarian player and
+result !=`-1` permit `0x82D1A148` clearing presence before rewards. This
+consumes the resource on the city center. It does not place a resource nearby.
+Counter/mask/input/entry/helper guards prevent treating the marker as unique
+current-capital resolver or observed instance.
 
 [UEA36 continuation](../../manifests/resource-density-generation-boundary.json#/ironCapitalCaseBoundary/uea36RetentionBoundary):
 `0x82D199DC -> 0x82CF0CB0(36,p,0)`. The
@@ -313,7 +319,8 @@ distinguishes logical tile state from completed refresh and persistence.
 
 ### Terrain consumers and stale state
 
-Store `0x8312B288+i`, `i=40*a+b`, changes one byte without refresh. Resource,
+A store to `0x8312B288+i`, `i=40*a+b`, changes one byte without refreshing
+derived state. Resource,
 three yield accessors and movement admission `0x82CF0268` read it on their next
 admitted call; stored credits/assignments/routes/AI summaries do not.
 `0x82D00C78` can rescore normalized candidates, query food/production/trade and
@@ -336,12 +343,12 @@ return remain conditional. Query needs stable finite end and completing
 predicates/appends.
 
 `0x82D7FCB0` skips creation for nonnull begin/nonzero count, without type/name
-comparison or replacement. Terrain change plus `+0xF4` does not replace an
-existing visual. Empty result requires nonnull allocation `0x82D7FD2C` (null
-still dereferences), constructor `0x82E54250`, `+0x14` dispatch and `0x82C78D68`
-manager insertion, including further appends/refcount loops/ helpers.
-Completion/lifetime remain required; insertion alone proves no retained
-registration.
+comparison or replacement. Changing terrain and calling `+0xF4` does not
+replace an existing visual object. Empty result requires nonnull allocation
+`0x82D7FD2C` (null still dereferences), constructor `0x82E54250` , `+0x14`
+dispatch and `0x82C78D68` manager insertion, including further
+appends/refcount loops/ helpers. Completion/lifetime remain required;
+insertion alone proves no retained registration.
 
 `0x82D64B18` locally returns for terrain !=`3`; `3` uses `+0x118`/ `+0x120`
 child work, with targets in the manifest but completion conditional. Finite
@@ -353,8 +360,8 @@ unproved.
 
 City candidates are eight `{-1,0,1} x {-1,0,1}` offsets excluding `(0,0)`
 (Chebyshev radius one). Courthouse `+0x10` bit `0x4000` adds twelve radius-two
-boundary cells excluding four outer corners: twenty neighbors, or 21 with
-separately treated center, not necessarily worked/usable. Tables
+boundary cells excluding four outer corners: twenty neighbors, or 21 tiles including
+the separately treated center. They are not necessarily worked or usable. Tables
 `0x82F7A0B8`/`0x82F7A168`:
 [Courthouse scan](../../manifests/courthouse-city-coordinate-scan.json).
 
@@ -420,10 +427,12 @@ reload/reconstruction remain separate gates.
 
 The
 [feasibility boundary](../../manifests/resource-density-generation-boundary.json#/abundantLegendaryFeasibilityBoundary)
-owns consumers, locators, capacity and gates. Abundant conditionally adds native
-presence; Legendary preserves terrain/allows duplicates, needing identity
-overrides for nonmatches. Both require timing/consumer/new-object contracts;
-changing visible identities also needs replacement.
+records the consumers, locators, capacity and conditions. Abundant can add
+native resource-presence flags under those conditions. Legendary preserves
+terrain and allows duplicates, but needs identity overrides when the chosen
+resource does not match the native lookup. Both need correct timing, consumer
+coverage and new-object handling. Changing a visible resource also requires
+replacing its existing object.
 
 ### Presence consumers
 
@@ -482,7 +491,8 @@ writes where matching terrain exists:
 [Definition matrix](resource-definitions.md): `0x82F6FAD0`, 22 rows of `0x44`,
 terrain `+0x40`, remainder `+0x42`. Mountain means terrain `6`, not an inferred
 class in unnamed `+0x41`. Unsupported terrain has no match. Two Grassland/two
-water/two Forest is an owner premise, not a universal native ring census.
+water/two Forest is an owner-supplied assumption. It is not an established
+native count for every ring.
 
 ### Legendary identity choices
 
@@ -509,11 +519,11 @@ or its cause. Native matches without active/stale overrides avoid that source of
 disagreement, but still need presence/cache/visual gates. Preserve native
 technology/context filtering.
 
-Duplicates remove distinct-type capacity limits. Freeze one choice per physical
-cell across overlapping rings; preserve all centers, even inside other rings.
-Resolve clipped/forbidden/unsupported/fallback conflicts before writes. Log and
-retain Normal for impossible starts; another ring must not invalidate that
-fallback.
+Allowing duplicates removes the need for enough distinct resource types.
+Freeze one choice per physical cell across overlapping rings; preserve all
+centers, even inside other rings. Resolve
+clipped/forbidden/unsupported/fallback conflicts before writes. Log and retain
+Normal for impossible starts; another ring must not invalidate that fallback.
 
 ### Terrain construction and hook contract
 
@@ -558,17 +568,17 @@ before load consumers via
 
 ## Mutation seam and native setup order
 
-No shared mutation seam is certified. The selected native setup path constructs
-the scene and attempts resource creation before later player assignment and
-presence writers. Abundant needs the final native count; Legendary can change an
-existing identity. Neither the setup return nor recount satisfies both
-requirements.
+No common hook point for changing resource state is certified. The selected
+native setup path constructs the scene and attempts resource creation before
+later player assignment and presence writers. Abundant needs the final native
+count; Legendary can change an existing identity. Neither the setup return nor
+recount satisfies both requirements.
 
 The
 [mutation seam
 boundary](../../manifests/resource-density-generation-boundary.json#/abundantLegendaryFeasibilityBoundary/mutationSeamBoundary)
 owns this partial order, exact registers, packet evidence and remaining gates.
-It is not a total first-frame timeline.
+It does not establish the complete order through the first frame.
 
 | Selected order | Addresses | Presence/identity and retained state |
 |---|---|---|
@@ -651,7 +661,7 @@ passes, so it does not count `9999` draws and is no general oracle.
 Freeze once per accepted launch; preserve terrain/centers/native resources,
 define host admission, measure final N, select finitely and log capacity/count.
 Publish before affected reads/first creation or prove replacement/cache rebuild.
-No current address satisfies this complete contract.
+No currently identified address satisfies all these requirements.
 
 ## Paired new-game setup probe contract
 
@@ -819,8 +829,8 @@ seam.
 
 Unknown readers/fields, event loss, unordered threads, unexercised caches,
 ambiguous epochs/endpoints and incomplete object-lifetime evidence are
-inconclusive. A cache not entered during the pair is not exercised, rather than
-proved absent or safe. These two observer-only launches can prove observed order
+inconclusive. A cache not entered during the pair remains untested. Its absence or safety
+is not proved. These two observer-only launches can prove observed order
 or reject a candidate.
 
 They do not prove added resources propagate to every consumer or all supported

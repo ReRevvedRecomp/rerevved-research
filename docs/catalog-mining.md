@@ -1,8 +1,8 @@
 # Catalog mining method
 
-Mining answers a bounded guest-code question. Topic manifests retain evidence;
-catalogs retain reusable symbols, layouts, vtables, slots and explicit
-relations. Formats/tools: [topic manifests](topic-manifests.md),
+Mining answers a bounded guest-code question. Topic manifests retain the
+evidence. Catalogs retain reusable symbols, layouts, vtables, slots and explicit
+relations. Formats and tools: [topic manifests](topic-manifests.md),
 [catalogs](catalogs.md), [headless workflow](workflow.md).
 
 ## Investigation scope

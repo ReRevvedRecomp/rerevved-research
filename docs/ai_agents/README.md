@@ -1,13 +1,14 @@
 # Automated and AI-assisted contributions
 
-Contributors own every automated/AI-assisted claim and must explain its source,
-scope, confidence and evidence under the ordinary contribution contract.
+Contributors are responsible for every automated or AI-assisted claim.
+Explain its source, scope, confidence and evidence under the ordinary
+contribution contract.
 Automation is not guest evidence: findings start from retail data with
 [evidence-model](../evidence-model.md) locators. Ghidra, generated code, logs
 and external material aid interpretation, not independent correctness.
 
-Reference pages hold settled findings; manifests/workflow records hold locators
-and reproducible methods. Tracked Markdown/records exclude prompts, assignments,
+Reference pages hold settled findings. Manifests and workflow records hold
+locators and reproducible methods. Tracked Markdown/records exclude prompts, assignments,
 handoffs, session plans/self-review, machine/private paths, branch/checkpoint
 administration, retry diaries, opaque milestones, raw decompiler output and
 private title material.

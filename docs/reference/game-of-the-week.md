@@ -8,9 +8,10 @@ with mode 3.
 
 ## Settings input contract
 
-Boolean `gotw_custom_seed` defaults `false`: unchecked/no week override uses
-shared weekly selection; checked enables manual seed. Explicit week is
-independent; seed-only retains native week, inferring no historical one.
+Boolean `gotw_custom_seed` defaults to `false`. With the box unchecked and
+no week override, the game uses the shared weekly selection. Checking it
+enables a manual seed. An explicit week is independent: choosing only a seed
+retains the native week and does not infer a historical week.
 
 After native session `==1`, pre-`0x82E76ED4 -> 0x82DADC88` has fresh setup r3,
 week r4, zero r5; entry LR `0x82E76ED8` identifies origin.
@@ -21,10 +22,11 @@ week r4, zero r5; entry LR `0x82E76ED8` identifies origin.
 | `true` | Validate [content membership](#content-backed-seeds-and-dlc-error); zero-extend seed into r5 at `0x82E76ED4`, reapply before `0x82D91A94` only for `+4 == 2`/matching launch. Week follows independent replay policy. |
 
 Preserve session/mode/setup, registers, condition state, frame/memory; change
-argument only, not global seed/clock. Low32 r5 zero means automatic even if
-upper bits are set. Explicit stores all 32 bits at `+0x138`, admitting
-`1..4294967295` without signed-positive/range checks; content supports less.
-Automatic zero is not locally excluded; acceptance proves no generation/loading.
+argument only, not global seed/clock. Low32 r5 zero means automatic selection
+even if upper bits are set. An explicit seed stores all 32 bits at `+0x138` ,
+admitting `1..4294967295` without checking for a positive signed value or a
+narrower range. Content supports fewer seeds. Automatic zero is not locally
+excluded. Acceptance alone proves neither generation nor loading.
 
 ## Week, seed and civilization
 
@@ -40,7 +42,8 @@ era; entry handler sets difficulty. Selection/civilization counts are separate
 samples requiring stable configuration. Zero-divisor traps follow week/seed
 stores and can leave partial state.
 
-Same seed across weeks/counts need not preserve civilization. Supply it before
+The same seed need not select the same civilization with a different week
+or different counts. Supply it before
 writer and player-slot publication `0x82E76F14`. Generation `0x82D0F13C` samples
 `+0x138`; `0x82D0F154` clears `0x82F7AD04`, `0x82D0F164` copies seed to
 `0x82F7AD00`, without local zero/mode test.
@@ -74,8 +77,9 @@ keys; wider nonzero writer domain supplies no textures.
 
 ## Map source and later seed changes
 
-MapList yields scalar seed/possible prebuilt-texture key, not terrain/scenario.
-Changing ordinal neither supplies arbitrary seed nor prevents overwrites.
+MapList supplies a scalar seed that may also be a key for prebuilt textures.
+It does not supply terrain or a scenario. Changing its ordinal neither supplies
+an arbitrary seed nor prevents later overwrites.
 `0x82D86AD0` passes zero/named-map pointer according to `0x8314F252`;
 constructor r3 is name, not setup. Successful `0x82D0ADE0` `.map` load bypasses
 `0x82D0F0FC`; otherwise enters `0x82D0F100`.
@@ -202,10 +206,11 @@ targets/effects/ordered generation delivery remain conditional despite the bound
 later overwrite.
 
 Latch manual origin independently of checkbox changes. Result namespace uses
-week `+0x134`; property `0x20000038` label "Seed" means week, not `+0x138`.
+week `+0x134` ; property `0x20000038` label "Seed" means week, not `+0x138` .
 Guard local score/week caches and base/victory-child submissions from
-classifying custom results as shared challenge. Final host filtering alone does
-not prove local protection. Retain session/failure cleanup. The selected
+classifying custom results as shared challenge. Filtering only the final host
+submission does not prove that local caches are protected. Retain
+session/failure cleanup. The selected
 [save/load boundary](#saving-and-loading) separates native record requests
 from unproved custom-origin/rules/profile persistence. No leaderboard support
 is required.
@@ -416,10 +421,10 @@ Week and seed controls are independent:
 | Seed only | Native week | Chosen seed |
 | Both | Chosen week | Chosen seed |
 
-Seed-only must not silently choose a past week. Validate any manual seed against
-the set supported by content when retaining numbered textures. Latch the
-original native week separately from effective week, seed policy, both custom
-flags and the accepted launch/setup identity before `0x82E76ED4`.
+Choosing only a seed must not silently select a past week. Validate any manual
+seed against the set supported by content when retaining numbered textures.
+Latch the original native week separately from effective week, seed policy,
+both custom flags and the accepted launch/setup identity before `0x82E76ED4` .
 
 Before both `0x82E76ED4` and `0x82D91A94`, substitute zero-extended effective
 week in `r4` when selected, and the same latched seed policy in `r5`. Let the

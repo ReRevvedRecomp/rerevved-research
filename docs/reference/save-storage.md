@@ -28,11 +28,11 @@ original encoding.
 
 ## Selected-user owner lifetime boundary
 
-The `0x78`-byte owner initially publishes via `0x8314EFE0`. Exact inventory has
-107 READ rows/65 functions plus three data sources, no modeled WRITE. Builder/
-constructor reduce to non-returning thunks; `0x82E633C0` truncates on bad data.
-Teardown, republication and profile-service `+0x18` lifetime remain unproved,
-not excluded elsewhere.
+The `0x78`-byte owner is initially published through `0x8314EFE0`. The exact
+inventory has 107 READ rows in 65 functions plus three data sources, with no
+modeled WRITE. The builder and constructor reduce to non-returning thunks;
+`0x82E633C0` truncates on bad data. Teardown, republication and profile-service
+`+0x18` lifetime remain unproved. They are not excluded elsewhere.
 
 ## Recovered functions
 

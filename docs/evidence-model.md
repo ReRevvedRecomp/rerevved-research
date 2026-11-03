@@ -11,9 +11,10 @@ Promoted findings need:
 - Static/dynamic locators for behavioral claims.
 - Unresolved alternatives or falsification conditions.
 
-Evidence terms: "accepted" means supported within recorded scope; "selected"
-identifies inspected paths, not exhaustive coverage. Bounded negatives exclude
-only tested forms. Preserve claim-specific guards, unknowns and runtime limits.
+"Accepted" means supported within the recorded scope. "Selected" identifies
+the paths inspected; it does not imply exhaustive coverage. Negative results
+exclude only the forms tested. Preserve each claim's conditions, unknowns and
+runtime limits.
 
 Keep raw decompilation local; publish names, addresses, signatures, layouts,
 call edges and short summaries. Consumers explicitly adopt/copy findings;

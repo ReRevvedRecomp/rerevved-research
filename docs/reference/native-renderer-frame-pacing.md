@@ -2,9 +2,9 @@
 
 The
 [frame-pacing manifest](../../manifests/native-renderer-guest-frame-pacing.json)
-bounds static timing/waits from playable callback to presentation; it
-establishes neither simulation ownership, fixed tick nor rendering on every
-timing update. Callback `0x82E87D18` calls `0x82C7DF58`, dispatching timing slot
+records static timing and waits from the playable callback to presentation.
+It establishes neither ownership of simulation, a fixed tick nor rendering on
+every timing update. Callback `0x82E87D18` calls `0x82C7DF58`, dispatching timing slot
 `+0x8` at `0x82C7DF84`, then manager work. Entry r4 low byte nonzero permits
 `0x82C7E104 -> 0x82C71A00`; zero reaches `0x82C7E118`. Both return `1`.
 

@@ -1,7 +1,7 @@
 # GFx state and MovieClipLoader requests
 
-This static flow joins GFx state lookup, MovieClipLoader requests and
-fulfillment. Names are recovered, not debug symbols; runtime evidence is stated
+This static flow connects GFx state lookup, MovieClipLoader requests and
+fulfillment. Names are recovered, not debug symbols. Runtime evidence is stated
 explicitly.
 
 ## State bag and owner forwarding interface
@@ -55,7 +55,8 @@ Attachment queries `State_TaskManager` key `0x16` through owner `+0x10`:
   selecting `0x82227EF0` or `0x822270F8` and appending non-null construction
   through `+0x224`. Both constructors repeat that keyed lookup.
 
-Null is expected fallback, not evidence of missing setter/fault. Provider and
+Null selects the expected fallback. It is not evidence of a missing setter
+or a fault. Provider and
 wider request/result container types remain unknown.
 
 ## Non-convergence boundary

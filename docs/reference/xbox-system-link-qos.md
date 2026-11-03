@@ -1,7 +1,8 @@
 # Xbox System Link QoS boundary
 
-Static calls and controlled menu traces are separate evidence, neither a
-complete System Link implementation nor an online-play guide. Unless explicitly
+Static calls and controlled menu traces provide separate evidence. They do
+not establish a complete System Link implementation or provide an online-play
+guide. Unless explicitly
 bound, objects, fields, slots, literals and helpers remain neutral: no class,
 visible action, resource-loading, session, advertisement/discovery, transport,
 delivery, ordering or synchronization semantics follow from a call tuple.
@@ -73,8 +74,9 @@ UI/unit commands, not these dispatches. Resource string `0x8211FFB0` has no
 modeled reference, tested split-address use or aligned initialized pointer:
 naming is only a lead.
 
-Canonical-Boolean-enabled entry probe `0x82DECB20` logged nothing on controlled
-Y press; normal exit captured no command/receiver. Other contexts remain
+The entry probe at `0x82DECB20`, enabled with a canonical Boolean, logged
+nothing on a controlled Y press. The process exited normally without capturing
+a command or receiver. Other contexts remain
 possible. Buffer layout, Refresh ownership, host/client direction, relay and
 Internet play remain unresolved alongside the page-wide networking limits.
 
@@ -263,8 +265,9 @@ Wrapper `0x827F10D0` inserts caller one before five title arguments to
 | `0x82C99018` / `0x82C99048` | `+0x0C`, `+0x08`, `+0x04`*12, zero, operation 5; true iff wrapper zero |
 | `0x82C99060` / `0x82C99094` | `+0x0C`, three zeros, operation 16; walks `+0x08`, conditionally routes element/base through `0x82D3D9F0`, writes first-word sentinel, clears `+0x08` |
 
-Model has no callers, not proof of disuse. Operations/payload, host/client,
-advertisement/discovery/transport and menu/state linkage remain unknown.
+The model has no callers. That does not prove that the code is unused.
+Operations/payload, host/client, advertisement/discovery/transport and
+menu/state linkage remain unknown.
 
 ### Direct socket and XNet calls
 

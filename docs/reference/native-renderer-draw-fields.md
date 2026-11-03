@@ -30,8 +30,9 @@ variants differ.
 
 ## Device state and lifetime
 
-Flush reads/clears dirty +0x00/+0x08/+0x10/+0x18/+0x20; sampler store 0x8268F058
-targets device +0x18. Flush also reads +0x28; writer/meaning remain unknown.
+Flush reads and clears dirty +0x00/+0x08/+0x10/+0x18/+0x20. The sampler store
+at 0x8268F058 targets device +0x18. Flush also reads +0x28, whose writer and
+meaning remain unknown.
 
 Distinct bindings: streams +0x30AC by index; fetch shadows +0x6F0/+0x6F4 with
 8-byte indexing; stride bytes +0x30F0; textures +0x3100 by stage; fetch shadow

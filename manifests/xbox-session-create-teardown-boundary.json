@@ -16,7 +16,7 @@
     "destructorBody": "0x82C9BB38",
     "teardownWrapper": "0x82C9ACC0",
     "teardownRequestProducer": "0x82A1EDA0",
-    "boundary": "This packet enumerates the modeled exits of 0x82A1EB38, its sole bounded raw direct caller, and one conditional vtable-to-teardown-request chain for caller field +0x4C. It does not prove that message 0x000B0011 is a delete operation, that every created handle reaches the destructor, assign host or client semantics to the r9 branch, cover indirect or asynchronous ownership, or establish runtime cleanup behavior."
+    "boundary": "This packet enumerates the modeled exits of 0x82A1EB38, its sole bounded raw direct caller, and one conditional vtable-to-teardown-request chain for caller field +0x4C. It does not prove that message 0x000B0011 is a delete operation or that every created handle reaches the destructor. It neither assigns host or client semantics to the r9 branch nor covers indirect or asynchronous ownership, and it does not establish runtime cleanup behavior."
   },
   "dependencies": [
     {
@@ -105,7 +105,7 @@
     "qualification": "The teardown-wrapper call is conditional on the field guard. Within 0x82A1EDA0, both the request and dereference are conditional on reference-helper success. No accepted static edge proves that every handle retained by G6 or G7 reaches this vtable path."
   },
   "boundedNegative": {
-    "result": "The all-path four-operation teardown claim is not supported inside the accepted static closure. Six create-wrapper exit groups perform no close and call neither 0x82A1EDA0 nor 0x82E92314; two groups close and reset to zero but call neither function. The sole direct caller cleans up a separate temporary handle only.",
+    "result": "Within the accepted static scope, the evidence does not support the claim that all paths perform all four teardown operations. Six create-wrapper exit groups perform no close and call neither 0x82A1EDA0 nor 0x82E92314; two groups close and reset to zero but call neither function. The sole direct caller cleans up a separate temporary handle only.",
     "effect": "A distinct destructor chain can submit message 0x000B0011, dereference, close, and reset field +0x4C to -1, but the request's delete identity and lifecycle reachability from retained create results are unresolved.",
     "remainingGate": "Independently identify message 0x000B0011 and prove whether every retained result from G6 and G7 reaches vtable target 0x822E5520 without bypassing the guarded request, dereference, close, and reset chain."
   },

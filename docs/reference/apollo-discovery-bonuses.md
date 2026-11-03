@@ -1,12 +1,13 @@
 # Apollo Program technology and discovery bonuses
 
 The [canonical finding](../../manifests/apollo-technology-discovery-bonuses.json)
-records Apollo's virtual ownership shortcut, guarded completion and direct
-acquisition semantics. Its selected native provider, returned F for technology 4,
-all 46 reward rows and conditional native return are resolved. A deferred
-per-entry grant/presentation candidate is specified separately. Its scheduling,
-save/load and common-peer acceptance contracts are not an implemented feature
-or proof of natural reward delivery.
+records how Apollo makes technologies count as owned, how its guarded
+completion works and what direct acquisition does. The selected native provider,
+returned F for technology 4, all 46 reward rows and conditional native return
+are resolved. A separate proposal would grant each eligible technology and
+present its reward after native completion work. Scheduling, save/load and
+agreement across peers still need acceptance. This is not an implemented
+feature or proof that rewards are delivered during ordinary play.
 
 ## Virtual ownership and raw first-world eligibility
 
@@ -21,7 +22,8 @@ Technology query 0x82CEF6A8 calls that query at 0x82CEF704. Active Apollo makes
 supported technologies 1..46 return owned before the raw ownership read.
 Technology 47 retains the ordinary bit path; 0 returns false and sentinel -1
 returns true. Neither complete query requests acquisition 0x82D09208. This
-does not establish a separate retail mass-materialization producer.
+does not establish a separate retail path that actually acquires all those
+technologies.
 
 Generic acquisition reads the entire raw word
 `W=U32[0x830EDC48+4*t]` at 0x82D09318 and ORs player p's bit at 0x82D0937C,
@@ -33,14 +35,14 @@ discoverer p at 0x82D0932C and shared F=1 at 0x82D09330. Source is written at
 through its virtual-ownership guard; direct acquisition is not an isolated,
 idempotent reward API.
 
-The unclaimed candidate admits ascending t in 1..46 only when the whole raw word
-is 0, rechecking immediately before each phase 1 call and retaining that premise
-through the native read. W!=0 is excluded even if only another civilization
-owns it, or source 6 suppression, recipient failure or another native rule
-prevented an earlier reward. Raw ownership, discoverer, source and tally are
-not completed-award receipts. The W0 criterion is not a historical ledger
-covering external state changes or another timeline; it supplies no authority
-to repair or reissue a raw-claimed bonus.
+The unclaimed candidate admits ascending t in 1..46 only when the whole raw
+word is 0, rechecking immediately before each phase 1 call and retaining that
+premise through the native read. W!=0 is excluded even if only another
+civilization owns it, or source 6 suppression, recipient failure or another
+native rule prevented an earlier reward. Raw ownership, discoverer, source and
+tally do not prove that an award was delivered. The W0 criterion does not
+track external state changes or another timeline. It cannot justify repairing
+or reissuing a bonus whose raw ownership word is already claimed.
 
 Source 6 writes the early records before clearing F. Exact phase 2 also writes
 raw ownership and source, without the odd-phase tally or Irrigation store.
@@ -53,8 +55,9 @@ production, copies item 217 to city+0x3A and clears current item+0x38 only when
 the saved second entry argument is 0. The helper call is
 `0x82D16BA0(17,c,1,0)`. Its r4 is a city, not an acquisition player; p must come
 from the supported retained city owner and agree with the published claim.
-The absent-claim gate and conditional item clear are local repeat barriers,
-not a universal safe partial-retry theorem.
+The absent-claim check and conditional item clear prevent repeats on these
+local paths. They do not prove that every partially completed attempt can be
+retried safely.
 
 Retained 17 bypasses the second mode 2 helper at 0x82D16374 for either byte-gate
 value, then publishes city+0x24 pending Wonder bit 0x1000. At 0x82D16388 the
@@ -87,14 +90,14 @@ Irrigation reward.
 
 ## Sharing, provider and returned technology 4 F
 
-For W0 and t!=4, the admitted one-bit corridor bypasses sharing before native
-suppressors. Technology 4 additionally samples q at 0x82F700B0. Supported q==p
-leaves one raw bit, q!=p adds a second at 0x830EDC58, and sentinel -1 skips the
-extra store. Initialized q=7 is not evidence of its current value. With a
-positive supported player bound, the selected 16-bit count can admit source 5
-recursion at
-0x82D094BC/0x82D0951C. Exact phase 1 excludes the second arm, not necessarily
-the first; outer F is not saved/restored around recursion.
+For W0 and t!=4, the admitted path with one ownership bit bypasses sharing
+before the native suppressors. Technology 4 additionally samples q at
+0x82F700B0. Supported q==p leaves one raw bit, q!=p adds a second at
+0x830EDC58, and sentinel -1 skips the extra store. Initialized q=7 is not
+evidence of its current value. With a positive supported player bound, the
+selected 16-bit count can admit source 5 recursion at 0x82D094BC/0x82D0951C.
+Exact phase 1 excludes the second arm, not necessarily the first; outer F is
+not saved/restored around recursion.
 
 The first selected recursive tuple is `(j,4,-1,5,1)`. Exact argument moves,
 complete query and original save25/restore25 suffixes retain r5=-1; ordinary
@@ -149,8 +152,8 @@ remain intact.
 The canonical matrix covers every t in 1..46: prerequisites, unit+0x4A first-reward
 matches, separate unit+0x4E availability captions, old-type+0x4C matches,
 building+0x42 matches, actual special target, government offer and obsolete
-Wonder. It is complete conditional native dispatch coverage, not a claim that
-every technology grants a reward or every allocation succeeds.
+Wonder. It covers every native dispatch under the stated conditions. It does not
+claim that every technology grants a reward or every allocation succeeds.
 
 - Units scan 38 definitions, excluding type 27. Recipient selection scans 128
   cities with matching nonnegative owner and positive population; definition
@@ -231,8 +234,8 @@ Completion marker 0x830E3348[p] and context 0x830E3328[p] differ from selected
 research 0x830EDD48[p] and recursive marker 0x830E3430. Ordinary phase 1 publishes
 one technology and later 0x82D1D460..47C consumes one source 0/phase 2 request.
 Two phase 1 entries cannot both survive that scalar slot. Shared R can also
-be overwritten at 0x82D0A208 before its 0x82D0A214 reader. Normal delayed sweeps
-therefore cannot preserve a batch.
+be overwritten at 0x82D0A208 before its 0x82D0A214 reader. The ordinary delayed processing
+therefore cannot preserve a batch of grants.
 
 Immediate grants at 0x82D16344 have another concrete defect. Apollo's pending
 Wonder bit 0x1000 marks work that later reads city+0x3A. The reader at
@@ -254,11 +257,13 @@ reentrancy lock; native nested command dispatch remains possible.
 
 Marker values alone cannot establish readiness. Reset 0x82D1F4EC writes -1,
 which the literal nonzero reader still admits; a consumed positive marker can
-retain identical bits. Track actual 0x82D20C18 publications, select the generation
-at 0x82D1D460 and consume only it when its 0x82D1D47C request fully returns at
-0x82D1D480. A newer nested publication remains pending. Direct batch phase 2
-is not a native marker-consumption receipt. A bypassed/filtered consumer
-defers drain until actual completion; all-mode eventual drain is not proved.
+retain identical bits. Track actual 0x82D20C18 publications, select the
+generation at 0x82D1D460 and consume only it when its 0x82D1D47C request fully
+returns at 0x82D1D480. A newer nested publication remains pending. Running
+phase 2 directly for a batch does not prove that the native marker was
+consumed. If the consumer is bypassed or filters out the request, draining the
+queue waits for actual completion. Eventual draining in every mode is not
+proved.
 
 For each ascending fresh W0 entry, run `(p,t,c,0,1)` to full native return,
 then `(p,t,c,0,2)` to full native return before t+1. Recheck current game,

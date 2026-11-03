@@ -87,11 +87,19 @@ all-city execution. Exact guards/alternatives:
 
 ## Population capacity
 
-Population is a signed byte at city+3. City records start at 0x8314FE28 with stride 188. Positive 127 is representable, but is not a safe population cap.
+Population is a signed byte at city+3. City records start at 0x8314FE28 with
+stride 188. The byte can represent positive 127, but that does not make it a
+safe population cap.
 
 CityUpdate clamps signed population at least 32 to 31. Ordinary food growth additionally selects ceilings 9, 17 or 32 from a signed definition halfword, storing ceiling minus one. Hanging Gardens and Statue of Liberty clamp their grants to 31; the economic reward admits populations 1 through 30. Irrigation has no local below-31 guard, so this evidence does not establish a universal invariant across every transient writer.
 
-The population refresh helper reads/writes one assignment byte for each reached citizen ordinal, starting at city+0x58, and tests a citizen-ordinal lock bit. The separate word at city+0x78 follows a 32-byte interval. A reached ordinal-32 assignment overlaps that word. CityUpdate, assignment counting/matching/classification and command 8 have additional population-length assignment accesses. Bounding only the refresh store leaves other accesses unsafe.
+The population refresh helper reads/writes one assignment byte for each
+reached citizen ordinal, starting at city+0x58, and tests a citizen-ordinal
+lock bit. The separate word at city+0x78 follows a 32-byte interval. An
+assignment at ordinal 32 overlaps that word. CityUpdate, assignment counting,
+matching and classification, and command 8 also access assignments according
+to population. Limiting only the refresh store leaves those other accesses
+unsafe.
 
 Native handling of unassigned citizens has a separate capacity limit. Helper
 0x82CE1C10 clears eight output words but indexes them by floor(ordinal/6).
@@ -99,7 +107,7 @@ Population 127 needs 22 buckets. Cost helper 0x82CF7E30 initializes 33
 population-indexed entries, 0..32; higher populations read outside those
 initialized entries. A larger-city design that preserves the byte layout must
 specify both policies and their callers. A population of thirty-two or 48
-fitting one capacity does not establish a safe cap.
+fitting one structure does not establish a safe cap for the whole city.
 
 The growth formula uses arithmetic rather than a population-indexed food
 table. For a nonnegative unmodified factor F, population 127 requires F<=258

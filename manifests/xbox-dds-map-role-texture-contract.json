@@ -19,7 +19,7 @@
   "dependencies": [
     {
       "topic": "xbox-dds-map-role-consumer-boundary",
-      "use": "RVA-F-0371 fixes distinct role requests, type7 cold dispatch and the shared parser/upload frontier.",
+      "use": "RVA-F-0371 fixes distinct role requests and type7 cold dispatch, and bounds the remaining questions about the shared parser/upload path.",
       "locators": ["xbox-dds-map-role-consumer-boundary.json#/roles", "xbox-dds-map-role-consumer-boundary.json#/type7CreationBoundary", "xbox-dds-map-role-consumer-boundary.json#/sharedDdsParser"]
     },
     {
@@ -114,7 +114,7 @@
     "orderingAndLength": "0x825851BC..0x825853C0 walks each face's declared mip sequence, advances by computed level bytes and halves each dimension unless already 1. Each level requires enough remaining payload at 0x82585374/0x8258537C. The selected palette-class branch first consumes 1024 bytes at 0x82585194..0x825851B4; no claim of reachable palette membership is made.",
     "nativeTiling": "0x82578E00 can untile source through 0x826B8060->0x826B7920 when source 0x100 is set, or tile a destination temporary through 0x826B7E00->0x826B7550 at 0x8257948C. The ordinary DDS source bit is clear. Source pitch and native destination pitch are distinct, and native 32-block/page alignment is not a DDS file-padding requirement.",
     "bytePreservingArm": "0x8258AC18 creates conversion objects through 0x82596178, calls pre-copy helper 0x8258BB50, then tries 0x82587F60. Admission at 0x82587F78..0x82587FDC requires equal regions and formats equal modulo mask 0x1C0; row copies at 0x82588098..0x825880CC require object+12 nonzero. Interior 0x8258B928 of base owner 0x8258B880 sets that field from nonzero bits-per-pixel; zero takes DXT-only aligned arm 0x825879F0. The admitted row-copy operation is byte-preserving. This does not close parser, lock or cleanup representation effects surrounding the copy.",
-    "heightEncodingConsequence": "OPEN: the local same-format row copy does not establish file-to-CPU sample byte identity. Retail numbered-map files exhibit LE16 samples, while 0x82C69850 consumes unsigned BE16. The native representation transfer remains unbound; do not prescribe BE16 file samples from the CPU load alone. See xbox-heights-authoring-contract.json#/sourceFormat/payload for swap frontiers and xbox-heights-authoring-contract.json#/retailObservedProfile for the observed writer candidate.",
+    "heightEncodingConsequence": "OPEN: the local same-format row copy does not establish file-to-CPU sample byte identity. Retail numbered-map files exhibit LE16 samples, while 0x82C69850 consumes unsigned BE16. The native representation transfer remains unbound; do not prescribe BE16 file samples from the CPU load alone. See xbox-heights-authoring-contract.json#/sourceFormat/payload for unresolved byte-swap paths and xbox-heights-authoring-contract.json#/retailObservedProfile for the observed writer candidate.",
     "unresolved": [
       "Native same-format file-to-CPU height sample endian transfer; see xbox-heights-authoring-contract.json#/sourceFormat/payload.",
       "All cross-format conversion kernels, channel replication/selection and their byte swaps;0x8258AC18 exposes ten fallback candidates beyond the bounded child expansion.",
@@ -183,5 +183,5 @@
     "Do not require one source format merely because heights requests 0x28000058.",
     "Do not treat output clamping/rounding as source-header rejection or a successful authoring validator."
   ],
-  "conclusion": "The ordinary path fixes a little-endian classic DDS header, bounded 39-descriptor matching, tightly computed linear payload records, declared-mip byte checks and adjustable output dimensions/counts. The selected CPU height reader consumes unsigned BE16 scaled by terrain+0x58 and 255/65536; that does not prescribe file sample byte order. Retail LE16 observations, native swap frontiers and extraction-storage constraints are bounded in xbox-heights-authoring-contract.json. Complete conversion support, alternate resources and blend/lightmap channel meaning remain open."
+  "conclusion": "The ordinary path fixes a little-endian classic DDS header, bounded 39-descriptor matching, tightly computed linear payload records, declared-mip byte checks and adjustable output dimensions/counts. The selected CPU height reader consumes unsigned BE16 scaled by terrain+0x58 and 255/65536; that does not prescribe file sample byte order. Retail LE16 observations, unresolved native byte-swap paths and extraction-storage constraints are bounded in xbox-heights-authoring-contract.json. Complete conversion support, alternate resources and blend/lightmap channel meaning remain open."
 }

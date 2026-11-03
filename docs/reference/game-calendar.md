@@ -1,7 +1,7 @@
 # Game calendar state
 
-Turn and converted year are separate scalars. Names are recovered, not debug
-symbols; runtime observations are distinguished from static dataflow.
+Turn and converted year are separate values. Names are recovered, not debug
+symbols. Runtime observations are distinguished from static dataflow.
 
 ## Owned scalars and converter
 
@@ -106,8 +106,8 @@ establish delivered presentation.
 
 The converter yields turn 192 = 2098, turn 193 = 2100 and turn 194 = 2102.
 These results come from static arithmetic, not observed endgame dates. The
-deadline consumes calendar state; changing displayed dates alone does not
-establish more play.
+deadline reads calendar state. Changing displayed dates alone does not
+establish that the game can continue longer.
 
 Changing only the 2100 compare leaves both old warning tests unchanged.
 Bypassing from `0x82D11304` to `0x82D1143C` skips the complete warning/deadline

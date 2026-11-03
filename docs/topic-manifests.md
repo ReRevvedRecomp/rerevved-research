@@ -72,8 +72,8 @@ Do not use these comparison or source-target keys in `currentEvidence`:
 `pairs`, `source`, `sourceAddress`, `sourceInstructionCount`, `sourceVtable`,
 `target`, `targetAddress`, `targetInstructionCount`, and `targetVtable`.
 
-Qualifications record remaining boundaries, unresolved alternatives, or
-falsification conditions. Cite exact guest addresses and offsets with the
+Qualifications state the claim's limits, unresolved alternatives or conditions
+that would disprove it. Cite exact guest addresses and offsets with the
 supporting static, generated, runtime, or external evidence. Address proximity,
 matching shapes, and decompiler guesses do not establish identity or behavior.
 

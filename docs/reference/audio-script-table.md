@@ -2,7 +2,7 @@
 
 The audio manager owns a low-level stream system and 2D script pointer table.
 Names are recovered, not debug symbols. Evidence is static except where runtime
-correlation is stated; ownership does not prove successful I/O or playback.
+correlation is stated. Ownership does not prove successful I/O or playback.
 
 ## Audio manager ownership
 

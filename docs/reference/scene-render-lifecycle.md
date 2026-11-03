@@ -1,7 +1,7 @@
 # Scene render-tree lifecycle
 
 The scene tree, application scene-update helper and audio receiver are distinct.
-Names are recovered, not debug symbols; evidence is static unless stated.
+Names are recovered, not debug symbols. Evidence is static unless stated.
 
 ## Tree publication and layout
 

@@ -244,6 +244,20 @@ retirement. Name-based candidate selection can occur earlier. Retained owner,
 record and descriptor identity, supported counts and helper effects remain
 conditions; neither API call establishes returning-player or world acceptance.
 
+The [member transfer-retirement contract](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberTransferRetirementBoundary)
+records selected state-six marking/reinsertion and separate member-collection
+requests. Queue count is restored by the paired normal operations under the
+recorded helper premises; terminal notification/disposal belongs to a later
+pump. Actual callback/storage effects and post-tail lifetimes remain open before
+complete cancellation or retry can be accepted.
+
+The [member storage/failure boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberStorageFailureBoundary)
+expands node acquisition, local disposal requests and failure continuation.
+A usable node and graceful failure require caller/ownership contracts; the
+selected native exception request reaches a pinned SDK handler that requests a
+debugger break and implements no guest unwind. Source binding, actual
+exception behavior and complete cancellation remain qualified.
+
 The [selected local-member producer](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeLocalMemberIdentityBoundary)
 binds local address, sign-in and profile-XUID requests to the selected local
 record's user-index and count fields. Its pending-address back edge has no local
@@ -342,7 +356,38 @@ The [selected constructor/callback contract](../../manifests/xbox-network-messag
 binds the constructed buckets and separate list to four-byte strides, distinct
 callback configurations and a fixed list-slot target. Parent pointer guards do
 not establish valid child backing. Actual title-object identity, partial-state
-compensation and the target's retirement effect remain active research.
+compensation and complete target retirement remain active research.
+
+The [selected list/title-registry contract](../../manifests/xbox-network-message-root.json#/nativeConnectionListTitleRegistryBoundary)
+traces child/final retirement requests, builder modes and conditional receiver
+output, socket-field and registry publication. Its node-allocation guard proposal
+requires failure propagation and acquired-socket compensation. Actual entry,
+receiver/callback identity and map growth/count effects remain gates; no executed
+failure or complete cancellation fix was established.
+
+The [selected registry/callback continuation](../../manifests/xbox-network-message-root.json#/nativeSocketRegistryCallbackContinuationBoundary)
+records normal vector/count publication and lookup-based teardown or child
+dispatch. One direct construction wrapper adds a forwarded target and another
+registry-slot write. Same-key receiver/child lifetimes, actual target effects and
+entry/class binding remain required before complete callback or retry behavior.
+
+The [selected admission/binding contract](../../manifests/xbox-network-message-root.json#/nativeSocketAdmissionConnectionBindingBoundary)
+separates predicate refusal, local-accept failure and accepted continuation.
+It records state-before-callback-copy ordering and subsequent registry/child
+requests. Actual callback-table targets, receiver class and full ownership remain
+gates; local acceptance is not completed member/player admission or a clean retry.
+
+The [constructed closed-callback join](../../manifests/xbox-network-message-root.json#/nativeSocketAdmissionConnectionBindingBoundary/constructedClosedCallbackJoin)
+composes accepted constructor/table identities with the callback-copy rule to
+identify a selected target and its guarded disconnect continuation. Current
+registry/record identities and transitive retirement effects remain required
+before the enclosing connection/socket drain can be declared safe.
+
+The [selected admission-policy contract](../../manifests/xbox-network-message-root.json#/nativeConnectionAdmissionPolicyBoundary)
+records descriptor, optional session-owner, application and scalar-equality
+gates. Its descriptor count comparison does not establish a record member-count
+bound, and final application/record ownership and scalar-writer contracts remain
+open. These predicate stages are separate from completed member/player admission.
 
 The [configured-target return boundary](../../manifests/xbox-network-message-root.json#/nativeSocketConfiguredReturnBoundary)
 binds the selected exit helper to preservation of the parent result word under
@@ -375,6 +420,87 @@ and the [voice-create status contract](../../manifests/xbox-live-mode-entry-invi
 join native API return checks to the pinned SDK owners. They distinguish
 unsupported results from output consumption; they do not establish a statistics
 backend, voice transport, audible output or a successful online feature.
+
+The [identity/notification/voice consumer contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeIdentityNotificationVoiceConsumerBoundary)
+connects selected local profile outputs, completion polls and notification
+callbacks to the native field/return consumers. A raw packet-submission stub
+leaves a pointer-shaped register for a signed native check, which is not a
+packet receipt. Actual entry, listener/object generations, downstream helpers
+and the voice backend remain open.
+
+The [notification-worker and privilege-entry contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeIdentityWorkerPrivilegeEntryBoundary)
+maps selected poll/wrapper callers and their timer, status/output and terminal
+requests. SDK clock conversion and the separate callback/cancellation frontier
+do not establish an observed cadence or completed shutdown. Actual signal/wait,
+listener/object publication and downstream policy helpers remain open.
+
+The [signal/wait and listener-retirement contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeIdentitySignalWaitRetirementBoundary)
+connects selected constructor publications, local stop writes and cleanup
+requests to SDK event/listener behavior. A conditional SDK listener Restore
+path can replay a nonempty queue without signaling its event. Native SDK-restore
+reach, successful worker join and final ownership remain open.
+
+The [timeout/startup and heap-routing contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeIdentityTimeoutStartupHeapBoundary)
+resolves selected timeout, clear-event and startup register paths, and the
+owner's heap-delegate branch. The later entry/heap contract classifies the
+stored pointer as runtime-function metadata. Actual feature callers, current
+ownership and successful shutdown remain open.
+
+The [entry, method-slot and heap-lifetime contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeIdentityEntryHeapLifetimeBoundary)
+resolves selected adapter arguments, retain/release slots and heap/free gates.
+The reached SDK VM-free entry lacks a null-heap lookup guard; a bounded proposed
+guard preserves its existing error/output policy. Current native occurrence,
+allocation initialization, final ownership and successful shutdown remain open.
+
+The [constructed component setup contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeIdentityConstructedSetupBoundary)
+binds a selected parent/factory/table path to the worker-backed setup request.
+It preserves zero-status, Boolean and pointer return conventions, the guarded
+slot0 request and field clear after normal return. Current registry/receiver identity,
+acquired-resource cleanup, actual upstream use and safe retry remain open.
+
+The [component lifecycle and service-mode contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeIdentityComponentLifecycleBoundary)
+maps selected registered-service routes to child initialization and component
+release requests. The routes have distinct local rollback gates; allocation
+guards, required-child policy and complete worker retirement remain open.
+The selected descriptor fills are established under their stack/span premises.
+
+The [manager host and service dispatch contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeHostMenuServiceDispatchBoundary)
+distinguishes mode-2 host preparation and search-cancellation requests from
+registered-service setup. Selected callers retain raw results across narrower
+branch tests and cleanup requests. Actual receiver generations, cancellation
+completion and same-attempt ordering remain separate ownership questions.
+
+The [component member-query contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeComponentMemberQueryBoundary)
+follows the separate manager callback through roster lookup and selected local
+or remote state queries. The remote path refreshes retained state and invokes
+child callbacks. Its result does not establish player admission or delivery;
+clock, child/writer ownership and complete retirement remain open.
+
+The [component-query presentation contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeComponentQueryPresentationBoundary)
+maps five query callers and the selected presentation requests, whose metadata
+supports audio/talk-indicator intent. One caller returns a three-state code;
+its downstream consumer remains open. In the selected matching class, a row
+refresh uses its comparison word where the builder uses the row key. That gives
+a bounded title correction candidate; complete cache publication, sink behavior
+and current-instance ownership remain open.
+
+The [presentation adapter and storage contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeQueryPresentationEffectsBoundary)
+separates nested-owner readiness, method-result words, queue-erasure requests
+and row-storage publication. A formatter's raw return cannot serve as a general
+invocation receipt. Insertion copies row fields; rotation, callbacks and the
+comparison-cache writer remain separate contracts.
+
+The [pre-build and row-movement contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativePresentationPrebuildRotationBoundary)
+binds selected field-update requests and conditional three-word rotation. The
+pre-build body has no direct row reset; its helpers and callbacks retain their
+own effects. Moving a cached word with its row does not publish fresh query
+state or establish a complete rebuild.
+
+The [presentation collection lookup contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativePresentationCollectionLookupBoundary)
+identifies normal candidate/sentinel output writes, in-place key folding and
+temporary reset requests. Bucket-table initialization, actual map/key/node
+ownership and completed release remain distinct from a returned output cell or
+collection pointer.
 
 The [selected guest-refusal predicate](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeGuestRefusalBoundary)
 adapts sign-in-info status before testing one output bit. Its true branch

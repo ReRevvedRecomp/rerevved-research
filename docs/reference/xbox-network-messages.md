@@ -187,6 +187,92 @@ pointer. Reference model omits proven read/call; other writers remain open. All
 type-55 submit/no-submit paths merge before one type-54 site. Other cases remain
 neutral; shared targets prove no shared meaning.
 
+## Native transport sequence boundary
+
+The [selected native receive helpers](../../manifests/xbox-network-message-root.json#/nativeTransportReceiveBoundary)
+establish more than raw UDP: a header-bearing path compares 16-bit modular
+sequence fields, skips older records, buffers later records with an equality
+check, and drains buffered records matching the next expected field. Separate
+control inputs retire a stored prefix or select stored records by an incoming
+sequence field/range; they do not establish a retry time interval.
+The expected field advances before the dispatch outcome is known. When numeric
+type seven reaches `0x82A123F8`, that dispatcher returns one without a type
+handler. This does not guarantee a true enclosing receive result. A true
+transport result is not a world-write receipt. The type-101 retry parser also reads
+two bytes before its length check; its exact declared-payload bound and proposed
+pre-read guard belong to the manifest.
+
+The [selected send path](../../manifests/xbox-network-message-root.json#/nativeTransportSendBoundary)
+reaches `NetDll_sendto` through a proved native shim. Its outer nonzero result
+also covers selected no-send and nonfatal-error branches, and can store a
+sampled value at connection `+0x88` without a peer receipt. The SDK's stopped-client
+length/drop branch additionally requires relay mode and a still-registered
+datagram handle. The manifest separates the API result, observer callback,
+sample store and unproved delivery and clock-provider contracts.
+
+The [selected readiness gate](../../manifests/xbox-network-message-root.json#/nativeTransportReadinessBoundary)
+supplies a zero-timeout, one-socket write-set poll. Its zero result alone does
+not distinguish ordinary not-ready from selector failure; neither outcome is
+a peer-delivery receipt. Native mode and relay-queue integration remain open.
+
+These are local retained-connection contracts. Full fragmentation, timer/retry
+limits, wrap/lifetime bounds, direct/relay crossover and successful command
+delivery remain open. The SDK's directory retries and direct-path replay window
+are separate layers. No new reorder or retransmit implementation follows from
+this partial native audit.
+
+The hotjoin manifest's
+[connection callback boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary)
+identifies the installed vector and selected listener slots. The
+[connection-index boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary)
+follows selected raw callback corridors into guarded native index allocation
+and disconnect forwarding. A native connection index is not an established
+XUID/game-player binding. Transport sequence handling and this allocation path
+do not establish fresh returning-player admission or successful recovery.
+
+The [member-name selector](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberNameSelectionBoundary)
+extends that path through a parsed 64-byte string field, case-insensitive setup
+string comparison and zero-result index lookup. Actual vacancy requires retained
+service/descriptor identity; validation, member-to-XSession binding and retirement
+remain active research. The bounded parser hardening seam is a proposal, not a
+malformed-peer or runtime failure observation.
+
+The [XSession membership boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary)
+joins selected parsed member fields to the native member-join wrapper before
+the later free-index scan, and traces the member-leave call before guarded
+retirement. Name-based candidate selection can occur earlier. Retained owner,
+record and descriptor identity, supported counts and helper effects remain
+conditions; neither API call establishes returning-player or world acceptance.
+
+The [selected local-member producer](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeLocalMemberIdentityBoundary)
+binds local address, sign-in and profile-XUID requests to the selected local
+record's user-index and count fields. Its pending-address back edge has no local
+deadline or cancellation check. Record-pointer storage and partial address
+writes can precede the count-one write; they do not establish completed
+membership. The proposed title readiness stage, logging hooks and unrun controls
+remain research findings, with outer attempt/cleanup handling and player
+admission open.
+
+The [selected create/startup boundary](../../manifests/xbox-live-session-search-contract.json#/nativeCreateStartupBoundary)
+shows the earlier synchronous SDK relay-startup wait and distinguishes initializer
+success from a ready network. Host/join callers require exact local-producer
+result one and collapse other producer results to three. SDK cleanup serializes
+behind startup, while Client Stop waits behind the active Associate operation;
+an earlier direct Stop does not prevent a later association by that startup.
+They do not provide whole-attempt cancellation.
+Native reference pairing and outer cancellation ownership remain active.
+
+The [dynamic export census](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeDynamicExportBoundary)
+accounts for eight direct lookup sites using the pinned SDK's startup-extension
+and instrumentation mappings. Indirect/tail paths and other platform versions
+remain outside that negative; no service or startup runtime result follows.
+
+Selected [statistics request consumers](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeStatsConsumerBoundary)
+and the [voice-create status contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeVoiceStatusBoundary)
+join native API return checks to the pinned SDK owners. They distinguish
+unsupported results from output consumption; they do not establish a statistics
+backend, voice transport, audible output or a successful online feature.
+
 ## Object serialization and envelope
 
 The constructed command object uses vtable `0x821368E0` and embeds the five-word

@@ -33,7 +33,7 @@
     "objectFields": "The 128-byte object built by 0x82C9CD68 keeps the user index at +0x44, a byte at +0x48 that selects the search-by-identifier path, the request state at +0x1C, the result-buffer size at +0x20, the result buffer at +0x24, an XOVERLAPPED at +0x28 whose first word is polled for 997, the context count at +0x4C, the context array at +0x50, and the QoS lookup object at +0x7C. Reset helper 0x82C9CB18 first calls listener slot +0x1C with event 1 and its own slot +0x10, then clears these fields and sets +0x44 to -1."
   },
   "browse": {
-    "gate": "0x82C9D080 requires network-readiness gate 0x82E476B0, then 0x82CB1140(user, 1), which returns true only when XamUserGetSigninState 0x82E92A74 reports 2. On a sign-in failure it calls XamShowSigninUI 0x82E929A4 with (1, 2) and returns 2.",
+    "gate": "0x82C9D080 requires startup helper 0x82E476B0, whose initializer/readiness distinction is recorded in nativeCreateStartupBoundary, then 0x82CB1140(user, 1), which returns true only when XamUserGetSigninState 0x82E92A74 reports 2. On a sign-in failure it calls XamShowSigninUI 0x82E929A4 with (1, 2) and returns 2.",
     "sizeProbe": "0x82C9C5F8 calls 0x82A1F310(0, user, 200, 0, 0, null, null, &object+0x20) with null results and null overlapped; it accepts return 122 with a nonzero size.",
     "contexts": "0x82C9CE10 copies a caller vector of pointers at +0x14 through +0x18, each to a 12-byte {id, value, string} record built by 0x82E47C20, into an 8-byte-per-entry array at +0x50 and stores the entry count at +0x4C.",
     "request": "0x82C9D080 calls 0x82A1F310 at 0x82C9D16C with procedure index 0, the user index, 200 results, zero properties, a 16-bit context count equal to the stored count minus one, a null property pointer, the context array, &object+0x20, the buffer at +0x24, and the XOVERLAPPED at +0x28. It sets state +0x1C to 1 on return 0 or 997.",
@@ -181,5 +181,73 @@
     "Do not record the runtime value of global 0x8312B8D4 from the static zero.",
     "Do not equate registry slot +0x94 with session mode or with Xbox LIVE versus System Link; the record ties create flags only to that slot and settings byte +0x05."
   ],
-  "conclusion": "Session mode 2 browses by calling XGI message 0x000B0016 with procedure 0, 200 results, the settings contexts, and a buffer of 8 + 1326 bytes per result, after requiring sign-in state 2 (signed in to Live). It reads 92-byte records for session identifier, host address, key, four slot counts, 24-byte properties (0x1000003B, 0x20000039, 0x40008109), and 8-byte contexts, then runs one QoS lookup over every record and completes the list when no probe is pending, using median round-trip time. Search by identifier (0x000B001B, 20-byte request, 1334-byte buffer) serves only the accepted-invite path through XLiveBase message 0x00058023, and on that path reads contexts from 12-byte records in the host QoS data. Create, join, leave, details, start, end, modify, migrate, and delete are shared with System Link in the XSession wrapper class at vtable 0x82160630; its create flags are selected by settings byte +0x05 and registry slot +0x94: 0x2E, 0x43E when context 0x800A is 0, 0x20, or 0x706, plus 0x100 when invites are off and 1 for a host. Which session mode reaches which branch is not tied statically to slot +0x94. Both creates publish up to seven contexts, host create also sets the XUID property 0x20000039, and a QoS listen payload carries of the same context records; 0x82D8F398 also sets properties 0x2000003A and 0x1000003B, on a path not attributed to host or client."
+  "conclusion": "Session mode 2 browses by calling XGI message 0x000B0016 with procedure 0, 200 results, the settings contexts, and a buffer of 8 + 1326 bytes per result, after requiring sign-in state 2 (signed in to Live). It reads 92-byte records for session identifier, host address, key, four slot counts, 24-byte properties (0x1000003B, 0x20000039, 0x40008109), and 8-byte contexts, then runs one QoS lookup over every record and completes the list when no probe is pending, using median round-trip time. Search by identifier (0x000B001B, 20-byte request, 1334-byte buffer) serves only the accepted-invite path through XLiveBase message 0x00058023, and on that path reads contexts from 12-byte records in the host QoS data. Create, join, leave, details, start, end, modify, migrate, and delete are shared with System Link in the XSession wrapper class at vtable 0x82160630; its create flags are selected by settings byte +0x05 and registry slot +0x94: 0x2E, 0x43E when context 0x800A is 0, 0x20, or 0x706, plus 0x100 when invites are off and 1 for a host. Which session mode reaches which branch is not tied statically to slot +0x94. Both creates publish up to seven contexts, host create also sets the XUID property 0x20000039, and a QoS listen payload carries of the same context records; 0x82D8F398 also sets properties 0x2000003A and 0x1000003B, on a path not attributed to host or client.",
+  "nativeCreateStartupBoundary": {
+    "scope": "Selected host/join create callers, their startup helper, local-member status gate and pinned SDK startup wait. This establishes initializer/caller contracts, not a ready network, successful session create, remote authentication, player admission or measured wait.",
+    "callerInputs": "Accepted vptr82160630 selects host C9B668 at+4 and join C9B4B8 at+8. Host retains Q=r3, a separate r4 value and descriptor D=r5; join retains Q=r3, separate r4, session-info pointer I=r5, length r6, descriptor D=r7 and kind r8. Host rejects null D. Join rejects null D or length!=60; this is not a null-I check. Both require low-byte E476B0 nonzero, then CB1140(U32[Q+0x48],U8[D+5]) true. Valid retained receivers/inputs, actual selected vptr, normal ABI/helper returns and noninterference remain premises.",
+    "signinAndMemberGate": "A false pre-sign-in result calls 8280DDE8 with (1,2) when D+5 is nonzero or (1,0) otherwise, then returns raw2. Otherwise host calls Q virtual+0x78 with kind0 at C9B6EC/C9B6F0; join passes original r8 as kind at C9B54C/C9B550. With selected target C99368, nativeLocalMemberIdentityBoundary in xbox-hotjoin-transfer-restore-boundary.json owns that producer. Both callers require raw producer result exactly1; another result, including its UI-branch2 or terminal3, reaches their then-unchanged local fallback3. It is not propagated as a pending result. They next require Q+4 nonnull and signed count at U32[Q+4]+0x24 greater than zero.",
+    "laterCreate": "After those gates join requests a 60-byte copy from I into Q+0x0C, then calls Q virtual+0x80 with D and stores returned flags at Q+0x50. Host calls that flags method with D, ORs its result with one and stores Q+0x50. Later helper/list processing leads to Q virtual+0x74 at host C9B808/C9B80C or join C9B650/C9B654, with Q, retained original r4 and D; that call's raw r3 is forwarded. Compatible copy/helper effects and retained identities remain premises. These local gates do not prove the final API create, advertisement or member admission; existing F-0243 owns the selected create wrapper.",
+    "startupHelper": "E476B0 reads U8[U32[8314F204]+0xA8]. Nonzero supplies null parameters; zero constructs a 13-byte stack request with byte0=13, byte1=1 and the other requested bytes zero. At E47704/E47708 it calls 827F1040, which supplies caller1 and the parameter pointer and tail-branches to827F0F88. Only result0 reaches A1F620 at E47718/E4771C. E476B0 returns one iff that second result is also zero, otherwise zero. F-0247 nativeDynamicExportBoundary owns 827F0F88's XamGetSystemVersion/dynamic-XNetStartupEx or ordinary-XNetStartup paths. This helper initializes networking; its Boolean alone is not network readiness.",
+    "secondInitializer": "A1F620 passes fixed descriptor address82F38844 to A1F598. That function requires a nonnull descriptor and its first two U32 fields nonzero, otherwise returns87. It calls 827F1218(2,&stackData) at A1F5D4/A1F5D8. The shim supplies caller1 and tail-branches to827F1170, whose dynamic/ordinary WSA startup contract is separately accepted in F-0247. A nonzero WSA result is returned. On zero, A1F598 calls A1FB88 with destination82FA73B8 and those descriptor fields at A1F5F0/A1F5F4; a negative result becomes1627 and a nonnegative result becomes0. A1FB88 requests a 44-byte header copy, tests destination+8 bit0, returns80004005 when set, otherwise computes/stores its selected header-derived offsets and returns0. Compatible copy effects, valid backing arithmetic/ranges and normal returns remain conditions; no original class name or usable pool extent is assigned. These inspected helpers contain no matching XNet/WSA cleanup before returning failure; outer cleanup ownership is still active research.",
+    "sdkWaitAndReferences": "At SDK2d4b3e588d06ff33153ca8d221c5c9dbc0b9e8ec, xam_net.cpp:452-547 serializes XNet startup/cleanup with xnet_lifecycle. system_link_config.cpp:451-526 checks config.error first, acquiring a reference and returning zero through MarkFailed on that branch. Only without that earlier error does invalid LAN-enabled/zero-XUID input reject before increment. Other accepted/network-failed starts acquire references as recorded in the SDK lifecycle audit. Among cleanup calls only the final one stops the client; startup also calls Stop on its post-association LAN-identity configuration failure. Client::Associate at relay_system_link.cpp:1545-1582 holds its lifecycle mutex while changed.wait releases the separate state mutex and waits for state!=kJoining. The worker's live/fail paths notify it. Fresh startup therefore waits for joining to end before the normal native local-member call, under unchanged mode/association and normal returns. A later CB1610 pending-zero loop is a separate conditional path; it is not evidence that the ordinary fresh handshake first waits there. The SDK startup zero can also mean failed networking recorded through MarkFailed, so the native Boolean does not prove Live or a usable address.",
+    "cancellationBoundary": "SDK XNetCleanup needs the same xnet_lifecycle mutex held throughout startup, so it serializes behind that operation. Client::Stop instead serializes behind Associate while its client lifecycle mutex is held, including the Joining condition wait. A direct Stop can finish earlier while startup is resolving/reading configuration before Associate, without preventing that startup's later association. Neither is an independent cancellation contract for the whole startup attempt or its Joining wait. The worker has a source five-second unjoined-handshake policy, but transport/DNS/fingerprint work, scheduling and wake behavior are not measured or given a universal wall-time bound here. This is an explicit cancellation limitation, not an observed deadlock or a reference leak. The per-call lifetime balance must be proved at native cleanup owners.",
+    "minimalProposal": "Put any cancellable title readiness stage around the owned startup operation before invoking native create, and preserve its startup/cleanup balance. Do not repeatedly call E476B0 as a read-only poll, fabricate a static address, or return a pending code through the existing exact-one gate. If cancellation during the SDK start is required, add a separate attempt-owned request covering resolution/configuration through association: recheck cancellation before publishing/starting an association, reach an active Joining waiter without waiting on its held lifecycle lock, transition/wake it to a defined terminal outcome and retire its worker exactly once. Preserve legacy guest status behavior and other owners' active references. Merely moving the blocking call to a worker does not make Stop/Cleanup a whole-attempt cancellation contract. Native allocation guards and partial-record isolation remain separately proposed at nativeLocalMemberIdentityBoundary; no implementation was changed.",
+    "loggingProposal": "Default-off paired metadata at host C9B68C/C9B690 and join C9B4EC/C9B4F0 startup calls, E47704/E47708 XNet result, E47718/E4771C second initializer, A1F5D4/A1F5D8 WSA result, A1F5F0/A1F5F4 header setup, host C9B6EC/C9B6F0 and join C9B54C/C9B550 member gate, and final create pairs C9B808/C9B80C and C9B650/C9B654. Correlate opaque attempt/owner tags, path, raw results, exact-one outcome and output-present/count categories only after the valid record gates. SDK hooks distinguish entry/reference acquisition, Joining, live/fail notify, startup return, requested cleanup and final/nonfinal cleanup. Preserve guest state; retain no descriptors, addresses, profile/session identifiers, keys, payloads or credentials. No extra startup call is made for logging.",
+    "unrunCases": [
+      "Host null descriptor and join null descriptor/wrong length return3 before startup; join I-pointer validity is a separate supported-input contract.",
+      "False pre-sign-in invokes UI and returns2, while a member-producer2 is collapsed to3. Producer1 plus a retained positive-count record can reach later flags/copy/create helpers; final create result remains distinct.",
+      "SDK relay live/fail transitions unblock Associate and complete the startup helper path. A failed-network startup may return0 and retain a reference; later address-none/member3 must not be mislabeled as ready.",
+      "Hold a fake worker in Joining and request Stop/Cleanup: characterize the current lifecycle serialization. A proposed independent cancel must supply a terminal predicate/notify, generation ownership and one worker retirement, not just set stop while leaving the wait predicate Joining.",
+      "A late initializer failure after successful XNet/WSA acquisition distinguishes local returned failure from outer cleanup ownership. Complete native pairing before declaring a leak; no fake, handshake, deadline measurement, game or service was executed."
+    ],
+    "nextStaticWork": "Follow native startup/cleanup pairing at 827F1050, A0F4F8 and A1F630 and their actual owners, plus the E476B0 account/service callers. A1F658 is a separate header-derived lookup/output path, not a cleanup owner. Complete outer failed-create/cancellation and second-match retirement before assigning per-attempt reference policy. The descriptor/header publisher/backing lifetime, full create/status consumers and incoming member/player/command admission remain separate active paths.",
+    "evidence": {
+      "method": "Serialized foreground read-only exact-owner/raw-word queries, narrow generated corroboration and pinned SDK startup/wait reconciliation.",
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "distinctQueriedWords": 1350,
+      "selectedWordRanges": [
+        {
+          "start": "0x82C9B668",
+          "endExclusive": "0x82C9B820",
+          "sha256": "5AC2CC54500F40DC1087025883B098EE77EC788057FF9C260E8DEA7E78056F4D"
+        },
+        {
+          "start": "0x82C9B4B8",
+          "endExclusive": "0x82C9B668",
+          "sha256": "9444442D1D3D4558C85EE6C8C0D62C3F5C7517FF6497C2A7E5ACFD0A802B9397"
+        },
+        {
+          "start": "0x82E476B0",
+          "endExclusive": "0x82E47734",
+          "sha256": "ECFBE05E98757930CF56D085EFFB15496BFF7B4537CA58BBEC009300E60AEB81"
+        },
+        {
+          "start": "0x827F1040",
+          "endExclusive": "0x827F104C",
+          "sha256": "D7C876C1EA1DF0C343806B43B61CD6D18CC2AB13A000BCF62BE7D225C9E543A6"
+        },
+        {
+          "start": "0x82A1F620",
+          "endExclusive": "0x82A1F62C",
+          "sha256": "ADDB6FC2BE9E86F0CC16B4FCFAF1C7847B22922B9540E4300D67BA41BE9685B7"
+        },
+        {
+          "start": "0x82A1F598",
+          "endExclusive": "0x82A1F620",
+          "sha256": "9B34D4420FDC9C7BE11365BC120A5B902EF1BCF7B2925EA0B8B93758A3B251E5"
+        },
+        {
+          "start": "0x827F1218",
+          "endExclusive": "0x827F1228",
+          "sha256": "D355EB6104C96E67B421366D16244FF7C6155939FFFB38BD8F606EBB9ACE350E"
+        },
+        {
+          "start": "0x82A1FB88",
+          "endExclusive": "0x82A1FC4C",
+          "sha256": "37059788083469E05DD2FDD66F9B461E3DF7FAE9B6C6C543EA274EB71C8BCB23"
+        }
+      ],
+      "qualification": "Half-open corridors are not inferred function extents. Canonical thunk/bad-data truncation remains. Prior F-0247 dynamic-startup byte evidence is reused; no runtime/startup/cleanup/relay/service or timing measurement occurred."
+    }
+  }
 }

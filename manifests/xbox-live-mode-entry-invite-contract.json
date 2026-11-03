@@ -169,5 +169,140 @@
     "Do not equate controller 43 (GFX_RankedMPMenu.gfx) with a play entry; its traced requesters are leaderboard controllers.",
     "Do not attribute the received-invite dialog to notification 0x02000002; its record producer is not identified."
   ],
-  "conclusion": "Player Match and Ranked Match in GFX_MatchType.gfx (controller 9 handlers 0x82E6C0E8 and 0x82E6BE10) gate on Live sign-in and multiplayer privilege, write game-setup mode words 4 and 5, and open GFX_InternetGameType.gfx (controller 12). Its Quick Match calls mode-2 browse 0x82D8D898, Custom Match and Create Private Match lead through game-type controller 13, and staging controllers 26 and 27 host through 0x82D8E430; both reach factory 0x82CA28F0 with mode 2 and table 0x82160450. Ranked Match is the only visible ranked play entry. An accepted invite arrives as XNotify ID 0x02000002 from the pump at 0x82DA8B60, whose user index 0x82D8ED68 stores at manager +0x1C; a front-end state joins at once, other states defer, and front-end entry 0x82E7F820 services a stored invite after a cold start. The join creates a mode-2 session, reads the 64-bit session identifier at +0x14 of the 0x00058023 result, searches by identifier, joins through 0x82D8EFF0 on listener event 3 with status 0, and writes mode word 4; failures surface as title messages or active-screen events 16 and 17, not system message boxes. The join builds the same GT2 network object on port 1000 for both modes, and the host address string comes from XNetXnAddrToInAddr with port 1000, but the edge into GT2 connect after a mode-2 join remains open. Context 55 and property 0x1000003B carry the selected scenario identifier, with -1 for none, and a joiner rejects a scenario it lacks."
+  "conclusion": "Player Match and Ranked Match in GFX_MatchType.gfx (controller 9 handlers 0x82E6C0E8 and 0x82E6BE10) gate on Live sign-in and multiplayer privilege, write game-setup mode words 4 and 5, and open GFX_InternetGameType.gfx (controller 12). Its Quick Match calls mode-2 browse 0x82D8D898, Custom Match and Create Private Match lead through game-type controller 13, and staging controllers 26 and 27 host through 0x82D8E430; both reach factory 0x82CA28F0 with mode 2 and table 0x82160450. Ranked Match is the only visible ranked play entry. An accepted invite arrives as XNotify ID 0x02000002 from the pump at 0x82DA8B60, whose user index 0x82D8ED68 stores at manager +0x1C; a front-end state joins at once, other states defer, and front-end entry 0x82E7F820 services a stored invite after a cold start. The join creates a mode-2 session, reads the 64-bit session identifier at +0x14 of the 0x00058023 result, searches by identifier, joins through 0x82D8EFF0 on listener event 3 with status 0, and writes mode word 4; failures surface as title messages or active-screen events 16 and 17, not system message boxes. The join builds the same GT2 network object on port 1000 for both modes, and the host address string comes from XNetXnAddrToInAddr with port 1000, but the edge into GT2 connect after a mode-2 join remains open. Context 55 and property 0x1000003B carry the selected scenario identifier, with -1 for none, and a joiner rejects a scenario it lacks.",
+  "nativeDynamicExportBoundary": {
+    "scope": "Raw direct branch-and-link census for imported XexGetProcedureAddress at 0x82E926A4 and the three exact caller owners. This closes the eight discovered direct sites, not every possible indirect/tail/dynamic import path or native online feature.",
+    "census": "FindDirectCallers scanned aligned raw words in initialized executable program blocks, cap 32 per target. It found eight sites, Truncated=false and Cancelled=false: 0x827F0FE4, 0x827F11C8, 0x82823BAC, 0x82823BC4, 0x82823BDC, 0x82823BF4, 0x82823C0C and 0x82823C24. Modeled references had missed them. An aligned whole-initialized-memory pointer-value query for 0x82E926A4 found zero with cap 32; that does not exclude computed/split pointers, indirect dispatch or tail branches.",
+    "startup": "0x827F0F88 and 0x827F1170 compare unsigned XamGetSystemVersion against 0x200A3200. At or above it, with nonnegative module lookup, they resolve module literal at 0x820AC818 and ordinals 0x50 and 0x24 respectively. Negative procedure status clears the candidate pointer. Nonzero resolved pointer is called with the original startup arguments plus library version 0x201B5300; otherwise they call ordinary imported XNetStartup at 0x827F1024 or WSAStartup at 0x827F120C. The platform module literal matches SDK module xam.xex; names here are SDK mappings, not newly published retail string payloads.",
+    "debugCallbacks": "The other six sites are in 0x82823B30. A nonzero U32[0x82FA21E0] skips setup. Otherwise it requires nonzero U32[U32[0x820007E8]] and bit 0x10 of U32[U32[0x820008C0]], obtains the module matching SDK xbdm.xex from literal 0x820AF53C, and requires nonnegative lookup status and a nonzero module handle. It resolves ordinals 0x9B through 0xA0 in order, aborting publication on a negative status. After six nonnegative procedure statuses it publishes the six stack output words at 0x831580E0 through +0x14 with the observed lwsync separators. The local body neither initializes nor tests those output slots, so valid resolved pointers require the import's successful-output contract. Normally returning setup paths reached from an initially zero flag, with valid dereferences and returning imports, set attempted flag one; subsequent calls observing it nonzero skip setup. External flag resets and concurrent execution are unproved. Under the pinned SDK module/ordinal mapping this is instrumentation callback lookup, not an online-storage request; another platform/version mapping is unproved.",
+    "sdkMapping": "At SDK 2d4b3e588d06ff33153ca8d221c5c9dbc0b9e8ec, src/kernel/xam/export_table.inc:50,80 maps 0x24/0x50 to NetDll_WSAStartupEx/NetDll_XNetStartupEx. src/kernel/xam/xam_info.cpp:157-170 returns 0x20449700 when System Link mode is not off, otherwise zero. src/kernel/xam/xam_net.cpp:625-640 forwards the Ex forms to ordinary startup when enabled; off returns caller r3. Thus the source version value selects the Ex lookup branch for enabled System Link, with fallback still conditional on actual resolution. src/kernel/xbdm/export_table.inc:137-142 maps 0x9B..0xA0 to DmMarkPseudoCreateBegin/End, DmMarkPseudoEventBegin/End and DmMarkFileEventWorkerThreadBegin/End. Export table presence alone proves neither a resolved function pointer nor service support.",
+    "negativeBoundary": "None of the eight discovered direct lookup module/ordinal pairs maps to XStorage or another storage export in SDK 2d4b3e588d06ff33153ca8d221c5c9dbc0b9e8ec: two map to startup extensions and six to instrumentation callbacks. Other platform/version mappings are unproved. This extends the scoped direct-import negative without a universal no-storage claim. Computed/indirect/tail-call reach and native content/profile consumers retain their own inventory gates.",
+    "minimalProposal": "No behavior change is justified by these lookup wrappers alone. Preserve the native fallback and source-mode distinction; do not replace them with a new storage service or infer runtime startup from SDK table configuration.",
+    "loggingProposal": "Default-off bounded metadata at lookup call/return and startup indirect/fallback branch: ordinal, opaque module/result category, version-gate category, resolved-pointer-present, fallback-taken and guest status. Do not log module memory, arbitrary names/payloads or credentials. Observe existing calls while preserving guest state.",
+    "unrunCases": [
+      "Version below/at threshold, module failure, procedure failure and nonzero resolved pointer versus ordinary fallback, with original arguments and library version preserved.",
+      "SDK System Link off versus enabled source modes; no source equality implies installed binary identity or successful startup.",
+      "Instrumentation guard absent, individual ordinal resolution failure, successful six-pointer publication and repeated call with attempted flag set. No instrumentation runtime was launched."
+    ],
+    "evidence": {
+      "method": "Serialized foreground read-only raw BL census, pointer-value search, exact caller function queries and raw word queries; exact-owner generated corroboration and pinned SDK export/implementation comparison.",
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "selectedWordRanges": [
+        {
+          "start": "0x827F0F88",
+          "endExclusive": "0x827F1040",
+          "sha256": "DE18106A7B8630623977EE2B0D2F1E5B934BE6FA8C3D70993EB254F1311A9517"
+        },
+        {
+          "start": "0x827F1170",
+          "endExclusive": "0x827F1218",
+          "sha256": "EF423E64F6AAA88D62C5EAE3E83054F4931315F06B7C1C152F89C852C87313F9"
+        },
+        {
+          "start": "0x82823B30",
+          "endExclusive": "0x82823C90",
+          "sha256": "B56BFC4222DDE5221759AD573F7D37F20EBAF12FD94F4DC99F58F49FE1EA4AB1"
+        },
+        {
+          "start": "0x820AC818",
+          "endExclusive": "0x820AC820",
+          "sha256": "71D1C54EB323126BBD85D8BACB66192ABF007A9F76A57FD4958E9239689E66A3"
+        },
+        {
+          "start": "0x820AF53C",
+          "endExclusive": "0x820AF548",
+          "sha256": "A471960F0AEF54E604A48B2FE62BE7A79A3C20B10B555630CE4F2B4C353F820A"
+        }
+      ],
+      "qualification": "Half-open corridors are not inferred function extents. Configured thunk/bad-data truncation remains. The BL census omits indirect calls and tail branches; no launch, relay/service or runtime acceptance was performed."
+    }
+  },
+  "nativeStatsConsumerBoundary": {
+    "scope": "Two native statistics-enumerator wrappers and three selected request consumers. This proves conditional native API calls and return handling, not the visible leaderboard UI, a ranked service, submitted results or runtime availability.",
+    "wrappers": "0x8280E438 and 0x8280E498 call imported XamUserCreateStatsEnumerator at 0x8280E48C and 0x8280E4EC after 0x8281B888 returns zero. The former passes by-rank one and low32(original r4) as pivot; the latter passes by-rank zero and full original r4. Original r5..r9 become import r6..r10, and the import r3 return is preserved. The gate accepts title id zero; for nonzero input it calls XamGetExecutionId and compares the input high 16 bits with execution-id U16+0x0C, returning zero on its selected match and 1627 otherwise. Dereferences and normal import/helper returns remain premises.",
+    "consumers": "With their separate object/account/setup guards satisfied, 0x82E64648 calls E498 at E64744, 0x82E64780 calls E438 at E64810, and 0x82E64848 calls E498 at E648E0. All three pass title id zero, row count from object+0x30, specification count one, specs at object+0x78, and size/handle outputs at frame+0x50/+0x54. Their pivot inputs differ: a selected object-array eight-byte value, object+0x38 rank, or a stack-produced eight-byte value. They require the wrapper return to equal zero before calling 0x82E64568(object,size,handle). That helper's nonzero low byte selects their return one; otherwise they retain return three. Separate earlier guards can return two or three. These numeric returns are not assigned an unproved UI meaning.",
+    "sdkBoundary": "At SDK 2d4b3e588d06ff33153ca8d221c5c9dbc0b9e8ec, src/kernel/xam/xam_user.cpp:729-737 returns X_ERROR_FUNCTION_FAILED without writing size or handle. include/rex/system/xtypes.h:79,101 defines that Win32 result as positive 1627. Therefore a reached selected request rejects this SDK response before E64568 consumes outputs. The SDK has no statistics enumerator/backend here; export presence and native wrappers do not implement leaderboard reads. Source is equal at the title lock for these inspected owners, without a binary/fingerprint equality claim.",
+    "minimalProposal": "No title fix is proved by this failure gate. SDK support requires an actual enumerator/result owner with the native-requested size, handle and row contracts; replacing 1627 with zero alone would enter an output consumer without supplied outputs. Establish E64568, native close/cancel and result-to-view ownership before specifying the minimal functional SDK implementation. XGI stats/arbitration stubs remain separately recorded source boundaries.",
+    "loggingProposal": "Default-off numeric metadata at E64744/E64748, E64810/E64814 and E648E0/E648E4 records the selected consumer and request return on every reached call; size/handle-present categories are inspected only after a zero API result. E64568 call/return distinguishes enumerator admission from the request status; correlate within the same request and object lifetime. Retain no XUID, score, row or profile payload; preserve guest state and do not probe uninitialized failed-call outputs.",
+    "unrunCases": [
+      "Title id zero and nonzero matching/mismatching execution-id gate; by-rank one versus zero preserves the wrapper pivot-width difference.",
+      "At the pinned SDK, 1627 with untouched outputs must stay on the selected return-three path and must not call E64568; object/setup prerequisites are tested separately.",
+      "A future successful implementation supplies valid size and owned enumerator handle before E64568, with lifetime/close/cancel and row consumption specified independently. These cases were not executed."
+    ],
+    "nextStaticWork": "Follow E64568 result/enumerator ownership and the native dispatcher/callers selecting E64648, E64780 and E64848, then bind their results to the actual view and teardown. Native ranked-result submission, XGI stats/arbitration and profile persistence remain distinct inventory paths.",
+    "evidence": {
+      "method": "Serialized foreground read-only function, raw BL-caller and word queries, exact-owner narrow generated corroboration and pinned SDK implementation/result-definition comparison.",
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "selectedWordRanges": [
+        {
+          "start": "0x8280E438",
+          "endExclusive": "0x8280E498",
+          "sha256": "C42EDFB5BDEBD77C31D3F02DAD858D4B2F7DBE3BA64F7DEA6D9CE6ED6A641B22"
+        },
+        {
+          "start": "0x8280E498",
+          "endExclusive": "0x8280E4F8",
+          "sha256": "CD890434131D5517D138707149AFF12E8C5E8929D1B3E26F1B5855384CEE45A5"
+        },
+        {
+          "start": "0x8281B888",
+          "endExclusive": "0x8281B8F0",
+          "sha256": "2611208FBFE6FF3CB15115BD33A3FC28CBD3FC992239EA687EB6BE8C701F3F6C"
+        },
+        {
+          "start": "0x82E64648",
+          "endExclusive": "0x82E64780",
+          "sha256": "724A8450ED41082EDB27425D63A1A49AED593FE60BB250B73931B082B1CF3813"
+        },
+        {
+          "start": "0x82E64780",
+          "endExclusive": "0x82E64848",
+          "sha256": "522B388F01F7C53E5FE8F2E9E5372222B2D322C79DEFDF21ACE83D74FF120BF2"
+        },
+        {
+          "start": "0x82E64848",
+          "endExclusive": "0x82E64918",
+          "sha256": "837DE33A72CBDA49A8B4E5289789EACAA3976AAF4D1C2FEBBEBEA06D95E1E904"
+        }
+      ],
+      "qualification": "Half-open checked corridors are not inferred function extents. Configured second-thunk truncation remains. No runtime, service, audio or leaderboard result is claimed."
+    }
+  },
+  "nativeVoiceStatusBoundary": {
+    "scope": "Selected native voice-create wrapper, its setup helper and one object-level consumer. This establishes a source/native status mismatch under reached valid-object and normal-return premises, not voice transport, audible output or overall UI activation.",
+    "create": "0x82A25CE0 calls its cleanup path, then imported XamVoiceCreate at 0x82A25D08 with r3=original r4, r4=15 and r5=object+8. It saves returned r3 and branches to cleanup only when that signed value is negative. A nonnegative result calls 0x82A2A328 with U32[object+4], replacing the saved status with that helper's return. Before testing the setup result, it writes object+0 and +0xC4, atomically sets +0x48 to one and requests a 54-byte metadata copy into +0x54 through 827F8550; copy effects and normal return remain premises. A negative setup result then enters handle cleanup; a nonnegative result returns the saved status after those writes. A nonzero handle is closed and cleared on the selected failure path; successful creation is not proved by a nonnegative number alone.",
+    "setup": "0x82A2A328 invokes its nested cleanup/queue helpers, iterates its retained queue count, writes its selected timing/state fields, samples helper 0x8280DE30 and then explicitly returns zero. Those nested effects, termination, ABI preservation and normal returns remain premises; this packet does not infer a voice handle from those calls.",
+    "consumer": "0x82A231F8 uses its critical section and selected nonzero-entry scan/transfer/clear path, whose pool/free-slot ownership semantics remain unbound, to call A25CE0 at A23288 with the selected object and original input r4. It tests the final wrapper return as signed; nonnegative writes one at consumer object+0x524, then it returns the saved status after leaving the critical section. The field's wider semantics and actual callers remain unbound; the store is not named audible voice or a successful remote channel.",
+    "sdkBoundary": "At SDK 2d4b3e588d06ff33153ca8d221c5c9dbc0b9e8ec, src/kernel/xam/xam_voice.cpp:31-37 clears a nonnull output and returns X_ERROR_ACCESS_DENIED. include/rex/system/xtypes.h:79,85 makes that a positive Win32 five. With the selected native caller this does not take its signed-negative failure branch; under normally returning A2A328 it is replaced by zero and can reach the consumer's flag store while object+8 remains zero, absent another writer. This is a status-contract mismatch, not an observed runtime incident. Close/headset return zero and packet submission remains an SDK stub as recorded in the service contracts; no voice backend is supplied here.",
+    "minimalProposal": "At the SDK voice-create owner, return a failure representation compatible with the supported native signed-status callers while preserving zero output and existing cleanup expectations. Verify the export's HRESULT/NT-status convention before selecting the exact high-bit error constant. Do not change the global Win32 result definitions, fabricate a voice handle or treat this status correction as voice implementation. Full voice support requires packet, capture/playback, mute/privilege and lifetime contracts beyond this packet.",
+    "loggingProposal": "Default-off numeric metadata at A25D08/A25D0C create call/return, A25D1C/A25D20 setup call/return, and A23288/A2328C consumer call/return. A23298 pre-store and paired A2329C post-store, correlated within one invocation, observe the later +0x524 write rather than inferring it from the call return. Record original/import/setup/final status categories, zero/nonzero output handle and whether the selected flag store was reached, correlated per object/invocation. Preserve guest state; retain no audio, packet, identity or profile data. A nonnegative status or local flag is not an audio receipt.",
+    "unrunCases": [
+      "Pinned SDK positive-five/zero-output response follows the native nonnegative branch under normal helper returns; an HRESULT/NT-style negative response takes the selected failure branch.",
+      "Negative create, a mocked/nonconforming negative setup return, scan-with-no-nonzero-entry consumer and successful mocked create are separate controls; handle close/clear is observed without claiming real voice support.",
+      "Proposed SDK status correction must leave output zero and avoid the selected success-like continuation, with exact error convention settled first. No native runtime, audio device or transport was used."
+    ],
+    "nextStaticWork": "Follow actual callers/dispatch of A231F8 and native headset/submit/close consumers and mute/privilege gates. Separate these from party APIs and from SDK voice backend implementation.",
+    "evidence": {
+      "method": "Serialized foreground read-only function, raw BL-caller and word queries, exact-owner narrow generated corroboration and pinned SDK implementation/result-definition comparison.",
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "selectedWordRanges": [
+        {
+          "start": "0x82A231F8",
+          "endExclusive": "0x82A232B0",
+          "sha256": "8BB68D6B4686D19836607CBCA6A54B4742E358F35C93AA492088B87396E353EC"
+        },
+        {
+          "start": "0x82A25CE0",
+          "endExclusive": "0x82A25D98",
+          "sha256": "6F3AC13D204DF4C32614C2214FDE035B631B6629A455C6B856B35C5A8E559897"
+        },
+        {
+          "start": "0x82A2A328",
+          "endExclusive": "0x82A2A3B8",
+          "sha256": "E45A91C1F2807D3233FBB271EE4EACC424F8504E85B4EB81A4F43049A489B113"
+        }
+      ],
+      "qualification": "Half-open checked corridors are not inferred function extents. Configured second-thunk truncation remains. No runtime, service, audio or leaderboard result is claimed."
+    }
+  }
 }

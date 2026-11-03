@@ -723,5 +723,190 @@
     "Do not treat the executable-wide function metadata row as a network registration record or infer descriptor semantics from its packed value.",
     "Do not add a title enum, generated header, code-generation authority, internal API, or public API until an identified maintained host consumer requires it; research remains outside the runtime build dependency graph."
   ],
-  "conclusion": "Version 1.3 uses a five-word, 0x14-byte internal command record in a 32-slot modulo ring at 0x83155C28. Drain function 0x82CE16C8 copies one record and directly calls dispatcher 0x82CDDF08. The dispatcher reads type plus three arguments, accepts unsigned types 0 through 65, and branches through the exact 66-entry table at 0x82CDE014. Submit function 0x82CE1950 keeps its target argument separate, copies the five-word record into a distinct vtable-bearing object through 0x82D90A18, and routes it through a network-manager child. Numeric type 49 has the static role of ORing a LocalPlayerIdResolve-derived slw mask into 0x83157E44; cases 46 and 47 initialize that mask and contain three exact type-49 submit sites, while case 46 later compares it with the human-player mask. Selected turn/synchronization debug labels and their command-type input join are owned by nativeTurnNameEvidence. Numeric type 57 has the separately accepted neutral role of storing arg2 as a halfword at 0x830E9050 + arg1*2; its policy name remains unresolved. The command object's paired methods serialize and deserialize the embedded record as five ordered 32-bit primitives for an exact 20-byte object-layer payload with conditional byte-order conversion. The factory pointer's initialized row belongs to executable-wide function metadata, not a network registry, and no supported static consumer maps outbound leading value 77 to the factory. Outer framing, target encoding, platform transport, runtime delivery, and unsupported cross-platform semantics remain unresolved."
+  "conclusion": "Version 1.3 uses a five-word, 0x14-byte internal command record in a 32-slot modulo ring at 0x83155C28. Drain function 0x82CE16C8 copies one record and directly calls dispatcher 0x82CDDF08. The dispatcher reads type plus three arguments, accepts unsigned types 0 through 65, and branches through the exact 66-entry table at 0x82CDE014. Submit function 0x82CE1950 keeps its target argument separate, copies the five-word record into a distinct vtable-bearing object through 0x82D90A18, and routes it through a network-manager child. Numeric type 49 has the static role of ORing a LocalPlayerIdResolve-derived slw mask into 0x83157E44; cases 46 and 47 initialize that mask and contain three exact type-49 submit sites, while case 46 later compares it with the human-player mask. Selected turn/synchronization debug labels and their command-type input join are owned by nativeTurnNameEvidence. Numeric type 57 has the separately accepted neutral role of storing arg2 as a halfword at 0x830E9050 + arg1*2; its policy name remains unresolved. The command object's paired methods serialize and deserialize the embedded record as five ordered 32-bit primitives for an exact 20-byte object-layer payload with conditional byte-order conversion. The factory pointer's initialized row belongs to executable-wide function metadata, not a network registry, and no supported static consumer maps outbound leading value 77 to the factory. Outer framing, target encoding, platform transport, runtime delivery, and unsupported cross-platform semantics remain unresolved.",
+  "nativeTransportReceiveBoundary": {
+    "scope": "Selected native GT2-shaped receive helpers only. This does not change the internal five-word record contract or close a complete GT2 wire/reliability protocol.",
+    "entry": "0x82A11B00 is the queried socket receive classifier. Its selected header-bearing type-below-eight path calls 0x82A11F88. The classifier includes connection, filter, state and framing guards; reaching this helper is a premise, not a runtime observation.",
+    "fields": "For retained connection C, 0x82A11F88 requires at least U32[U32[C+8]+0x44]+7 bytes. It uses 0x82A12160 to read big-endian U16 fields at header offsets three and five, then strips that seven-byte header plus the socket prefix. The first is compared to U16[C+0x66]; the second is passed to 0x82A12250. These offsets do not identify native command bytes or a complete packet.",
+    "comparison": "0x82A121B8 returns sign-extended int16(a-b). This is modular signed comparison, not an unbounded serial-number order; no allowed outstanding half-range or wrap-lifetime invariant was proved.",
+    "expected": "After successful 0x82A12250, first field equal to C+0x66 calls 0x82A13010, 0x82A123F8 and, only after a nonzero result, 0x82A12DF8. 0x82A123F8 increments U16[C+0x66] BEFORE dispatching numeric type zero through six to distinct helpers. Type seven is admitted by the selected classifier but falls through this dispatcher to return one without a type handler. A later false handler does not undo the local increment. These are ordering facts, not demonstrated defects or successful world-write receipts.",
+    "older": "A nonmatching first field whose signed modular comparison with C+0x66 is negative calls 0x82A13010 and returns one without calling 0x82A123F8. This suppresses dispatch of older records in this selected retained connection lifetime; it does not prove cross-association duplicate rejection.",
+    "later": "Other nonmatching fields call 0x82A12B58. Its C+0x5C record scan checks exact U16 equality at record+0x0C, returning success/out-zero for an equal record encountered BEFORE the first positive signed-comparison break. It otherwise inserts using the signed comparator; record ordering and half-range invariants are not proved. With enough C+0x44 buffer capacity it stores offset/length/type/field, appends payload bytes and can call 0x82A13F98 with a missing interval. Insufficient capacity or failed collection growth sets out-one. Allocation, send, time and transitive callback effects remain premises.",
+    "drain": "0x82A12DF8 repeatedly finds a buffered record whose +0x0C equals the CURRENT C+0x66, calls 0x82A123F8, and only on nonzero result removes it through 0x82A12ED8. It returns zero on handler failure. Buffer removal/compaction transitive behavior and all failure recovery are not closed.",
+    "retirement": "0x82A12250 removes the C+0x60 prefix whose record+8 field compares below its input, then clears C+0x58 when empty or rebases remaining offsets/buffer. Numeric outer type100 reaches the same helper through 0x82A131A0 only for a two-byte payload. This is a cumulative-retirement boundary, separate from world acceptance.",
+    "retryRequest": "Numeric outer type101 reaches 0x82A13228. It unconditionally calls the two-byte reader 0x82A12160 at 0x82A13248 BEFORE checking input length at 0x82A13254/0x82A1326C. A zero/one-byte post-header payload therefore reads beyond its declared payload before the malformed-length path; mapped-memory invalidity, runtime reachability and incident causation are not established. Two-byte input chooses one field; four-byte input chooses an inclusive interval using the signed-16 comparator against each endpoint, not ordinary unsigned ordering. The half-range/wrap-lifetime invariant remains unproved. It visits C+0x60 records and calls 0x82A14330 for fields inside that interval. That queried helper updates the buffered header through 0x82A13F48 and calls 0x82A14878 with stored bytes/length; its success updates record+0x0C. Actual socket-send effects and autonomous timer/retry limits remain unproved. No retry duration, count or loss guarantee is assigned.",
+    "minimalParserProposal": "At the native/title parser owner, reject a post-header payload shorter than two bytes before the first 0x82A12160 read, preserving the existing two/four-byte control semantics and malformed-input outcome. No SDK GT2 parser or retransmit layer is proposed. UNRUN offline cases: declared lengths zero/one must reach no payload read; two/four retain their single/range behavior; three follows existing malformed handling. Use bounded synthetic input and a read-boundary receipt; no game, socket or relay is needed to specify these cases.",
+    "scheduledFlag": "0x82A13010 sets C+0x90 once and samples 0x82A0F520 into C+0x94. The consumer that emits/clears this flag is outside the promoted range; do not call its setting a peer ACK.",
+    "remaining": "nativeTransportSendBoundary expands the selected 0x82A14878 socket path without proving delivery. Exact next static owners are 0x82A15128/0x82A155D0 for accepted type-zero delivery, 0x82A12648..0x82A12AD8 for other type handlers, 0x82A12ED8 for buffered removal, and the C+0x90 flag consumer and autonomous timer owners. Fragment/reassembly grammar, retry deadlines, connection lifetime/wrap, route crossover and the live callback join to 0x82C9FB38/native command append remain unresolved. Existing bulk chunks are a different layer.",
+    "evidence": {
+      "method": "Serialized foreground read-only function and raw-word queries against the pinned flat image. Complete selected byte corridors checked; no Ghidra model repairs or runtime activity.",
+      "selectedWordRanges": [
+        {
+          "start": "0x82A11F88",
+          "endExclusive": "0x82A12160",
+          "sha256": "2924DDD4E6B464ACF1476BA2F919469D75FF53170351E591BA407DEE7DE7A727"
+        },
+        {
+          "start": "0x82A12160",
+          "endExclusive": "0x82A121B8",
+          "sha256": "00A9C4A280A17AF3E8B3107BC902975458660C2B205848FEE4C717D1B6B67857"
+        },
+        {
+          "start": "0x82A121B8",
+          "endExclusive": "0x82A121D8",
+          "sha256": "5B375FFB957808DDD2BD296EFDB71944909A32261CA3DE789C8EF0F54CBD050C"
+        },
+        {
+          "start": "0x82A12250",
+          "endExclusive": "0x82A123F8",
+          "sha256": "C2FF74423BDDFE7EC1EF329162488C0F1F9C939A3500C1C4419BDE2BAA81AF77"
+        },
+        {
+          "start": "0x82A123F8",
+          "endExclusive": "0x82A12578",
+          "sha256": "04C7F0AD7F1676AF991773A9744263DF80BAB07FA4D3600ACA11E2D1AC5295F2"
+        },
+        {
+          "start": "0x82A12B58",
+          "endExclusive": "0x82A12DB0",
+          "sha256": "C42B9AD828BDB6B2E80815C8B76A184A3054F00C63A8F974B1F7640867206B8C"
+        },
+        {
+          "start": "0x82A12DF8",
+          "endExclusive": "0x82A12ED8",
+          "sha256": "0E3F82C36E1BBCD53796BFF47D5B71D9765D7F93F490A4C9D38A02F5832C626B"
+        },
+        {
+          "start": "0x82A13010",
+          "endExclusive": "0x82A13058",
+          "sha256": "3414BF29DCCC67F0998F8D70B5AB2731F8877D0FDDE863D2A5EEABE0ABF6FF86"
+        },
+        {
+          "start": "0x82A131A0",
+          "endExclusive": "0x82A13228",
+          "sha256": "424DCE8CEE31443E3AEEF4B393A91A9B0886070794E4BAE2475B5092280503BE"
+        },
+        {
+          "start": "0x82A13228",
+          "endExclusive": "0x82A13358",
+          "sha256": "7C7DAF37329FED16913BDD15081FFB70F2522B3ADF32A7F1255092C3F922DDDB"
+        }
+      ],
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "qualification": "Half-open corridors are not new function extents. Constructor/send/missing-interval decompilation hits the known thunk boundary; no truncated tail is treated as absent behavior. Queried follow-up 0x82A14330 establishes only its local call boundary; its bytes are not part of these promoted corridor digests."
+    }
+  },
+  "nativeTransportSendBoundary": {
+    "scope": "Selected connection send wrapper through the native socket shim and pinned SDK API, plus the socket observer and guarded retirement-helper return contract. This does not establish actual destruction, peer receipt, reliable retry deadlines, native command acceptance or world application.",
+    "entry": "0x82A14878 receives connection C and payload pointer/length. It calls 0x82A11350 with socket U32[C+8], destination U32[C], U16[C+4] and the payload arguments. A zero result returns zero. A nonzero result samples 0x82A0F520, stores returned r3 at C+0x88 and returns one. Retained C identity/lifetime, normal provider return and noninterference are premises; the store is not a peer receipt or a guaranteed send time.",
+    "normalizationAndGate": "A11350 first calls 0x82A092E8 on its payload pointer/length homes. A null pointer substitutes a default pointer and length zero; length -1 with nonnull pointer requests C12DE0 and stores its result+1. That callee's semantics remain unexpanded. If socket+0x40 != three, it calls A08120(socket handle); a zero gate returns one without reaching sendto. A08120 initializes a local flag to zero, calls A07D80(handle,0,&flag,0) and returns that flag only when the helper returns one, otherwise zero. nativeTransportReadinessBoundary supplies the selected write-set poll and its source/return qualifications.",
+    "socketCall": "On the send branch, A11350 requests a 16-byte zero-fill for a stack sockaddr, explicitly writes family two, the destination address and 16-bit port, then calls 827F1368 at A113EC with handle, normalized payload/length, flags zero, sockaddr and length16. Compatible fill effects, valid guest ranges and normal returns are premises. The shim shifts those six arguments by one register, supplies caller one and tail-branches to imported NetDll_sendto at 82E928D4. This binds an actual socket API call under the stated branch, not just a symbol name.",
+    "apiResult": "A11350 tests only whether sendto returns -1; it does not compare any other byte count with the requested length. A result other than -1 goes to the optional socket+0x28 observer. On -1 it calls 827F1390 for last error. Errors10055/10035 immediately return one without the observer. Errors10040/10064 also return one. Error10054 calls A11710; error10065 calls A11910 with the additional flag one; those branches return zero only when that helper returns zero, otherwise one. Other errors call A116A8 and return zero after normal cleanup return. Their callbacks/cleanup effects remain unexpanded conditions, not inferred successful sends or teardown.",
+    "observer": "After an API result other than -1, absent socket+0x28 returns one. When present, A11350 obtains a connection candidate via A10AB8 and calls A15728(socket,candidate,destination,port,0,payload,length,1). A15728 chooses socket+0x28 for nonzero final mode and +0x2C for zero; null socket or callback returns one. It normalizes a missing payload pointer or zero length to both zero, increments socket+0x1C and optional connection+0x24 around the indirect callback, then decrements them. Callback r3 is not the helper result. If socket+0x14 is nonzero and socket+0x1C is zero afterward, it calls A10F10(socket) and returns zero; otherwise one. A11350 forwards that zero/one distinction. Live socket/connection retention and normally returning callbacks/helpers are premises; no lock or concurrent mutation guarantee is inferred.",
+    "clockBoundary": "A0F520 calls 8280DE30, which returns U32[U32[0x82000854]+0x10]. The selected code performs no clock-unit conversion. The source of that pointer, actual update cadence, scaling, monotonicity and wrap/lifetime contract are not established by this packet. SDK KeTimeStampBundle setup is a separate source lead, not a proved binding of this slot.",
+    "sdkJoin": "At SDK 2d4b3e588d06ff33153ca8d221c5c9dbc0b9e8ec, src/kernel/xam/xam_net.cpp:1545-1600 owns ordinary sendto and src/kernel/xam/relay_system_link.cpp:1669-1720 owns relay Client::Send. Beyond a valid socket and IPv4 destination, RelaySocket requires relay mode and a still-registered datagram handle. Under those guards a stopped relay Client::Send can return the payload length while dropping it. Thus the selected native branch for a result other than -1 and C+0x88 store can follow local SDK acceptance/drop without a peer packet. This is the documented stopped-relay policy, not a new causal claim or a proposed retry layer. Direct socket acceptance, relay queuing, relay delivery and native-world application remain different receipts.",
+    "minimalProposal": "No transport behavior change follows from the outer Boolean alone. Diagnose the underlying gate, exact send return/error, observer branch and C+0x88 sampled-value store before changing ordering/retry policy. Keep existing SDK lifecycle/error proposals separately owned; do not equate native one with delivery, add retries above GT2, or choose wait targets without the timer/clock contract and later measurements.",
+    "loggingProposal": "Default-off numeric metadata at A113EC/A113F0 socket call/return, A11400/A11404 last-error call/return, A1150C/A11510 observer wrapper call/return, A148B0/A148B4 outer call/return and A148CC pre-store/A148D0 post-store. Correlate paired sites within one invocation; separate every reached API return, nonfatal no-send/error branch, guarded retirement-helper call/return and actual C+0x88 write. Record requested/returned lengths, error category, gate/observer presence, opaque socket/connection/attempt tags and raw sampled value. Preserve guest state and retain no payload, address, identity or credentials. The error getter is sampled only where the native path already calls it.",
+    "unrunCases": [
+      "Mode/gate skip returns one without sendto; API zero/full returns and a mocked short return are distinguished from -1 and last-error categories. No fake or socket was executed.",
+      "10035/10055/10040/10064 nonfatal branches, 10054/10065 helper true/false and other-error cleanup remain separate controls with normal-return premises.",
+      "Absent/present observer, nested callback depths and the guarded A10F10 call classify the wrapper result without treating callback r3 as delivery or the helper call as completed destruction. C+0x88 write observation requires the paired store sites and retained connection.",
+      "A stopped-relay length/drop follows the documented SDK policy; any permitted future runtime comparison must distinguish local API acceptance, route delivery, peer consume and native command/world receipt."
+    ],
+    "nextStaticWork": "nativeTransportReadinessBoundary expands the selected A07D80 write-set poll; its mode/relay integration remains active. Follow C12DE0 result semantics, A11710/A11910/A116A8 error/close callbacks, A10AB8 live connection lookup, A10F10 actual retirement, native type-zero delivery/callback installation, C+0x90 flag consumer and autonomous timers/retries. Trace the clock slot and its provider before assigning milliseconds or deadlines. These remain active research.",
+    "evidence": {
+      "method": "Serialized foreground read-only function and raw-word queries, exact-owner narrow generated corroboration and pinned SDK socket/relay contract comparison.",
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "distinctQueriedWords": 1016,
+      "selectedWordRanges": [
+        {
+          "start": "0x82A11350",
+          "endExclusive": "0x82A1152C",
+          "sha256": "87FB130670632DB1974FC3FB7A1736C402F56F2130FCB5DC9EC1E74B193A5062"
+        },
+        {
+          "start": "0x82A14878",
+          "endExclusive": "0x82A148E4",
+          "sha256": "88317C79D48AF1382E251119CA7DAE2205370AE948897D0F3D359634CDC552C6"
+        },
+        {
+          "start": "0x827F1368",
+          "endExclusive": "0x827F1388",
+          "sha256": "40B77FE730E334061865009B0BAF10DD267169F0A58E24CBD3C0C092F4DB8C80"
+        },
+        {
+          "start": "0x82A15728",
+          "endExclusive": "0x82A158A0",
+          "sha256": "D7772C26E36D6CE90B56DE6344F00937E4815E1270A839BFEF8F370F50149458"
+        },
+        {
+          "start": "0x82A092E8",
+          "endExclusive": "0x82A09364",
+          "sha256": "4ECEB304351B036536D342EBA3C6BCBCAF4E7D5A843C7A8890CCAC6DB009BFF8"
+        },
+        {
+          "start": "0x82A08120",
+          "endExclusive": "0x82A08170",
+          "sha256": "1D318338EC20CCF33FD96A75FE268255FFF89DC24EE6C013C3BE4A75C0242D95"
+        },
+        {
+          "start": "0x82A0F520",
+          "endExclusive": "0x82A0F540",
+          "sha256": "5F81657ACEDD8D4B7F776D78EDE66AA48AB0A77EF4433A4E93CDE19DF424F213"
+        },
+        {
+          "start": "0x8280DE30",
+          "endExclusive": "0x8280DE40",
+          "sha256": "66BE20FE42660ED664B2E4C85C0B254FE13E69F64A4D8D1BC8318FE920994E0F"
+        }
+      ],
+      "qualification": "Half-open checked corridors are not inferred native function extents. Configured thunk/bad-data truncation remains. No socket, relay, peer, runtime or timing measurement was performed."
+    }
+  },
+  "nativeTransportReadinessBoundary": {
+    "scope": "The selected A11350 -> A08120 -> A07D80 write-readiness gate and its native shims, reconciled with pinned SDK select/FDIsSet. This does not prove send acceptance, relay-queue readiness, delivery, retry timing or connection retirement.",
+    "selectedCaller": "nativeTransportSendBoundary owns A11350's socket+0x40 gate. When that field is not three, A08120 initializes one local flag to zero and calls A07D80(handle,0,&flag,0). It returns that flag only when A07D80 returns exactly one; otherwise it returns zero without resetting the local flag. Thus this selected invocation supplies only a write-set output pointer, not all three optional outputs. A zero result makes A11350 return one without sendto; it does not by itself identify whether the cause was not-ready, missing handle or select failure.",
+    "setsAndPoll": "A07D80 supports optional read/write/exception output pointers. For each nonnull pointer it initializes a separate local fd set with count one and the supplied handle. It explicitly zeroes the two-word timeval and calls 827F12F8 at A07FC4/A07FC8 with nfds64, the three set pointers or zero, and that timeval address. The selected A08120 path supplies one write set and null read/exception sets. Valid guest objects/ranges, normal calls, compatible SDK field layout and noninterference remain premises.",
+    "nativeImports": "827F12F8 shifts five arguments right by one register, supplies caller one and tail-branches to 82E92894. 827F13A0 tail-branches to 82E92914 without a register shuffle. The title generated import table at generated/default/rerevved_init.cpp:40271,40279 maps these to NetDll_select and NetDll___WSAFDIsSet, respectively; F-0079 already records the first import. The pinned SDK registrations/export table supply the matching entry points. These source bindings and image-backed branches are static evidence, not installed-binary or runtime-call receipts.",
+    "returnGate": "A07D80 returns -1 immediately when select returns -1, without writing its optional outputs. Otherwise each nonnull output is written one only when the raw select result is greater than zero and 827F13A0 reports the supplied handle present in that corresponding resulting set; it writes zero otherwise. It returns the raw select result. A08120's preinitialized flag and exact-one test therefore turn the selected -1, zero or absent-handle result into zero. Callback dispatch or a send is not part of these helpers.",
+    "sdkContract": "SDK 2d4b3e588d06ff33153ca8d221c5c9dbc0b9e8ec src/kernel/xam/xam_net.cpp:1314-1415 converts guest sets to host socket sets, calls host select with the supplied timeval after scaling, updates guest sets using host FD_ISSET and returns the host result. That update also runs after host failure; readiness is asserted only for a successful host result. Its host_set::Load asserts fd_count<64 and stops at -1 or an invalid handle. The selected native set requests count one, so it does not exercise the known exactly-64 assertion defect. This body does not explicitly copy/map host select failure to XThread guest last-error state; the host API's own error state is separate. At :1602-1610 FDIsSet scans min(fd_count,64) for exact handle equality. General SDK status/capacity proposals remain owned by the network API audit.",
+    "relayBoundary": "The selected SDK select/FDIsSet bodies contain no RelayRequested/RelaySocket branch and poll the converted host socket sets. This establishes no relay-specific queue readiness policy. The separate sendto relay branch from nativeTransportSendBoundary must still be reached through this gate unless socket+0x40 equals three. Do not infer that a running relay client, a queued relay receive, or a stopped-client length/drop necessarily passes this host write-set gate. Relay registration/receive/selector integration and the native socket+0x40 writers remain active research.",
+    "minimalProposal": "No native gate change is justified from this static mapping alone. Diagnose gate failure separately from sendto failure; keep the existing SDK select error/capacity proposal at its owner. Do not convert this poll into a blocking wait or add a relay-readiness override without the socket-mode/queue contract.",
+    "loggingProposal": "Default-off paired call/return metadata at A08148/A0814C for the inner A07D80 result, A11394/A11398 for the final A08120 gate return, A07FC4/A07FC8 for select and A08048/A0804C for the selected write-set FDIsSet call. Record opaque socket/attempt tags, requested/resulting set counts, raw select result, whether FDIsSet was reached and its raw result, the inner local flag separately from the actual gate return and the existing outer no-send branch. Preserve guest state. Retain no raw pointers, addresses, payloads or user identity, and do not add a last-error getter call to this path.",
+    "unrunCases": [
+      "A one-entry write set with zero timeval reaches select; result zero produces gate zero and the outer nonfatal no-send return.",
+      "Result one plus retained-handle match produces gate one; a missing match produces zero. Neither result is a send or delivery receipt.",
+      "Select -1 leaves the generic outputs untouched, but the selected caller's initialized/exact-one flag handling produces zero; diagnostics must distinguish this from ordinary not-ready without changing last error.",
+      "SDK invalid-handle filtering and native socket-mode three bypass are separate supported controls. Relay queue/readiness claims require the later integration contract. No fake, selector, socket, relay or game was executed."
+    ],
+    "nextStaticWork": "Follow the native socket+0x40 writer/mode selection and SDK relay registration/receive/selector relationship. Timer comparisons, connection lookup/error callbacks, actual retirement, payload-length normalization and delivery/callback installation remain active at nativeTransportSendBoundary and the separate transport frontier. A zero-timeout poll does not provide an invocation cadence.",
+    "evidence": {
+      "method": "Serialized foreground read-only function/raw-word queries and exact-owner generated/pinned SDK source corroboration.",
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "distinctQueriedWords": 834,
+      "selectedWordRanges": [
+        {
+          "start": "0x82A07D80",
+          "endExclusive": "0x82A080CC",
+          "sha256": "CA8E754D40499909C6D57B3458B557CD6CFEB964E4640ECFAA7C23941F0579EE"
+        },
+        {
+          "start": "0x827F12F8",
+          "endExclusive": "0x827F1314",
+          "sha256": "CABEE14E196537F825DF816CB22C861E809FE5FDF93D1684CB215F91223ADA06"
+        },
+        {
+          "start": "0x827F13A0",
+          "endExclusive": "0x827F13A4",
+          "sha256": "BF79D887787D6DB26693B16F41A8D6822CD0CE6B48512AC1019022C667BC6838"
+        },
+        {
+          "start": "0x82A08120",
+          "endExclusive": "0x82A08170",
+          "sha256": "1D318338EC20CCF33FD96A75FE268255FFF89DC24EE6C013C3BE4A75C0242D95"
+        }
+      ],
+      "qualification": "Half-open corridors are not inferred function extents. Native shim decompilation is bad-data truncated; image words and generated bindings establish the selected shifts/branches. No runtime, relay, selector or timing execution."
+    }
+  }
 }

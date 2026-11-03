@@ -502,6 +502,57 @@ temporary reset requests. Bucket-table initialization, actual map/key/node
 ownership and completed release remain distinct from a returned output cell or
 collection pointer.
 
+The [hash initialization contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativePresentationHashInitializationBoundary)
+binds the global table writer and a conditional native startup dispatch. Its
+expected table/seed writes and caller status are distinct from completed
+initialization in a loaded instance. Earlier callbacks, actual startup binding
+and later table generations remain separate requirements.
+
+The [startup status continuation contract](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeStartupStatusContinuationBoundary)
+closes the selected conditional failure and scalar overwrite, and records the
+SDK's patch-before-entry-cache source order. Actual loaded binding and the
+owned failure response remain gates; no SDK blocker or runtime fix is claimed.
+
+The [application admission contract](../../manifests/xbox-network-message-root.json#/nativeConnectionApplicationAdmissionBoundary)
+records selected capacity, phase, name-index and statistic gates, plus one
+scalar-write source. Current association/XUID/player identity, input origin
+and recovery/teardown remain separate joins; no new repair is selected.
+
+The [admission scalar envelope contract](../../manifests/xbox-network-message-root.json#/nativeAdmissionScalarEnvelopeBoundary)
+records selected construction, a five-word payload codec and routed/header
+writes. The original scalar seed, receive dispatcher and complete capture
+ownership remain active; a request or counter advance is not delivery acceptance.
+
+The [admission send-buffer contract](../../manifests/xbox-network-message-root.json#/nativeAdmissionSendBufferBoundary)
+records local serialization, byte forwarding and cleanup, with a conditional
+backing-null guard candidate. Full direct/queued capture and attempt rollback
+remain active; descriptor return and a free request do not prove success.
+
+The [buffer position and growth contract](../../manifests/xbox-network-message-root.json#/nativeAdmissionBufferPositionGrowthBoundary)
+records relative advance, conditional header-range restoration and growth/error
+requests. Current failure policy, exceptional continuation and complete transport
+capture remain active; no standalone repair or runtime acceptance is inferred.
+
+The [direct connection-send contract](../../manifests/xbox-network-message-root.json#/nativeDirectConnectionSendCaptureBoundary)
+records callback versus empty-callback routes, conditional byte capture and
+local status categories. Actual callbacks/storage/failure policy remain active;
+local0 and lower-send acceptance are not peer capture or delivery receipts.
+
+The [send-capacity and fallback contract](../../manifests/xbox-network-message-root.json#/nativeConnectionSendCapacityFallbackBoundary)
+records capacity/scalar effects, pending-record count checks and selected
+control/state/closed-callback requests. Actual typed storage and complete
+pressure/retirement policy remain active; no standalone repair is inferred.
+
+The [control, callback and expiry contract](../../manifests/xbox-network-message-root.json#/nativeConnectionControlCallbackExpiryBoundary)
+records selected control framing/classification, alternate callback and raw
+counter/phase requests. Actual clock units, callback binding and complete
+retirement remain active; a local return is not delivery or player admission.
+
+The [send-phase and sample contract](../../manifests/xbox-network-message-root.json#/nativeConnectionSendPhaseSampleBoundary)
+records selected periodic, retry and pending-reply requests plus initial sample
+and slot traversal. Counter units, outer cadence, exact header-update effects
+and actual typed lifetimes remain active; local results do not prove delivery.
+
 The [selected guest-refusal predicate](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeGuestRefusalBoundary)
 adapts sign-in-info status before testing one output bit. Its true branch
 requests a refusal message and sign-in UI, while the pinned SDK leaves the

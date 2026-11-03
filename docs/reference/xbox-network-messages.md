@@ -262,6 +262,109 @@ an earlier direct Stop does not prevent a later association by that startup.
 They do not provide whole-attempt cancellation.
 Native reference pairing and outer cancellation ownership remain active.
 
+The [selected cleanup helpers](../../manifests/xbox-system-link-qos-root.json#/nativeNetworkCleanupBoundary)
+separate the WSA-only session helper from the WSA-then-XNet helper. The SDK's
+zero XNet cleanup result covers both nonfinal reference release and final
+network cleanup. These local calls establish neither a complete lifetime
+balance nor a leak; the destructor callbacks and outer owners remain active.
+
+The [selected failed-startup diagnostic](../../manifests/xbox-system-link-qos-root.json#/nativeStartupDiagnosticBoundary)
+has a normal return path in the checked recompiled type-20 handler, with valid
+guest string access and normal helper/logger behavior required. The startup
+helper then returns the later WSA result. Visible debug output, XNet readiness,
+original retail trap handling and complete reference pairing are separate
+contracts.
+
+The [selected session-owned object retirement](../../manifests/xbox-live-session-search-contract.json#/nativeSessionObjectRetirementBoundary)
+binds the QoS and settings objects to their selected destructors. QoS release
+precedes serialized-buffer disposal, and a configured SDK release can also clear
+the active service's QoS mirror. Failed or skipped release still requires correct
+final cleanup. Local field clears establish neither complete network retirement
+nor a clean second match; allocator behavior, the registry service callback and
+outer reference pairing remain active.
+
+The [selected allocation-return contract](../../manifests/xbox-live-session-search-contract.json#/nativeSessionAllocationReturnBoundary)
+connects explicit conditional zero-return arms to the recorded session consumer
+guard proposals. Concrete refill/heap/handler states and cleanup-safe caller
+unwind remain active research; the source paths establish no executed failure.
+
+The [selected failure policy](../../manifests/xbox-live-session-search-contract.json#/nativeSessionFailurePolicyBoundary)
+keeps create and migration result encodings separate. For a session-create result
+whose low word differs from one, its selected join-parent suffix requests
+retirement of a present network object. Early guard exits skip that suffix. The
+proposed local guards avoid publishing fresh partial objects; callback, queue,
+socket and complete reference compensation remain active research.
+
+The [selected outer join rollback](../../manifests/xbox-live-session-search-contract.json#/nativeOuterJoinRollbackBoundary)
+reaches service destruction for a matching registry value on its processed
+failure route. Session-wrapper destruction additionally requires a retained,
+nonnull wrapper with the selected vptr; preparation can fail before one exists.
+Stable registry/key/object identities and normal helper returns are required.
+Its early exits differ, and the mode-2 marker setter is
+separate from search cancellation or release. This conditional destructor reach
+does not establish final socket retirement or a clean retry.
+
+The [selected socket-unwind helpers](../../manifests/xbox-network-message-root.json#/nativeSocketUnwindHelperBoundary)
+separate registry-node removal, callback traversal, deferred flagging and the
+immediate close/container/WSA/XNet call sequence. The immediate path ignores
+the close API result; its later return has a different source. The SDK's zero
+close result also does not establish OS-close success or object destruction.
+Connection callbacks, configured retirement targets and complete lifetimes
+remain active research.
+
+The [selected callback and configured-target contract](../../manifests/xbox-network-message-root.json#/nativeSocketCallbackTargetBoundary)
+binds reverse iteration to a slot address, its stored connection value and a
+fixed-flag helper sequence. Element callbacks receive the slot address instead.
+The initial configured retirement target reaches header/list or virtual-memory
+requests, with subordinate retirement effects still active. These different
+results do not form a shared cleanup-success enum.
+
+The [selected forced-connection continuation](../../manifests/xbox-network-message-root.json#/nativeForcedConnectionRetirementBoundary)
+publishes state seven before its container requests and can continue after a
+callback wrapper requests socket retirement. Safe continuation depends on the
+actual callbacks and retained connection/container lifetimes. This establishes
+a lifetime obligation; it does not establish a stale access or a complete fix.
+Actual growth, copy and installed destructor effects remain active research.
+
+The [selected container-mutation contract](../../manifests/xbox-network-message-root.json#/nativeConnectionContainerMutationBoundary)
+records search comparison order, capacity/backing/count publication and the
+callback-before-erase sequence. Actual target binding, existing-backing growth
+and callback ownership remain active before a completed container transfer or
+a failure-safe retry.
+
+The [selected growth/copy target contract](../../manifests/xbox-network-message-root.json#/nativeConnectionGrowthCopyBoundary)
+joins the configurable growth slot and its initial target to the allocator's
+conditional zero-return path. The forward-copy routine has local return paths
+and a bounded span/storage contract. These facts support a growth-guard proposal;
+actual title binding and complete failure ownership still need proof.
+
+The [selected constructor/callback contract](../../manifests/xbox-network-message-root.json#/nativeConnectionContainerConstructionBoundary)
+binds the constructed buckets and separate list to four-byte strides, distinct
+callback configurations and a fixed list-slot target. Parent pointer guards do
+not establish valid child backing. Actual title-object identity, partial-state
+compensation and the target's retirement effect remain active research.
+
+The [configured-target return boundary](../../manifests/xbox-network-message-root.json#/nativeSocketConfiguredReturnBoundary)
+binds the selected exit helper to preservation of the parent result word under
+valid frame, lock and ABI premises. It also records a four-slot callback writer;
+zero raw direct calls and zero modeled references do not prove an immutable
+table. Local result preservation remains separate from completed retirement.
+
+The [selected native duplicate-handle uses](../../manifests/xbox-network-message-root.json#/nativeDuplicateHandleUseBoundary)
+account for three raw direct wrapper sites found by the aligned-word scan of
+initialized executable memory. Two request
+the current-thread pseudo-handle; the third reads a field populated by a thread
+creator, with retention across its intervening wait required. These selected
+inputs do not establish a socket alias. Indirect use, thread/owner teardown and
+actual runtime occurrence remain separate research.
+
+The [selected registry service reset](../../manifests/xbox-live-session-search-contract.json#/nativeSessionServiceResetBoundary)
+binds the destructor's two lookups and a constructed cross-key path to a
+conditional receiver class. Its selected callback resets a local list and
+vector; the nine copied head markers are not established player or SDK event
+identities. Key replacement, other construction orders and complete network
+retirement remain active research.
+
 The [dynamic export census](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeDynamicExportBoundary)
 accounts for eight direct lookup sites using the pinned SDK's startup-extension
 and instrumentation mappings. Indirect/tail paths and other platform versions
@@ -272,6 +375,12 @@ and the [voice-create status contract](../../manifests/xbox-live-mode-entry-invi
 join native API return checks to the pinned SDK owners. They distinguish
 unsupported results from output consumption; they do not establish a statistics
 backend, voice transport, audible output or a successful online feature.
+
+The [selected guest-refusal predicate](../../manifests/xbox-live-mode-entry-invite-contract.json#/nativeGuestRefusalBoundary)
+adapts sign-in-info status before testing one output bit. Its true branch
+requests a refusal message and sign-in UI, while the pinned SDK leaves the
+tested bit clear. Actual guest-profile policy, caller/action identity and
+display/completion behavior remain active research.
 
 ## Object serialization and envelope
 

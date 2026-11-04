@@ -27,9 +27,15 @@ selected block write; callback BLR alone would not suffice.
 | VS `0x82C2AAF0` -> `0x823066D0` | `r3=[0x8314F300]`, `r4=0`, `r5=r1+0x80`, `r6=96` | `[0x8314F300]+0x780` -> `r1+0x80..r1+0x67F`, `0x600` bytes |
 | PS `0x82C2AB08` | Same pointer/`r4=0`, `r5=r1+0x900`, `r6=8` | `[0x8314F300]+0x1780` -> `r1+0x900..r1+0x97F`, `0x80` bytes |
 
-Copy has byte/word/vector arms; unknown alignment and unexpanded
-`0x827F89D8`/`0x82825410` qualify full transfer/return. Original semantic
-producers remain unknown.
+The shared
+[copy contract](../../manifests/native-renderer-shader-fetch-patch-boundary.json#/currentEvidence/shaderConstructionBoundary/metadataTransferBoundary)
+bounds transfer/return for lengths at least 16 under its readable aligned
+source envelope, writable destination/stack, disjoint physical aliases,
+supported execution and retention premises. These requested lengths meet its
+size floor; their actual mappings, aliases and retained bytes remain unjoined.
+The same contract binds the shader metadata request at `0x8269467C` to its
+offset-table copy only within the stated allocation and metadata bounds.
+Original semantic producers and current shader/pass identity remain unknown.
 
 | Object slot | Load and producer | Forwarded load; bind BL |
 | --- | --- | --- |

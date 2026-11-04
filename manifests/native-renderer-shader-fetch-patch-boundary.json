@@ -130,7 +130,109 @@
       "metadata": "Init reads offsets at VS+896+8*v. Their producer is the metadata transfer request, corresponding to blob B+24+8*v if that transfer completes as requested. Init does not synthesize this table. It forms M_v=VS+load32(VS+896+8*v)+872 and code=C+load32(M_v).",
       "savedRecords": "For selected patch-list word P_i, init copies12 bytes from code+12*(P_i&0xFFF) to VS+68+416*v+12*i when the addresses differ. It stores-1 at VS+40+416*v at0x82692C30; that store is a cache tag, not an offset-table write.",
       "corroboration": "Canonical rerevved generated/default/rerevved_recomp.119.cpp:12769-12939 and rerevved_recomp.199.cpp:12503-12648 at observed HEAD81798450751cfb75460269f82c2eb4df02754e80.",
-      "qualification": "These are allocation/transfer requests and direct pointer/record stores. Hook effects, actual extents, full transfer/alignment behavior, allocator ownership, blob/metadata validity and aliases remain guarded. The existing world-constant transfer evidence also leaves unexpanded0x8281ABB8 alignment branches."
+      "qualification": "These are allocation/transfer requests and direct pointer/record stores. The metadataTransferBoundary supplies a conditional N>=16 transfer/return relation, including its aligned source envelope, destination/stack extent, alias, execution and retention premises. Hook effects, actual extents, allocator ownership, blob/metadata validity and aliases remain guarded; the separate code-copy request remains outside that relation.",
+      "metadataTransferBoundary": {
+        "confidence": "strong",
+        "evidenceClass": "Conditional static relation with separately identified generated corroboration; no runtime transfer observation.",
+        "request": "CreateVS0x826945E8 call0x8269467C requests0x8281ABB8(D,S,N), D=VS+872,S=B,N=M=load32(B+4). The separate0x827F8550 code request remains outside this transfer relation.",
+        "supportedDomain": "N>=16, zero-extended32-bit N/SP/LR, nonwrapping valid guest extents; SP16-byte aligned. Source data-load envelope R=[floor16(S),ceil16(S+N)) is readable; W=[D,D+N) is writable. R,W and the listed stack footprint have no interfering physical aliases; R and W are disjoint. Inputs, mappings, source bytes, scratch and save slots remain stable. All scalar/vector/partial-store/cache and ABI leaves execute with the inspected semantics and return normally, without trapping or replacement-hook differences. Actual B alignment is unrestricted and unobserved.",
+        "relation": "On this domain, post[D+i]=pre[S+i] for0<=i<N. Parent return at0x8281AE8C supplies original incoming r3 in full64 bits; its low32 is D. CreateVS overwrites this return while forming its next allocation request.",
+        "alignmentAndLength": "For N>=16 define p=(-D)&0xF, a=(-D)&0x7F, q=min(a>>4,(N-p)>>4), A=p+16*q, K=128*floor((N-A)/128), T=N-A-K. Prefix0x8281ACC0..ACDC writes p bytes, then0x8281AD44..AD60 transfers q16-byte chunks. If K>0,D+A is128-byte aligned. Source low4 bits at0x8281AD68/AD74 select aligned parent bulk or0x82825410(D+A,S+A,K) at0x8281AE20. Remaining T bytes use full16-byte and final partial tails at0x8281AE38..AE88. Lengths sum exactly to N.",
+        "dataFootprint": "Source vector loads cover R, including up to15 bytes before S and up to15 after S+N. Destination data stores cover exactly W. In addition,0x8281AD1C zeroes the first complete128-byte bulk line when K>=128; aligned0x8281ADB8 zeroes the next line when remaining>256, while unaligned0x82825448 does so when remaining>=256. These intermediate zero writes are subsets of W and are overwritten on normal completion. They preclude an unrestricted overlap guarantee.",
+        "cacheTouches": "0x8281ACA4 requests S+128*j for0<=128*j<min(N,1024). Bulk0x8281ADA8 and helper0x82825444 request currentSource+1024 when remaining>1024. Each EA lies within the requested source span; its128-byte cache line may extend beyond R. Supported cache-touch semantics and any required line address validity are premises, distinct from the data-load footprint.",
+        "stackAndReturn": "For incoming SP, save26 writes and restore26 reads six full64 GPR slots at[SP-56,SP-8) and4-byte LR at[SP-8,SP-4). Parent writes4-byte backchain[SP-176,SP-172) and16-byte vector mask[SP-80,SP-64), reloading the latter after the unaligned helper, including K=0. Parent restores full64 r26..31, retaining CreateVS live r27=M,r28=B+M,r29=code size,r30=VS,r31=B. LR restoration zero-extends the saved low32 bits; arbitrary high64 LR retention is not claimed. Volatile GPRs0,3..12,CTR,XER,CR0/6/7 and used vectors are not preserved by this contract.",
+        "continuations": {
+          "0x827F89D8": "Scalar leaf uses at most three leading bytes to align destination4, aligned word loads or four byte loads per word, then0..3 trailing bytes. Valid nonwrapping disjoint requested spans suffice without extra aligned reads; r3 remains the original full64 destination. Parent reaches it only on N<16 in the inspected body.",
+          "0x82825410": "For its selected K multiple128 and128-byte-aligned destination, copies K bytes using aligned16-byte source loads and permutations; helper r3/r4 advance by K and r5 becomes0. K=0 returns immediately without a data load/store. Parent discards this local return and restores its own original destination."
+        },
+        "smallLengthStop": "N<16 is excluded. The parent's residual byte loop subtracts the live word loaded from0x82F2FA74 at0x8281AC50; its value and termination are unproved here. The scalar leaf alone does not close this parent path, which can also use an8-byte load/store.",
+        "metadataJoin": "Subject to completed transfer,28+8*v<=M, valid downstream table bounds and preservation through intervening allocation/code-copy/init, load32(VS+896+8*v)=preload32(B+24+8*v). This narrows metadata-copy qualification without proving a current shader/asset identity, code-copy delivery or shader semantic equivalence.",
+        "allocationQualification": "The accepted VS request is M+40+((load32(B)&1)?832:0). Without size arithmetic wrap, bit0=1 requests M+872 and covers the requested metadata endpoint. Bit0=0 requests M+40 and does not alone establish backing through VS+872+M. Actual writable extent remains a premise; no defect or larger allocator backing is inferred for excluded inputs.",
+        "nativeEvidence": {
+          "method": "Foreground read-only ghidra/DumpFunctions.java and ghidra/DumpMemoryWords.java, with every selected native word compared to the supported flat image identified by image.json.",
+          "completeRanges": [
+            {
+              "start": "0x8281ABB8",
+              "endExclusive": "0x8281AE98",
+              "words": 184
+            },
+            {
+              "start": "0x827F89D8",
+              "endExclusive": "0x827F8A80",
+              "words": 42
+            },
+            {
+              "start": "0x82825410",
+              "endExclusive": "0x828254D0",
+              "words": 48
+            },
+            {
+              "start": "0x827F7C80",
+              "endExclusive": "0x827F7CA0",
+              "words": 8
+            },
+            {
+              "start": "0x827F7CD0",
+              "endExclusive": "0x827F7CF4",
+              "words": 9
+            }
+          ],
+          "selectedWords": 291,
+          "result": "All selected words matched the supported flat image. Canonical parent decompilation remained thunk-truncated; VMX128 interpretation used the separately hashed exact generated functions, with execution semantics still conditional. No whole-program byte identity is claimed.",
+          "bodyCount": 7,
+          "bodyLimit": 8,
+          "reusedBodies": [
+            "0x826945E8",
+            "0x82692B50"
+          ]
+        },
+        "generatedCorroboration": [
+          {
+            "path": "generated/default/rerevved_recomp.95.cpp",
+            "function": "0x8281ABB8",
+            "windows": [
+              "16348-16547",
+              "16548-16747",
+              "16748-16794"
+            ],
+            "sha256": "DB490CBEE3D08D757CD2820AE2DA7EE00B1F1F52F190F8EA9DC7C9085EEE2596"
+          },
+          {
+            "path": "generated/default/rerevved_recomp.101.cpp",
+            "function": "0x827F89D8",
+            "windows": [
+              "16257-16358"
+            ],
+            "sha256": "E56DDC6C0E716D9B6C2C44025473F021AAEF34F7077790245DD554A303CF4520"
+          },
+          {
+            "path": "generated/default/rerevved_recomp.75.cpp",
+            "function": "0x82825410",
+            "windows": [
+              "16289-16411"
+            ],
+            "sha256": "36308C31D36DF304AE93E9891BA5593FEDFE87D2B3AA01F4F7F9E2910C924DE6"
+          },
+          {
+            "path": "generated/default/rerevved_recomp.207.cpp",
+            "function": "0x827F7C80",
+            "windows": [
+              "15989-16008"
+            ],
+            "sha256": "D37F0BCF8822C0D2129C0B91546CF5AEE8150A92A15224FDF137389529F6D125"
+          },
+          {
+            "path": "generated/default/rerevved_recomp.185.cpp",
+            "function": "0x827F7CD0",
+            "windows": [
+              "16458-16479"
+            ],
+            "sha256": "9B8E09CD889187B28680C2ABB83E1962DE1F6002E30B25C4C692E20DAA4AE5B3"
+          }
+        ],
+        "generatedQualification": "These are separately hashed generated artifacts from the canonical title checkout, independently of native-worktree handwritten source inspected by Git object. No source-to-generation byte-identity claim binds them to the title source revision or the earlier generatedRevision. Native words establish current-image identity; generated windows corroborate interpretation.",
+        "falsifier": "A supported admitted input with a wrong requested byte, a data load beyond R, a store beyond W plus the stated stack footprint, a zero line outside W, a changed saved caller-live GPR, or failure to return under the explicit execution premises. Unsupported/trapping vector forms or different hook behavior require their exact route/implementation discriminator; first selected VMX128 gate is0x8281ACC0 for p>0 or0x8281AD38 for p=0. Runtime support/trapping was not observed."
+      }
     },
     "dirtyProducerBoundary": {
       "encodingSearch": "Aligned initialized mapped words: oris immediates4/8/16 followed within four words by stw+0x14 or std+0x10 using the same result register.29 raw pairs, cap128 not reached; intervening writes and base provenance required confirmation.",

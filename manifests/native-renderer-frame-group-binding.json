@@ -34,7 +34,7 @@
     "frameOwnerSelection": "In 0x82C71A00, byte [r31+0xA0] is read at 0x82C71C28. A nonzero byte selects source [r31+0xAC] via 0x82C71C38; zero selects [r31+0xB0] via 0x82C71C40. The frame zeroes r24 at 0x82C71B80, initializes the destination slot from it at 0x82C71C2C, and 0x821B2440 assigns the selected pointer into r1+0x60, with its conditional release/refcount behavior still qualified; the frame reloads that slot into r20 at 0x82C71C54.",
     "directArm": "When byte [r31+0x98] is nonzero, 0x82C71C64 calls 0x821D6DD0 with r4=r20 and r5=7. This arm therefore carries the selected frame-owner pointer assigned from +0xAC or +0xB0, subject to r20 being nonnull, DD0's explicit predicate, its opaque helper return, and the later receiver/vptr retention required by RVA-F-0262.",
     "wrapperArm": "When byte [r31+0x98] is zero, 0x82C71C70 calls 0x821D6D10 with r4=7. D10 obtains a separate r4 from its receiver +0x74 before calling DD0; it does not inherit the frame-owner +0xAC/+0xB0 pointer. Its own predicate, nonnull +0x74 result, DD0 predicate, opaque helper return, and later receiver/vptr retention remain required.",
-    "rendererPublication": "At 0x8250F988, entry r4 is preserved in r30. 0x82500200 receives that incoming group in r4, saves it in r31 at 0x82500214, and calls the incoming group's +0x74 slot. A nonnull first result returns directly. If that result is null, 0x82520958 supplies a fallback: a nonnull fallback skips the error call, while a null fallback calls 0x823522E8 at 0x82500250 and then still reaches the +0x78 slot at 0x82500260 if the error call returns. After the +0x78 call, 0x8250026C restores the saved fallback provider into r3, so the +0x78 virtual return is not the helper's published result. F988 stores its incoming r30 to [renderer+0x550] at 0x8250F9D0 only after 0x82500200 returns nonnull and 0x82520478 returns a nonzero low byte.",
+    "rendererPublication": "At 0x8250F988, entry r4 is preserved in r30. 0x82500200 receives that incoming group in r4, saves it in r31 at 0x82500214, and calls the incoming group's +0x74 slot. A nonnull first result returns directly. If that result is null, 0x82520958 supplies a fallback: a nonnull fallback skips the error call, while a null fallback calls 0x823522E8 at 0x82500250 and then still reaches the +0x78 slot at 0x82500260 if the error call returns. After the +0x78 call, 0x8250026C restores the saved fallback provider into r3, so the +0x78 virtual return is not the helper's published result. F988 stores its incoming r30 to [renderer+0x550] at 0x8250F9D0 only after 0x82500200 returns nonnull and 0x82520478 returns a nonzero low byte. The concrete fallback return origin and its first incoming-group +0x60 frontier are bounded in #/currentEvidence/fallbackProviderBoundary.",
     "attachmentBinding": "At 0x8250FA14, 0x8250F988 calls 0x82516F60 with r3=[renderer+0x564] and r4=[renderer+0x550]. F60 first clears context +0x124, reads group slot +0x60 for a count, then calls group slot +0x58 with each index. Each returned item is read at +0x01 before the four words at +0x18, +0x24, +0x30, and +0x3C; null-item validity, indirect returns, and the optional 0x82394268 check remain required to reach the suffix. F60 sets r4=0 at 0x825170A8 and loads r3=[context+0xF54] at 0x825170AC, stores the masked accumulator to context +0x124 at 0x825170B4, and then calls 0x8268D728 at 0x825170B8. The mask is the stored context field, not that call's r4 argument.",
     "laterGroupConsumers": "After intervening 0x8250F988 helpers, the body loads current renderer +0x550 at 0x8250FB00 for the +0x48 callback at 0x8250FB30, then reloads current +0x550 at 0x8250FB34 for the +0x4C callback at 0x8250FB50; both use r4=0 and their returns feed record extent/state calculations. These are exact current-field loads, but equality with the original entry r30 requires intervening returns, +0x550 value retention, valid group/item/context storage, and relevant non-aliasing and vptr conditions.",
     "relationToGroupBracket": "When the separate conditional +0x160 renderer relation reaches 0x8250AC90, its current group is loaded from renderer +0x550 and the existing group-bracket evidence selects indexed color fields +0x3098 + 4*index and depth field +0x30A8. This packet ties the accepted +0x15C frame arm to the same renderer field coordinate but does not prove that the +0x15C and +0x160 dispatches execute in one invocation or that their target/depth objects share a lifetime.",
@@ -142,7 +142,7 @@
         "0x82520478",
         "0x8268D728"
       ],
-      "qualification": "The five DumpFunctions targets plus the two generated corroboration bodies are the seven intentionally inspected exact bodies for this question. D10 and DD0 are reused accepted RVA-F-0262 evidence; 0x82394268 and 0x82520958 remain unexpanded."
+      "qualification": "The five DumpFunctions targets plus the two generated corroboration bodies are the seven intentionally inspected exact bodies for this question. D10 and DD0 are reused accepted RVA-F-0262 evidence. 0x82394268 remains unexpanded; the separate bounded 0x82520958 continuation is in #/currentEvidence/fallbackProviderBoundary."
     },
     "readSets": [
       {
@@ -167,7 +167,7 @@
           "0x82500200",
           "0x82516F60"
         ],
-        "bound": "The same five-target DumpFunctions query and eight-center radius-20 raw query, with bounded generated windows for F988, its provider guard helper, F60, and the two generated corroboration bodies counted in bodyInventory. 0x82394268 and 0x82520958 remain unexpanded.",
+        "bound": "The same five-target DumpFunctions query and eight-center radius-20 raw query, with bounded generated windows for F988, its provider guard helper, F60, and the two generated corroboration bodies counted in bodyInventory. 0x82394268 remains unexpanded; #/currentEvidence/fallbackProviderBoundary owns the separate 0x82520958 continuation.",
         "evidence": [
           "#/currentEvidence/queries/0",
           "#/currentEvidence/queries/1",
@@ -177,7 +177,91 @@
         ]
       }
     ],
-    "qualification": "The raw-word query is the source support for exact instruction PCs, displacements, and direct-call words. Generated windows supply local control and register flow where canonical listing shells are incomplete. Indirect group slot targets, helper semantics, target/depth identities, object retention, runtime execution, and pass naming remain unresolved."
+    "qualification": "The raw-word query is the source support for exact instruction PCs, displacements, and direct-call words. Generated windows supply local control and register flow where canonical listing shells are incomplete. Indirect group slot targets, helper semantics, target/depth identities, object retention, runtime execution, and pass naming remain unresolved.",
+    "fallbackProviderBoundary": {
+      "question": "What concrete return origin does 0x82520958 supply after the incoming group +0x74 result is null, and where does its next unresolved provider edge occur?",
+      "confidence": "strong",
+      "kind": "conditional-static",
+      "symbols": "G is incoming r3 to 0x82520958, supplied from incoming group r31 by 0x82500200; B is the nonzero return of 0x82465C58(276).",
+      "requestAndConstructor": "0x82520958 preserves G in r30 at 0x8252096C, requests 276 bytes from 0x82465C58 at 0x82520974, and branches to the zero-return suffix when that result is null. Nonnull B enters 0x825200D0 at 0x82520980; that constructor leaves r3 unchanged, so the r31 value saved at 0x82520984 is B. The body still tests that value for null at 0x82520988. Allocation extent, validity, ownership and lifetime remain unproved.",
+      "constructor": {
+        "function": "0x825200D0",
+        "endExclusive": "0x8252013C",
+        "returnedOrigin": "Incoming r3 is unchanged on both local paths; no call or r3 assignment occurs.",
+        "objectEffects": "0x825200E0 writes 0x82048390 to [B]. Stores 0x825200E4..0x8252010C clear B+0xF8, +0x100/+0x104/+0x108/+0x10C/+0x110, and +4/+8/+0x10/+0xC/+0x14. B+0xFC is not cleared in this constructor; no full-object zeroing claim follows.",
+        "globalEffects": "The byte at 0x82F1834C is read at 0x82520110. If zero, 0x82520118 returns before the global stores. If nonzero, 0x82520120 clears that byte and 0x82520128..0x82520134 clear the four words at 0x82F8FCA4..0x82F8FCB0. This conditional global reset is an effect, not a success prerequisite or a global origin of B."
+      },
+      "firstUnresolvedProvider": {
+        "receiver": "G",
+        "vptrLoad": "0x82520990",
+        "slotLoad": "0x82520998",
+        "slot": "+0x60",
+        "call": "0x825209A0",
+        "arguments": "r3=G",
+        "returnedValueStore": "0x825209B0 writes returned r3 to B+0xF8 before direct unexpanded 0x82520580 at 0x825209B4.",
+        "frontier": "The concrete current slot target, returned value, G/B storage and alias relation, and return/retention through later helpers remain unresolved. No virtual target or additional helper body is expanded here."
+      },
+      "returnAndFailure": "If the remaining local path and its unexpanded calls reach 0x82520C2C, r3 is set to saved r31=B before the epilogue. The other selected suffix at 0x82520C40 calls B's current vptr slot+0 at 0x82520C54 with r3=B,r4=1 and sets r3=0 at 0x82520C58 if that call returns. The error suffix calls 0x823522E8 at 0x82520C78 and sets r3=0 at 0x82520C7C if it returns; the initial request/constructor null branches enter 0x82520C7C directly. These are conditional return origins, not guaranteed return, allocator semantics, deallocation or leak-freedom proofs. Valid stack/storage, ABI nonvolatile retention and absence of destructive aliases remain premises.",
+      "publicationJoin": "Reuse #/staticJoin/rendererPublication: 0x82500200 saves the fallback B, supplies it as r4 to incoming G+0x78, and restores saved B to r3 at 0x8250026C, discarding that virtual return. F988 still requires nonnull provider output and 0x82520478 low-byte success; its 0x8250F9D0 store publishes incoming G to renderer+0x550, not B. Separate D10 receiver+0x74 and incoming G+0x74 remain distinct. Current +0x550 equality, renderer+0x564 context, receiver/vptr retention, concrete target/depth and cross-dispatch lifetime qualifications are retained.",
+      "queries": [
+        {
+          "script": "ghidra/DumpFunctions.java",
+          "targets": [
+            "0x82520958",
+            "0x825200D0"
+          ],
+          "mode": "foreground-read-only",
+          "result": "0x82520958 returned a second-save-thunk shell at 0x827F7C7C; exact generated corroboration supplies its local register/control flow. 0x825200D0 returned its local constructor and conditional global reset. No image repair was used."
+        },
+        {
+          "script": "ghidra/DumpMemoryWords.java",
+          "targets": [
+            "0x82520980",
+            "0x825209B0",
+            "0x825200F8",
+            "0x82520128",
+            "0x82520C58",
+            "0x82520C80"
+          ],
+          "radius": 12,
+          "mode": "foreground-read-only",
+          "result": "The six selected 25-word windows, including overlapping words and bounded neighboring instructions, agree with the supported flat image. They cover the request/constructor/null tests, first G+0x60 call and B+0xF8 store, complete constructor, and selected saved-B/zero return suffixes. No whole-program identity is claimed."
+        }
+      ],
+      "generatedWindows": [
+        "generated:rerevved/generated/default/rerevved_recomp.64.cpp:9144-9210",
+        "generated:rerevved/generated/default/rerevved_recomp.64.cpp:9211-9400",
+        "generated:rerevved/generated/default/rerevved_recomp.64.cpp:9401-9595",
+        "generated:rerevved/generated/default/rerevved_recomp.64.cpp:9596-9626",
+        "generated:rerevved/generated/default/rerevved_recomp.190.cpp:9107-9163",
+        "generated:rerevved/generated/default/rerevved_recomp.139.cpp:8756-8835",
+        "generated:rerevved/generated/default/rerevved_recomp.185.cpp:8918-9007"
+      ],
+      "generatedIdentity": {
+        "qualification": "Separately hashed generated artifacts from the canonical title checkout, independently of native-worktree handwritten source inspected by Git object. The tracked title revision and original generatedRevision do not establish source-to-generation byte provenance. Native words identify the supported image; these windows corroborate local control/register interpretation where the canonical fallback query is thunk-truncated.",
+        "files": [
+          {"path": "generated/default/rerevved_recomp.64.cpp", "sha256": "8490864898D817E85C2C145AD602DFEEDD617933F71A9FECF97747DD0BA1217E"},
+          {"path": "generated/default/rerevved_recomp.190.cpp", "sha256": "14BB8A036576F4D0E6FD194D0302C56CCDA0DFF48A8785C82A56FA9088DFD5E7"},
+          {"path": "generated/default/rerevved_recomp.139.cpp", "sha256": "8B4963F8FC9CDE120E64AF98494C9A856A0107251799C65B0B7060E8534A0CE3"},
+          {"path": "generated/default/rerevved_recomp.185.cpp", "sha256": "9B8E09CD889187B28680C2ABB83E1962DE1F6002E30B25C4C692E20DAA4AE5B3"}
+        ]
+      },
+      "bodyInventory": {
+        "count": 4,
+        "limit": 8,
+        "newBodies": [
+          "0x82520958",
+          "0x825200D0"
+        ],
+        "reusedAcceptedBodies": [
+          "0x82500200",
+          "0x8250F988"
+        ],
+        "qualification": "This bounded continuation has its own four-body read set. The original seven-body inventory remains its historical coverage record. No allocator, remaining direct helper, virtual target, table census or callback vector was expanded."
+      },
+      "negativeAndLimits": "The selected constructor supplies no global fallback-return origin and no B+0xFC clear. Only the selected local request/constructor and return origins are closed. First unresolved G+0x60 target/return, later helper/copy and provider effects, actual allocation extent/generation, same-instance G/B identity, current +0x550 retention, color/depth binding, execution frequency and runtime behavior remain unproved. No target/depth or pass identity follows from B's layout or vptr.",
+      "alternativeAndFalsifier": "A mismatch at the selected native words, a constructor write to r3, a local overwrite of retained r31, or a reached successful return selecting another origin falsifies the respective static relation. Even with these local relations, invalid/aliased/recycled storage, a changed current vptr or nonreturning/destructive helpers can prevent the same-instance publication join."
+    }
   },
   "observations": [
     "The frame body selects +0xAC or +0xB0 from the frame-owner pointer according to byte +0xA0, assigns the selected pointer through 0x821B2440 into a zero-initialized stack slot, and reloads the slot into r20 before the +0x98 branch.",
@@ -201,7 +285,7 @@
     "No runtime observation pins this current-image group handoff, execution frequency, pass name, target/depth identity, EDRAM base, or visible output."
   ],
   "nextDiscriminator": {
-    "site": "Pre-store 0x82500200 incoming-group slots +0x74/+0x78 and separate D10 renderer-receiver +0x74; later current renderer +0x550 consumers F60 +0x60/+0x58 and F988 +0x48/+0x4C, plus renderer fields +0x3098..+0x30A8",
+    "site": "Pre-store 0x82500200 incoming-group slots +0x74/+0x78 and separate D10 renderer-receiver +0x74; later current renderer +0x550 consumers F60 +0x60/+0x58 and F988 +0x48/+0x4C, plus renderer fields +0x3098..+0x30A8; first fallback producer frontier incoming G current vptr+0x60 at 0x825209A0, whose return is stored to the fallback object's +0xF8 at 0x825209B0",
     "question": "Can an exact slot target or image-pinned runtime observation identify the concrete provider, resource, color target, or depth object across the pre-store provider frontier and later current-+0x550 group consumers?",
     "limits": "Keep F988's incoming-group +0x74/+0x78 path distinct from D10's renderer-receiver +0x74 source. Do not infer target/depth identity from slot adjacency, item masks, callback names, table proximity, or the +0x550 store. Preserve separate-arm input, intervening-return, field-retention, storage-validity, alias, receiver/vptr, helper-return, and cross-dispatch lifetime conditions."
   },

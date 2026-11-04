@@ -23,6 +23,14 @@ stores/historical captures prove neither current retention nor unique type.
    current group and read `+0x48`/`+0x4C`. Equality with original group
    requires retention, valid storage, nonaliasing and vptr conditions.
 
+On the null incoming `+0x74` arm, the
+[fallback contract](../../manifests/native-renderer-frame-group-binding.json#/currentEvidence/fallbackProviderBoundary)
+binds `0x82520958` to a 276-byte storage request initialized by `0x825200D0`.
+Its successful local suffix returns that saved object. The first unresolved
+provider is incoming group `+0x60` at `0x825209A0`, stored to object `+0xF8`.
+Renderer `+0x550` still receives the incoming group. Allocation extent,
+current storage/vptr, helper returns and target/depth identity remain unproved.
+
 Wrapper D10 `+0x74` supplies a separate group; target/depth remain unknown. The
 [Resolve discriminator](../../manifests/native-renderer-resolve-destination-lifecycle-discriminator.json#/decisiveObservation/observationCoverage)
 requires pre-`0x8250AFEC` item/provider-to-r6 linkage paired with same-call

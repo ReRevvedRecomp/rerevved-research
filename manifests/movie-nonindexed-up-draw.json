@@ -60,6 +60,44 @@
       "payload": "raw=resourceBase+recordOffset; the physical alias is (raw & 0x1FFFFFFF) + (((raw >> 20) + 512) & 0x1000).",
       "submission": "The loader emits PM4 header 0xC0022F00, physical backing, firstFloat4*4 and wordCount, then publishes G+0x30. The first index belongs to the unified ALU file, not the shader-relative pixel constant namespace.",
       "qualification": "PS+0x28 is the literal-table header. Shader code metadata is reached through PS+[PS+0x40]+0x28. 0x826ADF14 emits pixel shader code addresses; it is not the literal-loader call. The actual record spans and values for a selected shader require a live resource capture."
+    },
+    "slotZeroOrigin": {
+      "wordEvidence": {
+        "method": "Read-only canonical mapped-word query; all153 selected BE32 words matched the independently hashed flat image. Capstone5.0.7 PPC64 BE decoded every selected word. No runtime or whole-program mapped rehash is claimed.",
+        "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+        "querySha256": "42523bdaa9829d6cd83e7cbdb28c48d6b58aaa1819e3682850ab28decd25c97a",
+        "qualification": "Two complete small scalar functions and two partial movie-owner windows. Native-word support does not establish current object identity, aliases, floating environment, helper behavior, lifetime or decoder semantics.",
+        "ranges": [
+          {
+            "start": "0x82E305F8",
+            "endExclusive": "0x82E30640",
+            "words": 18,
+            "windowBeSha256": "b7f27190f54a9c993c3bec7a806c067e20b1210aed70f880f8e13a8ce7ab4837",
+            "undecoded": []
+          },
+          {
+            "start": "0x82E33538",
+            "endExclusive": "0x82E335AC",
+            "words": 29,
+            "windowBeSha256": "55b27506b6125bcb7a996c719ad51c7302e27f9f39590c8236c00b4f8741df54",
+            "undecoded": []
+          }
+        ]
+      },
+      "entry": "0x82E305F8 allocates an880-byte frame with stwu at0x82E30600. Let S be its new SP. Entry low32 r3/r4 are stored as32-bit words at S+384/S+38C at0x82E30604/608, above the local frame in home cells. These are not fields of a newly allocated movie object.",
+      "orderedReads": [
+        "0x82E33538/53C: Pa=W(S+38C), j=W(Pa+14).",
+        "0x82E33540/544/548/54C/550: n=Z32(j<<5), reload Pb=W(S+38C), form Pb+78+n, then read backend B from its+10 cell. In the checked no-wrap domain and with Pa=Pb=P, that cell is P+88+32*j.",
+        "0x82E33554 stores B at S+25C.0x82E33558/55C writes local slot0 at S+258. Repeated local reads through0x82E33584 feed the signed-right/logical-right mask sequence.",
+        "If those local slot reads retain0, the full64 mask stored at S+250 at0x82E33594 is0000000080000000, not8000000000000000.",
+        "0x82E33598/59C/5A0/5A4 reload full64 mask into r6, B into r5, set r4=0 and load G=W(S+384) into r3.0x82E335A8 calls0x8269AF10 without a preceding local nonnull-B test."
+      ],
+      "acceptedConsumer": "Reuse gfx-backend-fetch-descriptor RVA-F-0031 fetchSelection/descriptorMerge for slot0 six-word shadow G+480 and backend cell G+3100. Nonnull B merges its fields and ORs the supplied full64 mask into Q(G+18); null backend may preserve the old fetch shadow. This origin proof does not replace that accepted merge contract.",
+      "guards": [
+        "Home cells, actual Pa/Pb, index and local slot reads need retention/readability through their ordered accesses; entry spills do not exclude intervening helper, alias or concurrent writes.",
+        "A sufficient preflight checks readable home cells/P+14 and checked P+88+32*j+4<=2^32 before narrowing the backend-cell address. No record count or allocation extent is proved; j is not statically in range. This checked-domain formula is not a general theorem about wrapping or high-address native effective addresses.",
+        "Retain the actual descriptor/backend/shadow/backing incarnation and later reader. Do not assign Y/U/V/channel semantics, decoder frame selection, decode completion, first-safe reuse or current shader identity from slot0 or the draw tuple."
+      ]
     }
   },
   "guards": [

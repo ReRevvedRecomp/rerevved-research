@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0387",
+  "topic": "xbox-resync-target-selection",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which peers does the turn-end comparison select for resynchronization, what does each peer present for a selection, and which fields feed the compared value?",
+  "scope": {
+    "functions": [
+      "0x82CDE910",
+      "0x82CDEC48",
+      "0x82CDED60",
+      "0x82CD4CF0",
+      "0x82D91BD0",
+      "0x82D8FCC8",
+      "0x82D8FF78",
+      "0x82D8FB38"
+    ],
+    "boundary": "Static selection, notification, presentation and compared-field reads. Runtime policies, indices, delivery, load success and the first divergent field are outside it."
+  },
+  "dependencies": [
+    {
+      "topic": "xbox-network-message-root",
+      "use": "Numeric case dispatch, case 55 and case 60 anchors, and the index-object consumer."
+    },
+    {
+      "topic": "xbox-hotjoin-transfer-restore-boundary",
+      "use": "Snapshot queueing, stream receipt and the shared mode-1 loader that follow a selection."
+    },
+    {
+      "topic": "native-human-turn-completion-boundary",
+      "use": "Native label ImDoneAI for numeric type 53."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Narrow generated-code windows and a lis/addi string-user scan over generated code, read independently twice. The canonical project's decompiler stops at save and restore thunks in these bodies, so generated code carries the claims.",
+    "entries": [
+      { "role": "case 53 receipt and comparison", "address": "0x82CDE910", "confidence": "strong" },
+      { "role": "first scan", "address": "0x82CDE9B8", "confidence": "strong" },
+      { "role": "case 55 submit", "address": "0x82CDEAD0", "confidence": "strong" },
+      { "role": "second scan and selection", "address": "0x82CDEB44", "confidence": "strong" },
+      { "role": "case 55 reply", "address": "0x82CDEC48", "confidence": "strong" },
+      { "role": "case 60 receipt", "address": "0x82CDED60", "confidence": "strong" },
+      { "role": "compared scalar", "address": "0x82CD4CF0", "confidence": "strong" },
+      { "role": "selection presentation", "address": "0x82D8FCC8", "confidence": "strong" },
+      { "role": "state-one snapshot scan", "address": "0x82D8FF78", "confidence": "strong" },
+      { "role": "completion banner", "address": "0x82D8FB38", "confidence": "strong" }
+    ],
+    "qualification": "Only 0x82D8FCC8 materializes the three resync dialog and banner strings in the generated scan; dynamically sourced or duplicate text remains possible."
+  },
+  "comparison": {
+    "receipt": "Case 53 ORs the sender bit into 0x83157E48 and stores its argument in 0x8312E5C0[sender].",
+    "gate": "The body continues when 0x82D8AA60 reports the local peer as host and the receipt mask equals human mask 0x8312E608, or when 0x8314F1B0 is nonzero. That second condition can statically admit a non-host.",
+    "firstScan": "0x82CDE9B8 walks other connected humans that pass 0x82CD5A70, 0x82D8AB00, the 0x830ED0D8 flag, the 0x82D8F700 state, the city or settler tests and the 0x8314EF9F byte. A stored value differing from a fresh 0x82CD4CF0 result sets the predicate.",
+    "exchange": "With the predicate set and halfword 0x82F77454 nonzero, the body clears 0x83157E40, submits type 55 at 0x82CDEAD0, and pumps 0x82E2A838 until 0x83157E40 equals the human mask. A failed pump leaves the loop, so older stored values can remain. Case 55 uses its scalar and seed only to set bit 0x10 of 0x82FFE7C4, then always replies type 60 with its index and a fresh scalar. Case 60 ORs the sender into 0x83157E40 and stores 0x8312E5C0[sender].",
+    "selection": "0x82CDEB44 takes a fresh local scalar and, for every index other than the local one that passes 0x82CD5A70 with 0x8312E5C0[i] different, builds an object with vtable 0x82136930 and +0x34 = i and passes it to service slot +0x44. The loop has no early exit, so one pass can select several peers. A seed mismatch does not select a peer.",
+    "routing": "Service slot +0x44 resolves to 0x82CA6500, which attempts delivery to all present peer entries of 8, not only the selected index."
+  },
+  "presentation": {
+    "consumer": "Object slot 0x82D91BD0 calls 0x82D8FCC8 with manager 0x8314EFDC and index +0x34.",
+    "selectedPeer": "When the index equals the local index, 0x82D8FCC8 calls service slot +4 with zero (0x82CA5210) and UI virtual +0x234 with title 0x82136A64 and body 0x82136A34.",
+    "otherPeer": "Otherwise it calls service slot +8 with the index (0x82CA51A8) and UI virtual +0x23C with banner 0x82136A74, naming the indexed peer through 0x82DAD4F8.",
+    "shared": "Both branches then call 0x82D8F800 with state one and store 2 in the receiver +0x2C indexed entry. 0x82D8FE60 is the join variant and stores 1.",
+    "snapshot": "0x82D8FF78 queues a snapshot for each state-one index, moves it to state two, and selects banner 0x821369C8 or 0x821369E8 from the +0x2C entry. 0x82D8FB38 selects completion banner 0x82136ADC or 0x82136AFC for a non-local index.",
+    "reading": "A peer's own selection shows the dialog and never its own name; another peer's selection shows a banner with that name and no dialog. A selection of several peers therefore shows each peer the dialog when selected, plus one banner for each other selected peer."
+  },
+  "comparedFields": {
+    "form": "0x82CD4CF0 returns a sum, so compensating changes can cancel.",
+    "units": "0x830F2BF0 + p*0x5400 + j*0x54, gated by owner +0 not 0xFF and +0xC bit 31 clear: j times signed type +1, signed X +0x1C, 2 times signed Y +0x1E, signed +0x52, signed rank +5.",
+    "players": "For the count at 0x82F700AC: reserve 0x830ED544, culture strength 0x830ED4E4, derived culture level 0x830ED4C4, acquisition tally 0x830EDD08, strategy word 0x830E5250 + p*0x80, and when selected technology 0x830EDD48[p] is not -1, progress 0x830EDD68[p*48 + tech].",
+    "cities": "0x8314FE28 + j*0xBC for 128 entries, gated by owner +0 not -1 and population +3 above zero: owner, population, word +0x10, +0x34, +0x36, 2 times +0x38, +0x3C.",
+    "wonders": "City word 0x830E5148 + j*8 + 4 for 33 slots.",
+    "excluded": "AI research lists and research progress other than the selected technology are not read."
+  },
+  "guards": [
+    "Comparison is against the comparing peer's scalar; a selection does not show which peer diverged.",
+    "Do not infer which peers were selected in a session, or their indices, from this static boundary.",
+    "A non-selected peer can still load through an independently available stream: 0x82D8F9A0 reaches 0x82D86400 through header +0x5C without an index test, with callers 0x82D217C8 and 0x82D8C820.",
+    "The consumption of a selection on the host is a premise, not a traced result.",
+    "Do not read a scalar difference as a named divergent field, delivery failure or true simulation divergence."
+  ],
+  "conclusion": "The turn-end comparison selects every peer whose stored scalar differs from the comparing peer's, not only the first. Each peer sees the dialog for its own selection and a named banner for another peer's, so a named banner does not identify the only target. A runtime receipt is still needed for actual selections and the first divergent field."
+}

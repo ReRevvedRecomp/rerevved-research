@@ -75,7 +75,7 @@
     "create": "0x82C9B820 proceeds only while handle +0x4C is -1 and, when registry slot +0x94 returns true, only when its second argument is 1000; it then calls create wrapper 0x82A1EB38 with flags +0x50, user +0x48, public and private slot counts, nonce +0x58, session information +0x0C, a waited overlapped, and handle +0x4C. Join create 0x82C9B4B8 first copies a 60-byte session information argument to +0x0C and rejects any other length.",
     "join": "0x82C9B0D0 compares the first 36 bytes of a member record with the local member at +0x04. A match issues 0x000B0012 through 0x82A1EE50 with the count and user indices (+0x24, +0x48) from the local record and private-slot bytes from the argument record +0x58; otherwise 0x82A1EEF8 sends the XUIDs at +0x28. Leave 0x82C9AF78 uses the same comparison for 0x000B0013 through 0x82A1EFA0 or 0x82A1F048.",
     "details": "0x82C9B2E0 and 0x82C9ADC8 call 0x82A1F908 (message 0x000B001D, 24-byte request) with a 128-byte output. 0x82C9B2E0 returns true when output +0x0C lacks bit 0x08, and otherwise only when output +0x18 is at least the number of members needing a public slot. 0x82C9ADC8 returns false only when output +0x0C has bit 0x100.",
-    "teardown": "Destructor chain 0x822E5520, 0x82C9BB38, 0x82C9ACC0 issues 0x000B0011 through 0x82A1EDA0 when handle +0x4C is not 0 or -1, closes the handle, and writes -1. Mode-2 table release 0x82C9CC68 cancels a pending search, frees the context array at +0x50 and the result buffer at +0x24, and destroys the QoS lookup object at +0x7C.",
+    "teardown": "Destructor chain 0x822E5520, 0x82C9BB38, 0x82C9ACC0 issues 0x000B0011 through 0x82A1EDA0 when handle +0x4C is not 0 or -1, closes the handle, and writes -1. nativeFrontendRegistryRetirementBoundary owns the selected mode-2 release/cancellation and guarded storage/destructor requests. Cancellation, allocator and callback completion remain separately qualified.",
     "shared": "Every direct caller of the 0x000B0010 through 0x000B0015, 0x000B0018, 0x000B001A, 0x000B001D, and 0x000B001E wrappers lies between 0x82C9ACC0 and 0x82C9C5F8; 0x000B0025 is issued from 0x82CA8750. Table 0x82160450 issues only XGI messages 0x000B0016 and 0x000B001B, plus XLiveBase message 0x00058023 at 0x82C9CFC4."
   },
   "currentEvidence": {
@@ -729,6 +729,209 @@
         ]
       }
     }
+  },
+  "nativeFrontendRegistryRetirementBoundary": {
+    "confidence": "strong",
+    "question": "What native release and destruction requests precede the selected return to the game selector, and how far can that route be composed with the accepted session-delete chain?",
+    "scope": "M is a manager sampled from U32[8314EFE0]; G is a separate registry owner sampled from U32[8314F204]; J is U32[M+8]; N is the selected G+50 node and R is its nonnull node+C value. G+50 is distinct from the primary registry at G and from the other G+28 registry. No identity with an XSession map or claim that G+50 is the only secondary registry is made. Eight selected native owners total 523 words, with six selected table cells. Valid mapped objects, frames, containers, ABI-preserved saved state and compatible helper/allocator effects, finite traversal, normal returns and no interfering or reentrant mutation are premises. Structure offsets are hexadecimal.",
+    "frontendReturnAndCallerReuse": "Reuse only the accepted F-0385 corridors E6AFF8..E6B044 (19 words), D8B6C8..D8B728 (24 words) and D8E798..D8E844 (43 words): 86 words. E6AFF8 retains its controller and separately samples M0 at E6B014 and M1 at E6B01C from 8314EFE0. It calls D8B6C8(M0), then D8E798(M1), then requests the retained controller slot+1C(10). Same M and actual controller/table lifetime require proof. The final four words of the complete 23-word E6 owner are outside the accepted queried prefix; the words at D8B728 and D8E844 are neighbors outside their true PE extents and are excluded. No normal E6 epilogue or actual invocation is added from those words.",
+    "pairedReset": "D8B6C8 conditionally writes -1 at U32[M0+10]+8, loads J=U32[M0+8], samples fresh G=U32[8314F204] and calls CAAB10. Only normal return reaches M0+8=-1 at D8B708 and M0+14=0 at D8B70C. The caller does not inspect CAAB10's raw r3 as a cleanup result.",
+    "publicationAndReaderJoin": "Reuse ai-stat-choice.json#/setupReceiverProductionBoundary/conditionalWriter and ai-stat-choice.json#/setupReceiverProductionBoundary/lookupRegistrationBoundary/registrationContinuation. CABB68 samples counter 8314F210 for the factory, later lookup/missing-pair and final returned key; they are separate reads. The selected continuation publishes low32(factory P) at N+C then increments a fresh counter sample. D8D170 stores returned J at M+8, reloads the registry owner and uses CAA9D8 to read its G+50 node+C into M+14. Require the same G or proved mapping equivalence, matching key/counter/sentinel and retained current node/payload from publication through this reader and CAAB10. Accepted factory mode 1 -> 82160348 and otherwise -> 82160450 is conditional class context, not proof of current R or its current vptr. Actual helper effects, membership, lifetime and class retention through each virtual sample remain required.",
+    "registryReleaseBeforeDestruction": "CAAB10 calls accepted 821B8CD0 with G+50 and the supplied key, compares the returned node against U32[G+58], and exits on absence. A present null N+C skips value calls and still reaches node removal. With nonnull retained R, CAAB5C/CAAB64 request current R slot+10 first. After that normal return CAAB68 freshly loads R vptr, then CAAB74/CAAB7C request its current slot0(1). R's object generation and installed table may have changed during release; destructor selection requires a separate retained-class contract. The caller does not clear node+C or withdraw the value before either call. Persistence of that publication through the calls requires no helper, reentrant or interfering mutation. After the calls it requests hash selection, adjusts bucket boundaries, unlinks the selected node, requests D3D9F0(N), then decrements the G+50 count. No reentrant-safe erasure, callback/table/key/map/frame retention or successful allocator effect is implicit. This differs from accepted CAAD20, which clears primary node+C after the value destructor returns.",
+    "modeOneRelease": "For current table 82160348, cell 82160358 selects C9DB20. It tests byte R+58; a nonzero byte is cleared at C9DB48 before A09F40(0) at C9DB4C. It then always samples current R slot+38 at C9DB58/C9DB60; cell 82160380 selects C9DA08 only if that table remains installed. C9DA08 is not expanded. xbox-gamespy-surface-inventory.json#/hostSide/service supplies a qualified GameSpy/QR2 naming lead for A09F40, whose source identity and precise meaning are not established by this packet.",
+    "modeOneDestruction": "For retained current table 82160348, cell 82160348 selects deleting wrapper 822E5220. It calls C9DC80 first, then requests D3D9F0(R) only when the saved delete-flag low bit is 1, and returns retained numeric R after that request; this is not a live ownership receipt. C9DC80 reinstalls 82160348 and directly calls C9DB20 again at C9DC9C. Under the selected external release/destructor composition there can be two slot+38 requests; the earlier clear suppresses the second A09F40 request unless an intervening helper republishes byte R+58. It traverses pointer ranges R+28..2C, R+38..3C and R+48..4C, requests each nonnull current element slot0(1), clears that entry only after normal return, and reloads each range end per iteration. Actual element classes, finite range validity, aliases, ownership and callback retention remain unproved. The three later self-subtractions are zero; on the unequal begin/end arm they force end=begin and skip their copy calls. 827F1620 is not reachable through those selected arms. Backing release requests follow in reverse range order through opaque pool/generic helpers, then clear the corresponding metadata. Finally the R+1C string-storage block is considered at pointer-16, with null/shared-empty and block+4-zero guards; no semantic reference-count name is assigned. It restores empty contents and base vptr 8215FE20. Pool and generic helper completion is not proved.",
+    "modeTwoReleaseAndCancel": "For current table 82160450, cell 82160460 selects C9CC68. It first samples current R slot+38 at C9CC84/C9CC8C, conditionally selecting C9C968 through cell 82160488. Only signed32[R+1C] == 1 makes that five-word leaf tail-request 8281A6C8(R+28); otherwise it returns early without a normalized status. Reuse game-of-the-week-local-generation.json#/leaderboardContract/R5 for the native XMsgCancelIORequest(wait = 1) wrapper contract, retaining its wrapper status/event guards. Neither the tail request nor wait argument proves that a wait was reached, a cancellation matched, or pending work completed. After normal slot return C9CC68 conditionally requests D3D9F0 for nonnull R+50 and R+24 and clears each after return; nonnull R+7C gets current slot0(1) then clears. Actual R+7C class and helper effects remain open.",
+    "modeTwoDestruction": "For retained current table 82160450, cell 82160450 selects deleting wrapper 822E5360. It first calls C9CCF8, conditionally requests outer D3D9F0 on delete-flag low bit 1, then returns retained numeric R. C9CCF8 reinstalls 82160450, conditionally requests D3D9F0(U32[R+68]), zeros R+68/+6C/+70, requests opaque 82306DE0(R+58), requests D3D9F0(U32[R+5C]) and clears R+5C, then installs base8215FE20. R+54 is not identified as an ordinary pointer vector. Opaque helper82306DE0 and allocator effects do not prove complete disposal. Unlike the mode-one cleanup body, this selected body does not directly repeat C9CC68; any transitive repeat would require the opaque helper contract.",
+    "conditionalPrimarySessionDeleteComposition": "If E6 M0=M1, D8B6C8 returns normally, and intervening D8E798 helpers do not republish M+14, its M+14 callback branch is skipped after the earlier clear. D8E798 still follows its accepted primary-registry CAAD20 path using M+4 and a fresh registry-owner sample. Reuse xbox-live-session-search-contract.json#/nativeOuterJoinRollbackBoundary and /nativeSessionObjectRetirementBoundary: matching primary key/registry/node and actual S table 8215FA78 select 822E2880 -> CA5A20; retained nonnull Q with actual table 82160630 selects 822E5520 -> C9BB38 -> C9ACC0. Only a handle other than 0/-1 reaches A1EDA0 with message 000B0011 and the close/reset requests. Preserve all accepted normal-return, helper, actual-class, key, registry, Q and SDK-authority premises; the present native packet adds no SDK completion fact. G+50 value retirement and this primary service/Q chain are distinct. Actual route invocation, complete host-wait release, reference balance, socket/callback retirement and successful retry remain unproved.",
+    "minimalProposal": "No behavior change is selected by these native contracts. Preserve release-before-destruction, fresh vptr sampling, publication during value calls, the normal-return-dependent field clears and the accepted primary service/Q order. Do not add duplicate cancellation, deletion, synthetic success, forced registry clears or a host-wait release on the strength of these requests.",
+    "logging": "Proposed observation only, default off and passive, with a fixed bounded record budget. Use opaque attempt/controller/M/G/node/value/service/Q generations and class/branch categories. Pair E6B018/E6B01C and E6B020/E6B024; D8B700/D8B704 and its later key/value-field stores; CAAB64/CAAB68 and CAAB7C/CAAB80; C9DB48/C9DB4C and C9DB60 return; C9CC8C/C9CC90; C9C978 wrapper entry/return; the selected child-call/clear edges; and the primary CAAD20/Q invocation joins. Record equality and retention as categories using captured tags, not post-destruction dereferences. Distinguish request, normal return, field clear and independently matched completion. Emit no raw addresses, keys, handles, XUIDs, strings, contents or payload bytes; preserve registers, raw results and native order. Declare the finite event cap and dropped-event count. Incomplete or overflowed pairs invalidate ordering, equality and generation conclusions.",
+    "unrunCases": [
+      "UNRUN: Missing G+50 key, present-null value and retained mode1/mode2 classes; release mutating or replacing vptr; changed registry/key/counter/node/payload or reentrant mutation. None licenses continued stale dereference or an all-path erasure claim.",
+      "UNRUN: Separate M0/M1 samples, helper republish of M+14, null/changed controller, skipped primary key/Q/handle guards and the optional early-refusal route. Correlate actual primary and secondary generations before composing them.",
+      "UNRUN: Mode1 R+58 zero/nonzero/republication, two slot+38 requests versus the conditional A09F40 count, null/populated finite element ranges and per-call field-clear order, zero self-subtraction copy bypass and reverse backing release.",
+      "UNRUN: Mode2 signed state1 versus other states, wrapper guard branches and matched completion separate from the wait request; null/populated R+50/+24/+7C and opaque 82306DE0 effects. Distinguish delete-flag 0/1 and numeric destructor return from live ownership.",
+      "No model, proposed test, fake, unit, title, allocator, socket, SDK, relay, network or runtime case was executed. These controls are acceptance requirements only."
+    ],
+    "nextStaticWork": [
+      "Bind selected C9DA08 at mode1 cell 82160380, its current receiver/state, helper effects and return into each C9DB20 invocation; bind A09F40 identity only if its precise release effect is required.",
+      "Bind 82306DE0(R+58) at C9CD40 with the actual nested representation, retained storage/aliases and callback behavior; do not infer a vector destructor from R+54.",
+      "Bind actual mode 1 element slot0 targets and mode 2 R+7C target, ownership/aliasing, pool/generic allocator helper contracts and normal returns where disposal or retention relies on them.",
+      "Bind actual ordered route/controller invocation and coherent M/G/key/counter/current-node/payload/class generations across publication, CAA9D8 reader, CAAB10 release/destructor and distinct CAAD20/Q retirement.",
+      "Join the separately owned SDK cancellation/delete authority to a matched completion and host-wait owner release for the same attempt/generation; a native request or wait argument is insufficient."
+    ],
+    "evidence": {
+      "method": "Foreground read-only exact native-word queries, pinned flat-image comparison, exact generated-owner corroboration and reused accepted current-image contracts.",
+      "structuralIdentityConfidence": "confirmed",
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "selectedInstructionWords": 523,
+      "selectedOwners": 8,
+      "peOwners": 7,
+      "peInstructionWords": 518,
+      "nonPeLeafWords": 5,
+      "selectedTableCells": 6,
+      "navigationWords": 1280,
+      "navigationOverlapSelectedInstructionWords": 66,
+      "selectedWordRanges": [
+        {
+          "start": "0x82CAAB10",
+          "endExclusive": "0x82CAAC18",
+          "words": 66,
+          "sha256": "56FEA9BA75B45E745457FC3E128F8A5248F564FD4A2930CF0BBC1DD52F4AD7DD",
+          "extentBasis": "PE runtime-function row",
+          "peRuntimeFunctionRow": "0x8219A4F0",
+          "generatedOwner": "generated:rerevved/sub_82CAAB10"
+        },
+        {
+          "start": "0x822E5220",
+          "endExclusive": "0x822E5270",
+          "words": 20,
+          "sha256": "9E936FDB0433E84E45DE70752D142E2D9344182161EA4E3EF799B4E35EDEFC1E",
+          "extentBasis": "PE runtime-function row",
+          "peRuntimeFunctionRow": "0x82172BD8",
+          "generatedOwner": "generated:rerevved/sub_822E5220"
+        },
+        {
+          "start": "0x822E5360",
+          "endExclusive": "0x822E53B0",
+          "words": 20,
+          "sha256": "446BB2065EDA2D837A84F19F36E0B087462E0C0032017E8977A2A778A781212A",
+          "extentBasis": "PE runtime-function row",
+          "peRuntimeFunctionRow": "0x82172BE8",
+          "generatedOwner": "generated:rerevved/sub_822E5360"
+        },
+        {
+          "start": "0x82C9DC80",
+          "endExclusive": "0x82C9E19C",
+          "words": 327,
+          "sha256": "406D1B633715419FEBEA1F5CADB9E43A1B3EAFAB1923C693715AFB4F69874AD6",
+          "extentBasis": "PE runtime-function row",
+          "peRuntimeFunctionRow": "0x82199D20",
+          "generatedOwner": "generated:rerevved/sub_82C9DC80"
+        },
+        {
+          "start": "0x82C9CCF8",
+          "endExclusive": "0x82C9CD64",
+          "words": 27,
+          "sha256": "1FC6B02C3B3CA46B55108FA0B5BAFE9F89AB7139C0D1C95919E73D358939AE7C",
+          "extentBasis": "PE runtime-function row",
+          "peRuntimeFunctionRow": "0x82199CA0",
+          "generatedOwner": "generated:rerevved/sub_82C9CCF8"
+        },
+        {
+          "start": "0x82C9DB20",
+          "endExclusive": "0x82C9DB78",
+          "words": 22,
+          "sha256": "C9EB8B862DCE116D2A5E144E06DEDB65A2E385545F46D927AF793BC223F371B5",
+          "extentBasis": "PE runtime-function row",
+          "peRuntimeFunctionRow": "0x82199D08",
+          "generatedOwner": "generated:rerevved/sub_82C9DB20"
+        },
+        {
+          "start": "0x82C9CC68",
+          "endExclusive": "0x82C9CCF8",
+          "words": 36,
+          "sha256": "1E4483A52F22773D50B4DEA6611748B5875D761B730E911E9E94466D61148C71",
+          "extentBasis": "PE runtime-function row",
+          "peRuntimeFunctionRow": "0x82199C98",
+          "generatedOwner": "generated:rerevved/sub_82C9CC68"
+        },
+        {
+          "start": "0x82C9C968",
+          "endExclusive": "0x82C9C97C",
+          "words": 5,
+          "sha256": "6E9809A4E230D608C6A517D210848162779BE06A642E49AF2F916CC3E36FFC33",
+          "extentBasis": "Selected exact generated owner instruction-comment window, not a PE extent",
+          "generatedOwner": "generated:rerevved/sub_82C9C968"
+        }
+      ],
+      "selectedCells": [
+        {
+          "address": "0x82160348",
+          "value": "0x822E5220",
+          "sha256": "7799192599F19840AB294A0A89C9D72D699B3351C7E8389DC55BDC0DD8441C09"
+        },
+        {
+          "address": "0x82160358",
+          "value": "0x82C9DB20",
+          "sha256": "2943EBF58D18AE15B44954FD6DDDC329FC95380715D852CCC52099724194DD79"
+        },
+        {
+          "address": "0x82160450",
+          "value": "0x822E5360",
+          "sha256": "D4D8C089E5CF598BE75090DEA38A78687B82D11FFE7D8E6447659F9357EB25FC"
+        },
+        {
+          "address": "0x82160460",
+          "value": "0x82C9CC68",
+          "sha256": "D0E096A3012F8C2D3F2857DDE01AF7468AE6025F2494202CF01412D9292C96F5"
+        },
+        {
+          "address": "0x82160380",
+          "value": "0x82C9DA08",
+          "sha256": "053959BC654F86A7FF4EC20F5AF616C487F8BA0CDB166CA1D22510941C66B5BB"
+        },
+        {
+          "address": "0x82160488",
+          "value": "0x82C9C968",
+          "sha256": "9AA42F8799FCA5F2F3EB8B902792D27850103AB1CD345A1DFBC3D2B2972A02FF"
+        }
+      ],
+      "acceptedCallerReuse": [
+        {
+          "start": "0x82E6AFF8",
+          "endExclusive": "0x82E6B044",
+          "words": 19,
+          "qualification": "Accepted prefix only; complete PE owner ends E6B054.",
+          "sha256": "890AB31931D4B67756EEC75BD6429567A58B516750D7EE324FF66908788D8D51",
+          "acceptedSource": "game-start-formatting-boundary.json#/currentEvidence/selectedWordRanges/18",
+          "peMetadata": "0x821A1150",
+          "peOwnerEndExclusive": "0x82E6B054"
+        },
+        {
+          "start": "0x82D8B6C8",
+          "endExclusive": "0x82D8B728",
+          "words": 24,
+          "qualification": "True PE owner; exclude neighbor at D8B728 from accepted wider band.",
+          "sha256": "AC7E3F69B8191EFB24C41ACDC4D69DF6D4B469A51C4806CE0B5E95A754615B31",
+          "acceptedSource": "game-start-formatting-boundary.json#/currentEvidence/selectedWordRanges/16",
+          "peMetadata": "0x8219D4A8",
+          "peOwnerEndExclusive": "0x82D8B728"
+        },
+        {
+          "start": "0x82D8E798",
+          "endExclusive": "0x82D8E844",
+          "words": 43,
+          "qualification": "True PE owner; exclude neighbor at D8E844 from accepted wider band.",
+          "sha256": "8BB1CD11EFF01D9747ED5B2E92353674F454D0515D37F96BFB08A2BB30CAF98B",
+          "acceptedSource": "game-start-formatting-boundary.json#/currentEvidence/selectedWordRanges/17",
+          "peMetadata": "0x8219D5A8",
+          "peOwnerEndExclusive": "0x82D8E844"
+        }
+      ],
+      "reusedBoundaries": [
+        "game-start-formatting-boundary.json#/nativeRefusalBoundary",
+        "xbox-live-session-search-contract.json#/nativeOuterJoinRollbackBoundary",
+        "xbox-live-session-search-contract.json#/nativeSessionObjectRetirementBoundary",
+        "xbox-live-session-search-contract.json#/sessionLifecycle",
+        "ai-stat-choice.json#/setupReceiverProductionBoundary/conditionalWriter",
+        "ai-stat-choice.json#/setupReceiverProductionBoundary/lookupRegistrationBoundary/registrationContinuation",
+        "xbox-gamespy-surface-inventory.json#/internetPath/selection",
+        "xbox-gamespy-surface-inventory.json#/hostSide/service",
+        "game-of-the-week-local-generation.json#/leaderboardContract/R5"
+      ],
+      "locators": [
+        "ghidra/DumpMemoryWords.java:0x82CAAB10..0x82CAAC18,0x822E5220..0x822E5270,0x822E5360..0x822E53B0,0x82C9DC80..0x82C9E19C,0x82C9CCF8..0x82C9CD64,0x82C9DB20..0x82C9DB78,0x82C9CC68..0x82C9CCF8,0x82C9C968..0x82C9C97C (half-open)",
+        "ghidra/DumpMemoryWords.java:0x82160348,0x82160358,0x82160450,0x82160460,0x82160380,0x82160488"
+      ],
+      "navigationOnly": {
+        "start": "0x82CAAA00",
+        "endExclusive": "0x82CABE00",
+        "matchedRawWords": 1280,
+        "qualification": "Only raw addi displacement 0x50 candidates were interpreted for navigation. No base identity, publication, class, code ownership effect, execution or absence proof; no broader semantic coverage is added."
+      },
+      "qualification": "Seven PE extents support 518 selected instruction words; C9C968 is a five-word exact generated-owner window with no PE runtime-function row and is not promoted as a PE extent. Six exact cells bind conditional current-table targets, not live classes. The accepted 86-word caller reuse excludes four unqueried E6 suffix words and two neighboring words. Generic unrelated Ready pointer-scan sections in validators are outside this packet. Request, field clear, helper return and completed platform/host retirement remain separate. No whole-family closure, SDK/title behavior change or observed runtime outcome is asserted."
+    },
+    "classification": "Statically proved conditional native cleanup order and requests; actual invocation and complete host-wait release remain unknown."
   },
   "nativeOuterJoinRollbackBoundary": {
     "question": "Does the selected outer failed-join controller reach the registered session wrapper destructor, and which adjacent operations are only marker or local-data resets?",

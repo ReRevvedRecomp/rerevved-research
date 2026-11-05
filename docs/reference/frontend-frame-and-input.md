@@ -23,15 +23,43 @@ two-word identity prefix:
   `0x821B3BB8` creates a `0x10`-byte state whose slot `+0x1C` builds the
   attract-movie playback object.
 
-A bounded registration search found no direct reference to the factory for key
-2. Vtable `0x8211EBD0` is installed by the factory and by in-place initializer
-`0x82E60D50`; neither complete body registers or dispatches the state. The
-entry target is referenced only by table word `0x8211EBD4`, so the frontend
-state-owner insertion edge and resolved dynamic callsite remain unknown.
+The bounded [registration query](../../manifests/key2-game-start-registration-boundary.json)
+found two initializers and the entry-table word. Neither initializer registers
+or dispatches the state. The separate
+[state-owner contract](../../manifests/game-start-formatting-boundary.json#/stateTransitionBoundary)
+binds the conditional entry call under the current-state and table premises.
+Actual registration, the request producer and natural entry remain unproved.
+
+The [entry lifetime contract](../../manifests/xbox-lobby-ready-gate.json#/nativeEntryControllerLifetimeBoundary)
+distinguishes the screen manager from the game header's loading object. The
+selected old frontend exit clears the manager global after a destructor
+request. A requested screen key and a separate loading object do not prove
+which controller is current during game entry or provide safe cancellation.
 
 These values identify two concrete states in the recovered paths. They do not
 define a universal frontend enumeration or assign original class names to other
 numeric keys.
+
+## Screen events during transitions
+
+Screen events use a separate queue from game commands. When the sampled
+controller's byte at `+0x0C` is nonzero, the dispatcher requests storage of
+the event and its argument. The [UI queue contract](../../manifests/native-ui-event-queue-boundary.json)
+owns this path. Its embedded queue count is at manager `+0x28`, separate
+from the requested screen key at `+0x10`.
+
+The reader calls the saved event before it advances queue metadata, then
+requests the retained record's free. Controller and queue changes during
+that callback require separate lifetime evidence. A count change does not
+prove delivery, removal of the same front record or safe cancellation.
+
+The [screen-controller lifecycle](../../manifests/native-screen-controller-lifecycle-boundary.json)
+owns the selected update, replacement and cleanup requests. Replacement is
+published before its entry call. A zero status byte uses a fresh current
+controller for another method request, without a following local clear.
+Cleanup requests and freed vector backing do not prove that every retained
+controller was destroyed. Actual ownership and invocation during game entry
+remain qualified.
 
 ## Gameplay availability signals
 

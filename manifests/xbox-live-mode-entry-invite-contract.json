@@ -32,7 +32,7 @@
     "registry": "Static registrars store controller factories in the map at [0x8314F2CC]+0x04: ID 9 factory 0x821DBE48 (registrar 0x82E89E88), 10 0x821DCA90, 12 0x821DBB70 (0x82E89CA8), 13 0x821DB9A0, 15 0x821DC228, 26 0x821DBA18, 27 0x821DC0D0, 37 0x821DAB80, 41 0x821DB798, 43 0x821DB7E8, and 45 0x821DB678. Their views bind GFX_MatchType.gfx (9), GFX_GameSelector.gfx (10), GFX_InternetGameType.gfx (12), GFX_MPGameType.gfx (13), GFX_WaitingOverlay.gfx (15), GFX_StagingScreen.gfx (26 and 27), GFX_BuddyManagement.gfx (37), GFX_LeaderboardMenu.gfx (41), GFX_RankedMPMenu.gfx (43), and GFX_Leaderboards.gfx (45).",
     "matchType": "Controller 9 constructor 0x82E6C3C0 installs table 0x8213B198. View label setup 0x82E52068 adds item 0 Player Match, item 1 Ranked Match, and item 2 System Link. 0x82D72C50 maps mode word 4 to Player Match, 5 to Ranked Match, and 6 to System Link.",
     "handlers": "Table 0x8213B198: +0x24 0x82E6C0E8 writes mode word 4 at 0x82E6C180 and requests controller 12; +0x28 0x82E6BE10 writes mode word 5 at 0x82E6BEA8 and requests controller 12; +0x2C 0x82E6BAB8 writes mode word 6 at 0x82E6BAE8 and requests controller 10; +0x30 0x82E6BB60 requests controller 37 without a mode write. A changed mode word is followed by 0x82D8ACB0 on the manager. A controller request goes directly through 0x82D704F0 or is deferred through 0x82C4E858 with the ID stored at controller +0x10.",
-    "gates": "Handlers 0x82E6C0E8, 0x82E6BE10, and every controller-12 handler call account slot +0x8C with 0 and require 1, then slot +0x90 with privilege kind 1 and require 1. On a slot +0x8C failure they show a connect or sign-in message chosen by account +0x58 and then call slot +0x8C with 1; on a privilege failure they show a permission message. Both messages go through application object 0x8314F76C slot +0x22C.",
+    "gates": "The accepted controller-12 handlers request account+0x8C with flag 0 and account+0x90 with kind 1, requiring result 1 at both gates. Their action targets remain recorded in internetGameType. The selected Player Match and Ranked Match callers request +0x8C with flag 0 and require low32 result 1, then freshly sample the account for +0x90 with mode 1 and require low32 result 1. nativeMenuAccountPrivilegeBoundary binds their selected class, fresh user-input construction and exact result consumption. First-gate result 3 requests a sign-in/connect message and later +0x8C(flag 1), whose result is ignored. Second-gate result 3 requests a permission message. Actual display, completed sign-in, current owner coherence and Live authority are not established.",
     "internetGameType": "Controller 12 constructor 0x82E6CE70 installs table 0x8213B038; label setup 0x82E524B0 adds item 0 Quick Match, item 1 Custom Match, and item 2 Create Private Match. Slot +0x24 0x82E6CB88 fills setup words +0xFC through +0x108 from descriptor +0x234, calls 0x82DAD8B0 with 3, calls mode-2 browse 0x82D8D898 at 0x82E6CC58, and on 1 requests controller 15. Slot +0x28 0x82E6C970 requests controller 13. Slot +0x2C 0x82E6C748 sets setup byte +0x130, calls 0x82DAD478, and requests controller 13.",
     "modeTwoCalls": "Browse 0x82D8D898 calls 0x82D8D170 with mode 2 at 0x82D8D8C4. Host 0x82D8E430 calls it with mode 2 at 0x82D8E470 and is reached by tail calls from staging slot +0x2C targets 0x82E4F778 (controller 26, table 0x8213AFE0) and 0x82E4E9F8 (controller 27, table 0x8213B348). 0x82D8D170 reaches factory 0x82CA28F0 through 0x82CABB68, which installs table 0x82160450 for any mode other than 1.",
     "searchContexts": "After a mode-2 create, 0x82D8D170 passes eight descriptor-name and context-ID pairs through session slot +0xA0: +0x23C with 0x800A, +0x244 with -1, +0x250 with 0x800B, +0x19C with 7, +0x1FC with 5, +0x1CC with 4, +0x22C with 11, and +0x248 with 55. Descriptor builder 0x82DABB20 stores the names ranked at +0x23C, skill at +0x244, scenario at +0x248, gametype at +0x250, and turntime at +0x22C.",
@@ -42,9 +42,9 @@
   "inviteDelivery": {
     "pump": "Pump table 0x821347C8: slot +0x04 0x82DA8B08 creates the listener through 0x8280E048, which calls XamNotifyCreateListener with area mask 0x2F and 3, and stores the handle at +0x04. Slot +0x0C 0x82DA8B60 calls XNotifyGetNext 0x82E926D4 at 0x82DA8BC4 and again at 0x82DA974C until it returns 0, with filter 0, or 0x0A000001 when its byte argument is set. The pump object is stored at global 0x8314F2D0 by 0x82E2E530; slot +0x0C is dispatched from 0x82C7DF58 and 0x82D83B38 with argument 0, 0x82D83888 with argument 1, and 0x82E55070.",
     "notification": "The pump dispatches ID 0x02000002 at 0x82DA94E8 to 0x82D8ED68 at 0x82DA9598 with the manager and the notification parameter as the user index. The ID matches the public XN_LIVE_INVITE_ACCEPTED value. ID 0x02000003 with parameter 0 while mode word 6 is set shows a disconnect message.",
-    "pending": "Manager initializer 0x82D8D430 sets manager +0x1C to -1 at 0x82D8D4EC. 0x82D8ED68 returns 0 when manager byte +0x5D is set, stores a nonnegative argument at +0x1C, and while +0x1C is nonnegative switches at 0x82D8EDE8 on word +0x04 of object [[0x82FFD624]+0x70]: 1 calls 0x82D8ECC0, 0 and 5 set byte +0x0C of that object, 2 and 3 call application slot +0xD4 with 0, and 4 does nothing, which leaves the invite pending.",
+    "pending": "Manager initializer 0x82D8D430 sets manager +0x1C to -1 at 0x82D8D4EC. 0x82D8ED68 returns 0 when manager byte +0x5D is set, stores a nonnegative argument at +0x1C, and while +0x1C is nonnegative switches at 0x82D8EDE8 on word +0x04 of object [[0x82FFD624]+0x70]: 1 calls 0x82D8ECC0, 0 and 5 set byte +0x0C of that object, 2 and 3 call application slot +0xD4 with 0, and 4 does nothing, which leaves the invite pending. nativeInviteGameplayTransitionBoundary owns the selected application request, deferred replacement ordering and pending-owner limits. Local1 is not a completed switch.",
     "coldStart": "Front-end state entry 0x82E7F820 (table 0x82131088 slot +0x04) calls 0x82D8ED68 with -1 at 0x82E7FA00, which services an invite already stored at +0x1C; on success it calls 0x82E2C890 with 1 and sets state +0x08 to 24. 0x82A1E8D0 has the single direct caller 0x82C9CF70, so no boot path queries 0x00058023 without a stored user index.",
-    "join": "0x82D8ECC0 requires +0x1C nonnegative, calls teardown helper 0x82D8E798, creates a mode-2 session through 0x82D8D170 at 0x82D8ED08, and when table slot +0x24 (0x821B1690, returns 1) succeeds calls 0x82D8C900. 0x82D8C900 rebuilds the account object through 0x82D8B668 and 0x82D8C6C8 when +0x1C differs from manager +0x00, then calls table slot +0x34 (0x82C9CF70) with the user from +0x1C at 0x82D8C964.",
+    "join": "D8ECC0 requires signed nonnegative pending M+1C, requests teardown and mode2 creation, and conditionally calls D8C900 through J+24. nativeInviteUserRebindBoundary binds its exact return provenance and selected input-manager user setter, inner and outer account rebuild requests, current-manager premises and J+34 invite retrieval. A local nonzero result does not prove a current rebuilt account or completed join.",
     "inviteRecord": "0x82C9CF70 passes a stack buffer at sp+0x50 of its 0xD0-byte frame to 0x82A1E8D0, which marshals two arguments (user index, output pointer) through 0x82A1E740 and issues XMsgInProcessCall app 0xFC message 0x00058023 at 0x82A1E9C0. The guest reads only the 64-bit word at +0x14 (0x82C9CFE4) and passes it to 0x000B001B. Under the public XINVITE_INFO layout +0x00 is the invitee XUID, +0x08 the inviter XUID, +0x10 the title ID, +0x14 the 60-byte XSESSION_INFO (session ID +0x14, host XNADDR +0x1C, key +0x40), and +0x50 fFromGameInvite, 0x54 bytes in all. The host address and key used for the join come from the 0x000B001B result record, not from this buffer.",
     "completion": "Session listener table 0x821372F0 (stored at manager +0x40 by 0x82D8D1F0) slot +0x0C 0x82D8A088 handles event 3: status 0 reads table slot +0x44 (0x82219D30, record index at +0x18) and calls join 0x82D8EFF0 unless 0x82D8AA60 is true; status 1 sends active-screen event 17 and other statuses event 16 through 0x82C56478.",
     "joinChecks": "0x82D8EFF0 calls 0x82D8EB00, which copies the record contexts into the game setup and passes table slot +0x80 (scenario) to 0x82DADE48. A false result shows a missing-content message and calls 0x82D8E798; success calls service slot +0x1C with manager +0x70, the record index, the setup buffer, the user, and a flag that is true when +0x1C is nonnegative. 0x82D8EFF0 then writes -1 to +0x1C at 0x82D8F1E8.",
@@ -162,14 +162,14 @@
   },
   "guards": [
     "Do not infer that ReRevved or any emulator has delivered notification 0x02000002 or run the invite join; no runtime observation is recorded.",
-    "Do not assume a running game joins immediately on an accepted invite; 0x82D8ED68 defers or ignores it in states other than 1, and the state names behind object [[0x82FFD624]+0x70] word +0x04 are not established.",
+    "Do not assume a running game joins immediately on an accepted invite. D8ED68 services the pending invite according to the frontend lifecycle key. playable-game-state-gates.json#/frontendLifecycle establishes gameplay key2 and retains qualified historical menu-key1/new-and-loaded-game-key2 observations. Keys0/3/4/5 and complete state meanings remain unassigned. nativeInviteGameplayTransitionBoundary binds the application+D4 request and guarded frontend replacement, with actual registry key1 callback/output and pending ownership unresolved. Gameplay lifecycle alone does not establish a human turn, unobstructed UI or completed session transition.",
     "Do not supply only the session identifier and expect a join; the guest reads +0x14 from 0x00058023 and needs 0x000B001B to return exactly one record with host address, key, slots, and contexts.",
     "Do not treat GT2 connect on port 1000 as closed for mode 2; the address string and call edge into service slot +0xD0 after a mode-2 join were not traced.",
     "Do not record the scenario global 0x8312B8D4 as -1 at host create from static evidence alone.",
     "Do not equate controller 43 (GFX_RankedMPMenu.gfx) with a play entry; its traced requesters are leaderboard controllers.",
     "Do not attribute the received-invite dialog to notification 0x02000002; its record producer is not identified."
   ],
-  "conclusion": "Player Match and Ranked Match in GFX_MatchType.gfx (controller 9 handlers 0x82E6C0E8 and 0x82E6BE10) gate on Live sign-in and multiplayer privilege, write game-setup mode words 4 and 5, and open GFX_InternetGameType.gfx (controller 12). Its Quick Match calls mode-2 browse 0x82D8D898, Custom Match and Create Private Match lead through game-type controller 13, and staging controllers 26 and 27 host through 0x82D8E430; both reach factory 0x82CA28F0 with mode 2 and table 0x82160450. Ranked Match is the only visible ranked play entry. An accepted invite arrives as XNotify ID 0x02000002 from the pump at 0x82DA8B60, whose user index 0x82D8ED68 stores at manager +0x1C; a front-end state joins at once, other states defer, and front-end entry 0x82E7F820 services a stored invite after a cold start. The join creates a mode-2 session, reads the 64-bit session identifier at +0x14 of the 0x00058023 result, searches by identifier, joins through 0x82D8EFF0 on listener event 3 with status 0, and writes mode word 4; failures surface as title messages or active-screen events 16 and 17, not system message boxes. The join builds the same GT2 network object on port 1000 for both modes, and the host address string comes from XNetXnAddrToInAddr with port 1000, but the edge into GT2 connect after a mode-2 join remains open. Context 55 and property 0x1000003B carry the selected scenario identifier, with -1 for none, and a joiner rejects a scenario it lacks.",
+  "conclusion": "Player Match and Ranked Match in GFX_MatchType.gfx (controller 9 handlers 0x82E6C0E8 and 0x82E6BE10) gate on Live sign-in and multiplayer privilege, write game-setup mode words 4 and 5, and open GFX_InternetGameType.gfx (controller 12). Its Quick Match calls mode-2 browse 0x82D8D898, Custom Match and Create Private Match lead through game-type controller 13, and staging controllers 26 and 27 host through 0x82D8E430; both reach factory 0x82CA28F0 with mode 2 and table 0x82160450. Ranked Match is the only visible ranked play entry. An accepted invite arrives as XNotify ID 0x02000002 from the pump at 0x82DA8B60, whose user index 0x82D8ED68 stores at manager +0x1C; a front-end state joins at once, other states defer, and front-end entry 0x82E7F820 services a stored invite after a cold start. The join creates a mode-2 session, reads the 64-bit session identifier at +0x14 of the 0x00058023 result, searches by identifier, joins through 0x82D8EFF0 on listener event 3 with status 0, and writes mode word 4; failures surface as title messages or active-screen events 16 and 17, not system message boxes. The join builds the same GT2 network object on port 1000 for both modes, and the host address string comes from XNetXnAddrToInAddr with port 1000, but the edge into GT2 connect after a mode-2 join remains open. Context 55 and property 0x1000003B carry the selected scenario identifier, with -1 for none, and a joiner rejects a scenario it lacks. nativeMenuAccountPrivilegeBoundary maps selected local-user construction and exact menu result consumption. The pinned SDK supplies local sign-in/privilege and notification compatibility, not Live account authority.",
   "nativeDynamicExportBoundary": {
     "scope": "Raw direct branch-and-link census for imported XexGetProcedureAddress at 0x82E926A4 and the three exact caller owners. This closes the eight discovered direct sites, not every possible indirect/tail/dynamic import path or native online feature.",
     "census": "FindDirectCallers scanned aligned raw words in initialized executable program blocks, cap 32 per target. It found eight sites, Truncated=false and Cancelled=false: 0x827F0FE4, 0x827F11C8, 0x82823BAC, 0x82823BC4, 0x82823BDC, 0x82823BF4, 0x82823C0C and 0x82823C24. Modeled references had missed them. An aligned whole-initialized-memory pointer-value query for 0x82E926A4 found zero with cap 32; that does not exclude computed/split pointers, indirect dispatch or tail branches.",
@@ -222,14 +222,14 @@
     "wrappers": "0x8280E438 and 0x8280E498 call imported XamUserCreateStatsEnumerator at 0x8280E48C and 0x8280E4EC after 0x8281B888 returns zero. The former passes by-rank one and low32(original r4) as pivot; the latter passes by-rank zero and full original r4. Original r5..r9 become import r6..r10, and the import r3 return is preserved. The gate accepts title id zero; for nonzero input it calls XamGetExecutionId and compares the input high 16 bits with execution-id U16+0x0C, returning zero on its selected match and 1627 otherwise. Dereferences and normal import/helper returns remain premises.",
     "consumers": "With their separate object/account/setup guards satisfied, 0x82E64648 calls E498 at E64744, 0x82E64780 calls E438 at E64810, and 0x82E64848 calls E498 at E648E0. All three pass title id zero, row count from object+0x30, specification count one, specs at object+0x78, and size/handle outputs at frame+0x50/+0x54. Their pivot inputs differ: a selected object-array eight-byte value, object+0x38 rank, or a stack-produced eight-byte value. They require the wrapper return to equal zero before calling 0x82E64568(object,size,handle). That helper's nonzero low byte selects their return one; otherwise they retain return three. Separate earlier guards can return two or three. These numeric returns are not assigned an unproved UI meaning.",
     "sdkBoundary": "At SDK 2d4b3e588d06ff33153ca8d221c5c9dbc0b9e8ec, src/kernel/xam/xam_user.cpp:729-737 returns X_ERROR_FUNCTION_FAILED without writing size or handle. include/rex/system/xtypes.h:79,101 defines that Win32 result as positive 1627. Therefore a reached selected request rejects this SDK response before E64568 consumes outputs. The SDK has no statistics enumerator/backend here; export presence and native wrappers do not implement leaderboard reads. Source is equal at the title lock for these inspected owners, without a binary/fingerprint equality claim.",
-    "minimalProposal": "No title fix is proved by this failure gate. SDK support requires an actual enumerator/result owner with the native-requested size, handle and row contracts; replacing 1627 with zero alone would enter an output consumer without supplied outputs. Establish E64568, native close/cancel and result-to-view ownership before specifying the minimal functional SDK implementation. XGI stats/arbitration stubs remain separately recorded source boundaries.",
+    "minimalProposal": "No current title fix follows from the1627 failure gate. SDK support requires an actual enumerator/result owner with the native-requested size, handle and row contracts; replacing1627 with zero alone would enter an output consumer without supplied outputs. game-of-the-week-local-generation.json#/leaderboardRetirementBoundary now maps selected native reset/release and the conditional generic deferred-writer cancellation gap. A future successful stats implementation needs same-request last-write retirement and explicit acquired-handle close policy. Existing XGI stats/arbitration stubs remain separate.",
     "loggingProposal": "Default-off numeric metadata at E64744/E64748, E64810/E64814 and E648E0/E648E4 records the selected consumer and request return on every reached call; size/handle-present categories are inspected only after a zero API result. E64568 call/return distinguishes enumerator admission from the request status; correlate within the same request and object lifetime. Retain no XUID, score, row or profile payload; preserve guest state and do not probe uninitialized failed-call outputs.",
     "unrunCases": [
       "Title id zero and nonzero matching/mismatching execution-id gate; by-rank one versus zero preserves the wrapper pivot-width difference.",
       "At the pinned SDK, 1627 with untouched outputs must stay on the selected return-three path and must not call E64568; object/setup prerequisites are tested separately.",
       "A future successful implementation supplies valid size and owned enumerator handle before E64568, with lifetime/close/cancel and row consumption specified independently. These cases were not executed."
     ],
-    "nextStaticWork": "Follow E64568 result/enumerator ownership and the native dispatcher/callers selecting E64648, E64780 and E64848, then bind their results to the actual view and teardown. Native ranked-result submission, XGI stats/arbitration and profile persistence remain distinct inventory paths.",
+    "nextStaticWork": "Reuse game-of-the-week-local-generation.json#/leaderboardContract/R1,R3,R4,R5, leaderboardWeekConsumption and leaderboardRetirementBoundary for selected dispatch/spec/parse/view and clear/free/cancel limits. The current stats constructor is unavailable; its future generic retirement and acquired-handle close contract require supported SDK policy/implementation, not another generic helper queue. Reuse achievement-unlock-triggers.json#/findings/RVA-F-0344/enumerationBoundary for the selected achievement caller, negotiated capacity and conditional deferred-count mismatch. Actual invocation/visible impact, other ranked/content consumers, XGI statistics/arbitration and profile persistence remain distinct questions.",
     "evidence": {
       "method": "Serialized foreground read-only function, raw BL-caller and word queries, exact-owner narrow generated corroboration and pinned SDK implementation/result-definition comparison.",
       "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
@@ -281,7 +281,7 @@
       "Negative create, a mocked/nonconforming negative setup return, scan-with-no-nonzero-entry consumer and successful mocked create are separate controls; handle close/clear is observed without claiming real voice support.",
       "Proposed SDK status correction must leave output zero and avoid the selected success-like continuation, with exact error convention settled first. No native runtime, audio device or transport was used."
     ],
-    "nextStaticWork": "nativeIdentityNotificationVoiceConsumerBoundary owns selected headset/profile/privilege/notification and submit consumers. Continue actual A231F8/A23AD8 caller/dispatch and current object/listener/voice generations, supported capability/status policy, close/queue/capture/playback/mute and callback lifetimes. Party APIs and complete SDK voice backend remain separate.",
+    "nextStaticWork": "Reuse nativeVoiceSetupEntryBoundary for the zero direct-BL/current-reference census and metadata-only aligned pointer match. Actual A231F8 feature entry is unproved and no useful caller discriminator was found; do not redispatch its accepted setup/queue bodies. Native notification/headset/profile/privilege/submit and A24180 ->A23AD8 worker routes remain accepted, with current generations, API-specific error/capability policy and complete voice ownership separate. A new call/publication or covered invocation is needed before more native entry tracing. Party APIs and the stubbed SDK backend remain separate.",
     "evidence": {
       "method": "Serialized foreground read-only function, raw BL-caller and word queries, exact-owner narrow generated corroboration and pinned SDK implementation/result-definition comparison.",
       "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
@@ -323,7 +323,7 @@
       "On the selected handler path, distinguish prior-comparison zero skip, the skip when the predicate is false and the suffix when it is true. After supported helper returns, the true suffix requests the two literal/string/application stages, temporary disposal and sign-in helper, stores marker1 and exits before the alternate continuation. Visible UI, completed sign-in and action admission require their actual receiver/caller contracts.",
       "Only a future supported guest-profile policy can supply a real guest-output case. Check that ordinary user0 remains ordinary and supported guest state selects the intended refusal without claiming sign-in UI notifications repair it. No fake, unit, profile, UI, guest, game, SDK, socket, relay, service or runtime case was run."
     ],
-    "nextStaticWork": "Follow actual E51BE0 entry/callers and index producers when binding the request to a visible action, E6A430 lookup/string temporaries and application+0x22C target/lifetimes before a display/completion claim. Continue E250 privilege/version policy and A23AD8/A24FD0 notification/identity consumers, then player/command/rejoin and other online families. Socket/list/title registry and native SDK handle/header lifetime fronts remain active separately. No family is closed and no runtime observation is substituted for remaining queryable static owners.",
+    "nextStaticWork": "Follow actual E51BE0 entry/callers and index producers when binding the request to a visible action, E6A430 lookup/string temporaries and application+0x22C target/lifetimes before a display/completion claim. nativeIdentityNotificationVoiceConsumerBoundary and nativeIdentityWorkerPrivilegeEntryBoundary already bind selected E250 and A23AD8/A24FD0 consumption/caller paths. Their actual action/user producers and higher policy remain open, alongside player/command/rejoin and other online families. Socket/list/title registry and native SDK handle/header lifetime fronts remain active separately. No family is closed and no runtime observation is substituted for remaining queryable static owners.",
     "evidence": {
       "method": "Reused selected read-only native word windows plus one serialized foreground read-only import window, pinned-image comparison, exact literals/generated corroboration and pinned SDK source reconciliation.",
       "reusedBoundaries": [
@@ -452,7 +452,7 @@
     "localProfileRequestAndPoll": "A257D0 calls A24FD0(O) at A257E0/E4. A24FD0 first calls HeadsetPresent with U32[O+8] at A24FF0/F4 and stores the raw low32 result at O+0xC0; its zero/nonzero transition can mark local update flags. SDK HeadsetPresent returns 0 without owning headset state. Profile work is gated by current N+0x524 or O+0xBC. It reads sign-in state for user U32[O] at A25044/48. With O+0xBC clear and nonzero sign-in result, A25278/7C requests ReadProfileSettings with title0xFFFE07D1,user U32[O],xuid count0/null xuids,count3,IDs at 82F38B08,size pointer O+0xB4,buffer U32[O+0xB0] and overlapped O+0x94. The ninth pointer is stored at frame+0x54, matching the pinned 32-bit stack-argument translator. Raw return 0 or 997 sets O+0xBC=1; neither alone proves completed good profile data. Buffer construction, actual size/backing and same attempt/overlapped generation remain active.",
     "profileCompletionAndLayout": "With O+0xBC set, A24FD0 calls DD38(O+0x94,0,0) at A25068/6C. DD38's selected no-wait caller maps a current status997 through locally formed258 to 996 and makes no wait request. A local or wait-result258 is remapped on that branch; other fresh result words, including258, can pass through unchanged on the result-word path. Its general optional output and wait/error-helper paths retain their own contracts. This caller consumes profile records only when sign-in remains nonzero and the poll result's low32 is0, then clears O+0xBC. Other continuations distinguish a still997 word from terminal failure; no busy wait is added here. The pinned profile API requires valid size/IDs/backing, completes successful overlapped data with result0 before returning997, and also returns 997 after immediate error completion for selected failures. Thus pending admission and successful record consumption remain separate. SDK record/header layout is8-byte header plus 40-byte records, ID+0x10 and Int32 value+0x20, matching the selected native view; the three Int32 records require128 bytes. Immediate completion first stores the current-thread context. Its common completion writer then captures event/routine/context before writing extended error/length and release-storing the result last, then may signal or queue an APC using that captured context. A prior overlapped context is not preserved by the immediate path. Actual memory/adapter/completion/retention conditions, not the raw pending return, must establish a usable same-generation buffer.",
     "profileSettingsConsumption": "The checked initial ID array contains 0x1004000C,0x1004000D,0x1004000E. The pinned SDK catalog names these VOICE_MUTED,VOICE_THRU_SPEAKERS,VOICE_VOLUME, initialized as Int32 values0,0,100; current profile/ID bytes need retained matching writers. The native count-driven consumer uses40-byte stride, compares each record's ID and updates O+0xC4 mask bits for the first two, while the volume case clamps signed values only above100 and combines the selected low word into the field. Do not infer a lower clamp, replace100, or assume arbitrary alternate writers preserve the same record/count/value range. A selected change can later derive O+0xB8 from byte O+0xC6 and a sampled global float before A237B0(N,O). SDK catalog names close local setting identity, not audible output or backend support; no profile payload should be logged.",
-    "privilegeConsumerAndVersionWrapper": "A24FD0 calls privilege export ordinal 0x212 DIRECTLY with argument252 at A252BC/C0. Nonzero API return or output equal1 selects mask0x20000. Otherwise it requests the same export with argument251 at A252E0/E4; only the combined low32-status0/output1 case selects0x10000, otherwise0. A subsequent current N+0x24 nonzero observation overrides the result to 0x20000 before replacing the selected O+0xC4 mask. These are numeric control fields, not proof of granted account privileges. The pinned API ignores the privilege mask, validates user0 or 0xFF and returns one/zero from local sign-in state2. The separate E250 wrapper first checks version0x20096B00: under a lower version it checks one user, or up to four for0xFF, and observed sign-in state1 writes output0/returns 1245; other branches forward the privilege API. SDK version is0x20449700 for System Link mode not off, else0. A24FD0 does not call this wrapper, so its direct privilege branches do not inherit that legacy/version guard. E250's own outer callers and these mask consumers' policy meanings remain active.",
+    "privilegeConsumerAndVersionWrapper": "A24FD0 calls privilege export ordinal 0x212 DIRECTLY with argument252 at A252BC/C0. Nonzero API return or output equal1 selects mask0x20000. Otherwise it requests the same export with argument251 at A252E0/E4; only the combined low32-status0/output1 case selects0x10000, otherwise0. A subsequent current N+0x24 nonzero observation overrides the result to 0x20000 before replacing the selected O+0xC4 mask. These are numeric control fields, not proof of granted account privileges. The pinned API ignores the privilege mask, validates user0 or 0xFF and returns one/zero from local sign-in state2. The separate E250 wrapper first checks version0x20096B00: under a lower version it checks one user, or up to four for0xFF, and observed sign-in state1 writes output0/returns 1245; other branches forward the privilege API. SDK version is0x20449700 for System Link mode not off, else0. A24FD0 does not call this wrapper, so its direct privilege branches do not inherit that legacy/version guard. nativeIdentityWorkerPrivilegeEntryBoundary maps selected E250 outer callers. Current higher policy and the meanings of these masks remain open.",
     "configurationRequestAndAggregation": "A237B0 constructs four eight-byte frame records. Current N+0x38==0 skips its final A68E90 request and leaves an earlier unnormalized r3. Otherwise O+0xC4 mask0x2, conditional A24F50(O), mask0xF0000 and O+0xB8 choose a sampled/default float before A68E90 at A23894/98; actual descriptor/receiver/float/helper effects remain unexpanded. A234A0 separately prepares48-byte and 408-byte manager areas, visits current source arrays, conditionally reorders entries and requests A25B38/A26EB0 with current row addresses. It updates selected manager fields and uses unsigned low32 candidate comparisons to retain r22, incrementing M+0x528 only for a nonzero low32 candidate before returning that register. Later indexed column copies use CURRENT r5 after unexpanded A22ED8; the ABI does not preserve the earlier selector by itself. These helper requests and local fields do not establish a UI, audible mix, peer count, scheduler cadence or a queue-drain guarantee.",
     "voiceWorkerAndStubReturn": "A257D0 follows profile refresh with its guarded list-node, packet preparation and spinlock requests. It stops its first request-list phase on nested code259, uses separate current lists/fields in the later phase and reaches XamVoiceSubmitPacket at A25A50/54 only under the selected queue/helper conditions. It supplies r3=U32[O+8] and a packet pointer in r5, then tests signed LOW32 returned r3 for negativity. The pinned SubmitPacket is a RAW REX_EXPORT_STUB/REX_STUB: it logs and makes no ctx or packet-memory assignment, with no typed status-return marshaler. Given the actual same direct symbol binding and normal noninterfering logging, input r3 survives. Its pointer-shaped low32 sign therefore selects this branch; a reached zero input gives a nonnegative branch without proving packet submission. This extends the accepted voice-create status boundary, not a new HRESULT success contract. The negative submit arm writes zero to the selected packet's first word and then also reaches A29CF0. The worker's final raw full result comes from A29CF0, with a signed-low32 gate for later v+0x10 callbacks; it does not return the submit result. Actual queue/job/voice generations, codec/helper and lock/callback effects remain active.",
     "remoteEntryAndLifetimeBoundary": "A26A88 first walks its current unsigned count at R+0x20 over pointers at R+0x18, passing the current, per-iteration reloaded first qword, current R+8 and child+0x18 through A238A8, then forwarding two frame outputs through A21430. A second current count R+0x14 walks pointers at R+0x0C and requests each current v+0x10 target. Normal completion returns 0. This does not name the first qword as an authenticated XUID or establish output initialization, callback class, record lifetime or remote delivery without those actual contracts. Native root M/N/O/R lifetimes and reloaded counts/pointers must survive the entire call chain, including the flag clear and lock release; a profile or callback confined to this source path proves neither player-slot assignment nor completed teardown.",
@@ -465,7 +465,7 @@
       "At an actually reached SubmitPacket import, distinguish retained input-pointer sign from a typed status and require separate evidence from the packet/backend path. Zero input can select the nonnegative branch under the raw-stub binding; this is not a proposed successful voice case. Keep the prior create-error mismatch and actual queue/close ownership separate.",
       "For valid finite current arrays/lists, correlate opaque callback/generation and lock enter/leave, final A29CF0 result and remote outputs before teardown or second attempt. All native/unit/fake-lifecycle/game/device/runtime/relay/service/network controls remain UNRUN."
     ],
-    "nextStaticWork": "nativeIdentityWorkerPrivilegeEntryBoundary owns selected A23AD8/E250 caller and worker timer/termination requests. Continue actual feature entry, signal/wait/wakeup, listener constructor/mask/version and O+0x90 manager publication. Expand A25B38/A26EB0/A22ED8(selector/return effects), A24F50/A68E90, A21818/A285B0/A29CF0, A238A8/A21430 and actual v+0x10 callbacks as reached; reuse known wait/error/lock contracts. Bind voice capability/create/close and queue generations rather than inferring them from local flags. Continue identity/account/player/XUID/slot, cancellation/second-match, command/determinism/snapshot/rejoin, transport and all remaining inventory families. No family is closed.",
+    "nextStaticWork": "nativeIdentityWorkerPrivilegeEntryBoundary owns selected A23AD8/E250 caller and worker timer/termination requests. nativeIdentitySignalWaitRetirementBoundary already maps selected listener construction with mask5/version3 and signal/wait/stop requests. Continue actual feature entry, supported publication/quiescence, current signal/wakeup/worker observations and O+0x90 manager publication. Expand A25B38/A26EB0/A22ED8(selector/return effects), A24F50/A68E90, A21818/A285B0/A29CF0, A238A8/A21430 and actual v+0x10 callbacks as reached; reuse known wait/error/lock contracts. Bind voice capability/create/close and queue generations rather than inferring them from local flags. Continue identity/account/player/XUID/slot, cancellation/second-match, command/determinism/snapshot/rejoin, transport and all remaining inventory families. No family is closed.",
     "evidence": {
       "method": "Reused serialized read-only root query plus five exact-owner and ten radius64 code windows, pinned-image/source-call comparison, eight radius8 import/settings windows and pinned SDK/ABI/layout/source-stub inspection. No model repair or behavioral execution.",
       "reusedBoundaries": [
@@ -1000,6 +1000,187 @@
       ]
     }
   },
+  "nativeMenuAccountPrivilegeBoundary": {
+    "question": "Which local user input and selected account methods reach Player Match and Ranked Match, and what do admission, refusal and a sign-in request actually establish?",
+    "classification": "Proved statically: the selected fresh construction copies the word at manager+0x00 into the account user field and binds the two account gate slots. The two menu actions require low32 result 1 at both gates. A sign-in request returns 2 independently of API status, and the current SDK request emits notifications without selecting a user or changing profile state. Current owner/user identity, actual UI outcome and Live authority remain unproved.",
+    "scope": "Eight selected owners, seven PE-bounded and one single-word no-PE tail thunk. Reuses the accepted CAF890/E250 logic and conditional registry/manager construction. M is a retained manager, A a retained account, C a retained menu controller and P a sampled setup object. Require valid mapped objects/frames/strings/containers, compatible normally returning helpers, original thunk/full-register ABI, stable counter/key/registry where used, actual class/import binding and no destructive aliases/interference. Fresh global/account samples do not prove one generation. A scalar user index is not a XUID, authenticated account, member or Civilization slot.",
+    "freshUserInput": "D8C6C8 only takes its fresh account path when M+18 is null. It passes U32[M+0] as r5 and the current M+48 callback as r4 to CABBF0 at D8C740. CABBF0 preserves those inputs into its CA8390 request at CABC0C. CA8390 retains the callback/user arguments and, on nonnull allocation, passes them to CA8320 as r5/r6. CA835C stores the user scalar at A+8; CA8360 stores the callback at A+0C. The separately sampled native counter/key is stored at A+4. These fields are distinct inputs, not identity aliases.",
+    "classAndPublication": "CA8320 first installs 8215F980. The admitted CA8390 return installs final8215F310 at CA83F0 and clears A+58. With the accepted compatible registry/counter/key and same-result lookup premises, D8C6C8 stores the returned key at M+0C, looks that key up and publishes A at M+18 at D8C758. It then invokes account+4 and can request success helpers or D8B668 fallback. The store is not proof that A survives that work or remains current at method return. An existing nonnull M+18 skips this construction and supplies no fresh M+0-to-A+8 copy in the selected fast path. Other writers/rebinding are not excluded.",
+    "gateSlots": "For actual retained final table 8215F310, selected cell8215F39C (+8C) contains CAF9A8, and 8215F3A0 (+90) contains CAF890. CAF890 is reused from nativeIdentityWorkerPrivilegeEntryBoundary, not re-expanded. Thus mode 1 at the selected second menu gate reaches the accepted initialized-output/code 254 path under the matching current-class premises. No complete table membership or global call inventory is inferred from these two cells.",
+    "signInResult": "CAF9A8 loads A+8 and requests accepted E240/GetSigninState. Signed low32 result 2 returns explicit 1. Otherwise a zero low byte of its request flag returns explicit 3. A nonzero flag requests 8280DDE8(count 1,flags 2) at CAF9F0, then returns explicit 2 after normal return without inspecting API status. The one-word DDE8 thunk tails to82E929A4, named XamShowSigninUI by the inspected generated import map. Return2 denotes this native request path, not successful sign-in or an accepted online action.",
+    "menuConsumption": "Player Match E6C0E8 calls the first account+8C gate with flag 0 at E6C128, compares signed low32 with 1 at E6C12C, then freshly loads manager/account and calls account+90 with mode 1 at E6C158, comparing low32 with 1 at E6C15C. Ranked Match E6BE10 has corresponding call/compare pairs E6BE50/54 and E6BE80/84. Only those selected result 1 branches reach their direct mode 4/mode 5 stores E6C180/E6BEA8 and the conditional controller 12 transition path. The stores precede local controller+10/+4 transition checks, so mode change is not screen entry, session creation or gameplay. The two gates use separate account samples.",
+    "refusalAndRetry": "On the selected first-gate result3 branch, the callers request the sign-in/connect message suffix and later request current account+8C with flag1 (Player E6C3A0; Ranked E6C0C8), ignoring that final return. Selected second-gate result3 instead requests the permission-message suffix and does not take that later sign-in request. Missing-account branches retain their separate later samples. Other non1 values exit without the selected mode store. There is no inline recheck/admission loop in these suffixes. Actual display, callbacks, later actions and user/session replacement remain separate. This is not complete retry, cancellation or host-wait release.",
+    "sdkReconciliation": {
+      "revision": "8bbc8d709f8d30cb75ae5c084c3c2c898de3b556",
+      "locators": [
+        "rerevved-sdk:src/kernel/xam/xam_user.cpp:68-76,373-389,479-490",
+        "rerevved-sdk:src/system/xam/user_profile.cpp:23-34"
+      ],
+      "contract": "GetSigninState supplies the local profile state for user 0 and 0 otherwise. The profile getter reports 1/2 from init-only live_signin without contacting a Live service. CheckPrivilege ignores the requested code, writes local-state-2 as 1/0 for user 0/0xFF, and can reject other indices before writing. Reuse CAF890 caller initialization/status-use qualifiers rather than treating its word as a fresh grant. ShowSigninUI requests sign-in-changed notification 0x0A(value 1) and UI-off notification 0x09(value 0), then succeeds. This handler neither selects a user nor assigns profile sign-in state. Notification request, native request result 2, processed notification, current account and successful admission are separate receipts."
+    },
+    "minimalProposal": "No new standalone title/SDK fix is selected. Preserve the 1/2/3 distinction and the menu checks for low32 result 1. Do not force live_signin/privilege, treat return 2 or SDK success as completed sign-in, or rebuild A merely because M+0 differs. Supported user/capability policy, actual rebinding and the intended retry/UI result must be established first. Existing output-validity, identity and lifecycle proposals retain their owners.",
+    "logging": "Proposed default-off bounded records: fresh/existing M+18 branch, user-input category at D8C734, A+8 store CA835C, final table/publication CA83F0/D8C758, actual first/second account generation and already loaded user at CAF9BC, each gate call/return and consumed low32 category, selected mode store, request-flag branch/CAF9F0 return 2 and the later ignored sign-in request. Correlate opaque manager/account/controller/attempt tags and coverage/loss. Distinguish notification request from poll/action/display. Capture no raw keys, user/profile identities, XUIDs, pointers, strings or credentials, and call no extra getter to log.",
+    "remaining": "nativeInviteUserRebindBoundary maps a selected M+1C-to-M+0 setter and the conditional fresh-account input path. Actual M+0 producers outside that route, complete A+8 writers/rebinding, current class/lookup/owner identity, full UI/notification effects and usable retry remain unknown. Local user, native key, XUID and Civilization remain distinct. Remote authority, rejoin and the first desync are separate. All behavior and acceptance UNRUN.",
+    "evidence": {
+      "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "titleRevision": "3f74e5f0995c4ebe6b0765b2ebe12d48ac85d6b7",
+      "method": "Four completed serialized foreground ReadOnly memory queries. All568 words matched the pinned image, independent PE/PPC64BE decoding and eight narrow generated owners. Seven PE extents plus the single tail instruction were checked. Two selected table cells are not a complete class or invocation inventory.",
+      "owners": [
+        {
+          "start": "0x82CA8320",
+          "endExclusive": "0x82CA838C",
+          "metadata": "0x8219A380",
+          "instructions": 27,
+          "sha256": "07C935D82176A33D3917EB2BA05958D3619483C96C1F1141849881CE840DE56C"
+        },
+        {
+          "start": "0x82CAF9A8",
+          "endExclusive": "0x82CAFA18",
+          "metadata": "0x8219A898",
+          "instructions": 28,
+          "sha256": "5CDD0633B3997768F1735D3490F6F83749A193EBBC0478BF003905FF4946CDF8"
+        },
+        {
+          "start": "0x82CA8390",
+          "endExclusive": "0x82CA8408",
+          "metadata": "0x8219A388",
+          "instructions": 30,
+          "sha256": "29F2B0CB92E11FFEBDF0D64CD0642AA3E4286CA7F6EB62553D9DE72059215769"
+        },
+        {
+          "start": "0x82D8C6C8",
+          "endExclusive": "0x82D8C7E4",
+          "metadata": "0x8219D4C8",
+          "instructions": 71,
+          "sha256": "428E71C63304E2C4558C598E31413BF6079D16EE729798CCC6EA3B93D67759EC"
+        },
+        {
+          "start": "0x82E6C0E8",
+          "endExclusive": "0x82E6C3BC",
+          "metadata": "0x821A1210",
+          "instructions": 181,
+          "sha256": "D225A2008BA92F00BC6CE5AD7B187274E296D071D1AECA63CC3EE69DBB386046"
+        },
+        {
+          "start": "0x82E6BE10",
+          "endExclusive": "0x82E6C0E4",
+          "metadata": "0x821A1208",
+          "instructions": 181,
+          "sha256": "8BE59964DB3CAE18FBC7C8BBACF354EE5159D7642F3B9AD3CA096EB9D5A0ABFF"
+        },
+        {
+          "start": "0x82CABBF0",
+          "endExclusive": "0x82CABC74",
+          "metadata": "0x8219A520",
+          "instructions": 33,
+          "sha256": "1B845E8EBECC4EE65FDA54B1D24E671DDFD9D55348A518C97BF206CD4FF89E7D"
+        },
+        {
+          "start": "0x8280DDE8",
+          "endExclusive": "0x8280DDEC",
+          "metadata": null,
+          "instructions": 1,
+          "sha256": "D8898B5FEC7A1F661E5F3134EF025C216D3F1623A658D05F4E28918374E39B80"
+        }
+      ],
+      "generated": [
+        {
+          "function": "0x82CA8320",
+          "path": "generated/default/rerevved_recomp.194.cpp",
+          "firstLine": 29237,
+          "lastLine": 29300,
+          "instructions": 27,
+          "sha256": "BCBA9C7085062E27A0330460753D49A2F97952CD5AB6F1574E0D1194911F6FEE"
+        },
+        {
+          "function": "0x82CAF9A8",
+          "path": "generated/default/rerevved_recomp.2.cpp",
+          "firstLine": 27094,
+          "lastLine": 27167,
+          "instructions": 28,
+          "sha256": "96905E137DC17668A3E0F5A95D9E9906074E6A5AD31025F3D60EDF8AAD63F50E"
+        },
+        {
+          "function": "0x82CA8390",
+          "path": "generated/default/rerevved_recomp.164.cpp",
+          "firstLine": 29883,
+          "lastLine": 29955,
+          "instructions": 30,
+          "sha256": "0195658EEC6E6EF61D6B0FC6B015C3B889B599F0DE9A55C0D9E0F48C62AED3AC"
+        },
+        {
+          "function": "0x82D8C6C8",
+          "path": "generated/default/rerevved_recomp.193.cpp",
+          "firstLine": 30278,
+          "lastLine": 30439,
+          "instructions": 71,
+          "sha256": "F1F4F4A654AE1886CE76D33760A4F910662CDCAF00B58BBCAEF4AA33B4FCFF41"
+        },
+        {
+          "function": "0x82E6C0E8",
+          "path": "generated/default/rerevved_recomp.196.cpp",
+          "firstLine": 32087,
+          "lastLine": 32493,
+          "instructions": 181,
+          "sha256": "B129F0F616AC8912AEEF284D44B9ACC98C35CA996FB7635ABBAE0EB61F52C8B7"
+        },
+        {
+          "function": "0x82E6BE10",
+          "path": "generated/default/rerevved_recomp.13.cpp",
+          "firstLine": 32428,
+          "lastLine": 32834,
+          "instructions": 181,
+          "sha256": "DF31F284B81071E6FCC2ECE5136ECAC8087437058B31802973D972654DF98964"
+        },
+        {
+          "function": "0x82CABBF0",
+          "path": "generated/default/rerevved_recomp.219.cpp",
+          "firstLine": 29615,
+          "lastLine": 29693,
+          "instructions": 33,
+          "sha256": "AD3F2DD1DAB5CEB3097F5B118A8A1DB9E5C378BCAF8C09B9BA346E5B52A311E3"
+        },
+        {
+          "function": "0x8280DDE8",
+          "path": "generated/default/rerevved_recomp.63.cpp",
+          "firstLine": 16196,
+          "lastLine": 16202,
+          "instructions": 1,
+          "sha256": "2D573B12A2B433338C0BDF1F3E9A6F03BE77EE4214ADBE1FB5F2D7893F874D02"
+        }
+      ],
+      "instructions": 552,
+      "proofWords": 568,
+      "proofWordRecords": 568,
+      "metadataWords": 14,
+      "selectedCells": {
+        "0x8215F39C": "0x82CAF9A8",
+        "0x8215F3A0": "0x82CAF890"
+      },
+      "reusedLegacyRange": {
+        "start": "0x82CAF890",
+        "endExclusive": "0x82CAF9A8",
+        "byteCount": 280,
+        "sha256": "DC186927A6D56FE429D382C0838979B307C1917331184E9B34F1F0D670ABCA96"
+      },
+      "generatedImportMap": {
+        "path": "generated/default/rerevved_init.cpp",
+        "sha256": "4A3E66DCA4CD52AF74D44380C22DDE8945EF347ACE30EF5F27B34AE0AEF06448",
+        "selectedImportAddress": "0x82E929A4",
+        "selectedImport": "__imp__XamShowSigninUI"
+      },
+      "locators": [
+        "ghidra/DumpMemoryWords.java:0x8215F39C,0x8215F3A0;radius0",
+        "ghidra/DumpMemoryWords.java:0x82CA8320,0x82CAF9A8,0x82CA8390,0x82D8C6C8,0x82E6C0E8,0x82E6BE10,0x82CABBF0,0x8280DDE8;selected scopes/PE words"
+      ],
+      "reusedContracts": [
+        "xbox-live-mode-entry-invite-contract.json#/menuEntry",
+        "xbox-live-mode-entry-invite-contract.json#/nativeIdentityWorkerPrivilegeEntryBoundary",
+        "xbox-live-session-search-contract.json#/nativeSessionServiceResetBoundary",
+        "native-renderer-alternate-resolve-provider.json#/rawUnresolvedOwnerFieldReceiverBoundary/managerSlot18NestedReceiverBoundary"
+      ]
+    }
+  },
   "nativeIdentityWorkerPrivilegeEntryBoundary": {
     "question": "Which selected outer callers reach the native notification poll and legacy privilege wrapper, and what do their timer, status/output and termination requests establish?",
     "scope": "Eight selected new owners A24180,A8D2C0,CAF890,CAF638,C13820,C137B0,C13770,8281A3C0. M is the incoming A24180 receiver, not an independently authenticated player or a proved current constructor generation. Reuses the accepted A23AD8/E250 consumers, local CB1140 sign-in predicate, E598 XUID wrapper, handle-close leaf and created-thread producer context. Actual feature/dispatcher/startup binding, listener/object/handle generations, finite arrays/lists, retained frames and output initialization, valid physical mappings/arithmetic, selected SDK/Windows binding, normal helper/ABI/instruction effects and no destructive aliases/interference remain premises. Native call sites are not a runtime schedule, online account, social relationship or evidence of complete teardown.",
@@ -1023,7 +1204,7 @@
       "For supported privilege API status/output combinations, separate first request failure, second request failure, freshly written zero/one and retained no-write error; preserve each caller's branches and full64/low32 distinctions. Do not invent status120 output initialization or interpret local return 1/3 as account/player authority.",
       "For a separately proved nonzero-routine timer caller, specify callback-copy-before-cancel, cancel-before-copy and object-retirement controls only with supported retained lifetimes and actual APC delivery. The selected routine0 worker does not prove those cases occur. All tests, native/runtime/game/device/network/relay/service controls remain UNRUN."
     ],
-    "nextStaticWork": "nativeIdentityEntryHeapLifetimeBoundary owns selected A20C40 arguments, method slots and DAC0/B538 heap delegates. The82192500 word is runtime-function metadata, not evidence that a dispatcher used it. Continue A20C40/other actual feature entry, flag8 allocation initialization/current heap generation, worker/handle/wakeup execution, zero-count owner retention and callback/descendant lifetimes. Bind E248 and its XUID/count/output callers before naming social/membership semantics; follow A8EC78/A8EC18/A8EC48 and CAF890/CAF638 callers as reached. Generic timer/APC cancellation, SDK Restore/manual-event caller reach, player/command/snapshot/rejoin/determinism, transport and all remaining families stay active. xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberBackendRetirementBoundary binds the selected C99E60 caller that consumes CAF638's result while constructing numeric control1010. Its control meaning and actual delivery remain separate.",
+    "nextStaticWork": "nativeIdentityEntryHeapLifetimeBoundary owns selected A20C40 arguments, method slots and DAC0/B538 heap delegates. The82192500 word is runtime-function metadata, not evidence that a dispatcher used it. Continue A20C40/other actual feature entry, flag8 allocation initialization/current heap generation, worker/handle/wakeup execution, zero-count owner retention and callback/descendant lifetimes. nativePartySocialConsumerBoundary binds E248's selected AreUsersFriends tail and CAF750/A26864 consumers. A8D2C0 list semantics, other inputs and higher social/membership policy remain open; follow A8EC78/A8EC18/A8EC48 as reached. nativeMenuAccountPrivilegeBoundary binds two selected CAF890 online-menu consumers and the fresh M+0 input path. Other CAF890/CAF638 routes, actual user producers and current identity/policy remain open. Generic timer/APC cancellation, SDK Restore/manual-event caller reach, player/command/snapshot/rejoin/determinism, transport and all remaining families stay active. xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberBackendRetirementBoundary binds the selected C99E60 caller that consumes CAF638's result while constructing numeric control1010. Its control meaning and actual delivery remain separate.",
     "evidence": {
       "method": "Serialized foreground read-only exact-owner, aligned raw-BL census and memory-word queries; pinned flat-image/call comparison; narrow exact generated definitions and pinned SDK timer/Windows/source contracts. No model repair or behavioral execution.",
       "reusedBoundaries": [
@@ -1530,7 +1711,7 @@
     "terminationCallbackList": "B2F8 retains its incoming full argument, enters the critical section at computed82F2FA78 and traverses the list headed by 82F2FA94. Each iteration loads and retains next before reading the current node's+8 target and issuing its indirect call with the retained incoming argument. It then compares the saved next with the head. Initial equality skips callbacks. On finite normal completion it leaves the critical section; the final r3 is not normalized here. Under accepted A3C0 this precedes the ExTerminateThread request with argument0 to B2F8. Actual registration, current targets, reentry/removal effects and saved-next/lock/owner lifetimes remain unbound, so this is not a no-callback or complete rundown guarantee.",
     "sdkClosedListenerPolicy": "KernelState RegisterNotifyListener retains a strong listener reference and may enqueue first-listener startup items when mask bit0 is present and its startup flag was clear. Its header explicitly documents retaining registered listeners after guest handles close. NtClose releases a table handle reference; on the final reference RemoveHandle clears that table entry, removes the supplied handle/name and releases the object, while the registered strong reference can keep the listener alive. HasOpenNotifyListener tests mask plus a nonempty guest-handle list, whereas BroadcastNotification snapshots all registered strong references under the kernel lock and enqueues after unlocking, with no open-handle filter. The scoped tracked src/include census at each of the three pins found only UnregisterNotifyListener's declaration and definition, no named call site. KernelState destruction stops its selected service before clearing the registry and resetting the object table. This is the documented retained-listener policy and its source effects, not an unconditional unregister fix, a proof of unbounded runtime growth or observed second-match failure; indirect/other-version uses and actual caller/alias generations remain qualified.",
     "sdkListenerRestoreDefect": "XNotifyListener Restore initializes/registers a new listener and then pushes saved queue pairs without signaling its wait event. Under a valid nonempty saved queue, no other enqueue/dequeue/interference, and either an already-set has_notified_startup_ flag or a mask that excludes startup items, Initialize leaves the event nonsignaled and replay makes the queue nonempty without setting it. This is a source queue/event mismatch: a subsequent SDK listener wait can still poll nonsignaled while FIFO GetNext can remove an item, under the corresponding current-handle/wait binding. Initialize can instead enqueue eligible startup pairs and set the event, so nonsignaled pre-replay state is conditional and those pairs/duplicates must be preserved. Native game snapshot/hotjoin is not joined to this SDK Restore path, and the inspected native notification consumer polls GetNext directly. No title symptom or executed restore/wait is attributed to this source defect.",
-    "minimalProposal": "At the SDK XNotifyListener::Restore owner, reconcile its wait-event state with the actual post-initialization/replay queue under the supported queue synchronization or quiescent-restore policy: signal when nonempty, preserve existing startup items and duplicate/order semantics, and keep a truly empty queue nonsignaled. Do not fake a new notification or clear startup items to make this condition pass. Confirm publication/concurrency at actual Restore callers before selecting synchronization details. Preserve the documented retained-closed-listener policy unless an owner decision and supported lifecycle contract change it; a destructor-only unregister cannot be assumed to solve strong-reference retention. For native retirement, nativeIdentityTimeoutStartupHeapBoundary owns the selected timeout/clear/startup source contracts; resolve actual worker/wakeup and descendant/release ownership before choosing a join-result guard or cleanup policy. No standalone title teardown fix or runtime responsiveness result is selected; no code or hooks were added.",
+    "minimalProposal": "At SDK 8bbc8d709f8d30cb75ae5c084c3c2c898de3b556, the proposed local listener correction can acquire the shared recursive global region before XNotifyListener::Restore calls RestoreObject, and retain it through event/filter initialization, registration/startup, saved-pair replay and final Set for an actual nonempty queue. This delays cooperating handle lookup/registry publication as well as serializing queue/event changes; a replay-only guard leaves earlier handle publication open. Independently proved caller quiescence for the complete restore permits the smaller final queue/event correction. Preserve stream format, saved pair order/duplicates/filter bypass and startup items. Actual KernelState/ObjectTable replacement, external producer/consumer quiescence, failure and resume policy remain required at the public Restore caller boundary; the local guard is not generic saved-state or native rejoin support. Source: rerevved-sdk:src/system/xnotifylistener.cpp:101-120, src/system/xobject.cpp:123-164, src/system/util/object_table.cpp:270-301,386-407, src/system/kernel_state.cpp:1102-1156,1359-1398 and include/rex/thread/mutex.h:56-75. No code or behavior test was run. Preserve the documented retained-closed-listener policy unless an owner decision and supported lifecycle contract change it; a destructor-only unregister cannot be assumed to solve strong-reference retention. For native retirement, nativeIdentityTimeoutStartupHeapBoundary owns the selected timeout/clear/startup source contracts; resolve actual worker/wakeup and descendant/release ownership before choosing a join-result guard or cleanup policy. No standalone title teardown fix or runtime responsiveness result is selected; no code or hooks were added.",
     "logging": "Default-off opaque M/event/listener/thread/attempt/queue-generation tags. Pair A2446C/70 event-create with A24474 publication and A24478 branch; pair A24490/94 listener-create with A24494 publication and later zero guard, and observe A244A0 flag publication. Pair A23948/4C F090 request, actual A23958/A23960 state writes, A2395C/60 wait request/return, A23968/6C thread close and the separate event/listener close calls. Record fresh handle presence/generation, actual waitable-object category, timeout-pointer nullness only when valid, result category and ignored-versus-inspected consumption. Before possible release, capture descendants/opaque generations and paired clear/store categories without dereferencing freed owners. For SDK listener Restore record queue-empty/nonempty and event-state categories before initialization, after initialization/startup and after replay under valid synchronization; distinguish open-handle admission, registered snapshot and object retirement. No IDs/parameters/profile/XUIDs, raw handles/pointers/addresses, descriptors, audio or packet bytes, unbounded per-poll logs or measured waits.",
     "unrunCases": [
       "With an actual valid retained constructor/worker generation, distinguish create/notify zero publication, successful selected event/listener args and a current M+0x520 replacement. Require actual startup/wakeup/worker receipts before claiming that publication starts polling.",
@@ -1540,7 +1721,7 @@
       "Also specify saved-empty/no-startup, saved-nonempty plus startup-enqueued items, duplicate saved pairs and current-pointer/queue synchronization controls. Preserve source startup behavior and avoid assuming replay began with an empty queue.",
       "For the documented registry policy, close a fresh sole guest handle, then broadcast a matching category and compare HasOpen false with retained snapshot/queue behavior; separately cover an outstanding alias/nonfinal reference. All cases, native/runtime/unit/fake-lifecycle/game/network/relay/service controls remain UNRUN."
     ],
-    "nextStaticWork": "nativeIdentityEntryHeapLifetimeBoundary refines full A20C40 arguments, selected method slots and heap delegates; actual A20C40/other feature entry, allocation initialization/generation and zero-count owner/join retention remain active. Bind saved-next callback registration/targets, descendant A68D60/A25BE8/A269A0 and A69438/A693D8 configuration/output lifetimes as reached. Follow actual SDK Restore callers, publication/synchronization and manual-event caller/lifetime paths separately from native world snapshot. Continue E248/social output, player/command/snapshot/rejoin/determinism, transport and every other inventory family. None is closed.",
+    "nextStaticWork": "nativeIdentityEntryHeapLifetimeBoundary refines full A20C40 arguments, selected method slots and heap delegates; actual A20C40/other feature entry, allocation initialization/generation and zero-count owner/join retention remain active. Bind saved-next callback registration/targets, descendant A68D60/A25BE8/A269A0 and A69438/A693D8 configuration/output lifetimes as reached. The selected SDK KernelState -> XObject -> NotifyListener Restore route is source-mapped at 8bbc8d709f8d30cb75ae5c084c3c2c898de3b556. Bounded tracked SDK/title source searches found no outer KernelState Restore caller, so actual table/registry replacement, producer/consumer quiescence and failure/resume policy remain the public-caller boundary, separate from native world snapshot. Do not redispatch generic listener constructors for that missing invocation. Manual-event caller/lifetime paths remain separate. Continue E248/social output, player/command/snapshot/rejoin/determinism, transport and every other inventory family. None is closed.",
     "evidence": {
       "method": "Serialized foreground read-only exact-owner and seven radius64 word queries, four radius8 import windows, pinned-image/call comparison, accepted constructor/creator range reuse, exact generated source and pinned SDK source/caller census. No model repair or behavioral execution.",
       "reusedBoundaries": [
@@ -3980,7 +4161,7 @@
     "serviceSetupAndActualSlotJoin": "D8F398 retains M and the full incoming second argument. After three preliminary helper requests it samples M+0x10, writes M+0x1C=-1 and retains initial result3. Nonzero sampled M+0x10 exits with 3; zero requests accepted D8C570 and separately reloads M+0x10, with a zero reload also returning3. These exits skip its local D8E798 call, but are not side-effect-free. After descriptor construction and the property requests already owned by hostAdvertisement.properties, it requests freshly loaded service S=U32[M+0x10] virtual+0x18 at D8F4B4/B8. r4 is2 exactly when the incoming second argument's low8 is nonzero, otherwise0; r5=U32[M+0x70],r6=&frame+0x70,r7=U32[M]. For the matching registry-published live S with actual table8215FA78/key/generation, cell8215FA90 selects CA7720, whose complete third-mode route and child initialization are owned by nativeIdentityComponentLifecycleBoundary. This positive caller/table composition survives the earlier zero raw-BL census for CA7720; the census is not non-use evidence.",
     "serviceResultAndFailure": "D8F398 retains the full virtual+0x18 result at D8F4B8 and compares signed low32 with 1. A mismatch requests accepted D8E798(M) at D8F4FC/500, then destroys the descriptor and returns the retained raw result. A match freshly reloads M+0x10. If nonzero it requests that fresh service's current virtual+0x0C at D8F4E0/E4 with the original full second argument, ignores this callback's result, destroys the descriptor and returns the retained setup result. If the fresh field is zero it skips the callback, still destroys the descriptor and returns the retained result. A raw0x0000000100000001 therefore takes the low32-one branch without becoming full1. This does not prove a supported mutation, cleanup success, normalized status or live service retention; callback/helper compatibility and reference ownership remain required. nativeOuterJoinRollbackBoundary owns D8E798's selected requests; it is not redefined as completed shutdown here.",
     "distinctSlotCandidate": "D8B0B8's separate accessor/component+0x18 request and fresh receiver/slot hazards are owned by nativeComponentMemberQueryBoundary. The selected service accessor returns S+0x30; for the matching component/initialized worker it reaches member-record lookup, local/remote state selection and exact equality-to-one results, with a remote refresh sequence. It is not the direct service+0x18 setup operation. Actual current class/key/generation, D8AB00's accepted fresh lookup, supported publication and callback/lock/lifetime effects remain required; the query does not establish player admission or feature/UI intent.",
-    "minimalProposal": "No standalone title or SDK fix is selected. A supported D8D170-success/X-null or fresh-service/accessor-null case would justify an owner-specific guard before the corresponding vptr read only after the preserved status and resource/rollback policy is bound. Do not normalize retained results, turn cancellation requests into completion, change descriptor predicates into account authority or alter required-child policy from these local branches. Existing SDK proposals remain separate; no implementation or hook was added.",
+    "minimalProposal": "No standalone title or SDK fix is selected. A supported D8D170-success/X-null or fresh-service/accessor-null case would justify an owner-specific guard before the corresponding vptr read only after the preserved status and resource/rollback policy is bound. Do not normalize retained results, turn cancellation requests into completion, change descriptor predicates into account authority or alter required-child policy from these local branches. Existing SDK proposals remain separate; no implementation or hook was added. nativeHostFactoryOutputBoundary proves the local zero-lookup failure gate and selected mode2 fixed-result composition. It supplies no supported success-with-null path or unconditional lifetime guarantee, so the missing caller guard alone still does not justify a patch.",
     "logging": "Default-off opaque attempt/M/S/X/table/key/registry and temporary generations, with raw result and separately computed low8/low32 branch categories. Pair D8E470/474,D8E494/498,D8E4A8/AC and D8E408/40C; record the retained result at D8E4B0 versus direct-helper return at D8E4B4. Correlate the actual backend class and the accepted distinction between a cancellation request and completion, never label return 1 a completion. AtD8F4B4/B8 record actual service/slot/input-low8 and raw output before the low32-one branch. Correlate fresh M+0x10 loaded at D8F4C4, observed at D8F4C8, with callbackD8F4E0/E4, rollbackD8F4FC/500 and descriptor cleanupD8F4E8/EC or D8F504/508, preserving the retained setup result. Pair D8B0EC/F0 and D8B11C/120 as independent accessor generations before D8B134/138; observe zero categories without dereferencing them. No raw pointers/handles/keys, text, XUIDs, profile/packet bytes or per-tick logs; elapsed waits and outcomes remain unmeasured.",
     "unrunCases": [
       "Under actual retained mode-2 X/table, distinguish descriptor/factory gating, +0x24 return 1, +0x2C host request and pending-search cancellation from registered-service creation. Separately bind cancel completion and buffer lifetime before retry.",
@@ -3989,7 +4170,7 @@
       "Independently identify the two D8B0B8 v+0x110 receivers/results across D8AB00 and the child+0x18 callback. A supported generation change or null result needs the owning status/resource policy before any guard proposal becomes a fix.",
       "All unit/fake-lifecycle/runtime/game/network/relay/service controls remain UNRUN. Static word, source, data and document checks are not behavioral test execution."
     ],
-    "nextStaticWork": "Bind D8D170's actual success/output/lifetime guarantee and host-helper/current X/temporary ownership; follow D8ABB0/D8D0C8 and reached string/callback owners only as needed. Follow actual registered-service+0x20 upstream callers and alternate+0x1C callers, actual manager/key/registry publication and supported prior/fresh-field changes. Reuse nativeComponentMemberQueryBoundary for D8B0B8's selected component query, initialized worker slots, local/remote state and result gates; continue its actual callers/feature consumers, clock/child/writer/container and current lifetime/failure policy. Continue required-child/allocation/rollback/M stop-wait/shared-initialization retirement, complete player/command/snapshot/rejoin/determinism and transport, and all other inventory families. No family is closed.",
+    "nextStaticWork": "Reuse nativeHostFactoryOutputBoundary for D8D170's zero-lookup/result gate, selected mode2 leaves, held-table/fresh-receiver and local text cleanup. Actual generation/required-listener and helper effects remain explicit. Follow host-helper/current X/temporary ownership only with a concrete same-attempt field/retirement discriminator. Follow actual registered-service+0x20 upstream callers and alternate+0x1C callers, actual manager/key/registry publication and supported prior/fresh-field changes. Reuse nativeComponentMemberQueryBoundary for D8B0B8's selected component query, initialized worker slots, local/remote state and result gates; continue its actual callers/feature consumers, clock/child/writer/container and current lifetime/failure policy. Continue required-child/allocation/rollback/M stop-wait/shared-initialization retirement, complete player/command/snapshot/rejoin/determinism and transport, and all other inventory families. No family is closed.",
     "evidence": {
       "method": "Serialized foreground read-only exact-owner/bounded-word queries, exact generated-owner windows and pinned-flat byte/call/branch comparison. No project repair or behavioral execution.",
       "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
@@ -6762,6 +6943,1190 @@
       ],
       "qualification": "All392 public queried words match the pinned image;154 new instructions and37 reused caller comments are bound.11BL include one save-thunk request; six unconditional and21 conditional direct non-link branches are counted, with no new indirect call. Adjacent exported words supply equality only, not additional interpreted owners. The selected single callback relation and source/artifact metadata are public; other status-cell membership and raw code remain local. No loaded instance, actual failure or runtime acceptance is established.",
       "unconditionalDirectNonLinkBranchCount": 6
+    }
+  },
+  "nativeProfileWriteReachBoundary": {
+    "question": "Does the selected native import and direct dynamic-lookup evidence expose a XamUserWriteProfileSettings request that can be tied to the accepted profile-read consumer?",
+    "confidence": "strong for the explicitly bounded metadata negative",
+    "classification": "No XamUserWriteProfileSettings entry was found in the selected contiguous import corridor or the eight accepted direct dynamic-lookup pairs. The selected profile-read consumer remains a read. Native profile-write use is unresolved outside those sets, not proved absent from the program.",
+    "scope": "Exact half-open native corridor 82E922D4..82E932B4 contains 254 contiguous 16-byte import records. All 1016 words were queried and matched to the pinned image. Generated registration rows selected navigation and corroborated those native records; they do not establish whole-image import completeness or runtime binding. No ordinary function body or new caller expansion was performed. SDK module/ordinal interpretation uses the stated source revision. Other memory, computed/split pointers, indirect calls, tail paths, different module/version mapping and installed runtime remain outside the negative.",
+    "acceptedInputs": [
+      "#/nativeDynamicExportBoundary",
+      "#/nativeIdentityNotificationVoiceConsumerBoundary"
+    ],
+    "metadataResult": "Every selected 16-byte record has word0 top byte 1, word1 top byte 2 and equal low24 metadata, followed by words 7D6903A6 and 4E800420. The low24 metadata splits into an 8-bit module tag and low16 ordinal. The corridor has 169 tag-0 and 85 tag-1 records. All 85 tag-1 name/ordinal pairs match the pinned SDK xam export table. One tag-1 ordinal 0x219 is at 82E93234 and maps to XamUserReadProfileSettings. There is no tag-1 ordinal 0x21A in this corridor. The pinned SDK maps 0x21A to XamUserWriteProfileSettings. This is a metadata-set result, not a no-write theorem for native profile state.",
+    "dynamicLookupResult": "Reuse nativeDynamicExportBoundary's nontruncated, noncancelled eight-site direct BL census and three accepted caller owners. Two discovered xam.xex ordinal pairs select startup extensions 0x24/0x50. Six xbdm.xex pairs select instrumentation ordinals 0x9B..0xA0. None is the profile writer. The two SDK export tables retain identical blobs at that record's prior source pin and the current pin, so the selected name mappings remain valid. The accepted zero pointer-value census does not exclude computed/split, indirect or tail resolution; no new universal dynamic-lookup absence is inferred.",
+    "consumerBoundary": "The accepted nativeIdentityNotificationVoiceConsumerBoundary owns the reached A24FD0 ->A25278 ReadProfileSettings request and zero-completion consumption of three voice preferences. Its current buffer/overlapped/user/class and lifetime conditions remain. A read, local configuration callback or consumed preference cannot supply a missing WriteProfileSettings call edge. Separate native keyed history/file admission is owned by achievement-unlock-triggers.json#/findings/RVA-F-0351 and must not be equated with this API.",
+    "minimalProposal": "No title change or reached profile-writer-specific SDK fix is selected by this negative. Preserve the independently source-proved SDK generic write/error-handling proposals as conditional work, without attributing them to this native read consumer or a recorded multiplayer incident. Do not synthesize profile writes, force sign-in, alter native settings or infer a service backend to fill the missing edge.",
+    "logging": "If a future default-off bounded trace encounters the SDK writer, record API-entry and completion categories, opaque attempt/profile/session generations, supported user class, setting-type class and existing write/save stage outcomes without extra calls. Bind that receipt to the actual native caller and result consumer before selecting an integration repair. Keep Read versus Write, raw pending versus completion and memory update versus durable save separate. Do not log user identities, names, profile IDs/contents, setting values, paths, raw handles/pointers, timestamps or payloads. Absence of a trace event without coverage/loss metadata proves no non-use.",
+    "unrunCases": [
+      "UNRUN: If a real native writer is later identified, characterize its actual supported input/user/type and raw versus completion result under retained current buffers and generations. A source-only absence in the selected corridor is not a runtime control.",
+      "UNRUN: Reuse accepted profile-read result/layout cases and native history serialization/admission cases separately; do not treat either as WriteProfileSettings acceptance.",
+      "UNRUN: Generic SDK writer open/write/close/ownership/status proposals remain subject to their own source/fake I/O contract. No native, unit, fake, filesystem-failure, game, socket, relay, service or runtime case was executed."
+    ],
+    "remaining": "No direct writer/caller was found in the selected source sets, so there is no demonstrated native status consumer to patch. A computed/indirect lookup or another native persistence path needs a concrete discriminator before expansion. Existing native history/file paths remain independently useful. This result accounts for the selected API reach question and does not close all profile/content or online families.",
+    "sdkMapping": {
+      "revision": "8bbc8d709f8d30cb75ae5c084c3c2c898de3b556",
+      "priorDynamicLookupRevision": "2d4b3e588d06ff33153ca8d221c5c9dbc0b9e8ec",
+      "equalExportTables": [
+        {
+          "path": "src/kernel/xam/export_table.inc",
+          "blob": "2e22f562954d10c03a64903f14e0a96a1057ea82"
+        },
+        {
+          "path": "src/kernel/xbdm/export_table.inc",
+          "blob": "ab217b3ab80e28a146a0c534e85c55637ca6db59"
+        }
+      ],
+      "read": {
+        "ordinal": "0x219",
+        "symbol": "XamUserReadProfileSettings",
+        "line": 334
+      },
+      "write": {
+        "ordinal": "0x21A",
+        "symbol": "XamUserWriteProfileSettings",
+        "line": 335
+      }
+    },
+    "evidence": {
+      "method": "One serialized foreground read-only DumpMemoryWords radius0 query of the exact native import corridor, with all 1016 words matched to the pinned image. Metadata decoding and SDK export-table comparison corroborated by the selected generated registration rows. Existing native read/dynamic-lookup bodies and their exact scope were reused.",
+      "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "start": "0x82E922D4",
+      "endExclusive": "0x82E932B4",
+      "sha256": "5d13fc12b8a1be466d0b73f446a68d00db744c4ad9ffec558f4d0b79015ccc8f",
+      "words": 1016,
+      "records": 254,
+      "recordBytes": 16,
+      "moduleCounts": {
+        "0": 169,
+        "1": 85
+      },
+      "xamNameOrdinalMatches": 85,
+      "readProfileAddress": "0x82E93234",
+      "profileWriteMatches": 0,
+      "generatedRegistration": {
+        "path": "generated/default/rerevved_init.cpp",
+        "firstLine": 40179,
+        "lastLine": 40432,
+        "records": 254,
+        "qualification": "Generated registration rows selected navigation and corroborate queried native metadata, not whole-image import completeness or runtime dispatch"
+      },
+      "locators": [
+        "ghidra/DumpMemoryWords.java:radius0;82E922D4..82E932B4 (half-open)",
+        "generated:rerevved/generated/default/rerevved_init.cpp:40179..40432 (registration rows only)",
+        "rerevved-sdk:src/kernel/xam/export_table.inc:334-335",
+        "#/nativeDynamicExportBoundary/evidence",
+        "#/nativeIdentityNotificationVoiceConsumerBoundary/evidence"
+      ],
+      "qualification": "Import metadata, not 254 proved function bodies or an exhaustive program import inventory. The selected record contains module/ordinal metadata before a branch veneer; no decompiler interpretation of those metadata words is claimed. All reach/lifetime/API/SDK/ABI/source binding guards in reused records remain. No runtime profile write, data loss, persistence equivalence, SDK incident cause or service acceptance is established."
+    }
+  },
+  "nativePartySocialConsumerBoundary": {
+    "question": "Which selected native social requests are reached through tail adapters, how are relationship results consumed, and is dedicated party API use present in the accepted import/lookup sets?",
+    "confidence": "strong for selected static control/data flow and bounded metadata negative",
+    "classification": "Native game-invite UI, gamer-card and relationship requests are present. Dedicated Party-named export use was not found in the selected import/direct-lookup sets. Actual visible UI, delivered invitations, friends data, party membership and current runtime/source binding remain unproved.",
+    "scope": "Seven selected entries: four complete PE owners and three straight-line leaf/tail windows, with no PE extent asserted for the leaves. All 382 new selected words matched the pinned image, including 374 instructions and eight PE words. Two configured raw direct-BL censuses supplied nine distinct sites checked against image words/targets. Reuse the accepted 1016-word import corridor and eight direct dynamic lookups. Valid frames, argument/output/row/collection storage, current globals/objects and dynamic targets, compatible helper effects, ABI preservation and normal returns remain premises. No UI input-to-handler or whole-program party/social census is claimed.",
+    "acceptedInputs": [
+      "#/nativeProfileWriteReachBoundary",
+      "#/nativeDynamicExportBoundary",
+      "#/nativeIdentityNotificationVoiceConsumerBoundary",
+      "#/menuEntry"
+    ],
+    "partyReach": "At SDK 8bbc8d709f8d30cb75ae5c084c3c2c898de3b556, the xam export table has 34 names containing Party. None of their ordinals appears among the 85 tag-1 records in the accepted native corridor 82E922D4..82E932B4. The eight accepted direct procedure-lookup pairs map to startup/instrumentation, not those names. This is only a named-export/set negative. Other computed, indirect, tail, message, code/data or runtime paths and different module/version mappings remain open. A menu, session-member roster or external presence party ID does not establish native Xbox party API use.",
+    "socialImports": [
+      {
+        "address": "0x82E929B4",
+        "ordinal": "0x2D5",
+        "symbol": "XamShowGamerCardUIForXUID"
+      },
+      {
+        "address": "0x82E929E4",
+        "ordinal": "0x2CD",
+        "symbol": "XamShowGameInviteUI"
+      },
+      {
+        "address": "0x82E92A84",
+        "ordinal": "0x213",
+        "symbol": "XamUserAreUsersFriends"
+      }
+    ],
+    "tailAdapters": "Selected entry 8280DE08 tails directly to GameInviteUI E929E4. Entry 8280DDF0 sets r5=0 then tails to GamerCardUIForXUID E929B4. Entry 8280E248 tails to AreUsersFriends E92A84. These are real tail branches, explaining why direct-BL counts at the two UI imports are zero. The import census found one direct relationship call at A26864. A second census found one direct invite-adapter site E4CB14, two gamer-card adapter sites CA8730/D6F37C, two relationship-adapter sites A8D3E8/CAF750 and three A26740 sites A251EC/A26C88/A26DA0. Locations are not execution counts. Unexpanded callers and indirect/tail routes retain their limits.",
+    "inviteConsumer": "Complete E4C988 has several guarded arms. On the selected initial-predicate-low8-zero arm, D8AA60 must return nonzero low8 and the fresh U32[U32[8314EFC8]+4] sample must equal 4. E4CB10 then supplies r3=U32[U32[8314EFE0]+0], with r4/r5/r6 zero, and E4CB14 requests 8280DE08. The following epilogue neither tests nor normalizes the raw result. Earlier helper/volatile r6 effects and actual receiver/global generations remain separate from this selected suffix. It proves a guarded outbound UI request, not a shown dialog, recipient selection, sent invitation, accepted invite or completed caller action.",
+    "gamerCardConsumer": "Complete CA86B8 retains incoming r4 as the eventual API user argument and incoming r6 as an index. A nonnull CB07E8 result and its +0x28 collection, sufficient signed count and nonnull selected entry permit CA8730 to call 8280DDF0 with r4=U64[U32[entry+0x1C]]. The adapter supplies r5=0. Valid nonnegative index, retained finite collection/entry/value storage and helper result are premises; the local signed upper comparison does not establish them. The reached API arm does not inspect its raw return before the epilogue. Other early paths retain their own unnormalized results. The separate D6F37C caller was not expanded, and no displayed gamer card or account lookup is proved.",
+    "relationshipConsumer": "Complete CAF638 first compares an incoming 64-bit value with a helper-supplied local value, then takes distinct user/privilege gates and loops. Those helper outputs must be valid/current before assigning identity or policy meaning. Its final loop requests 8280E248 only for a sampled sign-in result exactly 2. At CAF750 it supplies current loop user, a pointer to the saved incoming value, count 1, an output word initialized to zero at frame+0x54 and null overlap. It ignores the API status, loads only that BOOL and selects the numeric-3 return when zero. Non-2 sign-in samples skip this check; an earlier equal-value arm and other admitted routes return 1. Neither result is named as a universal error/admission enum. An empty/failed relationship check and a real negative relationship cannot be separated by this consumer's result alone.",
+    "fourSlotPolicyConsumer": "Complete A26740 initializes four local words to 1 and visits selected records through current B+8 at offsets +0x458..+0x464 when B+0x4C is zero. Under its record/flags conditions A26864 directly requests AreUsersFriends with user U32[record], r4=B, count 1, an initialized frame+0x50 BOOL and null overlap. Its API status is ignored; zero BOOL clears that slot's local word. Later branches can update a record flag and request accepted A237B0, construct local frame values and request A68E90. These are conditional local policy/configuration effects. The accepted profile consumer can request A26740 at A251EC, but actual B/record generations and transitive configuration effects remain required. This is not a proved friends-list UI, audible voice result or invitation admission rule.",
+    "minimalProposal": "A supplied UI implementation must distinguish an actual UI operation from an unavailable request. Select an API-specific unsupported result only after validating the original ABI and higher consumers; a raw preserved input register is not an operation receipt. Relationship consumers need status/output validity separated from a legitimate false BOOL before choosing any integration correction. Do not force friends=true, bypass sign-in/privilege gates, invent party membership or claim an error return implements dialogs, friendships or invitations. No complete title fix or exact new status code is selected here.",
+    "logging": "Future default-off bounded records should pair E4CB14/E4CB18 invite and CA8730/CA8734 gamer-card calls/results with actual import dispatch and unsupported/operation categories. Pair CAF750/CAF754 and A26864/A26868 raw relationship status with safely written BOOL, initialized-output category, sign-in/guard category and the later selected numeric result or local slot-word clear. Retain separate opaque caller/attempt/session/record generations and coverage/loss. For absent Party-named imports, do not turn missing trace events into non-use. Do not log identities, target 64-bit values, pointers, user/profile data, row contents, handles, invite text/tokens, addresses or payloads. The linked SDK topic owns partial backend and UNRUN acceptance proposals.",
+    "unrunCases": [
+      "UNRUN: Selected invite arm guards and raw result, plus gamer-card valid row/nonnegative index and skipped paths. UI operation, selected recipients, delivery and accepted invitation remain separate receipts.",
+      "UNRUN: Relationship gate/equal-value/privilege routes, sign-in 0/1/2, API failure versus zero/false versus true/written BOOL, initialized outputs and selected numeric 1/3 result. Preserve other users and local policy; no fake relationship or forced account state.",
+      "UNRUN: Four-slot record/flags/current-generation controls, zero/true BOOL and downstream configuration requests without claiming audible state. Native friend-enumerator producer/list use and complete Xbox party behavior were not characterized.",
+      "UNRUN: No native, fake, unit, GUI, game, socket, relay, service or runtime behavioral case was executed. SDK and installed-title/source binding remain distinct."
+    ],
+    "remaining": "Native friends-enumerator request producer/list use, actual outer UI/feature invocation, current user/receiver/storage generations, higher return consumers, real friends/party/backend authority, invite delivery and visible/audible outcomes remain open. The selected scopes neither prove all social functionality unused nor establish a supported Xbox party. Reuse accepted inbound invite/Discord contracts rather than equating them with this outbound UI path.",
+    "evidence": {
+      "method": "Two serialized foreground read-only raw BL censuses and one radius0 word query, all adopted words checked against the supported image, with 374 exact generated instruction comments. Accepted import/dynamic/read contracts reused. No project repair or decompiler completion claim.",
+      "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "selectedEntries": [
+        {
+          "start": "0x8280DE08",
+          "endExclusive": "0x8280DE0C",
+          "metadata": null,
+          "extent": "Selected straight-line entry through unconditional return/tail branch, no PE owner asserted",
+          "instructions": 1,
+          "sha256": "cb247dafe898ebaedc57125bbce857db9eb1a1bb077b15dc20df761044dd0815",
+          "generatedPath": "generated/default/rerevved_recomp.198.cpp",
+          "generatedFirstLine": 16513,
+          "navigationCallLine": 16516
+        },
+        {
+          "start": "0x8280DDF0",
+          "endExclusive": "0x8280DDF8",
+          "metadata": null,
+          "extent": "Selected straight-line entry through unconditional return/tail branch, no PE owner asserted",
+          "instructions": 2,
+          "sha256": "46abf08209e3176c0c552d3d6cbdd37d609dfec77c97ebdd72aa8b2720fb3ae6",
+          "generatedPath": "generated/default/rerevved_recomp.84.cpp",
+          "generatedFirstLine": 16782,
+          "navigationCallLine": 16787
+        },
+        {
+          "start": "0x8280E248",
+          "endExclusive": "0x8280E24C",
+          "metadata": null,
+          "extent": "Selected straight-line entry through unconditional return/tail branch, no PE owner asserted",
+          "instructions": 1,
+          "sha256": "2bb081e197dc256cd35fdc0dd2edf87f23e697190e3ff3d9f428543625f7e26c",
+          "generatedPath": "generated/default/rerevved_recomp.99.cpp",
+          "generatedFirstLine": 16404,
+          "navigationCallLine": 16407
+        },
+        {
+          "start": "0x82A26740",
+          "endExclusive": "0x82A2699C",
+          "metadata": "0x82192790",
+          "extent": "PE owner",
+          "instructions": 151,
+          "sha256": "17dd8cd50c25338c842416a6bbdde6b1bbf6633de0597ac91705bcb1ad99b78d",
+          "generatedPath": "generated/default/rerevved_recomp.80.cpp",
+          "generatedFirstLine": 22486,
+          "navigationCallLine": 22652
+        },
+        {
+          "start": "0x82CAF638",
+          "endExclusive": "0x82CAF778",
+          "metadata": "0x8219A878",
+          "extent": "PE owner",
+          "instructions": 80,
+          "sha256": "d90603a18e7537ddee8c0d91b55c2d64a9c8662d92335db452d45c86d6b90b87",
+          "selectedCall": "0x82CAF750"
+        },
+        {
+          "start": "0x82E4C988",
+          "endExclusive": "0x82E4CB20",
+          "metadata": "0x821A06B0",
+          "extent": "PE owner",
+          "instructions": 102,
+          "sha256": "62199f54e73b62349ee8a9828dc9fe1d024cf17d01cf668bdc79240133e07975",
+          "selectedCall": "0x82E4CB14"
+        },
+        {
+          "start": "0x82CA86B8",
+          "endExclusive": "0x82CA874C",
+          "metadata": "0x8219A3B0",
+          "extent": "PE owner",
+          "instructions": 37,
+          "sha256": "2bae018a8477807e3eb0ea3b03bfde486b7052e175db74435d296bd179e5d478",
+          "selectedCall": "0x82CA8730"
+        }
+      ],
+      "words": 382,
+      "instructions": 374,
+      "PE_owners": 4,
+      "selectedLeafWindows": 3,
+      "censuses": [
+        {
+          "calls": [
+            {
+              "site": "0x82A26864",
+              "word": "0x4846C221",
+              "target": "0x82E92A84"
+            }
+          ],
+          "counts": [
+            0,
+            0,
+            1
+          ],
+          "truncated": false,
+          "cancelled": false,
+          "sha256": "4ba314191a1db0a1c6ea68389e0ea44e38fb0838f606940fd60fb4e84e7e66fe",
+          "scope": "Configured initialized executable aligned raw direct BL words; tail/indirect calls excluded"
+        },
+        {
+          "calls": [
+            {
+              "site": "0x82A251EC",
+              "word": "0x48001555",
+              "target": "0x82A26740"
+            },
+            {
+              "site": "0x82A26C88",
+              "word": "0x4BFFFAB9",
+              "target": "0x82A26740"
+            },
+            {
+              "site": "0x82A26DA0",
+              "word": "0x4BFFF9A1",
+              "target": "0x82A26740"
+            },
+            {
+              "site": "0x82A8D3E8",
+              "word": "0x4BD80E61",
+              "target": "0x8280E248"
+            },
+            {
+              "site": "0x82CA8730",
+              "word": "0x4BB656C1",
+              "target": "0x8280DDF0"
+            },
+            {
+              "site": "0x82CAF750",
+              "word": "0x4BB5EAF9",
+              "target": "0x8280E248"
+            },
+            {
+              "site": "0x82D6F37C",
+              "word": "0x4BA9EA75",
+              "target": "0x8280DDF0"
+            },
+            {
+              "site": "0x82E4CB14",
+              "word": "0x4B9C12F5",
+              "target": "0x8280DE08"
+            }
+          ],
+          "counts": [
+            1,
+            2,
+            2,
+            3
+          ],
+          "truncated": false,
+          "cancelled": false,
+          "sha256": "f9403176d0a0eff34418fcb3f5b7e3f45d22716c059bda46ebb7513ad234c506",
+          "scope": "Configured initialized executable aligned raw direct BL words; tail/indirect calls excluded"
+        }
+      ],
+      "generated": [
+        {
+          "start": "0x8280DE08",
+          "path": "generated/default/rerevved_recomp.198.cpp",
+          "firstLine": 16513,
+          "lastLine": 16515,
+          "instructions": 1,
+          "sha256": "ce313ddbee43dddd44afda58cacae53fb026573cbe6cd3a48e4237d9377786b3"
+        },
+        {
+          "start": "0x8280DDF0",
+          "path": "generated/default/rerevved_recomp.84.cpp",
+          "firstLine": 16782,
+          "lastLine": 16786,
+          "instructions": 2,
+          "sha256": "353441fb947d225550d09b36edc5383dd0c64b9bb8128a6c7bc408012de04187"
+        },
+        {
+          "start": "0x8280E248",
+          "path": "generated/default/rerevved_recomp.99.cpp",
+          "firstLine": 16404,
+          "lastLine": 16406,
+          "instructions": 1,
+          "sha256": "31075442515647bb06d5d36a5c869a87aba8d294f102f39dfa9ccd36fa30619b"
+        },
+        {
+          "start": "0x82A26740",
+          "path": "generated/default/rerevved_recomp.80.cpp",
+          "firstLine": 22486,
+          "lastLine": 22826,
+          "instructions": 151,
+          "sha256": "9e7de81477c68fedfbd678e101e713187f9dbd263156b5645296e8df7c05e93d"
+        },
+        {
+          "start": "0x82CAF638",
+          "path": "generated/default/rerevved_recomp.98.cpp",
+          "firstLine": 28538,
+          "lastLine": 28726,
+          "instructions": 80,
+          "sha256": "52b72aa2323480bed0d53caa03e873b4aa22855faacc5da62a3a3e487e1ba78c"
+        },
+        {
+          "start": "0x82E4C988",
+          "path": "generated/default/rerevved_recomp.205.cpp",
+          "firstLine": 33693,
+          "lastLine": 33922,
+          "instructions": 102,
+          "sha256": "5a4c6761883a51b06421edb072ba4326ce17873ed3e3b4ebc349085fe64da8e5"
+        },
+        {
+          "start": "0x82CA86B8",
+          "path": "generated/default/rerevved_recomp.0.cpp",
+          "firstLine": 28723,
+          "lastLine": 28805,
+          "instructions": 37,
+          "sha256": "556341fe690ca3a80852b4890b44a738868dcb090d22ef750cb554091ff69bee"
+        }
+      ],
+      "reusedImportRange": {
+        "start": "0x82E922D4",
+        "endExclusive": "0x82E932B4",
+        "sha256": "5d13fc12b8a1be466d0b73f446a68d00db744c4ad9ffec558f4d0b79015ccc8f",
+        "words": 1016,
+        "records": 254,
+        "xamRecords": 85
+      },
+      "sdkExportTableBlob": "2e22f562954d10c03a64903f14e0a96a1057ea82",
+      "locators": [
+        "ghidra/FindDirectCallers.java:82E929B4,82E929E4,82E92A84;8280DE08,8280DDF0,8280E248,82A26740;cap16",
+        "ghidra/DumpMemoryWords.java:radius0;8280DE08..8280DE0C,8280DDF0..8280DDF8,8280E248..8280E24C,A26740..A2699C,CAF638..CAF778,E4C988..E4CB20,CA86B8..CA874C (half-open)"
+      ],
+      "qualification": "Four exact PE owners and three selected leaf/tail windows, not seven new PE extents or an outer feature census. Raw BL excludes tail/indirect calls. Reused native metadata gives only its stated corridor/set scope. Original helper/ABI/fresh-target/storage and source-binding premises remain. No actual UI, friends/party service, delivery, policy consequence, incident cause or runtime support was observed."
+    }
+  },
+  "nativeHostFactoryOutputBoundary": {
+    "question": "Does D8D170's successful return guarantee a usable M+0x14 backend before the accepted host-menu vptr read?",
+    "classification": "The local output/result contract is supported under its explicit object, helper and lifetime premises. A zero backend lookup selects failure, not the host caller's successful-byte branch. A retained existing backend bypasses construction with result1. A fresh actual mode2 backend uses fixed setup results and returns1 after the selected context/text requests. The routine supplies no final pointer recheck or new ownership reference, so its result alone is not an unconditional lifetime receipt. No supported success-with-null path or incident cause is proved by this read set.",
+    "confidence": "strong for exact native branches and selected mode2 targets, conditional for composition with compatible helper effects, unknown for actual invocation and lifetime",
+    "scope": "Seven selected owners contain261 instructions: four complete PE owners and three complete leaves. D8D170's accepted72-instruction prefix is reused from ai-stat-choice.json#/setupReceiverProductionBoundary/conditionalWriter. Two foreground ReadOnly DumpMemoryWords queries supplied201 fresh words:189 instructions,8 PE metadata words and4 table cells. All equal the supported flat image. Seven exact generated windows corroborate261 instructions at title3f74e5f0995c4ebe6b0765b2ebe12d48ac85d6b7. Reuse the accepted host caller and publication/lookup contracts. Do not infer decompiler closure across the unrepaired second thunk block. No additional map, allocation, text or registry helper body is expanded.",
+    "guards": [
+      "M, the selected X/backend, descriptors, context entries, stack and text/header spans must be mapped, compatible and retained. Protected manager/output fields and saved slots must not be destructively aliased by outputs or allocator/free effects. Normal helper returns, ABI/nonvolatile retention and the selected current virtual targets are premises.",
+      "Reuse accepted CABB68 publication and CAA9D8 lookup without promoting separate registry/counter/key samples to one immutable state. A fresh allocation or valid lookup is not established by an incremented key. For the mode2 target composition, the actual retained object's table must be82160450 at each stated sample.",
+      "The local result does not acquire or retain a reference. Compatible helper effects and no interfering/reentrant retirement or field replacement are required through the final caller read. A null caused by an unproved helper or interference is not a demonstrated supported path.",
+      "These are static contracts. No game, loader, native/SDK behavior case, allocation failure, cancellation, retry, service, relay or network observation was executed. No backend setup, completed hosting or desync cause follows from result1."
+    ],
+    "existingAndLookupCases": "Complete D8D170 initializes retained result r30=1 atD184. A nonzero M+14 with a different pointed-to mode word+8 requests accepted D8B6C8, then the routine reloads M+14. A nonzero reload atD1A4/1AC bypasses production and returns1 throughD3E4/D420 under the stated retention premises. The production arm reuses CABB68 -> returned key -> CAA9D8 -> storeM+14 atD220. D21C..D234 computes r30=1 exactly when the lookup return's low32 is nonzero. A zero low32 selects the common failure cleanup and returns0 after normal returns. It does not reach the fresh backend's local vptr reads or the caller's successful-byte branch.",
+    "listenerAllocationLimit": "The production arm tests M+40 and, if zero, requests a four-byte allocation. A zero allocation is stored as zero atM+40 and forwarded to CABB68 as its listener input without a separate local refusal. This does not establish that the actual constructor can return successfully with a null listener or that the listener is optional. Required-child and factory/resource policy remain distinct from the proved backend-null result gate.",
+    "genericSetupAndResult": "With nonzero lookup output, D258..D274 requests current X.v+4(X,mode==1), ignores its result, then independently reloads X and requests current X.v+8 atD278..D288. D28C..D298 sets r30=1 iff that return's low32 equals0. Nonzero low32 sets r30=0 and selects failure cleanup. Zero proceeds to eight current X.v+A0 requests with descriptor/context pairs already accepted in menuEntry.searchContexts. Their results are not aggregated or tested. AtD3A8/B8 the routine saves a vptr from one X sample, builds frame text through D8D0C8, then atD3C4 reloads the receiver from M+14 but calls held table+14 atD3C8/D3D4. The held table and later receiver therefore need the same-generation/class contract. It retains that call's full raw result in r30 atD3D8 across temporary cleanup, tests only its low8 atD3E4/EC and returns the retained full value atD420. A generic raw result100 hex has a zero byte and selects cleanup while still returning100 hex. This is a branch discriminator, not a supported mode2 return.",
+    "selectedModeTwoTargets": "Selected cells82160454,82160458,82160464,821604F0 contain822E3788,822DF8A0,821B1690,C9D560 respectively. The complete+4 leaf writes incoming low8 r4 to X+10 and does not normalize r3. In mode2 this byte is0. The complete+8 leaf returns full0 and the complete+14 leaf returns full1 without reading its receiver. Thus a fresh retained mode2 object passes the root's inverted+8 test and selects its successful-byte return after the context/text requests complete compatibly. This is local setup composition, not an acknowledgement that eight context operations succeeded or that hosting completed. The already accepted outer+24 target is also821B1690, so its ordinary retained mode2 path continues to the host preparation helper. No supported success-with-null branch is supplied by a failed zero lookup or these fixed leaves.",
+    "contextRequestBoundary": "Complete C9D560 forwards X+54 and the current name input to821CBD50, retains the context word from incoming r5 and writes that low32 to the returned address atC9D57C. It has no local null check on the helper output and no local M+14 access. The returned entry's validity, context-container ownership and nonalias/retention effects are explicit helper premises. No context-map algorithm, safe allocation-failure path or whole registration success is inferred. The root ignores the raw returns of these eight requests.",
+    "textAndCleanupBoundary": "Complete D8D0C8(O,M) first initializes O's data word to the shared data address8314F0A8. Nonzero M+18 requests CA85E0 into a local temporary, reads its data and preceding length and requests D3B798(O,length,data,0), then requests821B15C0 for that temporary. A zero current output length selects E7D8B8(frame,260,U32[M]) and821B2AD8(O,&frame). It returns retained O. Complete821B15C0 derives a header16 bytes before the data word. Zero header or shared header8314F098 skips free. Other valid headers request D3D9F0 only when signed header+4 equals0. After a normal return it writes shared data8314F0A8 to the supplied temporary. These selected local stores target temporary words, not a distinct M+14. Actual provider/copy/localization/assignment/free effects, valid spans and protected-field/lifetime preservation remain premises. No leak, nonreentrancy or actual text output is proved.",
+    "failureAndOwnership": "AtD3E4/EC, a zero retained result byte requests accepted D8B6C8(M) atD3F0/F4. Reuse xbox-live-session-search-contract.json#/nativeFrontendRegistryRetirementBoundary/pairedReset and /registryReleaseBeforeDestruction: D8B6C8 samples the current registry/key, calls CAAB10, then writes M+8=-1 and M+14=0 only after normal return. CAAB10 has its separate guarded value-release/destructor and node-removal requests. This is requested cleanup under those contracts, not proof of complete factory/registry retirement. The root then freshly reads M+40. Nonzero requests its current slot0(1) atD404..D414 and clears M+40 atD41C only after normal return. Null skips that request. No local destructor result is tested and the saved factory result is not normalized. Fresh selected mode2's lookup-zero case returns0. Required listener ownership, registry generation, successful disposal and corrected retry remain separately unproved.",
+    "outputGuaranteeAndLimit": "Under protected-field and helper preservation, all locally successful cases carry a nonzero M+14 from the existing-object or lookup gate. Zero lookup cannot alone cause the accepted host caller to read a null backend after success. The routine neither validates M+14 again atD420 nor acquires a reference. Its held-table/fresh-receiver call and cleanup leave lifetime dependent on the admitted helpers and surrounding owner. In particular the selected+14 leaf can return1 without touching a receiver, so that constant alone cannot validate the final M+14. No actual helper that clears or retires the backend in this window, and no supported success-with-null execution, is established here.",
+    "minimalProposal": "No caller-only null guard or SDK change is justified by this result. The missing local caller guard is insufficient evidence of a supported failure because zero lookup already selects failure. First establish a same-attempt backend generation and retirement/field-change receipt across the held-table/fresh-receiver and final-return windows. If a valid supported path loses that generation, repair the owning lifetime/result/cleanup contract and preserve required resources. A check only after D8D170 returns would not protect its earlier vptr reads. Do not normalize generic raw results or treat a fixed1 as completed hosting.",
+    "logging": "Proposed default-off metadata should distinguish existing versus produced backend, current mode/class category, lookup-zero category, listener allocation category and full raw result versus low8/low32 branch categories. Pair D8D204/208,D8D218/21C,D8D220,D8D274/278,D8D288/28C andD8D3D4/3D8. Correlate the X/vptr sample atD8D3A8/B8, text request/returnD8D3BC/C0, fresh receiverD8D3C4, held targetD8D3C8 and temporary cleanupD8D3E0/E4 with final resultD8D420. Link these to existing host callerD8E470/474 and its subsequent current-X read under opaque attempt/backend/registry/text generations. Observe only values the guest already reads and emit explicit loss. Do not add reference-count, clock or registry lookups, dereference a missing pointer, or log pointers, names, handles, keys, identities or payload bytes. No hook was implemented.",
+    "unrunCases": [
+      "UNRUN: retained existing matching-mode backend returning1, differing-mode cleanup followed by a new lookup, and failed lookup returning0 without caller backend dispatch.",
+      "UNRUN: listener present or allocation-zero input, keeping actual constructor acceptance and required-listener policy separate.",
+      "UNRUN: selected mode2+4 byte0,+8 result0,+14 result1 and eight compatible context requests, distinguished from generic changed-target nonzero+8 or zero-byte+14/raw100 hex branches.",
+      "UNRUN: valid context entry versus missing/invalid helper output, compatible or destructive aliases, current table/receiver retention and explicit generation changes during text work.",
+      "UNRUN: shared, zero-header, nonzero-header-field and owned temporary cleanup categories with normal/nonreturning helpers and retained factory result.",
+      "UNRUN: failure cleanup, listener slot0 request/return/clear, actual registry/backend retirement, host caller continuation and corrected second attempt."
+    ],
+    "evidence": {
+      "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "method": "Two serialized foreground tools/run-headless.ps1 -ReadOnly DumpMemoryWords.java queries with radius0, flat-image word equality, exact PE/leaf extent and generated-instruction comparison. No project repair or guest execution.",
+      "selectedOwners": [
+        {
+          "start": "0x82D8D170",
+          "endExclusive": "0x82D8D42C",
+          "metadata": "0x8219D520",
+          "instructions": 175,
+          "sha256": "01635322BD3DE0C05EDC763BC5EBB59AFB0F14A0227B4EF0AEEE27CCADF6D899",
+          "acceptedPrefix": {
+            "start": "0x82D8D170",
+            "endExclusive": "0x82D8D290",
+            "instructions": 72,
+            "source": "ai-stat-choice.json#/setupReceiverProductionBoundary/conditionalWriter",
+            "sha256": "A28810EEB5B27913F493B564D01381FC4A296FC4CE74B6A79777C38D8E62C39A"
+          }
+        },
+        {
+          "start": "0x822E3788",
+          "endExclusive": "0x822E3790",
+          "metadata": null,
+          "instructions": 2,
+          "sha256": "85C0208C87C8D17AB61C036FFA978BF0A77BEC30857ACA7FCF37E694DB6F73BA",
+          "extent": "Complete selected leaf through first blr"
+        },
+        {
+          "start": "0x822DF8A0",
+          "endExclusive": "0x822DF8A8",
+          "metadata": null,
+          "instructions": 2,
+          "sha256": "D4E9E7520EF19698837E384BFE1708AC4B91FCF26B16EC098EC21C1E344AD3DB",
+          "extent": "Complete selected leaf through first blr"
+        },
+        {
+          "start": "0x821B1690",
+          "endExclusive": "0x821B1698",
+          "metadata": null,
+          "instructions": 2,
+          "sha256": "2BF7A94759A252FD0D2AF700FF876C19AB13998FB28AC5B0DB3C70CDBC9EF8D6",
+          "extent": "Complete selected leaf through first blr"
+        },
+        {
+          "start": "0x82C9D560",
+          "endExclusive": "0x82C9D594",
+          "metadata": "0x82199CE0",
+          "instructions": 13,
+          "sha256": "D16DBD3671BA722061B8BEE658C3DBEECD777D5F3B105C4EC425B3E526A877CA",
+          "extent": "Complete PE owner"
+        },
+        {
+          "start": "0x82D8D0C8",
+          "endExclusive": "0x82D8D170",
+          "metadata": "0x8219D518",
+          "instructions": 42,
+          "sha256": "EE10A7778EC0A6DEFC2107D42D4CE7A95E14BC6A383E8626E967731AA8B555A1",
+          "extent": "Complete PE owner"
+        },
+        {
+          "start": "0x821B15C0",
+          "endExclusive": "0x821B1624",
+          "metadata": "0x8216B910",
+          "instructions": 25,
+          "sha256": "7CD7D4E435AFCC63530A8B5F4E986446EB2746F97D7341AED092A1CFCB50C596",
+          "extent": "Complete PE owner"
+        }
+      ],
+      "selectedSlotCells": [
+        {
+          "slot": "0x4",
+          "cell": "0x82160454",
+          "target": "0x822E3788"
+        },
+        {
+          "slot": "0x8",
+          "cell": "0x82160458",
+          "target": "0x822DF8A0"
+        },
+        {
+          "slot": "0x14",
+          "cell": "0x82160464",
+          "target": "0x821B1690"
+        },
+        {
+          "slot": "0xA0",
+          "cell": "0x821604F0",
+          "target": "0x82C9D560"
+        }
+      ],
+      "generated": [
+        {
+          "path": "generated/default/rerevved_recomp.66.cpp",
+          "start": "0x82D8D170",
+          "endExclusive": "0x82D8D42C",
+          "firstLine": 30147,
+          "lastLine": 30527,
+          "instructions": 175,
+          "sha256": "6A6F8EE06DAD8AC549BDD443F2CE2B58D3CB1CCC69F088BD33E24A6D1486F993"
+        },
+        {
+          "path": "generated/default/rerevved_recomp.181.cpp",
+          "start": "0x822E3788",
+          "endExclusive": "0x822E3790",
+          "firstLine": 2892,
+          "lastLine": 2896,
+          "instructions": 2,
+          "sha256": "22E37BF5364225AD4A742B92620B078E3D336955746633AD80D04C045A9300DF"
+        },
+        {
+          "path": "generated/default/rerevved_recomp.22.cpp",
+          "start": "0x822DF8A0",
+          "endExclusive": "0x822DF8A8",
+          "firstLine": 2781,
+          "lastLine": 2785,
+          "instructions": 2,
+          "sha256": "561031E29AA6FC85FBF5C0086E63075FCD36A4C6DA23252B7E72B721B6257E81"
+        },
+        {
+          "path": "generated/default/rerevved_recomp.58.cpp",
+          "start": "0x821B1690",
+          "endExclusive": "0x821B1698",
+          "firstLine": 5,
+          "lastLine": 9,
+          "instructions": 2,
+          "sha256": "9B8D0EF1DE273E632DFF61A506ED3BBAFA800257F0A0D54A57395843880F1E58"
+        },
+        {
+          "path": "generated/default/rerevved_recomp.156.cpp",
+          "start": "0x82C9D560",
+          "endExclusive": "0x82C9D594",
+          "firstLine": 33046,
+          "lastLine": 33075,
+          "instructions": 13,
+          "sha256": "3C6955C685CE8BAB924907F538066F42481B8C755929A4518CFC1D2DD6BCD12F"
+        },
+        {
+          "path": "generated/default/rerevved_recomp.6.cpp",
+          "start": "0x82D8D0C8",
+          "endExclusive": "0x82D8D170",
+          "firstLine": 30499,
+          "lastLine": 30592,
+          "instructions": 42,
+          "sha256": "9F114FCA57443FB542BC772D7F26EA426056CF49DF2829FF01B26AF82FE5C16A"
+        },
+        {
+          "path": "generated/default/rerevved_recomp.54.cpp",
+          "start": "0x821B15C0",
+          "endExclusive": "0x821B1624",
+          "firstLine": 6,
+          "lastLine": 62,
+          "instructions": 25,
+          "sha256": "4D73A7E707FE1FAEAD56EA37F3BC7EE91BC2E7E07A58E5E01E16177C59917689"
+        }
+      ],
+      "reusedHostCaller": {
+        "start": "0x82D8E430",
+        "endExclusive": "0x82D8E4CC",
+        "byteCount": 156,
+        "sha256": "E19B4663DB8BCB9A4C186DB6969FD009A1606513DDCE99208D974DBA6297515E"
+      },
+      "reusedContracts": [
+        "ai-stat-choice.json#/setupReceiverProductionBoundary/conditionalWriter",
+        "ai-stat-choice.json#/setupReceiverProductionBoundary/lookupRegistrationBoundary/registrationContinuation",
+        "ai-stat-choice.json#/setupReceiverProductionBoundary/storeClassification",
+        "xbox-live-session-search-contract.json#/nativeFrontendRegistryRetirementBoundary/pairedReset",
+        "xbox-live-session-search-contract.json#/nativeFrontendRegistryRetirementBoundary/registryReleaseBeforeDestruction",
+        "#/nativeHostMenuServiceDispatchBoundary/hostMenuGate",
+        "#/nativeHostMenuServiceDispatchBoundary/modeTwoBackendComposition",
+        "#/menuEntry/searchContexts"
+      ]
+    },
+    "remaining": "Actual registry/key/counter/payload and backend generation retention, required-listener/constructor/resource policy, protected text/context/free effects, full cleanup/corrected retry and completed hosting remain open. These are specific contracts or observations, not evidence of a success-with-null incident or SDK block. Reuse the finite local null/result and fixed-mode2-target findings instead of another generic factory/map/text-helper queue. Continue compatible deferred-search output/error policy, admission, commands/recovery, determinism and the remaining online families. No family or the broad goal is complete."
+  },
+  "nativeInviteGameplayTransitionBoundary": {
+    "question": "What does the accepted-invite application request during gameplay do before the pending invite can reach search and join?",
+    "confidence": "strong",
+    "classification": "Partial. Selected static request, constructed frontend, deferred replacement ordering and the key1 registry/construction link are proved under their stated conditions. Actual current objects, entry phase, pending ownership and completed session switch remain unresolved.",
+    "scope": "M0 is the incoming D8ED68 manager. Later manager loads, including U32[8314EFE0], are fresh roles and require the same generation or proved mapping equivalence before composing pending ownership. A is the static object8314F76C, not its loaded first word. R0/R1 are sampled U32[82FFD624] frontend roots, S a sampled manager+10 service, O a current R+70 state, N a queued/replacement R+74 state, and F the registry sampled from8314EF98. Valid finite mapped ordinary RAM, compatible original ABI, finite loops/counts, retained current vptr/slot/class/key/map/frame identities, normal helper returns and no interfering/reentrant mutation of protected state are premises. Helper calls may mutate or replace these roles. The result does not prove a complete safe game exit, new session, notification delivery, remote host release or successful retry.",
+    "requestAndReturn": "Proved statically: D8ED68 returns local0 when M0 byte+5D is set. Otherwise a nonnegative incoming low32 user index is stored at M0+1C. A retained nonnegative pending word produces local1. A missing current-state pointer, out-of-range key or state4 can still return that1 without an application transition. Key2 is the accepted gameplay lifecycle identity; key3 shares the selected dispatch but its meaning remains unknown. D8EEA8..D8EEC0 sets r4=0 and invokes current A slot+D4, then returns retained r30 rather than that callback's raw r3. Initialized82138768 cell8213883C contains D82E88. This selects the target only with the matching current A table/slot.",
+    "applicationRequest": "Proved statically: D82E88 first samples root R0 and O=U32[R0+70]. If O is nonnull and its low32 key+4 is1, D82EC0 exits without the later flag or desired-key stores. Otherwise D82ED4 ORs0400 into R0+4. The selected request later stores1 at root+78 at D8314C when saved incoming r4 low8 is0, or3 when nonzero. This is a desired key, not an assignment to current R+70 or O+4. The root used by that store is the original R0 on the direct arms and a fresh global sample at D83134 after the selected special-mode work. If bit0100 of that root+4 is sampled set, D83164 also ORs04 into root+4. Later presentation/helper calls remain opaque. No local M+1C store or call into D8ECC0 occurs in this body; that does not prove transitive pending preservation.",
+    "conditionalEndReuse": "Proved statically: the branch requires nonzero byte8314F10B, low32[U32[8314EFC8]+4]==5 and the second selected D8A3F8 result low32==2 before D83130 requests current S slot+184, S=U32[U32[8314EFE0]+10]. Additional player/result/helper work precedes it. Reuse nativeSessionEndRestartBoundary/outerCallerBoundary in xbox-live-session-search-contract.json only with the same retained matching S/class/slot. Its result is not tested here before the desired-key path. Other selected arms request no such End call. Do not describe every invite as End, wrapper deletion, membership removal or completed departure.",
+    "frontendConstruction": "Proved statically: E83EA8 requests allocation0xD4; a nonnull result calls E294D0, while the null arm supplies0. E83F04 publishes the returned numeric pointer at82FFD624, followed by an unguarded virtual+8 access. Only a nonzero returned low8 reaches E29170. No successful allocation/init is inferred. E294D0 calls opaque base initializerE2AFD0, installs table82121100 at E294F4 and returns its retained incoming object after further helpers. Current table/field/frame retention and publication equivalence remain required. Cell82121104 contains E2B138. E29170 captures the global root once, repeatedly samples that retained root's current+4 slot, and continues only while each result low8 is nonzero. It does not reload the global root on each iteration.",
+    "transitionOrder": "Proved statically: E2B138 samples O=R+70 and, if nonnull, calls current O+8 first. A zero result low8 skips the transition, even with desired key1 pending. With a nonzero result or absent O, it compares a fresh current O key+4 with R+78 and also tests R+74. Equal key and no queued N skip replacement. Otherwise a current O receives slot0(1) at E2B1BC; only normal return reaches R+70=0 at E2B1C0. The old state remains published during that call. A nonnull queued N at R+74 takes precedence: its key+4 overwrites R+78 at E2B1EC. Without N, E2B1DC requests E7FA70 with a fresh desired key and fresh F. It then clears R+74 at E2B1F4 and stores the sampled replacement at R+70 at E2B200 before entry. A nonnull replacement receives current slot+4 at E2B224, whose raw result is retained; D8ACB0 on a fresh manager follows after normal entry return. The final result is normalized1 only if retained result low8 is nonzero and R+4 bit04 is clear; otherwise0. It is not a receipt for invite consumption or complete teardown.",
+    "factoryBoundary": "Proved statically: E7FA70 copies the low32 requested key to its stack word, queries F+4 using accepted821B8CD0 and compares the result with F+C sentinel. Absence returns0. Presence requests822DF948 on F+4 with the same local-key address, loads a function from its returned address and calls it at E7FAC4. Actual F/map/key retention and helper/callback ABI/effects remain conditions. Reuse nativeInviteFactoryRegistrationBoundary for the selected startup writer, key1 value publication and821C87B8 -> E7E328 construction. Its valid current registry/map/key, helper/output/table retention and actual entry conditions remain necessary. The existence of that link is not a completed session switch.",
+    "pendingAndExistingEntry": "Proved conditional composition: accepted inviteDelivery/coldStart maps table82131088 slot+4 to E7F820 ->D8ED68(-1) at E7FA00. It services stored pending data only when this same state/manager generation actually reaches that route with its guards satisfied. Reuse inviteDelivery/join and xbox-live-session-search-contract.json#/nativeOuterJoinRollbackBoundary: the processed D8EFF0 paths clear M+1C after the selected preparation/service-result work, while its existing-service and null-after-create early branches do not pass that clear. The selected D82E88/root update stores do not supply a new pending-owner cancellation contract. Repeated notification, a different manager/root/queued state, opaque old-state destruction or helper mutation can invalidate the proposed composition. Unknown: exact abandonment versus retry policy, complete SDK/native retirement and successful new search/join.",
+    "negativeCandidates": "Proved statically: the82131088 raw split-constant query reported three candidates, without truncation. The selected E7F4A8 body installs that table, calls E7F3A8 and replaces it with8211EBB8. The selected821C8AA8 body adds a low-bit-controlled D3D9F0 request and returns the retained numeric object. Neither local body provides a key1 registration or retained82131088 output, and their opaque helpers remain outside that negative. nativeInviteFactoryRegistrationBoundary owns the distinct E7E328 constructor at the third candidate E7E338/E7E340 and its selected allocation/registration link. Two scoped store searches near frontend getter references found25 syntactic stores, all stack based; they do not establish absence of root stores elsewhere. The actual processor is outside those bands.",
+    "minimalProposal": "No new title or SDK behavior fix is selected. Preserve the distinction between accepted/pending input, requested frontend key, old-state update permission, replacement choice/entry and successful native search/join. A blanket invite cancellation at End, immediate forced state/key assignment, forced pending clear or direct lobby leave would select behavior beyond this contract. Before proposing retirement, bind the same registry key1 callback/output and supported old-state exit/pending policy, or gather the matching bounded diagnostics under separate authorization.",
+    "diagnostics": "Proposed default-off metadata only. Pair D8ED94 pending presence and D8EDE8 sampled lifecycle category with D8EEC0 application-call request and D8EEC4 returned r3, retaining caller r30 separately before D8EEC4 copies it over r3. Distinguish D82EC0 early exit from D8314C desired-key store request and D83150 post-store observation, root bit0100/04 categories and the guarded D83130 End request. Pair E2B164 old-state update request with E2B168 returned r3 and E2B16C retained r30; E2B178 supplies transition eligibility. Before E2B1BC record the old-state slot0(1) request. Only normal return reaches E2B1C0 R+70 clear request; E2B1C4 is its post-store observation. Record queued-N presence and requested factory key category at E2B1DC. E7FAAC identifies missing/present lookup branches. Pair E7FAC4 callback request with E7FAC8 normal-return r3 output; E2B1E0 observes the overall factory r3 result, including missing-key zero, before its R+74 store. Pair E2B1F4 R+74 clear with E2B1F8 after-store observation, and E2B200 R+70 publication with E2B204 after-store observation. Pair E2B224 selected entry request with E2B228 returned r3 and E2B230 retained r30, after the copy at E2B22C. Correlate existing E7FA00,D8ECC0,D8F1E8 hooks only under the same opaque attempt/root/state/manager generations. Use numeric categories/opaque generations, not raw addresses, pointers, handles, IDs, user indexes, strings, payloads or settings. Use the existing campaign cap/coverage/reset policy; saved tags after the old-state call must not dereference that old object.",
+    "unrunCases": [
+      "UNRUN: Same retained gameplay-key2 pending invite, matching app/root tables, old-state update low8 zero versus nonzero. Distinguish caller local1 from requested key1 and completed transition.",
+      "UNRUN: Queued replacement absent versus present, including a different key; registry key1 present/missing and null/non-null callback output. Require actual registered callback and constructed entry class before joining the menu handler.",
+      "UNRUN: Same/different manager and root generations, a later accepted notification overwriting pending data, old-state destruction/helper mutation and the root04 termination guard. Preserve no-alias/frame/normal-return conditions rather than assuming pending storage survives.",
+      "UNRUN: Conditional mode5/result2 End arm versus all skipped arms, then separately match processed join-result pending clear and early branches that bypass it. Observe actual remote departure, reference retirement, search/join and usable new session independently."
+    ],
+    "remaining": "Reuse nativeInviteFactoryRegistrationBoundary for the selected key1 callback and constructed state. Actual executed registration, current registry/output/table, entry phase and same pending-invite authority remain unproved. Old-state update/destructor policy and opaque helper effects need a concrete reached owner before more expansion. Complete departure, supported abandonment/retry, native/SDK retirement and a successful new session remain observations or explicit policy decisions. No desync cause or whole online family is closed.",
+    "evidence": {
+      "image": "image.json",
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "titleCommit": "3f74e5f0995c4ebe6b0765b2ebe12d48ac85d6b7",
+      "method": "Foreground read-only existing headless scripts, exact original-memory comparison, PE owner bounds, local instruction decoding and narrow generated-comment corroboration. Existing second-block thunk truncation is retained; listing instructions skipped into later functions and truncated decompilation are excluded from body evidence. No repair or behavior execution.",
+      "owners": [
+        {
+          "start": "0x82D8ED68",
+          "endExclusive": "0x82D8EEE4",
+          "metadata": "0x8219D5D8",
+          "peWords": 95,
+          "instructions": 89,
+          "inlineData": [
+            {
+              "start": "0x82D8EDEC",
+              "endExclusive": "0x82D8EE04",
+              "words": 6
+            }
+          ],
+          "sha256": "F7ACF5F83A05E6764C6E2784148AA6E939CA8EB527F598987E99F262B6988EB9"
+        },
+        {
+          "start": "0x82D82E88",
+          "endExclusive": "0x82D83208",
+          "metadata": "0x8219D1B0",
+          "peWords": 224,
+          "instructions": 224,
+          "inlineData": [],
+          "sha256": "65F618FCE1FA27FA0BA64D9B1DD0F225838F5067AB4669447FAADB532C1DB808"
+        },
+        {
+          "start": "0x82E83EA8",
+          "endExclusive": "0x82E83F64",
+          "metadata": "0x821A1B18",
+          "peWords": 47,
+          "instructions": 47,
+          "inlineData": [],
+          "sha256": "F6D176880A4409AB3483F1C5CA4E9CD811DF19C6EEAAA94D0E7AD85C0F7F9F77"
+        },
+        {
+          "start": "0x82E294D0",
+          "endExclusive": "0x82E29570",
+          "metadata": "0x8219FCF8",
+          "peWords": 40,
+          "instructions": 40,
+          "inlineData": [],
+          "sha256": "5964E5DB1C92DB2F82E134ADD1C48E268068785AFD64962745F3AC56DD212DE7"
+        },
+        {
+          "start": "0x82E29170",
+          "endExclusive": "0x82E291C0",
+          "metadata": "0x8219FCC8",
+          "peWords": 20,
+          "instructions": 20,
+          "inlineData": [],
+          "sha256": "57E039B4F6978AF4B5D641B920931EC4B689ABFB80BE225124387F340D224FB5"
+        },
+        {
+          "start": "0x82E2B138",
+          "endExclusive": "0x82E2B2A4",
+          "metadata": "0x8219FD98",
+          "peWords": 91,
+          "instructions": 91,
+          "inlineData": [],
+          "sha256": "C9562E28387B59082DB3BD2E2F31F0187E55595D9D46CA9B13392D31492D72CD"
+        },
+        {
+          "start": "0x82E7FA70",
+          "endExclusive": "0x82E7FAE8",
+          "metadata": "0x821A18B0",
+          "peWords": 30,
+          "instructions": 30,
+          "inlineData": [],
+          "sha256": "9AD948B43AB6E2BD8F85DBCE65F405011CCC469F49518A70850104E80E9E3238"
+        },
+        {
+          "start": "0x82E7F4A8",
+          "endExclusive": "0x82E7F4EC",
+          "metadata": "0x821A1890",
+          "peWords": 17,
+          "instructions": 17,
+          "inlineData": [],
+          "sha256": "5722F225A7B5C9F96FB58E21FDFB5E64E4F0AB04AC6DBE14EAE47A4B7CB5BC3C"
+        },
+        {
+          "start": "0x821C8AA8",
+          "endExclusive": "0x821C8B10",
+          "metadata": "0x8216C600",
+          "peWords": 26,
+          "instructions": 26,
+          "inlineData": [],
+          "sha256": "AC2024AEA830530BB85A3E3E10328BB214347EB32E10482EBC267370A96F74D2"
+        }
+      ],
+      "generated": [
+        {
+          "owner": "0x82D8ED68",
+          "path": "generated/default/rerevved_recomp.141.cpp",
+          "firstLine": 30439,
+          "lastLine": 30654,
+          "instructions": 89,
+          "sha256": "CB7B58CDE051E1C568EE1779BE5E398BF31D2D216F3AF532A1A63F184E33521D"
+        },
+        {
+          "owner": "0x82D82E88",
+          "path": "generated/default/rerevved_recomp.38.cpp",
+          "firstLine": 29806,
+          "lastLine": 30308,
+          "instructions": 224,
+          "sha256": "17686DB4A6D1F3AA6F82AE84A360E2D384CCA6CE759AB8EF2552AE3B518CC6FB"
+        },
+        {
+          "owner": "0x82E83EA8",
+          "path": "generated/default/rerevved_recomp.158.cpp",
+          "firstLine": 33153,
+          "lastLine": 33265,
+          "instructions": 47,
+          "sha256": "E1E2A7756686FE2180D41EEFE282C77A9A226BB1CE680DB4EF8F5892BF165CC3"
+        },
+        {
+          "owner": "0x82E294D0",
+          "path": "generated/default/rerevved_recomp.73.cpp",
+          "firstLine": 30757,
+          "lastLine": 30849,
+          "instructions": 40,
+          "sha256": "FB8E455E383727BAEF74BAD36F2A45FB570883516C873107F181F685FE6E3BBE"
+        },
+        {
+          "owner": "0x82E29170",
+          "path": "generated/default/rerevved_recomp.130.cpp",
+          "firstLine": 33076,
+          "lastLine": 33124,
+          "instructions": 20,
+          "sha256": "9A80EDF2665D941BF49CC2BF412E2ACD70105147BC8BABF5F5F8BABC944A1915"
+        },
+        {
+          "owner": "0x82E2B138",
+          "path": "generated/default/rerevved_recomp.107.cpp",
+          "firstLine": 33566,
+          "lastLine": 33772,
+          "instructions": 91,
+          "sha256": "40885AAD7599BAE1FDBB9CF8E0CBC7E1E5624100E611F5721A222D101A125555"
+        },
+        {
+          "owner": "0x82E7FA70",
+          "path": "generated/default/rerevved_recomp.108.cpp",
+          "firstLine": 32812,
+          "lastLine": 32883,
+          "instructions": 30,
+          "sha256": "482A90CD1A6771F9E6167BBD9A72FA2B7F0F6F5D0D8180D33DFDF941BFE72AFE"
+        },
+        {
+          "owner": "0x82E7F4A8",
+          "path": "generated/default/rerevved_recomp.137.cpp",
+          "firstLine": 33659,
+          "lastLine": 33700,
+          "instructions": 17,
+          "sha256": "A52BAE9E9FEF4E0897D5A8EF0B67D7BFB715AB4C7279CF00D938DC1CE0FAAA12"
+        },
+        {
+          "owner": "0x821C8AA8",
+          "path": "generated/default/rerevved_recomp.181.cpp",
+          "firstLine": 147,
+          "lastLine": 208,
+          "instructions": 26,
+          "sha256": "44E75E863D85D9CC8E7808CA16016EB8B508E49FFF02F0B40B21FB5FBFBDFA58"
+        }
+      ],
+      "selectedInstructions": 584,
+      "memoryWords": 612,
+      "peMetadataWords": 18,
+      "inlineTableWords": 6,
+      "otherDataWords": 4,
+      "cells": [
+        {
+          "address": "0x8213883C",
+          "value": "0x82D82E88",
+          "role": "initialized A table+D4"
+        },
+        {
+          "address": "0x82121104",
+          "value": "0x82E2B138",
+          "role": "constructed frontend table+4"
+        }
+      ],
+      "storeCandidateSearches": [
+        {
+          "rangeStart": "0x82E16000",
+          "endExclusive": "0x82E18000",
+          "scannedWords": 2048,
+          "matches": 20,
+          "allStackBase": true
+        },
+        {
+          "rangeStart": "0x82E0E000",
+          "endExclusive": "0x82E11000",
+          "scannedWords": 3072,
+          "matches": 5,
+          "allStackBase": true
+        }
+      ],
+      "tableCandidates": [
+        [
+          "0x821C8AC0",
+          "0x821C8AC8"
+        ],
+        [
+          "0x82E7E338",
+          "0x82E7E340"
+        ],
+        [
+          "0x82E7F4BC",
+          "0x82E7F4C0"
+        ]
+      ],
+      "reusedContracts": [
+        "xbox-hotjoin-transfer-restore-boundary.json#/scope/headerPremise",
+        "playable-game-state-gates.json#/frontendLifecycle",
+        "#/inviteDelivery/pending",
+        "#/inviteDelivery/coldStart",
+        "#/inviteDelivery/join",
+        "xbox-live-session-search-contract.json#/nativeSessionEndRestartBoundary/outerCallerBoundary",
+        "xbox-live-session-search-contract.json#/nativeOuterJoinRollbackBoundary"
+      ],
+      "locators": [
+        "ghidra/DumpMemoryWords.java:0x8213883C,0x82121104 and selected owner/PE words;radius0",
+        "ghidra/FindRawGlobalStoreChains.java:0x82FFD624;lookahead32;one candidate;not truncated",
+        "ghidra/FindSplitConstantCandidates.java:0x82131088;three candidates;not truncated",
+        "ghidra/FindRawFieldStores.java:[82E16000,82E18000),[82E0E000,82E11000);offsets70,78;25 stack candidates;not truncated or cancelled"
+      ]
+    }
+  },
+  "nativeVoiceSetupEntryBoundary": {
+    "question": "Which selected source caller enters the distinct native voice setup consumer, and what support verdict follows?",
+    "classification": "Proved bounded negative: the configured native program supplies no ordinary direct-BL caller, current modeled reference or exact aligned callable pointer to 0x82A231F8 in the checked scopes. The sole aligned value match is its PE function-start metadata. Feature entry therefore remains unresolved. This is not a whole-program unused verdict, lack of native voice code, or proof that all voice routes are unreachable. The SDK voice backend remains stubbed under its separate source contract.",
+    "sources": {
+      "image": "image.json",
+      "titleRevision": "3f74e5f0995c4ebe6b0765b2ebe12d48ac85d6b7",
+      "sdkRevision": "8bbc8d709f8d30cb75ae5c084c3c2c898de3b556",
+      "priorSDKRevision": "2d4b3e588d06ff33153ca8d221c5c9dbc0b9e8ec"
+    },
+    "acceptedConsumer": "Reuse nativeVoiceStatusBoundary for 0x82A231F8 ->0x82A25CE0 ->import XamVoiceCreate and its setup/cleanup/status consumption. Under that retained valid-object, actual invocation and normal-helper/ABI contract, a nonnegative final status can publish consumer+0x524=1. The current SDK positive 5/zero-output source is not an audio, feature-entry or successful handle receipt. No accepted body was re-expanded in this question.",
+    "directCallerCensus": {
+      "scope": "FindDirectCallers, aligned raw words in initialized executable blocks of the configured program, target 0x82A231F8. Opcode 18 with link bit 1 only; displacement and absolute-address forms are handled by the existing script.",
+      "cap": 32,
+      "matches": 0,
+      "truncated": false,
+      "cancelled": false,
+      "qualification": "No non-link tail-branch census, conditional/computed/indirect call census, externally registered/generated binding or other-image reach proof. Raw query bypasses undefined instruction listing, but is still a scoped configured-program result. Existing first-thunk repair and unpatched second-thunk/listing limitations remain recorded in the image/runbook; no whole-image original-byte identity is claimed."
+    },
+    "pointerAndReferenceCensus": "Proved bounded result: FindPointerValues scanned aligned initialized memory for exact BE word 0x82A231F8 with cap 32, found only 0x82192618 and did not reach its cap. DumpReferences found 0 current modeled references. Radius0 DumpMemoryWords confirms 0x82192618=0x82A231F8 and next word 0x40002E03. This is a PE row within the accepted exception table, not a vtable/callback publication. Its encoded 46instructions give end 0x82A232B0, matching the accepted consumer corridor. Exact aligned words do not cover computed/split/unaligned/encoded pointers; modeled absence does not cover undefined/truncated code.",
+    "generatedNavigation": "In current generated navigation artifacts of the title checkout at the stated source pin, a narrow-name search for sub_82A231F8(ctx found no generated direct call. The literal address search returned only generated/default/rerevved_init.cpp:27934 and rerevved_register.cpp:27916 registration rows. These generated artifacts are navigation, not a tracked-source identity, native vtable publication, runtime invocation or independent whole-program absence evidence.",
+    "sdkComparison": "Proved source identity: the three listed blobs match both SDK revisions. The accepted XamVoiceCreate zero-output/positive X_ERROR_ACCESS_DENIED value 5 response, constant inactive/headset results and raw packet/capture stubs therefore retain their selected source behavior at the current SDK pin. The accepted signed native status consumer still has its conditional mismatch, but this search adds no actual caller. Exact supported export error/capability policy and complete packet/capture/playback/mute ownership remain unproved; neither a negative error-code choice nor voice implementation is selected.",
+    "minimalProposal": "No new standalone title fix follows from the absence of a caller in these scopes. Keep the accepted conditional SDK status-compatibility proposal, settling its actual API error convention before choosing a numeric failure and preserving zero output/cleanup. Do not fabricate handles, force active/headset success, bypass native status/feature gates or treat the +0x524 store as audio support. Reopen native entry only with a concrete call, callback publication/computed target, changed artifact or authorized covered invocation. Another generic setup, queue or allocator expansion would not supply that discriminator.",
+    "diagnostics": [
+      "UNRUN default-off entry coverage at 0x82A231F8 may distinguish a reached invocation from no observation within a bounded capture. Record an opaque receiver/attempt generation and argument-validity class without a speculative receiver dereference or raw identity. No hit with incomplete coverage is not unused code.",
+      "UNRUN only after actual entry/valid current object: reuse accepted create 0x82A25D08/0x82A25D0C, setup 0x82A25D1C/0x82A25D20, consumer 0x82A23288/0x82A2328C and flag-store 0x82A23298/0x82A2329C pairs. Distinguish original API, setup, final status and valid zero/nonzero handle classes, preserving frame/register/FPU state and explicit loss. Retain no raw pointers, handles, IDs, profile/audio or packet bytes."
+    ],
+    "unrunCases": [
+      "UNRUN: actual covered entry versus no observed entry, a supported ordinary caller versus tail/computed/indirect publication, current receiver lifetime and selected scan path versus no selected entry. This bounded source negative does not predict runtime absence.",
+      "UNRUN: accepted SDK positive 5/zero output versus a supported signed-negative failure, helper normal-return/cleanup and final consumer flag. Settle API-specific error convention before testing a proposed numeric replacement.",
+      "UNRUN: actual engine/packet/capture/playback/mute/privilege and close/callback ownership, source versus installed SDK identity and any audible result. No game, native behavior, SDK/fake test, service or audio device was used."
+    ],
+    "remaining": "Unknown: the real feature/action producer, any omitted caller/publication, actual receiver/user/backend generation, exact supported error/capability ABI and complete voice data/lifetime ownership. The checked sources provide no useful entry discriminator, so this question stops. Existing backend stubs and native worker contracts retain their classifications. This is not a multiplayer desync cause or whole-family completion.",
+    "evidence": {
+      "method": "Four serialized foreground ReadOnly queries using existing FindDirectCallers, FindPointerValues, DumpReferences and DumpMemoryWords scripts. Two queried metadata words match the pinned flat image. The three accepted nativeVoiceStatusBoundary byte-range hashes were rechecked, with no new function body/owner expansion, repair or native behavior execution.",
+      "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "metadataRow": "0x82192618",
+      "metadataWords": [
+        "0x82A231F8",
+        "0x40002E03"
+      ],
+      "newOwnerExpansions": 0,
+      "newMetadataWords": 2,
+      "reusedWordRanges": [
+        {
+          "start": "0x82A231F8",
+          "endExclusive": "0x82A232B0",
+          "sha256": "8BB68D6B4686D19836607CBCA6A54B4742E358F35C93AA492088B87396E353EC"
+        },
+        {
+          "start": "0x82A25CE0",
+          "endExclusive": "0x82A25D98",
+          "sha256": "6F3AC13D204DF4C32614C2214FDE035B631B6629A455C6B856B35C5A8E559897"
+        },
+        {
+          "start": "0x82A2A328",
+          "endExclusive": "0x82A2A3B8",
+          "sha256": "E45A91C1F2807D3233FBB271EE4EACC424F8504E85B4EB81A4F43049A489B113"
+        }
+      ],
+      "reusedContracts": [
+        "#/nativeVoiceStatusBoundary",
+        "#/nativeIdentityNotificationVoiceConsumerBoundary",
+        "#/nativeIdentityWorkerPrivilegeEntryBoundary",
+        "#/nativeIdentityConstructedSetupBoundary"
+      ],
+      "sdkSourceBlobs": [
+        {
+          "path": "rerevved-sdk:src/kernel/xam/xam_voice.cpp",
+          "blob": "e48d6ce8881ba7d0349cfc930463913b5a36a486"
+        },
+        {
+          "path": "rerevved-sdk:include/rex/system/xtypes.h",
+          "blob": "d0e8f6775416e90ec3d1d2f43863fa45a01f50bc"
+        },
+        {
+          "path": "rerevved-sdk:include/rex/hook.h",
+          "blob": "4ce4f9b9f8627702f2435e4bfc6b5c2242c830ef"
+        }
+      ]
+    }
+  },
+  "nativeInviteFactoryRegistrationBoundary": {
+    "question": "Which registry callback constructs frontend key1 after the deferred gameplay-invite request, and does its output supply the known pending-invite entry?",
+    "confidence": "strong",
+    "classification": "Proved statically: selected startup registration writes callback821C87B8 under literal key1 in the frontend registry. That callback requests a16-byte allocation and, when nonnull, calls E7E328. The constructor writes key1 and table82131088, whose entry slot is E7F820, before returning the incoming numeric object under the stated helper/ABI conditions. This closes the missing selected registration/construction link conditionally. Executed registration, retained current registry/output/table, old-state exit, same pending invite and completed new session remain unknown. No new behavior or desync cause is established.",
+    "sources": {
+      "image": "image.json",
+      "titleCheckoutRevision": "3f74e5f0995c4ebe6b0765b2ebe12d48ac85d6b7",
+      "generatedQualification": "Generated windows are local artifacts, not tracked content at this title revision. Their exact window hashes identify corroboration separately from the checkout pin."
+    },
+    "scope": "F0 is the E88810 sample U32[8314EF98]. A null F0 requests821B0B50 and a fresh F1 sample; a nonnull F0 is retained directly. D is selected F+4, K the local literal-one key home and P the independently returned value slot. N is the allocator result passed to E7E328. Constructor global/helper roles and the later factory F/state/manager are separate generations until retained or matched. Require finite valid ordinary-RAM frames, registry/key/node/value/object extents, successful relevant lookup/insertion/allocation effects, current matching types/slots, compatible aliases and normal returns with required full registers/nonvolatiles/frame/ABI preserved across original thunks. Early constructor fields and registry publication must survive helper, reentrant and intervening effects. Three complete PE owners are checked. No helper closure, original-thunk proof or actual runtime identity is inferred.",
+    "registration": {
+      "owner": "0x82E88810..0x82E88880, end exclusive",
+      "registry": "E88824 samples F0. If zero, E88830 requests821B0B50 and E88834 reloads the global. There is no second local null guard before forming D=F+4. A normal initializer return alone does not establish valid nonnull F.",
+      "keyAndSlot": "E88838/40 homes literal1. E88850 requests821B8CD0 using D and that key address. Its first local output is not tested or used as the value slot. E8885C independently requests822DF948(D,&K), then E88860/64 materializes callback821C87B8 and E88868 stores it through the returned P.",
+      "composition": "Reuse readyValueBoundary/valueAddress and selectedTransportKeyedTargetBoundary:822DF948 returns the selected node+0x0C, or requests insertion of the current key with zero then returns the resulting node+0x0C. With coherent successful map/key/node retention, registration writes the key1 value later resolved by E7FA70. Allocation, insertion, key retention and later current registry are conditions, not consequences of merely requesting either helper."
+    },
+    "startupPublication": {
+      "cell": "0x82F107E0 = 0x82E88810",
+      "ordinal": 500,
+      "acceptedRange": "[0x82F10010,0x82F10CBC),811 four-byte cells",
+      "meaning": "Reuse nativePresentationHashInitializationBoundary/nativeEntryAndInitializerWalker. Only after its first phase reaches the required zero-status join does the selected native walker request eligible current second-range callbacks in order. Each selected callback must return with iterator/end/frame/ABI and table state retained. This cell supplies a callable startup publication, not proof that registration executed or survives later replacement. The other aligned E88810 pointer match at821A1D30 is PE metadata."
+    },
+    "allocationCallback": {
+      "owner": "0x821C87B8..0x821C8808, end exclusive",
+      "request": "821C87D0 puts0x10 in r3 and821C87D4 requests D3DBA0. This overwrites the incoming factory argument; the registry value-slot pointer is not passed as the constructor object. The selected zero result arm returns local0. A nonzero result requests E7E328 at821C87E0 and forwards its normal r3 result.",
+      "limit": "The request does not prove successful allocation or construction. It provides a conditional returned numeric object, not frontend publication, entry, pending-invite consumption or completed session transition."
+    },
+    "constructor": {
+      "owner": "0x82E7E328..0x82E7E3E0, end exclusive",
+      "initialWrites": "E7E334 retains incoming N in r31. E7E348 writes word1 at N+4, E7E34C writes table82131088 at N+0 and E7E350 writes byte1 at N+0x0C. Later local instructions contain no second N+0 or N+4 write. Opaque helper effects and retained object ownership still govern whether those fields survive until factory return/entry.",
+      "separateGlobalWork": "E7E354 samples U32[8314F288] for the821B0C98 request using offsets+8/+0x0C. E7E364 samples that global again, then locally preserves the selected high flag bits and ORs0x78 into its+8 word. This is not the newly allocated N+8 field and is not assigned invite/session semantics here.",
+      "localPhase": "A separate manager sample U32[8314EFE0] supplies its word0. If that word is-1, or the reached CB1140(word,0) result has low byte0, the selected local store writes1 to N+8. Otherwise it writes2. No symbolic meaning is assigned to these two field values. E7E3B8 restores r3=N before either normal tail-return path. These original thunk/ABI and helper-retention conditions remain explicit."
+    },
+    "conditionalEntryJoin": "Exact table cell8213108C contains E7F820. If executed registration remains in the same current F/key1 map, E7FA70 chooses the registered821C87B8 callback, allocation/construction returns N with the early key/table retained, and the accepted root transition selects that output rather than a queued replacement, E2B138 publishes N at root+0x70 before its current entry-slot request. With current table82131088, that request selects E7F820. Reuse inviteDelivery/coldStart only when its path reaches E7FA00 -> D8ED68(-1) on the same valid pending manager generation. The new constructor phase values do not prove that every entry executes this call or that a pending invite survives old-state work. A callback address, local return or key1 does not establish successful departure/join.",
+    "minimalProposal": "No title or SDK behavior change is selected. The missing selected registration/construction link no longer justifies forcing the frontend state or calling the entry directly. Preserve queued-state precedence, old-state permission/destructor order, pending-owner and End/join/rollback contracts. Any cancellation or pending-clear change still needs the supported same-attempt policy and complete cleanup authority.",
+    "diagnostics": [
+      "UNRUN default-off metadata: join the existing desired-key/factory/root-publication/entry receipts with an allowlisted key1 callback category at E7FAC4, zero/nonzero allocator and constructor-return categories at821C87D8/E4, and the reached entry/pending-service stage at E7FA00. Distinguish a queued replacement from factory selection. Use already available dispatch/write operands where possible, without a new guest call or registry traversal.",
+      "UNRUN: pair actual registration at E88868 and factory/entry with opaque local registry, root, returned-state, manager and invite-attempt generations. Record early constructor stores separately from retained current output. A matching category alone cannot establish same pending ownership or successful session transition.",
+      "UNRUN: preserve guest registers/frame/FPU state, existing observer ordering, finite capture and explicit losses. Emit no XUIDs/accounts, user indexes, names/name hashes, pointers, raw keys/handles, session or invite material, payloads, addresses or service data. Never inspect retired object backing."
+    ],
+    "unrunCases": [
+      "UNRUN: first-phase startup early return, missing/replaced registry, existing versus inserted key1, failed allocation, helper mutation and changed output table/key.",
+      "UNRUN: queued replacement precedence, old-state update zero, destructor/reentry effects, null factory output and each actual entry phase reaching or skipping the pending-service request.",
+      "UNRUN: same pending invitation across gameplay exit, mode-dependent End, rejection/rollback/retry, complete native/SDK retirement and a usable new session. No behavior case, launch or service use occurred."
+    ],
+    "remaining": "Unknown: actual executed registration and retained F/key1 output, current entry phase, complete old-state exit and supported same-pending ownership across replacement. The selected static factory link is now mapped. Another generic registry/map/constructor study is not selected without a concrete replacement writer, reached phase or ownership discriminator. This does not close the whole invites family or explain the first cross-PC mismatch.",
+    "evidence": {
+      "method": "Seven completed serialized foreground existing read-only memory-word, direct-BL, raw split-constant and pointer-value queries.94 selected instruction comments independently match the image and PowerPC decoding. Six PE metadata words plus two selected cells give102 distinct selected proof words. Four memory-word reports contain220 records. Navigation is not receiver/type/global-call closure.",
+      "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "owners": [
+        {
+          "start": "0x82E7E328",
+          "endExclusive": "0x82E7E3E0",
+          "metadata": "0x821A1858",
+          "instructions": 46,
+          "sha256": "9F45241A80C27BBE0B637C761DFC79925A3DDBE973B99E2C1D17098DFFFC4249"
+        },
+        {
+          "start": "0x821C87B8",
+          "endExclusive": "0x821C8808",
+          "metadata": "0x8216C5F0",
+          "instructions": 20,
+          "sha256": "4702F380B493422F99635D8ADDE659ABC2787251C7553021D743D513C9FD0890"
+        },
+        {
+          "start": "0x82E88810",
+          "endExclusive": "0x82E88880",
+          "metadata": "0x821A1D30",
+          "instructions": 28,
+          "sha256": "63AFDEC13B0ABA0D95283374D854EA3DB6B6ABF5F8F3D98CD86C44CA0C2A70C5"
+        }
+      ],
+      "generated": [
+        {
+          "function": "0x82E7E328",
+          "path": "generated/default/rerevved_recomp.138.cpp",
+          "firstLine": 34197,
+          "lastLine": 34303,
+          "instructions": 46,
+          "sha256": "B0D80729946D34DA2E35ACC156CAACBC49AAF3EF1F927D5DE7AAFF7265D2319E"
+        },
+        {
+          "function": "0x821C87B8",
+          "path": "generated/default/rerevved_recomp.177.cpp",
+          "firstLine": 147,
+          "lastLine": 196,
+          "instructions": 20,
+          "sha256": "6F05424462FCF92A6F55327AD952597749DACB3F43E413B110246EA88E2BC203"
+        },
+        {
+          "function": "0x82E88810",
+          "path": "generated/default/rerevved_recomp.166.cpp",
+          "firstLine": 33602,
+          "lastLine": 33668,
+          "instructions": 28,
+          "sha256": "C1F286E31BBB0CCAC8BA6CC5DCA75A9749CCA31A0CC47740ADD0B20FCC319064"
+        }
+      ],
+      "instructions": 94,
+      "memoryWords": 102,
+      "metadataWords": 6,
+      "selectedCells": {
+        "0x82F107E0": "0x82E88810",
+        "0x8213108C": "0x82E7F820"
+      },
+      "navigation": {
+        "constructorDirectBl": "One match821C87E0 below cap32, truncated false/cancelled false. Other call forms and actual reach remain open.",
+        "callbackSplitConstant": "One raw candidate E88860/E88864 below cap16, truncated false. No cancellation flag is emitted by this script. The selected complete owner confirms that operand flow.",
+        "registrationPointerValues": "Two aligned matches below cap16:821A1D30 metadata and82F107E0 startup cell. This script emits no truncation/cancellation flag. Raw values alone are not invocation proof."
+      },
+      "reusedContracts": [
+        "xbox-live-mode-entry-invite-contract.json#/nativeInviteGameplayTransitionBoundary",
+        "xbox-live-mode-entry-invite-contract.json#/nativePresentationHashInitializationBoundary/nativeEntryAndInitializerWalker",
+        "xbox-live-mode-entry-invite-contract.json#/inviteDelivery/coldStart",
+        "xbox-lobby-ready-gate.json#/readyValueBoundary/valueAddress",
+        "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportKeyedTargetBoundary",
+        "xbox-live-session-search-contract.json#/nativeOuterJoinRollbackBoundary"
+      ]
+    }
+  },
+  "nativeInviteUserRebindBoundary": {
+    "question": "Does the accepted invite user at manager+1C reach the current manager/account user, and what do the selected rebuild and retrieval returns establish?",
+    "classification": "Proved statically: the selected derived input manager method calls a setter that writes the requested local user and requests account retirement/reconstruction. The outer invite caller requests another retirement/reconstruction before invite retrieval. This supplies a conditional path from the pending user to the account input, not proof of the current account, completed invite join, retry safety or a defect caused by repeated rebuilding.",
+    "scope": "Eight selected owners: six complete PE extents and two explicitly bounded leaf code ranges without PE entries. The 433-instruction E2E3B8 owner supplies only the selected allocation/publication corridor here; its other helpers are not closed. M0 is the retained D8C900 manager, M1 the manager freshly sampled by the input method, U the sampled input object and J the freshly sampled M0+14 interface. Require valid objects/frames/strings/containers, original thunk/full-register ABI, compatible normally returning helpers, actual current classes/registry keys and no destructive aliases/interference. Require M0=M1 and retained helper outputs for the composed claim about the account input. These premises are not runtime observations. Local user, native registry key, XUID, member and Civilization remain distinct.",
+    "pendingAndEntry": "D8ED68 returns 0 when M+5D is set, otherwise stores a signed nonnegative incoming r4 at M+1C at D8ED90. A negative argument services the existing pending word. Its sequence using two cntlzw instructions admits signed nonnegative pending words, including 0. State 1 freshly samples global 8314EFE0 and calls D8ECC0 at D8EE0C. The accepted nativeInviteGameplayTransitionBoundary owns other states and deferred replacement. This fresh manager need not be the original pending owner.",
+    "inputClass": "In the selected E2E3B8 owner, E2E878/E2E87C requests 0x58 bytes. A nonnull result calls E55720 at E2E888, then E2E898 publishes the returned object to global 8314F2A4 before opaque C7A740. The allocation-null arm publishes the retained zero r29 instead. The leaf E55720 keeps r3 as its object and installs table 8212FE38 at E55798. Selected cell 8212FE3C (+4) contains E55980. This is a positive construction/publication link under normal helper return, not proof that the same class/object remains current at an invite call. Other publisher candidates remain navigation only.",
+    "inputMethod": "For actual retained table 8212FE38, D8C900 calls U+4 at D8C938 with the pending user already in r4. E55980 writes that user to U+54 at E55984 and, when U+4 is nonnull, to the selected child+28 at E55990. It freshly samples global 8314EFE0 as M1 at E55998, returns if it is null, freshly tests setup global 8314EFC8 and returns if that is null, otherwise tails to D8F518 at E559B4 with the same r4. Thus U fields can change without a manager update. Its local returns do not normalize a success result, and D8C900 ignores that result.",
+    "userSetter": "D8F518 retains M1 and requested low32 user. Different old/new values, both different from -1, take an extra branch that first writes M1+0 at D8F54C, clears application+D0, requests 8280DC70 and conditional E63490 work, then E2DE98. Those helpers and side effects are not expanded here. All normally returning paths converge on D8F5A4, which writes the requested user to M1+0 even when equal or -1, requests D8B668 at D8F5AC and D8C6C8 at D8F5B4. It neither normalizes nor independently checks the final helper return. The accepted nativeMenuAccountPrivilegeBoundary supplies the conditional fresh M+0-to-A+8 copy and post-publication initializer/fallback limits.",
+    "retirementAndRepeatedRebuild": "D8B668 optionally stores -1 to the current M+10 child+0C at D8B690, requests registry retirement CAAC18 with M+0C at D8B6A0, ignores its result and after normal return writes M+0C=-1 and M+18=0 at D8B6A8/D8B6AC. That is not complete callback/object retirement. After the input call returns, D8C900 requests D8B668/D8C6C8 again on retained M0 at D8C940/D8C948, also ignoring their returns. Under actual derived input class, nonnull M1/setup, M0=M1, compatible helpers and retained lifetimes, the inner and outer rebuild requests both occur. Actual rebuilt-account survival, deferred callbacks, registry quiescence, generation coherence and whether this repetition is necessary or harmful remain unknown.",
+    "retrievalAndResult": "After that conditional branch, D8C900 freshly loads J=M0+14, the native key M0+0C and pending user M0+1C, and invokes J+34 at D8C964. For retained actual table 82160450, selected cell 82160484 binds C9CF70. Reuse inviteDelivery/inviteRecord for its guarded 58023 record and identifier-search requests. D8C900 retains the full J result, tests only its low byte for a possible setup mode 4 write at D8C994 and fresh-global-manager D8ACB0 request, then returns the retained full result. It has no direct M+1C clear, explicit account-validity check or user rollback in this body. Opaque helpers/later paths are outside that negative. J is not automatically an SDK session handle or the network service.",
+    "parentResult": "D8ECC0 admits a signed nonnegative pending word, requests D8E798 then mode 2 D8D170 at D8ED08 and retains that full result. A zero low byte returns it. Otherwise it samples J and invokes J+24 at D8ED2C. A zero low byte there still returns the earlier D8D170 result at D8ED48, not that false gate result. For actual table 82160450, selected cell 82160474 binds the accepted constant-1 stub 821B1690, so that selected gate reaches D8C900 after admitted creation. Other classes/current-instance failures are not closed. A nonzero parent return is not independently proof of accepted invite retrieval, membership or join completion.",
+    "sdkReconciliation": {
+      "revision": "8bbc8d709f8d30cb75ae5c084c3c2c898de3b556",
+      "locators": [
+        "rerevved-sdk:src/kernel/xam/live_sessions.cpp:576-585,1262-1266,1337-1340,1529-1548",
+        "rerevved-sdk:src/kernel/xam/apps/xlivebase_app.cpp:101-110"
+      ],
+      "contract": "DeliverInviteLocked requires a pending undelivered invite, a live directory and a listening hook that returns true; it marks delivered before invoking the optional invite hook. The selected SDK hook requests kNotifyLiveInviteAccepted with parameter 0. AcceptedInvite returns no record for any nonzero local user or absent pending invite. HandleInviteInfo validates the argument list/count and user pointer before using that method, then requests WriteInviteInfo; the 58023 dispatcher returns success only when this handling returns true. This supports selected user 0 compatibility, not a mapping for multiple local users or actual processed notification. The native account-listener invitation record+4/dialog+0C producer remains unidentified and is not equated with this SDK parameter."
+    },
+    "minimalProposal": "No standalone title/SDK behavior change is selected. Do not force user 0, remove the repeated rebuild, treat a local nonzero return as a joined player or add a generic retry solely from this static composition. A fix needs a discriminating observation tied to the same attempt of stale/wrong manager or account, failed rebuild consumption, or an explicitly chosen supported-user policy. Existing cancellation, account-output and lifecycle proposals keep their own owners.",
+    "logging": "Proposed default-off bounded hooks: SDK delivery/notification request and HandleInviteInfo supported-user/result categories; D8ED90 pending store and D8EE0C current manager; D8C91C equality branch and D8C938 selected input class; E55984/E55998/E559AC inputs and null exits; D8F54C/D8F5A4 user stores; inner D8F5AC/D8F5B4 versus outer D8C940/D8C948 retirement/construction call returns; accepted D8C758 account publication and CA835C account user input; D8C964 J class/call result; D8ED2C/ED40/ED48 result provenance; later accepted D8F1E8 pending clear. Correlate opaque attempt/manager/input/account/interface generation tags, supported-user/equality/null categories, consumed low-byte result and capture coverage/loss. Read only already sampled values, preserve guest state, use no extra getter, and emit no raw identities, registry keys, pointers, XUIDs, tokens, names or addresses. Notification request, poll, action and completed join are separate receipts.",
+    "remaining": "Actual notification/action, retained derived input class, M0=M1 and pending-owner generation, helper side effects, exact account/registry retirement and usable current account, complete writers of the user field, other input manager classes and the account-listener invite producer remain unknown. The local bodies do not prove rollback, successful retry, a safe host release, member/Civilization admission, rejoin or a desync cause. All behavior, proposed diagnostics and acceptance UNRUN. The eight-owner packet ends here; no ninth generic manager/UI/registry helper is queued.",
+    "evidence": {
+      "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "titleRevision": "3f74e5f0995c4ebe6b0765b2ebe12d48ac85d6b7",
+      "method": "Eight completed serialized foreground ReadOnly queries. The selected proof comprises 721 decoded instructions, six inline switch-table words, 12 PE metadata words and three selected table cells: 742 distinct proof words. Five word-query reports contain those plus two padding words, 744 records in all. E559B8 return padding and E559BC undecoded padding are outside the selected E55980 corridor. Two leaf ranges without PE entries and six PE extents were checked against the original image. All selected words matched independent PPC64BE decoding and narrow generated comments. One separate 26-word capture duplicates D8B668 and increases no coverage. The 100-word publisher navigation windows and four masked store candidates establish positive navigation, not complete publishers or current class. No canonical repair was performed.",
+      "owners": [
+        {
+          "start": "0x82D8C900",
+          "endExclusive": "0x82D8C9B8",
+          "metadata": "0x8219D4E0",
+          "instructions": 46,
+          "sha256": "2536007E001B066FC98F71897C8664D621ED2D9DFED67CD7A97F6403A98B3D4A"
+        },
+        {
+          "start": "0x82D8ECC0",
+          "endExclusive": "0x82D8ED64",
+          "metadata": "0x8219D5D0",
+          "instructions": 41,
+          "sha256": "938977F5BA3086534AA4BF23EFFB1BCC83571F537B4319F097EF1D306DE743BC"
+        },
+        {
+          "start": "0x82D8ED68",
+          "endExclusive": "0x82D8EEE4",
+          "metadata": "0x8219D5D8",
+          "instructions": 89,
+          "sha256": "F7ACF5F83A05E6764C6E2784148AA6E939CA8EB527F598987E99F262B6988EB9",
+          "dataRanges": [
+            [
+              "0x82D8EDEC",
+              "0x82D8EE04"
+            ]
+          ]
+        },
+        {
+          "start": "0x82D8B668",
+          "endExclusive": "0x82D8B6C8",
+          "metadata": "0x8219D4A0",
+          "instructions": 24,
+          "sha256": "82098129F1C018231F410E75767535059F14D67D5D557F0BD36C22A8B56CF6A4"
+        },
+        {
+          "start": "0x82E55720",
+          "endExclusive": "0x82E557A0",
+          "metadata": null,
+          "instructions": 32,
+          "sha256": "C902909EE6FA623C046E9530A5146C763B99475AB9F6FE98F09CBCADCB1B99C8"
+        },
+        {
+          "start": "0x82E55980",
+          "endExclusive": "0x82E559B8",
+          "metadata": null,
+          "instructions": 14,
+          "sha256": "AF78753BF5962452CF2942D4776D48D9F1CA01562136082BE718A815160AC726"
+        },
+        {
+          "start": "0x82D8F518",
+          "endExclusive": "0x82D8F5C0",
+          "metadata": "0x8219D600",
+          "instructions": 42,
+          "sha256": "D379986752798C5D77D3A3A1B21D4F687265D242765E10F4AF278EC43F00B3C8"
+        },
+        {
+          "start": "0x82E2E3B8",
+          "endExclusive": "0x82E2EA7C",
+          "metadata": "0x8219FE18",
+          "instructions": 433,
+          "sha256": "7B3636B650A495B4202C1F999AD4C83D7657FE08C47CF4A85ACEFDD4BEFC085D"
+        }
+      ],
+      "selectedCells": {
+        "0x8212FE3C": "0x82E55980",
+        "0x82160474": "0x821B1690",
+        "0x82160484": "0x82C9CF70"
+      },
+      "generated": [
+        {
+          "function": "0x82D8C900",
+          "path": "generated/default/rerevved_recomp.102.cpp",
+          "firstLine": 30792,
+          "lastLine": 30897,
+          "instructions": 46,
+          "sha256": "914ACB557A36750459DC538326CCCD580428D372B87819BAF4A6AA2A95663CD1"
+        },
+        {
+          "function": "0x82D8ECC0",
+          "path": "generated/default/rerevved_recomp.92.cpp",
+          "firstLine": 31301,
+          "lastLine": 31395,
+          "instructions": 41,
+          "sha256": "8EDB449A3FB84AC94D2F20FA34066A3F9818B4CF5AEF51E23439AF63B2BA131A"
+        },
+        {
+          "function": "0x82D8ED68",
+          "path": "generated/default/rerevved_recomp.141.cpp",
+          "firstLine": 30439,
+          "lastLine": 30654,
+          "instructions": 89,
+          "sha256": "CB7B58CDE051E1C568EE1779BE5E398BF31D2D216F3AF532A1A63F184E33521D"
+        },
+        {
+          "function": "0x82D8B668",
+          "path": "generated/default/rerevved_recomp.115.cpp",
+          "firstLine": 31097,
+          "lastLine": 31155,
+          "instructions": 24,
+          "sha256": "AA5605C45899AF3FED779EB604B4C1BDF6DEB69DFDA5F697FC8D5AE1E558C2BB"
+        },
+        {
+          "function": "0x82E55720",
+          "path": "generated/default/rerevved_recomp.151.cpp",
+          "firstLine": 33600,
+          "lastLine": 33671,
+          "instructions": 32,
+          "sha256": "63E3D6096DE72C2395CDE94312A0347A912CD43F86D8A2058AFA2FB383F0777A"
+        },
+        {
+          "function": "0x82E55980",
+          "path": "generated/default/rerevved_recomp.203.cpp",
+          "firstLine": 33738,
+          "lastLine": 33771,
+          "instructions": 14,
+          "sha256": "DF806DD47974BB4EB29A2593897B1309B40467C40CC557781E6E72FE27AB5AC2"
+        },
+        {
+          "function": "0x82D8F518",
+          "path": "generated/default/rerevved_recomp.84.cpp",
+          "firstLine": 31247,
+          "lastLine": 31346,
+          "instructions": 42,
+          "sha256": "DDB77BEC02A65427AC709EE11C173401525EBC76F8B2397D7AA603F54C2EE785"
+        },
+        {
+          "function": "0x82E2E3B8",
+          "path": "generated/default/rerevved_recomp.171.cpp",
+          "firstLine": 32551,
+          "lastLine": 33530,
+          "instructions": 433,
+          "sha256": "611819C1C2D1A6EA447D958B009324E48631C950B4C3D85EB431DF08F43FF61D"
+        }
+      ],
+      "sdkSources": [
+        {
+          "repository": "rerevved-sdk",
+          "path": "src/kernel/xam/live_sessions.cpp",
+          "revision": "8bbc8d709f8d30cb75ae5c084c3c2c898de3b556",
+          "blob": "0c2e0fd4903b4642f859ceefd3f92f95281d4d48",
+          "sha256": "F25BFF5CC76C6175CDF38E54EEAC1D126EC7DF97D04F9169C36BDBF46EF6DA9E"
+        },
+        {
+          "repository": "rerevved-sdk",
+          "path": "src/kernel/xam/apps/xlivebase_app.cpp",
+          "revision": "8bbc8d709f8d30cb75ae5c084c3c2c898de3b556",
+          "blob": "50423b2d8bd4dd37ccd7940f3d7f2abf3959e3a5",
+          "sha256": "38CFC51D59CF15F2F1DAF2EACB25C89D62174DA238EB28DC03B93EFE8F72B23A"
+        }
+      ]
     }
   }
 }

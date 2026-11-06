@@ -124,6 +124,10 @@
     {
       "topic": "native-screen-controller-lifecycle-boundary",
       "use": "Selected screen-manager update, replacement and retirement requests, with actual controller and entry/pump invocation still conditional."
+    },
+    {
+      "topic": "special-functions-options-dispatch",
+      "use": "Shared exit wrapper and selected UI collection stores, without transferring Options-specific receiver or completion identity."
     }
   ],
   "currentEvidence": {
@@ -222,7 +226,7 @@
     "route": "0x82E4D660 retains the incoming controller, skips its body when byte 0x831562F0 is already set, otherwise sets the byte and requests 0x82D8E798 followed by 0x82D8B6C8 on the current manager. It then initializes a counter to 100 at 0x82E4D69C.",
     "pumpLoop": "Each normally returning iteration calls sleep helper 0x8280DBB0 with argument 10, then pump 0x82E2A838, decrements the counter and repeats while nonzero. The local loop therefore makes 100 such calls. The pump result does not end it. This is not an acknowledgement wait, a measured duration or a wall-clock deadline, and it does not bound blocking or nested work inside either helper.",
     "continuation": "After the loop, 0x82E4D6D4 calls the retained controller's virtual +0x24. A later guarded arm clears a setup byte and requests 0x82D8ACB0. The body clears its guard byte before its normal return. Normal-return and current receiver/lifetime premises apply to all requests.",
-    "otherRoute": "0x82E6AFF8 belongs to a different controller class. The lobby's vtable region does not contain it, which matches the live log that no controller matched that route.",
+    "otherRoute": "refusalExitLookupBoundary owns the selected 64-cell span and receiver continuation for 0x82E6AFF8. A range match or no-match diagnostic does not identify a compatible current controller or prove a lobby-leave request. Narrow table membership and the consumer's wider read span must remain distinct.",
     "qualification": "The press route to 0x82E4D660 through the AnimateExitComplete FSCommand was traced once and not repeated. The guard does not establish thread safety, retained-controller lifetime inside game start, completed membership removal or a compatible setup unwind. Calling this nested pump from inside game start is not a supported cancellation fix."
   },
   "readyPressContextBoundary": {
@@ -1408,7 +1412,7 @@
   "entryWait": {
     "loop": "The selected loop at 0x82D21FF4..0x82D220CC inside 0x82D217C8 requests human-mask recomputation through 0x82CD59A8, selects participants using the nonzero mask or the 0x82D8AB00 predicate, and repeats while a selected civilization-slot word remains -1. entrySlotReceiveBoundary identifies the selected kind-1 receive path and 0x82D05AD0 setter for 0x830ECD28+4*index. Current admitted member/index/value, delivery and retained slot observation remain premises. It pumps 0x82E2A838 at 0x82D22098.",
     "secondLoop": "The selected loop at 0x82D224FC..0x82D2263C scans mask-selected or descriptor/map-present participants and waits for each selected halfword at 0x830E9050 + 2*i to differ from 0xFFFF. Numeric type 57 stores arg2 at that indexed halfword under the separately accepted command contract. This can satisfy that cell, subject to the other participants and guards. It does not prove delivery or full setup success.",
-    "timeout": "Neither selected loop reads a timer or counts passes. A zero low byte from the pump followed by a zero low byte from the separate virtual +0x24 call branches out of the loop, at 0x82D220C4 or 0x82D22634 respectively. Those callback targets and their full setup-exit effects are unresolved. Leaving a selected loop is not a proved return from the setup function.",
+    "timeout": "Neither selected loop reads a timer or counts passes. A zero low byte from the pump followed by a zero low byte from the separate virtual+0x24 call can branch out at D220C4 or D22634. entryWaitExitBoundary proves their selected local continuations: D220D0 continues setup source/mask/branch work, while D2283C copies a frame word and joins D228E4 just as the second wait's ordinary completion does. Neither branch directly returns from D217C8. Callback effects, later complete setup outcome, safe cancellation/unwind and retry remain unproved.",
     "reading": "entryParticipantSelectionBoundary composes the accepted source-word and native descriptor/index-map lookup with the first wait. A nonzero source is copied directly. With a retained zero source, supported count/index/mask arithmetic and the same live nonnull descriptor/map, absence of that index's record can remove its own slot requirement. Other participants and later stages remain separate. Missing service/descriptor also yields zero and is not departure proof. player-count-setup-boundary.json#/humanMaskProducer/sourceWriterSearch records bounded navigation negatives, not a live-zero or no-writer theorem. Actual retirement, retained later observation and host release remain unproved. nativeDepartureCallbackBoundary owns selected requests, not completed participant removal."
   },
   "entryWaitVerification": {
@@ -1446,5 +1450,393 @@
     "A refused ready press stops the host only while the guest stays unready; it does not cover a guest whose press preceded the lobby bytes.",
     "A guest that refuses at game start after readying can leave the host waiting. Actual member departure releasing that wait was not observed and remains conditional on the selected mask/map and callback paths."
   ],
-  "conclusion": "A lobby ready press sends type 4, and the host's countdown needs every selected present member's flag. Refusing that press prevents start only while the guest remains unready. The selected entry loops have no local deadline, and departure does not unconditionally clear their selected participants. The lobby leave body has a finite local pump count, but its safe use from active setup, completed membership removal and host release remain unproved."
+  "conclusion": "A lobby ready press sends type 4, and the host's countdown needs every selected present member's flag. Refusing that press prevents start only while the guest remains unready. The selected entry loops have no local deadline, and departure does not unconditionally clear their selected participants. The lobby leave body has a finite local pump count, but its safe use from active setup, completed membership removal and host release remain unproved.",
+  "refusalExitLookupBoundary": {
+    "question": "Does the selected 64-cell span from the constructed lobby table contain the alternate return method, and which local request follows under the retained receiver/table premises?",
+    "confidence": "strong",
+    "scope": {
+      "constructorPrefix": "0x82E4D5A8..0x82E4D5EC",
+      "tableScan": "0x8213B714..0x8213B814",
+      "returnOwner": "0x82E6AFF8..0x82E6B054",
+      "selectedLeafWindow": "0x82D704F0..0x82D70550",
+      "extentConvention": "half-open",
+      "qualification": "Three selected native owners only. The constructor prefix and selected leaf window are not complete PE function extents. The alternate return body is PE-bounded. The 64-word data span is not a complete vtable extent or an assertion that all its cells belong to one class or are callable."
+    },
+    "evidence": {
+      "method": "Serialized foreground read-only ghidra/DumpMemoryWords.java radius-zero queries, exact word comparison with image.json, Capstone 5.0.7 decode and bounded generated instruction-comment corroboration.",
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "queriedWords": 132,
+      "selectedInstructions": 64,
+      "selectedDataWords": 64,
+      "metadataWords": 4,
+      "queryHashes": {
+        "initial": "fc72ee04b31d6a4766216a8893b7f1f97fc61a2a50016fd49473cf33cf729df0",
+        "lobby-continuation-words.txt": "42b32cc7a8d77527ef2919c747b849597d4c81a73d4a8b28d589fea3997a6e71",
+        "lobby-tail-word.txt": "86b0c890032e7d289487fb8e1eb8ee8948844e86d6fc26cc5fd5f3667ea5eaa1"
+      },
+      "constructorOwner": {
+        "start": "0x82E4D5A8",
+        "endExclusive": "0x82E4D660",
+        "metadata": "0x821A06D8",
+        "reusedFullBodySha256": "c8ce34a3c9e3a7db15d2cd1fa3a2f16c189c39f9588a5e6e289a5256c9cb3c91"
+      },
+      "returnAndLeafWindows": [
+        {
+          "start": "0x82E6AFF8",
+          "endExclusive": "0x82E6B054",
+          "metadata": "0x821A1150",
+          "sha256": "936e3b742b96340127c4cde91cb7a11b43175d5103b51d833009160415de560a",
+          "extentBasis": "PE runtime-function row"
+        },
+        {
+          "start": "0x82D704F0",
+          "endExclusive": "0x82D70550",
+          "extentBasis": "Selected entry through the observed indirect tail, not a PE extent",
+          "sha256": "d2d4078c82f58900d2c8673443a2abbed2728dfe6477e9753daed5fed8561818"
+        }
+      ],
+      "tableScanSha256": "5c38fcacce8ce7257d1e29a2d4e175b8e00c4583f9e7f3443846720685ea96a0",
+      "generatedCorroboration": [
+        {
+          "path": "generated/default/rerevved_recomp.156.cpp",
+          "firstLine": 37523,
+          "lastLine": 37560,
+          "instructions": 17,
+          "sha256": "3ef3882f4751f57deda9a3fc1e05897d50b3f240ac723d101a331e12d4889596"
+        },
+        {
+          "path": "generated/default/rerevved_recomp.1.cpp",
+          "firstLine": 32951,
+          "lastLine": 33003,
+          "instructions": 23,
+          "sha256": "c90928a8f6120ec1c0dc22731b8dc168d9ed61a3584370cdc874f5849dc50b81"
+        },
+        {
+          "path": "generated/default/rerevved_recomp.29.cpp",
+          "firstLine": 29598,
+          "lastLine": 29648,
+          "instructions": 24,
+          "sha256": "b76afd9ab9f2403afcb3424ff9d05babb910e70364d57d81f27f30ea226336b2"
+        }
+      ],
+      "reusedContracts": [
+        "#/readyPressContextBoundary",
+        "#/readyPressInvocationBoundary",
+        "#/entryWaitVerification",
+        "game-start-formatting-boundary.json#/nativeRefusalBoundary",
+        "xbox-live-session-search-contract.json#/nativeFrontendRegistryRetirementBoundary"
+      ],
+      "qualification": "All 132 words match the pinned image, and 64 native instruction comments match. The selected leaf's terminal instruction is7054C and its selected exclusive end is70550. No exact-start PE row was found for D704F0 in the inspected Exception directory; no PE extent is assigned to that leaf. The constructor's accepted complete-body digest is reused only for identity. No new helper, class-extent, child-target or runtime closure is claimed."
+    },
+    "constructorTable": {
+      "receiver": "The selected prefix retains incoming receiver in r31. Materializations at 0x82E4D5C0/0x82E4D5C8 form 0x8213B714, and 0x82E4D5E8 stores it at receiver+0.",
+      "retention": "Later helper effects, table replacement, actual construction/publication and current controller lifetime remain premises. This store does not identify every runtime lobby controller."
+    },
+    "selectedScan": {
+      "firstCell": "0x8213B714",
+      "endExclusive": "0x8213B814",
+      "cellCount": 64,
+      "matchingValue": "0x82E6AFF8",
+      "matchCount": 1,
+      "matchingCell": "0x8213B7F0",
+      "matchingSlot": 55,
+      "distinctLeaveCell": {
+        "address": "0x8213B720",
+        "offset": "0x0C",
+        "value": "0x82E4D660"
+      },
+      "requestCell": {
+        "address": "0x8213B730",
+        "offset": "0x1C",
+        "value": "0x82D704F0"
+      },
+      "result": "A faithful sequential search of this fixed span for E6AFF8 can select slot55. An earlier unreadable input can still stop a consumer before that match. The selected span cannot be treated as absent merely because a narrower class-table region omits the value. The match proves a value in a read span, not true method membership or receiver compatibility."
+    },
+    "returnContinuation": {
+      "managerCalls": "E6AFF8 retains incoming L. It samples M0 from8314EFE0 and requests D8B6C8 at E6B018, then freshly samples M1 and requests D8E798 at E6B020. Reuse their accepted release/reset/session-request order with all normal-return and generation premises; M0 and M1 are not equated automatically.",
+      "selectedVirtual": "After those calls, E6B024 freshly reads L's table. E6B038 requests its current +1C with r3=L,r4=10. Under retained table8213B714, the selected cell chooses D704F0. The normal epilogue ends at E6B050; it does not normalize the selected target's result into completion.",
+      "receiverLimit": "The cleanup calls may affect owners, tables or UI/controller lifetime. Reusing a numeric L after them requires retained compatible storage, current table/slot identity and native ABI/frame preservation. The slot55 range match alone supplies none of those retention guarantees."
+    },
+    "selectedLeafEffects": {
+      "roles": "L is the actual incoming receiver, and P is the fresh pointer read from8314F2E4 at D704FC. Field offsets without a prefix are hexadecimal. These definitions do not identify a platform session or prove actual UI delivery.",
+      "receiverByte": "D704F8 writes byte1 at L+0C.",
+      "requestFields": "With valid P, a null P+4, a current object's +8 differing from r4, or P+10 differing from r4 reaches D70528/2C/30: it writes low32 r4 at P+10 and zeros bytes P+40/P+41. When both comparisons match, those three stores are skipped. Under the composed caller r4 is10.",
+      "childTail": "D70534 samples child=U32[P+8]. A null child returns at D7053C with r3=0. A nonnull valid child supplies its current +0C target at D70544, and D7054C tail-dispatches with r3=child and retained r4. refusalExitChildBoundary binds the selected C569A8/E860E0 constructor route to the shared C7BD50 exit wrapper. Actual current child/table retention and delivery remain premises.",
+      "leaveLimit": "Neither selected local body directly calls E4D660 or produces the accepted AnimateExitComplete action. refusalExitChildBoundary owns the constructor-selected child handoff and shared collection-exit effects. Actual current instances, opaque helper effects and separate action/completion/leave delivery remain unproved. No direct leave invocation follows from the selected fields or requests."
+    },
+    "diagnosticCandidates": [
+      {
+        "beforeInstruction": "0x82E6B018",
+        "observation": "First manager-reset request with sampled M0 in r3 and retained L in r31."
+      },
+      {
+        "beforeInstruction": "0x82E6B020",
+        "observation": "Second cleanup request with freshly sampled M1 in r3 and retained L in r31. Pair identities conditionally rather than joining by numeric equality alone."
+      },
+      {
+        "beforeInstruction": "0x82E6B038",
+        "observation": "Actual current controller +1C request: r3=L,r4=10, selected target in r10/CTR. Do not call it a completed panel change or leave."
+      },
+      {
+        "beforeInstruction": "0x82D70528",
+        "observation": "Selected request-field store with fresh P in r11 and requested low32 r4. The equal-comparison branch skips this point."
+      },
+      {
+        "beforeInstruction": "0x82D7053C",
+        "observation": "Already sampled child in r3 and condition field from its zero comparison, before the native null return."
+      },
+      {
+        "beforeInstruction": "0x82D7054C",
+        "observation": "Actual nonnull child +0C tail request, child in r3, retained r4 and current target in r10/CTR. An observer must not manufacture a normal return after a non-normal target exit."
+      }
+    ],
+    "guards": [
+      "Keep object/frame/global storage valid and nonwrapping, normal callee ABI behavior, current tables/slots and no destructive aliases/interference as premises. Source range scans and native indirect calls need their actual live generations.",
+      "The selected scan admits a conditional method-value match. It proves neither a false-positive incident nor safety/incompatibility of invoking E6AFF8 on an actual lobby receiver.",
+      "A no-match diagnostic does not prove that the current table was8213B714 or that a whole 64-word span was read. Actual profile, owner, read and table outcomes remain separate.",
+      "Controller request fields, child tail dispatch, animation completion, native leave, membership retirement, host-wait release and corrected retry are distinct receipts. No new behavior change or runtime acceptance follows."
+    ],
+    "conclusion": "The constructor-selected 64-cell span contains E6AFF8 at slot55, so narrow table absence cannot rule out that lookup. Under a retained lobby receiver/table after the accepted cleanup calls, the return helper selects D704F0, conditionally writes request10 and tail-dispatches through current P+8/+0C. refusalExitChildBoundary binds one constructed child to the shared UI collection-exit path. Actual current ownership and completion-to-leave/host-release remain unproved."
+  },
+  "refusalExitChildBoundary": {
+    "question": "Which constructor-selected method receives the P+8 child request, what does its selected local exit path do, and does that establish the AnimateExitComplete-to-leave join?",
+    "confidence": "strong",
+    "scope": {
+      "constructor": "0x82E860E0..0x82E8613C",
+      "sharedExitWindow": "0x82C7BD50..0x82C7BD78",
+      "collectionExit": "0x82E40FF8..0x82E4108C",
+      "extentConvention": "half-open",
+      "qualification": "Three selected owners. Constructor and collection body are PE-bounded. The shared wrapper is a selected entry through direct-tail window, without an asserted PE extent. Valid nonwrapping object/frame/range storage, ordinary ABI/save/restore and helper normal returns, required field/table retention and no destructive aliases/interference are premises. No base-constructor, save/restore, synchronization or copy-helper body is expanded."
+    },
+    "evidence": {
+      "method": "Serialized foreground read-only ghidra/DumpMemoryWords.java radius-zero queries, exact pinned-image word checks, Capstone 5.0.7 decode and bounded generated instruction-comment corroboration.",
+      "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "queriedWords": 75,
+      "selectedInstructions": 70,
+      "selectedDataCells": 1,
+      "metadataWords": 4,
+      "owners": [
+        {
+          "start": "0x82E860E0",
+          "endExclusive": "0x82E8613C",
+          "metadata": "0x821A1BB0",
+          "instructions": 23,
+          "sha256": "1d59fddd452f52ef14e565d94b19954545600d51760ba84b72a7eaa8f4996f69"
+        },
+        {
+          "start": "0x82E40FF8",
+          "endExclusive": "0x82E4108C",
+          "metadata": "0x821A0140",
+          "instructions": 37,
+          "extentBasis": "PE runtime-function row",
+          "sha256": "6c43dc9f6ee8923a7b270f26634cebb1a6721e5a8ed7ba697391447b1d79607c"
+        },
+        {
+          "start": "0x82C7BD50",
+          "endExclusive": "0x82C7BD78",
+          "instructions": 10,
+          "extentBasis": "Selected entry through observed direct tail, not an asserted PE extent",
+          "sha256": "2265124be1d2118d4c3f310ea0809cf02b651bc61ee935abbce1860fc831be73"
+        }
+      ],
+      "selectedCell": {
+        "address": "0x8216755C",
+        "value": "0x82C7BD50",
+        "querySha256": "0cc54ab9c142d32636b14bf3c6a795434bedfa4b451f094776bd312733b9b062"
+      },
+      "queryHashes": {
+        "child-constructor-words.txt": "65cead0fd0ab7e728f5533ed5b0997e522b7c1b4a4703f6a6cf9a0aa05548952",
+        "child-method-cell.txt": "0cc54ab9c142d32636b14bf3c6a795434bedfa4b451f094776bd312733b9b062",
+        "child-exit-words.txt": "968ab6f55d86040fca98615f1db500f065b96651998e322ace5d0fbf941c2394"
+      },
+      "selectedBytesSha256": "6ab7705596567c417e7e58f450aec9d256faf1ed5e7c8336afc39bc415f4b142",
+      "aliasNormalization": "Compare normalized integer literals and corresponding mr/or, mflr/mfspr8, mtlr/mtspr8 and slwi/rlwinm spellings with their exact masks.",
+      "generatedCorroboration": [
+        {
+          "path": "generated/default/rerevved_recomp.118.cpp",
+          "firstLine": 33881,
+          "lastLine": 33935,
+          "instructions": 23,
+          "sha256": "49205553e9b01c230e67bc6a22957a41407bcbaada2e65569f353d12da5b7548"
+        },
+        {
+          "path": "generated/default/rerevved_recomp.157.cpp",
+          "firstLine": 33035,
+          "lastLine": 33122,
+          "instructions": 37,
+          "sha256": "5cbfa72f66a159fd203f6fffa58974d927566056f21515cdc5395fbc63c37633"
+        },
+        {
+          "path": "generated/default/rerevved_recomp.130.cpp",
+          "firstLine": 28613,
+          "lastLine": 28633,
+          "instructions": 10,
+          "sha256": "45766c40ab64b714dcc35859e725ef148c1a217e6e609961b43f199dcab0cf57"
+        }
+      ],
+      "reusedContracts": [
+        "#/refusalExitLookupBoundary",
+        "#/nativeEntryControllerLifetimeBoundary/selectedFrontendConstruction",
+        "#/readyPressInvocationBoundary",
+        "special-functions-options-dispatch.json#/optionsLifecycle/entryExit"
+      ],
+      "qualification": "All75 selected words equal image.json, and70 corresponding generated instruction comments match after documented alias normalization. The selected shared-wrapper tail at C7BD74 is included by exclusive end C7BD78. Existing constructor/publication and shared-exit facts retain their own storage, helper, current-pointer and lifetime premises. No actual callback, complete removal, action, leave or runtime result is inferred."
+    },
+    "roles": "P is a sample of the frontend manager at8314F2E4; L=P+4 is its separately sampled controller; W=P+8 is the selected1068-byte constructed object; C=U32[W+4] is its current inner child; Q=U32[8314F294] is a separate manager used by the shared exit wrapper. Offsets are hexadecimal. These role names do not prove disjoint allocations, current equality across samples or lifetime. Do not substitute L for C or Q for P.",
+    "constructorJoin": {
+      "acceptedPublication": "Reuse nativeEntryControllerLifetimeBoundary: C569A8 requests1068 bytes, conditionally calls E860E0 and stores the result or zero at P+8. Identifying a later W requires the same retained P/field and compatible allocation/return premises.",
+      "selectedConstruction": "E860E0 retains W in r31, requests base C7C3D0 at E86104, then materializes table82167550 and stores it at W+0 at E8611C. It reads constructor child C0 from W+4 and writes a sampled float at C0+20. C0 is not automatically the later exit-current C. Base output, valid storage, ABI retention and normal helper return are premises; the float's meaning/value is not assigned. The body returns retained W after its normal epilogue.",
+      "callbackCell": {
+        "address": "0x8216755C",
+        "table": "0x82167550",
+        "offset": "0x0C",
+        "value": "0x82C7BD50"
+      },
+      "result": "Under successful matching construction/publication and retained W/table, the earlier P+8/+0C request selects shared exit C7BD50. This is a constructor-specific handoff, not proof that every current P+8 has that identity."
+    },
+    "sharedExit": {
+      "childGuard": "C7BD50 samples C from incoming W+4. A null C returns at C7BD58 with incoming r3=W unchanged.",
+      "managerGuard": "For nonnull C, C7BD60 freshly samples Q from8314F294. A null Q returns at C7BD68 with r3=0, before the byte clear or collection request.",
+      "storeAndTail": "With valid nonnull C/Q, C7BD70 clears C+2A, then C7BD74 tail-requests E40FF8 with r3=Q,r4=C. It does not consume the caller's numeric10 as an exit-action identifier, construct an action string or directly invoke E4D660.",
+      "resultLimit": "The early raw returns and tail result are not a normalized removal/leave status. A normal return alone does not establish that C existed, a collection entry was found or the lobby departed."
+    },
+    "collectionExit": {
+      "enterRequest": "E41014 requests helper E922D4 with Q+4C. Valid stack/save state, helper return, current Q and synchronization behavior remain premises.",
+      "search": "After normal return, the body scans four-byte entries from Q+40 to sampled Q+44 for C, then reloads Q+44 at E41044 and compares the current scan pointer with that end at E41048. Valid aligned finite ranges, stable physical mappings and no destructive interference/aliases are required before interpreting this as a membership search.",
+      "found": "A found path computes a trailing-word count. Positive count requests827F1620 at E4106C with the selected destination/source and byte length. After normal helper return, or when no positive trailing count is selected, E41070 freshly reads the current end and E41078 writes that value minus4 at Q+44. It does not report a Boolean removal result.",
+      "absent": "The end-equality path skips the decrement. The earlier C+2A clear can therefore occur without removing an entry.",
+      "leaveRequest": "E41080 requests E922E4 with Q+4C, then the local body restores its frame and branches to the selected restore thunk. Helper effects, correct copy/synchronization, finite completion and object retention remain separate from those request/store facts.",
+      "actionLimit": "The selected local path has only the named helper/copy requests and pointer/byte/end operations. It contains no direct call to the mapped AnimateExitComplete handler or lobby leave E4D660. Opaque helper effects, independent queued callbacks and later controller retirement are not excluded or closed by this read set."
+    },
+    "diagnosticCandidates": [
+      {
+        "beforeInstruction": "0x82E86120",
+        "observation": "After the original table store, retained W is in r31 and constructor child C0 in r7, before the float access. Normal constructor return and later publication remain separate observations. Emit no addresses or sampled float."
+      },
+      {
+        "beforeInstruction": "0x82C7BD58",
+        "observation": "Already sampled inner child in r4 and zero-comparison condition before the native return. Distinguish missing C from an invoked collection exit."
+      },
+      {
+        "beforeInstruction": "0x82C7BD68",
+        "observation": "Already sampled Q in r3 and zero-comparison condition before its native return. Do not reread the global to manufacture identity."
+      },
+      {
+        "beforeInstruction": "0x82C7BD74",
+        "observation": "After the native byte clear, the actual tail arguments are Q in r3 and C in r4. A byte clear is not an entry-removal or leave receipt."
+      },
+      {
+        "beforeInstruction": "0x82E41048",
+        "observation": "The scan pointer and freshly reloaded end are in r3/r11 before the comparison. Classify equality, supported found position and validity without dumping the pointer range."
+      },
+      {
+        "beforeInstruction": "0x82E4107C",
+        "observation": "On the found path this follows the selected end store, while the absence branch also joins here. Keep branch provenance so a join observation does not imply that a decrement happened."
+      }
+    ],
+    "minimalProposal": "No behavior repair is selected. Passive bounded observations can distinguish missing W/C/Q, actual byte clear, found/absent collection request and later current-controller outcomes. This shared UI exit is not a proved lobby cancellation or completion producer. A title refusal repair still needs its actual current owner and outcome contract. Neither synthesizing AnimateExitComplete nor inserting E4D660 into a shared callback follows from these static effects.",
+    "unrunCases": [
+      "UNRUN: Successful matching constructor/publication and retained current P/W/table select C7BD50, while a supported alternate/replaced table remains a separate actual target.",
+      "UNRUN: Null selected P+8, missing current inner C and missing Q retain their distinct already guarded outcomes under otherwise valid storage. No invalid-pointer or constructor-fault execution is proposed.",
+      "UNRUN: C absent from a retained valid range versus last/middle found entries. Separate the byte clear, requested copy, end decrement and complete logical removal under the actual helper/retention contract.",
+      "UNRUN: P/W/C/Q replacement, callbacks or interrupted helper return must invalidate unsupported identity/order joins. Preserve guest GPR/CR/FP/frame state and report observation losses.",
+      "UNRUN: Actual title refusal controller request, shared collection exit, independent action/completion, native leave, SDK/native membership, host entry-wait release and corrected second match are separate receipts. No successful end-to-end cancellation follows from this static handoff."
+    ],
+    "conclusion": "The selected P+8 constructor installs82167550, whose +0C cell selects shared C7BD50. Its selected path handles the current inner C and separate Q: guarded byte clear, range search and conditional end decrement. It does not directly produce the mapped exit-completion action or invoke lobby leave. Current instances, helper effects and any later completion/leave/host-release remain unproved. The selected local effects establish a UI collection-exit request, without complete cancellation or gameplay acceptance."
+  },
+  "entryWaitExitBoundary": {
+    "question": "Do the two selected cooperative host-wait exits return from setup, or continue local setup execution?",
+    "confidence": "strong",
+    "classification": "Statically proved selected local branch destinations and continuation, under normal ABI/helper/instruction returns and retained valid state. No actual cancellation or runtime acceptance.",
+    "scope": "One accepted setup owner D217C8..D24F98. Four selected disjoint corridors contain170 instructions, plus2 PE metadata words. Reuse the existing first/second wait bodies and their pump/interface return gates. No full-owner path census, helper expansion, semantic interface naming or complete setup-return contract is added. F means the current retained setup frame, not a new object.",
+    "acceptedInputs": [
+      "#/entryWait",
+      "#/entryWaitVerification",
+      "#/entryParticipantSelectionBoundary",
+      "player-count-setup-boundary.json#/humanMaskProducer"
+    ],
+    "firstExit": "After the selected virtual call at D220B8, D220BC isolates low8(r3), D220C0 compares it with0 and D220C4 branches to D220D0 on zero. Otherwise D220C8/CC can repeat the wait when sampled r29 is zero; its nonzero arm also reaches D220D0. At D220D4 the continuation samples U32[8314F1B0]. Source0 branches at D220DC to D221D0. Nonzero source requests accepted CD59A8 at D220E0, then uses the current count/ordinal/mask or D8AB00 predicate for a selected loop. Only the selected predicate-false tail D221BC..CC is interpreted, not its skipped body. These local steps are additional setup execution, not a direct setup return or a proved cancellation-result contract. Full helper and intervening-body effects remain unknown.",
+    "firstLaterBranch": "D221D0/D4 samples byte8314F10B. Zero branches to D2264C; nonzero writes2 through the retained r24-derived address and the retained r17 value to global830E45D8, then requests D8AA60 on a freshly loaded manager. A zero low byte branches to D22464 outside the new corridors; the other branch can request current r14 virtual+0x44. D2264C's selected path samples halfword8314F1C8 or requests current r14 virtual+0x9C, stores its selected r3 through the same retained r24-derived address, and branches by that value. Neither side in these selected windows is a direct return. Initial r14/r17/r18/r24/r27 and count/mapped-storage premises remain those of the accepted setup owner; no meaning is assigned to these interface methods, destinations or the sampled halfword.",
+    "secondExit": "After the selected virtual call at D22628, D2262C isolates low8(r3), D22630 compares with0 and D22634 branches on zero to D2283C, not the ordinary fallthrough D22640. A nonzero sampled r27 at D22638/3C admits D22640; zero repeats D224FC. The D22640..48 path copies U32[F+0xE0] to F+0x190 and branches to D228E4. The D2283C..44 cooperative target performs exactly the same frame copy and branch. Thus these two selected exits use the same copy/branch shape. Their incoming copied contents may differ, and neither corridor adds a branch-specific flag or constant. The frame word's semantic meaning, previous initialization and ultimate consumer are not established here.",
+    "sharedContinuation": "At D228E4..F8 the retained r14 receives current virtual+0x200 with r4=0. Normal return reaches later local stores, including constant6 through retained r18 at D22918 and constant5 to global82F700B0 at D2291C. The virtual result is not tested before those stores. These addresses are within the PE owner, not its epilogue. Current virtual target, ABI/frame/nonvolatile preservation, valid mapped storage, callback effects and ordinary return remain premises. The selected D22848..E0 branch is a separate path and is not attributed to either wait exit merely because its addresses lie between their target and join.",
+    "limits": [
+      "A selected loop exit and local setup continuation do not prove that gameplay started, a peer was admitted, cancellation failed, a world was safe to consume, or the native setup function completed.",
+      "The called virtual methods and pump may mutate application/session state or take a non-normal path. Their transitive effects are not excluded by this local control-flow result. No live callback result, source mask, slot state or cause of incident104 is established.",
+      "Reaching a shared destination alone does not identify which preceding path ran. Retained same-invocation/frame generations, actual paired call/return and branch observations are needed; additional callers/jumps into these local blocks were not exhaustively inventoried.",
+      "No direct branch from these selected points supplies a complete unwind/resource/caller contract. A jump to an interior block or the unexamined final epilogue is not a supported cancellation fix."
+    ],
+    "minimalProposal": "Do not implement a timeout or cancellation merely by redirecting to D220D0, D2283C or D228E4: the recorded direct effect is continued setup, and the second path shares ordinary completion's local frame copy. No safe late-abort patch is selected. Keep the earlier conditional Ready/content guard proposal and final admission checks separate. A later abort design must bind the actual setup owner, acquired resources/side effects, unwind destination, caller result and retry state before choosing any branch or result.",
+    "logging": "Future default-off passive bounded observations should pair the accepted pump and virtual+0x24 calls/normal returns, retain their actual low-byte results, the current r29/r27 scan values, branch-source category and local invocation/frame generation, then observe D220D0/D221D0 and D2283C/D22640/D228E4 separately. A destination-only line cannot certify cancellation. Pair D228F8/D228FC current virtual+0x200 request/return without replaying it, and record later stores only as reached/valid categories rather than assigning gameplay meaning or exporting unknown contents. Preserve original registers, conditions, flow, gate ordering and all guest reads. Emit no raw frames, pointers, handles, identities, settings or payloads. Distinguish normal return, non-normal/missing completion, event gaps/overflow, full setup return and corrected retry as separate receipts.",
+    "unrunCases": [
+      "UNRUN: Actual pump/interface results and scan r29/r27 zero/nonzero, source0/nonzero and selected local branch taken. Require same setup invocation and actual paired calls; do not manufacture callback returns.",
+      "UNRUN: Second wait ordinary D22640 versus cooperative D2283C path, with retained valid F+E0/+190, both reaching D228E4 after the same local copy. Frame word equality is not a cancellation-success result.",
+      "UNRUN: Actual current r14 method targets, normal versus non-normal callback completion and separately observed later stores. Do not label a callback return or shared target as full setup completion.",
+      "UNRUN: Supported early refusal, safe complete setup exit/owned unwind, usable lobby and corrected second attempt, preserving final admission and current membership/mask conditions. No game, proposed model/fake/unit, behavior test, relay or service case was executed."
+    ],
+    "nextStaticWork": "The local branch question is closed by continuation rather than direct return. Do not expand the setup owner or virtual helpers merely to rename these exits. Select a concrete abort-owner/caller/resource contract only when designing an authorized cancellation fix, or continue the queued teardown/second-match and other online-feature questions. Actual behavior still needs separately authorized diagnostic evidence.",
+    "evidence": {
+      "method": "Two serialized foreground read-only DumpMemoryWords radius0 queries,172 distinct words matched to the pinned image, PE row8219B378/37C and170 exact selected generated instruction comments. Existing wait-body contracts reused.",
+      "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "owner": {
+        "start": "0x82D217C8",
+        "endExclusive": "0x82D24F98",
+        "metadata": "0x8219B378"
+      },
+      "distinctWords": 172,
+      "instructions": 170,
+      "windows": [
+        {
+          "start": "0x82D220B4",
+          "endExclusive": "0x82D22150",
+          "instructions": 39,
+          "sha256": "95d22132d71f62ddb99d670447bcc5b6ecdd3fc897070353d09d9ce3d5b783cd"
+        },
+        {
+          "start": "0x82D221BC",
+          "endExclusive": "0x82D22248",
+          "instructions": 35,
+          "sha256": "866f7c88789fa4f2ec77fd416ba0dbc4deefcfc01c02e404cbaad0224d66451f"
+        },
+        {
+          "start": "0x82D22624",
+          "endExclusive": "0x82D226C0",
+          "instructions": 39,
+          "sha256": "2385b23ed9ab5ead6fc32ef98a9da9a8d5f5a407c1898ab89dc7a3dde96cd66f"
+        },
+        {
+          "start": "0x82D2283C",
+          "endExclusive": "0x82D22920",
+          "instructions": 57,
+          "sha256": "8c701d6663ecbfd62d5efb478182aaefe633514f67bccdef1a76d8b48745bf03"
+        }
+      ],
+      "generated": {
+        "path": "generated/default/rerevved_recomp.30.cpp",
+        "windows": {
+          "0x82D220B4": [
+            28864,
+            28949
+          ],
+          "0x82D221BC": [
+            29008,
+            29084
+          ],
+          "0x82D22624": [
+            29636,
+            29721
+          ],
+          "0x82D2283C": [
+            29928,
+            30053
+          ]
+        },
+        "sha256": "7b88bcadf94fccec118c7fe123d396e1685819dc5735b410dc9ffd9018b900b3"
+      },
+      "locators": [
+        "ghidra/DumpMemoryWords.java:radius0;D220B4..D22150,D221BC..D22248,D22624..D226C0,D2283C..D22920 (half-open);8219B378,8219B37C",
+        "generated:rerevved/sub_82D217C8"
+      ],
+      "qualification": "Four selected corridors in one PE owner, not complete-owner code or a full caller census. Exact-word/PE/generated agreement proves selected static control flow under recorded ABI, valid storage and ordinary-return premises. It does not prove installed runtime effect, successful cancellation, complete setup outcome or clean retry."
+    }
+  }
 }

@@ -119,6 +119,335 @@
         "sdkLocator": "rerevved-sdk:src/kernel/xam/apps/xgi_app.cpp, message case 0x000B0008",
         "accountToService": "82CAFA40 loads account+0x24; null skips. Otherwise retain retailID in r4, set r5=U32[account+8] platform user and call service table+8 at82CAFA6C. This forwarding function returns0 without preserving the backend result.",
         "serviceConstruction": "Accepted initialization82CAFB48's successful82E476B0 gate reaches82CA8428. Its table+0x9C call returns into account+0x24 at82CA8540. Cell8215F3AC selects82CA82A8: current+0x24 nonzero returns0, zero tail-calls82CA10D8. Fresh82CA8320 clears+0x24 at82CA8378. Successful32-byte factory82CA10D8 calls82E45DA8; constructor stores final table82160558 at82E45DD8. Cell82160560 is therefore service slot+8->82E45D48."
+      },
+      "enumerationBoundary": {
+        "question": "Does native code use the achievement enumerator, and do its selected buffer, count and completion contracts agree with the supported SDK?",
+        "verdict": "Proved statically: a constructed service table selects a concrete achievement reader, its requested capacity matches the SDK writer, and countConsumerBoundary maps a stored-count-bounded ID lookup and flag predicate. Inferred under the default reader and retained normal request/storage: deferred count reporting disagrees with that native count publication. Actual invocation, callback/cache policy and a visible game fault remain unknown. This is not evidence of a multiplayer desync cause.",
+        "sources": {
+          "image": "image.json",
+          "titleRevision": "3f74e5f0995c4ebe6b0765b2ebe12d48ac85d6b7",
+          "sdkRevision": "8bbc8d709f8d30cb75ae5c084c3c2c898de3b556"
+        },
+        "notation": "N is the native service receiver, F is the reader stack frame and O is its 28-byte overlapped request at F+0x60. All field offsets below are hexadecimal. Item counts and byte capacities are decimal unless prefixed with 0x.",
+        "reach": "Proved statically: accepted finding RVA-F-0344 binds the account service factory to constructor 0x82E45DA8. The complete constructor stores table 0x82160558 at 0x82E45DD8 and zeroes N+4,N+18. Initialized table cell 0x8216055C is slot+4 ->0x82E45F70. That body calls wrapper 0x8280E510 at 0x82E45FB8, which calls import 0x82E92AC4 at 0x8280E588. Actual slot+4 invocation and current service/user identity remain unknown. Platform user is incoming low word of r4, not a Civilization or player slot.",
+        "create": "Proved statically: 0x82E45F70 retains receiver N and platform user, requests accepted sign-in reader 0x8280E240 at 0x82E45F8C and returns 0 if its low word is zero. Otherwise 0x82E45F98..0x82E45FB8 supplies title 0,user,zero,0xFFFFFFFF,offset 0,count 50,&F+50,&F+58 to 0x8280E510. Its accepted title gate admits title 0; zero in original r5 avoids its additional packed-value rejection. It restores eight input registers and preserves the import result. The caller admits only low-word result 0. Failure returns 0 without consuming size/handle outputs.",
+        "buffer": "Proved statically: after create status 0, size U32[F+50]==0 closes H=U32[F+58] and returns 1 without enumeration or clearing prior N+4. Positive size conditionally frees old N+18, clears it, requests that exact size from 0x82D3DBA0 at 0x82E45FFC and publishes returned r3 at 0x82E46000. No local nonnull check follows. It zeroes U32[F+54] and N+4, prepares O=F+60, then calls 0x8280DDD0 at 0x82E46028 with H,N+18,U32[F+50],&F+54,O. Accepted adapter 0x8280DDD0 shifts these into XamEnumerate(H,flags 0,buffer,size,countPointer,O). Actual allocation capacity, mapping and helper success remain premises.",
+        "sdkCapacity": "Proved statically at the pinned SDK: XamUserCreateAchievementEnumerator has eight 32-bit/mapped arguments, including u32 xuid. These inputs therefore select flags 0xFFFFFFFF and count 50, not flags 0. xam_user.cpp:595-623 returns required size 50*(36+464)=25000 and, on successful initialization, a real owned enumerator handle. Its distinct writer at:537-568 writes at most 50 records and starts strings at 50*36=1800. The requested 25000-byte buffer covers its maximum string extent. No selected native short-buffer conflict is proved. Generic buffer-length validation remains the separate SDK contract.",
+        "completion": "Proved statically: 0x82CB14A0 zeroes seven words at O, including completion routine O+0x10, then requests 0x8280EB38(0,0,0,0) and stores its returned word at O+C. Raw enumeration status 997 selects 0x82CB1430(O) at 0x82E4603C. That helper consults callback global 0x8314F1FC: nonzero invokes it and retains its return; zero calls accepted retail result reader 0x8280DD38(O,length pointer 0,wait 1). It then requests accepted NtClose wrapper 0x8280DA78 on O+C and returns the retained result. Other raw results close O+C directly at 0x82E46048 and retain the raw status. Callback override, successful event creation, pending wait/error branches and helper completion remain qualified. This is not proof of a call to the SDK XamGetOverlappedResult export.",
+        "countConsumption": "Proved statically: only resolved low-word status 0 reaches 0x82E46060/64, which copies U32[F+54] into N+4. On the pinned SDK, xam_enum.cpp:73-82 ignores items_returned when O is nonzero. Deferred work instead writes the batch count to O+4 through kernel_state.cpp:1162-1188, with final result published after length. The default reader has length pointer 0, so it supplies no copy into F+54. Inferred with default callback, retained distinct valid storage, normal helper returns, no intervening writer and successful deferred completion: F+54 remains its initialized zero and N+4 becomes zero even when O+4 reports a nonempty batch. An override or other unproved aliasing/reentry policy is not covered. countConsumerBoundary maps the selected signed-count ID scan and flag predicate. Actual invocation and visible player impact remain unknown.",
+        "handleAndLifetime": "Proved statically: after accepted creation, size 0 and both successful/failed enumeration statuses join 0x82E46068/6C to request close of the acquired H. The close Boolean is ignored; final r3 is retained native Boolean r30, so return1 is not a close receipt. Create failure does not consume an unacquired H. No immediate N+18 free occurs after submission in this body. The buffer is retained in N and O is frame-local. Default result/wait success, request identity and callback behavior are required before treating return as writer retirement. The generic cancel/reset/free gap is not automatically exercised here: this selected body has no cancellation call. A handle-close request alone never pins buffer/O lifetime or proves completed close. Terminal result publication precedes SDK event lookup/signaling, so event notification retirement is a separate requirement.",
+        "minimalProposal": "Conditional title-owned compatibility change: for this reader alone, consume the successful deferred item count from its same completed O+4, bounded to the requested 50, before publishing N+4. Preserve the immediate-error, create-failure, zero-size, callback and close policies. The selected count consumer is established in countConsumerBoundary. First establish actual invocation and the live callback/default route; a count correction alone does not define cache refresh or error-retry policy. Do not change the generic SDK to write both count destinations or broaden 0x82CB1430 globally merely to accommodate this caller. The SDK capacity check remains a separate generally owned proposal. No code change or claimed game fix was selected or executed.",
+        "diagnostics": [
+          "UNRUN default-off metadata: pair create 0x82E45FB8/BC raw r3 with admitted user class, count 50, flags class, size and output-validity category. Retain no user identity or handle.",
+          "UNRUN: pair allocator 0x82E45FFC/0x82E46000 existing returned r3 null/non-null category and requested capacity with enumerate 0x82E46028/2C raw r3. Preserve N/O/operation identity through opaque capture-local tags, never exported addresses.",
+          "UNRUN: classify callback/default branch at 0x82CB1454 and pair resolver 0x82E4603C/40 result with same valid O result/length and F+54. Pair native count load/store 0x82E46060/64 existing r11. Record length/count disagreement only after terminal success, with coverage/loss and nesting.",
+          "UNRUN: distinguish event-close requests 0x82CB147C/80 or 0x82E46048/4C from acquired-enumerator close 0x82E4606C/70 and final r30 Boolean. Capture returned close Boolean without folding it into an invented close receipt. Preserve guest registers, frame and FPU state."
+        ],
+        "unrunCases": [
+          "UNRUN: selected user admission and create status 0 with count 50/flags 0xFFFFFFFF produce required 25000 and a real H. Nonzero create does not read uninitialized size/handle; zero-size success closes H and preserves prior count.",
+          "UNRUN: deferred nonempty success with callback 0 leaves countPointer unchanged but writes O+4. Compare native N+4 before and after the conditional title proposal. Check 1, 49 and 50 items and strings within negotiated extent.",
+          "UNRUN: empty enumerator status 18, invalid handle status 6, null buffer status 87, immediate error and failed allocation avoid a successful count publication. Keep output zero separate from no records and from no invocation.",
+          "UNRUN: valid event wait, event failure, callback override, early/error wait return and normal completion before frame exit. Require exact-operation retirement and complete close outcomes independently of raw status 997 or native Boolean.",
+          "UNRUN: real native table+4 invocation and downstream count use, compared with title-owned achievement UI/local awards. No launch, runtime behavior test or multiplayer acceptance was performed."
+        ],
+        "countConsumerBoundary": {
+          "question": "Does the stored achievement enumeration count bound a native consumer, and what can a zero count mean there?",
+          "confidence": "strong",
+          "classification": "Proved statically: N+4 is the signed count bound for a native ID lookup, and the selected service+0x10 predicate returns a record flag bit or false on lookup failure. With a cached buffer and count0 it skips refresh and returns false. The selected account+0x38 wrapper instead calls service+0x0C and returns0, so it supplies no invocation of that count predicate. Actual natural invocation and visible game impact remain unknown. This is not an award, persistence, online-service receipt or desync result.",
+          "scope": "Five complete PE owners contain 135 instructions. Ten metadata words and ten checked cells give 155 proof words in three word reports with 387 records. Two service methods and one account wrapper are bounded negative controls. Three of the account cells are neighboring pointer identities only, without inferred interface extent or semantic use. Two other service-neighbor cells and eight account-neighbor words are navigation only. No further event, allocator, cancellation or generic account expansion is made.",
+          "guards": [
+            "N is the actual achievement service, A the account, B0 an initial N+0x18 sample, B1 the lookup scan sample and B2 the predicate later sample. C is signed low32 N+4, I the incoming low32 retail ID and U the platform-user argument supplied in r5 to the lookup/predicate. These roles are not Civilization/player identities or equal buffer/user generations automatically.",
+            "Require valid finite mapped N/A/frames/slots and record spans, current matching account/service tables, supported nonwrapping count/index arithmetic, compatible helper/alias/reentry effects and normal full-register/nonvolatile/frame/ABI returns through original thunks. An index returned from B1 is valid for B2 only with retained matching storage and record identity. Buffer allocation or table installation alone is not a complete result-validity or lifetime receipt.",
+            "The accepted reader still needs the same successful completed operation, callback/default policy, retained storage and a written SDK result before publishing a corrected count. Actual call occurrence, error/refresh policy and downstream consumers remain observations or separate source questions. No invalid/stale/null storage case was executed."
+          ],
+          "lookup": {
+            "owner": "0x82E45B68..0x82E45BF0, end exclusive",
+            "lazyRead": "The body retains N and incoming I, sets fallback full64 -1 and initializes r3=1. It samples B0=U32[N+0x18]. Nonzero B0 bypasses the reader, sign-in and any user-based refresh in this body. Zero B0 requests current N virtual+0x04 at E45BA4 with incoming r5 forwarded as r4; matching table82160558 selects accepted E45F70. The returned low8 must be nonzero to continue. The cached arm uses its initialized1 instead. No local cached-user or operation-generation comparison is made.",
+            "countAndScan": "E45BB4 samples C=U32[N+4] and E45BBC freshly samples B1=U32[N+0x18]. Signed C<=0 returns full64 -1 before any record read. For positive C it compares each record first word with low32 I, starting index0 and advancing B1 by0x24. It returns the first matching index before C; no match returns -1. Under valid coherent supported spans this is an ID scan bounded by the stored count, not an ignored count or raw byte capacity.",
+            "cacheLimit": "A retained nonzero buffer with count0 reaches -1 without another enumeration. The accepted reader publishes buffer storage before enumeration and sets count0 before submission. Thus, conditionally, either the default deferred-count gap or a returned enumeration error can leave nonzero storage/count0 for later calls. This establishes local retry suppression in this lookup, not an observed transient failure, a complete invalidation policy or safe permission to free a pending buffer."
+          },
+          "flagPredicate": {
+            "cell": "0x82160568 = 0x82E45BF0, offset +0x10 only under actual table82160558",
+            "owner": "0x82E45BF0..0x82E45C54, end exclusive",
+            "result": "E45C0C requests E45B68 with original arguments. Negative signed low32 index returns0. Otherwise it freshly samples B2=U32[N+0x18] at E45C1C, computes B2+36*index, reads word+0x20 at E45C2C and returns bit17, mask0x00020000, at E45C30. It supplies no distinct result for no ID, count0, reader failure or a matching record with that bit clear. Earlier index validity does not automatically pin this later B2 sample.",
+            "sdkLayout": "At pinned SDK xam_user.cpp:493-510, X_ACHIEVEMENT_DETAILS is36 bytes with ID at+0 and flags at+0x20. The writer copies item.flags at:561. The source ORs0x00030000 into flags for a local nonzero unlock time at:626-634, so it can set the tested bit. This is local stored-state evidence, not an Xbox Live award receipt. Existing capacity and deferred-count contracts are reused without changing SDK semantics.",
+            "conditionalImpact": "With retained valid written records, default successful deferred enumeration can report a nonempty O+4 while native N+4 remains0. The selected predicate would then return0 even for an ID whose cached record has bit17 set. This is a conditional composition, not proof that this method runs in a recorded game or that the title-owned achievement UI is wrong."
+          },
+          "negativeControls": {
+            "serviceMethods": "Complete E45CE8..E45D44 (+0x0C) and E45C58..E45CE8 (+0x14) use sign-in and separate wrapper/context requests. Neither selected local body explicitly reads N+4 or N+0x18 or invokes E45BF0. Their transitive effects and higher feature meanings are not inferred from this footprint.",
+            "accountWrapper": "Exact account table8215F310 cell8215F348 (+0x38) selects CAFA88. Its complete CAFA88..CAFACC body samples A+0x24. Null skips; nonnull supplies A+8 as r4 and requests current service+0x0C at CAFAB4, then returns literal0 regardless of the callback result. It does not forward the original incoming r4 as an achievement ID or select service+0x10 here. This differs from accepted account+0x34 award forwarding and is not the missing count-predicate caller.",
+            "callerSearch": "Raw aligned direct-BL navigation found0 E45BF0 callers and1 E45B68 caller, E45C0C, at cap16 with no truncation/cancellation. Exact aligned E45BF0 value navigation found2 placements: its selected table cell82160568 and PE row821A02E8. The value search emits no cancellation/truncation fields. These are scoped results and do not exclude virtual/computed/tail invocation or establish global non-use. Neighboring stub pointer identities do not prove the whole account has no other reader."
+          },
+          "minimalProposal": "The local count consumer is now established. Keep the reader-local conditional title proposal: on the same operation successful deferred completion, consume the completed O+4 count, validate it against the requested50 and publish N+4 before this lookup can use it. Preserve immediate/create/zero-size/error, callback and close policies. Actual installed callback/default route and invocation remain required before implementation. This count correction alone is not a complete cache refresh/user-generation/error-retry policy. Do not change generic SDK enumeration to write both destinations, broaden CB1430, clear/free live storage to force refresh or infer a visible achievement fix from a local predicate. No code change or new SDK behavior proposal is selected.",
+          "diagnostics": [
+            "UNRUN default-off bounded metadata: at E45B8C distinguish cached nonzero B0 from lazy read, pair E45BA4/E45BA8 for actual reader request/return and keep its low8 category. At E45BC4 record the already loaded signed count category and opaque N/B1/operation generations. Distinguish no reader call, reader failure, nonpositive count, no matching record and a matching index. Do not export IDs, record contents, addresses or platform-user identities.",
+            "UNRUN: pair E45C0C/E45C10 for lookup request/returned index category. At E45C2C/E45C30 record the already loaded flag17 category only after valid matched-buffer provenance. Keep B1 versus later B2 generations separate. A false predicate is not an error category or a local/online award receipt.",
+            "UNRUN: pair CAFAB4/CAFAB8 for the negative-control service+0x0C request and distinguish the later forced0 return. Observe actual current slot/class/caller categories without another virtual call. Reuse the accepted create/enumeration/resolution/count-publication and close hooks; join O+4, F+54 and N+4 only for the same completed operation and valid storage.",
+            "UNRUN: preserve registers, frame/FPU state, existing hook/observer ordering and bounded coverage/loss. Use opaque local cache/operation/account/service/user generations, never keys, XUIDs, raw pointers/handles, names, achievement contents or payloads. Do not walk stale backing, invoke a getter or force refresh for logging."
+          ],
+          "unrunCases": [
+            "UNRUN: actual constructed current table+0x10 invocation and platform-user/account/service association. Missing N, replacement callbacks and unsupported null/stale storage are not executed. Selected account+0x38 remains a different request, not count lookup.",
+            "UNRUN: cached versus lazy paths, reader low8 failure/success, count0/negative/positive supported bounds, absent ID, first/last matching record and flag17 clear/set. Match scan and predicate buffer generations and validate36-byte record spans.",
+            "UNRUN: default deferred nonempty success with N+4 still0 versus the reader-local corrected count, empty/error/zero-size and callback override paths, retained error-buffer retry behavior and actual cache invalidation. Keep operation completion, event notification and buffer/handle retirement independent.",
+            "UNRUN: native predicate use versus title-owned achievement list/local award/persistence outcomes. No natural award, visible fault, multiplayer desync or online delivery was demonstrated. No game, fake behavior test, service or relay operation ran."
+          ],
+          "remaining": "The N+4 consumer question is answered for the selected lookup and flag predicate. Actual upstream invocation, installed completion policy, cache refresh/user-generation contract, full lifetime and visible impact remain unknown. No generic count/event/allocator/account helper continuation is queued. This bounded result does not complete all achievements/content consumers or the broad online goal.",
+          "evidence": {
+            "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+            "titleRevision": "3f74e5f0995c4ebe6b0765b2ebe12d48ac85d6b7",
+            "sdkRevision": "8bbc8d709f8d30cb75ae5c084c3c2c898de3b556",
+            "method": "Seven completed serialized foreground ReadOnly queries. Three exact owner-word reports supply387 records covering155 proof words:135 code,10 PE metadata and10 data cells. Independent PPC64BE decoding agrees with five narrow generated windows. Two cell-navigation reports add16 records, including10 words outside that selected proof; all403 word records/165 unique words match the pinned image. Direct-BL/value navigation is scoped and retains its limits. Original thunk/full-register ABI, current class/identity and lifetime remain premises.",
+            "owners": [
+              {
+                "start": "0x82E45CE8",
+                "endExclusive": "0x82E45D44",
+                "metadata": "0x821A02F8",
+                "instructions": 23,
+                "sha256": "FFCEA265883951AC59E393F7630479882517B6A4ACA77802B0798E07D60F440B"
+              },
+              {
+                "start": "0x82E45BF0",
+                "endExclusive": "0x82E45C54",
+                "metadata": "0x821A02E8",
+                "instructions": 25,
+                "sha256": "384E457D1FFB887A45BE0A5CEA2E8AB3691250B070CF1BAA11A652DE96D80A16"
+              },
+              {
+                "start": "0x82E45C58",
+                "endExclusive": "0x82E45CE8",
+                "metadata": "0x821A02F0",
+                "instructions": 36,
+                "sha256": "A00B0E554FCFB9B4B7CE17C5651FC51A78CCE0EB74B7459B8EF035FD3D248531"
+              },
+              {
+                "start": "0x82E45B68",
+                "endExclusive": "0x82E45BF0",
+                "metadata": "0x821A02E0",
+                "instructions": 34,
+                "sha256": "DFA616FDBF90606626F43322ED7B23FBF8778A37DAEB8EDDED0B95EFECAE4218"
+              },
+              {
+                "start": "0x82CAFA88",
+                "endExclusive": "0x82CAFACC",
+                "metadata": "0x8219A8B0",
+                "instructions": 17,
+                "sha256": "D99B38DBF0B565BD74F740E13EDDE66C8BEFC1A6FBDC210525D4CE1EACA88BF6"
+              }
+            ],
+            "generated": [
+              {
+                "function": "0x82E45CE8",
+                "path": "generated/default/rerevved_recomp.6.cpp",
+                "firstLine": 32618,
+                "lastLine": 32674,
+                "instructions": 23,
+                "sha256": "CEC44DEC75FE2AC14B199C2DBCE6525388D0428BC2306A658150DEBFD6BB0C7B"
+              },
+              {
+                "function": "0x82E45BF0",
+                "path": "generated/default/rerevved_recomp.54.cpp",
+                "firstLine": 31963,
+                "lastLine": 32022,
+                "instructions": 25,
+                "sha256": "63CEE9D7601775D2401C20B407821BC0D37B1517BEAC02680DF4D25CC94DE21F"
+              },
+              {
+                "function": "0x82E45C58",
+                "path": "generated/default/rerevved_recomp.154.cpp",
+                "firstLine": 32700,
+                "lastLine": 32789,
+                "instructions": 36,
+                "sha256": "A4828FA166001875C604CD127FB4DAF44CA3EFEB5B7E18BEBEA09D175C5384E1"
+              },
+              {
+                "function": "0x82E45B68",
+                "path": "generated/default/rerevved_recomp.44.cpp",
+                "firstLine": 30692,
+                "lastLine": 30773,
+                "instructions": 34,
+                "sha256": "C94F6AB9EF6AA03FD5894E41FABDDFEB6F5E667F6BA50A3647CF3AD28810E7B5"
+              },
+              {
+                "function": "0x82CAFA88",
+                "path": "generated/default/rerevved_recomp.20.cpp",
+                "firstLine": 28541,
+                "lastLine": 28583,
+                "instructions": 17,
+                "sha256": "2C7125187FB9F9C43583CC9831C9A836E4E75B94E485F40AB8A244454CAD10D7"
+              }
+            ],
+            "instructions": 135,
+            "metadataWords": 10,
+            "proofWords": 155,
+            "proofWordRecords": 387,
+            "allQueryWordRecords": 403,
+            "allQueryUniqueWords": 165,
+            "checkedCells": {
+              "0x82160558": "0x822E54C8",
+              "0x8216055C": "0x82E45F70",
+              "0x82160560": "0x82E45D48",
+              "0x82160564": "0x82E45CE8",
+              "0x82160568": "0x82E45BF0",
+              "0x8216056C": "0x82E45C58",
+              "0x8215F348": "0x82CAFA88",
+              "0x8215F34C": "0x822DF8A0",
+              "0x8215F350": "0x822DF8A0",
+              "0x8215F354": "0x822DF8A0"
+            },
+            "sdkSourceBlobs": {
+              "src/kernel/xam/xam_user.cpp": "283a9c51584ef1db90cc153c9835ab145086038a",
+              "src/kernel/xam/xam_enum.cpp": "9dcab94ed1239a2920791eebbe360a5d737fa55f"
+            },
+            "reusedContracts": [
+              "achievement-unlock-triggers.json#/findings/RVA-F-0344/dispatch",
+              "achievement-unlock-triggers.json#/findings/RVA-F-0344/enumerationBoundary/countConsumption",
+              "achievement-unlock-triggers.json#/findings/RVA-F-0344/enumerationBoundary/buffer",
+              "achievement-unlock-triggers.json#/findings/RVA-F-0344/enumerationBoundary/completion",
+              "achievement-unlock-triggers.json#/findings/RVA-F-0344/enumerationBoundary/handleAndLifetime",
+              "native-renderer-alternate-resolve-provider.json#/rawUnresolvedOwnerFieldReceiverBoundary/managerSlot18NestedReceiverBoundary"
+            ]
+          }
+        },
+        "remaining": "Unknown: actual upstream invocation, current account/user/backend, allocation identity/capacity, installed callback, cache refresh/user-generation policy, wait/close success and visible impact. countConsumerBoundary maps the selected count-bounded lookup and flag result while preserving those limits. No further generic count/event/allocator/cancellation/account study is queued. Other achievement/content consumers and the broad online goal remain incomplete.",
+        "evidence": {
+          "method": "Serialized foreground existing FindDirectCallers, FindPointerValues, DumpReferences and DumpMemoryWords scripts with ReadOnly. Raw direct-BL search found one import caller 0x8280E588 and one wrapper caller 0x82E45FB8, both cap 32/untruncated/uncancelled; direct-BL search for 0x82E45F70 found0. These counts do not cover tail branches or indirect calls. Pointer-value search found0 for import and only PE metadata 0x8218A8D0 for wrapper. Listing references missed both raw calls but found data cell 0x8216055C for reader. These scoped negatives never prove unused code. All217 selected memory words match the pinned flat image;205 instruction comments agree with narrow generated windows. Existing save-thunk truncation is not closure evidence.",
+          "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+          "owners": [
+            {
+              "start": "0x8280E510",
+              "endExclusive": "0x8280E594",
+              "metadata": "0x8218A8D0",
+              "instructions": 33,
+              "sha256": "C3E516AEEB91C4848E7412F4D5F935A6665B797A12C72B94B07A3236DB05054D"
+            },
+            {
+              "start": "0x82E45F70",
+              "endExclusive": "0x82E46088",
+              "metadata": "0x821A0318",
+              "instructions": 70,
+              "sha256": "FE060E7A31613942B01C5A89B2C70861717F62F1EB0BFA1F217DCCFF127FDCA8"
+            },
+            {
+              "start": "0x82CB14A0",
+              "endExclusive": "0x82CB14FC",
+              "metadata": "0x8219AA08",
+              "instructions": 23,
+              "sha256": "7E10998432235C9E90B55309550F400A16187E726693ECDF58576D6FFA8D1D48"
+            },
+            {
+              "start": "0x82CB1430",
+              "endExclusive": "0x82CB149C",
+              "metadata": "0x8219AA00",
+              "instructions": 27,
+              "sha256": "EC39B2A8BB497C9AB6BF997FDCFB0C4485998481F3536120CF36F67A2806898E"
+            },
+            {
+              "start": "0x82E45DA8",
+              "endExclusive": "0x82E45E60",
+              "metadata": "0x821A0308",
+              "instructions": 46,
+              "sha256": "D1BC858AF91D5A7AB1AB2341B2B58B0FA38287531C8B56916780505890C38067"
+            },
+            {
+              "start": "0x8280DDD0",
+              "endExclusive": "0x8280DDE8",
+              "metadata": null,
+              "instructions": 6,
+              "sha256": "6F1B7DCF44402C98A49B83543F131E8368F633921A84D7900A2FCBC0A22A6807"
+            }
+          ],
+          "generated": [
+            {
+              "owner": "0x8280E510",
+              "path": "generated/default/rerevved_recomp.150.cpp",
+              "firstLine": 16181,
+              "lastLine": 16260,
+              "instructions": 33,
+              "sha256": "7312FA67E55266411770AFB665C03EB73F360EE354ABF54403B526F8F560EF16"
+            },
+            {
+              "owner": "0x82E45F70",
+              "path": "generated/default/rerevved_recomp.211.cpp",
+              "firstLine": 32574,
+              "lastLine": 32738,
+              "instructions": 70,
+              "sha256": "9E7CC655ED03B2C0CE9AD1B8BF8F57DE32C95A63747C871987A03DB02F2D7013"
+            },
+            {
+              "owner": "0x82CB14A0",
+              "path": "generated/default/rerevved_recomp.69.cpp",
+              "firstLine": 29329,
+              "lastLine": 29386,
+              "instructions": 23,
+              "sha256": "8753F11F9FB9AB583711B24D46645626831CF2E4167CC8E2D4C690F95D9A5E70"
+            },
+            {
+              "owner": "0x82CB1430",
+              "path": "generated/default/rerevved_recomp.95.cpp",
+              "firstLine": 29186,
+              "lastLine": 29251,
+              "instructions": 27,
+              "sha256": "D6D33753EF791ABD53C3236CCB6EEDBC2F7D6D772DEE8E0BA0809D6CC54695A7"
+            },
+            {
+              "owner": "0x82E45DA8",
+              "path": "generated/default/rerevved_recomp.124.cpp",
+              "firstLine": 32959,
+              "lastLine": 33065,
+              "instructions": 46,
+              "sha256": "F8958CC8A5864AA4B03EF369F288EE5929A63BD91D4608219EE39BCC35D015E4"
+            },
+            {
+              "owner": "0x8280DDD0",
+              "path": "generated/default/rerevved_recomp.174.cpp",
+              "firstLine": 16148,
+              "lastLine": 16164,
+              "instructions": 6,
+              "sha256": "CA74D2CCF82F3A7A65DD2C97F9ECE1965974F4847E2A75A707C1F73B545DFBD7"
+            }
+          ],
+          "instructions": 205,
+          "memoryWords": 217,
+          "peMetadataWords": 10,
+          "otherWords": 2,
+          "reusedContracts": [
+            "achievement-unlock-triggers.json#/findings/RVA-F-0344",
+            "xbox-live-mode-entry-invite-contract.json#/nativeIdentityNotificationVoiceConsumerBoundary",
+            "xbox-live-session-search-contract.json#/nativeDetailsOutputAvailabilityBoundary",
+            "xbox-kernel-handle-close-boundary.json#/leafResolution",
+            "game-of-the-week-local-generation.json#/leaderboardRetirementBoundary"
+          ],
+          "sdkSourceBlobs": [
+            {
+              "path": "rerevved-sdk:src/kernel/xam/xam_user.cpp",
+              "blob": "283a9c51584ef1db90cc153c9835ab145086038a"
+            },
+            {
+              "path": "rerevved-sdk:src/kernel/xam/xam_enum.cpp",
+              "blob": "9dcab94ed1239a2920791eebbe360a5d737fa55f"
+            },
+            {
+              "path": "rerevved-sdk:src/system/kernel_state.cpp",
+              "blob": "6b2ecdec18e9bc7bed8ac689fa9df8afdac07c8d"
+            },
+            {
+              "path": "rerevved-sdk:include/rex/ppc/function.h",
+              "blob": "b1dbba1d8c77794c0b189247330008072f2d3e97"
+            },
+            {
+              "path": "rerevved-sdk:include/rex/hook.h",
+              "blob": "4ce4f9b9f8627702f2435e4bfc6b5c2242c830ef"
+            },
+            {
+              "path": "rerevved-sdk:include/rex/system/xio.h",
+              "blob": "a74ef418001b80caba526fb0c37dd0fe2e6a14d5"
+            },
+            {
+              "path": "rerevved-sdk:include/rex/system/xtypes.h",
+              "blob": "d0e8f6775416e90ec3d1d2f43863fa45a01f50bc"
+            }
+          ]
+        }
       }
     },
     "RVA-F-0345": {

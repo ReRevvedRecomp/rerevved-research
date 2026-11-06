@@ -81,7 +81,7 @@
         "format": "%s.master.gamespy.com",
         "string": "0x820C5E2C",
         "user": "qr2_init_socketA 0x82A09368 formats it at 0x82A09688 only when its ispublic argument is nonzero and override buffer 0x83157EA0 is empty, then resolves UDP 27900 at 0x82A096C4.",
-        "titleReach": "Reached through the title qr2_initA call at 0x82C9F438, conditional on the runtime ispublic value."
+        "titleReach": "The selected title caller supplies 0 for the distinct r10 initialization field. Under nativeQr2ArgumentBoundary retention/helper conditions, A09654 skips this formatting/resolution suffix. Other callers, later writes and runtime traffic remain separate."
       },
       {
         "format": "%s.ms%d.gamespy.com",
@@ -102,17 +102,17 @@
   "hostSide": {
     "dispatch": "Manager host helper 0x82D8E1F8 dispatches session slot +0x2C at 0x82D8E408. For table 0x82160348 that slot is 0x82C9F320.",
     "qr2InitCall": "0x82C9F320 calls qr2_initA at 0x82C9F438 with qrec null, ip null, baseport 26900, registry gamename and secret key, r8 from slot +0x188 at 0x82C9F3F0, and r9 from slot +0x18C at 0x82C9F3D8 of the object returned by registry lookup 0x82CAAAA8 at 0x82C9F360 for session key +0x0C. It passes six code pointers 0x82C9E790, 0x82C9E648, 0x82C9E500, 0x82C9D7F8, 0x82C9DBC8, and 0x82C9E218 and the session as userdata. On success it stores byte 1 at session +0x58.",
-    "parameterShape": "The guest qr2_initA and qr2_init_socketA take sixteen argument slots. The 8th register argument and the first stack argument are zero at this call and have no positional counterpart in the 14-parameter bbac5ff qr2_initA. By the bbac5ff order, r8 is ispublic and r9 is natnegotiate.",
+    "parameterShape": "nativeQr2ArgumentBoundary corrects the 16-argument Xbox layout using native callers, forwarding and stored fields. Arguments 6/7 (r8/r9) are the selected session-record pointer and length, not ispublic/natnegotiate. Argument 8 (r10) and argument 9 (caller SP+54) are separately supplied 0 at C9F438 and reach initializer fields C+1C8/+1D4. External 14-argument positions do not establish this Xbox ABI.",
     "socket": "qr2_create_socket 0x82A09820 creates socket(2, 2, 17) at 0x82A0985C and binds INADDR_ANY (a resolved 127.0.0.1 is cleared) from the base port for at most 100 ports at 0x82A098D0, so the host query socket uses the first free UDP port in 26900 through 26999.",
     "service": "Slot +0x0C target 0x82C9DB78 calls qr2_think 0x82A09C20 and ServerBrowserThink 0x82A0D3D8. Slot +0x10 target 0x82C9DB20 calls heartbeat-sending QR2 helper 0x82A09F40, whose source identity is not established.",
-    "socketStartup": "Registry initializer call 0x82D8D494 passes a configuration bit to 0x82A07338, which stores it at 0x82F32D50; GameSpy SocketStartUp 0x82A0F460 skips XNetStartup when that word is nonzero."
+    "socketStartup": "Registry initializer call 0x82D8D494 passes a configuration bit to 0x82A07338, which stores it at 0x82F32D50. The common startup helper 0x82A0F460 uses that word to choose null versus initialized parameters. Both selected branches request XNetStartup. xbox-system-link-qos-root.json#/nativeNetworkCleanupBoundary owns the exact helper/result contract."
   },
   "refreshJoin": {
     "staticChain": "Title method 0x82D6C398 (table word 0x8213B8F8) tail-calls 0x82D8D920 with manager 0x8314EFE0. When manager +0x10 is null, 0x82D8D920 creates a mode-1 session through 0x82D8D170 and calls 0x82D8D030, which dispatches session slot +0x30 at 0x82D8D09C. For the GameSpy table this reaches 0x82C9DA48, slot +0x3C, 0x82C9D978, and the LAN update.",
     "secondRoute": "Dispatcher 0x82D8E848, called from 0x82D89FD8, calls 0x82D8D030 when its r4 argument is zero, helper 0x82D8AA60 returns zero, and manager +0x1C is negative.",
     "repeat": "Because 0x82C9DA48 reuses an existing browser and still dispatches slot +0x3C, a repeated browse request reissues the LAN query.",
-    "yPressBoundary": "The closed OnPressY runtime target 0x82D76350 directly calls only 0x82D39138, 0x82D6F300, 0x82D6F5D8, and 0x82D6F858; none is 0x82D6C398, 0x82D8D920, 0x82D8D030, 0x82C9DA48, or 0x82C9D978. Its slot +0x3C dispatch uses its second UI object, not a session table. Manager-level slot +0x3C dispatches in 0x82D8A508, 0x82D8C9B8, and 0x82D8DB48 use manager +0x10, not the session at +0x14.",
-    "qualification": "No static evidence connects the visible Refresh action to this chain. The UI class owning 0x82D6C398 and the event that invokes it are unresolved, and the closed OnPressY helper continuations were not followed."
+    "yPressBoundary": "The closed OnPressY runtime target 0x82D76350 directly calls only 0x82D39138, 0x82D6F300, 0x82D6F5D8, and 0x82D6F858; none is 0x82D6C398, 0x82D8D920, 0x82D8D030, 0x82C9DA48, or 0x82C9D978. Its slot +0x3C dispatch uses its second UI object, not a session table. Manager-level slot +0x3C dispatches in 0x82D8A508, 0x82D8C9B8, and 0x82D8DB48 use manager +0x10, not the session at +0x14. nativeSystemLinkBrowseDispatchBoundary now binds 0x82D6F5D8 slot+30 to 0x82D6C398 for actual retained constructed table 0x8213B8C8. This conditional transitive route is separate from the direct-call list and still requires the current second-object class/publication.",
+    "qualification": "nativeSystemLinkBrowseDispatchBoundary binds constructed table 0x8213B8C8, selected slot+30/0x82D6C398 and the conditional accepted OnPressY -> 0x82D6F5D8 helper route. Actual factory publication/current event receiver, visible Refresh ownership, fresh manager/session identity and completed query remain unproved. Closed earlier FSCommand/Y-button gates are not repeated."
   },
   "internetPath": {
     "selection": "0x82D8D170(manager, mode) tears down an existing session whose +0x08 mode differs (0x82D8D1A0), then creates one through 0x82CABB68 and factory 0x82CA28F0 (call 0x82CABB84). Mode 1 allocates 92 bytes with table 0x82160348; any other mode allocates 128 bytes through 0x82C9CD68 with table 0x82160450 and stores the mode at +0x08. The new session receives (mode == 1) through slot +0x04 at 0x82D8D274.",
@@ -121,7 +121,7 @@
     "xgiSearch": "0x82C9D080 calls 0x82A1F310 at 0x82C9D16C with procedure index 0, at most 200 results, and no properties. 0x82A1F310 submits XMsgStartIORequest app 0xFB message 0x000B0016 with a 32-byte request at 0x82A1F398, requires 8 + 1326 bytes per result, and returns 122, 997, or 1627. 0x82C9C5F8 also calls it. 0x82C9CF70 calls 0x82A1F3F0 at 0x82C9CFF0 and 0x82C9D03C; that wrapper submits message 0x000B001B with a 20-byte request carrying a 64-bit identifier at 0x82A1F45C and requires at least 1334 bytes.",
     "xgiLabels": "The maintained SDK handler labels 0x000B0016 as XSessionSearch with a 32-byte request and 0x000B001B as XSessionSearchByID with a 20-byte request. The guest request sizes and fields agree; the labels remain SDK interpretation.",
     "gameSpyMaster": "No title path reaches the master server list in the tested forms. ServerBrowserUpdateA 0x82A0CD50, ServerBrowserLimitUpdateA 0x82A0CDA8, ServerBrowserAuxUpdateIPA 0x82A0CF78, ServerBrowserAuxUpdateServer 0x82A0D1D0, 0x82A0CEB8, 0x82A0CF10, and GSIStartAvailableCheckA 0x82A07350 have no raw direct caller, no generated b or bl branch, and only .pdata words. All 18 generated branches into 0x82A0CB80, 0x82A1A0A8, 0x82A1A340, 0x82A1AE18, 0x82A1AEE8, 0x82A1B100, 0x82A1B230, 0x82A1B390, and 0x82A1B4A0 originate inside that closure or those roots.",
-    "qr2Public": "QR2 heartbeats to civconps3.master.gamespy.com UDP 27900 occur only if the runtime r8 value at 0x82C9F438 is nonzero; QR2 is called only from the mode-1 table.",
+    "qr2Public": "nativeQr2ArgumentBoundary proves that selected C9F438 supplies r10=0 and SP+54=0 independently of the record pointer/length. With retained native frame inputs and compatible helpers, the r10 guard at A09654 skips the selected master-address formatting/resolution suffix. This is not a whole-lifetime heartbeat or runtime traffic theorem. QR2 host selection remains mode 1.",
     "priorSearchQualification": "The configured project truncates 0x82A1F310 and 0x82C9D080 at save thunk 0x827F7C84 and 0x82A1F3F0 at bad instruction data, which is why the bounded modeled-reference searches for 0x000B0016 found no producer. That negative remains correct only for its tested form.",
     "result": "The title implements both paths. Mode 1 uses GameSpy Server Browsing in LAN mode plus QR2 hosting. Mode 2 uses XGI session search, search by identifier, and no GameSpy browsing or QR2. No GameSpy master list lookup is reachable."
   },
@@ -221,10 +221,378 @@
   "guards": [
     "Do not record or reproduce the secret key value.",
     "Do not treat mode 1 as System Link or mode 2 as Xbox LIVE from UI labels alone; the split is proved by the session tables, not by visible strings.",
-    "Do not assume QR2 contacts the GameSpy master in System Link play; it depends on the runtime value at 0x82C9F438, and the one emulator run sent no master traffic.",
+    "Do not infer current master traffic from a nonzero record pointer. nativeQr2ArgumentBoundary binds separate zero initialization inputs and the selected master-resolution guard; later QR2 state and actual traffic remain unobserved here.",
     "Do not infer that the visible Refresh action reaches 0x82C9D978 from this static chain.",
     "Do not treat the SDK XGI message labels as guest proof beyond the matching request sizes and fields.",
     "Do not infer runtime discovery, reply parsing, join completion, NAT traversal, or Internet play from this static inventory."
   ],
-  "conclusion": "Version 1.3 embeds GameSpy QR2, Server Browsing, GT2, and an unreached availability check, and carries no NAT Negotiation, GP, GameStats, SAKE, Peer/Chat, CD-key, or MOTD host. Its gamename is the PlayStation 3 identifier civconps3, and a six-byte secret key is built from immediates in 0x82D8CC28. Session mode 1 installs table 0x82160348: browsing creates a LAN-only QR2 Server Browser and broadcasts a 16-byte QR2 echo to UDP ports 26900 through 27000, and hosting calls qr2_initA with base port 26900, binding the first free port up to 26999. Other modes install table 0x82160450, which searches through XGI messages 0x000B0016 and 0x000B001B and makes no GameSpy call. No title path reaches the GameSpy master list; a QR2 master heartbeat depends on a runtime flag. One emulator capture of the base title corroborated the mode-1 exchange, QR2 port 26900, a GT2 join on guest port 1000, and no master traffic. The visible Refresh action and the static source of the runtime flags remain unjoined."
+  "conclusion": "Version 1.3 embeds GameSpy QR2, Server Browsing, GT2, and an unreached availability check, and carries no NAT Negotiation, GP, GameStats, SAKE, Peer/Chat, CD-key, or MOTD host. Its gamename is the PlayStation 3 identifier civconps3, and a six-byte secret key is built from immediates in 0x82D8CC28. Session mode 1 installs table 0x82160348: browsing creates a LAN-only QR2 Server Browser and broadcasts a 16-byte QR2 echo to UDP ports 26900 through 27000, and hosting calls qr2_initA with base port 26900, binding the first free port up to 26999. Other modes install table 0x82160450, which searches through XGI messages 0x000B0016 and 0x000B001B and makes no GameSpy call. No title path reaches the GameSpy master list in the recorded tested forms. nativeQr2ArgumentBoundary corrects the record pointer/length and zero flag inputs, and conditionally excludes the selected master-resolution suffix. Whole QR2 lifetime and runtime traffic remain separate. One emulator capture of the base title corroborated the mode-1 exchange, QR2 port 26900, a GT2 join on guest port 1000, and no master traffic. The visible Refresh action and actual current QR2/session state remain unjoined.",
+  "nativeQr2ArgumentBoundary": {
+    "question": "Which native QR2 arguments are the session-record pointer, length and two initialization flags, and does the selected host call admit master-address resolution?",
+    "confidence": "confirmed",
+    "classification": "Proved statically: the earlier assignment of ispublic to r8 and natnegotiate to r9 is incorrect for this Xbox native call. Under the selected retained service/wrapper classes, r8 is Q+0C and r9 is 60. The caller independently supplies r10=0 and its first stack argument=0. The native forwarding and initializer distinguish these fields. Under retained frame inputs and compatible normal helper returns, the zero r10 branch skips the selected master-address formatting/resolution suffix. Runtime packet absence, whole QR2 lifetime and discovery success are not established.",
+    "scope": "Eight selected owners: five complete PE extents and three bounded two-instruction leaves without PE entries. The accepted S+2C getter is revalidated rather than a new semantic expansion. Seven other owners are newly examined for this question. S is the registry-resolved primary service, Q1/Q2 are separately sampled nested wrappers, H the host session, C the initializer context and F a current initializer frame. Require valid separate mapped objects, frames, strings and extents, compatible normally returning helpers, original thunk/full-register ABI, retained actual classes/keys/outputs and no destructive aliases/interference. Separate getter/global samples do not prove equal current generations. No UI event, generic registry descendant or later QR2 heartbeat body is expanded.",
+    "hostAndRegistry": "C9F320 first requires a nonempty retained name and nonnull CAAAA8(global 8314F204,H+0C) result S. Reuse registryAndService for conditional key lookup and CB12F0 final service table 8215FA78. At C9F3D8 it requests S+18C and retains that result, then freshly samples S vptr for +188 at C9F3F0. It places the latter full result in r8 and the former in r9 before A09988 at C9F438. The two method calls and current tables require their own retention conditions. The host method does not itself inspect either result as a Boolean.",
+    "selectedSlots": "For actual retained table 8215FA78, cells 8215FC00/8215FC04 bind +188 to CA3AE0 and +18C to CA3A60. Both methods request service+10C twice when the first result is nonnull. With selected cell 8215FB84=822E2750, each getter returns U32[S+2C]. A null first sample returns explicit 0. A nonnull first sample gates a fresh second sample, which is dereferenced without another local null check. CA3AE0 invokes that second wrapper+5C; CA3A60 invokes its +60. Q1 and Q2 are not equated by this pattern.",
+    "recordAndLength": "For a retained actual second wrapper table 82160630, selected cell 8216068C (+5C) contains C992B0, which returns Q+0C; selected cell 82160690 (+60) contains C992A8, which returns explicit 60. The pointer and size are separate results from separate wrapper samples. Reuse accepted wrapperConstruction for the conditional service+2C factory/table link and wrapperAndGetter for the getter. The existing invite/session records supply the XSESSION_INFO interpretation. This packet proves pointer/length shape; it does not prove that the 60 bytes are populated, coherent, current, delivered or safe to reuse later.",
+    "callerFlags": "Independently of those two virtual results, C9F3F4 sets r5=0 and C9F400 writes 0 at caller SP+54. C9F430 sets r10=0. At C9F438 these are argument 8 and argument 9 when counting the incoming r3 as argument 1. They are distinct from argument 6=r8 and argument 7=r9. Six selected callback words and userdata follow on the stack. Public/native layout must not borrow the 14-argument external layout by position.",
+    "forwarding": "A09988 uses a frame 0xA0. It stores incoming r8/r9/r10 at its frame+DC/+E4/+EC and, after admitted socket creation, reloads them at A09A28/A09A24/A09A20 for A09368 at A09A40. The original caller SP+54 is copied through current frame+F4 to outgoing SP+54 at A09A18/A09A1C. Error before this call returns the socket helper result. The two extra pointer/length arguments precede the two flag inputs in this Xbox native ABI.",
+    "copyAndStoredFlags": "A09368 uses frame 0xC0. It stores incoming r8/r9/r10 at F+FC/+104/+10C. It writes the saved r10 to C+1C8 at A094B0 and the incoming first stack word F+114 to C+1D4 at A094C8. At A095FC..A09644, nonnull saved r8 and nonzero saved r9 admit a bounded-length copy request into C+90, with reported length written at C+190. A positive supplied 60 is below the signed cap 256 and therefore requests 60 bytes. Helper success and source/destination retention are separate premises; no completed copy is inferred merely from the call.",
+    "masterResolutionGuard": "After A0A190 returns, A0964C reloads saved r10 and A09654 branches to A09734 when it is0. This skips the selected A09658..A09730 suffix, including the conditional master-address formatting at A09688 and resolver request A0A278(port 27900) at A096C4. A09734 stages 1 for the final local result and its normal path returns 0. This proves the selected guarded call exclusion under retained arguments, not no network traffic anywhere, successful socket binding, no later context mutation or all-caller QR2 behavior. The ispublic and natnegotiate names are structural interpretations from the earlier external GameSpy comparison; the Xbox word flow and branch prove the argument distinction without using PS3 names as authority.",
+    "minimalProposal": "Correct the evidence and diagnostic labels. No title or SDK behavior change is selected. Preserve the deliberate zero values, pointer/length shape, current-object checks and native result distinctions. Do not enable public registration, alter a menu private/public setting or change transport from this argument correction. Reached menu ownership, usable discovery and complete QR2 lifecycle remain separate questions.",
+    "logging": "Proposed default-off bounded pairs: C9F360/C9F364 registry lookup; C9F3D8/C9F3DC and C9F3F0/C9F3F4 selected method results; each accessor first/second +10C sample and actual wrapper class; C9F438/C9F43C argument/result categories; A09A40/A09A44 forwarding; A094B0/A094C8 context flag writes; A09630 length store/A09644 copy request; A09654 chosen branch and A096C4 resolver request only if actually reached. Log opaque attempt/service/wrapper/context generations, null/class/equality categories, length and zero/nonzero flags, branch/result categories and capture coverage/loss. Use already sampled values, preserve guest state and emit no raw pointers, session records, XUIDs, addresses, keys, credentials, names or payloads. All diagnostics UNRUN.",
+    "remaining": "Actual service/wrapper/context generation, matching nested samples, usable record population, socket/helper outcomes, later context writers/heartbeat consumers, visible System Link list/Refresh ownership and complete discovery/join remain unknown. The historical emulator capture has its own base-title/emulator provenance and is not a new v1.3 runtime receipt. The earlier r8/r9 flag assumption is rejected, while current packet behavior, NAT traversal, Internet support and a desync cause are unproved. All behavior and acceptance UNRUN. No generic descendant or UI continuation is queued from this packet.",
+    "evidence": {
+      "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "titleRevision": "3f74e5f0995c4ebe6b0765b2ebe12d48ac85d6b7",
+      "method": "Six completed serialized foreground ReadOnly queries checked 493 word records:487 distinct proof words comprising 472 native instructions, 10 PE metadata words and five selected cells, plus six excluded neighboring words C992B8..C992CC. Independent original-image/PE/PPC64BE checks cover five PE extents and three two-instruction leaves. Eight narrow generated windows match 471 instruction comments. The native branch A09750 has no generated comment; it remains original-image/headless/decode evidence and is not silently counted as a matched comment. No canonical project repair or behavior execution.",
+      "owners": [
+        {
+          "start": "0x82C9F320",
+          "endExclusive": "0x82C9F474",
+          "metadata": "0x82199DD8",
+          "instructions": 85,
+          "sha256": "ED8C776F2729EEA87BEA4A899C8C248F088F756CAAF0C9C0A894FB4439930D45"
+        },
+        {
+          "start": "0x82CA3AE0",
+          "endExclusive": "0x82CA3B5C",
+          "metadata": "0x8219A068",
+          "instructions": 31,
+          "sha256": "D3EBF43D8513C4A470113B28FF29EBF30531C86CAC291CBB7237F93C6A97C032"
+        },
+        {
+          "start": "0x82CA3A60",
+          "endExclusive": "0x82CA3ADC",
+          "metadata": "0x8219A060",
+          "instructions": 31,
+          "sha256": "DCE7B8BBAAEBCE887F9BF21559B3FCA2CA5320419E2FFE18978231700E427034"
+        },
+        {
+          "start": "0x822E2750",
+          "endExclusive": "0x822E2758",
+          "metadata": null,
+          "instructions": 2,
+          "sha256": "B4A04E0D1E040286D1163E019BA7BBB96DEFB34CB7E28FFE34E1362B45FF0FFC"
+        },
+        {
+          "start": "0x82C992A8",
+          "endExclusive": "0x82C992B0",
+          "metadata": null,
+          "instructions": 2,
+          "sha256": "688E4151662F6A05A5906A90CD28BEE812CCB804EF214CB957E7D2EEF548A342"
+        },
+        {
+          "start": "0x82C992B0",
+          "endExclusive": "0x82C992B8",
+          "metadata": null,
+          "instructions": 2,
+          "sha256": "628252647637B09398402AFE55AB55EA98BC50A5B0146E4B8636C17F941A2A32"
+        },
+        {
+          "start": "0x82A09988",
+          "endExclusive": "0x82A09A84",
+          "metadata": "0x82191930",
+          "instructions": 63,
+          "sha256": "777DCCE79E2D05B027F065732578A78A07DC8791A193517EF480CB79E0279B57"
+        },
+        {
+          "start": "0x82A09368",
+          "endExclusive": "0x82A09768",
+          "metadata": "0x82191918",
+          "instructions": 256,
+          "sha256": "D74D6A751421E1B1C7180B0EB67583CC060342CD94FEF26AB0F78D2F6994EDC8"
+        }
+      ],
+      "selectedCells": {
+        "0x8215FC00": "0x82CA3AE0",
+        "0x8215FC04": "0x82CA3A60",
+        "0x8215FB84": "0x822E2750",
+        "0x8216068C": "0x82C992B0",
+        "0x82160690": "0x82C992A8"
+      },
+      "generated": [
+        {
+          "function": "0x82C9F320",
+          "path": "generated/default/rerevved_recomp.212.cpp",
+          "firstLine": 29635,
+          "lastLine": 29825,
+          "instructions": 85,
+          "matchedInstructionComments": 85,
+          "omittedNativeAddresses": [],
+          "sha256": "4C0B1980EEA3A2ACAE7540D4D01E225EEB1F5D7CFAC244FDC4A71B91B27D9CF0"
+        },
+        {
+          "function": "0x82CA3AE0",
+          "path": "generated/default/rerevved_recomp.44.cpp",
+          "firstLine": 26545,
+          "lastLine": 26617,
+          "instructions": 31,
+          "matchedInstructionComments": 31,
+          "omittedNativeAddresses": [],
+          "sha256": "3A37581BDFA38B238BACDD365DC1538768A5685D50B0B1957D66474CBA48A507"
+        },
+        {
+          "function": "0x82CA3A60",
+          "path": "generated/default/rerevved_recomp.146.cpp",
+          "firstLine": 29512,
+          "lastLine": 29584,
+          "instructions": 31,
+          "matchedInstructionComments": 31,
+          "omittedNativeAddresses": [],
+          "sha256": "336AB3FA5B8DF6F8D3332BBBF3765FEACA22273BD7DC7C88D743F1B25AC29F78"
+        },
+        {
+          "function": "0x822E2750",
+          "path": "generated/default/rerevved_recomp.38.cpp",
+          "firstLine": 2841,
+          "lastLine": 2848,
+          "instructions": 2,
+          "matchedInstructionComments": 2,
+          "omittedNativeAddresses": [],
+          "sha256": "64C0A706DCECFAFC1FC4EB96870277CD3A17F49611DC6117C3C4C5C6C64A400B"
+        },
+        {
+          "function": "0x82C992A8",
+          "path": "generated/default/rerevved_recomp.26.cpp",
+          "firstLine": 29106,
+          "lastLine": 29113,
+          "instructions": 2,
+          "matchedInstructionComments": 2,
+          "omittedNativeAddresses": [],
+          "sha256": "19BD4CDEBDA265F0DE9F6B175C094FBBAFB96E6F65B3537C2D89B7665CDF9F7A"
+        },
+        {
+          "function": "0x82C992B0",
+          "path": "generated/default/rerevved_recomp.148.cpp",
+          "firstLine": 27545,
+          "lastLine": 27552,
+          "instructions": 2,
+          "matchedInstructionComments": 2,
+          "omittedNativeAddresses": [],
+          "sha256": "16A624A3123A97AB229DD04F7DE7704C6B57F28DD961B2F304CB84F6C4AFD03D"
+        },
+        {
+          "function": "0x82A09988",
+          "path": "generated/default/rerevved_recomp.197.cpp",
+          "firstLine": 21453,
+          "lastLine": 21591,
+          "instructions": 63,
+          "matchedInstructionComments": 63,
+          "omittedNativeAddresses": [],
+          "sha256": "EC0A924D579FDEB1A537AC56053E696F3C079B3BE744BB994B4861679094684E"
+        },
+        {
+          "function": "0x82A09368",
+          "path": "generated/default/rerevved_recomp.33.cpp",
+          "firstLine": 21750,
+          "lastLine": 22303,
+          "instructions": 256,
+          "matchedInstructionComments": 255,
+          "omittedNativeAddresses": [
+            "0x82A09750"
+          ],
+          "sha256": "D53455304B7E7E04857F066EA7A60001BB644AE1B41E4E607CA1FE6995D62B96"
+        }
+      ],
+      "reusedContracts": {
+        "registryAndService": "xbox-live-session-search-contract.json#/nativeSessionServiceResetBoundary",
+        "wrapperConstruction": "xbox-live-session-search-contract.json#/nativeArbitrationFailureFallbackBoundary/freshKeyAndClass",
+        "wrapperAndGetter": "xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary"
+      }
+    }
+  },
+  "nativeSystemLinkBrowseDispatchBoundary": {
+    "question": "Which constructed native class can dispatch the System Link browse method, and does the accepted OnPressY branch have a conditional route to it?",
+    "confidence": "confirmed",
+    "classification": "Proved statically: constructed table 0x8213B8C8 supplies 0x82D6C398 at slot+30. 0x82D6F5D8 requests that slot and consumes low32 result 3 separately from other results. The accepted 0x82D76350 OnPressY branch calls this helper on its second object. This supplies a conditional route from the event to browsing when that object has the retained constructed class. Actual event receiver/class, factory registration/publication, visible Refresh ownership and completed LAN browsing remain unproved.",
+    "scope": "Eight newly examined semantic owners (six complete PE extents and two bounded leaves) plus the revalidated accepted three-instruction 0x82D6C398 tail. B is a retained browse object, E the accepted event receiver, S a separate small object, V the later B+4 sample and M a fresh global manager. Require valid mapped separate objects/frames/strings/finite containers, compatible normally returning helpers, original thunk/full-register ABI, admitted allocator extents, actual class/input/owner generations and no destructive aliases/interference. B=U32[E+4] with matching current class/lifetime is a composition premise, not an observation. Adjacent table words do not prove a whole-table boundary, RTTI identity or current menu. Unprefixed field and virtual-slot offsets in this record are hexadecimal.",
+    "constructedBrowseClass": "0x82D6C3A8 passes 10 to opaque 0x82D6F7B0 at 0x82D6C3C0, then writes table 0x8213B8C8 at B+0 at 0x82D6C3D0 and returns the retained numeric B. Factory 0x821DCA90 requests 0x34 bytes. Its nonnull branch passes 10 to the same base helper at 0x821DCAC4, installs 0x8213B8C8 at 0x821DCAD4 and returns the retained allocation after normal helper return. The null allocation branch returns 0. Ten is a constructor argument here; this packet does not establish it as a menu/controller ID or close the base helper, registration or output publication.",
+    "selectedMethod": "Selected cell 0x8213B8F8 is 0x82D6C398. Relative to actual retained table 0x8213B8C8 it is slot+30. The three-word leaf loads M=U32[0x8314EFE0] at 0x82D6C39C and tails to 0x82D8D920 at 0x82D6C3A0, replacing incoming r3. Reuse browseChain for the guarded mode1 construction/session+30/LAN-update path. The fresh M is not derived from B in this tail, and its current attempt or session identity is not established by the event receiver.",
+    "helperResultConsumption": "0x82D6F5D8 retains B, loads its table and invokes slot+30 at 0x82D6F5F8. Signed low32 result 3 takes the message-request suffix 0x82D6F604..0x82D6F678; compatible localization/string/application+22C helpers and actual display remain separate. All other low32 values take 0x82D6F68C: sample V=U32[B+4], skip when null, otherwise load byte V+10, write 1 to byte V+11 at 0x82D6F6A4, and only when the loaded byte is nonzero request 0x82C4E858 at 0x82D6F6C0. This body neither normalizes a success result nor establishes accepted search, new results, UI delivery or join. The result category is not an SDK status identity or a Boolean.",
+    "eventJoin": "Reuse eventBranch and eventQualification for the accepted 0x82D76350 local OnPressY comparison, scalar-delta threshold 500, second-object+11 write and 0x82D6F5D8 call. The new B class/slot30 proof is the concrete discriminator for expanding that formerly unexpanded direct helper. It does not redo the earlier FSCommand/Y-button gates or assert current receiver publication. With the same retained B at the accepted second-object input and actual table 0x8213B8C8, this route can request 0x82D8D920 on its freshly loaded M. Repeated helper invocation is separate from actual query transmission, result completion and visible Refresh action. No time unit is assigned to 500.",
+    "separateSmallObject": "The other construction candidate is a separate 16-byte path. 0x82D6C428 passes 17 to 0x82E4B690, then installs table 0x8213B898 at S+0. Factory 0x821DCA18 requests 0x10 bytes, calls 0x82E4B690 with 17 on nonnull allocation, installs 0x8213B898 and returns that retained allocation. Null returns 0. 0x82E4B690 stores the scalar at S+8, requests 20 bytes and, on nonnull allocation, calls opaque 0x82E51008 with that allocation and S. It stores the helper result at S+4; the null-allocation arm stores 0. This does not prove that the helper result equals its allocation or B. The raw word at 0x8213B898+30 is 0x821DCB28, with no whole-table membership inferred. The independently constructed browse table 0x8213B8C8 has the selected slot+30/0x82D6C398 join. Adjacency alone cannot choose the event receiver class.",
+    "smallObjectControl": "For actual retained table 0x8213B898, selected +0C cell 0x8213B8A4 binds 0x82E4B5E8 and +2C cell 0x8213B8C4 binds 0x82D6C3E8. 0x82E4B5E8 freshly samples globals 0x8314EFCC/0x8314EFC8, copies the first object+228 word to the second+108, then tails to its receiver+2C. 0x82D6C3E8 samples 0x8312B8D4 and requests its receiver+1C with numeric 11 when that word is -1 or 16 otherwise. These are selected copies and numeric requests; they do not prove a browse call, screen entry, Back/Cancel meaning or current menu/controller identity. The opaque +1C target is not expanded.",
+    "observedTargetLimit": "Selected cell 0x8213B904 is 0x82D6C340, offset+3C from constructed table 0x8213B8C8. This is compatible with the separately recorded OnPressX dynamic target, but a matching target alone does not identify the observed object class or establish a Create Game action. The old observation retains its own source/runtime provenance; no new runtime event was captured.",
+    "minimalProposal": "No title or SDK behavior fix is selected. Correct the class/slot and event diagnostic map, preserve native result 3 versus other categories and the deliberate threshold/constructor constants. Do not force an event, shorten a wait, substitute the small-object identifier or treat the helper result as browse completion. Actual factory publication/current receiver and intended error/retry policy must discriminate a repair.",
+    "logging": "Proposed default-off bounded hooks: B class publication at 0x82D6C3D0/0x821DCAD4 and its constructor-input category; accepted event second-object sample/call; 0x82D6F5EC table sample, 0x82D6F5F8/0x82D6F5FC call/return and consumed low32 category; 0x82D6C39C fresh manager; 0x82D6F68C nested-object sample and 0x82D6F6A4 byte write; message request versus actual display. Keep S constructor scalar/publication separate if observed. Correlate opaque event/browse/small-object/manager/session/attempt generations, class/equality/null categories and capture coverage/loss. Use already sampled values, preserve guest state and emit no raw pointers, keys, identities, names, strings, addresses or payloads. All diagnostics UNRUN.",
+    "remaining": "Unknown: actual factory registration and returned B publication into the accepted event receiver, current E/B/M/V/class/session generation, constructor-argument semantics beyond selected stores, reached menu/resource/event, message/display, query delivery/completion and safe retry. The constructed class and conditional event/helper target are mapped. A further source study needs a concrete publication to E+4 or another actual invocation discriminator; a matched class observation is a separate diagnostic gate. No generic UI/base constructor/allocator/registry descendants are queued. This is not a desync cause or complete multiplayer support. All behavior and acceptance UNRUN.",
+    "evidence": {
+      "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+      "titleRevision": "3f74e5f0995c4ebe6b0765b2ebe12d48ac85d6b7",
+      "method": "Seven completed serialized foreground ReadOnly queries. Five word reports contain 304 records / 303 distinct image-matched words. Selected proof is 229 words: 212 instructions (209 newly examined plus 3 revalidated), 12 PE metadata words and five selected cells. The 68 unselected table words and six neighboring code words remain navigation only. Six PE extents, two new bounded leaves and one accepted tail match independent original-image/PPC64BE checks and 212 comments in nine narrow generated windows. Two raw split-constant searches report 2/4 candidates with no truncation; candidates still require selected code/register/owner confirmation and are not complete class/publication inventories. No canonical repair, behavior or runtime execution.",
+      "owners": [
+        {
+          "start": "0x82D6C428",
+          "endExclusive": "0x82D6C468",
+          "metadata": "0x8219CA40",
+          "instructions": 16,
+          "sha256": "B76C984F7B86C2B5C4FECE34F99BE0E9610DC646DFCFC77D4FB5DF9981B9D38A"
+        },
+        {
+          "start": "0x821DCA18",
+          "endExclusive": "0x821DCA8C",
+          "metadata": "0x8216D198",
+          "instructions": 29,
+          "sha256": "330564B6E097D9E2E2D3E09D8703F611484F0E029B3CBE1B120CFE6C1DCED650"
+        },
+        {
+          "start": "0x82E4B690",
+          "endExclusive": "0x82E4B714",
+          "metadata": "0x821A0630",
+          "instructions": 33,
+          "sha256": "939263A72091C186929C1CC4D4251FB56DF4A886C148B830CD75B2C1E4B481EE"
+        },
+        {
+          "start": "0x82D6C3A8",
+          "endExclusive": "0x82D6C3E8",
+          "metadata": "0x8219CA38",
+          "instructions": 16,
+          "sha256": "9167FF20986DDC0C8ED8C4F16E653D3CDD4CE68DE3EA9F7BA79CD6ACC2B14121"
+        },
+        {
+          "start": "0x821DCA90",
+          "endExclusive": "0x821DCB04",
+          "metadata": "0x8216D1A0",
+          "instructions": 29,
+          "sha256": "C1984614007122AFF4548882F1158740A6AA2CA1C445CB788383D23583169E07"
+        },
+        {
+          "start": "0x82D6F5D8",
+          "endExclusive": "0x82D6F6D8",
+          "metadata": "0x8219CBC8",
+          "instructions": 64,
+          "sha256": "593AF2BD7807389013AABBC41670C4E9FD370309BEDB81179806E064EA8A54B0"
+        },
+        {
+          "start": "0x82D6C3E8",
+          "endExclusive": "0x82D6C418",
+          "metadata": null,
+          "instructions": 12,
+          "sha256": "78B030E0220F2081ED69200FB3B9D6EAB727C94AA63ABA17F6A5FE75CD682FCC"
+        },
+        {
+          "start": "0x82E4B5E8",
+          "endExclusive": "0x82E4B610",
+          "metadata": null,
+          "instructions": 10,
+          "sha256": "F3E4A41546A6EADAF285C8B2FAF681DA6B5A4DF0624F8205C07FA3E0A1826A3D"
+        }
+      ],
+      "reusedRanges": [
+        {
+          "start": "0x82D6C398",
+          "endExclusive": "0x82D6C3A4",
+          "metadata": null,
+          "instructions": 3,
+          "sha256": "43A2557B7A0C5DAED4E56BC99345296CB9492792C95A3C9C47F5019DB44A18E6",
+          "source": "xbox-gamespy-surface-inventory.json#/refreshJoin/staticChain"
+        }
+      ],
+      "selectedCells": {
+        "0x8213B8F8": "0x82D6C398",
+        "0x8213B8C8": "0x821DCB28",
+        "0x8213B8A4": "0x82E4B5E8",
+        "0x8213B8C4": "0x82D6C3E8",
+        "0x8213B904": "0x82D6C340"
+      },
+      "generated": [
+        {
+          "function": "0x82D6C428",
+          "path": "generated/default/rerevved_recomp.141.cpp",
+          "firstLine": 29903,
+          "lastLine": 29942,
+          "instructions": 16,
+          "matchedInstructionComments": 16,
+          "omittedNativeAddresses": [],
+          "sha256": "333A645031A6DCD2ED604375811A0DF4CF98D7990CAECE63409ED7E3FAAA74FC"
+        },
+        {
+          "function": "0x821DCA18",
+          "path": "generated/default/rerevved_recomp.200.cpp",
+          "firstLine": 356,
+          "lastLine": 423,
+          "instructions": 29,
+          "matchedInstructionComments": 29,
+          "omittedNativeAddresses": [],
+          "sha256": "1AB9D5B21E42C895554887B62E967873239C60DD5A0F6C762D91A70DE283A955"
+        },
+        {
+          "function": "0x82E4B690",
+          "path": "generated/default/rerevved_recomp.72.cpp",
+          "firstLine": 31992,
+          "lastLine": 32068,
+          "instructions": 33,
+          "matchedInstructionComments": 33,
+          "omittedNativeAddresses": [],
+          "sha256": "09AC952B8DEA42CF779C86F6156B7949A121E724FE4036F9B488AB06E4B2E784"
+        },
+        {
+          "function": "0x82D6C3A8",
+          "path": "generated/default/rerevved_recomp.39.cpp",
+          "firstLine": 29501,
+          "lastLine": 29540,
+          "instructions": 16,
+          "matchedInstructionComments": 16,
+          "omittedNativeAddresses": [],
+          "sha256": "76000A8A9EEFD48C2E44ECE714AFCCCBC7B699A3016D482949A7DA49C999CF7B"
+        },
+        {
+          "function": "0x821DCA90",
+          "path": "generated/default/rerevved_recomp.212.cpp",
+          "firstLine": 334,
+          "lastLine": 401,
+          "instructions": 29,
+          "matchedInstructionComments": 29,
+          "omittedNativeAddresses": [],
+          "sha256": "BCD9442E44878121C56473C8B8E6E95EC02B07FDD9414AA4E4FF1A5A7B1E7595"
+        },
+        {
+          "function": "0x82D6F5D8",
+          "path": "generated/default/rerevved_recomp.23.cpp",
+          "firstLine": 29590,
+          "lastLine": 29735,
+          "instructions": 64,
+          "matchedInstructionComments": 64,
+          "omittedNativeAddresses": [],
+          "sha256": "D5026604D53B833AA37C5CB76566850612DFFE4B48C911C1751312E9D6276A83"
+        },
+        {
+          "function": "0x82D6C3E8",
+          "path": "generated/default/rerevved_recomp.40.cpp",
+          "firstLine": 29450,
+          "lastLine": 29480,
+          "instructions": 12,
+          "matchedInstructionComments": 12,
+          "omittedNativeAddresses": [],
+          "sha256": "5B5C45F37959B3FF3A946ACE264AAB8DAF81F8BCA0476E2DABAFB52A5215364E"
+        },
+        {
+          "function": "0x82E4B5E8",
+          "path": "generated/default/rerevved_recomp.189.cpp",
+          "firstLine": 32841,
+          "lastLine": 32865,
+          "instructions": 10,
+          "matchedInstructionComments": 10,
+          "omittedNativeAddresses": [],
+          "sha256": "98B4C290EBE0D92DE4CC9A559830C396D8646907E869C38FFAC6250CD28B31D2"
+        },
+        {
+          "function": "0x82D6C398",
+          "path": "generated/default/rerevved_recomp.90.cpp",
+          "firstLine": 30004,
+          "lastLine": 30014,
+          "instructions": 3,
+          "matchedInstructionComments": 3,
+          "omittedNativeAddresses": [],
+          "sha256": "7F3DF74A032C849EC767C0399BD2862FFC74497813372B450F089B81E7A39E02"
+        }
+      ],
+      "reusedContracts": {
+        "browseChain": "xbox-gamespy-surface-inventory.json#/refreshJoin/staticChain",
+        "eventBranch": "xbox-system-link-qos-root.json#/uiAnchors/observedRefreshDispatchStatic",
+        "eventQualification": "xbox-system-link-qos-root.json#/uiAnchors/qualification"
+      }
+    }
+  }
 }

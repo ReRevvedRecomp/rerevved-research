@@ -45,9 +45,9 @@ below do not establish the order of the paths within a round.
 |---|---|---|
 | Research | The turn call `0x82D1D604` can reach the shared research prompt `0x82CECCD8` when research is unset or invalid and the state and resolver checks pass. The prompt builds ascending real technology IDs plus a sentinel and scores them. The order in which the scoring loop visits technologies is described in [Science and technology cost](science.md). | [technology-prompt-callers.json](../../manifests/technology-prompt-callers.json) |
 | Production | `AIUnitChoiceEvaluate` (`0x82CB44E0`) reads the city owner and scores candidates. Candidate 103 reads UEA 4 and adds half a coefficient before scoring. The comparison at `0x82CB668C..0x82CB66A4` replaces the best candidate on a tie as well as on a higher score. Whether the winner becomes an executed production is not shown. | [RVA-F-0330](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330), [production-cost-ownership.json](../../manifests/production-cost-ownership.json) |
-| Unit filter | `AITurnUnitFilter` (`0x82CBF570`) takes a player and unit, computes a threshold from the unit stats and replaces the retained candidate only for a strictly greater score. A tie keeps the earlier candidate. Later checks can drop it. One path through `TurnSelectionUpdate` (`0x82D259E8`) carries the code to a command 17 Move and a five word staging area. | [ai-stat-choice.json](../../manifests/ai-stat-choice.json), [unit-movement-lifecycle.json](../../manifests/unit-movement-lifecycle.json) |
-| Combat | `CombatResolve` (`0x82CD9970`) and three AI owners read the same effective attack and defense accessors. This shows that the AI consumes the stats. It does not show how the AI picks a war target, or how a result reaches live units. | [unit-definitions-ai-evaluation.json](../../manifests/unit-definitions-ai-evaluation.json), [Combat](combat.md), [Combat strength](combat-strength.md) |
-| Diplomacy | The selected scan of nonhuman pairs checks the relation, an elapsed value above 20 and both human checks, then requests contact. A retained nonzero choice reaches a warning, a history flag and a war request. See [Automatic AI contacts](#automatic-ai-contacts) and [Economic and strategic consumers](#economic-and-strategic-consumers). | [RVA-F-0330 `strategyDecisionBoundary`](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/strategyDecisionBoundary) |
+| Unit filter | `AITurnUnitFilter` (`0x82CBF570`) takes a player and unit, computes a threshold from the unit stats and replaces the kept candidate only for a strictly greater score. A tie keeps the earlier candidate. Later checks can drop it. One path through `TurnSelectionUpdate` (`0x82D259E8`) carries the code to a command 17 Move and a five word staging area. | [ai-stat-choice.json](../../manifests/ai-stat-choice.json), [unit-movement-lifecycle.json](../../manifests/unit-movement-lifecycle.json) |
+| Combat | `CombatResolve` (`0x82CD9970`) and three AI functions read the same effective attack and defense accessors. This shows that the AI consumes the stats. It does not show how the AI picks a war target, or how a result reaches live units. | [unit-definitions-ai-evaluation.json](../../manifests/unit-definitions-ai-evaluation.json), [Combat](combat.md), [Combat strength](combat-strength.md) |
+| Diplomacy | The selected scan of nonhuman pairs checks the relation, an elapsed value above 20 and both human checks, then requests contact. A stored choice that stays nonzero reaches a warning, a history flag and a war request. See [Automatic AI contacts](#automatic-ai-contacts) and [Economic and strategic consumers](#economic-and-strategic-consumers). | [RVA-F-0330 `strategyDecisionBoundary`](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/strategyDecisionBoundary) |
 | Spy | Evidence covers all six harmful missions and the selected arrival paths. A freshly created Spy picks mission 0. Kidnapping and bribery have rejection loops with no attempt limit. Whether a natural AI Spy reaches these paths is not shown. | [spy-mission-selection.json](../../manifests/spy-mission-selection.json), [Spy missions](spy-missions.md) |
 
 A leader name does not establish a personality table. Civilization bonuses
@@ -189,7 +189,7 @@ and one bit clear are recorded in
 [`multiplayerRosterEarlyAdmissionBoundary`](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0332/multiplayerRosterEarlyAdmissionBoundary).
 Their order relative to setup is not established.
 [`multiplayerPostResetFrozenRosterCandidateBoundary`](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0332/multiplayerPostResetFrozenRosterCandidateBoundary)
-owns the exact addresses, wire fields and conditions. Special modes, coherent
+records the exact addresses, wire fields and conditions. Special modes, coherent
 mappings, helper state, native civilization ID delivery and peer agreement
 remain conditions. No game with more than the native AI count has been run.
 
@@ -198,8 +198,8 @@ remain conditions. No game with more than the native AI count has been run.
 Command 48 loops over configured ordinals, not over a separate AI count. It
 loads the count at `0x82CDE800`, classifies each ordinal at `0x82CDE81C`, calls
 `0x82D1EAB0` and `0x82D1D1C0` for nonhumans at `0x82CDE830` and `0x82CDE838`,
-and advances through the count at `0x82CDE8A8..0x82CDE8B4`. Retained Barbarians
-are nonhuman, so a game with zero AI civilizations still gives this loop work.
+and advances through the count at `0x82CDE8A8..0x82CDE8B4`. Barbarians still in
+the roster are nonhuman, so a game with zero AI civilizations still gives this loop work.
 Its waits and completion checks still need finite returns and peer agreement.
 
 | Consumer | What the code does | What is not shown |
@@ -225,8 +225,8 @@ comes first in the network arm: `0x82D221D4` reads the network game byte
 `0x82D2264C` instead. The store runs before the call to `0x82D8AA60` at
 `0x82D221FC`, so that later manager check does not choose the value. No lobby
 or host value is read for it. In the other branch, `0x82D2264C..0x82D2267C`
-stores the root getter result, or a retained 0 when the halfword at `0x8314F1C8`
-is nonzero. Setup reads the word again at `0x82D2293C`, before the statistics
+stores the root getter result, or keeps the existing 0 when the halfword at
+`0x8314F1C8` is nonzero. Setup reads the word again at `0x82D2293C`, before the statistics
 recount at `0x82D2530C` (return address `0x82D25310`). The test at `0x82D22948`
 treats 0 specially: when `0x8312B8D4` is -1 and the halfword at `0x8314F1CC` is
 0, `0x82D22974` sets bit `0x800` in `0x830E4550`.
@@ -258,7 +258,7 @@ per-participant readiness, not an AI level.
 | Unit, building and Wonder production | `0x82CF1148`, `0x82CF1278` read L; `0x82CF1500..0x82CF1548` read D | A positive L lowers the starting scalar 10. The final Wonder test at `0x82CF1520` (signed D against 2) halves the cost C to `C - trunc0(C/2)`. | Wonder half cost: the human check false and D above 2. D 0, 1 and 2 pass no reduction, 3 and 4 do. There is no network byte test in this arm. |
 | Local Culture | `0x82D15094`, `0x82D15128`, `0x82D15134..0x82D15164` | Adds `clamp(2 - D, 0, 2)` to the Culture sum: 2, 1, 0, 0, 0 for D 0 to 4. This is Culture, not happiness. | The city owner equals the local player. |
 | Local combat help | `0x82CDB120` and `0x82CDB268` pick the side | D 0 adds 100 (`0x82CDB15C`, `0x82CDB294`) and D 1 adds 50 (`0x82CDB1E4`, `0x82CDB31C`) to the attack or defense multiplier. `0x82CDB390` and `0x82CDB39C` then multiply the base strengths. | The side equals the local player and the mode is 0 or 2. See [Combat strength](combat-strength.md). |
-| Higher difficulty combat paths | `0x82CDB8F4..0x82CDB944` | D above 2 or above 3 with the human check false can write a retained value to frame words `+0x9C` and `+0xA0`. | Flag meanings and effect are not established. |
+| Higher difficulty combat paths | `0x82CDB8F4..0x82CDB944` | D above 2 or above 3 with the human check false can write a saved value to frame words `+0x9C` and `+0xA0`. | Flag meanings and effect are not established. |
 | Garrison threshold | `0x82CB40C0..0x82CB40D8` | `low32(r10 + trunc0(s32(low32(low32(U32[0x830ECD08 + 4*r7] * (D + 1)) * r9)) / 60))`. | The index and inputs are selected, and the later use is open. It is not a general aggression multiplier. |
 | City priority | `0x82CC0008..0x82CC013C` in `0x82CBF570` | D not 0 is one condition of a priority path for other owners' cities. D 0 excludes that path. | Many other classification, tile and state checks. It is not a universal attack ban. |
 | Barbarian city credit | `0x82D15430..0x82D15448` | D 0 with weighted presence can zero a selected credit. | Not an AI wide factor. |
@@ -277,7 +277,7 @@ and the [difficulty finding](../../manifests/ai-options-boundaries.json#/finding
 ### What the evidence does not show
 
 Not every reader is found. A masked scan found 70 `lwz`, 3 `stw` and 4 `addi`
-candidates and a generated search found 66 comment hits in 25 owners, but cached,
+candidates and a generated search found 66 comment hits in 25 functions, but cached,
 indexed and passed pointer accesses are outside both. The scans include data
 and wrong bases: `0x823DA5D0` and `0x823DA5DC` use `0x82F8E7C8`, not difficulty.
 Research's discount also needs a zero network byte, so changing its difficulty
@@ -408,7 +408,7 @@ still be in flight when setup returns. None touches AI units.
 `0x82D0C1E0` keeps its once only check on the local observer, so peers set
 different pair matrix bits (`[A][p]` and `[B][p]`). This is native behavior for
 any network elimination. The 20 turn rule exists only in network games. The
-registry setting "Use MP Resynchronization" is stored at `0x8314F1D4`
+registry setting for multiplayer resynchronization is stored at `0x8314F1D4`
 (`0x82E2D684`). The resync strings are at `0x82D8FCC8` and the start is
 `0x82D8FF78`, called from `0x82D0E100`, `0x82D0E2BC`, `0x82CDE3C4` and
 `0x82D25B0C`. The per turn comparison is a type 53 check over the scalar
@@ -444,7 +444,7 @@ lookup (`0x82CF0CB0`, over a 16 by 4 table) can add half a local coefficient
 before later scoring. This does not show a leader personality, or any
 aggression, diplomacy, army, target or research preference. Candidate 103 reads
 UEA 4 at `0x82CB59E8..0x82CB5A08`, and the coefficient enters its score at
-`0x82CB5A40..0x82CB5AFC`. The ownership of each effect is in
+`0x82CB5A40..0x82CB5AFC`. Which civilization holds each effect is in
 [Civilization bonuses](civilization-bonuses.md#effect-ownership-catalog).
 
 The production score arm advances a local state, adds a scaled term to a
@@ -481,7 +481,7 @@ A starting list of arbitrary technologies needs its setup time effects checked.
 
 In OCC (one city challenge) games the AI can still found cities without a Settler, through a tile scan arm
 that starts at `0x82CBBE58`, calls the city creator at `0x82CBC03C` and has its continuation at `0x82CBC3D4`; see
-[Settler production gates](unit-definitions.md#settler-production-gates).
+[Settler production requirements](unit-definitions.md#settler-production-gates).
 
 ## Gold, Food and Culture output
 
@@ -490,7 +490,7 @@ the values reach caches and civilization state. Each hook must change both a
 register and its saved temporary, because changing a cache or a return value
 alone misses known copies. The
 [city yield finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0343)
-owns the registers, widths, native overrides and consumer limits.
+records the registers, widths, native overrides and consumer limits.
 
 | Yield | Hook point | Also change |
 | --- | --- | --- |
@@ -580,12 +580,12 @@ points.
 | Reset | `0x82D0606C..0x82D06084`, from the reset at `0x82D217E0` | Fills all 256 bytes (64 words) with `0xFF`, diagonal and unused cells included. |
 | Input | `0x82CC4C5C..0x82CC4CA4` (mode 1, null auxiliary) | Replaces all 64 words. A non-null auxiliary stream is a separate copy mode. |
 | Contact handler | `0x82CCEFA8`: `0x82CCFB98`, `0x82CCFBA4` store 1; `0x82CCFCE8` peace request; `0x82CCFBC8` war 0 preset | Earlier contact effects happen first. The preset forces war only for reached pairs. |
-| Retained contact home | `0x82CD11EC`, `0x82CD11F0` store 3; `0x82CD1654`, `0x82CD1658` and `0x82CD2044`, `0x82CD2048` store 1 | Two notifications are ignored; the Gold chooser branches before debit and credit. |
+| Saved contact home | `0x82CD11EC`, `0x82CD11F0` store 3; `0x82CD1654`, `0x82CD1658` and `0x82CD2044`, `0x82CD2048` store 1 | Two notifications are ignored; the Gold chooser branches before debit and credit. |
 | Tower of Babel (selector 7) | `0x82D18514`, `0x82D1852C` | A tested -1 becomes 1. An asymmetric reverse war 0 can also be overwritten. |
 | Tesla's Peace Ray (selector 11) | `0x82D18AC4`, `0x82D18ADC` | A tested war 0 becomes 1, with clocks and flags. |
 | Cleanup | `0x82D1D1C0` (`0x82D1E460`, `0x82D1E468`) | Writes 1 across a row and column for a player with sampled zero cities and Settlers. A sweep of 256 unit records may call `0x82D02390(p, record, 0)` first, at `0x82D1E428`. |
 
-The retained contact home at `stack+0xC8` holds three more symmetric non-war
+The saved contact home at `stack+0xC8` holds three more symmetric non-war
 pairs (the last three rows above that use it). Its full home version and six
 register generations are native. Other named homes and readers, including the
 United Nations Wonder path (UN19), are classified under stated frame, ABI and
@@ -616,7 +616,7 @@ reconcile every pair before setup and load readers.
 Normal refusal depends on the path:
 
 - The three choosers in `0x82CC9FF8` send native result -1 to the native war
-  continuation. Under retained symmetric war 0 this skips `0x82CC9078`, keeps
+  continuation. When symmetric war 0 is still in place, this skips `0x82CC9078`, keeps
   pair flag 4 and completes normally.
 - `0x82CC9078` has a place at `0x82CC90EC` that leads to its existing result 0
   and frame suffix. Cancelling its later notification is too late: the return is
@@ -633,7 +633,7 @@ Normal refusal depends on the path:
   `+0x434`, marks the dialog closed before the close work and publishes result -1
   after callbacks. The cancel request branch keeps AnimateExit, the current `+4`
   update loop and the usual completion suffix, all of which depend on the same
-  retained dialog, script and finite exit action. Animation state bytes are not
+  dialog, script and finite exit action staying in place. Animation state bytes are not
   written, and call depth does not stop a modal command from re-entering.
 - Command 39 writes the supplied relation at `0x82CE0088` and `0x82CE008C`. A
   check after the dispatch depth increment and before its first effects can
@@ -698,10 +698,10 @@ enforcement, other modes and Game of the Week are separate.
 
 `WARANDPEACE` is a signed 16 bit slot 9 at base `0x830E8FD0`, field `+0x12`
 (`0x830E8FE2`). The default is 1 and Eternal Kombat is 2. A scan of literal base
-loads found 8 loads in 7 owners; pointer and callback aliases are outside it.
+loads found 8 loads in 7 functions; pointer and callback aliases are outside it.
 Value 2 is broader than contact silence:
 
-| Reader | Owner | What value 2 changes |
+| Reader | Function | What value 2 changes |
 |---|---|---|
 | `0x82CB4000` | `0x82CB3F08` | Subtracts 1 from the selected non-Barbarian city threshold when city flag bit 0 is clear. Value 0 returns 1 instead. |
 | `0x82CCA190` | `0x82CC9FF8` | Makes the selected unit candidate -1. Presentation can still happen. |
@@ -744,7 +744,7 @@ command 33 is not proved to be manual only. The native condition `R(x, y)` not -
 a pair set to 0 by projection may not yet be disclosed, so first contact needs
 checking. Other message producers are not silenced. The
 [contact finding](../../manifests/ai-options-boundaries.json#/findings/RVA-F-0362/aiContactSilenceBoundary)
-owns the full reader table, inputs and limits.
+records the full reader table, inputs and limits.
 
 ### Default transport path for command 48
 
@@ -756,13 +756,13 @@ continuous war between every pair. Each is a finding in
 - `constructorTransportInitializationBoundary`: the call at `0x82CB1348` (target
   `0x82CB12F0`) reaches the constructor `0x82CA5E80`. The store at `0x82CA5EC4`
   writes zero to `S+0x14` before the first allocator call, and the 82 word local
-  owner has no later explicit overlapping store relative to S. Helper aliases,
-  normal return and the same retained receiver remain conditions. With a zero
+  object has no later explicit overlapping store relative to S. Helper aliases,
+  normal return and the receiver staying the same remain conditions. With a zero
   `S+0x14`, the accepted sender takes its missing transport path.
 - `sameSTransportPublicationBoundary`: child table `+0x18` is `0x82CA7720`. Under
   the stated call, allocator and helper conditions, `0x82CA77B0` installs table
-  `0x8215FC0C` to the retained P and `0x82CA77C4` publishes it to the same
-  `S+0x14`. Its retained `+0x0C` cell selects `0x82CA0488`. An allocation of zero
+  `0x8215FC0C` to P and `0x82CA77C4` publishes it to the same
+  `S+0x14`. Its `+0x0C` cell selects `0x82CA0488`. An allocation of zero
   also publishes zero, and the next pointer read has no null check, so nothing
   follows about a failed completion. The actual `+0x18` call, the current
   `S+0x130` and the initialization of captured table or current P `+0x04` are
@@ -771,11 +771,11 @@ continuous war between every pair. Each is a finding in
   `0x82C9FA10`. A nonzero low 32 bit routing input requests `0x82A087A8`. Zero
   requests a separate payload E and node J, then publishes J to the local
   `P+116` and `P+120` head and tail and adds 1 to `P+64`. The node stores E, not
-  the original serialized buffer pointer. With supported chunk, count, storage,
+  the original serialized buffer pointer. With a supported block, count, storage,
   clear and copy, and alias and lifetime conditions, E holds the selected source
   bytes plus zero padding. Clear before copy can destroy aliased source bytes,
   and aliasing of the node and control words can change resampled tail state.
-  Storage delivery, the retained queue and payload, and one connected consumer,
+  Storage delivery, the queue and payload staying in place, and one connected consumer,
   parser, factory or message processing edge are open. A copy request or queue
   append does not show a receipt or authority, and it needs coherent earlier
   links and a fresh node.
@@ -788,10 +788,10 @@ continuous war between every pair. Each is a finding in
   queued E or J, or defines a returned payload. Indirect effects are possible,
   so the local absence shows no actual non-use or release rule. A connected queue
   consumer and received processing are open.
-- `transportConstructorContextBoundary`: `0x82CA07DC` stores its retained second
+- `transportConstructorContextBoundary`: `0x82CA07DC` stores its second
   argument at `P+4` after two opaque helper requests. The accepted publication path
   supplies Q = `U32[S+0x18]`. This narrows the later current Q `+0x18` call target
-  to a retained constructor argument; the word alone does not show Q's table,
+  to a constructor argument; the word alone does not show Q's table,
   effects or lifetime. Whether the later initializer and call keep these values, and any identity of a
   queued E with a received command, are open.
 - `selectedTransportContextChildBoundary`: the installed Q `+0x18` method
@@ -799,9 +799,10 @@ continuous war between every pair. Each is a finding in
   then looks up `low32(V)` at R `+68`. The helper's word U (zero, or node `+12`)
   becomes the second argument to captured table `+0x64`. The full V is not that
   callback argument. The current registry, map, table and node must stay valid.
-  For an independently retained default child and table, the callback prefix tells
+  For a default child and table that independently stay in place, the callback prefix tells
   a null U from a signed `U+24` before further requests. No actual T equal to S,
-  queued E identity, payload ownership or command 48 receipt follows. The
+  the identity of the queued E, which function holds the payload, or receipt of
+  command 48 follows. The
   constructor path keeps its thunk, current state and finite return conditions.
 - `selectedTransportDefaultDispatchPrefixBoundary`: table `0x8215FA78` slot
   `+0xDC` (`0x8215FB54`) points to `0x82CA58A0`. The prefix keeps the full incoming

@@ -1,7 +1,7 @@
 # Native renderer ring setup and teardown
 
 The guest talks to the video hardware through two separate buffers. The
-command buffer is where draw code writes packets: its cursor is `G+0x30`, its
+command buffer is where draw code writes commands: its cursor is `G+0x30`, its
 soft limit `G+0x34` and its hard limit `G+0x38`, where `G` is the device
 structure. The primary ring is a small circular buffer the hardware reads. A
 finished command buffer segment reaches the hardware as a short descriptor
@@ -59,7 +59,7 @@ save thunk and two at an undecoded instruction.
 In order, it:
 
 1. drains its selected guest condition and closes writes to the old ledger,
-2. releases the owned blocks at `G+0x39F4` and `G+0x39F8`,
+2. releases the blocks it holds at `G+0x39F4` and `G+0x39F8`,
 3. unregisters the identifier address (value 0),
 4. releases the old `S2`, then the old `B`, and clears those fields,
 5. builds the replacement.
@@ -85,7 +85,7 @@ at `0x826A4B40`. Computed calls are outside this count.
 ## Draw entry inventory
 
 [`RVA-F-0081`](../../manifests/native-renderer-d3d-inventory.json) is an open
-candidate inventory of the Direct3D surface above the command packets. It
+candidate inventory of the Direct3D surface above the commands. It
 holds one entry, the wrapper `0x826A3568`, called at `0x82303E3C` and
 `0x82303E8C` from `0x82303C38` with primitive type 4. A plain reference query
 for `0x826A3568` returns no rows. After the repair scripts in

@@ -10,7 +10,7 @@ and repeated setup.
   layout, output contract, or failure path.
 - Evidence identity, JSON Pointers, ordering, or query bounds affect a result.
 - A writer or child process can fail. Check failure reporting, partial output,
-  and caller-owned cleanup or environment restoration.
+  and cleanup or environment restoration by the caller.
 
 ## When not to add a test
 
@@ -22,7 +22,7 @@ and repeated setup.
   the intended diagnostic.
 - The assertion only pins source spelling or editorial prose.
 - The check only enforces repository shape. Extend
-  [the verification gate](../../tools/verify.ps1) for links, ASCII,
+  [the verification check](../../tools/verify.ps1) for links, ASCII,
   script indexing, syntax, and forbidden tracked paths.
 
 ## Choose a fixture
@@ -55,8 +55,8 @@ Load every authored row once. Keep literal expected addresses, IDs, widths,
 and field order that specify evidence contracts. Schemas prove shape, not
 guest facts.
 
-Choose cases by branch: raw/swapped shader bytes, nested action scopes,
-bounded/overflowing candidate pools, or distinct path guards. Label cases with
+Choose cases by branch: raw or swapped shader bytes, nested action scopes,
+candidate pools within the limit or over it, or distinct path guards. Label cases with
 `self.subTest`; do not repeat every fault per row. Keep write, flush, and close
 failures separate because they occur at different points. Explain lost
 coverage when reducing a matrix.
@@ -94,4 +94,4 @@ powershell -NoProfile -File tools\verify.ps1
 
 Full discovery needs a JDK and `pwsh`. Ghidra API fixtures can skip when
 `REREVVED_GHIDRA_HOME` is unset. Report skips; do not count them as proof.
-[Verification](../style-guide.md#verification) owns dependencies and gate checks.
+[Verification](../style-guide.md#verification) covers dependencies and the checks.

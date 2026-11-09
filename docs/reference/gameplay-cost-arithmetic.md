@@ -42,7 +42,7 @@ The divide is at `0x82CE2910` and the multiply at `0x82CE2934` in `RushCostCompu
 (`0x82CE27F0`). The full unit cost that feeds the remaining production is
 `signed definition byte +0x44 * scalar / 2`; its instruction addresses, from
 `0x82CE28FC` to `0x82CE2928`, are in the
-[production cost ownership manifest](../../manifests/production-cost-ownership.json#/instructionAddresses).
+[production cost manifest](../../manifests/production-cost-ownership.json#/instructionAddresses).
 The formula and the command path are in the
 [rush cost manifest](../../manifests/rush-cost-producer.json#/costFormula).
 The same cost feeds the rush display at `0x82DFFE38`, the completion check at

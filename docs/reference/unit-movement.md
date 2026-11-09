@@ -190,5 +190,5 @@ animation setting.
   rejects the shared cooldown as a speed input.
 
 Evidence: [unit-movement-presentation.json](../../manifests/unit-movement-presentation.json)
-(`RVA-F-0383`). It supports bounded experiments, not an enabled option or
+(`RVA-F-0383`). It supports limited experiments, not an enabled option or
 observed acceleration.

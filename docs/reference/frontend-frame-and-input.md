@@ -1,14 +1,14 @@
-# Frontend, frame, and input ownership
+# Frontend, frame, and input paths
 
-Frontend lifecycle, timing, application callbacks, availability and input have
-separate owners. Names are recovered, not debug symbols. The static paths
-require the stated identities, normal ABI returns and stable state without
+Frontend lifecycle, timing, application callbacks, availability and input are
+handled by separate code. Names are recovered, not debug symbols. The static
+paths need the stated identities, normal ABI returns and stable state without
 harmful aliasing. Runtime observations are identified explicitly.
 
 ## Frontend state identity
 
 The global at `0x82FFD624` publishes the frontend root. Its field at `+0x70`
-holds the current frontend-state pointer. The bounded frontend states share a
+holds the current frontend-state pointer. The selected frontend states share a
 two-word identity prefix:
 
 | Offset | Recovered role |
@@ -23,12 +23,13 @@ two-word identity prefix:
   `0x821B3BB8` creates a `0x10`-byte state whose slot `+0x1C` builds the
   attract-movie playback object.
 
-The bounded [registration query](../../manifests/key2-game-start-registration.json)
-found two initializers and the entry-table word. Neither initializer registers
-or dispatches the state. The separate
-[state-owner contract](../../manifests/game-start-formatting.json#/stateTransitionBoundary)
-binds the conditional entry call under the current-state and table premises.
-Actual registration, the request producer and natural entry remain unproved.
+The [registration query](../../manifests/key2-game-start-registration.json),
+limited to the selected paths, found two initializers and the entry-table word.
+Neither initializer registers or dispatches the state. The separate
+[state-transition contract](../../manifests/game-start-formatting.json#/stateTransitionBoundary)
+ties the entry call to the current-state and table premises, and the call runs
+only when those premises hold. Actual registration, the request producer and
+natural entry are not yet established.
 
 The [entry lifetime contract](../../manifests/xbox-lobby-ready-check.json#/nativeEntryControllerLifetimeBoundary)
 distinguishes the screen manager from the game header's loading object. The
@@ -45,73 +46,79 @@ numeric keys.
 Screen events use a separate queue from game commands. When the sampled
 controller's byte at `+0x0C` is nonzero, the dispatcher requests storage of
 the event and its argument. The [UI queue contract](../../manifests/native-ui-event-queue.json)
-owns this path. Its embedded queue count is at manager `+0x28`, separate
+covers this path. Its embedded queue count is at manager `+0x28`, separate
 from the requested screen key at `+0x10`.
 
 The reader calls the saved event before it advances queue metadata, then
-requests the retained record's free. Controller and queue changes during
-that callback require separate lifetime evidence. A count change does not
+requests that the record be freed. Controller and queue changes during
+that callback need separate lifetime evidence. A count change does not
 prove delivery, removal of the same front record or safe cancellation.
 
 The [screen-controller lifecycle](../../manifests/native-screen-controller-lifecycle.json)
-owns the selected update, replacement and cleanup requests. Replacement is
+covers the selected update, replacement and cleanup requests. Replacement is
 published before its entry call. A zero status byte uses a fresh current
 controller for another method request, without a following local clear.
-Cleanup requests and freed vector backing do not prove that every retained
-controller was destroyed. Actual ownership and invocation during game entry
-remain qualified.
+Cleanup requests and freed vector backing do not prove that every controller
+still held was destroyed. Which code actually holds and invokes the controller
+during game entry remains qualified.
 
 ## Gameplay availability signals
 
 `FrontendInGameStateCheck` at `0x82E17238` reads the current state through the
-frontend root and requires key 2. Other recovered signals are independently
-owned:
+frontend root and requires key 2. Other recovered signals are written and read independently:
 
 | Signal | Address | Recovered role |
 | --- | ---: | --- |
-| Active player ID | `0x8312B8E8` | Published by the bounded turn-selection path |
+| Active player ID | `0x8312B8E8` | Published by the selected turn-selection path |
 | Human-player mask | `0x8312E608` | Classifies known human players when nonzero |
-| Interface-gate pointer | `0x8314F28C` | Points to an object whose byte `+0x5` controls interface updates |
+| Interface check pointer | `0x8314F28C` | Points to an object whose byte `+0x5` controls interface updates |
 
-Bounded runtime observations show the fields combining into a conservative
+Selected runtime observations show the fields combining into a conservative
 availability test across gameplay, modal, load, and menu transitions. The test
 is not a general lifecycle enum, and none of these signals substitutes for the
 application callback boundary.
 
-The static publisher in `AppResLoadBuild` conditionally installs a word-0 table
-and writes the candidate pointer to `0x8314F28C`. Its immediate owner dispatch
-prevents a retention claim beyond that call; live identity, lifetime and
-clear/toggle ownership remain unresolved.
+The static publisher in `AppResLoadBuild` installs a word-0 table only under
+a condition and writes the candidate pointer to `0x8314F28C`. Its immediate
+dispatch on the object shows nothing about whether the pointer stays valid
+beyond that call. Live identity, lifetime, and which code clears or toggles the
+byte remain unresolved.
 
-The exact stores, alias guards and conditional table slot are in
+The exact stores, alias guards and the table slot that is used only under a
+condition are in
 [`game-of-the-week-local-generation.json`](../../manifests/game-of-the-week-local-generation.json#/configurationPublisherBoundary).
-The separately captured runtime gate role is unchanged. The six incomplete
-writer candidates and unexpanded inventory of 29 reads remain bounded by
-[`playable-interface-flag-ownership.json`](../../manifests/playable-interface-flag-ownership.json).
+The separately captured runtime check role is unchanged. The six incomplete
+writer candidates and the unexpanded inventory of 29 reads are limited to what
+[`playable-interface-flag-ownership.json`](../../manifests/playable-interface-flag-ownership.json)
+records.
 
 ### Local-player result and lifetime
 
-`LocalPlayerIdResolve` (`0x82D8A3A0`) returns full-register `-1` for null input
-`+0x10`; otherwise it dispatches `+0x100` and zero-extends returned-pointer
-`+0xC`, without null checking. Combat loads input from `0x8314EFE0`.
+`LocalPlayerIdResolve` (`0x82D8A3A0`) returns the full-register value `-1` when
+the `+0x10` field of its input is null. Otherwise it dispatches through
+`+0x100` and zero-extends the `+0xC` field of the returned pointer, without a
+null check. Combat loads the input from `0x8314EFE0`.
 
-Initializer zeros owner `+0x10`; setup `0x82D8C600` stores matching registry
-lookup. Successful producer installs `0x8215FA78`, whose `+0x100` target
-`0x82A73340` returns child `+0x20`. Conditional factory allocates 108 bytes,
-sets result `+0xC` to `0xFFFFFFFF`, publishes constructor return at `+0x20`.
-Successful allocation/production/lookup and retention join resolver to that
-low32 -1; allocation failure can leave null at the unchecked read.
+The initializer zeros the input object's `+0x10` field. Setup at `0x82D8C600`
+stores the matching registry lookup result there. A successful producer
+installs `0x8215FA78`, whose `+0x100` target `0x82A73340` returns the child at
+`+0x20`. The factory runs only under a condition. It allocates 108 bytes, sets
+result field `+0xC` to `0xFFFFFFFF`, and publishes the constructor's return
+value at `+0x20`. When allocation, production and lookup all succeed and the
+stored pointer stays unchanged, the resolver reads the low 32 bits of -1. An
+allocation failure can leave null at the unchecked read.
 
-Store scan/three exact owners found no later consumed-word assignment. Child
-method passes result to a node-payload reader without a direct write/link;
-second scan identifies only child's own `+0xC` initialization, not the separate
-result. Selected stores use node/payload or adjusted subobject bases; float
-store could overwrite a word, but receiver/scalar dispatch remain unknown.
+A store scan, including the three exact writers it found, shows no later
+assignment to the consumed word. The child method passes the result to a
+node-payload reader without a direct write or link. A second scan finds only the
+child's own `+0xC` initialization, not the separate result. The selected stores
+use node, payload or adjusted subobject bases. A float store could overwrite a
+word, but the receiver and the dispatched scalar remain unknown.
 
-### Conditional ordinal writers
+### Ordinal writers that run only under a condition
 
-Child `+0x88` conditionally passes the same `+0x20` through ordinal search to
-exchange result `+0xC`:
+The child method at `+0x88` passes the same `+0x20` through an ordinal search
+only when its condition holds. It then exchanges result field `+0xC`:
 
 | Current word | Store |
 | --- | --- |
@@ -119,32 +126,37 @@ exchange result `+0xC`:
 | Otherwise searched ordinal | Outer ordinal |
 | Neither | Unchanged |
 
-Initial probe precedes retry bound 8; range is not universal. Stable count,
-nonnegative nonoverflowing ordinals and ownership/ABI/nonalias guards preserve
-initial `0xFFFFFFFF` because neither argument matches.
+The initial probe comes before a retry limit of 8, so that range is not
+universal. The initial `0xFFFFFFFF` survives when four things hold: the count is
+stable, the ordinals are nonnegative and do not overflow, the guards on the
+object, the ABI and aliasing pass, and neither argument matches.
 
-Another producer retains receiver, storing `+0xC` when `low32(r4)==0`:
-`low32(r6)` for `signed32(r6)>=0`, otherwise finite 0..7 vacancy search for
-`signed32(r6)<0`. Wrapper separately stores return, including -1. Two callers
-pass registry getter results, conditionally joined to constructed objects, but
-lookup/current-owner key equality, internal `+0x4` relookup/ `+0x148`, actual
-scalars and retention remain open. Wrapper needs incoming result
-identity/`+0x190`. Four setup bodies have no `+0x88` invocation; compatible
-nonzero consumption needs these joins or a new scoped caller. Execution/order,
-legal range/meaning, lifetime and network semantics remain unknown.
+Another producer keeps its receiver and stores `+0xC` when `low32(r4)==0`. It
+stores `low32(r6)` when `signed32(r6)>=0`. When `signed32(r6)<0`, it runs a
+finite vacancy search over 0 to 7. A wrapper separately stores the return value,
+including -1. Two callers pass registry getter results that are connected to
+constructed objects only under a condition. Five things remain open: whether the
+lookup key equals the current key, the internal `+0x4` relookup, `+0x148`, the
+actual scalars, and whether the stored value stays unchanged. The wrapper needs
+the incoming result identity and `+0x190`. Four setup functions never invoke
+`+0x88`, so a compatible nonzero value needs these links or a new scoped caller.
+Execution order, legal range and meaning, lifetime and network semantics remain
+unknown.
 
-No raw direct caller was found for `0x82CAF2C0`/`0x82CAF258`. Two methods pass
-own `+0x34` to `BufferReadU32`, dispatching input `+0x4` for four bytes before
-conditional reversal. Shared receiver, actual bytes/source and `+0x8` zero
-remain unproved; sparse candidate-base search found no installer. Actual
-key/compatible ordinal remain open in the
+No raw direct caller was found for `0x82CAF2C0` or `0x82CAF258`. Two methods
+pass their own `+0x34` to `BufferReadU32`, which dispatches input `+0x4` for four
+bytes before a reversal that happens only under a condition. The shared
+receiver, the actual bytes and source, and a `+0x8` zero are not yet shown. A
+sparse search of candidate bases found no installer. The actual key and
+compatible ordinal remain open in the
 [resolver boundary](../../manifests/playable-game-state-requirements.json).
 
-## Shared frame-timing owner
+## Shared frame-timing object
 
 `FrameTimingOwnerPublish` at `0x82E293E8` allocates and initializes one
-`0x48`-byte owner. It publishes the same pointer through globals `0x8314F280`
-and `0x8314F2D4`. The owner vtable at `0x82164E14` exposes two recovered slots:
+`0x48`-byte timing object. It publishes the same pointer through globals
+`0x8314F280` and `0x8314F2D4`. The object's vtable at `0x82164E14` exposes two
+recovered slots:
 
 | Slot | Target | Role |
 | --- | --- | --- |
@@ -156,29 +168,30 @@ and `0x8314F2D4`. The owner vtable at `0x82164E14` exposes two recovered slots:
 | Initialization and reset | 64-bit fields at `+0x8`, `+0x10`, and `+0x20`; word at `+0x30` |
 | Initialization also | 64-bit field at `+0x28` |
 
-A bounded first-reader search reconfirmed the `+0x10` stores at `0x82E2943C` and
-`0x82C7EC08`. Exact references to primary owner global `0x8314F280` produce 28
-distinct reader functions, exceeding the six-candidate cap before field
-classification. No first `+0x10` reader or value meaning is therefore assigned.
+A search for the first reader, limited to the selected references, reconfirmed
+the `+0x10` stores at `0x82E2943C` and `0x82C7EC08`. Exact references to the
+primary global `0x8314F280` produce 28 distinct reader functions, which exceeds
+the six-candidate cap before field classification. No first `+0x10` reader or
+value meaning is therefore assigned.
 
-`AttractMovieFrameStep` at `0x82C5F680` advances this shared owner, but its
+`AttractMovieFrameStep` at `0x82C5F680` advances this shared object, but its
 vtable and construction path place it on the object for the attract movie with
 key 5. It is not the frame boundary for playable games. Static timing dispatch
-also proves no runtime cadence.
+also shows no runtime cadence.
 
 ## Application callback registration
 
-The application owner keeps its callback vector at `+0x80` and its callback
+The application object keeps its callback vector at `+0x80` and its callback
 synchronization object at `+0x90`. `ApplicationCallbackContainerCtor` at
 `0x82E2AFD0` allocates a four-byte callback object, installs vtable
 `0x82120D2C`, and passes it to `ApplicationCallbackRegister` at `0x82E2AF20`.
-Registration locks the owner and appends the callback pointer to the vector.
+Registration locks the application object and appends the callback pointer to the vector.
 
 The callback vtable's slot `+0x0` enters `PlayableFrameCallback` at
-`0x82E87D18`, which reaches broad driver `0x82C7DF58`. Bounded runtime
+`0x82E87D18`, which reaches broad driver `0x82C7DF58`. A selected runtime
 observation places the broad driver on the game-start thread during playable
-gameplay. It is a frame boundary, not the availability predicate and not a
-movement-specific update owner.
+gameplay. It is a frame boundary. It is not the availability predicate and not a
+movement-specific update function.
 
 ## Controller poll-to-dispatch path
 
@@ -200,8 +213,8 @@ for the controller glyph family.
 ## Evidence boundaries
 
 - Frontend state, interface availability, callback dispatch, timing, and input
-  remain distinct signals and owners.
-- Guest pointers published through frontend or interface globals have bounded
+  remain distinct signals, each written by different code.
+- Guest pointers published through frontend or interface globals have limited
   lifetimes. The static layouts do not promise persistence across teardown.
 - No movement producer, duration field, or movement-specific callback follows
   from these application-wide paths.
@@ -209,136 +222,150 @@ for the controller glyph family.
 
 ## Special Functions options action
 
-Full chooser return 3 and alternate return 1 select action 29, dispatching
-receiver `0x8314F76C` slot `+0xCC`, then returning to the construction loop.
-Retained vtable `0x82138768` selects `0x82D84580`, which constructs dialog and
-invokes `+0x2C`; retained constructed vptr selects `0x82E40738`. Runner uses
-dialog/interface callbacks; exit dispatches `+0xC`, restores saved bytes through
-current gate/child pointers and returns `+0x42C`. Pointer retention/finite
-return remain unproved.
+When the full chooser returns 3, or the alternate chooser returns 1, the code
+selects action 29. That action dispatches receiver `0x8314F76C` slot `+0xCC` and
+then returns to the construction loop. Vtable `0x82138768`, when the object
+still holds it, selects `0x82D84580`, which constructs the dialog and invokes
+`+0x2C`. The constructed object's vptr, when still held, selects `0x82E40738`.
+The runner uses the dialog and interface callbacks. On exit it dispatches
+`+0xC`, restores saved bytes through the current interface and child pointers,
+and returns `+0x42C`. Whether those pointers stay valid, and whether the
+runner returns at all, is not yet shown.
 
-Update helper returns zero for nonzero dialog `+0x8`, selecting exit after
-earlier returns. State/status branch and initialized `+0x30` set that byte, the
-latter before application dispatch/outcome gates; these identify no button.
+The update helper returns zero for a nonzero dialog `+0x8`, which selects exit
+after earlier returns. The state and status branch sets that byte, and so does
+the initialized `+0x30`, the latter before the application dispatch and the
+outcome checks. Neither identifies a button.
 
-Base construction passes dialog to movie `+0x9C` before Options vtable install;
-constructed route stores `+0xFC`, getter `+0x98` returns it. Shared handler gets
-dialog then dispatches `+0x10`. Under identity/command guards, `OnAccept`
-selects `+0x30`, `OnCancel` selects `+0x34`. Cancel can clear `+0x8` after
-setting it; unconditional exit is unproved.
+Base construction passes the dialog to movie `+0x9C` before the Options vtable
+is installed. The constructed route stores `+0xFC`, and the getter at `+0x98`
+returns it. The shared handler gets the dialog and then dispatches `+0x10`.
+Under identity and command guards, the accept command selects `+0x30` and the cancel
+command selects `+0x34`. Cancel can clear `+0x8` after setting it. An exit that always
+happens is not yet shown.
 
 ### Callback receiver and handler limits
 
-Driver saves context `+0x74` on stack. First `+0x3C` uses that receiver, loading
-handler from return `+0xC0`; second reloads context field and supplies movie
-argument. Saved-value and receiver/return equality remain unknown. Constructed
-instance's initial `+0xC0` zero identifies neither return object nor handler
-installation.
+The driver saves context `+0x74` on the stack. The first `+0x3C` call uses that
+receiver and loads the handler from return value `+0xC0`. The second call
+reloads the context field and supplies the movie argument. Whether the saved
+value equals the receiver, and whether the receiver equals the return object,
+remain unknown. The constructed instance's initial `+0xC0` is zero. That shows
+neither the return object nor that a handler was installed.
 
-Helper constructor stores movie `+0x38`, movie `+0xC` reference at helper
-`+0x34`, and two vtables. Conditional secondary dispatch reaches descriptor
-storage; first publication wrapper prepares a local key and may select that
-target. These stores identify neither driver context nor handler-bearing return.
-Later callers pass descriptor-address holding saved helper through construction,
-copy/cleanup; one copy reaches unresolved secondary `+0x28`.
+The helper constructor stores movie `+0x38`, a reference to movie `+0xC` at
+helper `+0x34`, and two vtables. A secondary dispatch that runs only under a
+condition reaches the descriptor storage. The first publication wrapper
+prepares a local key and may select that target. These stores identify neither
+the driver context nor a return object that holds a handler. Later callers pass
+the descriptor address that holds the saved helper through construction, copy
+and cleanup. One copy reaches the unresolved secondary `+0x28`.
 
-Copy can dispatch current `+0x8`; base chain conditionally installs tables whose
-first targets return or increment `+0x4`. Applying them requires retained
-helper/table. Later base constructor uses a separate global receiver; image
-table and explicit replacement select different targets. Replacement can invoke
-callback/further unresolved calls. Another route passes replacement-writer
-address to a helper that can append it via global cursor. Consumer/order remain
-unknown despite cursor initialization/reset. Current table/returned-pointer
-separation is unproved, so base call establishes neither helper retention nor
-publication to driver.
+A copy can dispatch the current `+0x8`. The base chain installs tables only
+under a condition, and the first targets of those tables return or increment
+`+0x4`. Applying them needs the helper and table to stay valid. The later base
+constructor uses a separate global receiver. The image table and an explicit
+replacement select different targets. A replacement can invoke the callback and
+further unresolved calls. Another route passes the address of the replacement
+writer to a helper that can append it through a global cursor. The consumer and
+the order remain unknown even though the cursor is initialized and reset. The
+current table is not yet shown to be separate from the returned pointer.
+Therefore the base call establishes neither that the helper stays valid nor
+that it is published to the driver.
 
 ### Named commands and return paths
 
-Named route requires live instance/dialog vptrs and temporary differing from
-`OnSubOption`; preparation proves no byte identity with original command. Actual
-Options producer, handler registration and callback-ingress instance remain
-unknown.
+The named route needs live instance and dialog vptrs and a temporary that
+differs from the sub-option command. The preparation does not show that the bytes match
+the original command. The actual Options producer, the handler registration and
+the instance that receives callbacks remain unknown.
 
-Queued instance `+0x48` prepares a record for two unresolved virtual calls. One
-dispatches `+0x18` on descriptor `+0x4` pointer when first byte is 7; identity
-must survive extraction table calls/cleanup. Upstream lookup copies indexed
-tag/pointer, but record writer/primary vptr remain unknown. Separate
-`0x8228B1F0` parsed handoff produces tag 6/cached payload, selecting zero output
-if retained. Payload `+0` initializes to 1, not a tag-7 vptr proof. Other
-dispatch uses separate object `+0x4`; neither joins driver/completion.
+The queued instance at `+0x48` prepares a record for two unresolved virtual
+calls. One of them dispatches `+0x18` on the descriptor's `+0x4` pointer when
+the first byte is 7. That identity must survive the extraction table calls and
+cleanup. The upstream lookup copies an indexed tag and pointer, but the record
+writer and the primary vptr remain unknown. A separate parsed handoff at
+`0x8228B1F0` produces tag 6 and a cached payload, and selects a zero output when
+the payload stays in place. Payload `+0` initializes to 1, which is not shown to
+be a tag-7 vptr. The other dispatch uses a separate object `+0x4`. Neither path
+is linked to the driver or to completion.
 
-Entry/exit set/clear child `+0x2A` and reach manager pointer-range work, proving
-neither capture nor stable identity. After runner return, Options dispatches
-dialog `+0` with one, optionally original receiver `+0x1F0`, then rebuilds menu.
-Child calls/`+0x1E8` clear-set remain conditional; focus/pause, Back/Escape and
-exclusive capture remain unknown. All edges need valid objects, stated vptrs and
-prior returns.
+Entry and exit set and clear child `+0x2A` and reach the manager's pointer-range
+work. That shows neither capture nor a stable identity. After the runner
+returns, Options dispatches dialog `+0` with one, optionally passes the original
+receiver `+0x1F0`, and then rebuilds the menu. The child calls and the clear and
+set of `+0x1E8` run only under a condition. Focus and pause handling, Back and
+Escape handling, and exclusive capture remain unknown. All edges need valid
+objects, the stated vptrs and the earlier returns.
 
-Both choosers map -1 to receiver `+0xB0` with zero, optional `0x82D05C90`, then
--1 return. Input binding, focus restoration/live vtable remain unproved. Exact
-gates:
+Both choosers map -1 to receiver `+0xB0` with zero, an optional call to
+`0x82D05C90`, and then a -1 return. Input handling, focus restoration and the
+live vtable are not yet established. The exact conditions are in the
 [options manifest](../../manifests/special-functions-options-dispatch.json).
 
 ## Player-count setup
 
-`0x82D217C8` stores six at `0x82F700AC` , five at excluded-player `0x82F700B0`
-; nonzero `0x8314F180` overrides count to two/excluded index to retained r16.
-Override meaning/full provenance remain unknown. Initialization skips the
-excluded ordinal. Count, civilization, human status and storage capacity are
-distinct. Game-start reaches setup through a direct call chain. The human-mask
-helper clears the mask, then copies a nonzero source or combines player
-predicates. Clear bits do not prove ordinary AI, and key 2 does not
-distinguish create/load. New-game-only ingress and safe civilization omission
-remain unproved. See
-[setup boundary](../../manifests/player-count-setup.json) .
+`0x82D217C8` stores six at `0x82F700AC` and five at the excluded-player slot
+`0x82F700B0`. When `0x8314F180` is nonzero, the count is overridden to two and
+the excluded index is taken from the saved r16. The meaning of the override and
+its full provenance remain unknown. Initialization skips the excluded ordinal.
+Count, civilization, human status and storage capacity are distinct. Game start
+reaches setup through a direct call chain. The human-mask helper clears the
+mask, then copies a nonzero source or combines player predicates. Clear bits do
+not show that a player is a plain AI player, and key 2 does not distinguish
+creating a game from loading one. Whether setup runs only for a new game, and
+how a civilization could safely be omitted, are not yet shown. See the
+[setup boundary](../../manifests/player-count-setup.json).
 
 The inner -1 setup bypass does not establish cancellation of its enclosing
 game-start state. `0x82E60F70` does not compare the outer setup return before
-its guarded presentation continuation. That path can reach `0x82E225D0`'s
-indexed string argument and `0x82D3B830`'s narrow-string byte scan. Valid native
-inputs may satisfy this contract; invalid input and crash causation are not
-established by missing local checks. The
-[formatting boundary](../../manifests/game-start-formatting.json)
-owns exact branches, the application +0x60 identity, two argument slots,
-current/pending/requested-state transitions and bounded native refusal/reset
-routes, including the selected waiting-overlay event-16 cleanup and guarded
-setup continuation. That continuation requires normal cleanup return and
-retained roots; it is not an accepted retry. Its deferred frontend request is
-distinct from controller cleanup;
-safe late cancellation and the actual invalid slot remain unproved.
+its guarded presentation continuation. That path can reach the indexed string
+argument of `0x82E225D0` and the narrow-string byte scan of `0x82D3B830`. Valid
+native inputs may satisfy this contract. Invalid input and crash causation are
+not established by missing local checks. The
+[formatting boundary](../../manifests/game-start-formatting.json) records the
+exact branches, the application `+0x60` identity, two argument slots, the
+current, pending and requested-state transitions, and the selected native
+refusal and reset routes. Those routes include the selected waiting-overlay
+event-16 cleanup and the guarded setup continuation. That continuation needs a
+normal cleanup return and roots that stay valid, and it is not an accepted
+retry. Its deferred frontend request is distinct from controller cleanup. Safe
+late cancellation and the actual invalid slot are not yet shown.
 
 ## Advisor presentation entry
 
-Advisor constructor passes name address to base before initialization. Two
-accept/cancel-named wrappers conditionally forward to the scene-tree walker;
-names prove no gameplay callbacks. Lookup chain, show/enqueue ownership and
-optional-versus-mandatory choice remain unknown. The
+The advisor constructor passes the name address to the base before
+initialization. Two wrappers named for accept and cancel forward to the
+scene-tree walker only under a condition. Their names show no gameplay
+callbacks. The lookup chain, which code shows or enqueues the advisor, and
+whether the choice is optional or mandatory remain unknown. The
 [entry boundary](../../manifests/advisor-show.json#/findings/RVA-F-0242)
-supplies construction/forwarding, not safe popup suppression.
+supplies construction and forwarding, not safe popup suppression.
 The [advisor popup sites](advisor-popup-sites.md) page groups the 169 callers by purpose and result use.
 
 ## Evidence sources
 
-- [Native pause/resume dispatch](../../manifests/native-pause-resume-dispatch.json):
+- [Native pause and resume dispatch](../../manifests/native-pause-resume-dispatch.json):
   with matching live root and child tables, a selected zero-argument request
   can reach a global application object's `+0x70` child and its virtual `+0x10`.
   On the selected key-2 table this constructs a code-17 state message with a
-  zero byte at `+0x34`; the alternative method uses one. Registered sender
-  identity and selected early-return gates are bound. The selected processing
-  method forwards the byte to a root-state consumer whose admitted zero arm
-  clears bit `0x800` and reaches the frontend child's resume callback. An
-  already-clear bit bypasses those effects. A selected `OnAccept` command can
-  reach the zero-request callback through the pause class's current table;
-  the separate `OnPressStart` tail has different guards. Actual input, receipt/invocation,
-  current identity, child presentation and host/peer authority remain unbound.
-  The local-menu getter tests the nested dialog-child marker. A separate
-  receiver-relative event-byte reader still requires a same-singleton and
-  store-before-read join.
+  zero byte at `+0x34`; the alternative method uses one. The registered sender
+  identity and the selected early-return checks are confirmed. The selected
+  processing method forwards the byte to a root-state consumer whose accepted
+  zero arm clears bit `0x800` and reaches the frontend child's resume callback.
+  An already-clear bit bypasses those effects. A selected accept command can
+  reach the zero-request callback through the pause class's current table. The
+  separate tail for the Start press command has different guards. Actual input, receipt and
+  invocation, current identity, child presentation and host and peer authority
+  are not yet tied to this path. The local-menu getter tests the nested
+  dialog-child marker. A separate receiver-relative event-byte reader still
+  needs proof that it uses the same singleton and that the store comes before
+  the read.
 - [Frontend gameplay transition](../../manifests/frontend-gameplay-transition.json)
-- [Playable game state gates](../../manifests/playable-game-state-requirements.json)
+- [Playable game state requirements](../../manifests/playable-game-state-requirements.json)
 - [`playable-interface-flag-ownership.json`](../../manifests/playable-interface-flag-ownership.json)
 - [Attract-movie frame driver](../../manifests/attract-movie-frame-driver.json)
-- [Gameplay frame-timing owner](../../manifests/gameplay-frame-timing-owner.json)
+- [Gameplay frame-timing object](../../manifests/gameplay-frame-timing-owner.json)
 - [Gameplay main-frame boundary](../../manifests/gameplay-main-frame.json)
 - [Controller input and glyph
   selection](../../manifests/controller-input-glyph-selection.json)

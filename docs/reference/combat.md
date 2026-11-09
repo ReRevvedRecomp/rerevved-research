@@ -7,7 +7,7 @@ has no figures left. Loss protection can throw a result away and draw again
 when it would wipe out a protected side. The result is written to the two
 units and shown by the battle presentation.
 
-This page covers how the resolver `CombatResolve` (owner `0x82CD9970`) carries
+This page covers how the resolver `CombatResolve` (at `0x82CD9970`) carries
 the strengths into a random selection, how the random state is saved and
 reloaded, how the battle screen numbers are made and what the presentation
 code does with the result. The rules for which side is protected, the proof
@@ -305,7 +305,7 @@ created. Its `+0x100` returns `+0x20`. A successful 108 byte allocation sets the
 `+0xC` low word to `0xFFFFFFFF`. Neither step adds a compatible nonzero `+148`
 input. Child `+0x88` can exchange `+0xC` between searched ordinals. Its first
 probe comes before a retry limit of 8. A stable count, nonnegative ordinals that
-do not overflow, and the ownership, ABI and nonoverlap checks keep the
+do not overflow, and the no-aliasing, ABI and nonoverlap checks keep the
 initialized -1.
 
 A separate ordinal producer and three callers tie the loads and stores
@@ -335,7 +335,7 @@ resolver case above does not reach this chain.
 
 The transfer record shows an aligned 144 byte copy and a local return. With
 valid kept input, backing and save storage, the path copies 5 and then 13
-chunks of 8 bytes to `[0x83024E58, 0x83024EE8)`. Source and destination can be
+blocks of 8 bytes to `[0x83024E58, 0x83024EE8)`. Source and destination can be
 separate or identical. A destructive partial overlap is excluded. The incoming
 buffer is therefore separate from the first resolver array above.
 

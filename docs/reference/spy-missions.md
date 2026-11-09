@@ -13,7 +13,7 @@ production share one sabotage mission.
 | Bribe a Great General | 6 |
 | Leave quietly | 7 |
 
-The menu checks target state before offering conditional choices. Its packed
+The menu checks target state before offering choices that depend on it. Its packed
 command contains the mission and target city. The effect dispatcher has
 separate entries for the six harmful choices. ID 2 is not offered by this
 menu, and leaving quietly skips the action prefix.
@@ -21,14 +21,14 @@ menu, and leaving quietly skips the action prefix.
 One selected unit-filter path creates a Spy and passes a target city directly
 to the effect function. It supplies no mission byte, so every valid target on
 that path selects defense disruption. This is a local selection policy. It
-does not establish that every ordinary AI Spy follows the same route or that
+does not establish that every AI Spy follows the same route or that
 other mission commands fail.
 
-A broader AI policy needs the actual entry path for ordinary AI Spies and the
+A broader AI policy needs the actual entry path for AI Spies in general and the
 same target-eligibility guarantees as the interactive menu. Choosing arbitrary
 mission IDs would skip those guarantees. The current static result does not
 establish a correction or feature for broader AI use.
 
 The [mission-selection finding](../../manifests/spy-mission-selection.json)
-owns exact menu, dispatch, caller and target-range evidence, bounded negatives
-and the remaining runtime discriminator.
+holds the exact menu, dispatch, caller and target-range evidence. It also
+holds the limited negative results and the remaining runtime discriminator.

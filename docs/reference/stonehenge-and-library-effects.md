@@ -26,7 +26,7 @@ For a city with population `P` (the signed byte at city `+0x03`):
 - With no Cathedral and a Temple, the Temple adds `P`. If the Stonehenge check
   returns nonzero, it adds `trunc(P / 2)` more, rounding toward zero.
 - With neither building, neither path adds anything.
-- When the retained state word `r23` equals 3 at `0x82D14F24`, this whole
+- When the state word `r23` equals 3 at `0x82D14F24`, this whole
   building group is skipped.
 
 Example: a city of population 6 with a Temple and no Cathedral adds 6. When
@@ -80,7 +80,7 @@ test.
 
 The city stores run before the mode checks. The owner row additions run only in
 mode 0. A later change to a city field after the function returns does not
-change the retained value or the earlier owner total.
+change the stored value or the earlier owner total.
 
 The state credits at the end of `CityUpdate`:
 
@@ -108,7 +108,7 @@ Native overrides run between the cache stores and the credits:
 
 - When city word `+0x24` has mask `0x8`, or the UEA 42 lookup is not active and
   the state word `0x830ED3D8 + owner*4` is zero, `0x82D15350..0x82D1536C` clears
-  city `+0x40`, `+0x42`, `+0x44` and `+0x46` together with the matching retained
+  city `+0x40`, `+0x42`, `+0x44` and `+0x46` together with the matching stored
   values. City `+0x48` and `r18` are left alone.
 - For the excluded owner (`0x82F700B0`), `0x82D153C0..0x82D153EC` zeroes the
   Gold, `r18` and `r20` values. The credit adds zero while city `+0x46` keeps
@@ -186,9 +186,9 @@ that marks a new claim:
 
 The selected completion path requests no technology acquisition. A mod that
 wants Stonehenge to give Religion has a static contract to follow. It uses the
-acquisition owner `0x82D09208` with the arguments owner, 19 (Religion),
+acquisition function `0x82D09208` with the arguments owner, 19 (Religion),
 city, 5 (the Wonder reward source) and 1 (the normal state phase). The native
-Oxford branch calls the same owner at `0x82D17194` with the same shape. Before
+Oxford branch calls the same function at `0x82D17194` with the same shape. Before
 the call, check that `0x82CEF6A8(19, owner)` returns zero, which is the full
 native availability test. The raw Religion ownership word `0x830EDC94` is not
 enough on its own.
@@ -199,12 +199,12 @@ in `0x830EDC48 + 4 * technology` at `0x82D0937C` and records reason 5 at
 own and repeats its effects if called twice. Native presentation stays as it
 is: with flag 1 the selected popup branches are not entered, so no separate
 Religion message is promised. The real display was not observed.
-Ownership saves through `0x82CC4718` and `0x82CC4760`, and disabling a rule
-never removes a Religion already granted.
+The ownership is saved through `0x82CC4718` and `0x82CC4760`, and disabling a
+rule never removes a Religion already granted.
 
 The call must run in the interrupted guest context, with all registers, stack
 and continuation preserved. The static facts do not prove it is safe from a new
-hook. Excluded owner reachability, malformed or rewritten claims, the human and
+hook. Whether the excluded player can reach the grant, malformed or rewritten claims, the human and
 AI interface, network replication and save, load and transfer controls remain
 open.
 

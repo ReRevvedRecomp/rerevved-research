@@ -86,7 +86,7 @@ the first case that writes past the table.
 | Detail screen `0x82DFC8A0` | `0x82DFD864` | Counts positive words and builds text for each one from `H[j]` and `H[j] * j` |
 | Comparator `0x82E1EE48` | `0x82E1EEA0` | Compares the eight words with cached words, together with population and the halfword at city `+0x3C` |
 | Reconciler `0x82E22B38` | `0x82E22B50` | Adds or removes interface children by the difference between new and cached words; it does not update the cache |
-| Refresh owner `0x82E25EA8` | `0x82E26058` | After a refresh, copies the eight words into the interface cache |
+| Refresh function `0x82E25EA8` | `0x82E26058` | After a refresh, copies the eight words into the interface cache |
 
 The return value `U` has a gameplay consumer through the trade reader, so any
 replacement must still return the full `P - A`. The word consumers write no
@@ -156,7 +156,7 @@ below).
 | Food ceilings and increment | `0x82D163D8` to `0x82D16438` | The increment narrows to a byte before the ceiling test. Saturate in a word first. Changing 32 to 128 alone fails because 128 reads as -128 |
 | Irrigation | `0x82D0A3B0` to `0x82D0A414` | Adds 1 with no local test. Saturate before the byte store |
 | Hanging Gardens, Statue of Liberty | `0x82D16BA0` | Clamp at 31. Compute and clamp in a word before the byte store |
-| Economic reward and Great Humanitarian | `0x82CF5588`; `0x82CE0B88` to `0x82CE0BC4` | Each admits only `P < 31`. Raise both with the cap |
+| Economic reward and Great Humanitarian | `0x82CF5588`; `0x82CE0B88` to `0x82CE0BC4` | Each allows the grant only when `P < 31`. Raise both with the cap |
 | WorkerRefresh | `0x82D01788` to `0x82D019E4` | Limit the whole citizen body to `N = min(P, 32)`: the read at `0x82D017CC`, the write at `0x82D019D4` and the lock shifts. Ordinal 32 overlaps the lock word, and ordinal 100 reaches the next city |
 | CityUpdate yields | `0x82D13C78`, loop end `0x82D13F1C` | Supply -1 for ordinal 32 and up without reading memory. Keep the full `P` loop |
 | Assignment counter | `0x82CE1C40` to `0x82CE1C58`; histogram writes `0x82CE1C88` to `0x82CE1CA4` | Scan `N` bytes and keep `U = P - A`. Replace the unsafe histogram writes |
@@ -218,7 +218,7 @@ trip were not examined.
 ## Open questions
 
 - The census of every reader and writer is not complete. A whole-image scan
-  evaluated 4530 owner states and left 22612 forms unsupported. It missed the
+  evaluated 4530 states associated with containing functions and left 22612 forms unsupported. It missed the
   command 8 writes at `0x82CE0100` and `0x82CE0140`, so it cannot prove that no
   access is missing.
 - Writers still open: migration, the rest of the Great Humanitarian entry

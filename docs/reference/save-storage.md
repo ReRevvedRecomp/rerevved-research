@@ -1,8 +1,8 @@
 # Save storage and slot identity
 
-The player-facing slot label is separate from the internal storage filename.
-Ruleset persistence must use the internal filename inside the selected
-user/device content namespace.
+The player-facing slot label is separate from the internal storage file name.
+Ruleset persistence must use the internal file name inside the selected user
+and device content namespace.
 
 ## Selected content record
 
@@ -11,11 +11,11 @@ The picker has 11 records with stride `0x164`. The accepted
 
 | Offset | Recovered meaning |
 | --- | --- |
-| `0x108` | NUL-terminated internal slot filename read by both manual save and load owners |
+| `0x108` | NUL-terminated internal slot file name read by both the manual save function and the load function |
 
-Sidecar keys need the selected user/device namespace because filenames can repeat. Raw
-roots `save1` through `save9`, `save0`, `saveb` through `savei` live at
-`0x82F77368`, but use normalized record `0x108`, not localized manual/automatic
+Sidecar keys need the selected user and device namespace because file names
+can repeat. The raw slot file name roots live at `0x82F77368`, but the code uses
+the normalized record field `0x108`, not the localized manual or automatic
 labels.
 
 The recorded manual-save template is 9 bytes (SHA-256
@@ -26,13 +26,14 @@ automatic-save template is 11 bytes (SHA-256
 Digests identify recorded UTF-8 text without terminators, not guest addresses or
 original encoding.
 
-## Selected-user owner lifetime boundary
+## Selected-user object lifetime boundary
 
-The `0x78`-byte owner is initially published through `0x8314EFE0`. The exact
-inventory has 107 READ rows in 65 functions plus three data sources, with no
-modeled WRITE. The builder and constructor reduce to non-returning thunks;
-`0x82E633C0` truncates on bad data. Teardown, republication and profile-service
-`+0x18` lifetime remain unproved. They are not excluded elsewhere.
+The `0x78`-byte selected-user object is initially published through
+`0x8314EFE0`. The exact inventory has 107 READ rows in 65 functions plus three
+data sources, with no modeled WRITE. The builder and constructor reduce to
+non-returning thunks, and `0x82E633C0` truncates on bad data. Teardown,
+republication and the lifetime of profile-service `+0x18` are not yet
+established. They are not excluded elsewhere.
 
 ## Recovered functions
 
@@ -49,14 +50,15 @@ Names below describe recovered semantics, not original debug symbols.
 
 ## Sidecar intervention edges
 
-Load entry `0x82D84238` precedes open/deserializer `0x82D844CC`, allowing
-ruleset rejection before state change. Serializer returns `0x82D82984`; combined
-finalization result at `0x82D829E8` is `r25`, with filename in `r29`. Atomic
-sidecar replacement requires nonzero final result.
+Load entry `0x82D84238` comes before the open and deserializer call at
+`0x82D844CC`, which allows ruleset rejection before state changes. The
+serializer returns at `0x82D82984`. The combined finalization result at
+`0x82D829E8` is in `r25`, with the file name in `r29`. Atomic sidecar
+replacement requires a nonzero final result.
 
 ## Implementation guard
 
 The host sidecar contains the locked ruleset ID, version and configuration
-hash in the native slot's user/device namespace. Check it before loading;
+hash in the native slot's user and device namespace. Check it before loading;
 replace it atomically through a temporary file after a successful save. The
 native save stays unchanged.

@@ -1,32 +1,34 @@
 # Xbox game selector commands
 
-The System Link game list is a Scaleform movie, `GFX_GameSelector.gfx`. When the
-player presses Y or X on it, the movie does not call game code directly. It
-asks the host for a command named `OnPressY` or `OnPressX`, and native code
+The System Link game list is a Scaleform movie, the game selector movie. When
+the player presses Y or X on it, the movie does not call game code directly. It
+asks the host for a script command, one for Y and one for X, and native code
 then routes that command text through a chain of virtual calls. This page
 records that route for version 1.3. It stops where the code stops saying
-anything specific: no function on the route is tied to a visible Refresh or
-Create Game action, to a session, or to any network call.
+anything specific: no function on the route is tied to a visible refresh action
+or create-game action, to a session, or to any network call.
 
 ## What a Y press does
 
 A worked example, Y pressed on the System Link game list:
 
 1. The movie reads `Key.getCode()` and sees 45.
-2. It issues `GetURL2` with the URL `FSCommand:OnPressY` and numeric argument
-   0.
-3. Native code checks that the text starts with the 10 bytes `FSCommand:`,
-   skips them, and calls a virtual method with the remaining text `OnPressY`.
+2. It issues `GetURL2` with a script command URL for the Y command and numeric
+   argument 0. The URL is the script command prefix (10 bytes) followed by the
+   Y command text.
+3. Native code checks that the text starts with the 10 byte script command
+   prefix, skips it, and calls a virtual method with the remaining text, which is
+   the Y command.
 4. That method (`0x82C7CBE0`) calls two more virtual methods, the second being
    the command handler `0x82E819E0`.
 5. When a field on the handler's object is not null, the handler calls
    `0x82D76350` through a virtual slot, and that function compares the command
-   with five command strings. For `OnPressY` it reads a stored value, and when more than
-   500 has passed since that value it stores a new one, writes a 1 into a flag
-   byte on a second object, and calls helper `0x82D6F5D8`.
+   with five command strings. For the Y command it reads a stored value, and when
+   more than 500 has passed since that value it stores a new one, writes a 1 into
+   a flag byte on a second object, and calls helper `0x82D6F5D8`.
 
-X works the same way with key code 42 and `OnPressX`. Its native branch ends in
-a short forwarder (`0x82D6C340`) and then a state update (`0x82D704F0`).
+X works the same way with key code 42 and the X command. Its native branch ends
+in a short forwarder (`0x82D6C340`) and then a state update (`0x82D704F0`).
 
 What is not known: the meaning of the 500 threshold, the flag byte, either
 helper, and which on-screen action either press performs. The bodies read for
@@ -40,30 +42,31 @@ networking, so the page does not rule it out for either route.
 
 | Command | Key code | Movie URL | Guest string | Parameter reference |
 | --- | --- | --- | --- | --- |
-| `OnPressY` | 45 | `FSCommand:OnPressY` | `0x821242A0` | `0x82DECBB4` |
-| `OnPressX` | 42 | `FSCommand:OnPressX` | `0x8212648C` | `0x82DECB94` |
+| Y command | 45 | Script command prefix plus the Y command text | `0x821242A0` | `0x82DECBB4` |
+| X command | 42 | Script command prefix plus the X command text | `0x8212648C` | `0x82DECB94` |
 
 Each guest string has one modeled reference, and both references sit inside
-`0x82DECB20` (see the section on that function below). The visible `Refresh`
-(`0x821391A4`) and `Create Game` (`0x821391AC`) strings have no modeled
-references, so the page cannot say which key belongs to which label.
+`0x82DECB20` (see the section on that function below). The visible refresh
+string (`0x821391A4`) and the visible create-game string (`0x821391AC`) have no
+modeled references, so the page cannot say which key belongs to which label.
 
 ## Movie side
 
-The movie is `Resource/Common/GFX_GameSelector.gfx` (35,763 bytes; digest in
-the manifest). Its action block at tag `0xECC` reads `Key.getCode()`:
+The movie is the game selector movie in the common resource folder (35,763
+bytes; digest in the manifest). Its action block at tag `0xECC` reads
+`Key.getCode()`:
 
 | Command | Compare | Branch | URL push | `GetURL2` |
 | --- | --- | --- | --- | --- |
-| `OnPressY` | `0x134D` against 45 | `0x1556` | `0x155C`, with numeric argument 0 | `0x156A`, flags 0 |
-| `OnPressX` | `0x135D` against 42 | `0x1573` | `0x1579`, with numeric argument 0 | `0x1587`, flags 0 |
+| Y command | `0x134D` against 45 | `0x1556` | `0x155C`, with numeric argument 0 | `0x156A`, flags 0 |
+| X command | `0x135D` against 42 | `0x1573` | `0x1579`, with numeric argument 0 | `0x1587`, flags 0 |
 
-The command names also sit at script offsets `0x10CB` and `0x10E5` for
-`OnPressY`, and `0x10F8` and `0x1112` for `OnPressX`.
+The command names also sit at script offsets `0x10CB` and `0x10E5` for the Y
+command, and `0x10F8` and `0x1112` for the X command.
 
-The guest image defines the resource name `GFX_GameSelector.gfx` at
-`0x8211FFB0`. No modeled reference, no address built from a high and low half
-in one block and no stored word equal to the address uses it
+The guest image defines the movie's resource name at `0x8211FFB0`. No modeled
+reference, no address built from a high and low half in one block and no stored
+word equal to the address uses it
 ([search record](../../manifests/xbox-system-link-qos-root.json#/uiAnchors/resourceGuidance)).
 The name matches the movie only by spelling, so it is a search lead and not
 proof of how the movie loads. The game could still build or use the name some
@@ -71,16 +74,17 @@ other way.
 
 ## Native prefix check and callback sites
 
-For frontend input and event ownership see
-[frontend-frame-and-input.md](frontend-frame-and-input.md); for movie loading
-see [gfx-state-and-loadclip.md](gfx-state-and-loadclip.md). Neither covers
-`FSCommand:`. This section covers only the code that recognizes it.
+For frontend input and events see the
+[frontend, frame, and input](frontend-frame-and-input.md) page. For movie
+loading see [GFx state and MovieClipLoader requests](gfx-state-and-loadclip.md).
+Neither covers the script command prefix. This section covers only the code that
+recognizes it.
 
-The guest image defines `FSCommand:` at `0x8213E624` with two modeled
-references: a data reference at `0x82206660` and a parameter reference at
+The guest image defines the script command prefix string at `0x8213E624` with two
+modeled references: a data reference at `0x82206660` and a parameter reference at
 `0x8220A5CC`. Neither address lies in a function Ghidra models. Both are
 decoded instructions inside the recompiled function that starts at
-`0x82206350` and runs to the next entry at `0x8220BD08`; Ghidra models only
+`0x82206350` and runs to the next entry at `0x8220BD08`. Ghidra models only
 `0x82206350` through `0x82206357`, ending after the entry save thunk.
 
 Inside that function:
@@ -96,7 +100,8 @@ Inside that function:
 `0x827F43F0` takes two byte pointers and a signed count. A count below 1
 returns 0. Otherwise it returns the first unsigned byte difference and stops on
 that difference, on the first input's NUL byte, or when the count runs out.
-With count 10, a zero result means the input starts with `FSCommand:`.
+With count 10, a zero result means the input starts with the script command
+prefix.
 
 On each path where the prefixes match, the code advances the input by 10 and
 reaches an indirect call through receiver vtable slot `+0x04`:
@@ -110,7 +115,7 @@ The first site is direct evidence. The second is a candidate that matches in
 shape. This shows two native places where text after the prefix reaches a
 virtual call. It does not name the receiver class, the target or the action.
 
-## Observed route for OnPressY
+## Observed route for the Y command
 
 A Y press on the System Link game list reaches callback site `0x8220B4C0`. The
 other site was not seen on that press, and another context could use it. The
@@ -180,23 +185,23 @@ object field `+0x04`, and compares the command with five strings:
 | --- | --- |
 | `0x82139224` | Not identified |
 | `0x82126498` | Not identified |
-| `0x821242A0` | `OnPressY` |
+| `0x821242A0` | Y command |
 | `0x82128F58` | Not identified |
-| `0x8212648C` | `OnPressX` |
+| `0x8212648C` | X command |
 
 Branches that matter:
 
-- `OnPressY`: derives a scalar from a global double and takes an unsigned delta
+- Y command: derives a scalar from a global double and takes an unsigned delta
   involving incoming object field `+0x11C`. When the delta is 500 or less it
   returns. Otherwise it updates field `+0x11C`, writes 1 to the second object's
   byte `+0x11`, and calls `0x82D6F5D8` with that second object. That helper is
   not expanded. The delta does not show time units or debounce behavior.
-- `OnPressX`: after a byte 0 test on incoming object field `+0x11`, loads the
+- X command: after a byte 0 test on incoming object field `+0x11`, loads the
   second object's vtable slot `+0x3C` and calls it indirectly at `0x82D765B8`.
 - Other branches call `0x82D6F858`, `0x82D39138` and `0x82D6F300`. These
   addresses are not expanded.
 
-## Observed route for OnPressX
+## Observed route for the X command
 
 An X press on the System Link game list reaches the indirect call at
 `0x82D765B8` with the target `0x82D6C340`
@@ -251,34 +256,35 @@ save and restore thunk) runs in this order:
 1. At `0x82DECB38` it calls `0x82E40680` with the object, command and third
    argument.
 2. At `0x82DECB48` it calls `0x82DEA4C8` with the same arguments.
-3. It compares the command with `OnAccept`, `OnCancel`, `OnPressX` and
-   `OnPressY`. A match skips the remaining local option and unit-stack handling
-   by branching to `0x82DECC20`. No separate X or Y target is called.
+3. It compares the command with four command strings: accept, cancel, the X
+   command and the Y command. A match skips the remaining local option and
+   unit-stack handling by branching to `0x82DECC20`. No separate X or Y target is
+   called.
 
 The three callees only recognize general commands:
 
 | Callee | What it recognizes | Action |
 | --- | --- | --- |
-| `0x82E40680` | `OnAccept`, `OnCancel`, `OnOption` | Calls `0x82C7B710` first at `0x82E40698`, then dispatches object vtable slots `+0x30`, `+0x34` and `+0x38`, passing the object and third argument |
-| `0x82C7B710` | `OnInit` (`0x8212E7B8`), `OnExit` (`0x8212E7C0`), `PlaySound` (`0x82162D40`), `StopSound` (`0x82162D4C`) | Dispatches object vtable slots `+0x14`, `+0x18`, `+0x1C` and `+0x20` in that order, passing the object and third argument |
-| `0x82DEA4C8` | `OnLoadUnitStack` (`0x82128344`), `OnClearUnitStack` (`0x82127F5C`) | Unit-stack command state, described below |
+| `0x82E40680` | The accept, cancel and option commands | Calls `0x82C7B710` first at `0x82E40698`, then dispatches object vtable slots `+0x30`, `+0x34` and `+0x38`, passing the object and third argument |
+| `0x82C7B710` | The init command (`0x8212E7B8`), the exit command (`0x8212E7C0`), the play sound command (`0x82162D40`) and the stop sound command (`0x82162D4C`) | Dispatches object vtable slots `+0x14`, `+0x18`, `+0x1C` and `+0x20` in that order, passing the object and third argument |
+| `0x82DEA4C8` | The load unit stack command (`0x82128344`) and the clear unit stack command (`0x82127F5C`) | Unit-stack command state, described below |
 
 `0x82DEA4C8` ignores its third argument and scans a word array rooted at object
-field `+0x4C8`. For the first array value that is not 2, value 0 selects
-`OnLoadUnitStack` and value 1 selects `OnClearUnitStack`. When the incoming
-command matches the selected string, it changes that entry to 2, stores the
-result of `0x8280DE30` plus 2000 at object field `+0x4D4`, and runs a follow-up
-scan. It does not compare `OnPressX` or `OnPressY`.
+field `+0x4C8`. For the first array value that is not 2, value 0 selects the load
+unit stack command and value 1 selects the clear unit stack command. When the
+incoming command matches the selected string, it changes that entry to 2, stores
+the result of `0x8280DE30` plus 2000 at object field `+0x4D4`, and runs a
+follow-up scan. It does not compare the X command or the Y command.
 
-None of the three callees, and no comparison in them, handles `OnPressX` or
-`OnPressY`. The commands pass only through general filtering.
+None of the three callees, and no comparison in them, handles the X command or
+the Y command. The commands pass only through general filtering.
 
 The observed Y route calls `0x82E40680` from `0x82E819E0`, and `0x82DECB20` calls
 the same function. A candidate reading is that `0x82E819E0` and `0x82DECB20` are
-sibling command handlers that share it. That reading is not tested. A Y press was not seen to enter
-`0x82DECB20` in one process
+sibling command handlers that share it. That reading is not tested. A Y press was
+not seen to enter `0x82DECB20` in one process
 ([boundary record](../../manifests/xbox-system-link-qos-root.json#/uiAnchors/runtimeCommandBoundaryProbe)).
-That does not prove the function is never reached from another context.
+That does not show the function is never reached from another context.
 
 ## Network calls
 
@@ -292,14 +298,14 @@ its command was dispatched. The Y dispatch is the optional call inside
 This covers only those logged message kinds. It does not exclude an unlogged
 API attempt, a failed socket operation, a helper, a later asynchronous path,
 platform behavior, delivery or ordering. It does not map either press to a
-Create Game action, session creation, advertisement or discovery. What a host
+create-game action, session creation, advertisement or discovery. What a host
 flow does after X is on the [QoS page](xbox-system-link-qos.md).
 
 ## Addresses
 
 | Item | Address |
 | --- | --- |
-| `FSCommand:` string | `0x8213E624` |
+| Script command prefix string | `0x8213E624` |
 | Prefix comparator | `0x827F43F0` |
 | Recompiled function that matches the prefix | `0x82206350` through `0x8220BD08` |
 | Callback sites | `0x8220A634`, `0x8220B4C0` |
@@ -311,8 +317,8 @@ flow does after X is on the [QoS page](xbox-system-link-qos.md).
 ## Open questions
 
 - Receiver class and concrete type of every object on both routes.
-- Which visible action each press performs, and whether Refresh and Create
-  Game are involved.
+- Which visible action each press performs, and whether the refresh and
+  create-game actions are involved.
 - Whether the second callback site (`0x8220B4C0`) or the first
   (`0x8220A634`) is reached from other contexts.
 - The second target of the tail dispatch at `0x82D7054C`, and the helper
@@ -324,6 +330,6 @@ flow does after X is on the [QoS page](xbox-system-link-qos.md).
 ## Evidence sources
 
 - [Game selector locators](../../manifests/xbox-system-link-qos-root.json#/uiAnchors)
-- [Native FSCommand boundary](../../manifests/xbox-system-link-qos-root.json#/uiAnchors/nativeFsCommandBoundary)
+- [Native script command boundary](../../manifests/xbox-system-link-qos-root.json#/uiAnchors/nativeFsCommandBoundary)
 - [Command chain locators](../../manifests/xbox-system-link-qos-root.json#/uiAnchors/commandChainLocators)
 - [Xbox System Link QoS boundary](xbox-system-link-qos.md)

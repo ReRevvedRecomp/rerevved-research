@@ -11,8 +11,8 @@ three flags. The gameplay meanings of the scalar and flags remain unknown.
 | `half_3C` | City `+0x3C`, unsigned halfword | Bit `0x2` selects the first reduction |
 | `word_24` | City `+0x24`, unsigned word | Bit `0x40` selects the second reduction |
 
-`s32(v)`/`u32(v)` interpret low 32 bits signed/unsigned; `trunc0` divides toward
-zero:
+`s32(v)` and `u32(v)` interpret the low 32 bits as signed and unsigned.
+`trunc0` divides toward zero:
 
 ```text
 D  = 2 if word_10 bit 0x100 is set, otherwise 0
@@ -24,11 +24,11 @@ B  = T(B1) if word_24 bit 0x40 is set, otherwise B1
 
 Without overflow on nonnegative inputs, reduction is `floor((2*v + 1)/3)`;
 both flags apply it twice with intermediate rounding. There is no clamp before
-the bonus. Selected scalar initialization/calendar stores are recorded in the
-[capacity finding](../../manifests/city-population-cap.json#/growthBoundary).
+the bonus. The selected stores for scalar initialization and the Calendar are
+recorded in the [capacity finding](../../manifests/city-population-cap.json#/growthBoundary).
 Flag meanings, complete writer coverage and runtime ranges remain unknown.
 
-When cumulative UEA 8, Faster city growth, is active, the ordinary integer
+When cumulative UEA 8, Faster city growth, is active, the integer
 result is `max(20, B - 10)`. Otherwise the threshold is `B`. For wrapped signed
 inputs, the exact active result is `s32(B - min_signed(10, s32(B - 20)))`.
 
@@ -40,27 +40,27 @@ producers and the field's full meaning remain unknown. Evidence:
 
 The active floor can raise a baseline below 20. The proposed
 [economy bonus correction](economy-bonus-corrections.md#zulu-growth-without-increased-food-requirements)
-retains that baseline while preserving the native benefit at larger values.
+keeps that baseline while preserving the native benefit at larger values.
 
 ## Population bonus branches
 
 Applying the 100-Gold reward requests type-0 Settlers at the first populated
 city owned by the reward player, without testing whether it is the capital.
 The returning continuation advances the threshold marker without testing grant
-success. The 2,000-Gold reward adds +1 below population 31; Irrigation first
-discovery also adds +1 to owned cities with separate phase/source/eligibility
-guards and no below-31 test. Both call `0x82D00C78` after the writes.
+success. The 2,000-Gold reward adds +1 below population 31. Irrigation first
+discovery also adds +1 to owned cities, with its own checks on phase, source and
+eligibility and with no below-31 test. Both call `0x82D00C78` after the writes.
 
-The classifier's nonzero-mask and zero-mask/null-child branches retain helper
-state while clearing or bypassing the unnamed field at `+0x78`. A nonnull child
-requires the actual receiver and call target to be identified. Mask rebuild
-copies a nonzero source or combines session predicates. Searches for source
-stores, address construction and displaced or overlapping accesses found no
-producer, but did not exclude aliases, bulk copies or all writers. Zeros in the
-image and known call sites do not establish the live mask or retention across
-calls.
+The classifier's branches for a nonzero mask, and for a zero mask with a null child,
+keep the helper state while clearing or bypassing the unnamed field at `+0x78`.
+A nonnull child needs the actual receiver and call target to be identified. Mask
+rebuild copies a nonzero source or combines session predicates. Searches for
+source stores, address construction and displaced or overlapping accesses found
+no producer, but did not exclude aliases, bulk copies or all writers. Zeros in
+the image and known call sites do not establish the live mask, or that it stays
+unchanged across calls.
 
-The helper's save14/restore14 at `0x82D019E8/0x82D019EC` can restore the outer
+The helper's save14 and restore14 at `0x82D019E8` and `0x82D019EC` can restore the outer
 owner, ordinal and loop pointer despite reuse of `r31`, provided every child
 preserves the saved bytes and the city and marker bytes. It updates workers,
 tiles and flags without directly storing owner or population. Valid divisors,
@@ -71,18 +71,22 @@ classifiers read the mask again, so an initial nonzero mask is insufficient.
 
 To replace the application of the 100-Gold reward:
 
-1. Retain reward player; scan 128 slots, match signed owner/population 1 through
-   30, increment once and call `0x82D00C78(cityIndex)`. Skip 31; granting 32
-   breaks R=32/cap31.
-2. Require helper completion and retained frame/nonvolatiles/city/owner/population/
-   marker. Actual mask/order remain unknown. Zero mask needs current child,
-   `+0x100`, repeated dispatch/lifetime binding; manifest lists every reached gate.
-3. Skip `0x82CF57E4` creator, resume `0x82CF57E8` once. Retain applying
-   flag, tier index/table and marker address for `0x82CF5BE0`. Preserve preview/
-   later tiers; never separately mark or retry partial loop.
+1. Keep the reward player. Scan the 128 slots, match a signed owner and a
+   population of 1 through 30, increment once and call
+   `0x82D00C78(cityIndex)`. Skip 31, because granting 32 breaks R=32 at cap 31.
+2. Require helper completion. The frame, the nonvolatile registers, the city,
+   the owner, the population and the marker must stay valid. The actual mask and
+   order remain unknown. A zero mask needs the current child, `+0x100`, and
+   repeated dispatch and lifetime to be tied to code. The manifest lists every
+   check that is reached.
+3. Skip the creator at `0x82CF57E4` and resume at `0x82CF57E8` once. Keep the
+   applying flag, the tier index and table, and the marker address for
+   `0x82CF5BE0`. Preserve the preview and the later tiers. Never mark or retry a
+   partial loop separately.
 
-This conditional native-call contract proves no actual mask, full return or
-all-city execution. Exact guards/alternatives:
+This contract about native calls holds only under conditions. It shows no actual
+mask, no full return and no execution for all cities. The exact checks and
+alternatives are in
 [occ-gold-population-reward.json](../../manifests/occ-gold-population-reward.json).
 
 ## Population capacity

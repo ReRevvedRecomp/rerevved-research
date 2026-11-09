@@ -12,7 +12,7 @@ Findings, evidence contracts and query workflow:
 
 - [Source provenance](provenance.md) - source locators and unresolved origins.
 - [Evidence model](evidence-model.md) - what a claim needs and what it proves.
-- [Topic manifests](topic-manifests.md) - how to record one bounded finding.
+- [Topic manifests](topic-manifests.md) - how to record one finding.
 - [Catalog mining](catalog-mining.md) - how to scope a query and decide when to stop.
 - [Catalog contract](catalogs.md) - IDs, formats, evidence locators, and relations.
 

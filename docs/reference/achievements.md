@@ -24,75 +24,76 @@ it is independent of the achievement ID.
 
 The English names and descriptions in this catalog are the scoped display
 metadata exception described by the [evidence model](../evidence-model.md).
-They retain their retail provenance and do not establish a license for the
+They keep their retail provenance and do not establish a license for the
 original game artwork or text.
 
 ## Unlock trigger coverage
 
 The [native trigger family](../../manifests/achievement-unlock-triggers.json)
 records each retail ID's ordinal, exact submit sites, predicate, player identity
-and relevant history/reset machinery. The internal ordinal is not the retail
+and the relevant history and reset code. The internal ordinal is not the retail
 ID: ordinals 43..49 use an explicit reordered conversion.
 
-`mapped` means that bounded static connection has resolving evidence locators.
-It does not establish natural runtime acceptance, complete caller coverage,
-successful command delivery, asynchronous file completion or durable SDK unlock
-storage. `needs_mapping` retains a missing native join; partial evidence can
-still be linked while that status remains. No natural runtime unlock was
-validated by this mapping pass.
+`mapped` means that the selected static connection has resolving evidence
+locators. It does not establish natural runtime acceptance, complete caller
+coverage, successful command delivery, asynchronous file completion or durable
+SDK unlock storage. `needs_mapping` records a missing native link; partial
+evidence can still be linked while that status remains. Natural runtime unlock acceptance remains unverified.
 
 The aggregate victory, civilization and Great Person predicates use a shared
 profile bank. Its loader clears 680 bytes before optional restoration; it is
 not a new-game progress reset. Great Person history serializes presence bits
-and reloads 1/0 values. File-write admission remains conditional. The history
-finding records those qualifications alongside the exact cells and keys.
+and reloads values of 1 and 0. Whether the file write is accepted depends on a
+condition. The history finding records those qualifications alongside the exact
+cells and keys.
 
 The catalog covers retail metadata and trigger-research status. Custom
 recompilation achievements use their own IDs and are outside its 50 entries.
 The [combat reference](combat.md) explains why an observed
 combat or presentation pass cannot be assumed to be a unique unit defeat.
 
-## Custom achievement seams
+## Custom achievement hook points
 
-The family also records the three requested adaptations and their remaining
-acceptance gates:
+The family also records the three requested adaptations and what each still
+needs before acceptance:
 
-- **200% Concentrated Power of Will:** reuse the reached local-win handler
-  `0x82D052C8` and signed Deity difficulty >=4. The title must separately retain
-  all five handicap values staying at 200% for the whole game.
-- **One To Rule:** use that local Deity win and the actual enabled OCC policy.
-  Retail 49 checks saved founding history flags; it does not read the custom
-  OCC setting or compare current city count.
+- **200% Concentrated Power of Will:** this one reuses the reached local-win
+  handler `0x82D052C8` and a signed Deity difficulty of at least 4. The title
+  must separately keep all five handicap values at 200% for the whole game.
+- **One To Rule:** this one uses that local Deity win and the actual enabled OCC
+  policy. Retail 49 checks saved founding history flags. It does not read the
+  custom OCC setting or compare the current city count.
 - **Their Rage Is Within Your Control:** four selected combat retirement calls
-  expose original defeated ownership and the opposite winner. A live-to-dead
-  guard can reject repeated retirement, while allowing a reused live slot.
-  Full attack/defense, normal/Fast and command-42 delivery still need acceptance.
+  expose the defeated side as it was originally recorded and the opposite
+  winner. A guard on the unit going from live to dead can reject repeated
+  retirement, while allowing a reused live slot. Full attack and defense,
+  Normal and Fast presentation, and command-42 delivery still need acceptance.
   Retail 48 counts one unit's wins and cannot supply a saved per-game tally of
   50 Barbarian units defeated by the local player.
 
 ## Native gameplay events
 
 The [event boundary family](../../manifests/achievement-event-boundaries.json)
-records additional conditional static observations. Each finding retains its
-input, lifetime, route and delivery limits. None establishes complete runtime
+records additional static observations that each hold only under a condition.
+Each finding keeps its input, lifetime, route and delivery limits. None establishes complete runtime
 coverage or durable per-game history.
 
 | Event | Recorded boundary |
 |---|---|
-| [Unit production](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0354) | Selected post-creator completion and unit-rush joins, including alternate ship coordinates and partial-output guards. |
+| [Unit production](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0354) | Where the selected paths after the unit creator finishes connect to the unit-rush paths, including alternate ship coordinates and guards on partial output. |
 | [City founding](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0355) | Successful founding-only origin and current-turn observation, separate from current-city or first-capital history. |
-| [ICBM action](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0356) | Two source-consumption receipts; selector/address search limits and the exact early-SDI live admission probe. |
+| [ICBM action](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0356) | Two receipts that consume the source, the limits of the search for the selector and address, and the exact early SDI probe applied to a live action. |
 | [Knights Templar](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0357) | Artifact selector identity and same-tile artifact-bit clearing, separate from mounted-unit grants. |
-| [Water depth](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0358) | Native cache semantics, derived read-only current-terrain equivalent, conditional save/load transfer and selected committed-movement origins. |
-| [Combat strength](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0359) | Final operative pair joined conditionally to the local decisive-defensive result through exact queue record/cursor lineage. |
-| [Battle participation](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0360) | Opposed mode0 decision/RNG publication, checked mode2 evaluation exclusions and the later Normal/Fast presentation boundary. |
-| [City capture](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0361) | Current-owner transfer with retained old owner and Palace identity, without a Boolean success return. |
+| [Water depth](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0358) | Native cache behavior, a derived read-only equivalent of the current terrain, save and load transfer that happens only under a condition, and selected origins of committed movement. |
+| [Combat strength](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0359) | The final operative pair, tied to the local decisive defensive result only under a condition, through the exact lineage of the queue record and cursor. |
+| [Battle participation](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0360) | Opposed mode0 decision and RNG publication, the checked mode2 evaluation exclusions, and the later Normal and Fast presentation boundary. |
+| [City capture](../../manifests/achievement-event-boundaries.json#/findings/RVA-F-0361) | Transfer to the current owner (the player who now holds the city), with the previous owner and Palace identity kept, and no Boolean success return. |
 
 ## Catalog
 
 This table is generated from the canonical JSON. Run
 `python tools/reference_data.py --write` after editing the data; the regular
-verification gate rejects a stale table.
+verification check rejects a stale table.
 
 <!-- achievement-catalog:begin -->
 | ID | Name | Unlocked description | Locked description | G | Icon ID | Trigger mapping |

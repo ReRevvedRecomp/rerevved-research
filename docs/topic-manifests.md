@@ -1,7 +1,7 @@
 # Topic manifest contract
 
-Topic manifests in `manifests/*.json` canonically record each bounded question,
-current-image evidence, limits, and conclusion. Raw decompiler output, query
+Topic manifests in `manifests/*.json` are the canonical record of each narrow question,
+its current-image evidence, limits, and conclusion. Raw decompiler output, query
 reports, and runtime logs remain scratch.
 
 The four `manifests/catalogs/` files inventory reusable symbols, structures
@@ -20,14 +20,14 @@ fields except `question`:
 | `schemaVersion` | Exactly `1`. |
 | `id` | Unique across topic manifests and matches `RVA-F-` plus four digits. |
 | `topic` | Lowercase kebab-case and unique; a standalone file's stem equals it. |
-| `status` | `open` or `closed`: whether the bounded investigation remains active. |
+| `status` | `open` or `closed`: whether the investigation remains active. |
 | `confidence` | `confirmed`, `strong`, `candidate`, or `rejected`. |
 | `image` | Exactly `image.json`, the supported image contract. |
-| `question` | Narrow question answered or bounded by the evidence; required by convention, not the focused manifest test. |
+| `question` | Narrow question answered, or limited, by the evidence; required by convention, not the focused manifest test. |
 
 | Descriptive section | Role |
 | --- | --- |
-| `scope` | Bounded functions, fields, addresses, or other surface |
+| `scope` | The functions, fields, addresses, or other surface covered, with their limits |
 | `currentEvidence` | Current-image support, when present |
 | `guards` | Claims that must not be inferred |
 | `conclusion` | Supported result |
@@ -50,8 +50,8 @@ Confidence labels describe the evidence, not completion status:
 - `confirmed` requires authoritative static identity or runtime corroboration
   for a behavioral claim.
 - `strong` has direct evidence with a remaining boundary.
-- `candidate` is a bounded interpretation needing discrimination.
-- `rejected` retains a falsified candidate to prevent repeated work.
+- `candidate` is a limited interpretation needing discrimination.
+- `rejected` keeps a falsified candidate to prevent repeated work.
 
 ## Dependencies and current evidence
 
@@ -61,7 +61,7 @@ topics naming a standalone manifest or a family finding; `use` is a
 contribution rule.
 Older manifests may use `dependsOn` or omit `use`; normalize them only when
 editing that manifest. Dependencies name current evidence inputs, not old
-paths, commits, migrations, or relocations. Dependents retain their own
+paths, commits, migrations, or relocations. Dependents keep their own
 current-image locators.
 
 Optional `currentEvidence` describes checkout-current methods, entries,
@@ -88,9 +88,9 @@ must resolve in the checkout.
 
 Query narrowly in read-only mode; keep output in ignored scratch. Verify
 conclusions against the image pinned by `manifests/image.json`. Behavioral
-claims need a narrow generated-code comparison and a default-off runtime probe.
+claims need a narrow comparison against the recompiled code and a default-off runtime probe.
 
-Retain compact supported facts, evidence, uncertainty, guards, and conclusions.
+Keep compact supported facts, evidence, uncertainty, guards, and conclusions.
 Promote reusable entities or edges with their own catalog evidence and resolving
 JSON Pointers for topic citations. Promotion neither replaces nor requires
 rewriting the investigation record.

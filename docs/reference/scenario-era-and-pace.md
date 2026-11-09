@@ -60,7 +60,7 @@ select a calendar year or a slower pace. The new game setup function is `0x82D21
 | `0x82D22BAC` | Calls eligibility `0x82CE2C50`, which must return nonzero. |
 | `0x82D22BC4..0x82D22BEC` | Require an absent ownership bit, then OR the bit into `0x830EDC48`, add one to the success counter and add one to the acquisition tally at `0x830EDD08`. The loop repeats until successes reach the count. |
 | `0x82D22BFC` | Rereads Q+0x1C after each player. Later players and the value 4 test use the reloaded value. |
-| `0x82D22CA4`, `0x82D2301C`, `0x82D23050` | Enter the later player setup loop, cross a current virtual+0x40 call, then request era 0 from `0x82D05A48`. That setter writes a changed era before a current virtual+0x16C call and conditional local-player effects, so it is not a plain assignment. Earlier paths also cross a current virtual+0x100 call at `0x82D22D5C` and `0x82D22D7C`. |
+| `0x82D22CA4`, `0x82D2301C`, `0x82D23050` | Enter the later player setup loop, cross a current virtual+0x40 call, then request era 0 from `0x82D05A48`. That setter writes a changed era before a current virtual+0x16C call and effects on the local player that apply only under further checks, so it is not a plain assignment. Earlier paths also cross a current virtual+0x100 call at `0x82D22D5C` and `0x82D22D7C`. |
 | `0x82D20EB0..0x82D20EE4` | The tally chooser (thresholds 5, 14 and 24). |
 
 Whether the state from the grants is still intact at the era 0 request, and at
@@ -90,8 +90,8 @@ STARTERA, STARTYEAR and SPEEDMODE are separate inputs. The zero store at
 The scenario publisher `0x82DAEFD8` requests a 128 byte clear of Q at
 `0x82DAF000`, and its custom copy at `0x82DAF584..0x82DAF598` copies all 64
 halfwords into Q. A value written before a later publication can be replaced.
-Generated `0x82D219D4` is an early failure and reset call, not a proved
-overwrite after a successful setup.
+The recompiled code at `0x82D219D4` is an early failure and reset call. It is
+not a shown overwrite after a successful setup.
 
 ## Beta Centauri and STARTERA 4
 
@@ -161,9 +161,9 @@ should not repeat the startup grants.
 ## Game pace
 
 SPEEDMODE (slot 12) is added to a movement stat by `0x82CF1F70`
-(`EffectiveUnitMovementLookup`) on both return paths. It adds to retained r25
-(initialized to 1) or to the composed movement r26. This is not a proved
-movement budget, command cost or time multiplier. The preset store for built-in
+(`EffectiveUnitMovementLookup`) on both return paths. It adds to r25
+(initialized to 1) or to the composed movement r26. This does not show a
+movement budget, a command cost or a time multiplier. The preset store for built-in
 ordinal 5 writes SPEEDMODE 1 at `0x82DAF2DC`, after selected formatting calls.
 
 Coordinated slower progression needs a separate choice for each surface:
@@ -209,7 +209,7 @@ The arithmetic does not overflow for a signed 32-bit turn.
 - A second writer is in `0x82D0C3E8`, which the numeric EndTurn handler 54
   requests. It uses the same formula for Y below 1000 and gives 6 from year
   1000. It publishes year before an optional loop, and that loop's writes could
-  alias global memory, so the pair is not proved coherent.
+  alias global memory, so the pair is not shown to be coherent.
 - After the growth store, the helper `0x82D022F0` (called at `0x82D0C54C`) samples
   a signed count. A nonpositive count returns without scanning or calls. A
   positive count scans 256 records per row, resamples the row bound, and for a
@@ -234,9 +234,9 @@ order before the growth reader at `0x82CF1090` are open.
 - Research cost body `0x82CF0EE8` has 94 instructions and eight local load
   sites. Its scenario input is TECHNOLOGYRATE at Q+8, and it has no local
   Q+0x18 read. A raw search for the same halfword found no other candidates, but
-  long retained bases and computed aliases are not excluded.
+  long-lived bases and computed aliases are not excluded.
 - A definition+0x26 reader at `0x82CED418` and `0x82CED41C` sign extends a
-  halfword. The value -1 skips the adjustment. A bit overlap with a retained
+  halfword. The value -1 skips the adjustment. A bit overlap with a stored
   mask, plus a separate nonnegative global, adds 50 to a local score. This is a
   mask and sentinel use, not an ordered era comparison. Its upstream meaning is
   unknown.

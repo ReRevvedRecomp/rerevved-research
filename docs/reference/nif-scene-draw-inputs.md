@@ -82,7 +82,7 @@ that.
   masked with `0xF00F`, and the Shader Map ID is read and then written as zero.
 - Observations of the shared texture provider show registration and stream
   matches only. They do not show insertion order, a successful lookup or a
-  texture binding.
+  texture being set on the draw.
 - Terrain, particles, water and shader generation have their own records and
   are not covered by the NIF contracts. See
   [shader constants](native-renderer-shader-constants.md) and

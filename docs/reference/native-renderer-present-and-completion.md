@@ -84,6 +84,6 @@ unknown.
 - Whether the optional sink objects at `G+0x541C` and `G+0x5B0C` are ever set
   is unknown; see [tiling workers](native-renderer-tiling-workers.md).
 - The actual targets of the optional callbacks at `G+0x409C` and `G+0x40A0`
-  are unproved.
+  are not yet established.
 - Other writers of `G+0x2A98` and of the resource class mask `G+0x2AA0` are
   not ruled out. The word at `0x8319AEA8` may be one.

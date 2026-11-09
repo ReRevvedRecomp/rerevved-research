@@ -517,7 +517,7 @@ including the exact addresses, stack intervals and instruction counts, are in
 - The meanings of the override word at `0x830E4554` and the safeguard array at
   `0x830E45E4` are unknown. Their values at battle time are not established.
 - No natural battle that loses to protection is known. No proof covers every
-  legal input, retained generator state or retry.
+  legal input, stored generator state or retry.
 - Which unit configurations other than the single Catapult have an all state
   winning selection is open, as are zero override Army fights and wounded units.
 - The remaining callback, city creation and presentation effects keep the

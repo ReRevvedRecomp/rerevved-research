@@ -315,7 +315,7 @@ helpers are on the
   the peer. The SDK's stopped-client length and drop branch also needs relay mode
   and a datagram handle that is still registered. The manifest keeps four things
   apart: the API result, the observer callback, the sample store, and the
-  unproved delivery and clock contracts.
+  delivery and clock contracts that are not yet shown.
 - The [readiness check](../../manifests/xbox-network-message-root.json#/nativeTransportReadinessBoundary)
   polls one socket's write set with a zero timeout. A zero result alone does not
   tell not ready from a selector failure, and neither is a receipt from the peer.
@@ -392,7 +392,7 @@ helpers are on the
   helper then returns the later WSA result. Visible debug output, XNet readiness,
   the original retail trap handling and complete reference pairing are separate
   contracts.
-- The [session owned object retirement record](../../manifests/xbox-live-session-search-contract.json#/nativeSessionObjectRetirementBoundary)
+- The [session object retirement record](../../manifests/xbox-live-session-search-contract.json#/nativeSessionObjectRetirementBoundary)
   ties the QoS and settings objects to their selected destructors. QoS release
   comes before the serialized buffer is disposed, and a configured SDK release
   can also clear the active service's QoS mirror. A failed or skipped release
@@ -412,8 +412,8 @@ helpers are on the
   queue and socket handling and full reference compensation remain active.
 - The [outer join rollback record](../../manifests/xbox-live-session-search-contract.json#/nativeOuterJoinRollbackBoundary)
   reaches service destruction for a matching registry value on its processed
-  failure route. Destroying the session wrapper also needs a retained, nonnull
-  wrapper with the selected vptr, and preparation can fail before one exists.
+  failure route. Destroying the session wrapper also needs a nonnull
+  wrapper, still in place, with the selected vptr, and preparation can fail before one exists.
   Stable registry, key and object identities and normal helper returns are
   required. The early exits differ, and the mode 2 marker setter is separate from
   search cancellation or release. Reaching the destructor under these conditions

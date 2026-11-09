@@ -3,16 +3,16 @@
 Turn and converted year are separate values. Names are recovered, not debug
 symbols. Runtime observations are distinguished from static dataflow.
 
-## Owned scalars and converter
+## Scalars and converter
 
 | Item | Address | Recovered role |
 | --- | ---: | --- |
 | Current turn | `0x8312B8DC` | Numeric turn supplied to the native converter |
 | Current year | `0x8312B8E0` | Current converted calendar value |
 | `TurnToYear` | `0x82CEFA20` | Native piecewise conversion from turn to year |
-| `CalendarTurnAdvance` | `0x82D1EAB0` | Bounded routine that increments the turn, converts it to a year, and stores the year |
+| `CalendarTurnAdvance` | `0x82D1EAB0` | Routine that increments the turn, converts it to a year, and stores the year |
 
-The initial turn/year pair is 0/-4000. Each positive `TurnToYear` step advances
+The initial pair of turn and year is 0 and -4000. Each positive `TurnToYear` step advances
 the year by 100 while year < 0, 50 below 1000, 25 below 1700, 10 below 1900,
 5 below 1950, and 2 thereafter.
 
@@ -22,18 +22,18 @@ the year by 100 while year < 0, 50 below 1000, 25 below 1700, 10 below 1900,
 year at `0x8312B8E0`. Initialization has converter-derived paths; selected
 deserialization separately requests saved year and turn. Recomputing the pair
 on every load is not established. The full ABI, triggering phase, side effects
-and sole-writer status remain unproved.
+and sole-writer status are not yet established.
 
 Its exact direct `ActiveCivilizationBonusLookup` call establishes consumption,
 not calendar arithmetic or bonus causation.
 
-An initialization/load continuation repeatedly increments retained turn until
-converted year reaches a signed record-halfword threshold, except zero or values
-<=-4000. It can publish that turn to current/scheduling words before virtual
-dispatch. A frame-slot producer supplies the separate four-byte destination
+A continuation for initialization and load repeatedly increments the saved turn
+until the converted year reaches a signed record-halfword threshold. A threshold
+of zero, or of -4000 or less, is excluded. It can publish that turn to the
+current and scheduling words before virtual dispatch. A frame-slot producer supplies the separate four-byte destination
 `0x8314F17C`. Checking that value at the actual load discharges the intervening
-pointer-store alias guard; unconditional source retention remains unproved.
-The scheduling manifest owns the bypass-input and access guards. Callback
+pointer-store alias guard. That the source stays unchanged in every case is not
+yet shown. The scheduling manifest holds the bypass-input and access guards. Callback
 effects and credit cadence remain unknown.
 
 ## Presentation
@@ -43,13 +43,13 @@ compares event-year `+0x444` with `0x8312B8E0`; inequality branches to
 `0x82DFA038`, returns `1`, ending that match path. Event class, cadence and full
 eligibility remain unknown.
 
-Runtime observations: turn 61 -> 1025 AD; 62 -> 1050 AD. No universal formatter
+Runtime observations: turn 61 is 1025 AD, and turn 62 is 1050 AD. No universal formatter
 is identified. Complete `0x82CF3920..0x82CF39B0` selects negative, positive or
 zero presentation by the signed year argument. Its positive arm requests
 magnitude formatting without a local 2100 clamp or year-indexed table.
-Chart-label owner `0x82DF7648` passes a converter return to that formatter at
+The chart-label function `0x82DF7648` passes a converter return to that formatter at
 `0x82DF7690`; GotW also has a separately recorded consumer. Formatter
-descendants, ordinary HUD ownership and final wording remain unknown.
+descendants, which code draws the HUD year and the final wording remain unknown.
 Do not derive era and year from each other.
 
 ## Calendar beyond 2100
@@ -73,9 +73,9 @@ Turn 118 is 1950. Until the first signed year wrap, the late curve is
 These dates follow from the arithmetic; they are not observed endgame dates
 or a replacement deadline policy. Scenario elapsed turns are counted from a
 separate start turn.
-Selected save/load requests carry four-byte current-year and current-turn
-values; successful delivery, complete reload and retained coherence remain
-unproved for a continued game.
+Selected save and load requests carry four-byte current-year and current-turn
+values. Successful delivery, a complete reload and whether the state stays
+coherent in a continued game are not yet established.
 
 At turn 1073740966 the year is 2147483646. The next turn stores low32
 `0x80000000`, interpreted as -2147483648; later signed tests leave the simple
@@ -191,8 +191,9 @@ other ending paths. Replacing every 2100 is unsupported.
 
 ## Evidence boundaries
 
-- Dataflow establishes no cadence, sole/save/load ownership or complete side effects.
-- Reads require applicable player-state/pointer validity.
+- Dataflow establishes no cadence, no sole writer, no save or load handling and
+  no complete side effects.
+- Reads require valid player state and pointers where they apply.
 - No mutation, API, mod, SDK, presentation rewrite, movement field, duration
   producer or movement-specific timer follows.
 

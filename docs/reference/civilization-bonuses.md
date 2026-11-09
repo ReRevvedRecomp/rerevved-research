@@ -1,15 +1,17 @@
 # Civilization Unique Abilities
 
 Each civilization has one Unique Ability (UA) and four cumulative Unique Era
-Abilities (UEAs). Ancient starts apply the UA and Ancient UEA; later eras add
-effects without removing earlier ones. Later-era scenario grants retain the
-gates below. UAs can grant technologies, buildings, units, Gold or map state,
-or apply ongoing rules; they are separate from UEA table `0x82F6F950`: 16
-rows, four 32-bit IDs each, stride `0x10`, total `0x100`.
+Abilities (UEAs). Ancient starts apply the UA and the Ancient UEA. Later eras
+add effects without removing earlier ones. Scenario grants that start in a later
+era keep the checks below. UAs can grant technologies, buildings, units, Gold or
+map state, or apply ongoing rules. They are separate from the UEA table at
+`0x82F6F950`, which has 16 rows of four 32-bit IDs each, with stride `0x10` and
+total size `0x100`.
 
-Names are recovered, not debug symbols. Effect evidence is static unless stated;
-shared lookup alone proves neither complete effect ownership nor runtime,
-presentation, AI, save, scenario or multiplayer parity.
+Names are recovered, not debug symbols. Effect evidence is static unless stated.
+The shared lookup alone does not show which code writes each complete effect. It
+also does not show parity in runtime, presentation, AI, save, scenario or
+multiplayer behavior.
 
 ## Recovered storage and lookup
 
@@ -20,8 +22,8 @@ presentation, AI, save, scenario or multiplayer parity.
 | Player era array | `0x830ECD08` | Current era index consumed for each player |
 | Player civilization array | `0x830ECD28` | Civilization index selecting one table row |
 | Excluded player global | `0x82F700B0` | Player index for which the lookup returns false |
-| `ActiveCivilizationBonusLookup` | `0x82CF0CB0` | Shared activation owner and only recovered table reader |
-| UA text owner | `0x82CF97D0` | Presents the separate UA through `@CIVBONUSTEXT` |
+| `ActiveCivilizationBonusLookup` | `0x82CF0CB0` | Shared activation check and the only recovered reader of the table |
+| UA text function | `0x82CF97D0` | Presents the separate UA through the civilization bonus text token |
 
 `ActiveCivilizationBonusLookup` receives the requested UEA ID in `r3`, the
 player index in `r4`, and an exact era flag in `r5`.
@@ -66,8 +68,8 @@ interpretation sources and generation rule.
 | English | Elizabeth I | Monarchy | Longbow Archers gain +1 defense | Naval units gain +1 combat | Hill tiles provide +1 Production | Naval support is doubled |
 <!-- civilization-bonus-map:end -->
 
-Separate UA entries include one-time grants/initial state; German, Indian, Zulu
-and Mongolian entries establish ongoing rules.
+Separate UA entries include one-time grants and initial state. The German,
+Indian, Zulu and Mongolian entries establish ongoing rules.
 
 ## Unique Era Ability IDs
 
@@ -95,9 +97,9 @@ cumulative unlocks, not four mutually exclusive replacements.
 | 15 | English | 61 | 6 | 41 | 51 |
 <!-- civilization-era-id-map:end -->
 
-`African` is the internal image string for the player-facing Zulu civilization
-at index 13. `Arab` is likewise the internal name for the Arabian civilization
-at index 11.
+The internal name of the Zulu civilization at index 13 differs from its
+player-facing name. So does the internal name of the Arabian civilization at
+index 11.
 
 The Japanese row illustrates the two-layer model. Japan's UA grants knowledge of
 Ceremonial Burial, while its Ancient UEA is ID 28, which adds one food to sea
@@ -120,76 +122,82 @@ parameter table:
 | 59 | 5 | Pottery | French Ancient |
 | 60 | 15 | Democracy | Greek Ancient |
 
-Each requires unresolved selector-17 `0x82CEF4E8` zero, unowned technology and
-cumulative `ActiveCivilizationBonusLookup`; success calls `TechnologyAcquire`
-(`0x82D09208`) with player, technology, context, source/reason 6 and phase 1.
+Each of the eight branches needs three things: the unresolved selector-17 query
+`0x82CEF4E8` returning zero, an unowned technology and an active cumulative
+`ActiveCivilizationBonusLookup`. Success calls `TechnologyAcquire` (`0x82D09208`)
+with the player, the technology, the context, source (reason) 6 and phase 1.
 This generic acquisition also serves research, trade, setup, network and UA
-routes. It sets player bit in 48-word `0x830EDC48` and invokes discovery
-gameplay/presentation consumers.
+routes. It sets the player's bit in the 48-word table at `0x830EDC48` and
+invokes the discovery gameplay and presentation consumers.
 
-The grant opportunity occurs on the configured start turn or an era
-transition, rather than continuously. All eight use cumulative mode; later-era
-starts may grant earlier UEAs. Exact mode remains uncalled/unclamped. UA
-grants are separate: Arabian index 11 receives Religion 19 when current-start
-turn equals one, without UEA query. Saved ownership omits grant provenance;
-`0x82CC4040` transfers all 48 words both ways, so removing a host rule does
-not revoke technology.
+The grant opportunity occurs on the configured start turn or at an era
+transition, not continuously. All eight use cumulative mode, so a start in a
+later era may grant earlier UEAs. Exact mode remains uncalled and unclamped. UA
+grants are separate. Arabian index 11 receives Religion 19 when the current
+turn minus the start turn equals one, without a UEA query. Saved ownership omits
+the provenance of a grant. `0x82CC4040` transfers all 48 words in both
+directions, so removing a host rule does not revoke a technology.
 
-UEA40 has no technology branch. Replacing an existing literal changes another
-retail placement; dormant 57 has no accepted placement/presentation/AI meaning.
-Suppressing Mongolian Ancient 40 and granting Horseback Riding 4 needs a new
-combined civilization/era producer with explicit irreversible-save, timing,
-UI/AI/multiplayer semantics. No public ABI supports it.
+UEA 40 has no technology branch. Replacing an existing literal changes another
+retail placement. The dormant UEA 57 has no accepted placement, presentation or
+AI meaning. Suppressing Mongolian Ancient 40 and granting Horseback Riding 4
+would need a new combined producer for civilization and era. It would also need
+explicit semantics for irreversible saves, timing, UI, AI and multiplayer. No
+public ABI supports it.
 
 ## Shared consumers
 
 No table writer, initializer, row cache or second reader is known. Combat,
-effective stats, AI, rush, production/economy, calendar and other systems share
-`ActiveCivilizationBonusLookup`; relations catalog owns exact direct callsites.
-These edges establish no ID meanings, selecting branches, calendar effect or AI
-parity. A generic variant has one shared activation mechanism, not proof that
-every changed UEA behaves correctly.
+effective stats, AI, rush, production and economy, the Calendar and other
+systems share `ActiveCivilizationBonusLookup`. The relations catalog holds the
+exact direct call sites. These edges establish no ID meanings, no selecting
+branches, no Calendar effect and no AI parity. A generic variant has one shared
+activation mechanism. That does not show that every changed UEA behaves
+correctly.
 
 ## Effect ownership catalog
 
-Activation ID alone does not identify effect ownership. Accepted owner classes
-project distinct IDs onto all 64 retail cells:
+An activation ID alone does not identify the code that applies the effect. The
+accepted classes of that code map distinct IDs onto all 64 retail cells:
 
-| Owner class | Distinct retail IDs | Retail cells | Boundary |
+| Class of effect code | Distinct retail IDs | Retail cells | Boundary |
 | --- | --- | ---: | --- |
 | Shared cumulative lookup | 1, 3, 5, 8, 9, 10, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 28, 30, 32, 34, 35, 41, 42, 43, 47, 48, 50, 55, 56, 58, 59, 60 | 47 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
-| Direct civilization/effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
+| Direct civilization and effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
 | Mixed companion path | None | 0 | No native retail cell is accepted in this class. |
-| Unknown | 2, 4, 6, 7, 14, 26, 27, 36, 38, 46, 51, 61 | 16 | No accepted evidence packet linking the effect's producer and consumer establishes the native owner. |
+| Unknown | 2, 4, 6, 7, 14, 26, 27, 36, 38, 46, 51, 61 | 16 | No accepted evidence that links the effect's producer and consumer establishes the native function. |
 
-The 95-site inventory requests 44 of 45 retail IDs, offering search guidance,
-not named-effect/full-ownership proof or exclusion of direct companions. Merged
-calls for 12/16/28 escaped earlier immediate-literal search. Only 40 lacks a
-literal request and has a direct owner.
+The 95-site inventory requests 44 of 45 retail IDs. It offers search guidance.
+It is not proof of a named effect or of the full set of writers, and it does not
+exclude direct companions. Merged calls for 12, 16 and 28 escaped the earlier
+search for immediate literals. Only 40 lacks a literal request and has a direct
+path.
 
-| UEA | Static owner and boundary |
+| UEA | Static function and boundary |
 | --- | --- |
-| 1 | `RoadBuildCostLookup` (`0x82CF83C0`) and `0x82D13978` independently compose base road cost, query cumulative 1 and halve signed result toward zero. City value feeds affordability before command 7. Factor helper/full command semantics remain open: [`road-build-cost.json`](../../manifests/road-build-cost.json). |
-| 50 | `0x82D13978`, Warrior 6: active lookup `0x82D15B78` increments `+0x05`, later clamped to two. Another flag also admits increment; not sole veteran grant: [`new-warrior-veteran.json`](../../manifests/new-warrior-veteran.json). |
-| 3, 12, 55 | `EffectiveUnitMovementLookup` (`0x82CF1F70`) reads signed `+0x42`; `+0x50 & 0x200` selects 3, Riflemen 10 selects 12, Warrior 6 selects 55. Each adds one on ordinary composed return; special return remains unresolved: [`unit-movement-stat.json`](../../manifests/unit-movement-stat.json). |
-| 8 | `CityGrowthThresholdLookup` (`0x82CF1060`) queries at `0x82CF10F8` using city player `+0x00`; [growth threshold](city-growth.md) owns formula/adjustment/progress limits. |
-| 13 | `EffectiveUnitAttackLookup` (`0x82CF2230`) tests `UnitType` Cannon 17 at `0x82CF236C`, queries `0x82CF2380`, adds two at `0x82CF2390` only on success. |
-| 23 | `0x82D13978` adds signed `r18` to indexed `0x830ED484`, queries `0x82D15618`, then adds signed `r18 / 2` toward zero if active: nonnegative total `r18 + floor(r18 / 2)`. Maps Increased Great Person generation arithmetic, not enclosing name/layout or all producers/consumers. |
-| 25 | CityUpdate queries `0x82D148BC` and adds half its reaching Gold intermediate before storing frame `+0x7C`. The income contribution is separate from rush-rate and other AI valuation calls. The [correction contract](economy-bonus-corrections.md#gold-income-without-the-rush-penalty) preserves this income owner. |
-| 42 | `0x82D13978` requires local `0x8` clear/second indexed word zero; query `0x82D15344` can bypass `0x82D15350..0x82D1536C`, preserving four indexed halfwords/locals otherwise zeroed from `r22`. One Anarchy gate; dynamic field/predicate names and other paths remain open. |
-| 47 | `CalendarTurnAdvance` query `0x82D1F484` updates `0x830ED544 + player * 4` by `reserve + (reserve + 25) / 50`, signed truncation: ordinary nonnegative interest 2 percent, nearest/half-up. `0x82CF9F38` query `0x82CF9FE8` adds same term to aggregate without reserve store. [`gold-reserve-interest.json`](../../manifests/gold-reserve-interest.json) owns negative boundary. |
-| 40 | Capture `0x82D1B400` loads new civilization `0x82D1B74C`, tests Mongolian 14 at `0x82D1B758`, calls creator `0x82D1B784` on equality, ordinary reward `0x82D1B8BC` otherwise. Table replacement did not suppress it; Horseback Riding extension became non-retail mixed companion: synthetic shared grant plus separate `0x82D1B758` gate. |
+| 1 | `RoadBuildCostLookup` (`0x82CF83C0`) and `0x82D13978` each independently compose the base road cost, query cumulative 1 and halve the signed result toward zero. The city value feeds affordability before command 7. The factor helper and the full command semantics remain open: [`road-build-cost.json`](../../manifests/road-build-cost.json). |
+| 50 | `0x82D13978`, Warrior 6: when the lookup `0x82D15B78` is active, it increments `+0x05`, which is later clamped to two. Another flag also accepts the increment, so this is not the sole veteran grant: [`new-warrior-veteran.json`](../../manifests/new-warrior-veteran.json). |
+| 3, 12, 55 | `EffectiveUnitMovementLookup` (`0x82CF1F70`) reads signed `+0x42`. `+0x50 & 0x200` selects 3, Riflemen 10 selects 12, and Warrior 6 selects 55. Each adds one on a normal composed return. The special return remains unresolved: [`unit-movement-stat.json`](../../manifests/unit-movement-stat.json). |
+| 8 | `CityGrowthThresholdLookup` (`0x82CF1060`) queries at `0x82CF10F8` using the city player at `+0x00`. The [growth threshold](city-growth.md) page gives the formula, the adjustment and the progress limits. |
+| 13 | `EffectiveUnitAttackLookup` (`0x82CF2230`) tests `UnitType` Cannon 17 at `0x82CF236C`, queries `0x82CF2380` and adds two at `0x82CF2390` only on success. |
+| 23 | `0x82D13978` adds signed `r18` to the indexed `0x830ED484` and queries `0x82D15618`. If the query is active, it then adds signed `r18 / 2` toward zero. The nonnegative total is `r18 + floor(r18 / 2)`. This maps the arithmetic of Increased Great Person generation. It does not map the enclosing name or layout, or all producers and consumers. |
+| 25 | CityUpdate queries `0x82D148BC` and adds half of the Gold intermediate that reaches it before storing at `frame+0x7C`. The income contribution is separate from the rush-rate and other AI valuation calls. The [correction contract](economy-bonus-corrections.md#gold-income-without-the-rush-penalty) preserves this income path. |
+| 42 | `0x82D13978` requires local `0x8` clear and the second indexed word zero. The query `0x82D15344` can bypass `0x82D15350..0x82D1536C`, which preserves four indexed halfwords and locals that are otherwise zeroed from `r22`. It is one Anarchy check. The dynamic field and predicate names and other paths remain open. |
+| 47 | `CalendarTurnAdvance` query `0x82D1F484` updates `0x830ED544 + player * 4` by `reserve + (reserve + 25) / 50`, with signed truncation. For a nonnegative reserve this is interest of 2 percent, rounded to the nearest, with halves rounding up. The query `0x82CF9FE8` in `0x82CF9F38` adds the same term to the aggregate without storing the reserve. [`gold-reserve-interest.json`](../../manifests/gold-reserve-interest.json) holds the negative boundary. |
+| 40 | Capture `0x82D1B400` loads the new civilization at `0x82D1B74C` and tests Mongolian 14 at `0x82D1B758`. On equality it calls the creator at `0x82D1B784`. Otherwise it calls the regular reward at `0x82D1B8BC`. Replacing the table did not suppress it. The Horseback Riding extension became a mixed companion that is not in retail: a synthetic shared grant plus the separate check at `0x82D1B758`. |
 
-Reserve lifecycle follow-up found no additional source/caller: no exact base/
-owner-entry references and both bodies were non-returning thunks. This proves
-neither sole source nor consumer and leaves arithmetic unchanged:
+A follow-up on the reserve lifecycle found no additional source or caller. It
+found no exact references to the base or to an entry point of the function, and
+both bodies were non-returning thunks. This shows neither a sole source nor a
+consumer, and it leaves the arithmetic unchanged:
 [`gold-reserve-aggregate-lifecycle.json`](../../manifests/gold-reserve-aggregate-lifecycle.json).
 
 [`unique-era-ability-effect-ownership.json`](../../manifests/unique-era-ability-effect-ownership.json)
-owns qualifications/cell projection. Repaired complete yield accessors use
-cumulative lookup: Plains +1 Food (16), Sea +1 Food (28), Forest +1 Production
-(30), Desert +1 Food/+1 Trade (32), Hills +1 Production (41), Mountains +2
-Production (56). No generic tile API or broader parity follows.
+holds the qualifications and the projection onto cells. The repaired complete
+yield accessors use the cumulative lookup: Plains +1 Food (16), Sea +1 Food
+(28), Forest +1 Production (30), Desert +1 Food and +1 Trade (32), Hills +1
+Production (41) and Mountains +2 Production (56). No generic tile API or broader
+parity follows.
 
 | Accessor | Yield | Terrain value (UEA ID, increment, call site) |
 |---|---|---|
@@ -206,7 +214,7 @@ enumerated.
 ## Modification guards
 
 - Do not treat later era entries as replacements for earlier UEAs.
-- Do not assume UAs pass through the UEA lookup. The shared lookup owns the
+- Do not assume UAs pass through the UEA lookup. The shared lookup reads the
   four cumulative era entries, not the separate UA.
 - Do not patch individual UEA consumer branches for a generic variant.
   Recovered UEA consumers already converge on the shared lookup.
@@ -216,7 +224,7 @@ enumerated.
   lookup.
 - Do not assume host replacement identity is saved with ordinary technology
   ownership or negotiated between multiplayer peers. The current modding policy
-  adds no framework-wide mismatch gate.
+  adds no framework-wide mismatch check.
 - Do not reuse UEA ID 57 as an extension point. Its hard-coded Monarchy branch
   has no retail UEA-table placement or accepted effect contract.
 

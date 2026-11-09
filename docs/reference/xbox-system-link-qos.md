@@ -98,10 +98,10 @@ shows both calls in full.
 
 ## System Link menu labels and searches that found nothing
 
-Function `0x82E52068` resolves the Match Type, Player Match, Ranked Match and
-System Link labels and passes them to UI `SetTitle` and `SetText` calls. It
-makes no session, message, socket or search call. The `Refresh` and `Create
-Game` strings have no modeled references, so the page cannot say which control
+Function `0x82E52068` resolves the four labels for match type, player match,
+ranked match and System Link and passes them to UI `SetTitle` and `SetText`
+calls. It makes no session, message, socket or search call. The refresh and
+create-game strings have no modeled references, so the page cannot say which control
 sends which request.
 
 Searches through the three imported XMsg forms found no producer for messages
@@ -110,17 +110,17 @@ the truncated `0x000B001B` body that other evidence confirms, so it excludes no
 general XGI path. The [call inventory](xbox-networking-call-inventory.md#searches-for-general-search-messages)
 lists the search forms.
 
-One controlled System Link game list Refresh did not send caller 251, message
+One controlled System Link game list refresh did not send caller 251, message
 `0x000B001B`, length 20. The probe captured no matching request, no completion
-and no buffer write extent. This shows neither which function handles Refresh nor
+and no buffer write extent. This shows neither which function handles the refresh nor
 that the request is absent on other paths.
 
 ## Game selector commands
 
-The game list is a Scaleform movie that sends `FSCommand:OnPressY` for key code
-45 and `FSCommand:OnPressX` for key code 42. Neither route reaches a network
-call in the logged schemas, and neither press is tied to Refresh or Create
-Game. [Xbox game selector commands](xbox-game-selector-commands.md) holds the
+The game list is a Scaleform movie that sends the script command for the Y
+press for key code 45 and the script command for the X press for key code 42.
+Neither route reaches a network call in the logged schemas, and neither press
+is tied to the refresh or create-game action. [Xbox game selector commands](xbox-game-selector-commands.md) holds the
 movie anchors, callback sites, observed targets and zero-edge results.
 
 ## Host setup flow
@@ -147,7 +147,7 @@ not show cause.
 
 Leaving the lobby normally was followed by a session delete, QoS listen with
 flags `0x10` and cleanup. Cleanup reported zero counted direct LAN packets,
-QoS disabled and no retained QoS bytes. These records do not show that the
+QoS disabled and no QoS bytes kept. These records do not show that the
 title's own session was torn down. No successful `sendto` or `recvfrom`
 diagnostic appeared, which leaves unlogged or other I/O forms open.
 
@@ -163,7 +163,7 @@ success-only session handlers.
 
 - The record layout of the 1334-byte buffer and the meaning of messages
   `0x000B001B` and `0x00058023`.
-- Which function handles Refresh, and whether Refresh reaches `0x000B001B` on
+- Which function handles the refresh, and whether the refresh reaches `0x000B001B` on
   another path.
 - Host or client direction, relay and Internet play.
 - The meanings of the QoS result word `+0x04` and of states 2 and 3.

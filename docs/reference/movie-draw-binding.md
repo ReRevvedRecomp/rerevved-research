@@ -1,4 +1,4 @@
-# Movie draw binding
+# Movie draw plane setup
 
 The game draws a movie frame as a four vertex strip that samples texture planes
 filled by a video decoder. This page covers how the guest code hands those
@@ -13,7 +13,7 @@ first two arguments in home cells above the local frame: the first at `S+0x384`
 and the second at `S+0x38C`, where `S` is the new stack pointer. These cells
 are not fields of a new movie object.
 
-At the binding call `0x82E335A8` the code does this:
+At the plane setter call `0x82E335A8` the code does this:
 
 1. Load `Pa` from `S+0x38C`, then the index `j` from `Pa+0x14`.
 2. Reload the pointer, form `P+0x78+32*j` as the record base, and read a
@@ -59,7 +59,7 @@ skip handler. Neither slot shows that playback runs.
 
 | Question | Manifest |
 |---|---|
-| Caller, binding call, draw tuple, cleanup, slot 0 origin | [F0162](../../manifests/movie-nonindexed-up-draw.json#/currentEvidence/slotZeroOrigin) |
+| Caller, plane setter call, draw tuple, cleanup, slot 0 origin | [F0162](../../manifests/movie-nonindexed-up-draw.json#/currentEvidence/slotZeroOrigin) |
 | Setter behavior, null backend | [F0031](../../manifests/gfx-backend-fetch-descriptor.json#/fetchSelection) |
 | Key 5 object and frame slots | [F0059](../../manifests/attract-movie-frame-driver.json#/frameOwnership) |
 | Timing record and per frame update | [F0015](../../manifests/gameplay-frame-timing-owner.json#/perFrameUpdate) |
@@ -78,7 +78,7 @@ side, which is a separate path, is in [GFx image rendering](gfx-image-rendering.
   `0x100000000`.
 - `j` is not shown to be a frame number or a clock.
 - Plane sizes, channel roles and a color matrix are not established. Repeated
-  bind calls, draws or cleanups do not give a frame rate.
+  setter calls, draws or cleanups do not give a frame rate.
 
 ## Open questions
 

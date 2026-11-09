@@ -1,7 +1,7 @@
 # Research style guide
 
-This guide covers tracked scripts, records, and evidence prose. Content ownership
-and evidence requirements follow the [documentation index](README.md), [evidence
+This guide covers tracked scripts, records, and evidence prose. Where content lives
+and the evidence requirements follow the [documentation index](README.md), [evidence
 model](evidence-model.md), [topic manifest](topic-manifests.md),
 [catalog](catalogs.md), [workflow](workflow.md), and [comments and
 prose](ai_agents/comments-and-prose.md) contracts.
@@ -58,14 +58,14 @@ methods and locals, and `UPPER_SNAKE_CASE` constants. Use same-line braces,
 grouped standard and Ghidra imports, and applicable `@Override` annotations.
 Keep `//@category ReRevved` and document `REREVVED_*` inputs in entry comments.
 
-Queries write bounded output through `REREVVED_DUMP_PATH` or their declared
-interface and run through the read-only driver. Repairs retain bootstrap guards
+Queries write capped output through `REREVVED_DUMP_PATH` or their declared
+interface and run through the read-only driver. Repairs keep bootstrap guards
 and chain order. Name query limits and address ranges as constants.
 
 ## Comments and entry headers
 
 The [comments and prose policy](ai_agents/comments-and-prose.md) governs comment
-placement. Explain non-obvious guest locators, ABI/layout constraints, safety
+placement. Explain non-obvious guest locators, ABI and layout constraints, safety
 boundaries, tool interfaces, generated-output limits, or provenance requirements
 in one to three lines at the use site.
 
@@ -73,7 +73,7 @@ Comment individual enum members, fields, or list entries only for non-obvious
 meaning or limits. Keep comments adjacent and short; put shared rationale above
 the group.
 
-Preserve interface metadata: Python shebangs/docstrings, PowerShell help, Java
+Preserve interface metadata: Python shebangs and docstrings, PowerShell help, Java
 `//@category`, and environment variable names. Runtime strings, command help,
 catalog fields, and test labels are data or behavior. Edit generated output
 through its generator and canonical input, never by hand for style.
@@ -86,13 +86,13 @@ follow their schemas. Allocate IDs and canonical homes
 under the [topic manifest](topic-manifests.md) or [catalog](catalogs.md) contract.
 
 Write guest VAs as `0x` plus eight uppercase hexadecimal digits; offsets use
-`0x` plus uppercase hexadecimal without redundant leading zeroes. Retain
+`0x` plus uppercase hexadecimal without redundant leading zeroes. Keep
 `sub_XXXXXXXX` and `DAT_XXXXXXXX` until evidence supports semantic names.
 
 For unresolved fields, use neutral local patterns such as `byte_0C`, `word_08`,
 or `value_10`; state remaining interpretation in the claim or qualification.
 
-Unknown is a supported bounded result. Use explicit unknown/unresolved buckets,
+Unknown is a supported result, within the stated limits. Use explicit unknown and unresolved buckets,
 alternatives, or falsification conditions where supported by the record shape.
 Never hide uncertainty with invented semantic names, empty values, or omissions.
 
@@ -108,7 +108,7 @@ schema and focused validator or test changes for new fields. Preserve declared
 optional data only where permitted.
 
 Authored JSON uses two-space indentation, one property per line, a final newline,
-stable keys, and domain-ordered arrays. Generated JSON/JSONL follows its emitter:
+stable keys, and domain-ordered arrays. Generated JSON and JSONL follows its emitter:
 exporters sort inputs or records as needed, serialize explicitly, and emit one
 JSONL object per line with a final newline.
 
@@ -143,7 +143,7 @@ private.
 
 ## Verification
 
-The gate needs Python with `tools/requirements-dev.txt` (runtime requirements
+The verification check needs Python with `tools/requirements-dev.txt` (runtime requirements
 and pinned Ruff), plus JDK `java` and `javac` on `PATH`. Query-writer fixtures
 need neither a Ghidra project nor retail assets.
 
@@ -178,13 +178,13 @@ git diff --check
 Python with Ruff, checks PowerShell syntax, formatting and selected diagnostics
 against [the pinned settings](../tools/powershell-checks.psd1), runs Python
 tests, validates Markdown links and ASCII, and checks the Ghidra index,
-production writer/rebuild wiring, and repository hygiene.
+production writer and rebuild wiring, and repository hygiene.
 
 Run the focused test for a record family when its schema or validator changes.
 
 ## Commit subjects
 
 Use `type: imperative summary`, at most 50 characters. Use `research:` for a
-bounded finding that spans manifests, catalogs, or reference prose; `catalog:`
+finding that spans manifests, catalogs, or reference prose; `catalog:`
 for catalog-only work; and `docs:`, `tools:`, `test:`, `fix:`, or `ci:` for
 the matching change.

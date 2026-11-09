@@ -545,7 +545,7 @@ flowchart LR
   Exception metadata establishes `0x82D8F878` as a native entry despite its
   configured containing function model. This is implemented world state recovery
   machinery. Successful delivery, a disconnected player rejoining, command
-  reconciliation and an accepted return to play remain unproved.
+  reconciliation and an accepted return to play are not yet shown.
 - The
   [game entry controller lifetime](../../manifests/xbox-lobby-ready-check.json#/nativeEntryControllerLifetimeBoundary)
   separates the old screen manager's explicit global clear, a recorded screen

@@ -214,7 +214,7 @@ about use.
 
 Function `0x82A1F860` is a wrapper around `XMsgInProcessCall` at `0x82A1F890`
 with caller value 252 and message `0x0005800E`. The message is
-`XUserMuteListQuery`: the user index and a remote XUID go in, and a caller-owned
+`XUserMuteListQuery`: the user index and a remote XUID go in, and a caller-supplied
 four-byte BOOL comes back. The title calls it while it sets up a host game, and
 the SDK sees it as an unimplemented XLIVEBASE message.
 
@@ -230,7 +230,7 @@ input record the import receives as argument 1:
 
 The import receives caller value 252, message `0x0005800E`, the pointer to this
 record and the wrapper's argument 3. Argument 3 is the pointer to the
-caller-owned BOOL. In the direct caller `0x82CA1710`, instruction `0x82CA1850`
+caller-supplied BOOL. In the direct caller `0x82CA1710`, instruction `0x82CA1850`
 stores zero to stack word `+0x50`, instruction `0x82CA1864` calls `0x82A1F860`,
 and instruction `0x82CA1884` loads the same word afterward.
 
@@ -251,7 +251,7 @@ The call from guest callsite `0x82A1F890` with caller value 252 and message
 | --- | --- |
 | [Xenia Canary dispatch mapping](https://github.com/AdrianCassar/xenia-canary/blob/b5f6f6ed618210ecfbbcb228994418f734cdd850/src/xenia/kernel/xam/apps/xlivebase_app.cc#L230-L233) | Maps `0x0005800E` to `XUserMuteListQuery`. Clean-room implementation guidance, not retail authority. |
 | [Xenia Canary declaration](https://github.com/AdrianCassar/xenia-canary/blob/b5f6f6ed618210ecfbbcb228994418f734cdd850/src/xenia/kernel/xnet.h#L790-L794) | Declares user index, remote XUID and a separate four-byte state field. It does not show that the title's `+0x10` word is that field. |
-| [Source SDK header `ixboxsystem.h`](https://github.com/pmrowla/hl2sdk-csgo/blob/49e950f3eb820d88825f75e40f56b3e64790920a/public/ixboxsystem.h#L371-L375) | Independent Xbox 360 contract: user index, remote XUID and a caller-owned BOOL output. |
+| [Source SDK header `ixboxsystem.h`](https://github.com/pmrowla/hl2sdk-csgo/blob/49e950f3eb820d88825f75e40f56b3e64790920a/public/ixboxsystem.h#L371-L375) | Independent Xbox 360 contract: user index, remote XUID and a caller-supplied BOOL output. |
 
 The title code, the header and the pinned implementation together close the
 message identity and the input and output layout, and nothing more. The pinned

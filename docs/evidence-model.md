@@ -6,9 +6,9 @@ external sources interpret it, without independently proving correctness.
 Promoted findings need:
 
 - Image SHA-256 or its manifest reference.
-- Exact addresses/offsets and the narrow supported claim.
+- Exact addresses and offsets, and the narrow supported claim.
 - Confidence: `confirmed`, `strong`, `candidate`, or `rejected`.
-- Static/dynamic locators for behavioral claims.
+- Static and dynamic locators for behavioral claims.
 - Unresolved alternatives or falsification conditions.
 
 "Accepted" means supported within the recorded scope. "Selected" identifies
@@ -17,16 +17,16 @@ exclude only the forms tested. Preserve each claim's conditions, unknowns and
 runtime limits.
 
 Keep raw decompilation local; publish names, addresses, signatures, layouts,
-call edges and short summaries. Consumers explicitly adopt/copy findings;
+call edges and short summaries. Consumers explicitly adopt or copy findings;
 sibling builds must not depend on this repository.
 
-Keep retail descriptions/help/format strings, full selection tables/lossless
-membership, native-code slices and complete operands local. Publish locators,
+Keep retail descriptions, help and format strings, full selection tables and
+lossless membership, native-code slices and complete operands local. Publish locators,
 counts, lengths, digests and independent summaries. Text digests identify only
 recorded bytes, not an unrecorded terminator or original encoding.
 
 The [retail achievement catalog](../data/achievements.json) is a scoped exception:
-it retains the 50 English achievement names and unlocked/locked descriptions as
+it keeps the 50 English achievement names and unlocked and locked descriptions as
 display metadata alongside IDs, gamerscore and icon IDs. This exception does
 not include icon pixels, executable data or unrelated retail text. Metadata
 wording alone does not prove an unlock predicate or its runtime execution.

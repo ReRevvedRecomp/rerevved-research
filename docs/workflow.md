@@ -77,7 +77,7 @@ tools\run-headless.ps1 -Script DumpFunctions.java -ReadOnly `
   -ScriptEnv @{ REREVVED_TARGET_VAS = '0x821F2CA0,0x821F6B30' }
 ```
 
-Find uses of a structure offset inside a bounded function set:
+Find uses of a structure offset inside a limited function set:
 
 ```powershell
 tools\run-headless.ps1 -Script FindFieldRefs.java -ReadOnly `
@@ -116,12 +116,12 @@ It scans aligned raw words for `lis` followed within eight words by compatible
 Candidates may be data or contain intervening register writes; confirm exact
 instructions and functions. The query neither disassembles nor repairs.
 
-For known opcodes/displacements with varying registers, `FindPointerValues.java`
+For known opcodes and displacements with varying registers, `FindPointerValues.java`
 applies `REREVVED_WORD_MASK` before comparing words with `REREVVED_POINTER_VAS`.
 Patterns must zero ignored bits; omitting the mask gives exact matching.
 
 Mask `0xFFE0FFFF` and pattern `0x386001C0` find raw `addi r3,rN,0x1C0`
-candidates. Confirm code ownership and base registers before naming fields.
+candidates. Confirm which function uses the value and the base registers before naming fields.
 Results reaching the match cap are not exhaustive.
 
 ## Function fingerprint comparison
@@ -156,9 +156,9 @@ python tools\match_version_functions.py `
 ```
 
 The matcher rejects different algorithms and ties, caps heuristic pools at 256,
-and demotes many-source/one-target collisions. Exact or strong matches remain
+and demotes collisions with many sources and one target. Exact or strong matches remain
 identity candidates, insufficient for semantic claims. Re-query targets and
-compare bounded generated bodies when available before promoting facts.
+compare the recompiled copies of the functions when available before promoting facts.
 
 Promote compact findings into `manifests/`, then delete scratch fingerprint
 streams, reports, and headless logs. List prerequisite topics under
@@ -220,9 +220,9 @@ The tool searches complete dumped microcode in raw and per-dword byte-swapped
 form. JSON reports filenames, sizes, hashes, shader stages, match offsets,
 byte-order labels, schema version, and summary counts, without raw payloads.
 
-Keep reports in ignored scratch; promote bounded identities only when dump and
+Keep reports in ignored scratch; promote limited identities only when dump and
 asset are independently identified. Byte matches prove neither draw execution,
-visible output, sampler ownership, render-target state, nor defect causation.
+visible output, sampler use, render-target state, nor defect causation.
 
 ## Screen bounded integer arithmetic
 
@@ -266,8 +266,8 @@ neither construct it from `default.xex` and `default.xexp` nor validate retail
 derivation.
 
 Import at image base `0x82000000` with processor `PowerPC:BE:32:default`.
-The bounded contract covers `RVA-SYM-0223`, field
-relation `RVA-REL-0290`, and vtable ownership relation `RVA-REL-0293`.
+The contract is limited to `RVA-SYM-0223`, field
+relation `RVA-REL-0290`, and vtable relation `RVA-REL-0293`.
 
 Check the public contract and [attestation schema](../schemas/image-evidence.schema.json)
 without private inputs, then collect observations from the configured imported
@@ -287,7 +287,7 @@ imported program and hashes its source file, which must remain accessible.
 `--input` emits sanitized attestation JSON on stdout and returns nonzero for a
 failed result. Keep images, projects, observations, and raw logs local.
 
-Attestations contain public image identity, entity IDs/addresses, check names,
-and pass/fail summaries. All five checks must occur exactly once and match the
-public image/check identities. Complete failure attestations are valid; omitted
+Attestations contain public image identity, entity IDs and addresses, check names,
+and pass and fail summaries. All five checks must occur exactly once and match the
+public image and check identities. Complete failure attestations are valid; omitted
 checks never pass. The format cannot guarantee a runner's private-log handling.

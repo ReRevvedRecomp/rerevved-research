@@ -209,7 +209,7 @@ address that `0x827F6910` returns when its call returns zero. This is
 arithmetic. No use of the match is established.
 
 None of these dataflows shows an allocator or deallocator, construction or
-destruction, release or ownership, a class, object or field, a meaning for a
+destruction, release or any function that holds the data, a class, object or field, a meaning for a
 return value, or any runtime or transport role. The fallback calls
 `NtFreeVirtualMemory` on one path, which makes release plausible, but the page
 does not rely on that.
@@ -431,7 +431,7 @@ The hash `0x82A10E30` takes a pointer to a stored `C`, computes `U32[C]` times
 comparison `0x82A10E70` returns the 16 bit difference of `U16[C+4]` when the
 two `U32[C]` words are equal, and the word difference otherwise. A result of 0
 means those two fields match. It does not show pointer identity, a player
-identity or ownership. The list callback `0x82A10EE0` loads `C` from the slot
+identity or which code holds the data. The list callback `0x82A10EE0` loads `C` from the slot
 address and calls `0x82A14CE0(C)`.
 
 After building the children, `0x82A10B28` requests `0x827F1230` (arguments 2, 2,

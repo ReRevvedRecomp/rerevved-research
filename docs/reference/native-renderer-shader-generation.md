@@ -93,15 +93,15 @@ gives the full call chain with addresses.
 
 Candidate result, from
 [RVA-F-0415](../../manifests/native-renderer-shader-generation.json#/findings/RVA-F-0415).
-Two retained pixel programs match shipped effect files byte for byte:
+Two pixel programs in the corpus match shipped effect files byte for byte:
 
-| Retained program | Size | Effect file and offset |
+| Program | Size | Effect file and offset |
 |---|---|---|
-| River pixel shader | 564 bytes | `CivCon_Water.fxobj`, `0x3B7C` |
-| Shoreline pixel shader | 144 bytes | `CivCon_Wave.fxobj`, `0x2244` |
+| River pixel shader | 564 bytes | Water effect file, `0x3B7C` |
+| Shoreline pixel shader | 144 bytes | Wave effect file, `0x2244` |
 
-Neither retained vertex program matched any of the five candidate effect files
-(`CivCon_Rivers`, `CivCon_Water`, `CivCon_Wave`, `Terrain`, `CivCon_TerrainContour`).
+Neither vertex program matched any of the five candidate effect files (rivers,
+water, wave, terrain and terrain contour).
 That does not show a vertex shader is missing. The match ties a program to a
 file, not to a technique, a draw or any visible result. No guest address that
 loads these shaders is known.

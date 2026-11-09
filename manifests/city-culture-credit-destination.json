@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0406",
+  "topic": "city-culture-credit-destination",
+  "status": "open",
+  "confidence": "candidate",
+  "image": "image.json",
+  "question": "Does CityUpdate 0x82D13978 contain one authoritative per-city Culture credit, and what do the adjacent owner accumulator transaction and the city +0x48 consumers establish about where a flat Culture addition could land?",
+  "scope": {
+    "function": "0x82D13978",
+    "cityUpdateRanges": [
+      "0x82D152C0..0x82D15370",
+      "0x82D15370..0x82D15680"
+    ],
+    "calendarRanges": [
+      "0x82D1F9D0..0x82D1FB08",
+      "0x82D1F744..0x82D1F9D0"
+    ],
+    "accumulator": "0x830ED484 + owner*4",
+    "cityField": "city +0x48, signed halfword",
+    "boundary": "The selected stores and consumers are mapped. A per-city Culture bank, the complete set of Culture consumers and the intended destination of a flat Culture addition are not established."
+  },
+  "dependencies": [
+    {
+      "topic": "city-yield-state-credit",
+      "use": "Provides the retained r18 value, the accumulator store and the mode checks."
+    },
+    {
+      "topic": "unique-era-ability-effect-ownership",
+      "use": "Classifies the UEA 23 half term as Great Person generation."
+    },
+    {
+      "topic": "city-culture-border-yield-input",
+      "use": "Provides the border sweep reads of city +0x48."
+    },
+    {
+      "topic": "stonehenge-temple-contribution",
+      "use": "Provides the Temple contribution that reaches city +0x48."
+    }
+  ],
+  "accumulatorTransaction": {
+    "baseline": "On the continuing path, 0x82D15608 loads 0x830ED484 + owner*4, 0x82D1560C forms r7 = old word + retained r18, and 0x82D15614 stores r7. The word is owner indexed, not city indexed.",
+    "uea23Term": "0x82D15618 queries cumulative UEA 23. A nonzero return reloads the word at 0x82D15628 and stores old-after-baseline + signed truncation toward zero of r18/2 at 0x82D15634. A zero return joins at 0x82D15638.",
+    "multiplicity": "One baseline store and zero or one extra store per traversal of this straight-line block. The two stores are one native accumulator transaction, not two independent Culture credits.",
+    "classification": "The accepted UEA ownership result classifies the half term as Great Person generation. The word is not a per-city Culture bank.",
+    "qualification": "Complete reachability of the block for every mode and the complete set of readers of this accumulator are not established."
+  },
+  "cityInputs": {
+    "cityStore": "0x82D152E8..0x82D152F0 stores the low halfword of retained r18 to city +0x48 on selected recomputing paths. Mode zero also adds r18 to owner row 0x830EE388 + owner*0x28 + 0x10 at 0x82D15310.",
+    "borderSweep": "The border owner 0x82CBE528 reads signed city +0x48 at 0x82CBE854 and 0x82CBE860 and at 0x82CBE8D0 and 0x82CBE8DC. Derived terms are added to indexed halfwords through retained r14 + 0x208 and stored at 0x82CBE88C and 0x82CBE914..0x82CBE92C.",
+    "calendarCache": "On one continuing cached path, 0x82D1FAB8..0x82D1FAD8 adds signed city +0x48 to 0x830EE388 + incomingPlayer*0x28 + 0x10 and 0x82D1FADC branches to 0x82D1FC18, past the first mode-zero call. The block holds no reserve or UEA 23 accumulator store.",
+    "laterClearing": "UEA 42 clearing at 0x82D15350..0x82D1536C leaves city +0x48 and r18 intact. The owner byte comparison with 0x82F700B0 can clear stack +0x7C, r18 and r20 at 0x82D153C0..0x82D153EC without rewriting the earlier city +0x48 store.",
+    "qualification": "These are real accumulations of the city value. They are not shown to be interchangeable with the 0x82D15614 accumulator or with a Culture bank."
+  },
+  "scalingDistinction": {
+    "native": "With the UEA 23 term active, a native r18 equal to C stores old + C + trunc(C/2) into the accumulator (low 32 bits), where old is the word before the block. With old 100 and C 6 the stored value is 109.",
+    "changeR18": "Changing r18 from C to C + N before 0x82D15614 changes the transaction by N + trunc((C + N)/2) - trunc(C/2). This is generally neither N nor N + trunc(N/2).",
+    "changeStoreOperand": "Changing only r7, the operand of the store at 0x82D15614, leaves native r18 for the later half term and gives a flat delta of N in the accumulator.",
+    "qualification": "Native low 32 bit arithmetic applies. Whether a flat Culture addition should reach this Great Person accumulator, its UEA 23 modifier, the city +0x48 value or another consumer is not decided by the static evidence."
+  },
+  "candidateDestinations": [
+    {
+      "role": "cache value before the mode -1 exit",
+      "address": "immediately before 0x82D1537C",
+      "note": "Assign the freshly computed native value plus N to city +0x48, not the old composed value plus N. Mode zero also needs the matching N in owner row +0x10 once. Display and border consumers of +0x48 are not closed."
+    },
+    {
+      "role": "accumulator store operand",
+      "address": "operand r7 immediately before 0x82D15614",
+      "note": "Adds exactly N to the owner accumulator with native r18 unchanged. Does not update city +0x48 or owner row +0x10."
+    },
+    {
+      "role": "accumulator join after the UEA 23 term",
+      "address": "0x82D15638",
+      "note": "One flat N per traversal after the baseline and optional half term. It is an extra word mutation and is not needed when the store operand can be edited."
+    },
+    {
+      "role": "Calendar aggregate stage",
+      "address": "0x82D1FAB8..0x82D1FADC",
+      "note": "Adds to the incoming player row. A cached city +0x48 already includes a composed cache bonus, so adding N again doubles it. Not a sole credit point."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Three foreground read-only raw word queries over the listed ranges, checked against the pinned flat image. All 594 queried words matched. No generated code was read and no runtime action was performed.",
+    "entries": [
+      {
+        "role": "accumulator baseline and UEA 23 term",
+        "address": "0x82D15608..0x82D15638",
+        "confidence": "strong"
+      },
+      {
+        "role": "city +0x48 store and owner row addition",
+        "address": "0x82D152E8..0x82D15310",
+        "confidence": "strong"
+      },
+      {
+        "role": "Calendar cached +0x48 addition",
+        "address": "0x82D1FAB8..0x82D1FADC",
+        "confidence": "strong"
+      }
+    ],
+    "qualification": "The destination interpretations are candidates composed from these local stores."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No city update, accumulator store or Culture result was observed at runtime."
+  },
+  "guards": [
+    "Do not name 0x830ED484 a city Culture bank.",
+    "Do not suppress UEA 23 to make an assumed Culture delta equal N.",
+    "Do not add N to r18 and expect a flat accumulator delta.",
+    "Do not add N to a cached city +0x48 contribution that already includes a composed bonus.",
+    "Do not infer Culture consumer coverage, display parity, once per city turn cadence or runtime acceptance."
+  ],
+  "conclusion": "No single authoritative per-city Culture credit is established. The adjacent owner accumulator at 0x830ED484 is a Great Person generation word that receives r18 at 0x82D15614 and optionally half of it at 0x82D15634. City +0x48 is a retained cache that feeds the border sweep and an owner row. A flat addition has four candidate landing points with different scaling and double counting behavior, and the intended Culture destination remains an open decision."
+}

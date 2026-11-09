@@ -304,3 +304,14 @@ scenario-specific behavior remain separate.
 Exact scopes, native words, producer/reload qualifications, closed searches and
 the remaining publication/input discriminator are in
 [barbarian-spawn-population.json](../../manifests/barbarian-spawn-population.json).
+
+## Barbarian leader message screens
+
+In the inspected paths, a Barbarian leader message screen appears in two
+situations; other callers are not yet classified. The first eligible contact
+with a Barbarian city in each latitude band shows a taunt, but only when the
+city carries the human player's visibility bit; otherwise the screen is skipped
+and the band stays unshown. Capturing a Barbarian village shows a comment from
+the leader of that band. A friendly
+village never raises one. The paths, band rule and native skips are in
+[barbarian-contact-messages.json](../../manifests/barbarian-contact-messages.json).

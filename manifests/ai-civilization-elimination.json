@@ -5,7 +5,7 @@
   "status": "closed",
   "confidence": "strong",
   "image": "image.json",
-  "question": "Which native path destroys a civilization, which state marks it destroyed, how does Domination count eligible capitals, and which post-setup point lets a title remove non-human civilizations identically on every peer?",
+  "question": "Which native path destroys a civilization, which state marks it destroyed, how does Domination count eligible capitals, and where does the post-setup recount sit relative to setup on every peer?",
   "scope": {
     "functions": [
       "0x82D0C1E0",
@@ -61,14 +61,47 @@
       "slots": "0x82D217C8 stores count 6 and barbarian player 5 (0x82D22918, 0x82D2291C). A nonzero 0x8314F180 replaces them with 2 and -1 (0x82D22934, 0x82D22938). The selected start arm bypasses the sampled barbarian ordinal (0x82D231BC); additional session/flag/definition guards condition a type-0 unit request through 0x82D11750 (0x82D23258) or a city request through 0x82D18D88 (0x82D23348). These local requests do not prove successful delivery for every player. No separate AI constructor exists; AI is the complement of the human mask 0x8312E608.",
       "humanMask": "In network games the zero-source path of 0x82CD59A8 sets bit p when 0x82D8AB00 finds ordinal p in the map at +0x1C of the session object reached through 0x8314EFE0 +0x10 and vtable +0x100 (lookup 0x82CA9810).",
       "routing": "0x82CE1830 sends an event through 0x82D90988 and session vtable +0x44 without running it locally when the network byte is set, the local player is valid and the event's player is human or its id is at least 0x29 (0x82CE18C0 to 0x82CE1938); other events run locally through 0x82CE16C8 (0x82CE1944). Events of non-human players with ids below 0x29 therefore run on every peer.",
-      "postSetup": "0x82D25170 clears turn 0x8312B8DC and start turn 0x8312B8D8, calls setup at 0x82D25254, returns at 0x82D25260 when it yields -1, and otherwise calls the statistics recount 0x82D11AD8(1, 1) at 0x82D2530C."
+      "postSetup": "0x82D25170 clears turn 0x8312B8DC and start turn 0x8312B8D8, calls setup at 0x82D25254, returns at 0x82D25260 when it yields -1, and otherwise calls the statistics recount 0x82D11AD8(1, 1) at 0x82D2530C.",
+      "networkByte": "0x8314F10B is set at 0x82D89B48 from session vtable +0x94 and cleared at 0x82D06A7C; it has about 150 readers.",
+      "startLoop": "0x82D23258 requests a type 0 unit through 0x82D11750 in games started without a city. 0x82D23348 requests a city through 0x82D18D88 when definition field +0x1E is nonzero and mode 0x8312B8D4 is not -1, followed by extra units at 0x82D23388.",
+      "events": "An event record has five words {id, a, b, c, d}. 0x82CE16C8 queues one and drains the queue through dispatcher 0x82CDDF08 (66 entry table at 0x82CDE014). Setup sends events 0x3A, 0x3B and 0x39 (0x82D223DC, 0x82D22460, 0x82D224F0) and, for each human and Barbarian pair, event 0x26 as a network message (0x82D24E88); otherwise 0x26 runs locally at 0x82D24EA4. 0x82CE1950 is the variant of the post routine with an origin player. These events can still be in flight when setup returns and none touches AI units.",
+      "humanMaskSource": "0x82CD59A8, called at 0x82D21FF4, copies the source word 0x8314F1B0 when nonzero, and otherwise sets bit p for each ordinal p below the count where 0x82D8AB00(0x8314EFE0, p) is nonzero. The same session lookup conditions the event routing at 0x82D24B64, 0x82D24C24 and 0x82D24DB8.",
+      "countTwoBranch": {
+        "address": "0x82D22920",
+        "condition": "0x8314F180 (0x8314F17C + 4) is nonzero; 0x82D22934 and 0x82D22938 store count 2 and Barbarian -1 (r16 = -1 from 0x82D21A70).",
+        "effects": "The Barbarian word 0x82F700B0 has 201 readers. The branch needs humans at ordinals 0 and 1.",
+        "readers": "Besides setup, 0x8314F180 is read at 0x82D032B0 and 0x82D0F19C. No writer was found by lis direct or one level base scans.",
+        "startTurnMark": "0x8314F17C is a start turn mark written at 0x82D24F70 (setup), 0x82D25898 (after load), 0x82D0C8EC and 0x82D0C958.",
+        "qualification": "The writer and meaning of 0x8314F180 are open."
+      },
+      "postSetupHookPoint": "The recount call at 0x82D2530C (return address 0x82D25310) follows the 0x8314F76C slot +0x54 call and the setup result check at 0x82D25260. Every peer runs 0x82D25170 locally from the same setup inputs, and AI is simulated locally."
     },
     "domination": {
       "palaces": "0x830ECB40 holds per-player palace counts and total 0x830ECB60. Handler 0x82D1EAB0 increments the owner's count and the total for a palace city (0x82D1F7D0, 0x82D1F7DC); capture moves one count from victim to capturer (0x82D1C948 to 0x82D1C964).",
       "test": "Victory evaluation 0x82D10FD8 grants Domination through 0x82D02AB8(p, 1) at 0x82D11284 when palaces[p] is nonzero, palaces[p] is at least the total minus definition halfword +0x16 (0 when 0x82FFE7C4 bit 0x08000000 is set), at least 10 turns have passed since 0x8312B8D8 (0x82D11264) and 0x82CEEA50(1) is nonzero. 0x82CEFC98 and the capture warning at 0x82D1CDC8 use the same comparison.",
-      "result": "A civilization destroyed before founding never adds to the total, so the total counts only existing capitals."
+      "result": "A civilization destroyed before founding never adds to the total, so the total counts only existing capitals.",
+      "examples": [
+        "Two humans and no AI capital: each human holds 1 of a total of 2 palaces, so neither wins 10 turns after the start turn; capturing the other capital gives 2 of 2.",
+        "One human and no AI civilization: Domination is granted 10 turns after the start turn once the capital exists.",
+        "A human who has not founded a capital 10 turns after the start turn lets the other human win.",
+        "An eliminated civilization has 0 palaces and cannot win. The eliminated display reads the city and unit arrays at 0x82DD4948."
+      ],
+      "scenarioStarts": "A civilization that starts with a capital adds to the total, so removing its units alone leaves a city and a palace. Native city destruction is not traced."
     },
-    "persistence": "Serializer 0x82CC4040, called by save 0x82D81654 and load 0x82D86674, covers the unit records 0x830F2BF0, the pair matrix 0x830ED0D8, the nine palace words 0x830ECB40 and the count words. Load routine 0x82D86400 and pre-load 0x82D84238 sit in one slot table (0x821387C4, 0x821387CC)."
+    "persistence": "Serializer 0x82CC4040, called by save 0x82D81654 and load 0x82D86674, covers the unit records 0x830F2BF0, the pair matrix 0x830ED0D8, the nine palace words 0x830ECB40 and the count words. Load routine 0x82D86400 and pre-load 0x82D84238 sit in one slot table (0x821387C4, 0x821387CC). A load either skips 0x82D25170 or overwrites what that function changed; setup cannot run after a load because it resets the turn counter.",
+    "statistics": {
+      "stride": "0x80",
+      "recount": "0x82D11AD8 clears 0x830E5650 and 0x830E5AD0 for 0x480 bytes and counts again.",
+      "cityCount": "0x830E5AD0[p*0x80]: capture uses cities plus 1 as a divisor at 0x82D1C61C and the elimination tests use 0.",
+      "settlementPresence": "0x830E5650[p*0x80] is indexed by the Settlers class and does not count every live unit (friendly-village-rewards.json#/metricDefinitions/settlementPresence).",
+      "qualification": "An earlier reading of 0x830E5650 as a general unit count is superseded by the settlement presence definition."
+    },
+    "multiplayer": {
+      "pairBit": "0x82D0C1E0 keys its once only check on the local observer, so peers set different pair matrix bits ([A][p] and [B][p]). This is native behavior for any network elimination.",
+      "noCityRule": "The 20 turn rule for a civilization with no cities exists only in network games.",
+      "resync": "The registry setting Use MP Resynchronization is stored at 0x8314F1D4 (0x82E2D684). Resync strings are at 0x82D8FCC8 and the start is 0x82D8FF78, called from 0x82D0E100, 0x82D0E2BC, 0x82CDE3C4 and 0x82D25B0C. The per turn comparison is type 53 over the scalar 0x82CD4CF0 (xbox-resync-target-selection.json); a resync carries the host's full state.",
+      "divergence": "A peer that applies a different elimination rule diverges from the first AI event."
+    }
   },
   "staticQuery": {
     "scripts": [
@@ -82,13 +115,20 @@
     "bounds": "No match cap applies; the direct-caller scans cover every aligned word in .text. lis-based reference scans do not see stores through registers loaded from memory."
   },
   "guards": [
-    "Destroying a civilization changes the simulation; every peer must apply the same rule, so the setting belongs in the pre-join compatibility fingerprint.",
-    "Act only on players outside a nonzero human mask, never on the barbarian player, and only when count and barbarian words hold their ordinary 6 and 5.",
-    "Use the mode-0 unit kill or 0x82D0C1E0 itself; do not clear unit records directly.",
+    "Destroying a civilization changes the simulation; peers that apply different rules diverge from the first AI event.",
+    "The complement of the human mask includes the Barbarian player and does not identify eligible AI civilizations by itself. Count and Barbarian words hold 6 and 5 only on the selected setup suffix; the 0x8314F180 branch holds 2 and -1.",
+    "The recorded native ways to remove a civilization's units are the mode 0 kill 0x82D02390 and 0x82D0C1E0 itself.",
     "A player that already owns a city is out of scope; native city destruction is not traced here.",
     "0x82D0C1E0 keys its once-only gate on the local player, so peers set different pair-matrix bits; this is native behavior for any network elimination.",
     "Static evidence only; a default-off runtime probe must confirm elimination timing, turn continuation, Domination and save/load on one machine and across two System Link peers.",
     "The walk is bound to this image; another build needs a new walk."
   ],
-  "conclusion": "0x82D0C1E0 kills the selected civilization's live unit records through 0x82D02390 mode 0 and presents messages. The selected end-of-round caller checks for zero city and settlement-presence statistics, with a separate network condition after 20 turns, before later session and civilization-pair checks. It does not count all live units or establish a general alive flag. Setup requests non-Barbarian starts under recorded conditions; successful delivery and current participation remain separate requirements. The human-player bitmask identifies human players. Its complement alone does not identify eligible ordinary AI civilizations. The accepted post-setup recount, local non-human event routing and palace-based Domination result remain conditional implementation inputs under the recorded peer and runtime requirements."
+  "conclusion": "0x82D0C1E0 kills the selected civilization's live unit records through 0x82D02390 mode 0 and presents messages. The selected end-of-round caller checks for zero city and settlement-presence statistics, with a separate network condition after 20 turns, before later session and civilization-pair checks. It does not count all live units or establish a general alive flag. Setup requests non-Barbarian starts under recorded conditions; successful delivery and current participation remain separate requirements. The human-player bitmask identifies human players. Its complement alone does not identify eligible ordinary AI civilizations. The accepted post-setup recount, local non-human event routing and palace-based Domination result remain conditional implementation inputs under the recorded peer and runtime requirements.",
+  "openQuestions": [
+    "Writer and meaning of 0x8314F180.",
+    "Whether 0x82D25170 runs on the load path.",
+    "Which condition reaches the tail of dispatcher event 0x11 at 0x82CDF2D4.",
+    "Natural city destruction, and the first diverging field behind a resync.",
+    "The farewell leader messages can be hidden through the path recorded in barbarian-contact-messages.json."
+  ]
 }

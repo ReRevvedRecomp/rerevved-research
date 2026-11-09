@@ -1,0 +1,322 @@
+{
+  "schemaVersion": 1,
+  "family": "ai-unit-rush-valuation",
+  "findings": {
+    "RVA-F-0398": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0398",
+      "topic": "ai-unit-rush-valuation",
+      "status": "open",
+      "confidence": "candidate",
+      "image": "image.json",
+      "question": "What integer expression does AIUnitChoiceEvaluate use to value rushing a unit, and how does it differ from the human rush cost?",
+      "scope": {
+        "function": "0x82CB44E0",
+        "semanticName": "AIUnitChoiceEvaluate",
+        "scannedRange": "0x82CB67EC..0x82CB6858",
+        "boundary": "One local expression and its operands. The result is a candidate difference from the human rush cost, not a confirmed defect and not a claim about what a natural AI turn pays."
+      },
+      "dependencies": [
+        {
+          "topic": "production-cost-ownership",
+          "use": "Accepted AIUnitChoiceEvaluate owner 0x82CB44E0, its helper 0x82CF1148 and the signed unit factor at definition +0x44."
+        },
+        {
+          "topic": "rush-cost-producer",
+          "use": "Human rush formula, its early division and the command path that this AI block does not submit."
+        }
+      ],
+      "operations": [
+        {
+          "address": "0x82CB6818",
+          "operation": "multiply",
+          "role": "unit factor F times effective scalar S"
+        },
+        {
+          "address": "0x82CB6824",
+          "operation": "subtract",
+          "role": "subtract invested production I from F*S"
+        },
+        {
+          "address": "0x82CB6828",
+          "operation": "divide",
+          "role": "truncating division that forms the Gold rate R, already truncated before use"
+        },
+        {
+          "address": "0x82CB6830",
+          "operation": "multiply",
+          "role": "rate R times the subtracted value"
+        },
+        {
+          "address": "0x82CB6838",
+          "operation": "signed half scaling",
+          "role": "first instruction of the final half"
+        },
+        {
+          "address": "0x82CB6844",
+          "operation": "signed half scaling",
+          "role": "completes the final half with truncation toward zero"
+        }
+      ],
+      "arithmetic": {
+        "variables": {
+          "F": "signed unit factor",
+          "S": "effective scalar",
+          "I": "invested production",
+          "R": "Gold rate, already truncated"
+        },
+        "domain": "Small positive overflow-free operands under stable supplied inputs.",
+        "humanRush": "R * (trunc0(F*S/2) - I)",
+        "selectedAiValue": "trunc0(R * (F*S - I) / 2)",
+        "difference": "The AI expression subtracts invested production before the final half; the human rush subtracts it after halving the full unit cost.",
+        "workedExample": {
+          "factor": 2,
+          "scalar": 10,
+          "invested": 2,
+          "rate": 2,
+          "human": 16,
+          "ai": 18,
+          "note": "Accepted Warrior factor 2. The comparison does not depend on the American half-price bonus."
+        },
+        "modelCheck": "tools/check-cost-audit.py compares the two expressions over factors 2, 4, 5 and 10, four eras and both bonus alternatives: 1744 supplied cases, 1668 differ. These are cases, not distinct bugs."
+      },
+      "currentEvidence": {
+        "method": "Foreground read-only ghidra/DumpMemoryWords.java queries; selected instruction and data words checked against the hash-verified supported flat image; independent opcode, register and shift checks; narrow exact-function generated corroboration.",
+        "entries": [
+          {
+            "role": "multiply",
+            "address": "0x82CB6818",
+            "confidence": "strong"
+          },
+          {
+            "role": "subtract",
+            "address": "0x82CB6824",
+            "confidence": "strong"
+          },
+          {
+            "role": "rate division",
+            "address": "0x82CB6828",
+            "confidence": "strong"
+          },
+          {
+            "role": "rate multiply",
+            "address": "0x82CB6830",
+            "confidence": "strong"
+          },
+          {
+            "role": "signed half",
+            "address": "0x82CB6838",
+            "confidence": "strong"
+          },
+          {
+            "role": "signed half",
+            "address": "0x82CB6844",
+            "confidence": "strong"
+          }
+        ],
+        "qualification": "The operations are checked statically. Which item, scalar and rate a natural AI occurrence supplies is not observed."
+      },
+      "guards": [
+        "Do not infer that a natural AI overpays or skips an affordable purchase from the 16 and 18 comparison.",
+        "Do not call the difference a defect until live inputs and intended rounding are known.",
+        "The 16 and 18 comparison needs matching item, scalar and rate premises; see RVA-F-0401."
+      ],
+      "conclusion": "Under the stated operands, AIUnitChoiceEvaluate computes trunc0(R*(F*S-I)/2), which exceeds the human rush cost R*(trunc0(F*S/2)-I) in the Warrior example (18 against 16). The difference stays a candidate until a live AI occurrence confirms the inputs."
+    },
+    "RVA-F-0399": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0399",
+      "topic": "ai-unit-rush-affordability-arms",
+      "status": "open",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Which comparisons does AIUnitChoiceEvaluate make between the valued amount and the owner's Gold before the paid arms?",
+      "scope": {
+        "function": "0x82CB44E0",
+        "semanticName": "AIUnitChoiceEvaluate",
+        "ranges": [
+          "0x82CB68A4..0x82CB68B0",
+          "0x82CB6990..0x82CB69B4"
+        ],
+        "boundary": "Two local comparisons. Opaque callee effects and the full set of paths that enter either arm are outside this record."
+      },
+      "dependencies": [
+        {
+          "topic": "ai-unit-rush-valuation",
+          "use": "The retained amount compared with Gold."
+        }
+      ],
+      "arms": [
+        {
+          "name": "primary paid arm",
+          "range": "0x82CB68A4..0x82CB68B0",
+          "requires": "signed amount < owner Gold"
+        },
+        {
+          "name": "policy bit 0x4 arm",
+          "range": "0x82CB6990..0x82CB69B4",
+          "requires": "amount < trunc0(Gold/2)",
+          "entry": "An earlier check can enter this arm directly."
+        },
+        {
+          "name": "nonpositive amount",
+          "requires": "amount <= 0",
+          "result": "A separate item and CityUpdate path without the local debit and production stores."
+        }
+      ],
+      "currentEvidence": {
+        "method": "Foreground read-only ghidra/DumpMemoryWords.java queries; selected instruction and data words checked against the hash-verified supported flat image; independent opcode, register and shift checks; narrow exact-function generated corroboration.",
+        "entries": [
+          {
+            "role": "primary affordability comparison",
+            "address": "0x82CB68A4",
+            "confidence": "strong"
+          },
+          {
+            "role": "policy bit 0x4 comparison",
+            "address": "0x82CB6990",
+            "confidence": "strong"
+          }
+        ],
+        "qualification": "Static operand checks only. Equality and signed behavior follow the decoded comparisons; actual Gold reads are not observed."
+      },
+      "guards": [
+        "The amount is an affordability and charge input in this block; that does not show the amount equals what the AI pays in play.",
+        "The local block contains no explicit command 6 submission."
+      ],
+      "conclusion": "Both paid arms compare the retained amount with the owner's Gold: the primary arm needs amount below Gold, and the policy bit 0x4 arm needs amount below half of Gold, truncated toward zero."
+    },
+    "RVA-F-0400": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0400",
+      "topic": "ai-unit-rush-charge-stores",
+      "status": "open",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "What do the two paid arms of AIUnitChoiceEvaluate store after the affordability comparison?",
+      "scope": {
+        "function": "0x82CB44E0",
+        "semanticName": "AIUnitChoiceEvaluate",
+        "ranges": [
+          "0x82CB6928..0x82CB6954",
+          "0x82CB6A2C..0x82CB6A88"
+        ],
+        "boundary": "The local stores and the CityUpdate call. The CityUpdate return value and later effects are not described here."
+      },
+      "dependencies": [
+        {
+          "topic": "ai-unit-rush-affordability-arms",
+          "use": "The two arms that lead to these stores."
+        }
+      ],
+      "stores": [
+        {
+          "range": "0x82CB6928..0x82CB6954",
+          "arm": "primary paid arm"
+        },
+        {
+          "range": "0x82CB6A2C..0x82CB6A88",
+          "arm": "policy bit 0x4 arm"
+        }
+      ],
+      "effects": [
+        "Write the selected item to the city.",
+        "Debit the amount from the reloaded Gold word.",
+        "Increase the 16-bit production by trunc0(amount / recomputedRate).",
+        "Call CityUpdate(city, 1)."
+      ],
+      "currentEvidence": {
+        "method": "Foreground read-only ghidra/DumpMemoryWords.java queries; selected instruction and data words checked against the hash-verified supported flat image; independent opcode, register and shift checks; narrow exact-function generated corroboration.",
+        "entries": [
+          {
+            "role": "primary arm stores",
+            "address": "0x82CB6928",
+            "confidence": "strong"
+          },
+          {
+            "role": "policy bit 0x4 arm stores",
+            "address": "0x82CB6A2C",
+            "confidence": "strong"
+          }
+        ],
+        "qualification": "Static words checked against the supported image. The first and recomputed rates are equal only when retained era and bonus state match."
+      },
+      "guards": [
+        "No complete CityUpdate contract follows from this record.",
+        "Completed production, delivery and the actual Gold change are not observed."
+      ],
+      "conclusion": "Each paid arm writes the item, subtracts the valued amount from Gold, adds production computed from the amount and a recomputed rate, and calls CityUpdate(city, 1)."
+    },
+    "RVA-F-0401": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0401",
+      "topic": "ai-unit-rush-live-confirmation",
+      "status": "open",
+      "confidence": "candidate",
+      "image": "image.json",
+      "question": "What must a live AI occurrence show before the AI rush valuation difference counts as a gameplay effect?",
+      "scope": {
+        "function": "0x82CB44E0",
+        "semanticName": "AIUnitChoiceEvaluate",
+        "boundary": "The conditions that decide whether the static difference matters. No game observation exists for them."
+      },
+      "dependencies": [
+        {
+          "topic": "ai-unit-rush-valuation",
+          "use": "The expression whose live inputs are open."
+        },
+        {
+          "topic": "ai-unit-rush-charge-stores",
+          "use": "The stores a live occurrence would record."
+        }
+      ],
+      "openConditions": [
+        "The factor F and scalar S need not describe the same item: the scalar's item-sensitive part uses the old current city item before replacement.",
+        "The first rate R and the recomputed rate in the production store are equal only when retained era and bonus state match.",
+        "The 16 and 18 comparison needs matching item, scalar and rate premises.",
+        "A natural AI occurrence has not been recorded with these identities."
+      ],
+      "confirmationRequirement": "One natural AI occurrence that records both Gold reads, which check or bypass is taken, the stores, the CityUpdate return and the completed outcome.",
+      "currentEvidence": {
+        "method": "Static reading of the same words as RVA-F-0398 through RVA-F-0400.",
+        "entries": [
+          {
+            "role": "AI unit-choice input",
+            "address": "0x82CB6804",
+            "confidence": "candidate"
+          }
+        ],
+        "divideMultiplyScreen": {
+          "tool": "tools/find_divide_multiply.py",
+          "runs": 2,
+          "wordsExamined": 645,
+          "supportedInstructionsRetained": 405,
+          "barriersEncountered": 240,
+          "pairs": [
+            "0x82CE2910 -> 0x82CE2934",
+            "0x82CB6828 -> 0x82CB6830"
+          ],
+          "ranges": [
+            "0x82CB67EC..0x82CB6858",
+            "0x82CE2888..0x82CE2938",
+            "0x82CF0F8C..0x82CF105C",
+            "0x82CF1148..0x82CF1278",
+            "0x82CF1278..0x82CF1554",
+            "0x82CF83C0..0x82CF8494",
+            "0x82D16828..0x82D16898",
+            "0x82D1F470..0x82D1F4A8",
+            "0x82CF9FDC..0x82CFA014",
+            "0x82D2B4BC..0x82D2B5DC",
+            "0x82D17964..0x82D17AAC"
+          ],
+          "qualification": "Two bounded runs examined 645 words across these half-open ranges; the source states the counts for the two runs together. The scanner follows only explicit word division results into multiplication within 16 instruction steps. The technology sequence crosses a branch and was assessed from its accepted formula instead. Zero hits on another slice do not establish correctness, and this was not an executable-wide census."
+        },
+        "qualification": "This record lists conditions; it adds no observation."
+      },
+      "guards": [
+        "Do not classify the valuation as a defect or an intended policy before confirmation."
+      ],
+      "conclusion": "The valuation difference is a static candidate. Its gameplay effect, if any, needs the live occurrence described above."
+    }
+  }
+}

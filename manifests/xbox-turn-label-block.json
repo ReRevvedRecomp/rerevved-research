@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0411",
+  "topic": "xbox-turn-label-block",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Where does the contiguous block of Xbox-native command label strings sit, which exact labels anchor it, and do direct references or aligned pointers to the turn labels expose a label table or the message dispatcher?",
+  "scope": {
+    "labelBlockStart": "0x82156BF0",
+    "turnLabelStrings": ["0x82156DBC", "0x82156DD0", "0x82156DF0"],
+    "syncDiagnosticStrings": ["0x821574F8", "0x82157508", "0x82157930"],
+    "boundary": "Defined-string references, aligned initialized pointers and the exact string addresses only. It does not recover how labels reach the log or screen, which command types they name beyond the selected join in native-human-turn-completion, or any runtime behavior."
+  },
+  "dependencies": [
+    {
+      "topic": "native-human-turn-completion",
+      "use": "Supplies the mapper 0x82CD5400 and table 0x82CD5420 route that reaches label text, and the selected type-to-label map."
+    },
+    {
+      "topic": "xbox-network-message-root",
+      "use": "Supplies the case 55 producers of the two synchronization error strings and the Great General cases 25 and 44."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Direct flat-image string reconnaissance, a read-only Ghidra string-boundary query limited to eight functions, and a read-only scan of initialized memory for aligned pointer values with at most eight matches per value.",
+    "tools": ["ghidra/DumpStringBoundary.java", "ghidra/FindPointerValues.java"],
+    "labelBlock": {
+      "start": "0x82156BF0",
+      "contiguous": true,
+      "anchors": [
+        { "label": "AddGeneral", "address": "0x82156CBC" },
+        { "label": "ImDoneAI", "address": "0x82156DBC" },
+        { "label": "EndTurn", "address": "0x82156DC8" },
+        { "label": "SynchCheck", "address": "0x82156DD0" },
+        { "label": "WorldType", "address": "0x82156DF0" },
+        { "label": "Checksum", "address": "0x82156E08" }
+      ],
+      "otherLabelText": "native-human-turn-completion.json#/nativeCommandNames records the text addresses of ImDone, EndTurn, GameOver, Settle, Fortify and Sentry from the same block.",
+      "qualification": "Numeric agreement with the comparison guide's message list is not accepted as Xbox semantics."
+    },
+    "addGeneralText": {
+      "address": "0x82156CBC",
+      "statement": "The text AddGeneral exists in the label block. The selected type-to-label map in native-human-turn-completion does not include types 25 or 44, and xbox-network-message-root assigns neither Great General case the name AddGeneral. Both statements stand: the string is present, and no recorded route ties it to a command type.",
+      "reference": "xbox-network-message-root.json#/greatGeneralAttachmentAnchor"
+    },
+    "negatives": [
+      {
+        "id": "directReferences",
+        "searched": ["0x82156DBC", "0x82156DD0", "0x82156DF0"],
+        "result": "All three strings are defined, and Ghidra reports zero references to each. The query returned zero root functions and zero closure functions.",
+        "limit": "A direct reference from a function to the label text. Ghidra reference absence does not exclude split address construction."
+      },
+      {
+        "id": "alignedPointers",
+        "searched": ["0x82156DBC", "0x82156DD0", "0x82156DF0"],
+        "result": "Initialized memory holds zero aligned words equal to any of the three addresses, so there is no conventional pointer table for these labels.",
+        "limit": "Aligned whole-word pointers only. It does not exclude split address construction, an index-relative string scheme, or an unused debug name block."
+      },
+      {
+        "id": "syncDiagnostics",
+        "searched": ["0x821574F8", "0x82157508", "0x82157930"],
+        "result": "The data mismatch message at 0x821574F8 and the seed mismatch message at 0x82157508 are defined and have zero Ghidra references; the query returned no root or closure functions. The final checksum message at 0x82157930 did not resolve as an exact defined string under the query's trimmed token, so no reference claim is made for 0x82157930.",
+        "limit": "Ghidra references only. The producers of both error strings are recorded under xbox-network-message-root.json#/turnAndSyncAnchors/case55."
+      }
+    ],
+    "supersession": "The mapper 0x82CD5400 and table 0x82CD5420 reach label text through per-label functions, so the labels are used. The three negatives hold for direct references and aligned pointers only; they do not show the labels are unused, and they do not exclude the label route recorded in native-human-turn-completion."
+  },
+  "guards": [
+    "Do not read the zero reference counts as unused labels.",
+    "Do not assign a command type, opcode value or runtime behavior to a label from its position in the block.",
+    "Do not name case 25 or 44 AddGeneral from the string alone.",
+    "A label string does not prove checksum coverage, delivery or synchronization behavior."
+  ],
+  "conclusion": "A contiguous Xbox-native label block starts at 0x82156BF0 with six exact anchors. No direct reference or aligned pointer reaches the ImDoneAI, SynchCheck or WorldType text, and none reaches the two synchronization error strings; the labels are reached through the mapper route instead."
+}

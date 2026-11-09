@@ -53,3 +53,43 @@ unresolved ranges and readers.
 
 - [D3D runtime surface](../../manifests/native-renderer-d3d-runtime-surface.json): wider device state.
 - [Resource contract](../../manifests/native-renderer-resolve-resource-contract.json): qualified six-word texture descriptors.
+
+## State that survives removing the guest draw path
+
+[`RVA-F-0307`](../../manifests/native-renderer-draw-state-reader.json) lists
+which draw fields other guest code still reads when the draw entries
+themselves are skipped. Setters, getters, creators, Release, reset, Clear,
+Resolve, tiling and present code all keep running. A field with no reader
+found is `unknown`, not unused, because loads through other bases, indexed
+loads, copies and bulk writes were not all searched.
+
+| Fields | Still read by |
+|---|---|
+| Dirty words at `G+0x10`, `+0x18`, `+0x20` | Clear and Resolve emitters, plus the flush functions `0x826A8140` and `0x826AA088` |
+| Color word `G+0x2884` | Resolve (`0x8269E448` selects the color nibble only for argument 0) and shader mode code |
+| Control word `G+0x2954` | Surviving readers unknown: no retained direct reader was found, and aliases and raw-only candidates stay unresolved |
+| Shader constants shadows `G+0x2920`, `+0x2924`, `+0x2928` | Clear and Resolve register copies |
+| Bytes `G+0x2ABD`, `+0x2ABE` | Resolve (mask `0x08` of `+0x2ABE` is tested and cleared) and the register run code |
+| Stream stride cache `G+0x2E38` through `G+0x2E47` | `SetStreamSource` at `0x8268FC08`, which sets dirty bit `0x80000` on a difference |
+| Shader code bytes at `VS+0x20` | The effect refresh and copy paths (`0x82662D28`, `0x82694480`) |
+| Identifier counter at `0x82FA0544` | Surviving readers unknown. The identified readers sit in selector and patcher paths that draw skipping consumes (one decoded materializer and one raw split candidate at `0x826ADD1C`). A helper there stays live only through a surviving caller, so retained helper entry points are possible, not proved reads; copied or indexed aliases are not searched |
+| Cursor and pool words `G+0x30`, `+0x34`, `+0x38`, `+0x3A44` to `+0x3A54` | The allocation routines `0x8269B618`, `0x8269B818` and `0x826A6848` |
+| Tiling list `G+0x33C8` and worker state | See [tiling workers](native-renderer-tiling-workers.md) |
+
+## Draw residue that blocks removing dirty fetch and mode work
+
+Three results from the draw path describe state that stays after a draw:
+
+- A shader code patch made while drawing is persistent. The effect code reads
+  it later through `0x82694480`
+  ([`RVA-F-0308`](../../manifests/native-renderer-shader-readback-activation.json)).
+  The byte rules are in
+  [`RVA-F-0304`](../../manifests/native-renderer-shader-fetch-byte-contract.json).
+- The mode refusal protects an ordered fold in `0x826ADD88`: low 3 bits of
+  `G+0x2954` become 5 or 4, with dirty bit `0x80000` added first
+  ([`RVA-F-0317`](../../manifests/native-renderer-mode-fold-contract.json#/currentEvidence/orderedFold)).
+- A temporary user pointer stride causes the same fetch patch path
+  ([`RVA-F-0318`](../../manifests/native-renderer-up-fetch-history.json)).
+
+See [user pointer draws](native-renderer-up-draw-reservation.md) for the order
+of these effects.

@@ -287,6 +287,19 @@ locally true: neither that result nor the serializer hook proves restored OCC
 policy. Exact gates and unresolved command/dispatch edges are in
 [occ-settler-production-requirements.json](../../manifests/occ-settler-production-requirements.json).
 
+AI players can also found a city without a Settlers unit, so a Settlers rule
+does not stop every AI city. In a selected AI routine, on turns where the turn
+plus the player index divides by 8, a tile scan can accept an interior tile that
+passes its distance, terrain and score checks. The routine then takes one
+population from the nearest owned city and requests a new city at `0x82CBC03C`.
+Its unit check searches the unit table for distance only. With no live unit near
+the tile it passes, so no Settlers unit is needed. A refusal point for OCC can sit
+at `0x82CBBE58`, continuing at `0x82CBC3D4`, before the population is taken. A
+refusal at the city request alone would leave the population loss and counters.
+This is static evidence: the route that produced any reported AI city was not
+observed. See the
+[AI founding finding](../../manifests/city-militia-scout-feasibility.json#/occAiFoundingBoundary).
+
 ## Normal unit production cost
 
 `EffectiveUnitProductionCostScalar` at `0x82CF1148` starts at 10, applying
@@ -779,6 +792,9 @@ unchanged. The [zero-amount boundary](../../manifests/rush-cost-producer.json#/c
 owns the owner/item, rate, helper-return and retention guards; no natural AI
 transaction or completed production is established.
 
+See also [gameplay cost arithmetic](gameplay-cost-arithmetic.md) for worked
+rush, AI valuation and rounding examples.
+
 The same `0x82D13978` routes signed current item `+0x38` >=100 to
 `BuildingWonderProductionCostLookup`. IDs 100 through 199 compare signed
 invested production `+0x36` against cost, branch away below cost, and first
@@ -1101,7 +1117,7 @@ This is one prediction path through the combat resolver. It does not prove
 that other AI evaluators, early returns or every resolver outcome use the same
 combat roles.
 
-The [ordinary combat boundary](ordinary-combat.md) records separate local
+The [combat reference](combat.md) records separate local
 weighting and checkpoint-selection blocks with conditional generator-word
 stores. The guarded frame-value calculations and local stack-store pointer are
 closed. A guarded trace from the core stat pair to the first store depends on
@@ -1136,7 +1152,33 @@ A compatible nonzero producer and resolver entry, full transfer and participant
 persistence remain unclosed; no naturally reachable ordinary outcome path is
 proved.
 
+## Knight attack and defense
+
+Knights (type 13) have base attack 4 and defense 2. The native code adds nothing
+to the Knight's defense: its flags and type skip both defense modifier branches,
+so defense stays 2. Attack is 4 plus these terms:
+
+- Two small terms shared with other units, one from an unnamed player word and
+  one from the Wonder with index 10 (see
+  [core stats](combat-strength.md#core-stats)).
+- 1 for an Arabian player from the Industrial era (UEA 14) or for a Japanese
+  player from the Medieval era (UEA 27). A player gets at most one of them.
+- The scenario `ATTACKBONUS` value, slot 21 at `0x830E8FFA`, a signed halfword
+  that is added to every nonzero base attack.
+
+A third Knight term tests UEA 15, which no civilization holds in the retail
+table, so it adds nothing there; it would add 2. These terms do not change with
+army size, health, rank, terrain or the opponent. Those enter later, in combat
+resolution. The values are static results, and no battle involving Knights was
+observed. The
+[Knight findings](../../manifests/unique-unit-combat-predicates.json#/knightAttackModifierBoundary)
+hold the exact conditions and addresses.
+
 ## Loaded-fleet sale value
+
+A fleet sale adds the passengers' values to the carrier's first and applies the
+fleet multiplier of 3 once to the total, so each Spy adds 75 Gold and the
+multiplier does not triple the refund a second time.
 
 The selected native sale path adds the carrier's production factor and admitted
 linked passengers' factors, then applies the carrier's army/fleet multiplier

@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0409",
+  "topic": "city-yield-credit-hook-candidates",
+  "status": "open",
+  "confidence": "candidate",
+  "image": "image.json",
+  "question": "Which edit points in CityUpdate 0x82D13978 can carry a flat Gold or Culture addition after the native modifiers, and how do they differ on repeat counting, display, owner totals and later overrides?",
+  "scope": {
+    "function": "0x82D13978",
+    "cacheBoundary": "0x82D1537C",
+    "goldCredit": "0x82D15610",
+    "accumulator": "0x82D15614",
+    "boundary": "A comparison of local edit points composed from accepted stores. It is not an accepted hook set."
+  },
+  "dependencies": [
+    {
+      "topic": "library-gold-credit-transaction",
+      "use": "Provides the cache boundary operands and the credit store."
+    },
+    {
+      "topic": "city-yield-state-credit",
+      "use": "Provides the mode checks and later overrides."
+    },
+    {
+      "topic": "city-culture-credit-destination",
+      "use": "Provides the Culture accumulator and cache candidates."
+    },
+    {
+      "topic": "library-city-yield-writers",
+      "use": "Provides the Library arithmetic and the separate city writers."
+    },
+    {
+      "topic": "city-credit-calendar-cadence",
+      "use": "Provides the Calendar call conditions."
+    }
+  ],
+  "candidates": [
+    {
+      "point": "final result stores of city +0x46 and +0x48 (0x82D14ED0, 0x82D152F0)",
+      "oncePerCredit": "no: they also run in mode -1",
+      "cityCache": "changes the cache, display consumers not closed",
+      "ownerAggregate": "can reach the early mode zero total depending on the operand",
+      "safety": "a Gold addition can be erased by the clearing at 0x82D15368 and 0x82D1536C, later owner clearing can separate the retained credit from the cache, and changing r18 also feeds the UEA 23 half term. Unsafe as the only hook."
+    },
+    {
+      "point": "immediately before 0x82D1537C, after the UEA 42 override",
+      "oncePerCredit": "no: shared with mode -1",
+      "cityCache": "candidate: assign the fresh native value plus N to +0x46 or +0x48, not the old composed value plus N",
+      "ownerAggregate": "mode zero needs the matching N once in row +0x0C or +0x10, and mode -1 must add no owner delta",
+      "safety": "keeps a reusable composed cache for later Calendar use. The credit needs a separate edit after the later clearing."
+    },
+    {
+      "point": "store operand immediately before 0x82D15610",
+      "oncePerCredit": "yes: r8 plus N gives exactly N in that credit",
+      "cityCache": "no cache store here",
+      "ownerAggregate": "no aggregate store here",
+      "safety": "runs only when the credit block is reached. A cache stage N must not also be loaded into stack +0x7C or it counts twice."
+    },
+    {
+      "point": "store operand immediately before 0x82D15614",
+      "oncePerCredit": "yes for the accumulator: r7 plus N with native r18 unchanged",
+      "cityCache": "does not update city +0x48",
+      "ownerAggregate": "does not update row +0x10",
+      "safety": "the later reload includes N and then adds the unchanged native half term. Does not establish the accumulator as a Culture destination."
+    },
+    {
+      "point": "join at 0x82D15638",
+      "oncePerCredit": "one N per traversal after the baseline and half term",
+      "cityCache": "no",
+      "ownerAggregate": "no",
+      "safety": "equivalent flat delta only if the destination and owner stay valid across callbacks. An extra word mutation."
+    },
+    {
+      "point": "Calendar aggregate stage (0x82D1FAB8..0x82D1FADC)",
+      "oncePerCredit": "no",
+      "cityCache": "no fresh composition",
+      "ownerAggregate": "yes, the incoming player row, which is not the city owner row",
+      "safety": "a reset can erase an earlier edit, and adding N to a composed cached +0x48 doubles it. Never the only credit hook."
+    }
+  ],
+  "libraryScienceSeparation": {
+    "native": "The Library bit 0x20 of city +0x10 doubles r20 when the University bit 0x1000 is clear and the native state check allows it. r20 goes to city +0x44, owner row +0x08 and the progress stores. Gold comes from stack +0x7C to city +0x46 and row +0x0C.",
+    "independence": "A change only to r8 at 0x82D15610 leaves the Science stores and Library arithmetic alone. A cache stage change limited to +0x46 and row +0x0C does not touch +0x44 or row +0x08.",
+    "owner": "Chinese is civilization index 6 in 0x830ECD28. Match the current city owner and the Library bit independently at each validated transaction. The comparison with 6 at 0x82D1468C reads 0x830ED3D8 and is not a civilization test."
+  },
+  "recommendation": {
+    "gold": "Two parts: compose a fresh cache +0x46 value after the UEA 42 override and before the mode -1 exit, with the matching mode zero row +0x0C delta, and separately compose the reserve store operand at 0x82D15610 with stack +0x7C unchanged. A credit only edit misses the cache, display and aggregate. A cache only edit misses the retained credit and can lose N to the overrides.",
+    "joint": "If a Culture consumer is chosen that uses 0x830ED484 with a flat policy, one edit before 0x82D15610 can stage r8 plus the Gold amount and r7 plus the Culture amount, since both sums exist there.",
+    "open": "Staging and fallback across the earlier cache and aggregate edits, display initialization, owner and phase lifetimes, and coherent overflow handling are not established."
+  },
+  "currentEvidence": {
+    "method": "Composition of the accepted CityUpdate stores, with the three read-only queries of the Culture destination topic as the new evidence.",
+    "entries": [
+      {
+        "role": "cache boundary and credit stores",
+        "address": "0x82D1537C..0x82D15638",
+        "confidence": "strong"
+      }
+    ],
+    "qualification": "The comparison is an inference over accepted stores."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No edit point was exercised."
+  },
+  "guards": [
+    "Do not use CityUpdate entry or a Calendar total as the credit event.",
+    "Do not load a cache stage amount into the credit operand.",
+    "Do not treat any candidate as an accepted hook set.",
+    "Do not infer presentation parity, save behavior or runtime acceptance."
+  ],
+  "conclusion": "A flat Gold addition needs two coordinated edits, a cache and owner total edit before 0x82D1537C and a store operand edit at 0x82D15610. Culture has candidate points, but the destination is open. No single edit point is safe as the only hook."
+}

@@ -59,3 +59,32 @@ boundaries, not proved frame roots.
 Remaining joins distinguish incoming provider `+0x74`/`+0x78`, current `+0x550`
 consumers and bindings `+0x3098` through `+0x30A8`: execution, pointer
 retention, surfaces and total order remain unproved.
+
+## Names and flow in plain terms
+
+Names used on this page: `F` is the frame object pointer saved in `r31` by frame function `0x82C71A00`, `Rr` the
+global renderer, `G` the incoming group, `B` the separate fallback storage
+object, and `C` the context loaded from `Rr+0x564`. They name roles, not
+proved types or instances. Byte `F+0xA0` and byte `Rr+0xA0` use different
+tests.
+
+The flow, with each step conditional on the one before:
+
+1. `F` picks `+0xAC` or `+0xB0`, then calls the `+0x15C` function of `Rr`
+   directly (when `F+0x98` is nonzero) or through `0x821D6D10`.
+2. `0x8250F988` asks `G` for its provider at virtual `+0x74`. A nonnull answer
+   is used. A null answer goes to the fallback `0x82520958`, which asks `G`
+   again at virtual `+0x60` (`0x825209A0`) and stores the returned word in `B+0xF8`.
+3. Only a nonnull provider and a nonzero low byte from `0x82520478` let
+   `0x8250F9D0` store `G` at `Rr+0x550`. The store publishes `G`, not `B`.
+4. `0x82516F60` and the callbacks at group `+0x48` and `+0x4C` reload `Rr+0x550`.
+   Each reload needs the pointer to stay valid.
+5. A separate `+0x160` path (`0x8250AC90`) runs a depth Resolve before the
+   indexed color Resolve, with resource details in
+   [resolve resources](native-renderer-resolve-resources.md).
+
+The fallback result is the last known edge: the target of group virtual `+0x60`
+is not known, so neither the fallback result nor the group's target and depth
+can be named. Which of these edges run in a real frame is not covered by
+this page. No shadow, terrain, water, fog, unit, effect, label or interface
+pass is named here.

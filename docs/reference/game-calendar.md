@@ -83,49 +83,111 @@ two-year curve. Signed nonpositive turn inputs return -4000. Conversion also
 loops once per positive input turn. Removing a deadline therefore supplies
 neither infinite integer storage nor arbitrary-turn consumer correctness.
 
-## Deadline admission
+A nearer limit is in generated code that stores history turns as signed 16-bit
+values before conversion, at `0x82CE62A0`, `0x82CEB348` and `0x82CC75B8`. Turn
+32768 would read as negative there. Turn 393 fits. Its writer and any
+truncation are not linked to these readers, so this is a lead and not a
+confirmed bug. See the
+[calendar manifest](../../manifests/game-calendar-state.json).
 
-Victory evaluator `0x82D10FD8` has a separate deadline arm at
-`0x82D11378..0x82D11438`. Its local admission requires:
+## Earliest Domination date
 
-- Signed current year >=2100.
-- The selected player's unsigned ranking halfword at
-  `0x830E9200+32*p` equals zero, under retained loop/frame state.
-- Scenario word `0x8312B8D4` equals exactly -1, or signed low32
-  `currentTurn-startTurn` >=200.
+Domination cannot be won before a minimum number of elapsed turns. The game
+counts the turns from the scenario start turn, then converts the winning turn to
+a year. A standard game starts at turn 0 (4000 BC) and the native minimum is
+10 turns, so Domination is first possible in 3000 BC. Each turn before the year
+reaches 0 adds 100 years, so a smaller minimum gives these earliest dates:
 
-Admission requests `0x82D02AB8(p,1)`, the shared result writer also used by
-ordinary Domination. Its initial stores publish player rank/type and sampled
-turn/year in the result block. The deadline has its own admission; the ordinary
-palace-based Domination condition retains its elapsed-ten-turn and
-enabled-victory gates. Earlier victories and evaluator/iteration guards still
-apply. The local-player warning separately tests year 2090 at `0x82D11320`
-with scenario -1, or elapsed 195 at `0x82D1133C` with another scenario value.
-The selected warning resource promises a five-turn lead. Its request does not
-establish delivered presentation.
+| Minimum elapsed turns | Earliest date with start turn 0 |
+|---:|---|
+| 10, native | 3000 BC |
+| 5 | 3500 BC |
+| 1 | 3900 BC |
 
-The converter yields turn 192 = 2098, turn 193 = 2100 and turn 194 = 2102.
-These results come from static arithmetic, not observed endgame dates. The
-deadline reads calendar state. Changing displayed dates alone does not
-establish that the game can continue longer.
+A scenario that starts at a nonzero turn does not share these dates. The minimum
+is added to its own start turn, and the sum goes through the converter. For
+example, a start at turn 20 (2000 BC) with the native minimum of 10 reaches turn
+30, which is 1000 BC.
 
-Changing only the 2100 compare leaves both old warning tests unchanged.
-Bypassing from `0x82D11304` to `0x82D1143C` skips the complete warning/deadline
-arm. A finite extension instead needs a coherent warning policy, including
-the separate scenario elapsed-200 gate. Other victories, shared result
-handling and ordinary calendar/turn flow must remain intact. Current inputs,
-callback effects, peer compatibility and save/load of a continued game remain
-requirements. The first selected post-result virtual request at `0x82D113F0`
-uses current object `0x8314F76C` slot `+0x1C4`; its actual target and effects
-remain unresolved. These local predicates and stores do not prove a completed
-game ending or continued play.
+How the code does it. Victory evaluation `0x82D10FD8` tests signed
+`currentTurn - startTurn >= 10` at `0x82D11264`, where the start turn is the word
+at `0x8312B8D8`. The converter is `TurnToYear` (`0x82CEFA20`). The same
+evaluation also needs a nonzero palace count for the player, a palace count at
+least the total less the definition's allowance, and a nonzero `0x82CEEA50(1)`
+(Domination enabled). It then requests `0x82D02AB8(player, 1)`. Lowering the
+minimum changes only this date test. It does not raise a year limit, and the
+palace and enabled checks still apply. The dates are arithmetic from the
+converter and were not observed in play.
 
-A bounded aligned-immediate census found five signed comparisons with 2100
-and one with 2090 in the tested forms. Only the selected deadline/warning
-comparisons are established current-year limit readers. Other hits include
-incoming-argument predicates and address/code construction. This does not
-exclude computed constants, resource/advisor text, aliased or indirect readers,
-other opcode forms or other ending paths. A global replacement is unsupported.
+See [AI settings](ai-options.md) for civilization elimination and how it changes
+the palace count, and the
+[elimination manifest](../../manifests/ai-civilization-elimination.json) for the
+palace formula and addresses. The
+[Domination dates](../../manifests/game-calendar-state.json#/dominationDates)
+hold the table and its limits.
+
+## The 2100 deadline
+
+The game ends with a type 1 result (the same one Domination uses) when the year
+reaches 2100, with two extra conditions. The player must have a ranking value of
+zero, and either the scenario word is -1 or at least 200 turns have passed since
+the start turn. A five turn warning comes first.
+
+Worked examples with the native settings:
+
+- A standard game has scenario -1 and start turn 0. The warning fires at year
+  2090 (turn 188). The deadline is reached at year 2100 (turn 193). Turn 192 is
+  2098 and turn 194 is 2102.
+- A scenario with an id other than -1 that starts at turn 20 needs 200 elapsed
+  turns, so the deadline is turn 220, which is year 2154 (`2*220+1714`). The warning
+  fires at elapsed 195, turn 215, year 2144, with no year check.
+- Changing only the 2100 compare would leave both warnings unchanged. Skipping
+  from `0x82D11304` to `0x82D1143C` removes the whole warning and deadline arm.
+
+How the code does it. Victory evaluator `0x82D10FD8` has a separate arm at
+`0x82D11378..0x82D11438`. It has earlier guards for entry, the player and
+Barbarian loop, victory settings and callbacks. The rank formula needs fresh
+loop and frame state. Current turn is `0x8312B8DC` and start turn is
+`0x8312B8D8`.
+
+| Site | What it does |
+|---|---|
+| `0x82D11308..0x82D11314` | A helper return must equal player r27 before the local player warning runs. |
+| `0x82D11320`, `0x82D11328..0x82D1132C` | Signed year equal to 2090 and scenario exactly -1 starts the warning. |
+| `0x82D11338..0x82D11348` | Otherwise low32 elapsed turns equal to 195 with scenario other than -1 starts it. |
+| `0x82D11354`, `0x82D11370` | Separate formatting and presentation requests. Resource `0x8214D170` describes five turns and highest score Domination, with no replacement year. |
+| `0x82D1137C..0x82D11384` | Read signed year at `0x8312B8E0`. Below 2100 jumps to `0x82D1143C`. |
+| `0x82D11388..0x82D11394` | Require the unsigned ranking halfword at `0x830E9200+32*p` to be zero. |
+| `0x82D11398..0x82D113B0` | Scenario `0x8312B8D4` equal to -1 skips the elapsed test. Any other value needs signed low32 current turn minus start turn of at least 200. |
+| `0x82D113BC` | Requests shared result writer `0x82D02AB8(p,1)`. |
+| `0x82D113F0` | Next request goes through current object `0x8314F76C` slot `+0x1C4`. Its target and effects are unresolved. |
+
+The year test and the elapsed test are separate, so this is not a universal
+turn 193 ending. The shared result writer's first stores publish rank and type
+(`0x82D02AF4`, `0x82D02AFC`) and the turn and year (`0x82D02B08`,
+`0x82D02B10`), then copy eight score words. They add no new limit field.
+Game of the Week computes its own score and Year of Victory (see
+[Game of the Week](game-of-the-week.md)), so changing the converter would alter
+those dates without changing the deadline and warning policy coherently. Do not suppress every type 1 result,
+because Domination uses the same writer.
+
+The warning text is a five turn advance notice for highest score Domination.
+Its request does not show that the message is delivered. The warning tests
+compare 2090 and 195, so a late start or a changed year can separate the
+warning from the deadline.
+
+Changing displayed dates alone does not let a game run longer. A finite
+extension needs a warning rule that fits the elapsed 200 test, other victories
+left intact, and compatible peers and saves. These local tests and stores do not
+prove a finished ending or continued play.
+
+A search of aligned immediate forms found five signed compares with 2100 and
+one with 2090 (the counts by form are in the
+[turn limit manifest](../../manifests/game-turn-limit.json)). Only the deadline
+and warning compares are shown to read the current year as a limit. Other hits
+test incoming arguments or build addresses. The search leaves out computed
+constants, resource text, aliased or indirect readers, other opcode forms and
+other ending paths. Replacing every 2100 is unsupported.
 
 ## Evidence boundaries
 
@@ -138,6 +200,7 @@ other opcode forms or other ending paths. A global replacement is unsupported.
 
 - [Game calendar state](../../manifests/game-calendar-state.json)
 - [Game turn-limit boundary](../../manifests/game-turn-limit.json)
+- [AI civilization elimination](../../manifests/ai-civilization-elimination.json)
 - [Scenario preset and selected load widths](../../manifests/scenario-speedmode-movement.json)
 - [City yield scheduling
   producers](../../manifests/city-yield-scheduling-producer.json)

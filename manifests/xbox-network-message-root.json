@@ -35,7 +35,10 @@
     "submit": {
       "function": "0x82CE1950",
       "stagingStores": ["0x82CE19CC", "0x82CE19D0", "0x82CE19D4", "0x82CE19D8", "0x82CE19DC"],
-      "target": "The sixth incoming argument remains separate from the five-word staging record."
+      "stagingStackOffsets": ["0x50", "0x54", "0x58", "0x5C", "0x60"],
+      "constructorHandoff": "0x82CE1A24 passes the staging source at stack +0x50, 0x82CE1A28 passes a distinct destination at stack +0x70, and 0x82CE1A30 is a direct branch-and-link to 0x82D90A18.",
+      "target": "The sixth incoming argument remains separate from the five-word staging record.",
+      "targetQualification": "The sixth incoming value stays in its register and is compared later; it is never stored in the five-word source. This rejects a six-consecutive-integer layout for the send stage."
     },
     "ring": {
       "drain": "0x82CE16C8",
@@ -44,13 +47,22 @@
       "consumerCounter": "0x8314F1F8",
       "slots": 32,
       "stride": "0x14",
-      "result": "The append and drain loops each copy exactly five words. A five-bit index mask and 20-byte index arithmetic select one of 32 modulo slots."
+      "result": "The append and drain loops each copy exactly five words. A five-bit index mask and 20-byte index arithmetic select one of 32 modulo slots.",
+      "instructionLocators": {
+        "baseMaterialization": "0x82CE16E0 forms counter base 0x8314F1F8 and 0x82CE16E4 forms ring base 0x83155C28; the paired counter is read and written at base -4, which is 0x8314F1F4.",
+        "indexArithmetic": "0x82CE16FC masks the producer index to five bits, index times five follows, and 0x82CE1710 scales by four, which gives the 20-byte stride.",
+        "appendCopy": "0x82CE16F8 loads loop count five and 0x82CE172C closes the five-word append copy.",
+        "drainCopy": "The drain repeats a five-word copy that ends at 0x82CE1780.",
+        "dispatcherCall": "0x82CE17B0 is a direct branch-and-link to 0x82CDDF08 with the drained record at r1+0x50."
+      },
+      "qualification": "Modulo storage does not prove thread safety, overflow behavior under concurrency, delivery, or runtime order. The fifth word's consumer meaning is unresolved."
     },
     "consumerView": {
       "function": "0x82CDDF08",
       "reads": ["0x82CDDF18:+0x0", "0x82CDDF1C:+0x4", "0x82CDDF20:+0x8", "0x82CDDF24:+0xC"],
       "qualification": "The dispatcher reads type and the first three arguments directly. Arg4 is preserved by submit, ring, and constructed-object copies, but its consumer meaning is not established by this packet."
-    }
+    },
+    "canonicalListing": "The Ghidra listings of 0x82CDDF08, 0x82CE1950 and 0x82CE16C8 truncate at the second-block Xenon thunks 0x827F7C50, 0x827F7C7C and 0x827F7C8C. The record, ring and dispatch claims rest on exact image words with narrow recompiled-code corroboration; 0x82D90A18 decompiles in full."
   },
   "queueAndDispatch": {
     "managerPointer": "0x8314EFE0",
@@ -58,6 +70,12 @@
     "targetRouting": {
       "minusOneSlot": "0x44",
       "otherTargetSlot": "0x3C",
+      "instructionLocators": {
+        "managerLoad": "0x82CE1A34 loads global 0x8314EFE0 and 0x82CE1A3C loads its child at offset 0x10; the receiver is null-checked on both paths.",
+        "targetCompare": "0x82CE1A38 compares the separate sixth argument with -1.",
+        "equalPath": "Child vtable offset 0x44 is used at 0x82CE1A5C, with the indirect call at 0x82CE1A64; the constructed object pointer is passed.",
+        "unequalPath": "Child vtable offset 0x3C is used at 0x82CE1A8C, with the indirect call at 0x82CE1A94; the target is passed separately."
+      },
       "result": "0x82CE1950 passes the constructed object through one of two child-object virtual slots based on whether the target equals -1. When it differs from -1, the path passes the target separately.",
       "qualification": "The original slot names and the meaning of -1 remain unresolved."
     },
@@ -82,6 +100,7 @@
       "outOfRangeBranch": "0x82CDDFF8",
       "table": "0x82CDE014",
       "indirectBranch": "0x82CDE010",
+      "tableLoadWords": "0x82CDDFFC..0x82CDE010 forms table root 0x82CDE014, scales the type by four, loads one table word into CTR and branches through it.",
       "entries": [
         { "type": 0, "target": "0x82CDF74C", "label": "Combat", "semanticEvidence": "combat-resolution-lifecycle" },
         { "type": 1, "target": "0x82CDFA74" },
@@ -277,6 +296,23 @@
           ],
           "allocatorPath": "Function 0x821D3A98 requests 0x38 bytes, installs this table, initializes the same observed offsets as the guarded stack path, and stores zero at +0x34 where the guarded stack path stores its loop index.",
           "companionTransition": "Initializer 0x82CB1B80 installs 0x8211EC1C in a caller-provided object and writes overlapping neutral base fields. Functions 0x82CCE708 and 0x82CEDF90 construct a command object through 0x82D90A18, route it through manager child +0x44 when nonnull, and then install 0x8211EC1C.",
+          "tableReferences": {
+            "model": "The current Ghidra reference model records these direct references. It omits the independently proved case 53 store of each leading word, so none of the lists is an executable-wide installer or lifetime inventory.",
+            "0x82136930": [
+              { "site": "0x821D3AE8", "function": "0x821D3A98", "kind": "data" }
+            ],
+            "0x8211EC1C": [
+              { "site": "0x82CB1BA0", "function": "0x82CB1B80", "kind": "data" },
+              { "site": "0x82CCE810", "function": "0x82CCE708", "kind": "parameter" },
+              { "site": "0x82CCE814", "function": "0x82CCE708", "kind": "data" },
+              { "site": "0x82CEE090", "function": "0x82CEDF90", "kind": "parameter" },
+              { "site": "0x82CEE094", "function": "0x82CEDF90", "kind": "data" }
+            ],
+            "0x8211EC30": [],
+            "0x8211EC38": [
+              { "site": "0x82E2EC38", "function": "0x82E2EBD8", "kind": "data" }
+            ]
+          },
           "companionTable": {
             "address": "0x8211EC1C",
             "extent": "[0x8211EC1C,0x8211EC34)",
@@ -289,6 +325,30 @@
               { "offset": "0x14", "target": "0x821B14B0", "role": "Preserves opaque arg1 across one unconditional helper call and a second call gated by arg2 bit zero, then returns arg1." }
             ],
             "successorBoundary": "Zero word 0x8211EC34 separates the six consecutive pointers from a distinct five-pointer sequence at 0x8211EC38. The current reference model records one data reference to 0x8211EC38, and exact initializer 0x82E2EBD8 stores that address at caller-provided object offset zero.",
+            "successorWords": {
+              "range": "[0x8211EC30,0x8211EC4C)",
+              "words": [
+                { "address": "0x8211EC30", "value": "0x821B14B0" },
+                { "address": "0x8211EC34", "value": "0x00000000" },
+                { "address": "0x8211EC38", "value": "0x821B1630" },
+                { "address": "0x8211EC3C", "value": "0x821B1640" },
+                { "address": "0x8211EC40", "value": "0x821D5678" },
+                { "address": "0x8211EC44", "value": "0x822DF8A0" },
+                { "address": "0x8211EC48", "value": "0x821B1628" }
+              ],
+              "result": "The words reject a repeated eight-byte pointer and descriptor shape starting at 0x8211EC30. Five consecutive function pointers begin at 0x8211EC38 after one zero word. With the successor installer 0x82E2EBD8 and the zero separator, the six pointers at 0x8211EC1C..0x8211EC30 close the companion extent.",
+              "sixthTargetOccurrences": "Exact value 0x821B14B0 occurs twice in aligned initialized memory: at 0x8211EC30 and at 0x8216B900. The second lies inside the accepted executable-wide eight-byte function-pointer and descriptor table [0x8216B800,0x8218A050), so it is a metadata-row occurrence and not a vtable comparator."
+            },
+            "sixthTargetWrapper": {
+              "address": "0x821B14B0",
+              "dataflow": "Ghidra truncates the decompilation at known bad instruction data. Narrow exact generated corroboration shows an opaque object-like first argument preserved across an unconditional call to 0x82E2EFF0, a conditional call to 0x82D3D9F0 when incoming arg2 bit zero is set, and return of the original first argument. It performs no direct object-relative field access.",
+              "qualification": "Supports only a neutral wrapper role for slot +0x14. It does not support a destructor, release, ownership, lifetime, helper, class, serialization, transport, or runtime semantic name."
+            },
+            "returnZeroStub": {
+              "address": "0x822DF8A0",
+              "dataflow": "Fully decompiles as a shared return-zero stub.",
+              "qualification": "Ghidra reports far more than eight callers. None is inspected or incorporated."
+            },
             "qualification": "The successor evidence closes a structural boundary only. It is not an executable-wide installation or lifetime inventory, and the successor table is not cataloged here. The sixth target's helper, destructor, release, ownership, and lifetime semantics remain unresolved."
           },
           "sharedLeadingHelper": {
@@ -517,6 +577,7 @@
               "valueSource": {
                 "address": "0x82812B20",
                 "dataflow": "Fully decompiles as a leaf that reads and returns the 32-bit value at neutral global address 0x831580F8.",
+                "callerModel": "The current Ghidra caller model reports 0x82800DE8, 0x827F9550, and 0x827F57E0 and omits the independently proven direct call from 0x827F5780. The list is incomplete; no caller count or completeness is claimed.",
                 "global": {
                   "address": "0x831580F8",
                   "canonicalImageValue": "0x00000000",
@@ -532,17 +593,18 @@
               "secondarySequence": {
                 "pointerSelector": {
                   "address": "0x827F6910",
-                  "dataflow": "Calls 0x827FE4E8, returns static address 0x82F2E9A8 when that call returns zero, and otherwise returns that call's return value plus eight."
+                  "dataflow": "Calls 0x827FE4E8, returns static address 0x82F2E9A8 when that call returns zero, and otherwise returns that call's return value plus eight.",
+                  "callerModel": "The configured model reports a caller set larger than the one-function closure and omits the independently proven call from 0x827F5780. No caller count, completeness, or caller behavior is incorporated."
                 },
                 "selectorSource": {
                   "address": "0x827FE4E8",
                   "dataflow": "Preserves the return from 0x8280DD30 for a final 0x82819F18 call, loads the word at 0x82F2EE28, obtains an indirect target from 0x827FE3F0, and calls it with the loaded word. An initial nonzero result other than one is returned unchanged; one becomes zero. Initial zero enters guarded indirect calls through the pointer at 0x82FA1644 and may pass one and 0xC4 to 0x827F9628. A returned pointer is conditionally passed through the same indirect gate. A zero result from that second indirect call passes the pointer to 0x827F5780 and returns zero; a nonzero result stores one at +0x14, address 0x82F2F080 at +0x5C, the return from 0x8280DA68 at +0, and -1 at +4, then returns the pointer. Other zero-result guarded paths return zero.",
-                  "qualification": "Ghidra truncates at bad instruction data. Narrow exact generated corroboration supports only this local control and dataflow. Initial-result, literal-one, indirect-call, argument, returned-pointer, stored-field, allocator, owner, object, structure, singleton, and lifetime meanings remain unresolved."
+                  "qualification": "Ghidra truncates at bad instruction data and reports three callers and seven direct targets outside the one-function closure; none is followed or treated as complete. Narrow exact generated corroboration supports only this local control and dataflow. Initial-result, literal-one, indirect-call, argument, returned-pointer, stored-field, allocator, owner, object, structure, singleton, and lifetime meanings remain unresolved."
                 },
                 "intermediateSelector": {
                   "address": "0x8280DD30",
                   "dataflow": "Returns the word at *(r13+0x100)+0x160 when the word at r13+0x150 is zero; otherwise returns zero.",
-                  "qualification": "The configured caller model omits the independently proven 0x827F5780 call. Register-base, nested-pointer, offset, zero-gate, storage, lock, scheduler, owner, object, structure, singleton, and lifetime meanings remain unresolved."
+                  "qualification": "The configured caller model reports six callers, including 0x827FE4E8, and omits the independently proven 0x827F5780 call; no caller count or completeness is claimed. Register-base, nested-pointer, offset, zero-gate, storage, lock, scheduler, owner, object, structure, singleton, and lifetime meanings remain unresolved."
                 },
                 "finalLookup": {
                   "address": "0x827F68A8",
@@ -596,9 +658,220 @@
     "case54": {
       "type": 54,
       "target": "0x82CDED8C",
-      "case53Submit": "Case 53's no-type-55 path and both type-55 paths converge at 0x82CDEC1C before one direct numeric type-54 submit at 0x82CDEC40.",
+      "case53Submit": "Past the entry check, case 53's no-type-55 path and both type-55 paths converge at 0x82CDEC1C before one direct numeric type-54 submit at 0x82CDEC40.",
       "mismatchState": "0x82CDED90..0x82CDED98 clears bit 0x10 in 0x82FFE7C4 before 0x82CDED9C directly calls 0x82D0C3E8.",
       "calendarDataflow": "Within 0x82D0C3E8, 0x82D0C400 loads current turn 0x8312B8DC, 0x82D0C470 directly calls TurnToYear at 0x82CEFA20, and 0x82D0C490 stores the result at current year 0x8312B8E0."
+    },
+    "instructionLocators": {
+      "scope": "Raw instruction words in dispatcher 0x82CDDF08 and its callees behind the roles recorded in the sibling sections of turnAndSyncAnchors and setupStateAnchors. Each entry lists the exact words and the static relation they prove. A two-address entry marks the ends of a range when its role says so.",
+      "case46": {
+        "context": "Dispatcher 0x82CDDF08, numeric case 46 (BeginTurn).",
+        "words": [
+          { "addresses": ["0x82CDE1C0", "0x82CDE1D0", "0x82CDE1D8"], "role": "Store the shared zero (r17, set by 0x82CDDF84) to 0x83157E4C, 0x83157E48 and the type 49 mask 0x83157E44, in that order, before either type 49 submit site." },
+          { "addresses": ["0x82CDE390"], "role": "Loop-back target of the later mask comparison." },
+          { "addresses": ["0x82CDE3C8", "0x82CDE3D4"], "role": "Range 0x82CDE3C8..0x82CDE3D4 loads the type 49 mask, loads the word at r31+0x48, compares them and branches back to 0x82CDE390 while unequal. Generated address formation and the accepted playable-game-state topic resolve r31+0x48 to human player mask 0x8312E608." }
+        ]
+      },
+      "case47": {
+        "context": "Dispatcher 0x82CDDF08, numeric case 47 (BeginTurnReload).",
+        "words": [
+          { "addresses": ["0x82CDE44C"], "role": "Word 0x816BF1B0 loads gate word 0x8314F1B0." },
+          { "addresses": ["0x82CDE454"], "role": "Conditional branch 0x419A013C selects short path 0x82CDE590 when the gate word is zero." },
+          { "addresses": ["0x82CDE4B4", "0x82CDE4C0"], "role": "Nonzero gate word, loop path: store the shared zero to receipt mask 0x83157E48 and then to the type 49 mask 0x83157E44." },
+          { "addresses": ["0x82CDE5AC"], "role": "Zero gate word, short path: loads human player mask 0x8312E608." },
+          { "addresses": ["0x82CDE5B8"], "role": "Stores that mask to the type 49 mask 0x83157E44." },
+          { "addresses": ["0x82CDE5BC", "0x82CDE5C4"], "role": "Clear one-shot word 0x83157E4C and receipt mask 0x83157E48, in that order." }
+        ]
+      },
+      "type49Submit": {
+        "context": "The three literal 49 submit sites of cases 46 and 47 and the helper before them.",
+        "words": [
+          { "addresses": ["0x82CDE268", "0x82CDE280"], "role": "Case 46 first site: range 0x82CDE268..0x82CDE280 is a seven-word tail after the local-player helper call. It sets target r8 to -1, arg3 (r6) to -1, loads arg4 (r7) from the stored word rooted at 0x82F7AD00, sets arg2 (r5) to -1, sets type r3 to 49 and calls NetworkCommandSubmit. It does not define r4 (arg1)." },
+          { "addresses": ["0x82CDE510", "0x82CDE528"], "role": "Case 47 site: range 0x82CDE510..0x82CDE528 has the same seven-word shape and also leaves r4 undefined." },
+          { "addresses": ["0x82D038E8"], "role": "Complete leaf between the local-player helper and each submit. Three direct callers, no callees, two returns. The non-null path stores a frame-timing-derived integer at 0x830E3CF4 and the null path stores zero. Neither path writes r4, so the LocalPlayerIdResolve result (0x82D8A3A0, moved from r3 to r4 before the call) reaches NetworkCommandSubmit as arg1." }
+        ]
+      },
+      "case49": {
+        "context": "Dispatcher 0x82CDDF08, numeric case 49 (BuildDone).",
+        "words": [
+          { "addresses": ["0x82CDE624"], "role": "Branch to common dispatcher exit 0x82CE16AC. Generated-code corroboration only; this word was not queried as a raw word." }
+        ]
+      },
+      "case50": {
+        "context": "Dispatcher 0x82CDDF08, numeric case 50 (ImDone).",
+        "words": [
+          { "addresses": ["0x82CDE6EC", "0x82CDE700"], "role": "Range 0x82CDE6EC..0x82CDE700 sets 1 << record.arg1 in 0x830EE7E0 and stores sentinel 999 at adjacent state 0x830EE7D8." },
+          { "addresses": ["0x82CDE718", "0x82CDE728"], "role": "Range 0x82CDE718..0x82CDE728, after a direct call to 0x82D8AA60 returns nonzero, compares the accumulated mask with human player mask 0x8312E608." },
+          { "addresses": ["0x82CDE73C", "0x82CDE740"], "role": "On equality, and only while one-shot flag 0x83157E4C is zero, set that flag." },
+          { "addresses": ["0x82CDE744"], "role": "Calls helper 0x82D038E8." },
+          { "addresses": ["0x82CDE75C", "0x82CDE760"], "role": "Directly submit numeric type 48 through NetworkCommandSubmit 0x82CE1950." }
+        ]
+      },
+      "cases51To53": {
+        "context": "Dispatcher 0x82CDDF08, numeric cases 51 (ImNotDone), 52 (AIDone) and the state half of 53 (ImDoneAI).",
+        "words": [
+          { "addresses": ["0x82CDE770"], "role": "Case 51 calls IsHumanPlayer with the value loaded from 0x8312B8E4." },
+          { "addresses": ["0x82CDE788", "0x82CDE794"], "role": "Range 0x82CDE788..0x82CDE794 clears 1 << record.arg1 in 0x830EE7E0 only when that call returns true." },
+          { "addresses": ["0x82CDE8FC", "0x82CDE908"], "role": "Case 52 range 0x82CDE8FC..0x82CDE908 sets 1 << record.arg1 in 0x830EE7E0 with no predicate." },
+          { "addresses": ["0x82CDE920", "0x82CDE934"], "role": "Case 53 sets 1 << record.arg1 in receipt mask 0x83157E48." },
+          { "addresses": ["0x82CDE928", "0x82CDE938"], "role": "Case 53 stores record.arg2 at 0x8312E5C0 + 4 * record.arg1." }
+        ]
+      },
+      "case53ScanEntry": {
+        "context": "Dispatcher 0x82CDDF08, case 53, setup of the first scan.",
+        "words": [
+          { "addresses": ["0x82CDE918"], "role": "Defines one in r18." },
+          { "addresses": ["0x82CDE91C"], "role": "Forms indexed-array base 0x8312E5C0." },
+          { "addresses": ["0x82CDE970"], "role": "mr r21,r17 initializes the case-local predicate to zero from the shared zero." },
+          { "addresses": ["0x82CDE974", "0x82CDE97C"], "role": "0x82CDE974 calls current-data helper 0x82CD4CF0 and 0x82CDE97C preserves its result for the scan." },
+          { "addresses": ["0x82CDE980"], "role": "Copies the shared zero into loop index r31." },
+          { "addresses": ["0x82CDE988", "0x82CDE98C"], "role": "Signed zero compare and branch that bypass the scan to 0x82CDEA88 unless the signed word at 0x82F700AC is greater than zero." },
+          { "addresses": ["0x82CDE990", "0x82CDE9AC"], "role": "Construct neutral indexed-word base 0x830ED0D8 in r28." },
+          { "addresses": ["0x82CDE994", "0x82CDE9B0"], "role": "Construct neutral per-iteration word base 0x830E5650 in r25." },
+          { "addresses": ["0x82CDE998", "0x82CDE9B4"], "role": "Construct neutral per-iteration word base 0x830E5AD0 in r24." },
+          { "addresses": ["0x82CDE99C"], "role": "Copies base 0x8312E5C0 into r29, the pointer advanced by 4 per iteration." },
+          { "addresses": ["0x82CDE9A0"], "role": "Copies the shared zero into r30, the displacement advanced by 0x80 per iteration. It indexes the two per-iteration word bases." },
+          { "addresses": ["0x82CDE9A4"], "role": "Forms base 0x83150000; 0x82CDEA18 then loads the pointer at 0x8314EFDC." },
+          { "addresses": ["0x82CDE9A8"], "role": "lis r23,0x8315, the base for the byte load at 0x82CDEA40 (displacement -0x1061)." }
+        ]
+      },
+      "case53IterationChecks": {
+        "context": "Dispatcher 0x82CDDF08, case 53, one iteration of the first scan. In address order; every check skips to 0x82CDEA70 when it fails.",
+        "words": [
+          { "addresses": ["0x82CDE9BC"], "role": "Calls 0x82D8A3A0 (LocalPlayerIdResolve) with manager 0x8314EFE0 loaded at 0x82CDE9B8." },
+          { "addresses": ["0x82CDE9C4"], "role": "Equality branch after 0x82CDE9C0 compares the loop index with that result. Equal skips the iteration." },
+          { "addresses": ["0x82CDE9C8", "0x82CDE9CC"], "role": "Loop index to arg1, then a direct call to 0x82CD5A70." },
+          { "addresses": ["0x82CDE9D0", "0x82CDE9D4", "0x82CDE9D8"], "role": "Reduce the return to its low byte, compare with zero and skip when it is zero." },
+          { "addresses": ["0x82CDE9DC", "0x82CDE9E0", "0x82CDE9E4"], "role": "Loop index to arg2, manager 0x8314EFE0 to arg1, direct call to 0x82D8AB00." },
+          { "addresses": ["0x82CDE9E8", "0x82CDE9EC"], "role": "Unsigned zero compare and branch: skip when the call returned zero." },
+          { "addresses": ["0x82CDE9F4"], "role": "Direct call to 0x82D8A3A0." },
+          { "addresses": ["0x82CDE9F8", "0x82CDE9FC", "0x82CDEA00"], "role": "Compute byte index 4 * (8 * helper result + loop index)." },
+          { "addresses": ["0x82CDEA04", "0x82CDEA08"], "role": "Load one word through base r28 (0x830ED0D8) and isolate bit 0x100." },
+          { "addresses": ["0x82CDEA0C", "0x82CDEA10"], "role": "Compare and branch: skip when bit 0x100 is set." },
+          { "addresses": ["0x82CDEA14", "0x82CDEA18", "0x82CDEA1C"], "role": "Loop index to arg2, pointer word at 0x8314EFDC to arg1, direct call to 0x82D8F700." },
+          { "addresses": ["0x82CDEA20", "0x82CDEA24"], "role": "Compare and equality branch: skip when the call returned exactly one." },
+          { "addresses": ["0x82CDEA28", "0x82CDEA2C", "0x82CDEA30"], "role": "Load the first player-indexed word and compare it with zero. Nonzero goes to the shared selector path at 0x82CDEA40." },
+          { "addresses": ["0x82CDEA34", "0x82CDEA38", "0x82CDEA3C"], "role": "When the first word is zero, load and compare the second player-indexed word. Equality to zero goes to the one-valued path at 0x82CDEA50. A nonzero second word falls through to 0x82CDEA40." },
+          { "addresses": ["0x82CDEA40", "0x82CDEA44"], "role": "Shared selector path: byte load (lbz r11,-0x1061(r23)) from 0x8314EF9F, then compare with zero." },
+          { "addresses": ["0x82CDEA48", "0x82CDEA4C"], "role": "Select the zero value; an equality branch to 0x82CDEA54 keeps it when the byte is zero." },
+          { "addresses": ["0x82CDEA50"], "role": "Replaces the selection with one. Reached when the byte is nonzero, or directly when both indexed words are zero." },
+          { "addresses": ["0x82CDEA54", "0x82CDEA58", "0x82CDEA5C"], "role": "Load the indexed word at 0x8312E5C0 + 4*i, compare it with the preserved current-data value, and skip the predicate set on equality." },
+          { "addresses": ["0x82CDEA60", "0x82CDEA64", "0x82CDEA68"], "role": "Reduce the selected flag to its low byte, compare with zero and skip when it is nonzero." },
+          { "addresses": ["0x82CDEA6C"], "role": "Copies one into the predicate (r21)." }
+        ]
+      },
+      "case53LoopProgression": {
+        "context": "Dispatcher 0x82CDDF08, case 53, first scan loop control.",
+        "words": [
+          { "addresses": ["0x82CDEA70"], "role": "Reloads the signed limit through the neutral base in r19 (word 0x82F700AC)." },
+          { "addresses": ["0x82CDEA74", "0x82CDEA78", "0x82CDEA7C"], "role": "Increment loop index r31 by one and advance r30 by 0x80 and r29 by 4." },
+          { "addresses": ["0x82CDEA80", "0x82CDEA84"], "role": "Compare the incremented index with the limit and branch back to 0x82CDE9B8 while signed-less-than." },
+          { "addresses": ["0x82CDEA8C", "0x82CDEA90"], "role": "Test the low byte of the final predicate. Zero branches to common site 0x82CDEC1C and skips both type 55 submissions." }
+        ]
+      },
+      "case53SubmitPaths": {
+        "context": "Dispatcher 0x82CDDF08, case 53, type 55 submit paths and their convergence.",
+        "words": [
+          { "addresses": ["0x82CDEA9C", "0x82CDEAA4"], "role": "0x82CDEA9C loads halfword 0x82F77454. The zero branch at 0x82CDEAA4 selects the alternate path at 0x82CDEBF8." },
+          { "addresses": ["0x82CDEAB4", "0x82CDEAB8", "0x82CDEABC", "0x82CDEAC0"], "role": "First path: 0x82CDEAB4 calls 0x82CD4CF0, 0x82CDEAB8 loads the stored word through r14, and 0x82CDEABC and 0x82CDEAC0 place the two values in submit arg1 and arg2." },
+          { "addresses": ["0x82CDEAC4", "0x82CDEAD0"], "role": "First path: literal 55 and the direct call to NetworkCommandSubmit." },
+          { "addresses": ["0x82CDEBF4"], "role": "Branch that sends the first path to common site 0x82CDEC1C." },
+          { "addresses": ["0x82CDEBF8", "0x82CDEBFC", "0x82CDEC00", "0x82CDEC04", "0x82CDEC08"], "role": "Alternate path: 0x82CDEBFC calls 0x82CD4CF0, 0x82CDEC00 loads the stored word through r14, and 0x82CDEC04 and 0x82CDEC08 place them in submit arg1 and arg2." },
+          { "addresses": ["0x82CDEC0C", "0x82CDEC18"], "role": "Alternate path: literal 55 and the direct call to NetworkCommandSubmit. It falls through to 0x82CDEC1C." },
+          { "addresses": ["0x82CDEC34", "0x82CDEC40"], "role": "Common path: literal 54 and the direct call to NetworkCommandSubmit." }
+        ]
+      },
+      "case53SecondScan": {
+        "context": "Dispatcher 0x82CDDF08, case 53, second scan and its guarded body.",
+        "words": [
+          { "addresses": ["0x82CDEB14", "0x82CDEB1C"], "role": "0x82CDEB14 calls 0x82CD4CF0 and 0x82CDEB1C preserves the return as the second scan's snapshot." },
+          { "addresses": ["0x82CDEB18", "0x82CDEBE0"], "role": "Load the same signed limit word 0x82F700AC (entry test at 0x82CDEB18, reload for the loop at 0x82CDEBE0)." },
+          { "addresses": ["0x82CDEB20"], "role": "Copies the shared zero into loop index r31." },
+          { "addresses": ["0x82CDEB24", "0x82CDEB28"], "role": "Signed zero compare and branch that bypass the scan to common site 0x82CDEC1C unless the limit is greater than zero." },
+          { "addresses": ["0x82CDEB44", "0x82CDEB48"], "role": "Manager 0x8314EFE0 to arg1, direct call to 0x82D8A3A0." },
+          { "addresses": ["0x82CDEB4C", "0x82CDEB50"], "role": "Compare the loop index with the result and skip to progression block 0x82CDEBE0 when equal." },
+          { "addresses": ["0x82CDEB54", "0x82CDEB58"], "role": "Loop index to arg1, direct call to 0x82CD5A70." },
+          { "addresses": ["0x82CDEB5C", "0x82CDEB60", "0x82CDEB64"], "role": "Reduce to the low byte, compare with zero, skip to 0x82CDEBE0 when zero." },
+          { "addresses": ["0x82CDEB68", "0x82CDEB6C", "0x82CDEB70"], "role": "Load the current iteration word through r27 (base 0x8312E5C0, advanced by 4), compare it with the fresh snapshot and skip to 0x82CDEBE0 when equal." },
+          { "addresses": ["0x82CDEBE4", "0x82CDEBE8"], "role": "Increment the index by one and advance the iteration pointer by 4." },
+          { "addresses": ["0x82CDEBEC", "0x82CDEBF0"], "role": "Compare the incremented index with the reloaded limit and branch back to 0x82CDEB44 while signed-less-than." }
+        ]
+      },
+      "case53StackObject": {
+        "context": "Dispatcher 0x82CDDF08, case 53, second scan guarded body: complete initialization-store map of the neutral stack object at r1+0xA0.",
+        "words": [
+          { "addresses": ["0x82CDEB2C", "0x82CDEB3C"], "role": "Construct neutral constant 0x8211EC1C in r26." },
+          { "addresses": ["0x82CDEB30", "0x82CDEB40"], "role": "Construct neutral constant 0x82136930 in r30." },
+          { "addresses": ["0x82CDEB34", "0x82CDEB38"], "role": "Define -1 in r29 and 13 in r28." },
+          { "addresses": ["0x82CDEB74"], "role": "Stores the shared zero as a byte at +0x05." },
+          { "addresses": ["0x82CDEB78"], "role": "Stores the shared zero as a word at +0x28." },
+          { "addresses": ["0x82CDEB7C"], "role": "Loads manager 0x8314EFE0." },
+          { "addresses": ["0x82CDEB80"], "role": "Stores -1 at +0x1C." },
+          { "addresses": ["0x82CDEB84"], "role": "Stores 0x82136930 in the leading word at +0x00 before the call window." },
+          { "addresses": ["0x82CDEB88"], "role": "Stores 13 at +0x10." },
+          { "addresses": ["0x82CDEB8C"], "role": "Stores the shared zero as a word at +0x14." },
+          { "addresses": ["0x82CDEB90"], "role": "Stores the loop index at +0x34." },
+          { "addresses": ["0x82CDEB94", "0x82CDEB98"], "role": "Store the shared zero as words at +0x08 and +0x0C." },
+          { "addresses": ["0x82CDEB9C"], "role": "Stores -1 at +0x18." },
+          { "addresses": ["0x82CDEBA0"], "role": "Stores -1 at +0x20." },
+          { "addresses": ["0x82CDEBA4"], "role": "Stores the shared zero as a word at +0x24." },
+          { "addresses": ["0x82CDEBA8"], "role": "Stores the shared one (r18) as a word at +0x2C." },
+          { "addresses": ["0x82CDEBAC"], "role": "Stores the shared zero as a byte at +0x30." },
+          { "addresses": ["0x82CDEBB0"], "role": "Stores the shared one as a byte at +0x04." },
+          { "addresses": ["0x82CDEBB4"], "role": "Loads the manager's +0x10 child." },
+          { "addresses": ["0x82CDEBB8", "0x82CDEBBC"], "role": "Unsigned null compare and equality branch: a null child skips the call window to 0x82CDEBDC." },
+          { "addresses": ["0x82CDEBC0", "0x82CDEBC4", "0x82CDEBC8"], "role": "Pass the child as arg1, the stack object at r1+0xA0 as arg2 and literal one as arg3." },
+          { "addresses": ["0x82CDEBCC", "0x82CDEBD0"], "role": "Load the child's leading table pointer and the word at virtual slot +0x44." },
+          { "addresses": ["0x82CDEBD4", "0x82CDEBD8"], "role": "Move that word to the count register and call it indirectly. The dynamic target and table identity are unresolved, so no catalog slot is promoted." },
+          { "addresses": ["0x82CDEBDC"], "role": "Replaces the leading word with 0x8211EC1C after the call window or when the call is skipped." }
+        ]
+      },
+      "case55Diagnostics": {
+        "context": "Dispatcher 0x82CDDF08, case 55 (SynchCheck), diagnostic strings.",
+        "words": [
+          { "addresses": ["0x82CDEC78", "0x82CDEC7C"], "role": "Data mismatch: 0x82CDEC78 and 0x82CDEC7C materialize the data mismatch message text at 0x821574F8 and call the diagnostic helper at 0x82CDEC7C." },
+          { "addresses": ["0x82CDECA4", "0x82CDECA8"], "role": "Seed mismatch: 0x82CDECA4 and 0x82CDECA8 materialize the seed mismatch message text at 0x82157508 and call the same helper at 0x82CDECA8." }
+        ]
+      },
+      "case54Helper": {
+        "context": "Numeric case 54 (EndTurn).",
+        "words": [
+          { "addresses": ["0x82CDED94"], "role": "Within range 0x82CDED90..0x82CDED98, which loads 0x82FFE7C4, clears bit 0x10 and stores the result." },
+          { "addresses": ["0x82D0C3E8"], "role": "Canonical Ghidra identifies this helper but its listing and decompilation stop at the second Xenon thunk block, so no checksum or sync-finalization algorithm is established. Generated-code corroboration shows a large gameplay-state routine with a direct edge to TurnToYear 0x82CEFA20. That rejects a narrow checksum reading and does not prove a reusable role for the helper." }
+        ]
+      },
+      "storedWordWriters": {
+        "context": "Locators behind the four candidate writers of 0x82F7AD00.",
+        "words": [
+          { "addresses": ["0x82E2C29C"], "role": "In 0x82E2C010, loads the +0x134 word of the object referenced by 0x8314EFC8 (the store is 0x82E2C2A0)." },
+          { "addresses": ["0x82E2C218", "0x82E2C27C"], "role": "In 0x82E2C010, address formation for the load through pointer global 0x8314EFC8." },
+          { "addresses": ["0x82E2E2B0"], "role": "In 0x82E2E078, loads the +0x134 word (lwz r3,0x134(r11); the store is 0x82E2E2CC)." },
+          { "addresses": ["0x82E2E264", "0x82E2E268", "0x82E2E274", "0x82E2E27C"], "role": "In 0x82E2E078, the two paths that each form r31 = 0x8314EFC8." },
+          { "addresses": ["0x82E2E298"], "role": "lwz r11,0(r31) (word 0x817F0000): the dereference between that address formation and the +0x134 load." },
+          { "addresses": ["0x82E2E2AC"], "role": "addi r5,r9,-2224. This word is not the pointer load." },
+          { "addresses": ["0x82D21E54"], "role": "In caller 0x82D217C8, lwz r11,-4152(r15) (word 0x816FEFC8); the established r15 high half resolves the source to 0x8314EFC8." },
+          { "addresses": ["0x82D21E58"], "role": "lwz r3,-10716(r23) supplies a separate argument 1 object and is not the pointer global load." },
+          { "addresses": ["0x82D21E5C", "0x82D21E60"], "role": "lwz r4,0x134(r11) loads parameter 2, then a direct call to writer 0x82E2A638. The exact generated search finds this one direct call candidate." },
+          { "addresses": ["0x82D86440", "0x82D86450", "0x82D8645C", "0x82CC2BFC", "0x82CC2C08", "0x82CC2C10", "0x82CC2C20", "0x82CC2C68"], "role": "Eight words of the local-record transition: the caller passes its record at r1+0xA0 in ABI parameter 6 with mode 1 to 0x82CC29B8, and the builder carries the outer flag branch, the temporary seeded from 0x82F7AD00, the mode 1 branch, the call to 0x822DE438 and the store to record +0x0C. The mapping of each word to its step is not recorded." },
+          { "addresses": ["0x82CC29B8"], "role": "Canonical decompilation stops at the save-GPR thunk before any record-field work, so the field write is established from raw words and generated-code corroboration only." }
+        ]
+      },
+      "flagByteAndLimitWord": {
+        "context": "Locators for byte 0x8314EF9F and limit word 0x82F700AC.",
+        "words": [
+          { "addresses": ["0x82D05D5C", "0x82D05D60", "0x82D05D6C", "0x82D05D78"], "role": "In 0x82D05D50: 0x82D05D5C forms base 0x83150000, 0x82D05D60 sets r29 to zero, 0x82D05D6C copies it to r11 and 0x82D05D78 stores its low byte at displacement -0x1061 (0x8314EF9F), on the straight-line entry path before the first normal-body call." },
+          { "addresses": ["0x82D217E0"], "role": "Word 0x4BFE4571 is a relative branch with link to 0x82D05D50, inside 0x82D217C8. It is one static call edge only." },
+          { "addresses": ["0x82CEFC50"], "role": "Function containing the read at 0x82CEFC5C. It initializes the return register to zero and returns at once when the word is not positive." }
+        ]
+      },
+      "negativeSearches": [
+        "Ghidra records zero direct references to 0x83157E44. This does not contradict the split-address load, OR and store at 0x82CDE60C..0x82CDE620 and excludes no other split address formation.",
+        "A constant-argument query for direct NetworkCommandSubmit calls with nearest r3 = 49 returns zero matches because the canonical dispatcher listing truncates at the second Xenon thunk block. It does not disprove the three static sites.",
+        "A whole-program scan of 462,689 instructions for displacement 0xEF9F and signed -0x1061 returns zero hits and cannot bound the access set, because those seeds do not match the operand value the script compares. Seed 0xFFFFEF9F finds exactly one match in the defined listing, the store at 0x82D05D78. The read at 0x82CDEA40 is absent because the dispatcher region is not decoded there.",
+        "Initialized memory holds zero aligned words equal to 0x8314EF9F, which excludes only a stored pointer to the byte, not split address formation, undecoded accesses or runtime-created pointers.",
+        "Ghidra records zero references to function entry 0x82D05D50 although 0x82D217E0 calls it, so the reference model is an incomplete caller inventory."
+      ],
+      "qualification": "Every entry is a static word relation in the pinned image. Canonical Ghidra truncates the dispatcher at the second Xenon thunk block, so the words are exact and their completeness inside the function is generated-code corroboration. None of them proves runtime reachability, call multiplicity, order, delivery, readiness, completion, authority, lockstep, resynchronization, checksum coverage, framing or transport. Helper, array, flag and constant roles stay unnamed."
     },
     "projectionAndPhaseEvidence": "spaceship-part-presentation.json#/worldActorSaveSyncProjectionBoundary bounds 0x82CD4CF0's scalar projection and selected unit contribution; its worldActorSnapshotPhaseBoundary binds conditional nested drain before actor retirement. These are scalar samples and phase edges, not a bulk recovery snapshot or all-peer barrier.",
     "continuationEvidence": {
@@ -649,13 +922,27 @@
       "writeSlot": { "offset": "0x8", "target": "0x82D910C0" },
       "readSlot": { "offset": "0xC", "target": "0x82D91078" },
       "consumeSlot": { "offset": "0x10", "target": "0x82D91C58" },
-      "qualification": "The next table begins at 0x821368F4. The common leading slots at 0x0 and 0x4 remain unnamed."
+      "lastEntry": "0x821368F0",
+      "slotBodies": {
+        "write": "0x82D910C0 calls base helper 0x82CB1F78, then passes object +0x34 to 0x821D2F98.",
+        "read": "0x82D91078 calls base helper 0x82CB1EC8, then passes object +0x34 to 0x821D2F28.",
+        "consume": "0x82D91C58 calls the local drain 0x82CE16C8 on object +0x34."
+      },
+      "incomingReferences": {
+        "vtable": "Exactly two current-project references: the constructor store at 0x82D90A68 and a data reference at 0x821D37C4 inside 0x821D3778.",
+        "readMethod": "Exactly one reference to 0x82D91078, the vtable word at 0x821368EC; no direct caller exists."
+      },
+      "qualification": "The next table begins at 0x821368F4 and starts with the same two common leading targets. The common leading slots at 0x0 and 0x4 remain unnamed."
     },
     "baseEnvelope": {
       "writeHelper": "0x82CB1F78",
       "writeSequence": ["object+0x10", "literal 4", "object+0x2C", "object+0x1C", "object+0x18", "object+0x14", "object+0x24", "object+0x28"],
       "leadingValue": 77,
       "leadingValueProducer": "0x82D90A24 loads 77 and 0x82D90A64 stores it at constructed object +0x10.",
+      "leadingValueConfidence": "confirmed",
+      "writeWords": "0x82CB1F9C..0x82CB1FF8 call BufferWriteU32 in writeSequence order.",
+      "readWords": "0x82CB1EE4..0x82CB1F58 call BufferReadU32 into a stack word, compare it with literal 4, then read the six metadata offsets; the reader ends at 0x82CB1F70 and contains no read into object +0x10.",
+      "canonicalListing": "The Ghidra decompilations of both helpers truncate at the Xenon thunk limitation, so the sequences rest on exact image words with narrow recompiled-code corroboration.",
       "writeBytes": 32,
       "readHelper": "0x82CB1EC8",
       "readSequence": ["validate literal 4", "object+0x2C", "object+0x1C", "object+0x18", "object+0x14", "object+0x24", "object+0x28"],
@@ -670,6 +957,11 @@
       "vtable": "0x821368E0",
       "defaultLeadingField": 1000,
       "embeddedRecordInitialization": "Zeros object +0x34 through +0x44.",
+      "allocator": "0x82D3DBA0",
+      "vtableStore": "0x821D37C4",
+      "baseMetadataWordsInitialized": 6,
+      "directCallers": "Ghidra reports no direct callers and one direct callee, the allocator. This supports a strong default factory role but leaves registration unresolved; no registration path is recovered.",
+      "functionPointerOccurrences": "Exactly one aligned pointer value to 0x821D3778 exists in the initialized image, at 0x8216CC08.",
       "functionMetadataRow": {
         "factoryPointer": "0x8216CC08",
         "descriptorAddress": "0x8216CC0C",
@@ -686,6 +978,15 @@
         "lastTarget": "0x827F7860",
         "descriptorTopBits01Rows": 15590,
         "descriptorTopBits11Rows": 36,
+        "boundaryRows": {
+          "lowerBoundary": "0x8216B800 closes the table: the preceding pair at 0x8216B7F8 is zero and the first row targets 0x821B0000.",
+          "topBits01Run": "4,976 rows through 0x82175378, spanning ordered targets through 0x82344650; 4,900 of those targets are exact Ghidra function starts.",
+          "descriptorFormChange": "The next aligned pair at 0x82175380 stays increasing but changes the descriptor top bits from 01 to 11; the table continues through both forms.",
+          "lastRow": "0x8218A048, targeting 0x827F7860.",
+          "closingPair": "The next aligned pair targets 0x827F7C50 with descriptor 0x00001414, which lacks descriptor bit 30 and closes the extent."
+        },
+        "continuityWindows": "Walks of 64 words on each side of the factory row show unbroken rows from 0x8216C908 through at least 0x8216CF08, including the 64 complete rows 0x8216CB08..0x8216CD07, with strictly increasing function starts and several starts that Ghidra does not name.",
+        "literal77": "No literal 77 appears in the factory row or in the twelve-word window around 0x8216CC08.",
         "guestReferences": {
           "root": 0,
           "factoryRow": 0,
@@ -704,6 +1005,11 @@
       "payloadBytes": 20,
       "writePrimitive": "0x821D3EA0",
       "readPrimitive": "0x822D93E8",
+      "writeCallWords": "0x821D2FB4..0x821D2FEC pass record offsets 0, 4, 8, 12 and 16 in order to 0x821D3EA0.",
+      "readCallWords": "0x821D2F44..0x821D2F7C pass the same offsets in the same order to 0x822D93E8.",
+      "writePrimitiveBehavior": "0x821D3EA0 decompiles in full: it compares buffer state +0x08 with 0x82F78854, reverses the four bytes of one source word when they differ, and calls buffer virtual slot +0x08 with length 4 and the source pointer.",
+      "readPrimitiveWords": "0x822D9404..0x822D9418 call buffer virtual slot +0x04 with length 4 and the destination pointer; 0x822D9420..0x822D9484 compare the byte-order states and reverse the four destination bytes in place when they differ.",
+      "canonicalListing": "The Ghidra decompilations of 0x821D2F98, 0x821D2F28 and 0x822D93E8 truncate on bad instruction data, so those three rest on exact image words with narrow recompiled-code corroboration.",
       "byteOrder": "Each primitive conditionally reverses its four bytes when buffer byte-order state +0x08 differs from state at 0x82F78854. No unconditional wire endian is asserted."
     },
     "result": "The Xbox network object serializes and deserializes its embedded command record as five ordered 32-bit primitives, for an exact 20-byte object-layer payload. This is not the comparison guide's PS3/iOS opcode-dependent compact packing.",

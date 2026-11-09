@@ -1,0 +1,278 @@
+{
+  "schemaVersion": 1,
+  "family": "native-renderer-shader-generation",
+  "findings": {
+    "RVA-F-0412": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0412",
+      "topic": "native-renderer-shader-generators",
+      "status": "open",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "How does the guest produce shaders that no shipped file holds, and which inputs fix each one?",
+      "scope": {
+        "compiler": "0x8257EE38",
+        "callers": ["0x82545EE8", "0x8254B588", "0x82302208", "0x82302348", "0x824FF578", "0x824FF690", "0x824FF7A8", "0x82E30308"],
+        "descriptorWriter": "0x8236FAF8",
+        "boundary": "Static map of the generators and their input fields. No claim about which descriptors a play session reaches."
+      },
+      "currentEvidence": {
+        "method": "Read-only maintained Ghidra queries, exact-function generated call edges, and counts taken from the shipped game tree.",
+        "compilePath": {
+          "compileFunction": "0x8257EE38 is D3DXCompileShader. It takes ten arguments; the defines and include arguments are always null. Body chain 0x8257EC58, 0x8257EBE0, 0x8257E710, 0x8257E060. The from-file twin 0x8257EEA0 has one caller, 0x8254B330. Output depends only on text, entry name, profile and flags.",
+          "callers": [
+            { "caller": "0x82545EE8", "role": "text shader linker", "entry": "main (0x8204B108)", "profile": "read from 0x82F18350 and 0x82F18370", "flags": "0" },
+            { "caller": "0x8254B588", "role": "program creator from memory (vertex 0x8254BA00, pixel 0x8254BE88)", "profile": "passed in", "flags": "this+4 OR the word at 0x82F8FD1C, which is zero in the image" },
+            { "caller": "0x82302208 and 0x82302348", "role": "GFx shaders at renderer start", "entry": "main", "profile": "vs_1_1 and ps_1_1", "flags": "1" },
+            { "caller": "0x824FF578, 0x824FF690, 0x824FF7A8", "role": "copy vertex, copy pixel and depth write pixel shaders", "texts": ["0x8203F678", "0x8203F7C8", "0x8203F8E0"] },
+            { "caller": "0x82E30308", "role": "movie YUV shaders", "texts": ["0x82115618", "0x82115688", "0x821158E8"], "profile": "vs_2_0 and ps_2_0" }
+          ],
+          "errorShader": "0x82532A80 compiles embedded VSMain and PSMain at 0x82049DB8 and 0x82049EB0.",
+          "outputInstall": "0x82528FA0 (vertex) and 0x825290E0 (pixel) call CreateVertexShader at 0x826945E8, log 0x82049074 on failure and insert into a map keyed by a 16 byte key.",
+          "cache": "The linker cache named DefaultPipelineShaderCache has reader 0x82529AD8, writer 0x82528C38 (magic 0x6AA0467D), enable 0x82528438 and initializer 0x82526598, which loads and saves a cache file named at 0x820487F4. No cache file, hlsl file or fragment file is in the game tree or its archives."
+        },
+        "textShaderLinker": {
+          "role": "Fixed function emulation by text fragments. Fragment text is embedded at 0x8204F440 (vertex) and 0x820545D8 (pixel) through globals 0x82F18640 and 0x82F18644; loader 0x825586B0 uses it for the standard fragment file path.",
+          "vertexFragmentBits": "11 single bit IDs: TransformPosition 0x1, TransformSkinnedPosition 0x2, ProjectWorldPosition 0x4, OutputWorldPosition 0x8, LoadVC Ignore, Emissive and AmbDiff 0x10, 0x20 and 0x40, SetupLightingVariables 0x100, LightX 0x200, AmbientLight 0x400, LoadTexGenInputTexCoord 0x1000.",
+          "pixelFragmentBits": "21 single bit IDs: Dark, LightMapX, Detail, Base, NoBase, DecalX, ShadowMapX, VertexColor Modulate and Replace, Gloss, Bump, Sphere with Gloss, Bump and BumpGloss variants, Glow, SpecularColorAdd, FogMap, Fog, WriteDiff, WriteSpec.",
+          "key": "Four words per stage, built by 0x82527918 with per map handlers 0x82525FE0 through 0x825273E0. Word 0 is the OR of fragment IDs. Word 1 holds a light count in its low 5 bits and a 4 bit counter at bits 5 to 8 that likely counts texture coordinate sets. Name format is four 8 digit hex words joined by underscores (0x8254AC10). Generation path 0x82549900 -> 0x82549320 -> 0x82545EE8.",
+          "creation": "Created at renderer creation, 0x8250F2B0 -> 0x82527738. 0x825282F8 and 0x82528398 copy a renderer supplied profile into 0x82F18350 and 0x82F18370, so the run time profile text is unproved.",
+          "reachability": "The linker serves only null geometry draws (0x8250C560) and renderer mode toggles (0x82523A90). The only null geometry draw caller found is 0x82513850 (DrawScreenTexture), reached only from uncalled screen texture paths, so the linker is not on the scene geometry path."
+        },
+        "materialGraphEmitter": {
+          "role": "NiStandardMaterial and NiFragmentMaterial turn a node graph into HLSL. The game subclass CcNiStandardMaterialCurvedWorld has vtable 0x82131788, constructor 0x82E779F8 (created by 0x82E78808 from game init 0x82E2E078) and overrides slot 38 (vertex curve node, 0x82E77410) and slot 70 (fog tail, 0x82E77088) of base vtable 0x8200D978.",
+          "functions": "Vertex graph 0x8237C0C8, pixel graph 0x82372498, descriptor split 0x8237B7F8, emitter 0x8238CB60 (entry name Main), program creation 0x8252CAD8 with text from 0x8238DFB8. Node library bodies are embedded at 0x82010228 through 0x8201C618.",
+          "profileAndFlags": "0x8250A468 hard codes vs_3_0 and ps_3_0 (0x8203EF2C and 0x8203EF34) into 0x8252C3A0. 0x8252CAD8 compiles through 0x82515248 and 0x825153C8 -> 0x8254BA00 -> 0x8254B588 -> 0x8257EE38. Flags are this+4 (set to zero by 0x82557F58) OR 0x82F8FD1C; its only setter 0x82514C00 has no caller found, so flags are 0.",
+          "curvedWorldInputs": "The two overrides do not branch on the descriptor. Their inputs are run time constants g_fEndZ, g_fStartZ, g_fEnableDistFog, fCurveWorldRadius and g_f3FogColor."
+        },
+        "selection": "Draw functions 0x8250C498 (triangles), 0x8250C840 (skinned), 0x82510DD8 (lines) and 0x825107A0 (points) use the geometry's own shader when it is an NiD3DShaderInterface (0x8235B3B8 -> 0x823DBE50 -> material slot 4 0x82381C10, IsKindOf 0x82513C30 against RTTI 0x82F8FCEC). Otherwise 0x8235C3C0 activates the renderer default material at renderer+24, else the error shader (renderer vtable +244). 0x82E78808 wraps the stock NiStandardMaterial (renderer+20, renderer global 0x82F8E270) as the curved world material, installed by 0x823524B0.",
+        "descriptorWriter": {
+          "function": "0x8236FAF8 (GenerateDescriptor, slot 18) takes geometry, skin instance (geometry+188), property state (geometry+176), effect state (geometry+180) and the descriptor. Word +0 is the name at this+952. The descriptor split 0x8237B7F8 reads 63 distinct descriptor bits from words +4, +8, +12 and +16 (32, 22, 6 and 3 bits). Bits are numbered from the least significant bit.",
+          "fields": [
+            { "word": "+4", "bits": "b0-1", "field": "skin mode 0, 1 or 2", "input": "model data, skin partition test" },
+            { "word": "+4", "bits": "b2-3", "field": "normals 0, 1 or 2", "input": "model data, streams via 0x82380CF8; a normal map forces 2" },
+            { "word": "+4", "bits": "b4", "field": "specular", "input": "model data, NiSpecularProperty bit 0" },
+            { "word": "+4", "bits": "b5", "field": "color stream present", "input": "model data" },
+            { "word": "+4", "bits": "b6-8", "field": "vertex color source and lighting mode", "input": "model data, NiVertexColorProperty" },
+            { "word": "+4", "bits": "b9", "field": "lit (apply mode is not replace)", "input": "model data, texturing; none means unlit" },
+            { "word": "+4", "bits": "b10-11", "field": "fog 0, 1 or 2", "input": "scene state, NiFogProperty" },
+            { "word": "+4", "bits": "b12-14", "field": "texture coordinate set count", "input": "model data" },
+            { "word": "+4", "bits": "b15-17 and b20-24", "field": "parallax, base, normal, dark, detail, bump, gloss and glow maps", "input": "model data; bump needs an environment map, gloss needs specular or an environment map" },
+            { "word": "+4", "bits": "b25-27", "field": "environment map texgen {1,2,3,5,4}", "input": "scene state, NiTextureEffect type 2, value 0 to 4 at effect+380" },
+            { "word": "+4 and +8", "bits": "+4 b28-31, +8 b0", "field": "shader maps 0 to 4", "input": "model data" },
+            { "word": "+8", "bits": "b1-2", "field": "decal count", "input": "model data" },
+            { "word": "+8", "bits": "b3", "field": "per vertex lighting", "input": "derived from this+956, constant 0" },
+            { "word": "+8", "bits": "b4-15", "field": "point, spot and directional light counts", "input": "scene state" },
+            { "word": "+8", "bits": "b16-23", "field": "per light shadow mask", "input": "scene state, shadow manager byte +188" },
+            { "word": "+8 and +12", "bits": "+8 b24-31, +12 b0-7", "field": "projected light and shadow counts (each at most 3) and masks", "input": "scene state, 0x823E9338" },
+            { "word": "+12 and +16", "bits": "+12 b8-31, +16 b0-23", "field": "per slot texture coordinate index and transform flag, 12 slots", "input": "model data, 0x823E8EC8, clamped to the coordinate set count" },
+            { "word": "+16", "bits": "b28-29", "field": "shadow technique", "input": "scene state" },
+            { "word": "+16", "bits": "b30", "field": "alpha test with a nonzero function", "input": "model data, NiAlphaProperty flags bits 10 to 12" }
+          ],
+          "mapSlots": "Map slots compact in present order (parallax, base, normal, dark, detail, bump, gloss, glow, shader maps 0 to 4, decals). 0x823E8EC8 ignores slots past 12."
+        },
+        "closedSets": "29 GFx HLSL texts (5 vertex shaders in table 0x82F7B9CC and 24 pixel shaders in table 0x82F7B9E0, strings 0x821677C0 through 0x82169C58), all compiled by 0x82302348 at renderer start; 3 movie shaders; 3 copy and depth shaders; 2 error shaders. The four entries at 0x82F6E848 are vertex declarations.",
+        "limits": {
+          "lights": "0x823E9508 drops lights with index 8 or above, so at most 8 lights per object (165 point, spot and directional splits). The linker allows up to 31 lights per its own key.",
+          "otherRanges": "Projected light textures and shadow textures at most 3 each, one environment map, fog 0 to 2, shadow technique 0 to 3 and only when the shadow manager exists.",
+          "constantFields": "this+956, +957 and +958 are constant 0 (setters 0x8236E880, 0x8236E890 and 0x8236E8A0 have no callers)."
+        },
+        "shippedState": {
+          "shadowManager": "The shadow manager singleton is 0x82F8E74C (0x82F8E72C is a static string). Only 0x823AE6D0 and 0x823AEBC8 store it, and no direct caller of 0x823AE6D0 was found, so shadows and projected textures are off in shipped data unless an indirect caller exists. Indirect callers of 0x823AE6D0 are unresolved.",
+          "environmentMapsAndFog": "NiTextureEffect and NiFogProperty exist only through stream registration and no shipped NIF holds one, so environment maps and fog are off.",
+          "lights": "The light rig file named by EffectsLighingRig in ccglobaldefines.xml holds one directional and one ambient light, loaded by 0x82C80608, collected by 0x822F2038 onto *0x8314F27C (+24) and attached by 0x82C53EC0 (from 0x82C55448 and 0x82C7EF10). 0x82D878B8 adds an effect object's own NIF lights. Shipped lights are directional, ambient and point only; the worst case found is about 5 per object.",
+          "cacheFiles": "No compiled shader cache ships. Whether either cache file is ever written is unproved."
+        },
+        "modelData": {
+          "nif": "260 NIFs (245 in Common0, 10 in Level, 5 in hoa; none loose) hold 998 geometries: 519 NiParticleSystem, 6 NiMeshParticleSystem, 421 NiTriShape, 52 NiTriStrips, 31 skinned. All 940 texturing properties use modulate. Slot sets are base 850, base and glow 70, base and dark and glow 13, base and dark 7. 17 data records carry tangents. No NiFogProperty or NiTextureEffect exists. Lights number 8 directional, 3 ambient and 2 point. There are 45 distinct model side tuples before per slot texture coordinate choices. 951 of 998 geometries (all 519 NiParticleSystem) have no named material and use the default material.",
+          "gr2": "About 3,700 models are .gr2 files, loaded by FGrannyAssetResource::LoadGrannyAsset (0x82E45078) through 0x82C92950. Without flag 0x80000, FGrannyAssetToGamebryo (0x82C8B928, convert 0x82C8C6F0 -> 0x82C8BFD8) builds bones (0x82C89460), meshes and skin (0x82C8A548) and per group materials (0x82C8BAA0). With the flag, FGrannyAssetToFGX (0x82C82990) builds no Gamebryo meshes. Of 3,570 decoded files (28 failed), 819 have materials, 1,423 materials in all. 1,389 name a registered technique and none names an unregistered one. 34 materials use the default material: 31 Base only, 2 Base plus Glow, 1 Diffuse Color only (which falls back to Base, as does Dark). 778 set AlphaTestEnable.",
+          "gr2Rules": "0x82C8BAA0 is the only shader attach: a NiShaderCustAttribs TechniqueName that is non empty and not Default Shader goes to 0x82C8D3E8 (factory global 0x82F8E328, attach 0x8235C568); anything else stays on the curved world material. GR2 maps by usage name: Base 0, Detail 2, Decal 8, Bump 5, Gloss 3, Glow 4 (unmatched goes to Base), through 0x823546F0 on texture coordinate set 0 with no transform. ShaderFilenameN (N below 16) adds shader maps through 0x82C8B998. Dark, normal and parallax maps never come from GR2. A NiAlphaProperty is created only when AlphaTestEnable is set (flags 0x2ED, test function in bits 10 to 12, NoSorter bit 13). No material, vertex color or specular property is created from GR2."
+        },
+        "qualification": "Static and generated call edges plus counts from shipped data. Counts derived from the shipped game tree are descriptive. The map of generators does not show which descriptors or shaders a play session reaches."
+      },
+      "guards": [
+        "Do not infer that every generator output is reachable in play.",
+        "Do not treat the text linker as the scene geometry path; its only null geometry caller is uncalled.",
+        "Reached scene descriptors depend on scene state and are not enumerable statically."
+      ],
+      "unprovedItems": [
+        "Whether the linker cache write succeeds, and whether material constructor 0x82E779F8 reads or writes its two cache directory strings (0x82131158, 0x82131168). 0x8252CAD8 builds hlsl file names for diagnostics with no file input or output seen.",
+        "Projected light flag meaning, the skin mode pointer test, and whether other readers use the per slot fields.",
+        "Where scene lights come from: no game code constructs lights (0x82D87B80 rescales loaded ones); the GR2 LightInfo string near 0x82C89460 is a candidate.",
+        "The effect of g_fEnableShadows (0x82163444) on the descriptor.",
+        "Indirect callers of 0x823AE6D0, which would construct the shadow manager.",
+        "Raw microcode at 0x82F1B6AC, 0x82F1B920 and 0x82F1BB60 has no references and sits beside the compiler tables at 0x82F1C720; it is probably a D3D runtime built in. The label shader is not located.",
+        "Request flag 0x40 that selects the FGX path (0x82C63820); particle color and coordinate streams; defaults when vertex color or specular properties are absent; run time map transforms; whether NiMeshParticleSystem uses 0x825107A0; which spawn paths attach which light sets.",
+        "Whether 0x82383B10 and the curved world constructor tolerate a null renderer."
+      ],
+      "conclusion": "The guest carries two CPU side HLSL generators (a text linker and a node graph emitter) and the full Xbox 360 D3DX compiler. Fixed text sets can be compiled directly. Scene shaders depend on a descriptor that 0x8236FAF8 builds from model data, scene state and constants, with the limits listed above."
+    },
+    "RVA-F-0413": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0413",
+      "topic": "native-renderer-skin-mode-state",
+      "status": "open",
+      "confidence": "strong",
+      "image": "image.json",
+      "question": "Can a skinned object that starts in skin mode 1 report skin mode 2 after renderer preparation, and which code does it?",
+      "scope": {
+        "functions": ["0x8236FAF8", "0x823A5A68", "0x8250B668", "0x8250FE00", "0x82C8D360", "0x821D0C68"],
+        "boundary": "Static mutation path and conditions. No shipped asset or object is tied to it."
+      },
+      "currentEvidence": {
+        "method": "Read-only maintained Ghidra queries, raw instruction words compared with the supported flat image, and exact-function generated corroboration. The decompiler truncates several selected functions at Xenon save thunks, so claims use raw words and generated copies.",
+        "modeSelection": "0x8236FAF8 at 0x8236FB40 through 0x8236FB98 tests the skin instance and its +12 partition object. No skin or no partition object gives mode 0. With a partition object, count +8 equal to 0, array +12 equal to 0, or first partition +16 equal to 0 gives mode 2. Otherwise mode 1. A NIF without a partition object is therefore not by itself a mode 2 example. Constructors 0x822EBF80 (0x822EBFE0) and 0x823A4198 (0x823A41CC) set skin +12 to null, so mode 0 holds before a partition is attached.",
+        "releaseRoutine": "0x823A5A68 frees the arrays at partition +8, +12, +16 and +20 and clears each pointer; the +16 clear is at 0x823A5AA8. It leaves the partition object's count and array fields, and the GPU representation at +40, alone. A skin that still holds a populated partition can therefore change from mode 1 to mode 2 without a new skin or a new GPU object. This needs the same first partition to be released and kept until 0x8236FB6C reads it.",
+        "chain": [
+          { "step": "scene root traversal", "address": "0x821D0C68", "detail": "geometry RTTI check at 0x821D0C8C, data consistency exclusion at 0x821D0CA8, preparation call 0x821D0CB4 -> 0x82C8D360, child recursion at 0x821D0D04" },
+          { "step": "request preparation", "address": "0x82C8D360", "detail": "sets the high nibble of data +52 to 0x4000 at 0x82C8D38C; when data byte +54 is 0, calls renderer slot +172 at 0x82C8D3BC, then 0x82C8D3C4 -> 0x8250FE00" },
+          { "step": "resolve the renderer slot", "address": "0x8250F0E8", "detail": "constructor installs vtable 0x82047050 at 0x8250F118; cell 0x820470FC (slot +172) holds 0x82513498" },
+          { "step": "select skin and data", "address": "0x825134DC", "detail": "reads geometry +184 and +188; the skinned branch calls 0x82512420 at 0x82513790" },
+          { "step": "publish preparation records", "address": "0x82512420", "detail": "walks partition count and array at 0x82512440 through 0x82512464; stores data at record +0 (0x8251252C), skin at +4 (0x82512538), partition at +8 (0x8251253C), GPU representation at +24 (0x82512554); 0x825125D0 inserts the record into renderer +596" },
+          { "step": "upload and drain", "address": "0x8250FE00", "detail": "calls the skinned uploader 0x8250D298 at 0x8250FEE0; the completed record loop passes data, skin and partition to 0x8250B668 at 0x8250FF64 through 0x8250FF6C, then releases the record at 0x8250FF74" },
+          { "step": "strip CPU arrays", "address": "0x8250B668", "detail": "requires nonnull data and (data u16 at +52 AND 0xF000) equal to 0x4000 at 0x8250B680 through 0x8250B694; with a partition and bit 0x20 of data byte +54 clear, calls 0x823A4AA0 at 0x8250B740 and then 0x8250B748 -> 0x823A5A68. Bit 0x20 set bypasses the release at 0x8250B738" },
+          { "step": "later descriptor", "address": "0x8236FB6C", "detail": "a later read of the cleared first partition at 0x8236FB6C through 0x8236FB84 yields mode 2, which node selector 0x82374398 turns into the no indices skin transform" }
+        ],
+        "ingress": "0x82C60DA0 calls 0x821D0C68 at 0x82C60DD0 on its object +8 scene root. 0x82C62FC0 calls it at 0x82C63138 when incoming flag 0x4 is clear. 0x82C833A0 calls it at 0x82C83604 when request flag 0x80 is set and the renderer exists. Loader 0x82D9C050 calls it at 0x82D9C248 on the root obtained at 0x82D9C21C through 0x82D9C230. None of these names a model.",
+        "partitionBuilder": "GR2 conversion builds its default partition through 0x82C89010 -> 0x823A8F78 at 0x82C89140, attached to skin +12 by 0x82C8914C. The default bone limit is 25 and the per vertex weight limit is 4 (0x82C89028, 0x82C89130). 0x823A8F78 derives an indexed layout flag from unequal limits at 0x823A90B0 through 0x823A90E4 and passes it to 0x823A6D10 at 0x823A9134. The indexed branch allocates partition +16 at 0x823A6E30; an equal limit branch can leave it null when the index request flag is false (0x823A7108 through 0x823A712C). Renderer helper 0x824E50C8 -> 0x823A8F78 at 0x824E517C stores its result in its own wrapper +8 at 0x824E5194; it does not write skin +12.",
+        "mode2Shader": "Mode 2 builds the skinned vertex shader through 0x82374398 when its r5 argument equals 2, using fragment TransformSkinnedPositionNoIndices (0x820115D3): four bones in c0 through c11 with the fourth weight 1 - w0 - w1 - w2, then SkinToWorld c12 to c15 and ViewProj c17 to c20.",
+        "qualification": "The release path is conditional live object cleanup. It does not prove that descriptor generation repeats after cleanup for every object, and it does not tie a shipped asset or object to it. Fresh loaded assets do not cover the cleaned state."
+      },
+      "guards": [
+        "Do not read a NIF without a partition object as a mode 2 example.",
+        "Do not enumerate only freshly loaded NIF and GR2 assets when closing the descriptor set; prepared and stripped state must be included or shown to come after shader generation."
+      ],
+      "unprovedItems": [
+        "No shipped asset or leader or unit object is joined to a captured skin pointer, its preservation flags, the actual cleanup and the later descriptor call.",
+        "The count zero and null array alternatives have no established live producer.",
+        "Which shipped object uses the equal limit branch of 0x823A8F78."
+      ],
+      "conclusion": "Renderer preparation can release the first partition's CPU index array while the GPU representation survives, so a retained skin can move from mode 1 to mode 2 through 0x8250B668 -> 0x823A5A68 when bit 0x20 of data byte +54 is clear. This is a static route; the object that takes it is not identified."
+    },
+    "RVA-F-0414": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0414",
+      "topic": "native-renderer-shader-refusals",
+      "status": "open",
+      "confidence": "candidate",
+      "image": "image.json",
+      "question": "Which shader stages in the retained corpus fail an admission or translation check, where do they come from, and what does each refusal class mean?",
+      "scope": {
+        "decoderBank": "0x820F0B18..0x8210EC80 (container starts)",
+        "effectFiles": ["CivCon_NormalMap.fxobj", "Grass.fxobj", "CivCon_WorldMap.fxobj"],
+        "boundary": "A replayed admission classifier over 292 vertex shaders and the translation failure list. The corpus holds shader stage words; stage microcode is not retained in this repository."
+      },
+      "currentEvidence": {
+        "method": "Replay of a retained admission classifier, join of stage digests to container occurrences, embedded debug provenance at container +0x2C, and raw word checks against the supported flat image.",
+        "counts": {
+          "vertexShaders": 292,
+          "admitted": 228,
+          "refused": 64,
+          "refusedByClass": { "computedIndexFetch": 30, "indexRead": 10, "conditionalFlowFetch": 11, "noVertexFetch": 13 },
+          "imageStages": 62,
+          "effectStages": "one NormalMap vertex shader and one Grass vertex shader",
+          "translationFailures": 65,
+          "translationFailureMakeup": "64 image memory export vertex shaders and one WorldMap pixel shader",
+          "overlap": 62,
+          "union": 67
+        },
+        "decoderBank": {
+          "origin": "All 64 image memory export containers carry embedded debug provenance in the WMV decoder and DXVA namespace at container +0x2C. Container starts span 0x820F0B18 through 0x8210EC80.",
+          "operationFamilies": { "motionCompensation": 33, "padding": 7, "residualProcessing": 5, "deblocking": 7, "intraProcessing": 2, "rangeReduction": 2, "intensityCompensation": 2, "copying": 2, "detiling": 4 },
+          "qualification": "Debug provenance shows a compiled library origin, not that the library runs. These stages are not WorldMap occurrences. The separate movie path at 0x82E30308 does not join this bank because both involve video."
+        },
+        "computedIndexRefusals": {
+          "belongTo": "the decoder bank",
+          "consumedComponents": { "r0.z": 11, "r3.x": 6, "r1.z": 5, "r0.y": 5, "r0.w": 2, "r1.x": 1 },
+          "examples": [
+            "Container 0x820F49D0, code 0x820F4B90: r3.x is computed at instruction slot 9 and fetched with at slot 10.",
+            "Container 0x820F4208, code 0x820F43C8: r1.xyz is written at slot 7 and r1.z is fetched with at slot 8."
+          ],
+          "meaning": "Shader side data address or gather indices for media processing. They are not scene instancing or bone indices. The decoded surface layout stays open until the decoder resource descriptors are tied to a draw."
+        },
+        "normalMapException": {
+          "container": "CivCon_NormalMap.fxobj +0x5430",
+          "code": "+0x583C",
+          "finding": "A false incoming index refusal. Slot 15 is a 2D texture fetch using r0.zyz; the y and z components are defined at slots 11 and 14. The classifier checks a fetch's source register without separating texture coordinates from the vertex index input.",
+          "serializedLocators": "Technique name field +0x1C74, pass pointer +0x1C84 -> +0x1E40, state pointer +0x1E48 -> +0x22CAC, vertex shader reference +0x22CF4 -> +0x5430.",
+          "consequence": "The classification needs correcting. This does not show a need to initialize r0.x or add computed vertex fetches for this shader."
+        },
+        "grassException": {
+          "container": "Grass.fxobj +0x1AE0",
+          "code": "+0x22C8",
+          "finding": "Reads incoming r0.x at ALU slot 10 and compares -abs(r0.x) strictly greater than zero. For every finite vertex index it writes zero to vector r5.xyz and scalar r0.w. The vector operand is the zero literal c255.z, stored at effect offset +0x22C0; the literal descriptor at +0x2210 selects 16 dwords starting at register 252 from physical data +0x2288, and value 14 is c255.z.",
+          "serializedLocators": "Fields +0x1AA8, +0x1AB8 -> +0x1ABC, +0x1AC4 -> +0x43DC and vertex shader reference +0x4424 -> +0x1AE0.",
+          "consequence": "A zero initialization idiom, not an established instancing, bone or wind index. If the effective literal stays zero, a limited equivalence argument holds; otherwise the general incoming index ABI is the faithful route."
+        },
+        "worldMapPixelShader": {
+          "container": "CivCon_WorldMap.fxobj +0x62A8",
+          "code": "+0x6530",
+          "size": 480,
+          "finding": "The single translation refusal in this effect, which holds 13 vertex and 13 pixel containers. It is a 1D texture pixel shader. Technique field +0x2220 points to the name at +0x7144; its pass pointer reaches +0x2324 and its state pointer reaches +0x119BC. State cells +0x11A04 and +0x11A08 select vertex container +0x3880 and this pixel shader at +0x62A8.",
+          "qualification": "A serialized pair relationship. The loader, activation and actual draw call are unproved."
+        },
+        "exportConsumers": "The 64 exports have no established destination buffer, creation or draw site, completion point or CPU or GPU reader. Exact container start references for 0x820FE028, 0x820F49D0, 0x820F0B18 and 0x8210EC80 were not found by reference and aligned pointer queries, nor by a raw adjusted high lis and addi search. Shared bases, computed offsets, aliases and indirect dispatch fall outside that negative result. Representative containers: 0x820FE028 (motion compensation with residual input and tile output, debug locator 0x820FE054) and 0x820F49D0 (padding with image output, debug locator 0x820F49FC).",
+        "classTable": [
+          { "class": "computed fetch (30), conditional fetch (11), no vertex fetch (13)", "disposition": "All are decoder vertex shaders.", "consequence": "Faithful shader side fetch and control flow or procedural index handling, plus memory export, if executed. No unreachability is shown." },
+          { "class": "index read (10)", "disposition": "Eight decoder vertex shaders, the NormalMap false positive and the Grass zero idiom.", "consequence": "Correct the NormalMap classification; keep a literal guarded equivalence for Grass or supply the incoming index." },
+          { "class": "memory export (64)", "disposition": "The embedded decoder bank, including two vertex shaders the vertex admission check accepted.", "consequence": "Needs address and data export with matching memory consumers, or a defensible exclusion from supported execution." },
+          { "class": "1D texture (1 pixel shader)", "disposition": "WorldMap serialized pair, code +0x6530.", "consequence": "Needs 1D texture semantics if the pass is reachable, or an exact pass selection exclusion." }
+        ],
+        "qualification": "Candidate. No selected stage has an accepted archive occurrence or a shown draw site. Draw site and play reachability are unproved for every stage and none is shown unreachable. The per stage digests and the full 67 row ledger are not published here."
+      },
+      "guards": [
+        "Do not assign a draw address to a stage from a file name.",
+        "Do not read the memory export vertex shaders as WorldMap shaders.",
+        "A strict miss is an enumeration or admission defect, not grounds to enable a first use fallback."
+      ],
+      "unprovedItems": [
+        "Activation and draw sites and first readers for the decoder bank.",
+        "Actual pass activation for the three effect files.",
+        "Complete coverage of the retained corpus is not certified."
+      ],
+      "conclusion": "Of 292 vertex shaders, 64 are refused; with 65 translation failures the union is 67 stages. 64 of them are the executable's own WMV decoder bank, one is a WorldMap 1D texture pixel shader, and two refusals (NormalMap and Grass) come from classifier limits rather than unsupported shader features."
+    },
+    "RVA-F-0415": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0415",
+      "topic": "native-renderer-water-shader-identity",
+      "status": "open",
+      "confidence": "candidate",
+      "image": "image.json",
+      "question": "Which retained river and shoreline shader programs match byte for byte a shipped Xbox 360 effect file?",
+      "scope": {
+        "effectFiles": ["CivCon_Rivers.fxobj", "CivCon_Water.fxobj", "CivCon_Wave.fxobj", "Terrain.fxobj", "CivCon_TerrainContour.fxobj"],
+        "boundary": "Whole blob byte comparison of four retained shader programs against five effect files. No guest program address is tied to any of them."
+      },
+      "currentEvidence": {
+        "method": "Deterministic whole blob comparison through tools/correlate_fxobj_shaders.py, on raw and per dword byte swapped forms. No partial blob match was used.",
+        "effectFileSizes": { "CivCon_Rivers.fxobj": 25692, "CivCon_Water.fxobj": 35356, "CivCon_Wave.fxobj": 18332, "Terrain.fxobj": 59612, "CivCon_TerrainContour.fxobj": 12652 },
+        "retainedPrograms": [
+          { "role": "river vertex shader", "bytes": 672, "match": "none in the five effect files" },
+          { "role": "river pixel shader", "bytes": 564, "match": "CivCon_Water.fxobj, offset 15228 (0x3B7C), one raw match, no swapped match" },
+          { "role": "shoreline vertex shader", "bytes": 720, "match": "none in the five effect files" },
+          { "role": "shoreline pixel shader", "bytes": 144, "match": "CivCon_Wave.fxobj, offset 8772 (0x2244), one raw match, no swapped match" }
+        ],
+        "printableMetadata": {
+          "locator": "Effect file text and sampler tables, readable with tools/correlate_fxobj_shaders.py on the same five files.",
+          "CivCon_Rivers.fxobj": "2 technique names and 7 sampler names",
+          "CivCon_Water.fxobj": "3 technique names and 8 sampler names",
+          "CivCon_Wave.fxobj": "1 technique name and 1 sampler name",
+          "qualification": "Candidate discriminators from effect file text, not runtime identities. No exact guest string reference was found: a read-only search of the Ghidra program for the five file names returned no match."
+        },
+        "qualification": "The vertex shader no match is not proof that those shaders are missing from the effect files: a patched or rebuilt vertex fetch word could differ from the file bytes. The river and shoreline labels come from earlier attribution of visible contribution, not from the file names. Correlation establishes no technique, execution, visible output or cause."
+      },
+      "guards": [
+        "A byte match does not select a technique or show the effect is drawn.",
+        "Do not read the vertex shader no match as a missing vertex shader or as a complete pair identity.",
+        "Do not use this result as the cause of any water flicker; no failing frame comparison exists."
+      ],
+      "unprovedItems": [
+        "The guest program address that loads the matched pixel shaders.",
+        "Which vertex shader pairs with each matched pixel shader in the effect files.",
+        "The effect file text for the river and shoreline vertex shaders."
+      ],
+      "conclusion": "The retained river pixel program equals a 564 byte span of CivCon_Water.fxobj at 0x3B7C and the shoreline pixel program equals a 144 byte span of CivCon_Wave.fxobj at 0x2244. No vertex program matched any of the five effect files."
+    }
+  }
+}

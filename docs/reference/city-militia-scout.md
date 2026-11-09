@@ -142,6 +142,101 @@ unadmitted.
 [Latest consumer result](../../manifests/unit-definition-base.json#/findings/RVA-F-0277/productionNameAndUpgradeContinuation)
 retains production/name/upgrade gates.
 
+## Production identity carrier
+
+In game terms: a city's production choice is stored as one native item number.
+Militia is item 7, and a Scout built on Militia would share that number. A mod
+that adds a trainable Scout has to decide what the number 7 means whenever a
+production command carries it.
+
+The smaller design reserves item 7. Every explicit production command 5 whose
+full item word is exactly 7 means Scout, Militia stays untrainable, and the
+Militia that founding, scenarios and defenders give out stays Militia. That
+needs no second row key, request ID or extra command word, but it does need
+every human, AI and peer producer to agree on the rule. It is a proposed
+meaning, not a backend that exists.
+
+Worked example. A new city starts with current production 7, written by
+CityCreate at `0x82D19AEC` as the founding default when the selected defender
+type is 7 (the selection can be Modern Infantry 11). That is Militia, not Scout.
+The player opens the production menu and picks the Scout row, which also holds
+item 7. The two values are equal, so the game sees no change. On the AI and
+general submit path, the equality at `0x82CB44B0` exits without sending a
+command. On the human path, the equality at `0x82E02D20` skips the change
+helper `0x82E02C50`, though the confirmation can still reach the producer at
+`0x82E02D94`. A mod must therefore compare what the city is building (Militia
+or Scout) against what was picked, not the two native numbers.
+
+### How the choice reaches the city
+
+| Step | Address | What it does |
+|---|---|---|
+| Menu row copy | `0x82E01680`, `0x82E01688`, `0x82E01690` | Reads the row item and stores it at the production child `+0x448`. An invalid row stores -1. |
+| Handler | `0x82E02CE0` | Reads category `+0x440` and item `+0x448`. The unit branch `0x82E02D94 -> 0x82CEE650` forwards owner, city and item, not the row number. |
+| Candidate list | `0x82CEBC38` | Fills scratch `0x8312D7B0` with 32 bit item words and visits each unit type once. |
+| Human wrapper | `0x82CED7E8` | Skips `S` leading negative words and copies `(100 - S) * 4` bytes. Original row `a` becomes row `a - S`. |
+| Human producer | `0x82CEE650` | Builds the command `(5, owner, city, item, U32[0x82F7AD00])`. The fifth word is the live random state, so it is not spare storage. |
+| General producer | `0x82CE1950` | Builds the same five words. The submit helper's `mr r6,r7` at `0x82CB44BC` forwards the picked item unchanged. |
+| Command 5 writer | `0x82CE0020` | After matching the city's owner, calls `0x82CB3F08(city)` and stores the low halfword of the item at city `+0x38`. |
+| Later completion | CityUpdate | Reads the current item without making the candidate list again. |
+
+The command ring has 32 slots of 20 bytes and queues commands. It is not a
+build queue for a city. A constructed command is not delivered production.
+
+Two rows holding 7 would lose their difference at `+0x448`, so a design with
+several aliases would need an extra carrier. The one alias design avoids that:
+every trusted candidate 7 means Scout.
+
+### Preview is not a choice
+
+City `+0x38` is also used for temporary previews. In `0x82CE9490`,
+`0x82CE9DF8` saves the current item, `0x82CE9DFC` puts in a candidate building,
+the cost calls run, and `0x82CE9E20` puts the old item back. None of that picks
+production. A mod that tracks a Scout flag cannot treat every write to
+`+0x38` as a selection. It needs to separate a committed choice from a preview,
+keep the old context until the command-5 helper has read it, and publish the new
+context only after the store at `0x82CE0020`. The list of writers in
+[`production-item-writers.json`](../../manifests/production-item-writers.json)
+is not complete.
+
+The runtime observation on record saw building and wonder items at the command 5
+store. It did not see a Scout choice, a Scout flag, delivery of the command or a
+change between two items with the same native number.
+
+### Automatic production and the AI
+
+CityCreate also stores the current item at `0x82D19AEC` and grants a native unit
+at `0x82D19C4C`. When the selected defender type is 7, these are Militia and
+must not be read as Scout. A
+watcher on every current item 7 cannot tell them apart. The automatic origins at
+`0x82D163BC -> 0x82CF1060` and the reselection at `0x82D160F8` matter too: an
+equal native 7 can keep a stale Scout flag.
+
+One AI case follows from the accepted rules. Militia has attack 0, so the branch
+at `0x82CB6754..0x82CB6764` (attack 0 and item not 28) takes the same bypass as
+the type 0 case, and item 7 is below 100. If the checks hold, item 7 skips the
+five direct current item stores. This is inferred from the definition baseline,
+not shown by a run. Do not apply it to a changed definition or a tagged item.
+
+### Limits and open questions
+
+- The census of producers found no explicit command 5 that carries item 7 as
+  Militia, but it cannot show that none exists. Indirect and earlier built
+  commands are not covered.
+- The row copy at `0x82E01680` and `0x82E01688`, and the recreation store at
+  `0x82CD7954`, come from generated code, not from word reads of the image. The
+  recreation store is not shown to restore movement for the next turn.
+- The generated code confirms the copy and the compare at `0x82E02D20` but does
+  not show the human confirmation being suppressed.
+- No Scout menu, flag or command was observed. Detailed native fields and the
+  limits above are in
+  [`scoutProductionCarrierBoundary`](../../manifests/city-militia-scout-feasibility.json#/scoutProductionCarrierBoundary).
+  The assignment and queue facts are in
+  [`occ-settler-production-requirements.json`](../../manifests/occ-settler-production-requirements.json)
+  and [`city-production.json`](../../manifests/city-production.json)
+  (`RVA-F-0183`, `RVA-F-0184`, `RVA-F-0185`). Their Settlers observations are not
+  results for Scout.
+
 ## Unresolved boundaries
 
 Full creator/lifetime, universal event coverage, territory publication, upgrade

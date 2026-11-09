@@ -3814,11 +3814,14 @@
       "listSelection": "0x82D064F4 selects the alternate list when combined eligibility is zero. The alternate omits both Save and Load; full and alternate shows return at 0x82D06538 and 0x82D06614.",
       "saveAction": "Full row 1 maps to action 83 at 0x82D06588; the action-plus-one table reaches 0x82D06898 and calls 0x82D00550. Its current-root +0xDC picker is followed by +0x74 write only when the picker returns nonzero low byte. Under retained table 0x82138768 these targets are 0x82D83208 and 0x82D82510.",
       "loadAction": "Full row 2 maps to action 76 at 0x82D06598 and reaches 0x82D068E8 -> 0x82D005D8. The wrapper separately tests network byte 0x8314F10B at 0x82D00638..0x82D00640.",
-      "optionalPrompt": "0x82D1D320 excludes setup mode 2 from a separately guarded manual Save prompt. After device/user/modal conditions, 0x82D1D3AC calls 0x82D00550. This is not an automatic-save request.",
+      "optionalPrompt": "0x82D1D320 excludes setup mode 2 from a separately guarded manual Save prompt owned by 0x82D1D1C0; equality clears eligibility at 0x82D1D328. Network byte 0x8314F10B, restriction halfword 0x8314F1CC, a signed threshold, device and selected-user checks also apply. When the modal accepts row zero at 0x82D1D3A4, 0x82D1D3AC calls 0x82D00550. This is not an automatic-save request, and the smallest pause menu change does not need it.",
+      "discriminator": "Setup mode 2 is the demonstrated Game of the Week discriminator in these checks. 0x8314F10B is the network game byte and 0x8314F1CC a separate restriction or selection halfword; neither is a Game of the Week flag. Special game word 0x8314F180 and halfword 0x8314F1D0 are named by the title source, but no save check reading either was proved. The title setting gotw_standard_rules is an atomic per game latch, not a native field in this predicate.",
       "localNegative": "The complete selected 0x82D00550 wrapper has no direct setup-mode test; helper/backend refusal and other ingress are not excluded."
     },
     "recordRequests": {
-      "producer": "0x82D81560 requests mode0 header at 0x82D815E0 and body at 0x82D81654, then compresses and emits body data. A body return used as a size/logging value is not a field-completeness certificate.",
+      "producer": "0x82D81560 requests mode0 header at 0x82D815E0 (header function 0x82CC29B8) and body at 0x82D81654 (common body 0x82CC4040), then compresses and emits lengths and body bytes to the caller stream. Default input is mode1. A body return used as a size/logging value is not a field-completeness certificate.",
+      "identitySources": "Terrain plane identities come from xbox-map-tile-semantics (RVA-F-0370), the player civilization table from ai-options-boundaries (RVA-F-0328) and save-slot-ruleset-identity context, and calendar fields from game-calendar-state. The unrelated body loop over 1024 records of 14 bytes was not assigned terrain semantics.",
+      "notRoundTripped": "No saved-origin round trip was established for setup mode, original map seed, derived setup civilization +0x13C, host standard rules, custom settings, native challenge restrictions or GotW score and week caches. Selected load explicitly re-derives seed and civilization from the saved week. A native serializer cannot save a host atomic without an explicit title path. Turn persistence is not score cache persistence.",
       "week": "0x82CC2B24 samples setup +0x134; the selected header input/output scalar helpers precede common record +0x10 publication at 0x82CC2B80.",
       "mainRng": "In addition to the accepted header boundary, 0x82CC54CC..0x82CC553C requests body input/output of current state 0x82F7AD00. This is not the initial map seed.",
       "civilizations": "0x82CC4554..0x82CC45A0 requests eight words at 0x830ECD28 for version at least 13. This actual player table is distinct from setup +0x13C.",
@@ -3828,7 +3831,7 @@
     },
     "load": {
       "requests": "0x82D86400 requests mode1 header at 0x82D8645C and common body at 0x82D86674; accepted frame/alternate-input/restoration guards remain.",
-      "weekAndSeed": "On the reached retained-r8-zero arm, 0x82D86848 loads saved header week, 0x82D86844 supplies seed argument zero, 0x82D86854 restores main RNG, and 0x82D8685C calls 0x82DADC88. The writer re-derives setup seed +0x138 and civilization +0x13C from saved week; it does not restore setup mode +0x4.",
+      "weekAndSeed": "On the reached retained-r8-zero arm, 0x82D86848 loads saved header week from sp+0xB0, 0x82D86844 supplies seed argument zero, 0x82D86854 restores main RNG, and 0x82D8685C calls 0x82DADC88 (writer return LR 0x82D86860). The writer re-derives setup seed +0x138 and civilization +0x13C from saved week; it does not restore setup mode +0x4.",
       "mode": "The accepted owner-observed load origin had mode3. This does not establish that the whole loader is mode3-exclusive or that saved GotW origin/rules are restored.",
       "initializer": "0x82D86870 calls 0x82D7F550 with an old-versus-saved-week comparison. At 0x82D7F5B8..0x82D7F5C8, current-root +0x150 receives r4=0 and the comparison in r5. Retained table 0x82138768 cell 0x821388B8 selects 0x82D86A78; its zero-r4 branch skips direct map constructor call 0x82D86AD0 -> 0x82D0F0D0.",
       "limits": "Saved logical planes support conditional reuse, not a renderer snapshot. Other current virtual/helper effects, later terrain writes and statistics/cache effects remain unresolved. The selected constructor bypass does not prove a whole-load no-generation or no-statistics theorem."
@@ -3858,6 +3861,39 @@
       "skipResult": "0x82D83EA8 initializes return state to 1. Early readiness/name skips retain it, so wrapper return1 is not proof that any save or sidecar was written.",
       "numberedName": "0x82CC1874..0x82CC1894 computes 100 plus signed remainder modulo50 from its input; the selected caller supplies current turn plus1. Nonnegative input gives a number in100..149. Actual complete filenames, paths and overwrite/rotation remain unobserved.",
       "gotwLimit": "No direct GotW/setup-mode exclusion was selected in the complete wrapper or these local request windows. The mode2 exclusion at 0x82D1D320 is manual-prompt logic. Upstream mode/rate writers, aliased readers and unresolved 0x82D8AB00 virtual +0x100 prevent claiming that GotW always autosaves or that an exhaustive automatic gate/bypass is known."
+    },
+    "resultIsolationHookSites": {
+      "confidence": "candidate",
+      "purpose": "Sites where a mod can keep a resumed or save-enabled game out of the shared weekly result. Each continuation is the address after the skipped store or the native skip target. Meanings are read from adjacent stores in this manifest, not from a run; the continuation addresses were not decoded in a separate query.",
+      "sites": [
+        {
+          "site": "0x82D7DC44",
+          "continuation": "0x82D7DC90",
+          "skips": "GotW result record stores at 0x82D7DC60..0x82D7DC88: score 6000 minus year, table value, outcome, current year"
+        },
+        {
+          "site": "0x82DBF138",
+          "continuation": "0x82DBF13C",
+          "skips": "Cached score store at result owner +0x24"
+        },
+        {
+          "site": "0x82DBF14C",
+          "continuation": "0x82DBF150",
+          "skips": "Cached week store at result owner +0x28"
+        },
+        {
+          "site": "0x82DBE69C",
+          "continuation": "0x82DBE7AC",
+          "skips": "Native no-submission continuation of the 0x82DBE688 check, reached by base and victory-child submissions"
+        }
+      ],
+      "limits": [
+        "Result properties use setup week +0x134, not map seed.",
+        "Mode 2 alone is insufficient as durable resumed-origin isolation: the accepted owner-observed load had mode 3, which does not establish that every loaded game does.",
+        "Filtering only the final submission leaves local score and week caches unprotected.",
+        "Repeated load and replay can replay outcome and cache transitions; deduplication, score service behavior and profile lifetime are not proved.",
+        "Keep native completion and failure cleanup. No leaderboard support is needed to use the no-submission continuation."
+      ]
     },
     "guards": [
       "Do not enable saving by globally changing setup mode or clearing network/restriction fields.",

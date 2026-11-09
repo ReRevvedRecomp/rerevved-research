@@ -62,10 +62,10 @@ writes.
 | --- | --- | --- | --- | --- |
 | Vertex | `0x82692588` | `device +0x780 + 16*start` | Dirty offset `+0x00` | Vertex float payload; slot meaning unresolved |
 | Pixel | `0x82692668` | `device +0x1780 + 16*start` | Dirty offset `+0x08` | Pixel float payload; slot meaning unresolved |
-| Vertex | `0x82692788` | `device +0x2780 + 4*(start>>5)` | Dirty offset `+0x20`, bit 56 | Vertex boolean payload; slot meaning unresolved |
-| Pixel | `0x826927E8` | `device +0x2790 + 4*(start>>5)` | Dirty offset `+0x20`, bit 56 | Pixel boolean payload; slot meaning unresolved |
-| Vertex | `0x82692848` | `device +0x27A0 + 4*start` | Dirty offset `+0x20`, bit 56 | Vertex packed integer payload; slot meaning unresolved |
-| Pixel | `0x826928A0` | `device +0x27E0 + 4*start` | Dirty offset `+0x20`, bit 56 | Pixel packed integer payload; slot meaning unresolved |
+| Vertex | `0x82692788` | `device +0x2780 + 4*(start>>5)` | Dirty offset `+0x20`, mask `0x0100000000000000` | Vertex boolean payload; slot meaning unresolved |
+| Pixel | `0x826927E8` | `device +0x2790 + 4*(start>>5)` | Dirty offset `+0x20`, mask `0x0100000000000000` | Pixel boolean payload; slot meaning unresolved |
+| Vertex | `0x82692848` | `device +0x27A0 + 4*start` | Dirty offset `+0x20`, mask `0x0100000000000000` | Vertex packed integer payload; slot meaning unresolved |
+| Pixel | `0x826928A0` | `device +0x27E0 + 4*start` | Dirty offset `+0x20`, mask `0x0100000000000000` | Pixel packed integer payload; slot meaning unresolved |
 
 Uploader `0x82538718` has six dynamic-range arms, calling only when
 `start < end`; this proves upload shape, not world ownership. No direct
@@ -145,3 +145,14 @@ loop iteration under existing guards; earlier `0x82C2BDE4` draw join stays open.
 [anchor sites](native-renderer-anchor-sites.md) and
 [D3D surface](../../manifests/native-renderer-d3d-runtime-surface.json) retain
 surrounding call/storage evidence.
+
+## Inline shader metadata transfer
+
+The inline shader path has a separate conditional
+scalar copy contract, including zero and small lengths. It does not inherit the
+vector copy contract above. Its conditions are in the
+[inline transfer boundary](../../manifests/native-renderer-dirty-up-helper-contract.json#/currentEvidence/inlineTransferBoundary),
+and the shader construction path is in the
+[shader fetch patch manifest](../../manifests/native-renderer-shader-fetch-patch.json#/currentEvidence/shaderConstructionBoundary).
+Neither shows a complete inline replacement. For how shaders are built, see
+[shader generation](native-renderer-shader-generation.md).

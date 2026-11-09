@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0397",
+  "topic": "ai-research-candidate-ordinals",
+  "status": "open",
+  "confidence": "candidate",
+  "image": "image.json",
+  "question": "When the shared technology prompt chooses research for a nonlocal player, which positions of its eligible list does the scoring loop visit, and is Alphabet skipped when it is the first eligible technology?",
+  "scope": {
+    "functions": [
+      "0x82CECCD8",
+      "0x82D1D1C0",
+      "0x82CE2C50",
+      "0x82CE2280",
+      "0x82D20C9C",
+      "0x82CED640",
+      "0x82CDFFB0"
+    ],
+    "addresses": {
+      "scanStart": "0x82CED340",
+      "scoringLoopEnd": "0x82CED610",
+      "typeFourSubmission": "0x82CED61C..0x82CED62C",
+      "turnStartCaller": "0x82D1D604",
+      "selectedResearchSlot": "0x830EDD48 indexed by player * 4; -1 means unset."
+    },
+    "technology": {
+      "id": 1,
+      "name": "Alphabet",
+      "definitionTable": "0x82F77460, 48 records of 0x6A bytes"
+    },
+    "boundary": "The nonlocal branch of the shared prompt 0x82CECCD8: list construction, the scan start, the scoring loop and the numeric type 4 submission. The shared eligibility predicate 0x82CE2C50 and its optional prerequisite check 0x82CE2280 are read only for Alphabet. The grant scan 0x82D20C9C to 0x82CED640 is excluded as a different operation. Other research selection paths, modified definitions and any natural AI choice are outside this bound."
+  },
+  "dependencies": [
+    {
+      "topic": "technology-prompt-callers",
+      "use": "The turn-start check 0x82D1D604 is the only automatic caller that reaches the prompt for a player without a command."
+    },
+    {
+      "topic": "starting-technology-grants",
+      "use": "The shared eligibility predicate 0x82CE2C50 as used by the starting grant loop."
+    },
+    {
+      "topic": "science-completion",
+      "use": "Completion of a selected technology is a separate path from the selection that this finding covers."
+    }
+  ],
+  "currentEvidence": {
+    "method": "Foreground read-only Ghidra word queries of the pinned image and narrow generated-code corroboration of the exact instructions. Static evidence only; no runtime observation of an AI research choice.",
+    "entries": [
+      {
+        "role": "shared research prompt, nonlocal branch",
+        "address": "0x82CECCD8",
+        "confidence": "strong"
+      },
+      {
+        "role": "scoring scan start: pointer set to the list base plus 4",
+        "address": "0x82CED340",
+        "confidence": "strong"
+      },
+      {
+        "role": "scoring loop advance and numeric type 4 submission",
+        "address": "0x82CED610..0x82CED62C",
+        "confidence": "strong"
+      },
+      {
+        "role": "shared eligibility predicate",
+        "address": "0x82CE2C50",
+        "confidence": "strong"
+      },
+      {
+        "role": "turn-start caller of the prompt",
+        "address": "0x82D1D604",
+        "confidence": "strong"
+      },
+      {
+        "role": "command writer that stores the type 4 payload",
+        "address": "0x82CDFFB0",
+        "confidence": "strong"
+      }
+    ],
+    "generatedCorroboration": [
+      "generated:rerevved/sub_82CECCD8:0x82CED340..0x82CED62C",
+      "generated:rerevved/sub_82CE2C50",
+      "generated:rerevved/sub_82D1D1C0:0x82D1D5F8..0x82D1D608"
+    ],
+    "qualification": "The list layout, the scan start and the loop count are read directly from the instructions. That the traversal skips the first entry is a static consequence of them. No natural AI choice was observed, so the defect is a candidate."
+  },
+  "eligibleList": {
+    "construction": "The nonlocal branch builds the eligible technology IDs in ascending order, appends the sentinel -1 at ordinal N and retains N + 1 as the list size.",
+    "emptyList": "When N is 0 the retained size is 1, and the branch skips scoring before the loop. This is the existing no-candidate path."
+  },
+  "scoringTraversal": {
+    "start": "At 0x82CED340 the scan pointer is set to the list base plus 4, which is ordinal 1.",
+    "count": "The loop runs N iterations, one decrement and a pointer advance of 4 per iteration at 0x82CED610.",
+    "visited": "Ordinals 1 through N: the first real technology (ordinal 0) is never scored and the sentinel -1 at ordinal N is visited.",
+    "submission": "The result is submitted as a numeric type 4 value at 0x82CED61C..0x82CED62C. The command writer 0x82CDFFB0 stores that payload in 0x830EDD48[player].",
+    "cases": [
+      {
+        "realCandidateCount": 0,
+        "visitedNow": "none, scoring is skipped",
+        "visitedAfterCorrection": "none, unchanged"
+      },
+      {
+        "realCandidateCount": 1,
+        "visitedNow": "ordinal 1, the sentinel only",
+        "visitedAfterCorrection": "ordinal 0"
+      },
+      {
+        "realCandidateCount": 2,
+        "visitedNow": "ordinals 1 and 2, the second technology and the sentinel",
+        "visitedAfterCorrection": "ordinals 0 and 1"
+      },
+      {
+        "realCandidateCount": 3,
+        "visitedNow": "ordinals 1 through 3",
+        "visitedAfterCorrection": "ordinals 0 through 2"
+      }
+    ],
+    "checkedRealCandidateCounts": "Offline counts N = 1 through 47 gave the visited range 1..N now and 0..N-1 after the proposed correction."
+  },
+  "alphabetEligibility": {
+    "definition": "Alphabet is technology 1. Its three prerequisite halfwords and its blocker field are all -1.",
+    "predicate": "With the inspected definitions, 0x82CE2C50 accepts it when the initial ownership query returns zero. The optional prerequisite check 0x82CE2280 returns zero for Alphabet and does not exclude it.",
+    "costCheck": "A root technology whose prerequisite values are all -1 bypasses the general prerequisite cost limit.",
+    "firstEntry": "Alphabet is the first real entry whenever it is unowned, eligible and technology 0 is not on the list. In that case the scan start skips it on every choice until the player gets it by another route.",
+    "qualification": "That every AI path calls the predicate is not shown. A static cause is identified, not an intentionally low Alphabet score."
+  },
+  "excludedEdge": {
+    "edge": "0x82D20C9C to 0x82CED640",
+    "result": "A technology grant scan over IDs 0 through 47 that can acquire with source 6 and phase 1. It contains no store to the selected research slot, so it is not research selection."
+  },
+  "callerReach": {
+    "caller": "0x82D1D1C0 calls the shared prompt at 0x82D1D604 for a nonlocal player, bypassing the local interface dispatch.",
+    "requires": "The research slot unset or invalid, the state bit clear and the resolver and player inputs retained.",
+    "humanMask": "In the inspected suffix a nonzero human mask with the player's bit clear reaches the scorer after 0x82D8AA60, subject to a normal return. A zero mask uses a session helper instead.",
+    "qualification": "Being nonlocal does not by itself prove the player is an AI."
+  },
+  "candidateCorrection": {
+    "start": "Begin the scan at the first real entry (ordinal 0).",
+    "preserve": "Keep the real candidate count and the empty-list path.",
+    "include": "Every eligible ID exactly once, and never the sentinel -1.",
+    "doNotUse": "Forcing Alphabet ownership or tuning its cost does not correct the enumeration."
+  },
+  "openConditions": [
+    "No natural choice by an AI player with Alphabet unowned was observed, so the traversal result is not corroborated at runtime.",
+    "Whether the branch is delivered for every AI player, the effect of a modified definition table and any other research selection path are separate questions.",
+    "What the scorer does when the sentinel -1 is visited and chosen is not established here."
+  ],
+  "guards": [
+    "Do not describe the list traversal as an intended low score for Alphabet.",
+    "Do not treat the grant scan 0x82D20C9C to 0x82CED640 as research selection.",
+    "Do not infer that a nonlocal player is an AI from the branch alone.",
+    "Static evidence only; no completed AI research choice or runtime outcome follows."
+  ],
+  "conclusion": "On the nonlocal branch of the shared prompt, the scoring loop starts at ordinal 1 of the eligible list and runs N iterations, so it skips the first eligible technology and visits the sentinel. Alphabet, an eligible root technology, is skipped whenever it is first on the list. This is a candidate defect from static evidence."
+}

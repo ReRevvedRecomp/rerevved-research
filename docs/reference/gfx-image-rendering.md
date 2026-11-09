@@ -148,6 +148,59 @@ state; [CPU contract](../../manifests/gfx-draw-producer.json) owns
 arithmetic/arguments/ offsets/listing limits. CPU shadows prove no later tile
 overrides.
 
+## Affine and vertex constant lanes
+
+`GfxIndexedDraw` writes its transform into four vertex shader constant
+records, c0 to c3. The producer `0x823038D8` copies the six floats at renderer
+`+0xE4`..`+0xF8` (the projection record) to its own stack frame, then calls the
+composer `0x82259C80` with that copy as `P` and the six floats at renderer
+`+0xFC`..`+0x110` as `M`. The draw setup call at `0x82303DB4` supplies that
+matrix. The composer's result is `P` times `M`, with `P` on the left. In the
+selected instructions `mad` is a fused multiply and add, and `mul` and `add`
+round each result to single precision:
+
+```text
+c0 = mad(m3,p1, mul(m0,p0))    c3 = mad(m3,p4, mul(m0,p3))
+c1 = mad(p1,m4, mul(p0,m1))    c4 = mad(p4,m4, mul(p3,m1))
+c2 = add(mad(p1,m5, mul(p0,m2)), p2)
+c5 = add(mad(p4,m5, mul(p3,m2)), p5)
+```
+
+The producer then writes four records straight into the graphics device's
+vertex float shadow, with `Z` as the zero stored at `0x8211B944` and `H` as the
+one stored at `0x8211CE4C`:
+
+| Record | Graphics bytes | x, y, z, w | Register words |
+|---|---|---|---|
+| c0 | `+0x780` to `+0x78F` | c0, c1, Z, c2 | `0x4000` to `0x4003` |
+| c1 | `+0x790` to `+0x79F` | c3, c4, Z, c5 | `0x4004` to `0x4007` |
+| c2 | `+0x7A0` to `+0x7AF` | Z, Z, H, Z | `0x4008` to `0x400B` |
+| c3 | `+0x7B0` to `+0x7BF` | Z, Z, Z, H | `0x400C` to `0x400F` |
+
+That is 16 words, 64 bytes, the same extent as a setter call with start 0 and
+count 4. The producer does not call the vertex float setter `0x82692588`. After
+each record it ORs the high bit into the 64 bit dirty word at the device's `+0`.
+
+Worked example (small values that are exact in single precision). Take
+`P = (2, 3, 5, 7, 11, 13)` and `M = (17, 19, 23, 29, 31, 37)`. The six results
+are `(121, 131, 162, 438, 474, 581)`, so the records are
+`(121, 131, 0, 162)`, `(438, 474, 0, 581)`, `(0, 0, 1, 0)` and `(0, 0, 0, 1)`.
+Composing in the other order would give `(167, 260, 355, 275, 428, 585)`.
+
+These equations assume that the composer's output does not overlap its `M`
+input, that all four reads of the device pointer at renderer `+0xB8` see the
+same device, and that nothing changes the stack record between composition and
+the shadow stores. They do not show which shader reads the lanes. Nothing here
+shows them as texture coordinate generation. Any code that edits the record
+between composition and the stores changes the lanes. The guest code has no
+such edit. Evidence:
+[the composer and shadow writes](../../manifests/gfx-draw-producer.json#/currentEvidence/nativeInputRefinement/composer),
+[the lane table](../../manifests/gfx-draw-producer.json#/currentEvidence/nativeInputRefinement/shadowWrites)
+and [the matrix setter](../../manifests/gfx-renderer-state-setters.json#/matrixSetter).
+
+Movie frames use a separate draw path, covered in
+[movie draw binding](movie-draw-binding.md).
+
 ## Guest fetch and command emission
 
 `GraphicsFlushAndIssue` -> `GraphicsDirtyStateAndDrawPrepare` (`0x826A3048`) ->

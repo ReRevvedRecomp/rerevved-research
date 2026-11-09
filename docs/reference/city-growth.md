@@ -87,37 +87,18 @@ all-city execution. Exact guards/alternatives:
 
 ## Population capacity
 
-Population is a signed byte at city+3. City records start at 0x8314FE28 with
-stride 188. The byte can represent positive 127, but that does not make it a
-safe population cap.
+Population is a signed byte at city `+0x03`, and the shipped game stops cities
+at 31 in nearly every path. `CityUpdate` clamps a signed population of 32 or
+more to 31, food growth stops at ceilings 8, 16 or 31, and the grants and
+rewards clamp or refuse at 31. Irrigation is the exception: it adds 1 to a
+positive owned population with no local cap check.
+A larger cap also needs changes to the 32 citizen assignment bytes, the
+eight-word histogram of unassigned citizens, the 33-entry population cost
+table, the city screen, and the signed byte and signed halfword arithmetic
+around growth. The byte itself holds up to 127, which does not make 127 safe.
 
-CityUpdate clamps signed population at least 32 to 31. Ordinary food growth additionally selects ceilings 9, 17 or 32 from a signed definition halfword, storing ceiling minus one. Hanging Gardens and Statue of Liberty clamp their grants to 31; the economic reward admits populations 1 through 30. Irrigation has no local below-31 guard, so this evidence does not establish a universal invariant across every transient writer.
-
-The population refresh helper reads/writes one assignment byte for each
-reached citizen ordinal, starting at city+0x58, and tests a citizen-ordinal
-lock bit. The separate word at city+0x78 follows a 32-byte interval. An
-assignment at ordinal 32 overlaps that word. CityUpdate, assignment counting,
-matching and classification, and command 8 also access assignments according
-to population. Limiting only the refresh store leaves those other accesses
-unsafe.
-
-Native handling of unassigned citizens has a separate capacity limit. Helper
-0x82CE1C10 clears eight output words but indexes them by floor(ordinal/6).
-Population 127 needs 22 buckets. Cost helper 0x82CF7E30 initializes 33
-population-indexed entries, 0..32; higher populations read outside those
-initialized entries. A larger-city design that preserves the byte layout must
-specify both policies and their callers. A population of thirty-two or 48
-fitting one structure does not establish a safe cap for the whole city.
-
-The growth formula uses arithmetic rather than a population-indexed food
-table. For a nonnegative unmodified factor F, population 127 requires F<=258
-to keep 127*F within 32767. Stored growth progress is signed 16-bit, so
-accumulation needs its own interval. Food growth and Irrigation can narrow
-127+1 to 0x80, interpreted as signed -128, before a later upper clamp. Raising
-a ceiling alone does not prevent that wrap.
-
-The selected city stream requests one population byte, 32 assignment-byte primitives and a separate four-byte lock word. A selected UI row sends signed population to decimal formatting. Completed file/wire delivery, three-digit graphical capacity and named surplus-citizen semantics remain unproved. The whole mapped-owner candidate pass missed an independently identified command 8 assignment write; it is not a complete semantic reader/writer census.
-
-A population near 500 requires wider population access semantics, expanded or relocated assignment storage, coherent cap/grant rules and validation of formulas, AI, presentation, save and network formats. Those complete contracts and runtime safety remain unproved. The selected construction comparisons already use signed 32-bit threshold operands; threshold width is separate from population storage.
-
-Evidence: [city-population-cap.json](../../manifests/city-population-cap.json), RVA-F-0384, and its accepted mutation/growth dependencies.
+[City population cap](city-population-cap.md) gives the default yield of
+citizens beyond the assignment vector, the histogram and its consumers, the
+overflow arithmetic at a larger cap, every hook point with its address, and the
+open questions. Evidence: [city-population-cap.json](../../manifests/city-population-cap.json),
+`RVA-F-0384`, and its accepted mutation and growth dependencies.

@@ -1,0 +1,519 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0393",
+  "topic": "combat-fortification-terrain",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which native writers and readers produce the terrain, Fortify, Fortress, Great General and River contributions to combat strength, and when does each take effect?",
+  "scope": {
+    "terrainTable": "0x82F771C8, stride 29, byte +28",
+    "terrainPlane": "0x8312B288",
+    "fortifyCommand": "command 13 at 0x82CE04E8, state write 0x82CE067C..0x82CE06AC",
+    "calendarAdvance": "0x82D1EAB0, fortification block 0x82D206C8..0x82D206EC, Fortress block 0x82D20628..0x82D206C8",
+    "defenseReader": "0x82CDAE2C..0x82CDAF04",
+    "fortressReader": "0x82CDA5AC..0x82CDA5EC",
+    "greatGeneralReader": "0x82CDAA4C..0x82CDAB9C",
+    "greatGeneralPublisher": "0x82D11AD8, store 0x82D11F30..0x82D11F54",
+    "riverBranch": "0x82CDAA00 (subtract), 0x82CDAA04 (label)",
+    "riverPlane": "0x8311F690, flag 0x8312E60C",
+    "labelText": {
+      "Fortress": "0x82156F48",
+      "River": "0x82156F6C",
+      "Great General": "0x82156F78"
+    },
+    "selectedProducerRanges": [
+      "[0x82D20628,0x82D206EC)",
+      "[0x82D1FF98,0x82D20018)",
+      "[0x82CE067C,0x82CE06B0)",
+      "[0x82CDF3A4,0x82CDF3D0)",
+      "[0x82CDF750,0x82CDF784)",
+      "base, reset and scan windows inside [0x82D11AD8,0x82D11F54)"
+    ],
+    "limit": "Static results under stated inputs. Percentage points add, so no result here multiplies a finished strength. The composition and the other point sources are in combat-strength.json."
+  },
+  "dependencies": [
+    {
+      "topic": "combat-strength",
+      "use": "Composition of strength and the resolver stages that read these contributions."
+    },
+    {
+      "topic": "native-human-turn-completion",
+      "use": "Native command names Fortify, BeginTurn, BeginTurnReload, BeginTurnAI and EndTurn."
+    },
+    {
+      "topic": "barbarian-capital-grace-feasibility",
+      "use": "Native order state and combat entry facts."
+    },
+    {
+      "topic": "game-calendar-state",
+      "use": "Game turn and year conversion."
+    },
+    {
+      "topic": "unit-movement-lifecycle",
+      "use": "Move command reset of unit state bits."
+    },
+    {
+      "topic": "spy-mission-selection",
+      "use": "Defense disruption flag write that resets selected state."
+    },
+    {
+      "topic": "unit-definitions-ai-evaluation",
+      "use": "Unit definition table."
+    },
+    {
+      "topic": "unit-definition-count-extent",
+      "use": "The 38 initialized definitions, including type 30."
+    },
+    {
+      "topic": "great-general-attachment-lifecycle",
+      "use": "Type 30 treatment during border displacement."
+    },
+    {
+      "topic": "unique-era-ability-effect-ownership",
+      "use": "Terrain discriminator."
+    },
+    {
+      "topic": "xbox-map-tile-semantics",
+      "use": "Tile orientation and edge pair high bits."
+    },
+    {
+      "topic": "xbox-map-tile-edge-and-length",
+      "use": "Edge writes and endpoint lookahead."
+    },
+    {
+      "topic": "city-yield-ranking-table",
+      "use": "Calendar dispatch provenance."
+    },
+    {
+      "topic": "technology-first-discovery-rewards",
+      "use": "Caption turn order."
+    },
+    {
+      "topic": "city-militia-scout-feasibility",
+      "use": "Scout production carrier owner work observation."
+    },
+    {
+      "topic": "civilization-bonus-storage",
+      "use": "Native return contract of the cumulative query."
+    },
+    {
+      "topic": "xbox-network-message-root",
+      "use": "Native command retry queue."
+    },
+    {
+      "topic": "combat-outcome",
+      "use": "Normalization edges of the selected combat path."
+    },
+    {
+      "topic": "barbarian-spawn-population",
+      "use": "Owner and weighted presence rebuild."
+    },
+    {
+      "topic": "combat-effective-strength-event",
+      "use": "Shared handler 0x82CDFA74 and zero return 0x82CDFAC8."
+    }
+  ],
+  "terrain": {
+    "confidence": "strong",
+    "rule": "Outside a city, when the attacker's definition flag 0x4 is clear, the defender's starting defense points are 50*(signed terrain record byte +28, plus 1). The terrain id is read from 0x8312B288 and the byte from table 0x82F771C8 (stride 29).",
+    "rows": [
+      {
+        "terrain": "Sea",
+        "id": 0,
+        "byte28": 1,
+        "startingPoints": 100
+      },
+      {
+        "terrain": "Grassland",
+        "id": 1,
+        "byte28": 1,
+        "startingPoints": 100
+      },
+      {
+        "terrain": "Plains",
+        "id": 2,
+        "byte28": 1,
+        "startingPoints": 100
+      },
+      {
+        "terrain": "Forest",
+        "id": 3,
+        "byte28": 2,
+        "startingPoints": 150
+      },
+      {
+        "terrain": "Hills",
+        "id": 4,
+        "byte28": 2,
+        "startingPoints": 150
+      },
+      {
+        "terrain": "Desert",
+        "id": 5,
+        "byte28": 1,
+        "startingPoints": 100
+      },
+      {
+        "terrain": "Mountain",
+        "id": 6,
+        "byte28": 3,
+        "startingPoints": 200
+      }
+    ],
+    "otherRows": "The queried table also holds Ice Cap 7 and City 8, both with byte 1. These rows do not prove safe map values and do not replace the independent city flag.",
+    "seaRow": "The Sea row does not establish a legal Archer defense at Sea.",
+    "attackFromHills": "Attacking from Hills independently sets the attack scalar to 150. It uses the attacker's origin, not the target's terrain. A Warrior attacks at 1.50 from Hills and a Veteran Warrior at 2.00 before River or other adjustments.",
+    "city": "A city uses its own starting scalar: 200 for Walls or the recorded Great Wall city, otherwise 150 for a Palace, otherwise 100 with Hills selecting 150 in that last case. The city branch skips the outside-city terrain and Fortress arm, so terrain bonuses do not stack on every city start value."
+  },
+  "fortify": {
+    "confidence": "strong",
+    "command": "Native command 13 is named Fortify (native-human-turn-completion.json#/nativeCommandNames) and reaches 0x82CE04E8.",
+    "orderWrite": "On the generic route with definition flag 0x80 clear, 0x82CE067C..0x82CE06AC writes (old | (eligible ? 6 : 2)) & ~0x88000 to unit state +0xC after the accepted eligibility helper returns.",
+    "eligibility": "For an Archer the result is true: definition flags & 0x47 are clear and signed attack 1 is less than twice defense 2. Issuing the order from state 0 gives state 6 with no immediate defense bonus.",
+    "advance": "CalendarTurnAdvance 0x82D1EAB0 samples the selected live record at 0x82D20628. The block at 0x82D206C8..0x82D206EC tests that sample: if state & 4 is clear there is no local state write, otherwise newState = state | (0x10 if state & 8 is set, else 8).",
+    "progression": [
+      {
+        "stage": "Before the order",
+        "state": "0x00",
+        "fortifyPoints": 0,
+        "archerDefenseOnGrassland": "2.00"
+      },
+      {
+        "stage": "Order issued from state 0x00",
+        "state": "0x06",
+        "fortifyPoints": 0,
+        "archerDefenseOnGrassland": "2.00"
+      },
+      {
+        "stage": "First reached advance",
+        "state": "0x0E",
+        "fortifyPoints": 50,
+        "archerDefenseOnGrassland": "3.00"
+      },
+      {
+        "stage": "Second reached advance",
+        "state": "0x1E",
+        "fortifyPoints": 100,
+        "archerDefenseOnGrassland": "4.00"
+      }
+    ],
+    "progressionNotes": "These are reached per-player updates, not game turns. The current unit, its old state and the relevant code and storage must survive between updates. Reissuing the generic order keeps existing progress and does not restart it. A false eligibility result from clear initial state gives 2 and cannot progress through this block without an added bit 4.",
+    "reader": "0x82CDAE2C..0x82CDAF04 adds 100 defense points for non-Barbarian defenders when state bit 0x10 is set, otherwise 50 only when bits 0x4 and 0x8 are both set. The two are exclusive. A Barbarian defender gets neither. Other raw bit patterns can reach this reader without the command history above, so Fortify is not the only producer.",
+    "resets": "The selected Move (command 17) and Combat (command 0) preparation paths clear bits 0x1E through state & 0xFFFFFFE1. The Move alternative taken when bit 1 is set skips that reset. The accepted later Move completion cleanup keeps bits 4, 8 and 0x10. This is a limited reset map, not a census of every wake, attack or save path."
+  },
+  "beginTurnTiming": {
+    "confidence": "strong",
+    "rule": "CalendarTurnAdvance receives an explicit player P. It enumerates candidates from zero using the current count and the human mask at 0x8312E608, or the native fallback query when that mask is zero. With a stable positive count and a matching human, H is the first matching ordinal.",
+    "equations": [
+      "Calendar(P): if P == H then gameTurn = low32(gameTurn + 1) and gameYear = nativeYearConverter(gameTurn)",
+      "then complete the per-player work and scan P's unit slots 0 through 255"
+    ],
+    "storeAddresses": "The clock write is at 0x82D1EC44 and the year store at 0x82D1EC50. Both precede the unit scan. The scan reloads the saved P at 0x82D1FF80 and does not scan the first human's units just because that player supplied the clock tick.",
+    "noHuman": "With no matching human the enumerator can end at the count, and an initial nonpositive count leaves zero. These diagnostic results are not proved human identities, and the equality test has no separate human-found Boolean.",
+    "slotScan": "For a retained living human Archer (type 9, definition byte +0x43 zero, type not 29, accepted human mask bit) the scan reaches the Fortify block. Free and dead slots skip it. A completed, non-reentrant scan with retained saved player and slot examines slots 0 through 255 once. The only slot back edge increments the index and compares it with 256, so one slot visit reaches the progression block at most once. Changed records, recursive processing and aliased indices are outside this claim.",
+    "localPath": "The local path from the clock to the scan, 0x82D1EC54..0x82D1FF98, has no local early return. Completing calls, finite loops, valid strings, divisors and storage and compatible effects remain required. The explicit replay used optional presentation disabled, P = 0 and all 128 city populations inactive. Active city callbacks can create or change records and their effects are not covered. Later local state masks keep the Fortify bits.",
+    "commandRouting": {
+      "modeWord": "0x8314F1B0. These branches alone do not name it a single player or multiplayer setting.",
+      "rows": [
+        {
+          "command": "BeginTurn 46, mode nonzero",
+          "calendarCalls": "Starts at player 0 and processes the consecutive classified-human prefix. The first nonhuman or the count ends the loop."
+        },
+        {
+          "command": "BeginTurn 46, mode zero",
+          "calendarCalls": "Sweeps the count and calls Calendar for classifier-nonzero players. Presentation is a later separate sweep."
+        },
+        {
+          "command": "BeginTurnReload 47, mode nonzero",
+          "calendarCalls": "Starts at the restored per-turn ordinal from 0x830EE7F4 (read at 0x82CDE46C), then processes the consecutive classified-human prefix."
+        },
+        {
+          "command": "BeginTurnReload 47, mode zero",
+          "calendarCalls": "Skips these Calendar calls."
+        },
+        {
+          "command": "BeginTurnAI 48",
+          "calendarCalls": "Calls Calendar for classifier-zero players only when all three selected busy words are zero."
+        }
+      ],
+      "startOrdinals": "The start 0 of command 46 follows from dispatcher r17 = 0 (0x82CDDF84) and its copy at 0x82CDE1F4. The reload read at 0x82CDE46C uses 0x830EE7F4, which is distinct from the API active player word 0x8312B8E8. A received command does not by itself prove a completed update for a particular player."
+    },
+    "endTurn": {
+      "confidence": "candidate",
+      "production": "The selected EndTurn 54 handler calls 0x82D0C3E8. Its alternative tails can each request one BeginTurn 46 per reached non-reentrant tail call, under their manager and status conditions. The five words are (46, -1, -1, -1, current RNG state) with a separate target -1. The tuple has no round identity and no local duplicate check.",
+      "premises": "The whole path from 54 to the tail, one 54 per completed world round, reload exclusions and helper completion are separate premises.",
+      "localSubmit": "On the selected zero network byte local submit path, the queue can append 46 and try a nested drain before 54 returns. With the current 54 cursor already advanced, an otherwise empty compatible queue can next dispatch 46. An earlier pending command 42 under its busy 0x4000 test can instead return zero, roll the consumer cursor back and leave 46 queued. Queue integrity, capacity, callback effects and actual nonzero consumption matter. Appending, dispatching, consuming and completing P's unit scan are separate checkpoints, and none can be replaced by a calendar store or request count."
+    },
+    "schedule": {
+      "assumes": "One completed eligible owner update in each successive game round, the same healthy Archer, no reset or replacement, neutral Grassland outside a city, a clear initial Fortress flag, first human P = H = 0 and the BeginTurn 46 path completing once per chosen round.",
+      "rows": [
+        {
+          "event": "Fortify order issued",
+          "turn": 20,
+          "state": "0x06",
+          "fortress": "clear",
+          "archerDefense": "2.00"
+        },
+        {
+          "event": "First eligible next BeginTurn",
+          "turn": 21,
+          "state": "0x0E",
+          "fortress": "clear",
+          "archerDefense": "3.00"
+        },
+        {
+          "event": "Second eligible next BeginTurn",
+          "turn": 22,
+          "state": "0x1E",
+          "fortress": "clear",
+          "archerDefense": "4.00"
+        },
+        {
+          "event": "Third eligible next BeginTurn",
+          "turn": 23,
+          "state": "0x1E",
+          "fortress": "set if its conditions remain true",
+          "archerDefense": "6.00"
+        }
+      ],
+      "protectionContrast": "Against a Warrior with attack 1, turn 20 defense 2.00 meets the early 2:1 rule. At turn 21 defense 3.00 does not pass the later strict test (3 is not greater than 3*1). At turns 22 and 23 defense 4.00 and 6.00 pass it. The separate human safeguards stay off in this example. These are checkpoint strengths, not observed battles or displayed text."
+    },
+    "counterexample": "With two classified humans (mask 3) and a reached Calendar(P = 1), H is 0, so the clock can stay at 20 while that player's Archer advances 0x06 to 0x0E. A further separately accepted P = 1 scan can advance 0x0E to 0x1E with the clock still at 20. A BeginTurnReload with nonzero mode starting at 1 is one source-compatible caller. This does not claim that repeated reloads occur or that saved state is preserved across them. A clock increment can also precede a skipped, dead or replaced slot and prove no Fortify work for the original Archer.",
+    "conclusion": "The exact rule counts eligible per-player processing events. The one, two, three round timeline needs the stated once-per-round schedule and record carryover. It is not a function of the displayed turn."
+  },
+  "fortress": {
+    "confidence": "strong",
+    "reader": "Combat 0x82CDA5AC..0x82CDA5EC (label text at 0x82156F48) adds 100 defense points for tile flag 0x40 in the outside-city terrain branch. This is separate from the defender's Fortify points. The city starting scalar path skips it.",
+    "publisher": "The calendar block 0x82D20628..0x82D206C8 ORs 0x40 into the unit's current tile when all of these hold.",
+    "conditions": [
+      "The earlier live record scan accepted the unit and its sampled state has 0x10.",
+      "The current tile is not a city.",
+      "Signed definition base defense is at least signed base attack and is nonzero.",
+      "The unit's signed owner differs from the current Barbarian ordinal."
+    ],
+    "baseBytes": "These are base definition bytes, not civilization modified effective stats. Warrior 1/1 and Archer 1/2 pass. Catapult 4/1 does not. The nonzero signed check is not a general positive stat check.",
+    "order": "Fortress publication precedes the same call's fortification advance, so a new 0x0E to 0x1E transition cannot satisfy the earlier 0x10 test in that call. A native word replay from an eligible Archer's state 0x06 on a clear Grassland tile gave: first block state 0x0E, Fortress clear, defense 3.00; second block 0x1E, clear, 4.00; third block 0x1E, Fortress set, 6.00 = 2*(100 + 100 Fortress + 100 Fortify)/100.",
+    "qualification": "No other source change, earlier marker or interfering writer is assumed. The selected recount reset keeps 0x40. This is not an exhaustive Fortress lifetime, a sole writer rule, a permanent save effect or a three player turn construction rule."
+  },
+  "greatGeneral": {
+    "confidence": "strong",
+    "reader": "Combat (label text at 0x82156F78) adds 50 attack or defense points when that participant's own tile has 0x200 and its own definition flags & 0x6 are clear. One participant's marker does not apply to the other participant's tile.",
+    "publisher": "The recount 0x82D11AD8 publishes 0x200 at 0x82D11F30..0x82D11F54 for a reached live unit whose definition flag 0x8000 is set, on non-Sea terrain. Among the 38 initialized definitions only type 30, Great General, has that flag. The terrain tested is 0x8312B288, not weighted presence or a Spy mask. The local publisher has no carrier attachment test and no second unit presence test, so an unrelated co-located Archer can receive the contribution.",
+    "reset": "The selected active map reset masks tile flags with 0xF4FB. That clears 0x200 and keeps 0x40. A current General reading needs the same tile generation's reset, then publication, then no change until combat reads it. An old marker alone does not prove a General is present.",
+    "frameReuse": "Frame +0xA8 is reused between recount phases. Its initial 0x83129348 Spy owner plane is not the General terrain test.",
+    "qualification": "No complete General attachment or lifecycle claim is added here. See great-general-attachment-lifecycle.json."
+  },
+  "river": {
+    "confidence": "strong",
+    "effect": "The branch at 0x82CDAA00 subtracts 50 attack points and 0x82CDAA04 supplies the label text at 0x82156F6C. It applies only when attacker definition flags & 0x00200006 are clear. The subtraction is not a multiplication of the finished strength by 0.5.",
+    "label": "The label supports River as the modifier name, but the predicate also fires for some Sea adjacency cases. The label does not identify visible rivers.",
+    "visibleRivers": {
+      "confidence": "candidate",
+      "claim": "Interior paired edge writes from the map loader give river crossing inputs to the predicate. Whether every visible river comes from those writes is not shown."
+    },
+    "predicate": [
+      "Q starts as the attacker's byte in plane 0x8311F690.",
+      "OR in the Sea neighbor bits: index+1 gives 1, index-1 gives 4, index+40 gives 2, index-40 gives 8.",
+      "The signed direction selector must be 0..7. For selectors 0, 2, 4 and 6, test Q bit 1, 2, 4 and 8 respectively.",
+      "Odd selectors also OR bits derived from the defender's byte in the same plane, then test the mask below.",
+      "The flag at 0x8312E60C is cleared first and set on a trigger."
+    ],
+    "oddSelectors": [
+      {
+        "selector": 1,
+        "mapping": "defender bit 8 to 1; bit 4 to 2",
+        "trigger": "Q & 3 == 3"
+      },
+      {
+        "selector": 3,
+        "mapping": "defender bit 8 to 4; bit 1 to 2",
+        "trigger": "Q & 6 == 6"
+      },
+      {
+        "selector": 5,
+        "mapping": "defender bit 1 to 8; bit 2 to 4",
+        "trigger": "Q & 12 == 12"
+      },
+      {
+        "selector": 7,
+        "mapping": "defender bit 2 to 1; bit 4 to 8",
+        "trigger": "Q & 9 == 9"
+      }
+    ],
+    "directions": [
+      {
+        "selector": 0,
+        "dx": 0,
+        "dy": 1
+      },
+      {
+        "selector": 1,
+        "dx": 1,
+        "dy": 1
+      },
+      {
+        "selector": 2,
+        "dx": 1,
+        "dy": 0
+      },
+      {
+        "selector": 3,
+        "dx": 1,
+        "dy": -1
+      },
+      {
+        "selector": 4,
+        "dx": 0,
+        "dy": -1
+      },
+      {
+        "selector": 5,
+        "dx": -1,
+        "dy": -1
+      },
+      {
+        "selector": 6,
+        "dx": -1,
+        "dy": 0
+      },
+      {
+        "selector": 7,
+        "dx": -1,
+        "dy": 1
+      }
+    ],
+    "directionNote": "Relative directions from the accepted Combat 0 direction and coordinate tables. No screen compass orientation is assigned.",
+    "edgeWriters": "The accepted named map loader's file bit 0x40 writes paired low edge bits 2 at (x,y) and 8 at (x+1,y), matching selectors 2 and 6 in opposite traversals. File bit 0x80 writes 4 at (x,y) and 1 at (x,y-1), matching selectors 4 and 0. Interior paired edges with non-Sea neighbors therefore give river crossing inputs. A diagonal needs both of its constituent cuts and either cut alone is not enough. Upper edge byte bits do not trigger it.",
+    "edgeQualification": "The attacker, stored direction, target coordinates, frame pointer, edge generation and definition must stay equal to the writer and direction inputs. This does not cover every generated map river source or map boundary. The loader step used the accepted producer equations, not a new replay of the loader.",
+    "diagonalExample": {
+      "attacker": "(10,10)",
+      "defender": "(11,11)",
+      "selector": 1,
+      "equations": [
+        "cutY = (EA & 1) != 0 or Sea(10,11) or (ED & 8) != 0",
+        "cutX = (EA & 2) != 0 or Sea(11,10) or (ED & 4) != 0",
+        "hit = cutY and cutX"
+      ],
+      "note": "EA and ED are the current edge bytes. Both endpoints can remain Grassland. The Sea tests are on the two flank tiles (10,11) and (11,10).",
+      "cases": [
+        {
+          "sources": "No relevant river cut or Sea flank",
+          "penalty": false
+        },
+        {
+          "sources": "Either one Sea flank alone, zero edge bytes",
+          "penalty": false
+        },
+        {
+          "sources": "Both Sea flanks, zero edge bytes",
+          "penalty": true
+        },
+        {
+          "sources": "Either one relevant river cut alone",
+          "penalty": false
+        },
+        {
+          "sources": "Both distinct river cuts, no Sea flanks",
+          "penalty": true
+        },
+        {
+          "sources": "One required cut from Sea and the other from a river edge",
+          "penalty": true
+        },
+        {
+          "sources": "River and Sea both supply only the same cut",
+          "penalty": false
+        },
+        {
+          "sources": "Only unrelated edges or Sea neighbors, or upper edge byte bits",
+          "penalty": false
+        }
+      ]
+    },
+    "cardinalAndMask": "Every diagonal uses its two mapped cuts. A cardinal direction needs only its one cut, and in a cardinal Sea only case that Sea neighbor is the destination itself. A cardinal land to land attack does not get the penalty from an unrelated Sea neighbor. The flag mask 0x00200006 overrides all these geometries. The Catapult flags 0x00200028 hit the mask, so a Catapult gets no River subtraction from this path.",
+    "warriorValues": [
+      {
+        "warrior": "Rank 1, neutral land",
+        "withoutRiver": "1.00",
+        "withRiver": "0.50"
+      },
+      {
+        "warrior": "Veteran, neutral land",
+        "withoutRiver": "1.50",
+        "withRiver": "1.00"
+      },
+      {
+        "warrior": "Rank 1, Hills origin",
+        "withoutRiver": "1.50",
+        "withRiver": "1.00"
+      },
+      {
+        "warrior": "Veteran, Hills origin",
+        "withoutRiver": "2.00",
+        "withRiver": "1.50"
+      }
+    ],
+    "twoSeaDiagonal": "For the two Sea diagonal a rank 1 Warrior attack becomes 0.50 against Archer defense 2.00 and a Veteran Warrior 1.00 against 2.00. The first ratio passes the later strict human field defense protection and the second, exactly 2:1, does not. One Sea flank alone leaves attack at 1.00 and 1.50. A mixed two cut trigger has the same 50 point arithmetic as an all river or all Sea trigger.",
+    "counterexample": "A diagonal land to land attack with zero low edge bytes but two suitable Sea flanks can still trigger. The table assumes its stated paired river edge and non-Sea neighbors."
+  },
+  "coastBattle": {
+    "confidence": "candidate",
+    "example": "Actual Warrior (type 6) and Archer (type 9) records, selector 1, map width 32, both endpoints Grassland and empty Sea flanks. Combat 0 entry 0x82CDF74C..0x82CDF8FC checks the living actor, direction, origin and destination 0x8000 tests and its selected local and busy alternatives. The resolver then needs nonzero destination weighted presence at 0x830E7B10.",
+    "inputs": "Warrior player 1, Archer player 0, destination owner 0 at 0x830E6850 and presence 1 from the same generation. The living unit recount stores the Archer's owner as well as its presence. With the local player helper returning 0 and all three busy words zero, the selected busy check passes. A destination owner of -1 is only a local bypass control and does not match a completed, retained recount.",
+    "normalization": "The matching normalizer replaces an incoming defender of -1 with its current player and list output. 0x82D08948 and 0x82D06AA0 then score and select the fresh candidate and ignore the dispatcher's earlier selection. For a single Archer candidate the checked score is 66. That is a selection score, not defense strength or a win percentage. Zero presence, absent normalized output and a fresh unit of -1 stop the route. A different nonnegative selection can pass its numeric check while invalidating the old unit identity.",
+    "reach": "The same replay reaches the strength checkpoint 0x82CDA2EC with both fresh selections, stored direction and unit identities retained. It runs all eight neighbor checks and no Sea support inner scan, because the Sea flanks have zero presence.",
+    "qualification": "Native helper and normalizer outputs, world, record and plane generations, finite text returns and nonalias effects stay as contracts. Delivery of a user action and a naturally reached battle are not inferred."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only checks of decoded native words against the flat image in image.json#/analysisProgram, with zero mismatches. Independent raw instruction replay covered the Fortify progression (including semantic instruction mutations), the terrain and tile consumers, the publisher, reset and base arms, and the River predicate. Data checks covered nine terrain rows, all 38 definition flags and the label bytes. A native word integration replay covered the three consecutive Fortress, publication and progression blocks. Timing and coast replays covered the calendar corridor, caller modes, the Combat 0 entry checks, the resolver selection and the scorer.",
+    "entries": [
+      {
+        "role": "Fortify order writer",
+        "address": "0x82CE04E8",
+        "confidence": "strong"
+      },
+      {
+        "role": "calendar fortification advance and Fortress publisher",
+        "address": "0x82D1EAB0",
+        "confidence": "strong"
+      },
+      {
+        "role": "defense reader for Fortify bits",
+        "address": "0x82CDAE2C",
+        "confidence": "strong"
+      },
+      {
+        "role": "Fortress reader",
+        "address": "0x82CDA5AC",
+        "confidence": "strong"
+      },
+      {
+        "role": "Great General publisher",
+        "address": "0x82D11AD8",
+        "confidence": "strong"
+      },
+      {
+        "role": "Great General reader",
+        "address": "0x82CDAA4C",
+        "confidence": "strong"
+      },
+      {
+        "role": "River predicate",
+        "address": "0x82CDA748",
+        "confidence": "strong"
+      }
+    ],
+    "qualification": "The checks do not establish the whole resolver, a natural battle, a fixed turn cadence, display, save or peer behavior, or a universal winning selection. The calendar replay used a supplied preserving summary for the continuation before the 256 slot back edge, not emulation of the whole Calendar return. No runtime or game test supports these values."
+  },
+  "guards": [
+    "A turn number is not a Fortify counter. Fortify progress counts eligible per-player BeginTurn updates.",
+    "Do not read the one, two, three round timeline as a function of the displayed turn.",
+    "Do not read the Fortress bonus as a Fortify bonus or apply it inside cities.",
+    "Do not claim a Great General is present from an old 0x200 tile marker alone.",
+    "Do not identify visible rivers from the River flag. The predicate also fires for some Sea adjacency cases.",
+    "Percentage points add. Do not apply a River or Fortify point value as a multiplier of a finished strength.",
+    "The terrain rows do not prove that a unit can legally defend on every listed terrain."
+  ],
+  "conclusion": "Defense starts from terrain (or a city start value), gains 50 then 100 points from Fortify and 100 from a Fortress outside cities, and both sides gain 50 from a Great General on their own tile. Attacks from Hills start at 150 and the River predicate subtracts 50 attack points. Fortify progress counts per-player BeginTurn updates, so the familiar timeline needs one completed update per round."
+}

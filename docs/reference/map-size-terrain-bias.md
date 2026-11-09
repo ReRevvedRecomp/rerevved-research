@@ -30,13 +30,15 @@ argument 1, then clears its vector word after return. The callback's effect
 is unclassified; it is not proved to delete the object. Exact native words
 support this local contract despite truncated decompilation.
 
-| Request | Static assessment | Remaining gate |
+| Request | Static assessment | Remaining work |
 |---|---|---|
 | Less land inside 32x32 | Candidate authored-map design | Surrounding water remains playable; no inaccessible crop/border contract |
 | True smaller dimensions | Partial, with selected dimension-driven loops | Extent producers, fixed constants, generation/start termination and all consumers |
 | Wider first axis above 32 | Selected object index aliases adjacent-row cells | Backing and index representation changes before a supported expansion |
 | Taller second axis | Avoids this particular collision | Capacity, complete consumers, generation, rendering, saves and peers |
 | Larger than existing terrain backing | Unsupported by the bounded storage contract | Representation expansion across every affected plane and consumer |
+| Terrain or landmass composition bias | Authored content and the local CLIMATE dispatch are leads | A reader that connects the two setup words to a composition quantity |
+| Civilization starting-terrain bias | A selected native score reorder exists | Score meaning, valid candidates, mode and order, fairness and spacing, deterministic application |
 
 ## Composition and starting locations
 

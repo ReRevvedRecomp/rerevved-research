@@ -126,6 +126,48 @@ See:
 Source initialization establishes intent, not observed settings, host duration,
 event cadence, retail semantics or frame cap.
 
+## Simulation, interface and media timing
+
+These notes keep four timing questions apart. None has an accepted consumer
+that fixes a tick rate.
+
+**Simulation updates.** The advance at `0x82C7EB68` multiplies the clock
+difference by timing record `+0x28` and stores it at `+0x10`. The count at `+0x30`
+rises once per reached advance. It counts advances, not driver calls, game
+ticks or shown frames. The
+[field `+0x10` finding](../../manifests/frame-timing-field10-reader.json)
+stops at 28 direct reader functions, above its limit of 6, so it names no
+first reader. One later edge is accepted in
+[the main frame finding](../../manifests/gameplay-main-frame.json#/candidateFrameWork):
+`0x82E43B50` loads the receiver from `0x8314F084` and calls `0x82D526A0`. That
+shows where the receiver comes from, not what game state the call updates. The
+function that writes simulation state from the timing value is open. More driver
+entries with smaller elapsed values could change work that runs once per entry,
+so a driver count is not a simulation rate. The limits of the one runtime
+sample are in
+[the same finding](../../manifests/gameplay-main-frame.json#/runtimeProbe).
+
+**Interface scripts.** The frontend step `0x82C5F680` loads the timing record
+`0x8314F280`, calls its slot `+0x08` (target `0x82C7EB68`), and then uses the
+accumulated time or frame delta in later update calls
+([update finding](../../manifests/gameplay-frame-timing-owner.json#/perFrameUpdate)).
+The accepted records do not name the GFx advance call or the ActionScript
+scheduling code that runs in a game. A smaller elapsed value might change
+per-call script work or event order when updates run more often. That is
+unproved. The same finding's query of `0x82C5F680` covered two instructions
+and found no reader, which is not a no-reader result. The attract movie
+finding rejects `0x82C5F680` as the frame boundary of a playable game. Drawing
+is separate: see [GFx image rendering](gfx-image-rendering.md).
+
+**Movies.** The movie draw reads frame data with no known clock link. See
+[movie draw binding](movie-draw-binding.md).
+
+**Audio.** The stream slot handle at `+0x4` in the audio manager is the result
+of the Miles open wrapper. Nothing ties it to a render client index, a callback
+argument or a sample pointer. No code that produces PCM callbacks, no cue clock
+and no handle release is identified. See [audio script table](audio-script-table.md)
+and [the stream ownership finding](../../manifests/audio-initialization-stream-ownership.json#/streamOpen).
+
 ## Remaining limits
 
 Generated `0x82C7DF58` has no direct kernel wait/sleep/VdSwap text; indirect and

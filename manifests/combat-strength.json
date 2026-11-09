@@ -1,0 +1,427 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0392",
+  "topic": "combat-strength",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "How does CombatResolve compose each side's attack or defense strength from effective core stats, army status, percentage points, flat support and halving, and how do casualties reduce it?",
+  "scope": {
+    "resolver": "0x82CD9970",
+    "resolverRanges": [
+      "[0x82CD9970,0x82CD9AC0)",
+      "six consecutive bands covering [0x82CD9EA0,0x82CDB548)"
+    ],
+    "effectiveDefense": "0x82CF21A0, body [0x82CF21A0,0x82CF222C)",
+    "effectiveAttack": "0x82CF2230, body [0x82CF2230,0x82CF24F0)",
+    "specialDefenseHelper": "0x82CFBED0, body [0x82CFBED0,0x82CFC0A8)",
+    "specialAttackHelper": "0x82CFC0A8, body [0x82CFC0A8,0x82CFC3A4)",
+    "otherSelectedBodies": [
+      "[0x82CEF6A8,0x82CEF750)",
+      "[0x82D8A3A0,0x82D8A3F4)"
+    ],
+    "limit": "Static arithmetic under stated inputs. Several state predicates have no player-facing name. Loss protection, ratio rules, retry bounds and victory or survival belong to combat-outcome.json. Fortify, terrain, Fortress, Great General and River detail belong to combat-fortification-terrain.json."
+  },
+  "dependencies": [
+    {
+      "topic": "unit-definitions-ai-evaluation",
+      "use": "Unit definition table, base stat fields and the effective stat accessors."
+    },
+    {
+      "topic": "unique-unit-combat-predicates",
+      "use": "Knight attack and defense terms and the attack-side and defense-side callsites."
+    },
+    {
+      "topic": "civilization-bonus-storage",
+      "use": "Cumulative UEA query used by the core accessors."
+    },
+    {
+      "topic": "unit-special-upgrades",
+      "use": "Upgrade bit identities and the +0x10 storage read by the two upgrade helpers."
+    },
+    {
+      "topic": "new-warrior-veteran",
+      "use": "Rank byte and Veteran creation rank."
+    },
+    {
+      "topic": "army-formation-command",
+      "use": "Army byte written by army formation."
+    },
+    {
+      "topic": "building-completion-state-writer",
+      "use": "City building bits that select Palace and Walls."
+    },
+    {
+      "topic": "building-record-identities-100-122",
+      "use": "Building identities Palace 100 and Walls 107."
+    },
+    {
+      "topic": "wonder-claim-slot-state",
+      "use": "Claim state that identifies the recorded Great Wall city."
+    },
+    {
+      "topic": "wonder-record-identities",
+      "use": "Wonder identity Great Wall 201."
+    },
+    {
+      "topic": "barbarian-spawn-population",
+      "use": "Weighted presence and owner plane rebuild and the Barbarian ordinal."
+    },
+    {
+      "topic": "combat-effective-strength-event",
+      "use": "Neighbor tables."
+    },
+    {
+      "topic": "ai-stat-choice",
+      "use": "Map width and local player return conditions."
+    },
+    {
+      "topic": "apollo-technology-discovery-bonuses",
+      "use": "Technology availability shortcut used by the technology-query halving."
+    },
+    {
+      "topic": "combat-outcome",
+      "use": "Casualty continuation, loss protection and the hundredths text formatter."
+    }
+  ],
+  "records": {
+    "unit": {
+      "table": "0x830F2BF0",
+      "stride": "0x54",
+      "fields": [
+        {
+          "offset": "+0x00",
+          "meaning": "owner"
+        },
+        {
+          "offset": "+0x01",
+          "meaning": "UnitType"
+        },
+        {
+          "offset": "+0x04",
+          "meaning": "army byte"
+        },
+        {
+          "offset": "+0x05",
+          "meaning": "signed rank"
+        },
+        {
+          "offset": "+0x0C",
+          "meaning": "state word"
+        },
+        {
+          "offset": "+0x10",
+          "meaning": "special upgrade bits"
+        },
+        {
+          "offset": "+0x1C",
+          "meaning": "signed halfword coordinate"
+        },
+        {
+          "offset": "+0x1E",
+          "meaning": "signed halfword coordinate"
+        },
+        {
+          "offset": "+0x52",
+          "meaning": "casualty halfword"
+        }
+      ]
+    },
+    "definition": {
+      "table": "0x82F700D8",
+      "stride": "0x94",
+      "fields": [
+        {
+          "offset": "+0x40",
+          "meaning": "signed base attack"
+        },
+        {
+          "offset": "+0x41",
+          "meaning": "signed base defense"
+        },
+        {
+          "offset": "+0x48",
+          "meaning": "definition mask; its low three bits are the figure slots"
+        },
+        {
+          "offset": "+0x4E",
+          "meaning": "signed technology-query field"
+        },
+        {
+          "offset": "+0x50",
+          "meaning": "definition flags"
+        }
+      ]
+    }
+  },
+  "composition": {
+    "arithmetic": "The native code uses low-word wrapping arithmetic at the resolver's integer operations. s8, s16 and s32 are signed reads. half(x) is signed division by two truncated toward zero. trunc rounds toward zero. The positive examples avoid overflow, invalid indices, division traps and changed input generations.",
+    "perSide": "B is the effective core after the core replacements. p is the percentage point scalar. F is the flat support amount. T is the definition's technology-query value. n is the number of set bits in (definition mask & 7). h is the number of set bits in (casualty halfword & 7).",
+    "equations": [
+      "W0 = low32(B*p + 100*F)",
+      "W = half(W0) if mode == 0 and the side's technology-query guard holds, otherwise W0",
+      "R = W - trunc(low32(h*W)/n) when n > 0, otherwise W"
+    ],
+    "separateSamples": "The two sides read separate sampled inputs. Text callbacks, helper returns, save and restore operations and memory effects must keep the code, frame, records and state they need. A single-snapshot expression assumes that. The native code can reread values between calls.",
+    "readableForm": {
+      "appliesWhen": "Grassland, no other contribution active, required records and tiles unchanged.",
+      "armyMultiplier": "3 for an Army, otherwise 1.",
+      "rankPoints": "50 * clamp(signedRank - 1, -1, 1). Rank 1 adds 0, Veteran rank 2 adds 50, higher positive ranks add the same 50, ranks at or below 0 subtract 50.",
+      "attackPoints": "100 + rankPoints + specialAttackPoints",
+      "defensePoints": "defenseBasePoints + rankPoints + specialDefensePoints, where defenseBasePoints is 200 for Walls or the recorded Great Wall city, 150 for a Palace city without either, otherwise 100. A Palace does not add 50 on top of Walls.",
+      "weightedHundredths": "effectiveCoreStat * armyMultiplier * percentagePoints",
+      "remaining": "remainingHundredths = W - trunc(h*W/n), which equals ceil(W*(n-h)/n) for 0 <= h < n. The ceiling applies to internal hundredths, not to whole displayed strength points. remainingStrength = remainingHundredths / 100."
+    },
+    "workedValues": [
+      {
+        "case": "Archer, Palace city",
+        "value": "2 * 150 / 100 = 3"
+      },
+      {
+        "case": "Veteran Archer, Palace city",
+        "value": "2 * (150 + 50) / 100 = 4"
+      },
+      {
+        "case": "Veteran Archer, Walls city",
+        "value": "2 * (200 + 50) / 100 = 5"
+      },
+      {
+        "case": "Veteran Archer Army, Walls city",
+        "value": "(2 * 3) * 250 / 100 = 15"
+      },
+      {
+        "case": "Warrior with one of three casualty slots set",
+        "value": "100 - trunc(100/3) = 67, so 0.67"
+      },
+      {
+        "case": "Archer with one of three casualty slots set",
+        "value": "200 - trunc(200/3) = 134, so 1.34"
+      },
+      {
+        "case": "Archer Army with one of three casualty slots set",
+        "value": "600 - trunc(600/3) = 400, so 4.00"
+      }
+    ],
+    "qualification": "Casualty slots are internal. They do not identify a displayed health bar segment or a single Army figure."
+  },
+  "coreAccessors": {
+    "scope": "Values before Army, scalar, support and casualty steps. I(q) is 1 for a true predicate, otherwise 0. a and d are signed base attack and defense, f the definition flags, t the UnitType, p the player, Ui the accepted cumulative UEA query for ability i and that player, and W10 the accepted Wonder index 10 query.",
+    "terms": [
+      "P6 = I(U32[0x830ED3D8 + 4*p] == 6 and (f & 0x8087) == 0)",
+      "F6 = I((f & 2) != 0) * U6",
+      "s = s16[0x830E8FFA]",
+      "horseTerm = 2*U15 + (1-U15)*U14 if t is 12 or 13, otherwise 0",
+      "typeTerm = U37 if t == 15; 2*U13 if t == 17; U27 if t == 13; L if t == 8; 0 otherwise"
+    ],
+    "results": [
+      "A0 = 0 if a == 0, otherwise a + P6 + W10 + F6 + horseTerm + typeTerm + s",
+      "D0 = d + F6 + I(t == 9) * U61"
+    ],
+    "notes": "A true U15 skips the U14 query. Only the reached type and flag arms query their helpers. A zero base attack returns before every modifier, including the signed scenario term s. Defense has no zero base early return. No local clamp forces a negative result to zero. Types: 8 Legion, 9 Archer, 12 Horsemen, 13 Knights, 15 Phalanx, 17 Cannon.",
+    "legionTerm": {
+      "meaning": "L adds zero or one. Its complete stable-state predicate is kept without assigning government or scenario names.",
+      "inputs": [
+        "C = U32[0x830E5230]; u = U8[0x8314F10B]; z = s16[0x830E8FE0]",
+        "q = s16[0x82F7581C]; M = U32[0x830EDC48 + 4*q] on reached q != -1 arms",
+        "N = s32[0x82F700AC]; H(i) = U16[0x830E9070 + 2*i]",
+        "bit(j) = 0 if (j & 0x20) != 0, otherwise 1 << (j & 31)"
+      ],
+      "predicate": "L = I(C != -1 and u == 0 and (z != 0 or q == -1 or M == 0) and (z != 1 or q == -1 or N <= 0 or every j in 0..N-1 has H(j) == H(p) or (M & bit(j)) == 0) and (p == -1 or p == C or H(p) == H(C)))",
+      "qualification": "Sentinels are their native word patterns. Read order and valid selected storage remain premises. p == -1 skips only the final equality reads, not earlier reached reads. The cumulative UEA and indexed Wonder helper contracts are reused with their civilization, era, team and table conditions. P6 and L are not renamed from any other game's rules."
+    },
+    "knightTerms": "The Knight attack and defense terms are in unique-unit-combat-predicates.json#/knightAttackModifierBoundary and #/knightDefenseBoundary."
+  },
+  "specialUpgradePoints": {
+    "scope": "The two helper loops visit upgrade bits 0 through 8 only. Their switch tables have further cells that these entries cannot reach. Applicable contributions add. Added at resolver stage 10.",
+    "confidence": "strong",
+    "entries": [
+      {
+        "bit": 1,
+        "name": "Infiltration",
+        "helper": "0x82CFC0A8",
+        "attackPoints": 50,
+        "defensePoints": 0,
+        "when": "The target tile's city bit is set and its signed owner plane byte differs from the Barbarian ordinal."
+      },
+      {
+        "bit": 2,
+        "name": "Guerilla",
+        "helper": "0x82CFC0A8",
+        "attackPoints": 50,
+        "defensePoints": 0,
+        "when": "The sampled territory byte equals the attacker's owner byte (territory table 0x830E8790; attacker record +0x00)."
+      },
+      {
+        "bit": 3,
+        "name": "Loyalty",
+        "helper": "0x82CFBED0",
+        "attackPoints": 0,
+        "defensePoints": 50,
+        "when": "The sampled territory byte equals the defender's owner byte. Exact branch in unit-special-upgrades.json#/loyaltyDefenseBoundary."
+      },
+      {
+        "bit": 4,
+        "name": "Engineer",
+        "helper": "0x82CFBED0",
+        "attackPoints": 0,
+        "defensePoints": 100,
+        "when": "The defender tile's city bit is set."
+      },
+      {
+        "bit": 5,
+        "name": "Leadership",
+        "helper": "0x82CFBED0",
+        "attackPoints": 0,
+        "defensePoints": 100,
+        "when": "The sampled weighted presence byte exceeds 1."
+      }
+    ],
+    "noPoints": "Blitz (bit 0), March (bit 6), Medic (bit 7) and Scout (bit 8) add no points in these helpers.",
+    "weightedPresence": "An eligible unit counts as 1 and an Army as 3 in the accepted rebuild, with byte wrap. Leadership does not require two distinct unit records.",
+    "territory": "Territory equality is the proved predicate. No home or enemy territory rule is added. The matching tile plane rebuild must have run and its result must stay unchanged until combat reads it.",
+    "attackReads": "Attack reads the defender record before its optional text bypass. Player -1 is not established as a safe absent-defender input. Optional text calls must return normally and keep the sampled state.",
+    "qualification": "Per-index switch cell addresses, the tile plane addresses for the Infiltration city bit and owner byte, the Engineer city bit and the Leadership presence byte are not recorded in this finding. Runtime behavior is not observed."
+  },
+  "resolverStages": [
+    {
+      "stage": 1,
+      "range": "0x82CD9EC4 and 0x82CD9ECC",
+      "result": "Sets the attack scalar pA and the defense scalar pD to 100. The support scan that follows starts its own signed maxima at zero and does not change these scalars."
+    },
+    {
+      "stage": 2,
+      "range": "0x82CD9EF8..0x82CDA1D4",
+      "result": "Support scan. Visits eight neighboring tiles and, per tile, up to 256 records. The scan runs only when the defender's terrain is not Sea, defender definition flag 0x4 is clear and the local special-mode flag is clear. A neighbor counts only when it is Sea, has nonzero weighted presence and its sampled owner equals one side. A live record matches when owner is not 255, the state sign bit is clear, the coordinates match, definition flag 0x2 is set and the type is neither 19 nor 20. Attacker flag 0x4 suppresses the defender-side candidates. Each candidate is the support unit's effective attack times its army factor times (signed rank + 1), divided toward zero by 2 with UEA 51 and by 4 without it. Each side keeps the maximum of its candidates and zero. The X coordinate wraps by the current map width. Y adds its neighbor delta."
+    },
+    {
+      "stage": 3,
+      "range": "0x82CDA1D4..0x82CDA200",
+      "result": "Multiplies each support maximum by s16[0x830E8FDC]. When the local special-mode flag is set, both support amounts are cleared instead. Support enters later as 100*F after the percentage scalar is applied, not as percentage points."
+    },
+    {
+      "stage": 4,
+      "range": "0x82CDA200..0x82CDA278",
+      "result": "Samples the effective cores A0 and D0 (attack call 0x82CDA214, defense call 0x82CDA234). An attacker of type 25 against a defender with definition flag 0x4 uses that attacker's effective defense accessor as its attack core."
+    },
+    {
+      "stage": 5,
+      "range": "0x82CDA27C..0x82CDA2EC",
+      "result": "Triples each core for a nonzero signed army byte. The local special-mode flag then replaces each core with 3 for an army or 1 otherwise."
+    },
+    {
+      "stage": 6,
+      "range": "0x82CDA2EC..0x82CDA5F0",
+      "result": "Sets the initial defense scalar. A Barbarian city keeps 100 and skips the building and terrain alternatives. Other city tiles use 200 for Walls or when the city index equals the recorded Great Wall city, otherwise 150 for a Palace, otherwise 100. In that last case Hills terrain 4 with attacker flag 0x4 clear selects 150. Outside cities, attacker flag 0x4 clear selects 50*(signed terrain record byte +28, plus 1), and tile bit 0x40 adds 100. Attacker flag 0x4 set skips only the Hills start of 150 inside a city and this outside-city terrain and 0x40 arm, keeping 100 there. The 200 for Walls or the Great Wall city and the 150 for a Palace are not affected. Detail: combat-fortification-terrain.json."
+    },
+    {
+      "stage": 7,
+      "range": "0x82CDA5F0..0x82CDA748",
+      "result": "Sets the attack scalar to 150 when the attacker stands on Hills terrain 4 and attacker flag 0x4 is clear. A Barbarian attacker then halves its current scalar toward zero. A Barbarian defender subtracts 50 from its current scalar."
+    },
+    {
+      "stage": 8,
+      "range": "0x82CDA748..0x82CDAA4C",
+      "result": "Can subtract 50 attack points for the River predicate, only when attacker definition flags & 0x00200006 are clear. The predicate and its cases are in combat-fortification-terrain.json."
+    },
+    {
+      "stage": 9,
+      "range": "0x82CDAA4C..0x82CDAB9C",
+      "result": "Adds 50 points independently for each participant whose tile has the Great General marker 0x200 and whose definition flags & 0x6 are clear."
+    },
+    {
+      "stage": 10,
+      "range": "0x82CDAB9C..0x82CDAC18",
+      "result": "Adds specialAttackPoints and specialDefensePoints from the two upgrade helpers. They add to the scalars, not to the cores or to flat support. The defense helper is called with the defender owner and slot at 0x82CDAC10, and 0x82CDAC18 adds its result to the earlier defender modifier."
+    },
+    {
+      "stage": 11,
+      "range": "0x82CDAC50..0x82CDAC8C and 0x82CDAD48..0x82CDAD74",
+      "result": "Adds 50*clamp(signedRank - 1, -1, 1) to the attack scalar and to the defense scalar respectively."
+    },
+    {
+      "stage": 12,
+      "range": "0x82CDAE2C..0x82CDAF04",
+      "result": "For a non-Barbarian defender, adds 100 defense points when unit state word & 0x10 is set. Otherwise adds 50 when state bits 0x4 and 0x8 are both set. The two bonuses are exclusive. Detail: combat-fortification-terrain.json."
+    },
+    {
+      "stage": 13,
+      "range": "0x82CDAF04..0x82CDB0F8",
+      "result": "Halves the already composed attack scalar when the attacker's terrain is Sea and its definition flags & 0x6 are clear. On non-Sea defender terrain, definition flag 0x2 independently halves each corresponding core. The second operation halves cores, not percentage scalars."
+    },
+    {
+      "stage": 14,
+      "range": "0x82CDB0F8..0x82CDB390",
+      "result": "In modes 0 and 2 only, a participant equal to its freshly queried NativeLocalPlayer can gain points: state word 0x82FFE7C8 equal to 0 adds 100 and a fresh sample equal to 1 adds 50. Other values add none on this path. The samples and helper returns are separate unless something retains them."
+    },
+    {
+      "stage": 15,
+      "range": "0x82CDB390..0x82CDB428",
+      "result": "Multiplies each final core by its final scalar, keeping the low 32 bits, then adds low32(100*F). Scalars do not multiply the support addend."
+    },
+    {
+      "stage": 16,
+      "range": "0x82CDB460..0x82CDB548",
+      "result": "Tests each definition's technology-query field against -1, then queries technology availability for the opponent. In mode 0, a non-Barbarian side with a non-sentinel value and a nonzero query is halved after support. Other modes set the local flags without halving. Clearing both local flags when both are set does not undo halves already applied."
+    }
+  ],
+  "casualties": {
+    "continuation": "The accepted continuation owns the two casualty reductions and the both-zero replacement.",
+    "earlyReduction": "0x82CDB548..0x82CDB720",
+    "bothZeroReplacement": "0x82CDB7C0..0x82CDB7DC replaces the weighted frame words with 100 and 100.",
+    "modeZeroLaterReduction": "0x82CDBDD8..0x82CDBFC4 reduces the current weighted words again. Reading an earlier reduced pair does not identify the later pair.",
+    "protectionOperands": "The loss protection rules use the reduced operands. Later strict protection also requires that side's low three casualty bits to be clear. The early rule has no direct version of that check. See combat-outcome.json.",
+    "figureWeights": {
+      "scope": "Later figure selection weights are a separate transformation of the retained weighted W, not of the casualty-reduced R. Valid with the optional adjustment bypassed and the accepted no-overwrite conditions.",
+      "rules": [
+        "definition mask == 1: figureWeight = 3*W",
+        "definition mask == 6: figureWeight = W + trunc(W/2)",
+        "otherwise: figureWeight = W",
+        "Army: figureWeight = trunc(figureWeight/3)"
+      ],
+      "example": "An injured Archer Army has weighted 600, reduced 400 and figure weight 200. Using the reduced 400 in the division would give 133.",
+      "qualification": "Casualties also change the surviving figure masks. The optional unprotected adjustment helper is a separate comparison and no winner probability is derived."
+    },
+    "numericRequests": "Numeric requests use the accepted hundredths formatter and truncation rules (combat-outcome.json#/legalRatioAndDisplayBoundary). Mode 2 to mode 0 input correspondence, intervening overwrites and delivery of visible text remain separate conditions. The values here are computed strength."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only checks of decoded native words against the flat image in image.json#/analysisProgram, with zero mismatches. Separate formula oracles replayed the decoded words for the core accessors (every instruction, every branch taken and not taken), the two upgrade helpers (all switch cells), resolver composition (including all 256 signed rank values on both sides and complete support scans) and named unit examples.",
+    "entries": [
+      {
+        "role": "resolver",
+        "address": "0x82CD9970",
+        "confidence": "strong"
+      },
+      {
+        "role": "effective attack accessor",
+        "address": "0x82CF2230",
+        "confidence": "strong"
+      },
+      {
+        "role": "effective defense accessor",
+        "address": "0x82CF21A0",
+        "confidence": "strong"
+      },
+      {
+        "role": "defense upgrade helper (Loyalty, Engineer, Leadership)",
+        "address": "0x82CFBED0",
+        "confidence": "strong"
+      },
+      {
+        "role": "attack upgrade helper (Infiltration, Guerilla)",
+        "address": "0x82CFC0A8",
+        "confidence": "strong"
+      }
+    ],
+    "qualification": "No runtime, build or game test supports these values. Wound, late selection and formatter arithmetic from combat-outcome.json is reused, not retested."
+  },
+  "guards": [
+    "Percentage points add. City, Veteran and special upgrade bonuses are not independent multipliers.",
+    "Do not read the worked values as observed battles, delivered screen text, victory probabilities or survival proofs.",
+    "Do not rename P6 or L from another game's advertised rules.",
+    "Do not read casualty slots as health bar segments or as one Army figure.",
+    "Do not use the casualty reduced value in the later figure weight division.",
+    "Do not infer a home or enemy territory rule from the Guerilla and Loyalty comparisons.",
+    "Do not treat an absent defender (player -1) as a safe input to the attack helper."
+  ],
+  "conclusion": "The resolver builds each strength as effective core times Army factor times a sum of percentage points, plus flat support, with halving at stated stages and casualties applied afterward. Infiltration, Guerilla, Loyalty, Engineer and Leadership add points through two helper loops at resolver stage 10. The remaining native source terms are in the stage list and in combat-fortification-terrain.json."
+}

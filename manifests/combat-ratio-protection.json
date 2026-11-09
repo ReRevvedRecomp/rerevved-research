@@ -1,0 +1,375 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0394",
+  "topic": "combat-ratio-protection",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which strength ratios, turns and participant states make the combat resolver protect one side from losing, and how are the protection flags combined?",
+  "scope": {
+    "owner": "0x82CD9970",
+    "protectionBlock": {
+      "start": "0x82CDBFC4",
+      "endExclusive": "0x82CDC220",
+      "instructionSites": 151
+    },
+    "laterSelectionRead": {
+      "start": "0x82CDC220",
+      "endExclusive": "0x82CDC8B4"
+    },
+    "qualification": "The block sets two local protection flags. A set flag asks the retry consumer to reject a selection that empties the protected side. The consumer, the retry counter and the early rule are in combat-outcome.json#/earlyRatioProtectionBoundary. Actual participants, field and table identity, supported coordinates, classifier returns and retained frame generations, normal ABI and nonalias effects and defined arithmetic remain premises."
+  },
+  "dependencies": [
+    {
+      "topic": "combat-outcome",
+      "use": "Early rule, retry consumer, counter and final mask contract that this finding extends with the strict rules."
+    },
+    {
+      "topic": "unit-definitions-ai-evaluation",
+      "use": "Unit definition base 0x82F700D8, stride 0x94, base attack and defense bytes at 0x40 and 0x41, and the unit names used in the worked examples."
+    },
+    {
+      "topic": "game-calendar-state",
+      "use": "Current turn and year words, and the standard turn to year conversion."
+    },
+    {
+      "topic": "barbarian-contact-messages",
+      "use": "Global 0x82F700B0 written near 0x82CCF458 and 0x82CCF468, used here as the Barbarian player comparison."
+    },
+    {
+      "topic": "city-militia-scout-feasibility",
+      "use": "Tile plane bit 0 as the city flag (command entry 0x82CE031C..0x82CE03A8) and unit type 7 as Militia."
+    }
+  ],
+  "operands": [
+    {
+      "symbol": "A, D",
+      "meaning": "Current reduced internal attack and defense words, signed, in r29 and r30 at 0x82CDC138. They start from the weighted words and are reduced by the definition and participant +0x52 low three bit count. Equality with displayed battle numbers is not established.",
+      "confidence": "strong"
+    },
+    {
+      "symbol": "T",
+      "meaning": "Signed current turn word 0x8312B8DC, read through retained r26 = 0x83130000 and displacement -18212 at 0x82CDC138. The code never reads the displayed year here.",
+      "confidence": "strong"
+    },
+    {
+      "symbol": "HA, HD",
+      "meaning": "Current IsHumanPlayer results (RVA-SYM-0179) for the attacking and defending civilization.",
+      "confidence": "strong"
+    },
+    {
+      "symbol": "BA, BD",
+      "meaning": "Attacker or defender owner equals the Barbarian player in global 0x82F700B0.",
+      "confidence": "strong"
+    },
+    {
+      "symbol": "C",
+      "meaning": "Bit 0 of the tile plane at the defender's coordinates. It is not a unit type or city object query.",
+      "confidence": "strong"
+    },
+    {
+      "symbol": "CA, CD",
+      "meaning": "The protected participant's current +0x52 halfword has its low three bits clear: (casualtyRecord & 7) == 0. Higher bits alone do not fail the check. A zero record always passes. A full health display is not its definition.",
+      "confidence": "strong"
+    },
+    {
+      "symbol": "O",
+      "meaning": "Word reached through frame +268. The two selected pointer producers form 0x830E4554. Its gameplay name is unresolved. Nonzero O makes the attacker side of the strict rule available after turn 29.",
+      "confidence": "strong"
+    },
+    {
+      "symbol": "QA, QD",
+      "meaning": "Signed word indexed by each civilization in the array at 0x830E45E4. Initialization, writers, actual values and gameplay meaning are unresolved.",
+      "confidence": "candidate"
+    },
+    {
+      "symbol": "M",
+      "meaning": "Normalized defender type byte equals 7, Militia.",
+      "confidence": "strong"
+    }
+  ],
+  "strictRules": [
+    {
+      "side": "attacker",
+      "against": "defender that is not the Barbarian player",
+      "test": "A > 3*D",
+      "extraRequirement": "HA, or T < 30, or O != 0, and CA"
+    },
+    {
+      "side": "attacker",
+      "against": "defender that is the Barbarian player",
+      "test": "A > 2*D",
+      "extraRequirement": "HA, or T < 30, or O != 0, and CA"
+    },
+    {
+      "side": "defender",
+      "against": "attacker that is not the Barbarian player, defender not on a city tile",
+      "test": "D > 3*A",
+      "extraRequirement": "HD and CD"
+    },
+    {
+      "side": "defender",
+      "against": "attacker that is the Barbarian player, or defender on a city tile",
+      "test": "D > 2*A",
+      "extraRequirement": "HD and CD"
+    }
+  ],
+  "turnRules": [
+    {
+      "turns": "0 through 20",
+      "attacker": "A >= 2*D, any controller",
+      "defender": "D >= 2*A, any controller"
+    },
+    {
+      "turns": "21 through 29",
+      "attacker": "strict attacker rule, either classifier result",
+      "defender": "strict defender rule for a human defender only"
+    },
+    {
+      "turns": "30 onward",
+      "attacker": "strict attacker rule for a human attacker only, or for any attacker when O != 0",
+      "defender": "strict defender rule for a human defender only"
+    }
+  ],
+  "turnRuleQualification": "The assumptions are O = 0, participants that are not Barbarian, a clear city bit, clear low three casualty bits and no safeguard addition. Turn 30 is excluded from the date test for a non-human attacker. The code tests turn. The standard calendar maps turns 19, 20, 21 to 2100 BC, 2000 BC, 1900 BC and turns 20 and 30 to 2000 BC and 1000 BC. A loaded game with a different turn and year pairing must not be judged by the displayed date.",
+  "minimumProtectedStrength": [
+    {
+      "rule": "Early inclusive 2:1",
+      "minimum": "2*S"
+    },
+    {
+      "rule": "Strict 2:1",
+      "minimum": "2*S + 1"
+    },
+    {
+      "rule": "Strict 3:1",
+      "minimum": "3*S + 1"
+    }
+  ],
+  "minimumQualification": "S is the opposing strength in internal integer units. One internal unit need not equal one displayed point. A qualifying 4:1 or 5:1 battle passes the existing strict 3:1 rule. Exact 3:1 fails it. The direct code has no separate 4:1 or 5:1 rule.",
+  "setterRanges": [
+    {
+      "range": "0x82CDBFC4..0x82CDC068",
+      "role": "Strict attacker setter"
+    },
+    {
+      "range": "0x82CDC06C..0x82CDC134",
+      "role": "Strict defender setter"
+    },
+    {
+      "range": "0x82CDC138..0x82CDC170",
+      "role": "Early additions (turn 20 and earlier). They do not require the strict rules' classifier, Barbarian, city or casualty conditions."
+    },
+    {
+      "range": "0x82CDC174..0x82CDC1EC",
+      "role": "Safeguard additions keyed to 0x830E45E4"
+    },
+    {
+      "range": "0x82CDC1F4..0x82CDC208",
+      "role": "Cancellation when both flags are set"
+    },
+    {
+      "range": "0x82CDC20C..0x82CDC21C",
+      "role": "Militia clears defender protection"
+    }
+  ],
+  "safeguardAddition": {
+    "range": "0x82CDC174..0x82CDC1EC",
+    "word": "0x830E45E4",
+    "rule": "For each side that is human, add protection when its signed indexed word is at least 1 and its strength is greater than the other strength divided by two, truncated toward zero.",
+    "confidence": "candidate",
+    "qualification": "The word's gameplay meaning and live value are unresolved. Without this term a complete formula would be wrong. No label such as difficulty, luck or experience is established. Failed additions retain an existing flag."
+  },
+  "formula": {
+    "domain": "Positive strengths without signed product overflow, stable participant and state premises.",
+    "lines": [
+      "attackMultiplier  = 2 if BD else 3",
+      "defenseMultiplier = 2 if BA or C else 3",
+      "earlyAttack  = (T <= 20) and (A != 0) and (A >= 2*D)",
+      "earlyDefense = (T <= 20) and (D != 0) and (D >= 2*A)",
+      "strictAttack  = (HA or T < 30 or O != 0) and CA and (A > attackMultiplier*D)",
+      "strictDefense = HD and CD and (D > defenseMultiplier*A)",
+      "humanAttack  = HA and (QA >= 1) and (A > trunc(D/2))",
+      "humanDefense = HD and (QD >= 1) and (D > trunc(A/2))",
+      "rawAttack  = earlyAttack  or strictAttack  or humanAttack",
+      "rawDefense = earlyDefense or strictDefense or humanDefense",
+      "protectAttack  = rawAttack  and not rawDefense",
+      "protectDefense = rawDefense and not rawAttack and not M"
+    ],
+    "order": "Mutual protection cancels first at 0x82CDC1F4..0x82CDC208. Then Militia loses defender protection at 0x82CDC20C..0x82CDC21C. A Militia defender with raw protection can therefore cancel the attacker's raw protection before its own protection is removed.",
+    "downstream": "A set flag asks the retry consumer to reject a generated result that empties the protected side and to select again, subject to the shared retry counter (combat-outcome.json#/earlyRatioProtectionBoundary/protectedRejection). The retry allowance reaches its continuation threshold at 1000. That counter is not a count of draws or battles.",
+    "qualification": "No unconditional winner formula and no natural protected loss is established. The block gives no whole battle win percentage."
+  },
+  "noFurtherBracket": {
+    "range": "[0x82CDC220,0x82CDC8B4)",
+    "result": "The complete direct instruction read has no new turn test and no assignment to the two protection flags. Its strict history tests, definition weight transforms and army divisions are separate from the ratio rules. Constants 3 and 4 also serve weight transforms, masks and strides.",
+    "examples": "Supplied effective weights 3 to 1 and 4 to 1 each allow either comparison result under the file generator parameters and different supplied states. These are one comparison arithmetic examples, not legal whole battle loss examples.",
+    "unexpanded": "The optional arithmetic child 0x827F20F8 called at 0x82CDC318 is an unexpanded scalar and memory effect. The negative covers the inspected direct blocks, not every helper, inherited input or combat mode."
+  },
+  "casualtyCondition": {
+    "check": "Strict rules need the protected participant's +0x52 halfword low three bits clear. A zero casualty record is a sufficient condition.",
+    "armyNote": "For a supplied raw army casualty count of one, the result consumer stores zero base casualties. Raw army selection masks and stored base casualties differ."
+  },
+  "baseStatExamples": {
+    "assumptions": "Base attack and defense reach the check unchanged: single units, zero casualties, neutral modifiers, no override. The protected side is human where the strict rule applies. Defenders are outside cities. The three Barbarian definitions each have attack 1 and defense 1.",
+    "source": "unit-definitions-ai-evaluation.json#/unitDefinitions/records, ids 3 through 6, 9, 10, 12, 14, 16, 17; table 0x82F700D8, stride 0x94, attack and defense signed bytes at 0x40 and 0x41.",
+    "rows": [
+      {
+        "attacker": "Horsemen",
+        "A": 2,
+        "defender": "Warrior",
+        "D": 1,
+        "turns": "through 20",
+        "check": "2 >= 2*1",
+        "protects": "attacker"
+      },
+      {
+        "attacker": "Horsemen",
+        "A": 2,
+        "defender": "Warrior",
+        "D": 1,
+        "turns": "after 20",
+        "check": "2 > 3*1 is false",
+        "protects": "none"
+      },
+      {
+        "attacker": "Catapult",
+        "A": 4,
+        "defender": "Archer",
+        "D": 2,
+        "turns": "through 20",
+        "check": "4 >= 2*2",
+        "protects": "attacker"
+      },
+      {
+        "attacker": "Catapult",
+        "A": 4,
+        "defender": "Archer",
+        "D": 2,
+        "turns": "after 20",
+        "check": "4 > 3*2 is false",
+        "protects": "none"
+      },
+      {
+        "attacker": "Cannon",
+        "A": 6,
+        "defender": "Archer",
+        "D": 2,
+        "turns": "after 20",
+        "check": "6 > 3*2 is false",
+        "protects": "none"
+      },
+      {
+        "attacker": "Catapult",
+        "A": 4,
+        "defender": "Warrior",
+        "D": 1,
+        "turns": "after 20",
+        "check": "4 > 3*1",
+        "protects": "attacker"
+      },
+      {
+        "attacker": "Catapult",
+        "A": 4,
+        "defender": "Catapult",
+        "D": 1,
+        "turns": "after 20",
+        "check": "4 > 3*1",
+        "protects": "attacker",
+        "note": "Also the pairing covered by combat-catapult-retry-bounds.json."
+      },
+      {
+        "attacker": "Warrior",
+        "A": 1,
+        "defender": "Archer",
+        "D": 2,
+        "turns": "through 20",
+        "check": "2 >= 2*1",
+        "protects": "defender"
+      },
+      {
+        "attacker": "Warrior",
+        "A": 1,
+        "defender": "Archer",
+        "D": 2,
+        "turns": "after 20",
+        "check": "2 > 3*1 is false",
+        "protects": "none"
+      },
+      {
+        "attacker": "Horsemen",
+        "A": 2,
+        "defender": "Tank",
+        "D": 6,
+        "turns": "after 20",
+        "check": "6 > 3*2 is false",
+        "protects": "none"
+      },
+      {
+        "attacker": "Horsemen",
+        "A": 2,
+        "defender": "Riflemen",
+        "D": 5,
+        "turns": "after 20",
+        "check": "5 > 3*2 is false",
+        "protects": "none"
+      },
+      {
+        "attacker": "Warrior",
+        "A": 1,
+        "defender": "Riflemen",
+        "D": 5,
+        "turns": "after 20",
+        "check": "5 > 3*1",
+        "protects": "defender"
+      },
+      {
+        "attacker": "Horsemen",
+        "A": 2,
+        "defender": "Barbarian",
+        "D": 1,
+        "turns": "after 20",
+        "check": "2 > 2*1 is false",
+        "protects": "none"
+      },
+      {
+        "attacker": "Catapult",
+        "A": 4,
+        "defender": "Barbarian",
+        "D": 1,
+        "turns": "after 20",
+        "check": "4 > 2*1",
+        "protects": "attacker"
+      },
+      {
+        "attacker": "Barbarian",
+        "A": 1,
+        "defender": "Archer",
+        "D": 2,
+        "turns": "after 20",
+        "check": "2 > 2*1 is false",
+        "protects": "none"
+      }
+    ],
+    "qualification": "Base stat arithmetic only. These are not captured battles, legal source constructions for every pairing or displayed strengths. Modifiers are in the combat strength reference."
+  },
+  "currentEvidence": {
+    "method": "Read-only memory word queries of the exact owner compared with the supported flat image, a supplied input interpreter over the protection block and narrow exact owner generated code windows.",
+    "imageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
+    "earlyBlockPackets": "combat-outcome.json#/earlyRatioProtectionBoundary/evidence/packets",
+    "generated": {
+      "path": "rerevved:generated/default/rerevved_recomp.145.cpp",
+      "lines": "34376 through 35881",
+      "sha256": "061E0C9D9AF1EA591C7238FA6526E883C5D84A44DFD30D8B195102E133AF69A5"
+    },
+    "verification": "The interpreter executed all 151 instruction sites in [0x82CDBFC4,0x82CDC220) over 94356 supplied cases and rejected ten semantic mutations. It separated turns 20, 21, 29, 30 and 31, strict from inclusive ratios, both classifier results, Barbarian equality, the tile bit, low and high halfword bits, the auxiliary words, the override, cancellation and Militia clearing. A separate selection check decoded 421 words, matched five overlapping spans and checked four supplied comparison examples. All checks are static.",
+    "qualification": "Static decode and supplied state replay. No game, runtime probe or title change was used."
+  },
+  "guards": [
+    "A ratio table is not a winner formula: safeguard additions, cancellation and Militia clearing still apply.",
+    "A protected side is not proved to survive every legal battle and random state. Legal input range, generator retention, retry termination and final persistent survival are open except for the cases in combat-catapult-retry-bounds.json and combat-victory-survival.json.",
+    "Displayed strength ratios need not equal the internal ratio because the battle panel formatter omits low digits.",
+    "Do not give 0x830E45E4 or 0x830E4554 a gameplay name from this finding."
+  ],
+  "conclusion": "The resolver has an early inclusive 2:1 rule through turn 20 and strict rules after it: attackers need more than 3 times the defender (more than 2 times against Barbarians), human defenders need more than 3 times the attacker outside cities and more than 2 times in cities or against Barbarians. A non-human attacker is protected only before turn 30 unless the override word is nonzero. Strict rules need the protected side's low three casualty bits clear. A safeguard word at 0x830E45E4 adds a separate human rule. Mutual protection cancels and then Militia loses defender protection. There is no 4:1 or 5:1 rule."
+}

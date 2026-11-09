@@ -44,6 +44,25 @@ tally do not prove that an award was delivered. The W0 criterion does not
 track external state changes or another timeline. It cannot justify repairing
 or reissuing a bonus whose raw ownership word is already claimed.
 
+### Claimed state records
+
+These words show that a technology has been claimed. None of them proves that
+a reward was delivered.
+
+| Record | Address | Written at | Meaning and limit |
+|---|---|---|---|
+| Raw ownership | `W = U32[0x830EDC48 + 4*t]`, bit `p` | `0x82D0937C`; `0x82D09378` computes the bit | Test the whole word, not player `p`'s bit and not virtual ownership. |
+| First discoverer | `U32[0x830EDB88 + 4*t]` | `0x82D0932C` for old `W == 0` and `t != 47` | Writes `p`. It is not a completed reward receipt. |
+| Latest acquisition source | `U32[0x830ED588 + 4*(48*p + t)]` | `0x82D09384` | The admitted source, including exact phase 2. |
+| Acquisition tally | `U32[0x830EDD08 + 4*p]` | `0x82D093A0` | Increments for an odd phase, including repeated calls on a raw owned technology. |
+| Shared first world `F` | `U32[0x830E3438]` | `0x82D09330` | Set when `W == 0`. Suppressors and nested calls can replace it. |
+| Native acquired technology | `U32[0x830EDD28 + 4*p]` | `0x82D09370` | The native write is kept. It differs from selected research. |
+
+At `0x82D093A4` these records can already exist before the Irrigation store at
+`0x82D0A3F8` in the same call. Source 6 or a failed native recipient can leave a
+raw owned technology with no reward. Such a word stays excluded: a missing
+reward does not reopen the bonus.
+
 Source 6 writes the early records before clearing F. Exact phase 2 also writes
 raw ownership and source, without the odd-phase tally or Irrigation store.
 
@@ -66,8 +85,9 @@ original restore/return under intact frame and return-target guards; zero
 reloads the city and calls 0x82CF1060 at 0x82D163BC. Neither selected prefix
 requests acquisition.
 
-The selected calendar caller 0x82D1FC14 supplies second argument 0 to
-0x82D13978. The city loop uses stride 188 and positive signed population;
+The selected calendar caller sets the second argument to 0 at `0x82D1FC0C`,
+copies city `r25` to `r3` at `0x82D1FC10` and calls `0x82D13978` at
+`0x82D1FC14`. The city loop uses stride 188 and positive signed population;
 the callee saves city at frame+0x174, second argument at +0x17C and samples its
 signed owner. This is a conditional native caller, not observed human/AI/peer
 completion or a census of every caller.

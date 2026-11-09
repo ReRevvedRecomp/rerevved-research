@@ -630,6 +630,1023 @@
         ],
         "bounds": "The caller query returned 169 matches under a 256-match cap without truncation. No caller function body was expanded."
       },
+      "advisorPopupPurposeGroups": {
+        "basis": "Static grouping of the direct callers by what the popup tells the player or asks of them. Purposes come from the text each site loads before the call, read from the supported image, and from the producer function; the text itself is not reproduced. Grouping is a modding aid and does not prove a trigger condition.",
+        "handlingTerms": {
+          "notice": "The site never reads the returned value on any explored path, so a -1 return from the native early-out behaves like any other answer.",
+          "offer": "The site compares the returned value once, and a -1 return takes the same branch as any nonmatching answer, which skips the offered action.",
+          "keep-native": "Player menus, refusals, diplomacy, required choices, tutorial, game end and multiplayer host sites. Suppression is not supported because the site or a caller needs a real answer, or the popup is the only feedback for a player action."
+        },
+        "resultTerms": {
+          "ignored": "The producer overwrites r3 without reading it.",
+          "returned": "The producer returns the value to its caller. For the 62 notice sites, the native-word walk of RVA-F-0249 found that a caller within overwriteDepth levels overwrites it without reading it. For the other sites the walk stopped at the producer return, and no later discard is claimed.",
+          "used": "The site or a callee reads the value.",
+          "arg-to-call": "The value is passed to a call as an argument; the callee was not walked.",
+          "dead": "The walk found no live use of the value. The two sites also marked jump-table sit in a table region, so reachability through the table was not traced.",
+          "ignored or returned": "The two branch arms of the producer differ.",
+          "two labels joined by a comma": "Both labels hold on different paths."
+        },
+        "resultEvidence": {
+          "native-words": "The 65 sites of RVA-F-0249. result and overwriteDepth come from that native-word walk of the supported image: result is ignored at depth 0, returned at depth 1 or more, and used for the three read sites.",
+          "generated-listing": "The other 102 sites. result comes from a walk of both branch arms of each producer in the recompiled copy of the function. It is corroboration only and not a native-word result."
+        },
+        "countReconciliation": {
+          "callers": 169,
+          "classifiedSites": 167,
+          "withoutPurpose": [
+            "0x82D07B9C",
+            "0x82D07C9C"
+          ],
+          "withoutPurposeProducer": "0x82D076D8",
+          "withoutPurposeDetail": "Both pass cue index 1 (Military) and no text was recovered, so they belong to no group and have no result classification. The other 167 caller addresses of this finding each appear once below.",
+          "suppressibleSites": 65,
+          "keepNativeSites": 102
+        },
+        "cueNames": {
+          "0": "Science",
+          "1": "Military",
+          "2": "Domestic",
+          "3": "Foreign",
+          "4": "no cue",
+          "5": "tutorial cue"
+        },
+        "cueNamesQualification": "Names follow the advisor label recorded for each site; the name addresses selected by the cue switch are listed above. Index 5 selects a pair of names and is used by tutorial, Game of the Week and multiplayer host sites.",
+        "site": "Site addresses are the branch-and-link instruction; the return address seen on entry to 0x82CE8338 is the site plus 4.",
+        "qualification": "Static evidence for the supported image only. The handling labels say what the explored result paths tolerate, not that a trigger is safe to skip. The guards below still apply: the cue index is not a popup identity, and the two entry check bytes are not interpreted.",
+        "groups": [
+          {
+            "id": "rival-war-and-peace-news",
+            "purpose": "Reports that rival civilizations declared war or made peace.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82CC89BC",
+                "result": "returned",
+                "overwriteDepth": 2,
+                "event": "News that a rival civilization declared war"
+              },
+              {
+                "site": "0x82CC8A3C",
+                "result": "returned",
+                "overwriteDepth": 2,
+                "event": "News that a rival civilization signed a peace treaty"
+              }
+            ]
+          },
+          {
+            "id": "rival-government-changes",
+            "purpose": "Reports that a rival civilization changed government.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82CDFF70",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "News that a rival civilization changed government"
+              }
+            ]
+          },
+          {
+            "id": "city-capture-reports",
+            "purpose": "Reports of cities taken or recaptured, with the rewards that come with a capture.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82D1CB44",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "A rival civilization recaptured a city"
+              },
+              {
+                "site": "0x82D1D0A8",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "A rival civilization took a city"
+              },
+              {
+                "site": "0x82D1D18C",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "A rival civilization took a capital"
+              },
+              {
+                "site": "0x82D1CE5C",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "A technology learned during a city capture"
+              },
+              {
+                "site": "0x82D1C48C",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "Captive Settlers rescued during a city capture"
+              }
+            ]
+          },
+          {
+            "id": "victory-race-warnings",
+            "purpose": "Warnings that a rival civilization or we are close to a victory condition.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82CE1640",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "A rival civilization launched a Space Station"
+              },
+              {
+                "site": "0x82D0A938",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "A rival civilization discovered Space Flight"
+              },
+              {
+                "site": "0x82D0CDA4",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Victory race warning with a Science cue"
+              },
+              {
+                "site": "0x82D0D3AC",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Victory race warning with a Foreign cue (text not recovered)"
+              },
+              {
+                "site": "0x82D0D5EC",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Victory race warning with a Military cue (text not recovered)"
+              },
+              {
+                "site": "0x82D0DAD0",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Victory race warning with a Domestic cue (text not recovered)"
+              },
+              {
+                "site": "0x82E66AE0",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Countdown of Great People and wonders still needed for a victory"
+              },
+              {
+                "site": "0x82D11370",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Victory warning sent through the tutorial cue (text not recovered)"
+              }
+            ]
+          },
+          {
+            "id": "rival-great-people-and-wonders",
+            "purpose": "Reports of rival Great People and finished wonders.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82CE1244",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "A rival civilization used a Great Person to upgrade"
+              },
+              {
+                "site": "0x82D1775C",
+                "result": "returned",
+                "overwriteDepth": 5,
+                "event": "A rival civilization completed a wonder"
+              }
+            ]
+          },
+          {
+            "id": "rankings-and-culture",
+            "purpose": "Reports of world rankings and culture results.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82CC7414",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "A rival civilization has the strongest economy"
+              },
+              {
+                "site": "0x82D85B14",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "A city became the greatest city in the world"
+              },
+              {
+                "site": "0x82D1B374",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "Citizens of a city react to a culture result"
+              }
+            ]
+          },
+          {
+            "id": "artifacts-and-ancient-sites",
+            "purpose": "Reports of artifacts and ancient sites found or rumored.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82D18D7C",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "Rumor that a rival civilization found an artifact"
+              },
+              {
+                "site": "0x82D08E5C",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Villagers hint at an ancient site"
+              },
+              {
+                "site": "0x82D17FD8",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Lost City of Atlantis found"
+              },
+              {
+                "site": "0x82D186E0",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Terracotta Army found"
+              },
+              {
+                "site": "0x82D18B9C",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Tesla's Peace Ray found"
+              }
+            ]
+          },
+          {
+            "id": "combat-reports",
+            "purpose": "Reports of combat results, captures and nuclear defense.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82CD8F84",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "A Great General appeared after combat"
+              },
+              {
+                "site": "0x82CD9814",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "A Great General appeared after combat"
+              },
+              {
+                "site": "0x82CD91D0",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "A unit defeated an upgraded enemy"
+              },
+              {
+                "site": "0x82CD9294",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Combat report (text not recovered)"
+              },
+              {
+                "site": "0x82CD9558",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Combat report (text not recovered)"
+              },
+              {
+                "site": "0x82CD960C",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Combat report (text not recovered)"
+              },
+              {
+                "site": "0x82CD7A38",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Combat report (text not recovered)"
+              },
+              {
+                "site": "0x82CDCBE8",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "We captured an enemy Settler"
+              },
+              {
+                "site": "0x82CDCCD4",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "A rival civilization captured our Settler"
+              },
+              {
+                "site": "0x82CDCE24",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Our Settlers were captured and taken to another city"
+              },
+              {
+                "site": "0x82CDCF94",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "We captured an enemy unit"
+              },
+              {
+                "site": "0x82CDD0AC",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "A rival civilization captured one of our units"
+              },
+              {
+                "site": "0x82CDF268",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "An SDI Defense destroyed a nuclear weapon"
+              }
+            ]
+          },
+          {
+            "id": "spy-reports",
+            "purpose": "Reports of enemy Spy actions and bribed Great People.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82CF6E6C",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "An enemy Spy stole gold from a city"
+              },
+              {
+                "site": "0x82CF7418",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "A Great Person was bribed"
+              }
+            ]
+          },
+          {
+            "id": "city-status-reports",
+            "purpose": "Reports of city mood and blockades.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82D1DABC",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "City status report (text not recovered)"
+              },
+              {
+                "site": "0x82D1DBA0",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "City status report (text not recovered)"
+              },
+              {
+                "site": "0x82D1DCA4",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "City status report (text not recovered)"
+              },
+              {
+                "site": "0x82D1D9B0",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "City status report: positive mood change"
+              },
+              {
+                "site": "0x82D1E3A8",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "People are becoming content"
+              },
+              {
+                "site": "0x82CF5134",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "A unit could not be built because the city is blockaded"
+              }
+            ]
+          },
+          {
+            "id": "discoveries-and-progress",
+            "purpose": "Reports of technologies, eras, milestones, taxes and routes.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82CEAFC4",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "Our civilization was first to discover a technology"
+              },
+              {
+                "site": "0x82CEAE60",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Discovery report (text not recovered)"
+              },
+              {
+                "site": "0x82D076C4",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "Our civilization advanced to a new era"
+              },
+              {
+                "site": "0x82CF5D20",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Economic milestone reached"
+              },
+              {
+                "site": "0x82CF3DC4",
+                "result": "returned",
+                "overwriteDepth": 2,
+                "event": "An import tax was collected"
+              },
+              {
+                "site": "0x82D06FCC",
+                "result": "returned",
+                "overwriteDepth": 1,
+                "event": "Engineers completed a route to a city"
+              },
+              {
+                "site": "0x82D17470",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "A Great Wonder revealed a technology"
+              },
+              {
+                "site": "0x82D1DEBC",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Discovery report (text not recovered)"
+              },
+              {
+                "site": "0x82CED234",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Turns remaining on the current research"
+              },
+              {
+                "site": "0x82D0AA70",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Progress report (text not recovered)"
+              },
+              {
+                "site": "0x82D0AD5C",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Progress report (text not recovered)"
+              }
+            ]
+          },
+          {
+            "id": "village-outcomes",
+            "purpose": "Results of entering a village.",
+            "handling": "notice",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82D09098",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Villagers report a threat"
+              },
+              {
+                "site": "0x82D091E8",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Villagers mention a wealthy rival city nearby"
+              },
+              {
+                "site": "0x82D0EFB0",
+                "result": "returned",
+                "overwriteDepth": 2,
+                "event": "Villagers react to a refused or failed approach"
+              },
+              {
+                "site": "0x82D08448",
+                "result": "ignored",
+                "overwriteDepth": 0,
+                "event": "Villagers join the city"
+              }
+            ]
+          },
+          {
+            "id": "save-reminder",
+            "purpose": "Reminder to save the game.",
+            "handling": "offer",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82D1D3A0",
+                "result": "used",
+                "event": "Reminder to save the game"
+              }
+            ]
+          },
+          {
+            "id": "trophy-room-offer",
+            "purpose": "Offer to view the Trophy Room.",
+            "handling": "offer",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82D083E0",
+                "result": "used",
+                "event": "Offer to view the Trophy Room"
+              }
+            ]
+          },
+          {
+            "id": "new-government-available",
+            "purpose": "Prompt to change government when a new one is available.",
+            "handling": "offer",
+            "resultEvidence": "native-words",
+            "sites": [
+              {
+                "site": "0x82CEB298",
+                "result": "used",
+                "event": "A new government is available to adopt"
+              }
+            ]
+          },
+          {
+            "id": "player-menus-and-confirmations",
+            "purpose": "Menus and confirmations the player opened or must confirm.",
+            "handling": "keep-native",
+            "resultEvidence": "generated-listing",
+            "sites": [
+              {
+                "site": "0x82D06534",
+                "result": "used"
+              },
+              {
+                "site": "0x82D06610",
+                "result": "used"
+              },
+              {
+                "site": "0x82D2A498",
+                "result": "used"
+              },
+              {
+                "site": "0x82D2B22C",
+                "result": "used"
+              },
+              {
+                "site": "0x82D2CF98",
+                "result": "used"
+              },
+              {
+                "site": "0x82D2D06C",
+                "result": "used"
+              },
+              {
+                "site": "0x82D2D17C",
+                "result": "used"
+              },
+              {
+                "site": "0x82D853AC",
+                "result": "used"
+              },
+              {
+                "site": "0x82D2C0DC",
+                "result": "used"
+              },
+              {
+                "site": "0x82D2B4A8",
+                "result": "used"
+              },
+              {
+                "site": "0x82D2A000",
+                "result": "used"
+              },
+              {
+                "site": "0x82D28C60",
+                "result": "used"
+              },
+              {
+                "site": "0x82D28CF0",
+                "result": "used"
+              },
+              {
+                "site": "0x82CD49A8",
+                "result": "used"
+              },
+              {
+                "site": "0x82CF4248",
+                "result": "used"
+              },
+              {
+                "site": "0x82CF4554",
+                "result": "used"
+              },
+              {
+                "site": "0x82CF48C4",
+                "result": "used"
+              },
+              {
+                "site": "0x82CECB9C",
+                "result": "used"
+              },
+              {
+                "site": "0x82CECC74",
+                "result": "used"
+              },
+              {
+                "site": "0x82D6AC74",
+                "result": "ignored"
+              }
+            ]
+          },
+          {
+            "id": "refusals-of-a-player-action",
+            "purpose": "Explanations that a requested action is refused.",
+            "handling": "keep-native",
+            "resultEvidence": "generated-listing",
+            "sites": [
+              {
+                "site": "0x82CD4858",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82CD4A68",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82CD4AD0",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82CD4C50",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82CCEA6C",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82CCEBB4",
+                "result": "ignored or returned"
+              },
+              {
+                "site": "0x82CCEF9C",
+                "result": "returned"
+              },
+              {
+                "site": "0x82D2C068",
+                "result": "dead,jumptable"
+              },
+              {
+                "site": "0x82CDD55C",
+                "result": "used"
+              },
+              {
+                "site": "0x82CE0614",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82CE12BC",
+                "result": "ignored"
+              }
+            ]
+          },
+          {
+            "id": "diplomacy",
+            "purpose": "Diplomacy dialogs and answers.",
+            "handling": "keep-native",
+            "resultEvidence": "generated-listing",
+            "sites": [
+              {
+                "site": "0x82CC87FC",
+                "result": "returned"
+              },
+              {
+                "site": "0x82CCC1FC",
+                "result": "used"
+              },
+              {
+                "site": "0x82CCC2D8",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82CCF108",
+                "result": "returned"
+              },
+              {
+                "site": "0x82CCF1A8",
+                "result": "returned"
+              },
+              {
+                "site": "0x82CC75A8",
+                "result": "returned"
+              },
+              {
+                "site": "0x82CFBB74",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFBC74",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFBD28",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82CFBDC8",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82CFBE38",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82CFBEBC",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82CFD858",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFD9C4",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFDAA4",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFDB78",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFDC40",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFDD14",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFDDC8",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFDE80",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFDF18",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFDF70",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFDFF0",
+                "result": "used"
+              },
+              {
+                "site": "0x82CFE2A4",
+                "result": "used"
+              }
+            ]
+          },
+          {
+            "id": "required-choices",
+            "purpose": "Prompts that need a player decision.",
+            "handling": "keep-native",
+            "resultEvidence": "generated-listing",
+            "sites": [
+              {
+                "site": "0x82CED0CC",
+                "result": "used"
+              },
+              {
+                "site": "0x82D187EC",
+                "result": "returned,used"
+              },
+              {
+                "site": "0x82D1884C",
+                "result": "used"
+              },
+              {
+                "site": "0x82D1E6B0",
+                "result": "returned,used"
+              },
+              {
+                "site": "0x82D1E748",
+                "result": "used"
+              },
+              {
+                "site": "0x82CE9428",
+                "result": "used"
+              },
+              {
+                "site": "0x82D29A18",
+                "result": "dead,jumptable"
+              },
+              {
+                "site": "0x82D29A68",
+                "result": "used"
+              },
+              {
+                "site": "0x82D29ACC",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82D194DC",
+                "result": "used"
+              },
+              {
+                "site": "0x82D0BF90",
+                "result": "used"
+              },
+              {
+                "site": "0x82D12858",
+                "result": "used"
+              },
+              {
+                "site": "0x82D116A0",
+                "result": "ignored"
+              }
+            ]
+          },
+          {
+            "id": "tutorial-and-hints",
+            "purpose": "Tutorial and hint messages.",
+            "handling": "keep-native",
+            "resultEvidence": "generated-listing",
+            "sites": [
+              {
+                "site": "0x82DE3810",
+                "result": "returned"
+              },
+              {
+                "site": "0x82DE38D8",
+                "result": "used"
+              },
+              {
+                "site": "0x82DE3944",
+                "result": "used"
+              },
+              {
+                "site": "0x82DE39A8",
+                "result": "used"
+              },
+              {
+                "site": "0x82DE39F0",
+                "result": "ignored or returned"
+              },
+              {
+                "site": "0x82DE3C74",
+                "result": "used"
+              },
+              {
+                "site": "0x82DE3E1C",
+                "result": "used"
+              },
+              {
+                "site": "0x82DE4128",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82DE41E8",
+                "result": "used"
+              },
+              {
+                "site": "0x82DE4418",
+                "result": "used"
+              },
+              {
+                "site": "0x82DE44D4",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82DE4654",
+                "result": "used"
+              },
+              {
+                "site": "0x82DE46D4",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82DE4890",
+                "result": "used"
+              },
+              {
+                "site": "0x82DE4910",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82DE4974",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82DE4A0C",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82DE5030",
+                "result": "used"
+              },
+              {
+                "site": "0x82D2A8B4",
+                "result": "used"
+              }
+            ]
+          },
+          {
+            "id": "game-end-and-system",
+            "purpose": "Game end, demo, Game of the Week and system messages.",
+            "handling": "keep-native",
+            "resultEvidence": "generated-listing",
+            "sites": [
+              {
+                "site": "0x82D0E00C",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82D1F288",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82D1F304",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82D25C80",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82D270EC",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82DDDE4C",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82DF9958",
+                "result": "used"
+              },
+              {
+                "site": "0x82D20248",
+                "result": "ignored"
+              },
+              {
+                "site": "0x82D204AC",
+                "result": "ignored"
+              }
+            ]
+          },
+          {
+            "id": "multiplayer-host-controls",
+            "purpose": "Host menu for removing or muting players.",
+            "handling": "keep-native",
+            "resultEvidence": "generated-listing",
+            "sites": [
+              {
+                "site": "0x82DED3BC",
+                "result": "used"
+              },
+              {
+                "site": "0x82DED4B0",
+                "result": "arg-to-call"
+              },
+              {
+                "site": "0x82DED764",
+                "result": "used"
+              },
+              {
+                "site": "0x82DED8FC",
+                "result": "arg-to-call,dead"
+              },
+              {
+                "site": "0x82DEDA58",
+                "result": "arg-to-call,dead"
+              },
+              {
+                "site": "0x82DEDB14",
+                "result": "arg-to-call,dead"
+              }
+            ]
+          }
+        ]
+      },
       "guards": [
         "Do not treat the cue index as a per-popup identity; many distinct producers share one index.",
         "Do not infer the meaning of bytes 0x8314EF9F or 0x8314F10B from this gate; their producers and semantics remain separately bounded.",

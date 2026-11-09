@@ -191,6 +191,18 @@ cumulative lookup: Plains +1 Food (16), Sea +1 Food (28), Forest +1 Production
 (30), Desert +1 Food/+1 Trade (32), Hills +1 Production (41), Mountains +2
 Production (56). No generic tile API or broader parity follows.
 
+| Accessor | Yield | Terrain value (UEA ID, increment, call site) |
+|---|---|---|
+| `0x82CF1CE8` | Food, base table `0x82F771E0` | Plains 2 (16, +1), Sea 0 (28, +1), Desert 5 (32, +1), all at `0x82CF1E28` |
+| `0x82CF1AF0` | Production, base table `0x82F771E1` | Forest 3 (30, +1, `0x82CF1C18`), Hills 4 (41, +1, `0x82CF1C40`), Mountains 6 (56, +2, `0x82CF1C68`) |
+| `0x82CF17C8` | Trade, base table `0x82F771E2` | Desert 5 (32, +1, `0x82CF1A28`) |
+
+Each accessor reads the terrain value from the table at `0x8312B288`, requests
+the cumulative lookup for the matching ID, and adds the amount to its base yield
+only when the lookup is active. These are static facts about the three
+accessors. Other readers of a tile yield, such as display and AI, are not
+enumerated.
+
 ## Modification guards
 
 - Do not treat later era entries as replacements for earlier UEAs.

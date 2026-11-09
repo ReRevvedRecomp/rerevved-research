@@ -84,6 +84,69 @@ separate setup overrides and retention limits recorded in the
 [village reward finding](../../manifests/friendly-village-rewards.json#/settlersDifficultyBoundary).
 Multiplier/game-speed meanings and runtime cost remain unproved. Exact domains:
 [cost manifest](../../manifests/technology-research-cost.json).
+See also [gameplay cost arithmetic](gameplay-cost-arithmetic.md#technology-cost)
+for a worked rounding example.
+
+## AI research choice and Alphabet
+
+Status: candidate defect, from static evidence only. No AI research choice
+was observed.
+
+When a player with no research selected reaches the shared technology prompt
+(`0x82CECCD8`) as a nonlocal player, the game builds a list of the technologies
+that player can research and scores them to pick one. The scoring loop starts at
+the second entry of that list. The first technology on the list is never scored,
+so the AI cannot choose it. When Alphabet is first on the list, the AI skips
+Alphabet.
+
+Worked example. An AI player owns nothing and the eligible technologies are
+Alphabet (technology 1), Bronze Working (2) and Ceremonial Burial (3). The game
+builds the list `1, 2, 3, -1`, where `-1` is an end marker. The loop runs three
+times and scores Bronze Working, Ceremonial Burial and the end marker. Alphabet
+is never scored. The list has the same shape on every later choice, so Alphabet
+stays skipped until the player gets it another way. The real list depends on the
+definitions and on what the player owns.
+
+How the code does it:
+
+- The nonlocal branch lists the eligible technology IDs in ascending order and
+  appends `-1`. With `N` real technologies the list size is `N + 1`.
+- At `0x82CED340` the scan pointer is set to the list base plus 4, which is the
+  second entry. The loop at `0x82CED610` runs `N` times and advances the pointer
+  by 4 each time. It visits positions 1 through `N`: it skips position 0 and
+  visits the `-1` marker at position `N`.
+- The result goes out as a numeric type 4 value at `0x82CED61C..0x82CED62C`. The
+  command writer `0x82CDFFB0` stores it in `0x830EDD48[player]`, the selected
+  technology.
+- The shared eligibility check `0x82CE2C50` accepts Alphabet when the player does
+  not own it. Its three prerequisite values and its blocker value are all `-1`.
+  The optional prerequisite check `0x82CE2280` returns zero for Alphabet, so it
+  does not exclude it.
+- When `N` is 0 the loop is skipped, and that path is unchanged by the defect.
+  When `N` is 1, the loop scores only the `-1` marker.
+
+The turn-start check at `0x82D1D604` calls the prompt for a nonlocal player
+without a command, as listed in the
+[prompt callers](../../manifests/technology-prompt-callers.json). The branch
+tests the human mask, not whether the player is an AI, so being nonlocal does not
+prove an AI player.
+
+A correction would start the loop at the first real entry, keep the count and the
+empty list path, visit every eligible ID once and never the `-1` marker. Forcing
+Alphabet ownership or lowering its cost does not fix the list. See
+[AI settings](ai-options.md) for the other AI configuration findings.
+
+Open conditions:
+
+- Whether AI players reach this branch in a natural game, and whether the
+  scoring result is used unchanged, has not been observed.
+- Modified technology definitions, other ways the AI picks research and what
+  happens when the `-1` marker is chosen are not covered.
+- `0x82D20C9C` calling `0x82CED640` is a grant scan over technologies 0 through
+  47. It does not select research and is not part of this finding.
+
+The [manifest](../../manifests/ai-research-candidate-ordinals.json) holds the
+exact locators, the cases by real candidate count `N` and the falsification conditions.
 
 ## Spaceship launch result
 
@@ -99,78 +162,18 @@ actual dialog retention, launch delivery and repaired victory remain unobserved.
 
 ## Spaceship part presentation
 
-Part completion and its later pending-part processing are gameplay work.
-The selected consumer increments a component count at `0x82D1DE04`, then
-can request a foreign-owner advisor notice at `0x82D1DEBC`. Its unused result
-and native cleanup at `0x82CE87A8` supply a conditional notice-filter boundary.
-That cleanup clears the caller's presentation bit and returns through the
-matching frame; a bare return is not equivalent.
-
-Both owner-equality and foreign-notice paths then request a type 24 logical
-unit at `0x82D1DED8`. A successful slot gets marker 0 at unit+0x22 and sets
-`0x82FFE7C4` bit 0x02000000. The caller pumps application work until that bit
-clears or the pump returns zero, requests retirement, then resumes the later
-spaceship handling. Exact allocation failure instead rejoins at
-`0x82D1DF60` before starting this actor/wait.
-
-The selected type 24 updater calls `0x82D5E660`, which publishes focus inputs
-at `0x82D5E778/780`, sets a separate focus flag and requests selector 37.
-Native completion stores marker 0xFFFF at `0x82D5E898`, publishes a float
-constant, requests selector 14 and invokes object/child completion callbacks.
-The inactive 0xFFFF arm returns earlier and omits that completion work;
-forcing an active marker or globally clearing busy is not equivalent.
-
-This supplies a separate world-actor boundary. It does not prove a safe
-per-player refusal: creation uses a real unit bank, retirement can affect
-linked records, and actual child/media/input/audio/camera and peer/save
-consumers remain qualified. The pre-advisor helper also changes selected
-visibility/discovery state and must not be removed as a camera-only shortcut.
-
-Creation omission does not reproduce every logical record byte at immediate
-`0x82D1DF60`: mode 0 retirement marks the row and retains its owner, while
-omission leaves the free row unchanged. Selected native save field requests
-include its owner and lifecycle word; actual saved bytes and timing remain
-separate. Camera-only suppression leaves the busy wait. A late branch from
-the initialized comparison at `0x82D5E868` to `0x82D5E888` reaches native
-marker/selector 14/object completion requests, but follows the focus work and
-can change queued-input consumption. This is a conditional control-flow
-boundary, not proof of no camera pull, zero wait or per-peer safety.
-
-The initialized child selector writes state+0x6C; normal finish then requests
-manager cleanup. A separate native current-data scalar ignores marker+0x22
-but excludes dead-bit rows, so earlier retirement can change its result if a
-snapshot falls between retirements. Native save transfer also requests that
-marker. Queue event ingress and a later consumer are bound, but skipped pops
-and actual reader order remain distinct. These facts narrow the remaining
-camera/input, save and MP proof; they do not establish a local-only setting.
-
-The constructed view table selects `0x82E0E4B8`; its zero-delta update still
-publishes transforms. Under retained frame/interface/recipient mappings, input
-dispatch precedes the same actor updater and possible queue pop. One AI-turn
-snapshot at `0x82CDE8B8` follows returned actor retirement. A separate admitted
-pre-update drain can reach command 55's snapshot at `0x82CDEC64` inside the pump.
-The two phases must stay distinct when assessing differing player preferences.
-
-The selected output path writes a 16-float matrix and can publish three words
-in sequence through view+0xA0. Actual destination and engine use, and the
-effects of the current child and list, remain unresolved. The drain info byte
-has an initial zero writer and selected setter `0x82CA4A18` (child
-virtual+0x10), writing incoming r4's low byte through the same info getter.
-Its actual incoming value and order before the drain read remain unproved.
-
-The shared spaceship screen also returns launch results. Positive results
-from its automatic callers can request command 32 at `0x82D1DFA4` or
-`0x82D1E000`. Refusing the whole screen or pending-part branch can therefore
-alter gameplay. Arrival presentation uses another wrapper of the same class.
-The [part-presentation boundary](../../manifests/spaceship-part-presentation.json)
-owns exact sites, field/result separation and the remaining completion,
-media, local-peer and lifecycle qualifications.
+Each built part increments a component count, can show an advisor notice, and
+starts a rocket actor whose busy wait holds the turn. The shared spaceship
+screen also returns launch results, so refusing it can change gameplay. The
+[spaceship part presentation](spaceship-part-presentation.md) page covers the
+code path, every hook point and what a mod that skips the cutscene must keep.
 
 ## Evidence sources
 
 - [Technology research cost](../../manifests/technology-research-cost.json)
 - [First-discovery rewards](../../manifests/technology-first-discovery-rewards.json)
 - [Science completion](../../manifests/science-completion.json)
+- [AI research candidate ordinals](../../manifests/ai-research-candidate-ordinals.json)
 - [Spaceship launch arrival year](../../manifests/spaceship-launch-arrival-year.json)
 - [Starting technology grants](../../manifests/starting-technology-grants.json)
 - [City yield state credits](../../manifests/city-yield-state-credit.json)

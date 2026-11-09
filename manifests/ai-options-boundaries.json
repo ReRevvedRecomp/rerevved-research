@@ -883,7 +883,117 @@
           ],
           "qualification": "Selected bands include reused context and save-thunk call words. Original thunk effects and whole-owner closure are not inferred. Accepted F0240/F0252/F0331/F0332 supply separate capacity and lifecycle premises."
         },
-        "earlyRosterContinuation": "multiplayerRosterEarlyAdmissionBoundary binds the conditional configuration gate and one frontend bit clear, without a shared roster producer/freeze or clear-before-setup theorem. Complete MP0..5 remains unproved."
+        "earlyRosterContinuation": "multiplayerRosterEarlyAdmissionBoundary binds the conditional configuration gate and one frontend bit clear, without a shared roster producer/freeze or clear-before-setup theorem. Complete MP0..5 remains unproved.",
+        "humanCountTable": {
+          "layout": "Network setup publishes six slots: civilization ordinals 0..4 and the Barbarian at ordinal 5.",
+          "nativeRule": "For a valid human mask inside ordinals 0..4, configured AI civilizations = 5 - H, where H is the human count.",
+          "rows": [
+            {
+              "humans": 1,
+              "nativeAiCivilizations": "4",
+              "maximumRequestedWithinEightSlots": "5"
+            },
+            {
+              "humans": 2,
+              "nativeAiCivilizations": "3",
+              "maximumRequestedWithinEightSlots": "5"
+            },
+            {
+              "humans": 3,
+              "nativeAiCivilizations": "2",
+              "maximumRequestedWithinEightSlots": "4"
+            },
+            {
+              "humans": 4,
+              "nativeAiCivilizations": "1",
+              "maximumRequestedWithinEightSlots": "3"
+            },
+            {
+              "humans": 5,
+              "nativeAiCivilizations": "0",
+              "maximumRequestedWithinEightSlots": "2"
+            },
+            {
+              "humans": 6,
+              "nativeAiCivilizations": "outside the native layout",
+              "maximumRequestedWithinEightSlots": "1"
+            },
+            {
+              "humans": 7,
+              "nativeAiCivilizations": "outside the native layout",
+              "maximumRequestedWithinEightSlots": "0"
+            },
+            {
+              "humans": 8,
+              "nativeAiCivilizations": "outside the native layout",
+              "maximumRequestedWithinEightSlots": "impossible with a reserved Barbarian"
+            }
+          ],
+          "qualification": "Arithmetic over the selected layout. The last column is the largest request within the 0..5 request range and eight slots; eight slot storage alone holds 7 - H AI civilizations, so the range of 0..5 caps it for 1 and 2 humans. It does not show that the lobby accepts each human count or that a request of 2..4 humans changes the lobby's human capacity."
+        },
+        "layoutFormulas": {
+          "confidence": "candidate",
+          "inputs": "H distinct valid human ordinals, a request of 0..5 AI civilizations, and highestHumanOrdinal, the largest human ordinal.",
+          "maximumAi": "A = min(request, 7 - H); 7 - H is the eight slot storage limit with one Barbarian and request is 0..5.",
+          "participantCount": "N = max(6, H + A + 1, highestHumanOrdinal + 2)",
+          "barbarianOrdinal": "B = N - 1",
+          "requirements": [
+            "N <= 8.",
+            "Every human ordinal is below B."
+          ],
+          "examples": [
+            {
+              "humans": [
+                0,
+                1
+              ],
+              "request": 5,
+              "A": 5,
+              "N": 8,
+              "B": 7
+            },
+            {
+              "humans": [
+                0,
+                6
+              ],
+              "request": 0,
+              "A": 0,
+              "N": 8,
+              "B": 7,
+              "note": "The five native AI civilizations at ordinals 1..5 would all have to be removed. Humans are not compacted."
+            },
+            {
+              "humans": [
+                0,
+                4
+              ],
+              "request": 0,
+              "note": "Count 3 with the Barbarian at ordinal 2 cannot hold the human at ordinal 4 without moving a human."
+            }
+          ],
+          "humanSeven": "A human at ordinal 7 cannot share eight slots with a separate Barbarian, because N would be 9.",
+          "setupWait": "0x82D2206C..0x82D22078 waits for each human's native civilization word to differ from -1. A larger count creates no civilization IDs.",
+          "qualification": "The formulas give the smallest extent that holds the humans, the requested AI civilizations and one Barbarian. They are not a slot placement method and do not expand the native lobby's human limit. Current ordinals, initialization, matching early and late count stores and peer agreement are not shown."
+        },
+        "consumerFacts": [
+          {
+            "consumer": "setup",
+            "fact": "0x82D22908 and 0x82D22910 supply 6 and 5; 0x82D22918 and 0x82D2291C store the count and the Barbarian. Special 0x8314F180 selects count 2 and Barbarian -1."
+          },
+          {
+            "consumer": "players, contact and turns",
+            "fact": "Eight slot storage and the selected count loops can be reused. Hardcoded network extents and callback coverage are not exhaustively checked."
+          },
+          {
+            "consumer": "saving",
+            "fact": "The accepted native transfers cover eight unit pools, eight civilizations and 64 relation words. No new native format follows, and a saved multiplayer setting, load and current mappings are not shown."
+          },
+          {
+            "consumer": "peers",
+            "fact": "Matching local arithmetic follows from equal inputs. Roster, layout, civilization IDs and random state agreeing on every peer is not observed."
+          }
+        ]
       },
       "multiplayerRosterEarlyAdmissionBoundary": {
         "status": "closed",
@@ -16707,6 +16817,82 @@
             ]
           }
         ]
+      },
+      "readerTable": {
+        "sharedWord": "0x82FFE7C8",
+        "perPlayerArray": "0x830E9050 + 2*p halfwords (separate array, not shown to be an AI difficulty array)",
+        "names": "0 Chieftain, 1 Warlord, 2 King, 3 Emperor. Every other value, including 4, selects the Deity view; that is a display fallback, not a range check.",
+        "multiplayerArm": "0x82D221D4 reads the network game byte 0x8314F10B. A nonzero value reaches the literal 2 at 0x82D221E4 and 0x82D221EC stores it to 0x82FFE7C8 through r24 = 0x83000000. The store runs before the call 0x82D8AA60 at 0x82D221FC. 2 is King.",
+        "rows": [
+          {
+            "reader": "research cost",
+            "sites": "0x82CF0F8C..0x82CF1014, D at 0x82CF0FE4, owner 0x82CF0EE8",
+            "effect": "B becomes trunc0(6*B / (D + 6)) before the scenario multiplier.",
+            "requires": "0x8314F10B equal to 0, classifier 0x82CD5A70 low byte 0, a technology owned by the local player, and D above 1. A nonzero network byte disables the discount."
+          },
+          {
+            "reader": "unit, building and Wonder production",
+            "sites": "0x82CF1148 and 0x82CF1278 read L[p]; 0x82CF1500..0x82CF1548 read D",
+            "effect": "A positive L subtracts from the initial scalar 10. The final Wonder branch halves the then-current cost C to C - trunc0(C/2).",
+            "requires": "Wonder: classifier low byte 0 and D above 2 (signed comparison at 0x82CF1520, so D 0..2 pass no reduction and 3..4 do). That arm has no network byte test."
+          },
+          {
+            "reader": "local Culture composition",
+            "sites": "0x82D15094 (r22 = 0), 0x82D15128, 0x82D15134..0x82D15164",
+            "effect": "Adds clamp(2 - D, 0, 2) to the Culture accumulator r18 / stack+0x78: 2, 1, 0, 0, 0 for D 0..4.",
+            "requires": "Owner r17 equals the current local player (child +0x100 result +0xC). This is not happiness."
+          },
+          {
+            "reader": "local combat help",
+            "sites": "0x82CDB120, 0x82CDB268 (side selection); 0x82CDB15C and 0x82CDB294 (D 0); 0x82CDB1E4 and 0x82CDB31C (D 1); 0x82CDB390 and 0x82CDB39C (multiplication)",
+            "effect": "D 0 adds 100 and D 1 adds 50 to the attack or defense multipliers r26 or r27, which then multiply the base strengths.",
+            "requires": "The side equals the accepted local resolver and mode r24 is 0 or 2. Repeated D reads and later changes exclude a blanket percentage."
+          },
+          {
+            "reader": "higher difficulty combat paths",
+            "sites": "0x82CDB8F4..0x82CDB944",
+            "effect": "D above 2 or above 3, with classifier low byte 0, can write retained r22 to frame +0x9C and +0xA0.",
+            "requires": "An earlier frame +0xC0 value can bypass one D test. Flag meanings and outcome are open."
+          },
+          {
+            "reader": "garrison threshold",
+            "sites": "0x82CB40C0..0x82CB40D8",
+            "effect": "r18 = low32(r10 + trunc0(s32(low32(low32(U32[0x830ECD08 + 4*r7] * (D + 1)) * r9)) / 60)).",
+            "requires": "Selected index r7 and inputs; the later action is open. Not a general aggression multiplier."
+          },
+          {
+            "reader": "city priority",
+            "sites": "0x82CC0008..0x82CC013C in 0x82CBF570",
+            "effect": "D not 0 is one condition of a priority path for cities of other owners; D 0 excludes it.",
+            "requires": "Many classification, attack, tile and state checks. Not a universal attack ban."
+          },
+          {
+            "reader": "Barbarian city credit",
+            "sites": "0x82D15430..0x82D15448",
+            "effect": "D 0 with weighted presence can zero the selected credit.",
+            "requires": "Not an AI wide factor."
+          },
+          {
+            "reader": "friendly village reward",
+            "sites": "0x82D0EEB8..0x82D0EEE8",
+            "effect": "A Settlers reward needs D below 2; otherwise the reward is 25 Gold.",
+            "requires": "Network byte 0, so a network game never applies it, plus other conditions. Not AI only."
+          },
+          {
+            "reader": "local win history",
+            "sites": "0x82D052C8, 0x82D05394 onward",
+            "effect": "King and Deity thresholds (D at least 2 and at least 4) and difficulty indexed history.",
+            "requires": "The independent single-player byte check."
+          },
+          {
+            "reader": "extra request when D is below 2",
+            "sites": "0x82D25330, 0x82D25334..0x82D25368",
+            "effect": "D below 2 is one condition before a request to root +0x80 with 13 and -1.",
+            "requires": "Its effect is not tied to the village creator or to an AI bonus."
+          }
+        ],
+        "happinessReader": "None found. The scoped records do not establish a difficulty specific happiness formula. The Culture addend above must not be relabeled as happiness.",
+        "qualification": "Not every reader is listed: see discoveryBoundary. Each row needs its own classification and retention conditions from consumerResult."
       }
     }
   }

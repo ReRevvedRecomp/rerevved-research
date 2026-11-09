@@ -200,6 +200,41 @@
       }
     ]
   },
+  "instructionAddresses": {
+    "unitCostChain": {
+      "function": "0x82CE27F0",
+      "range": "0x82CE28D8..0x82CE2934",
+      "table": "0x82F700D8",
+      "recordSize": "0x94",
+      "fieldOffset": "0x44",
+      "steps": [
+        { "address": "0x82CE28FC", "operation": "lbzx", "role": "load the unit definition byte at +0x44" },
+        { "address": "0x82CE2908", "operation": "extsb", "role": "sign-extend that byte into the unit factor F" },
+        { "address": "0x82CE290C", "operation": "lhzx", "role": "load invested production from city +0x36" },
+        { "address": "0x82CE2914", "operation": "mullw", "role": "multiply F by the return of helper 0x82CF1148" },
+        { "address": "0x82CE2918", "operation": "srawi", "role": "first half of the signed half scaling" },
+        { "address": "0x82CE2920", "operation": "addze", "role": "completes the half with truncation toward zero" },
+        { "address": "0x82CE2928", "operation": "subf", "role": "subtract invested production from the halved unit cost" }
+      ],
+      "separateRushArithmetic": ["0x82CE2910", "0x82CE2934"],
+      "qualification": "The words match the exact generated body. The rush-gold divide at 0x82CE2910 and multiply at 0x82CE2934 are recorded in rush-cost-producer.json. This closes the normal unit remaining-production input inside the rush producer, not complete rush composition or normal completion."
+    },
+    "directHelperCallsites": {
+      "helper": "0x82CF1148",
+      "callsites": [
+        { "address": "0x82CB6784", "owner": "0x82CB44E0" },
+        { "address": "0x82CBA1F8", "owner": "0x82CB6E48" },
+        { "address": "0x82CE2BD4", "owner": "0x82CE2B98" },
+        { "address": "0x82CE6EC8", "owner": "0x82CE6E18" },
+        { "address": "0x82CE9D3C", "owner": "0x82CE9490" },
+        { "address": "0x82CEC2E4", "owner": "0x82CEBC38" },
+        { "address": "0x82CF8360", "owner": "0x82CF8308" },
+        { "address": "0x82D159C8", "owner": "0x82D13978" }
+      ],
+      "completeLocalComposition": ["0x82CBA1F8", "0x82CE2BD4", "0x82CF8360", "0x82D159C8"],
+      "qualification": "All eight call words target the helper. The four listed callsites carry the full unit cost composition in their own function words. In the other four functions the checked words confirm the call and partial dataflow only. The generated direct-call inventory has ten unique callers; two are not covered, so this list is not a complete caller inventory."
+    }
+  },
   "currentEvidence": {
     "method": "eight bounded foreground read-only Ghidra packets with exact-function generated corroboration after identification",
     "entries": [

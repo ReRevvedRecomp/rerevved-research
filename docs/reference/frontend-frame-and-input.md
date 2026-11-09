@@ -315,6 +315,7 @@ names prove no gameplay callbacks. Lookup chain, show/enqueue ownership and
 optional-versus-mandatory choice remain unknown. The
 [entry boundary](../../manifests/advisor-show.json#/findings/RVA-F-0242)
 supplies construction/forwarding, not safe popup suppression.
+The [advisor popup sites](advisor-popup-sites.md) page groups the 169 callers by purpose and result use.
 
 ## Evidence sources
 

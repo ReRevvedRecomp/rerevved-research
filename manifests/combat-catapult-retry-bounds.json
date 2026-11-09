@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0395",
+  "topic": "combat-catapult-retry-bounds",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "For a protected human Catapult attacking a Catapult after turn 20, does the retry cap ever stop the resolver from reaching a winning selection, and how many attempts and draws can it take from any starting generator state?",
+  "scope": {
+    "owner": "0x82CD9970",
+    "kernelEntry": "0x82CDC444",
+    "kernelWindow": {
+      "start": "0x82CDC424",
+      "endExclusive": "0x82CDC8B4",
+      "words": 292,
+      "sha256": "6F79B9B4D6022E3FDE69D47902D05EC60A744C55E5771411A97B7A9FA494E877"
+    },
+    "qualification": "One fixed single unit kernel with the supported file generator parameters. Armies, wounded records, other definition masks, other generator parameters, incompatible overrides and changed participant generations are outside it. The bounds are safe upper bounds, not tight maxima for the actual modified generator."
+  },
+  "dependencies": [
+    {
+      "topic": "combat-outcome",
+      "use": "Retry consumer, counter initialization at 0x82CDC444, cap 1000 and the selection loop in earlyProtectionOutcomeContinuation."
+    },
+    {
+      "topic": "combat-ratio-protection",
+      "use": "Strict rule that sets the attacker protection flag for strength above 3 times the defender."
+    },
+    {
+      "topic": "combat-victory-survival",
+      "use": "Result consumer contract that applies the winning selection to the original units."
+    },
+    {
+      "topic": "unit-definitions-ai-evaluation",
+      "use": "Catapult definition (UnitType 16, attack 4, defense 1, definition byte +0x48 equal to 1, flags 0x00200028)."
+    }
+  ],
+  "result": [
+    {
+      "question": "Which fight is covered?",
+      "answer": "A human attacker against a civilization that is not the Barbarian player, after turn 20, with single Catapults, no recorded casualties and neutral modifiers."
+    },
+    {
+      "question": "Which strength condition?",
+      "answer": "Positive, overflow safe late attack greater than 3 times late defense. The definition and no army transforms keep the earlier ratio."
+    },
+    {
+      "question": "Can the protected attacker reach the 1000 rejection cap?",
+      "answer": "No under the fixed inputs. At most 15 completed selections are rejected before a winning selection, in at most 16 attempts and 2801 generator draws."
+    },
+    {
+      "question": "Which starting states?",
+      "answer": "All 4294967296 state words and any draw counter word, with the stated modulus and scale retained."
+    },
+    {
+      "question": "What is the exact 4:1 bound?",
+      "answer": "For late weights 1200 and 300: at most 12 rejections, 13 attempts and 2276 draws."
+    }
+  ],
+  "kernel": {
+    "start": "0x82CDC444",
+    "state": "Rejection counter 0, participant masks 1 and 1, army bytes 0 and 0, history 0 and 0, protection flags 1 (attacker) and 0 (defender), override 0.",
+    "generator": {
+      "record": "0x82F7AD00",
+      "modulus": 4294954991,
+      "scaleBits": "0x3DF0000301109066",
+      "counter": "The draw counter does not enter the comparison."
+    },
+    "attempt": "Each completed attempt has one comparison and an ordinal search for bit 0. A losing comparison removes the attacker bit, increments the protection rejection counter and retries without reseeding. A winning comparison removes the defender bit. Army 0 bypasses the later cardinality retries. Definition 1 bypasses the additional twofold history producer. One final generator step publishes state and counter.",
+    "loop": "combat-outcome.json#/earlyProtectionOutcomeContinuation"
+  },
+  "guardedSource": {
+    "types": "Both units UnitType 16",
+    "baseStats": "attack 4, defense 1",
+    "completedScalars": "100 and 100",
+    "weightedAndWoundReduced": "400 and 100",
+    "lateWeights": "1200 and 300",
+    "units": "Both on Grassland (terrain byte 1), rank 1, army bytes 0, stored casualty halfwords 0, relevant tile, definition and participant flags select the ordinary path, optional ability contributions 0.",
+    "civilizationGuards": "Attacker civilization is neither 6 nor 13. Wonder 10 is unclaimed. Current signed halfword 0x830E8FFA is 0. The mode, difficulty and ownership guards keep the neutral scalars.",
+    "factorSelection": "The attacker indexed civilization word in the array rooted at 0x830ECD28 is not 13, Catapult definition bit 0x2 is clear and the defender is not the Barbarian player. These select factor 7 at 0x82CDB75C. Then 400 < 7*100 takes 0x82CDB818, which copies retained r22 = 0 before 0x82CDB7BC stores zero through 0x830E4554. 0x82CDB468 supplies that zero. The factor 4 alternative would use r20 = 1 at 0x82CDB7A0 and give a nonzero override, so it is excluded.",
+    "terrain": "Grassland 1 needs the nonzero terrain branches 0x82CDAFF4..0x82CDAFFC and 0x82CDB09C..0x82CDB0A4. Catapult flags 0x00200028 have the tested bit 0x2 clear, so the halving arms are bypassed. Terrain 0 is Sea and is not this land source.",
+    "qualification": "Source conditions. File initial values are not claimed as runtime invariants and no natural matching battle was observed. Override retention from 0x82CDB7BC to the later load needs the selected same owner assignment census and normal helper ABI."
+  },
+  "completeStateReduction": {
+    "constants": {
+      "N": "2^32",
+      "a": 214013,
+      "c": 2531011,
+      "M": "N - 12305 = 4294954991",
+      "F0": "F0(x) = low32(a*x + c)",
+      "F": "F(x) = F0(x) modulo M"
+    },
+    "ordinalZeroInterval": "With the retained scale, ordinal 0 occurs exactly for stepped states in I = [0, 477217221].",
+    "exactLoss": "For late weights 1200 and 300 a comparison loses exactly from state 3435963993 upward.",
+    "conservativeLoss": {
+      "threshold": 3221216243,
+      "formula": "H = floor((3/4)/Q), scale Q = 2251806265067571/2^83",
+      "argument": "For any positive signed late A > 3*D and state < H, the exact real comparison expression is at most 0.75*(A + D), which is at most A - 0.25. The two native ordered binary64 multiplications have total absolute rounding error below 2^-18 on this domain, even with directed IEEE rounding. The exact ordinal and comparison endpoints have larger margins than their full ULP error bounds, so truncation cannot reach A. Signed low word wrapping can remove losses but not add one below H. So [H, M) is a superset of every losing state and need not be the exact loss interval for each ratio."
+    },
+    "period": "F0 has period N. For affine jumps F0^(2^k)(x) = A_k*x + C_k, doubling gives A_(k+1) = A_k^2 and C_(k+1) = C_k*(1 + A_k). Since a - 1 has exactly two factors of 2 and c is odd, A_k - 1 has k + 2 factors of 2 and C_k has k. The jump flips bit k and keeps lower bits for k < 32, and the N step jump is the identity. Every F0 orbit visits every U32 state once. The folded game generator F has outputs below M and does not visit every U32 state.",
+    "fold": "The actual F differs from F0 only when F0 reaches [M, N). It then folds to r <= 12304, inside I, which ends an ordinal search. F0(r) <= 2635746963 < H, so the next comparison from a folded endpoint wins. Until a fold F follows the F0 cycle exactly.",
+    "runBounds": "Label each F0 visit x in I BAD when H <= F0(x) < M, otherwise GOOD. After at most one initial losing comparison from an arbitrary start, successive losing attempts follow consecutive BAD I visits, and a fold ends the chain at a GOOD endpoint. With K the longest run of consecutive BAD I visits and J the longest run of F0 states outside I, every actual F execution has at most K + 1 rejections, K + 2 attempts, J + 1 ordinal draws per attempt and (K + 2)*(J + 2) + 1 total draws including publication."
+  },
+  "exhaustiveScan": {
+    "script": {
+      "locator": "tools/audit-combat-rng-period.ps1",
+      "sha256": "E783071536FFDB3E02148F9954E70D4EBE17DA6CB5FC1164859068CBB3359B54",
+      "selfTest": "pwsh -NoProfile -File tools\\audit-combat-rng-period.ps1 -SelfTest",
+      "cases": "-Case above-three-to-one and -Case exact-four-to-one",
+      "selfTestGroups": 10,
+      "checks": "The scan starts from state 0, a GOOD I event, which prevents an uncounted circular run. It checks the affine period certificate, final state 0, exactly B + 1 I visits, an independently calculated BAD interval count and exhaustive actual F replays over three smaller full period domains. It checks native threshold endpoints and rejects unsupported fold and period inputs."
+    },
+    "runs": [
+      {
+        "case": "above-three-to-one",
+        "role": "Conservative strict envelope for late attack above 3 times defense",
+        "lossThreshold": 3221216243,
+        "states": 4294967296,
+        "eligibleStates": 477217222,
+        "adverseEligibleStates": 119303191,
+        "longestAdverseRun": 14,
+        "longestOrdinalMissRun": 173,
+        "maxRejections": 15,
+        "maxAttempts": 16,
+        "maxDraws": 2801,
+        "endState": 0
+      },
+      {
+        "case": "exact-four-to-one",
+        "role": "Exact late weights 1200 and 300",
+        "lossThreshold": 3435963993,
+        "states": 4294967296,
+        "eligibleStates": 477217222,
+        "adverseEligibleStates": 95442550,
+        "longestAdverseRun": 11,
+        "longestOrdinalMissRun": 173,
+        "maxRejections": 12,
+        "maxAttempts": 13,
+        "maxDraws": 2276,
+        "endState": 0
+      }
+    ],
+    "badCount": "The independent BAD count sums disjoint integer intervals [0, B] intersected with [ceil((q*N + H - c)/a), floor((q*N + M - 1 - c)/a)] over the relevant quotients q. It agrees with both scans.",
+    "qualification": "Complete finite scans with a proved state space reduction, not samples or an independent trial probability argument. Both runs ended at state 0."
+  },
+  "forcedSelection": {
+    "override": "The nonzero attacker favoring override loaded at 0x82CDC6C4 forces selection value 1, which removes a defender figure. Its gameplay name is unresolved. The source path supplies it. A large displayed ratio alone does not.",
+    "source": "On the default factor 7 route, 0x82CDB774 and 0x82CDB778 compare the actual source attack with 7 times the source defense. 0x82CDB77C takes the zero route only for strict less than, so equality can reach the nonzero path. The Catapult base attack byte 4 passes the following nonzero test, and retained r20 = 1 is stored through 0x830E4554 at 0x82CDB7A0. Definition flag 2 is clear, which bypasses the secondary store at 0x82CDB7BC. The pointer and pointee must keep this value from 0x830E4554 to the 0x82CDC6C4 load under the override carrier and selection store contracts in combat-outcome.json.",
+    "conditions": "Non-Barbarian opponent, factor 7 civilization and definition conditions, no added abilities, support or halving, zero casualties, history 0 and 0, and the fixed generator inputs.",
+    "examples": [
+      {
+        "attacker": "Veteran Catapult attacking from Hills against a Catapult on Grassland",
+        "strengthCalculation": "4*(150+50)/100 = 8",
+        "sourceOperands": "800 and 100; 800 >= 7*100",
+        "lateWeights": "2400 and 300",
+        "initialMasks": "1 and 1"
+      },
+      {
+        "attacker": "Catapult Army attacking from Grassland against a Catapult",
+        "strengthCalculation": "(4*3)*100/100 = 12",
+        "sourceOperands": "1200 and 100; 1200 >= 7*100",
+        "lateWeights": "1200 and 300 after army division",
+        "initialMasks": "0x49 and 1"
+      }
+    ],
+    "controls": "Numeric source controls 699 and 100, and 700 and 100, separate the strict source boundary. They are arithmetic controls, not additional unit constructions.",
+    "outcome": "The defender has only bit 0. Both possible random comparison values are overwritten by selection value 1. The ordinal 0 search eventually removes that defender bit. The ordinary attacker keeps bit 0. The healthy Army keeps all three bits 0x49 and passes the final army gate. History becomes 0 and 2, so neither the history equals 1 rejection nor protected elimination can retry. A winning selection returns on the first attempt.",
+    "drawBound": "The complete state certificate gives at most 174 ordinal draws from any state, including modulus folds. Adding one comparison and one publication draw gives at most 176 draws for all 4294967296 starting states and any draw counter. No new scan is needed. This follows from the forced selection and is separate from the zero override retry bound.",
+    "checks": "Source to load and removal checks for definition 1 single and Army sources reject broken override retention and source boundary mutations. The result conditions are in combat-victory-survival.json."
+  },
+  "guards": [
+    "The proof covers selection only. Applying the winning selection to the original units has the separate result and lifetime conditions in combat-victory-survival.json.",
+    "It is not a probability estimate, not an all unit theorem and not a proof of every later whole battle state change.",
+    "Other rows of the protection table inherit no all state guarantee from this kernel.",
+    "The native retry cap 1000 is not a draw count. The 1000 cap fallthrough alone does not prove a protected loss."
+  ],
+  "conclusion": "For the fixed single Catapult kernel every one of the 4294967296 starting generator states reaches a winning selection for the protected attacker within 16 attempts and 2801 draws when its strength is above 3 times the defender, and within 13 attempts and 2276 draws for exact 4:1 late weights. Forced attacker selection gives a first attempt win within 176 draws for the Veteran Hills 8:1 and Army 12:1 sources."
+}

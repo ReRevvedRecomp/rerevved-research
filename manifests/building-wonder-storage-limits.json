@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0410",
+  "topic": "building-wonder-storage-limits",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which stored limits on Building options, Wonder claim slots and Wonder definitions decide whether a new Building or Wonder could be added, and which of those limits are established?",
+  "scope": {
+    "buildingOptionAppend": "0x822D10C0",
+    "wonderMenuGenerator": "0x82CE2FD0",
+    "claimTable": "0x830E5148",
+    "claimHelper": "0x82D16BA0",
+    "eligibilityHelper": "0x82CF3608",
+    "serializer": "0x82CC4040",
+    "boundary": "Summary of accepted local limits. Global impossibility and complete extension safety are not established."
+  },
+  "dependencies": [
+    {
+      "topic": "building-option-copy-capacity",
+      "use": "Provides the fixed 100 word tail and the unchecked count."
+    },
+    {
+      "topic": "building-option-append-capacity",
+      "use": "Provides the append capacity check and the slow edge."
+    },
+    {
+      "topic": "building-record-identities-100-122",
+      "use": "Provides the record range and the overlap after item 122."
+    },
+    {
+      "topic": "building-completion-state-writer",
+      "use": "Provides the completion bit and list writers."
+    },
+    {
+      "topic": "city-production-option-source",
+      "use": "Provides the Wonder menu loop over 33 slots."
+    },
+    {
+      "topic": "wonder-claim-slot-state",
+      "use": "Provides the claim reset and writer."
+    },
+    {
+      "topic": "wonder-post-threshold-helper",
+      "use": "Provides the helper range check."
+    },
+    {
+      "topic": "wonder-outer-check-record-fields",
+      "use": "Provides the eligibility helper's record read."
+    },
+    {
+      "topic": "wonder-record-byte-boundary-237-249",
+      "use": "Provides the all zero bytes after item 236."
+    }
+  ],
+  "buildingOption": {
+    "append": "The append helper 0x822D10C0 is reached at 0x82DFF360 with the descriptor at child +0x430. With a nonzero begin pointer and a computed size below the computed capacity it writes one four byte entry at the end pointer and advances it. A zero begin pointer or a full descriptor delegates to 0x822D1150 at 0x822D113C.",
+    "wrapper": "The option wrapper passes a byte count based on the fixed 100 word tail and returns the visible count separately. It has no local check that the count is at most 100.",
+    "unresolved": "The growth path behind 0x822D1150, allocation, failure handling and the descriptor reset at 0x821C6C28 are not inspected.",
+    "verdict": "locally constrained, with complete transport capacity unresolved"
+  },
+  "buildingDefinitions": {
+    "records": "Twenty three Building records, items 100 through 122, at 0x82F71FD8 with stride 0xCC. The next stride position overlaps non record data before the Wonder table at 0x82F73238.",
+    "completion": "The completion helper 0x82D02090 is called at 0x82D16158 (0x82D16154 only prepares the argument) and writes city building bits and a bounded list of 28 bytes and has no independent upper item ID check. Room in the option buffer does not give a valid new ID or a completion slot.",
+    "cost": "The cost helper accepts IDs 100 through 199. That range is not a definition validity rule."
+  },
+  "wonderMenuAndClaims": {
+    "menu": "The menu generator walks 33 eight byte slots from 0x830E5148 to 0x830E5250, tests a slot only when its first word is -1, calls the eligibility helper with index 0 through 32 and appends index + 200. It can offer items 200 through 232 only.",
+    "helper": "The claim helper 0x82D16BA0 rejects normalized indices below zero or at least 33 at 0x82D16BC8 and 0x82D16BD8. Its mode one write stores owner and city in the same eight byte slots at 0x82D16C08 and 0x82D16C10.",
+    "reset": "The reset at 0x82D060C4..0x82D060D4 fills 0x108 bytes with 0xFF.",
+    "verdict": "locally constrained: an extra distinct slot needs the menu bound, the helper bound and the table extended together"
+  },
+  "wonderDefinitions": {
+    "records": "Initialized Wonder records run through item 236 at stride 0x14C from 0x82F73238. Items 233 through 236 lie outside the menu loop and the helper range.",
+    "continuation": "The twelve stride positions for items 237 through 248 (0x82F76234..0x82F771C3) are all zero bytes. The next position at 0x82F771C4 holds different data.",
+    "qualification": "Zero bytes alone do not show a table end or an invalid ID rule."
+  },
+  "eligibility": {
+    "helper": "0x82CF3608 has no accepted upper ID guard. The generic branch computes 0x82F73238 + index*0x14C without a bounds check and reads halfwords at +0x44, +0x46 and +0x48 as technology IDs or -1.",
+    "qualification": "The technology checks must stay distinct from the menu loop and the claim writer bounds."
+  },
+  "serializer": {
+    "symbol": "RVA-SYM-0333",
+    "name": "BroadGameStateSerializer",
+    "address": "0x82CC4040",
+    "qualification": "An accepted broad serializer for many state blocks. Its identity alone does not show that it transfers Wonder claims; the claim reset and paired copy paths are in wonder-claim-table-consumer."
+  },
+  "currentEvidence": {
+    "method": "Foreground read-only queries over the append helper and the option wrapper and child copy bodies, with the Wonder answer taken from accepted manifests. All queried words matched the pinned flat image. Neither route was tested at runtime.",
+    "entries": [
+      {
+        "role": "append capacity check",
+        "address": "0x822D10C0..0x822D114C",
+        "confidence": "strong"
+      },
+      {
+        "role": "Wonder menu loop",
+        "address": "0x82CE3034..0x82CE3068",
+        "confidence": "strong"
+      },
+      {
+        "role": "claim helper range check",
+        "address": "0x82D16BC8..0x82D16BD8",
+        "confidence": "strong"
+      }
+    ],
+    "qualification": "These are local limits of selected paths."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No new Building or Wonder was added or tested."
+  },
+  "guards": [
+    "Do not read room in the option buffer as a valid new Building ID or definition.",
+    "Do not equate the 33 claim slots with the 37 initialized Wonder definitions.",
+    "Do not infer that items 233 through 236 or IDs after them are globally invalid or unreachable.",
+    "Do not infer that the serializer identity transfers Wonder claims.",
+    "Do not claim save, effect or multiplayer safety for new content."
+  ],
+  "conclusion": "Both questions have local limits. Building options pass through a pointer based capacity check with an uninspected growth path and a fixed 100 word tail. Wonders are limited to 33 claim slots, items 200 through 232, by the menu loop, the claim helper and the reset together, while initialized definitions continue to item 236. A new Building or Wonder would also need a semantic ID, a definition and a completion slot that the evidence does not provide."
+}

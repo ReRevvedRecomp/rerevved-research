@@ -49,7 +49,7 @@ finding records those qualifications alongside the exact cells and keys.
 
 The catalog covers retail metadata and trigger-research status. Custom
 recompilation achievements use their own IDs and are outside its 50 entries.
-The [ordinary combat boundary](ordinary-combat.md) explains why an observed
+The [combat reference](combat.md) explains why an observed
 combat or presentation pass cannot be assumed to be a unique unit defeat.
 
 ## Custom achievement seams

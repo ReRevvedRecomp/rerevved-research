@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0408",
+  "topic": "city-credit-calendar-cadence",
+  "status": "open",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Under what local conditions does CalendarTurnAdvance reach its three mode-zero CityUpdate calls, how can one city be offered more than one, and which science progress writes and other reserve changes sit beside the per-city Gold credit?",
+  "scope": {
+    "calendar": "0x82D1EAB0",
+    "cityUpdate": "0x82D13978",
+    "modeZeroSites": [
+      "0x82D1FC14",
+      "0x82D1FD20",
+      "0x82D1FDC8"
+    ],
+    "ranges": [
+      "0x82D1F744..0x82D1F9D0",
+      "0x82D1F9D0..0x82D1FB08",
+      "0x82D1FDCC..0x82D1FF38",
+      "0x82D1FF38..0x82D1FF90",
+      "0x82D15370..0x82D15680"
+    ],
+    "boundary": "Local conditions and local multiplicity. Invocation counts, indirect callers and the intended cadence are not established."
+  },
+  "dependencies": [
+    {
+      "topic": "city-yield-credit-call",
+      "use": "Provides the 24 direct sites and the first call decisions."
+    },
+    {
+      "topic": "city-yield-turn-scheduling-inputs",
+      "use": "Provides the later call inputs and arithmetic."
+    },
+    {
+      "topic": "city-yield-ranking-table",
+      "use": "Provides the ranking reads that feed the call conditions."
+    },
+    {
+      "topic": "science-completion",
+      "use": "Provides the cached progress producer and the excess Gold store."
+    },
+    {
+      "topic": "gold-reserve-interest",
+      "use": "Provides the interest store."
+    }
+  ],
+  "modeZeroSites": [
+    {
+      "callSite": "0x82D1FC14",
+      "conditions": "Skipped by the cached branch (a retained byte predicate, an odd low bit of turn plus city, or turn below 20) and by its ranking, parity and turn conditions. Takes loop city r25."
+    },
+    {
+      "callSite": "0x82D1FD20",
+      "conditions": "Needs the saved player and excluded player checks, difficulty value 3, the saved player halfword above a second indexed halfword, and signed (turn + city) remainder 5 equal to zero. The ranking read of this region also lists a signed turn difference above 10 for the call. Takes loop city r25."
+    },
+    {
+      "callSite": "0x82D1FDC8",
+      "conditions": "Needs the saved player and excluded player checks, difficulty value 4, and a zero remainder of (turn + city) after division by 3 or 4. Divisor 4 is selected when the indexed halfword is nonzero and the signed turn difference exceeds 10, otherwise 3. Takes loop city r25."
+    }
+  ],
+  "difficultyWord": {
+    "address": "0x82FFE7C8",
+    "qualification": "The difficulty word is 0x82FFE7C8. The exact word meaning is the shared difficulty word of the AI options topic; it is read here as the effective value in the three conditions."
+  },
+  "multiplicity": {
+    "loop": "The selected loop advances the city index over 0..127 once, at 0x82D1FF40..0x82D1FF48.",
+    "perCity": "Before that increment the loop can offer more than one mode-zero call for the same city. With difficulty 3 or 4 held stable, the first site and the matching later site can both be selected when their other conditions allow.",
+    "consequence": "The three site counts are not three guaranteed credits and not a once per turn invariant. Reentry, ownership transfer and unexpanded helpers lie outside the proof. A deduplicator for city and turn would add behavior unless the intended credit unit is established first."
+  },
+  "scienceProgressRoutes": {
+    "continuing": "On the continuing CityUpdate path the word at 0x830EDD48 + owner*4 is read. When the signed word is above zero, 0x82D155B8 stores old selected progress + old zero column progress + r20 and 0x82D155BC clears the zero column. Otherwise 0x82D155E0 adds r20 to the owner's zero column. Both reach 0x82D155E4, before the Gold credit. Progress base is 0x830EDD68 with row stride 48*4.",
+    "cached": "The cached Calendar path adds signed city +0x44 to 0x830EDD68 + 4*(incomingPlayer*48 + selectedTechnology) at 0x82D1FAB4 when the selected technology is not -1.",
+    "qualification": "These are conditional native science progress routes, distinct from the Gold operands. They do not close every science producer or the valid technology domain."
+  },
+  "otherReserveChanges": {
+    "interest": "CalendarTurnAdvance stores reserve interest at 0x82D1F4A4.",
+    "scienceExcess": "Technology completion excess stores Gold at 0x82D20C14.",
+    "qualification": "Neither is the per-city Gold credit and neither receives a Library per-city bonus. Keep both separate in any measured reserve change."
+  },
+  "currentEvidence": {
+    "method": "Three foreground read-only raw word queries over the listed ranges plus the accepted ranking gate read, checked against the pinned flat image. All words matched. No runtime action was performed.",
+    "entries": [
+      {
+        "role": "mode zero call conditions",
+        "address": "0x82D1FAF8..0x82D1FDC8",
+        "confidence": "strong"
+      },
+      {
+        "role": "loop increment and bound",
+        "address": "0x82D1FF40..0x82D1FF48",
+        "confidence": "strong"
+      },
+      {
+        "role": "science progress routes",
+        "address": "0x82D155B8..0x82D155E4",
+        "confidence": "strong"
+      }
+    ],
+    "qualification": "Predicates and results stay their own native reads. Stable state across callbacks is not presumed."
+  },
+  "runtimeObservation": {
+    "status": "not-observed",
+    "qualification": "No Calendar pass, call or credit was observed."
+  },
+  "guards": [
+    "Do not treat the three sites as three credits per city turn or as exactly one.",
+    "Do not read the divisors or the remainder of five as player facing frequencies.",
+    "Do not add the interest or technology excess changes to the per city Gold credit.",
+    "Do not infer indirect callers, reentry or cadence from the direct inventory."
+  ],
+  "conclusion": "The three mode-zero sites are conditional. Under stable difficulty 3 or 4 a city can reach two of them in one loop pass, so the number of per city Gold credits per turn is not fixed by the static evidence. The continuing path writes science progress before the Gold credit, and interest and technology excess Gold are separate reserve changes."
+}

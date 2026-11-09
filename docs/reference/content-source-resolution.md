@@ -96,8 +96,8 @@ Neither establishes MAPNUMBER linkage; see the
 
 - [Main-menu File Data handoff](../../manifests/gfx-main-menu-filedata-handoff.json)
 - [Map content precedence](../../manifests/map-content-precedence.json)
-- [Map delivery boundary](../../manifests/map-delivery-boundary.json)
+- [Map delivery boundary](../../manifests/map-delivery.json)
 - [MapList selection owner](../../manifests/map-list-selection-owner.json)
 - [Registered-source delivery
-  boundary](../../manifests/registered-source-delivery-boundary.json)
+  boundary](../../manifests/registered-source-delivery.json)
 - [Catalog contract](../catalogs.md)

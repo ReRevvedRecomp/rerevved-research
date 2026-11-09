@@ -115,7 +115,7 @@ override follows a consumed comparison draw. Its actual live value and the
 producer-to-sample retention remain conditions; its name or gameplay policy
 is not recovered from this pointer identity.
 
-The [save-header boundary](../../manifests/combat-rng-save-reload-boundary.json)
+The [save-header boundary](../../manifests/combat-rng-save-reload.json)
 binds a conditional persistence mechanism. The default mode 0 output path in
 `0x82CC29B8` includes the current main-state word. Mode1 input places its
 helper-dependent value in local record `+0xC`. On a later guarded load path,
@@ -283,7 +283,7 @@ early. Neither supplies continuing stats/array.
 Countdown 1 decrements to zero, then tests bits. Local-player -1 gives `slw`
 low-six shift 63 -> zero, even with `+24` = `0xFFFF`, bypassing the one store.
 
-The [resolver boundary](../../manifests/playable-game-state-gates.json) binds
+The [resolver boundary](../../manifests/playable-game-state-requirements.json) binds
 initial null input and conditional registry child. Its `+0x100` returns `+0x20`;
 successful 108-byte allocation initializes `+0xC` low word `0xFFFFFFFF`. Neither
 adds compatible nonzero `+148` inputs. Child `+0x88` conditionally exchanges
@@ -295,11 +295,11 @@ Separate ordinal producer/three callers bind loads/stores; insertion guards join
 two getter returns to constructed results. Current key/child equality, internal
 `+0x4` lookup/`+0x148`, actual scalars and retention remain open. Wrapper needs
 result identity/`+0x190`; four setup bodies contain no `+0x88` invocation.
-[Prior-word boundary](../../manifests/playable-game-state-gates.json) requires
+[Prior-word boundary](../../manifests/playable-game-state-requirements.json) requires
 exact key/value joins or a new scoped caller, plus ordered compatible
 consumption before selecting nonzero stat/array arms.
 
-[Caller-key/scalar boundary](../../manifests/playable-game-state-gates.json)
+[Caller-key/scalar boundary](../../manifests/playable-game-state-requirements.json)
 bounds direct ingress/sparse installer hypothesis without actual key/receiver.
 Two readers pass own `+0x34` to four-byte input helper; shared receiver, source
 and `+0x8` zero remain unknown. Zero-route arrays and independent presenter
@@ -393,6 +393,6 @@ Preserve presentation/pump/completion:
 [combat lifecycle](../../manifests/combat-resolution-lifecycle.json) observed
 participant changes during presentation. No damage/experience/death/
 capture/distribution or human/AI/city/naval/air parity follows. See
-[bounded evidence](../../manifests/ordinary-combat-outcome-boundary.json) for
+[bounded evidence](../../manifests/combat-outcome.json) for
 windows/guards/examples and
 [stat roles](unit-definitions.md#combat-stat-role-boundary).

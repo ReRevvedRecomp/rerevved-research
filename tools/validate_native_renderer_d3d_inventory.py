@@ -66,7 +66,7 @@ TOPIC_REFS = {
     "gfx-fetch-allocation.json#/scope",
     "gfx-fetch-allocation.json#/currentEvidence/entries/2",
     "gfx-fetch-allocation.json#/vertexFetchProducer/wrapper",
-    "native-renderer-d3d-draw-lowering-frontier.json#/repairedReferenceIndex",
+    "native-renderer-d3d-draw-lowering.json#/repairedReferenceIndex",
 }
 
 EXPECTED_SCOPE = {
@@ -106,9 +106,7 @@ EXPECTED_SCOPE = {
 }
 EXPECTED_UNRESOLVED_COVERAGE = {
     "categories": UNRESOLVED_COVERAGE_CATEGORIES,
-    "evidenceBasis": [
-        "native-renderer-d3d-draw-lowering-frontier.json#/repairedReferenceIndex"
-    ],
+    "evidenceBasis": ["native-renderer-d3d-draw-lowering.json#/repairedReferenceIndex"],
 }
 EXPECTED_DEPENDENCIES = [
     {
@@ -123,7 +121,7 @@ EXPECTED_DEPENDENCIES = [
         "use": "accepted flush-and-issue wrapper identity and direct wrapper call",
     },
     {
-        "topic": "native-renderer-d3d-draw-lowering-frontier",
+        "topic": "native-renderer-d3d-draw-lowering",
         "use": (
             "accepted repaired reference replay for the two direct callsites "
             "and bounded partial root"
@@ -473,7 +471,7 @@ def _validate_partial_export(document: dict[str, Any], repo: Path) -> None:
             "RVA-SYM-0255",
             "RVA-REL-0349",
             "gfx-draw-producer.json#/drawSubmission/issue",
-            "native-renderer-d3d-draw-lowering-frontier.json#/repairedReferenceIndex",
+            "native-renderer-d3d-draw-lowering.json#/repairedReferenceIndex",
         ],
         "export claim references",
     )
@@ -518,7 +516,7 @@ def _validate_exact_packet(document: dict[str, Any]) -> None:
     _require_exact(
         root["claimRefs"],
         [
-            "native-renderer-d3d-draw-lowering-frontier.json#/repairedReferenceIndex",
+            "native-renderer-d3d-draw-lowering.json#/repairedReferenceIndex",
             "RVA-SYM-0255",
             "RVA-REL-0349",
         ],
@@ -544,7 +542,7 @@ def _validate_exact_packet(document: dict[str, Any]) -> None:
                 "RVA-REL-0349",
                 "gfx-draw-producer.json#/currentEvidence/entries/10",
                 "gfx-draw-producer.json#/drawSubmission",
-                "native-renderer-d3d-draw-lowering-frontier.json#/repairedReferenceIndex",
+                "native-renderer-d3d-draw-lowering.json#/repairedReferenceIndex",
             ],
         },
         "NRD-OP-0002": {
@@ -559,7 +557,7 @@ def _validate_exact_packet(document: dict[str, Any]) -> None:
                 "RVA-REL-0350",
                 "gfx-fetch-allocation.json#/currentEvidence/entries/2",
                 "gfx-fetch-allocation.json#/vertexFetchProducer/wrapper",
-                "native-renderer-d3d-draw-lowering-frontier.json#/repairedReferenceIndex",
+                "native-renderer-d3d-draw-lowering.json#/repairedReferenceIndex",
             ],
         },
     }

@@ -466,7 +466,7 @@ class TopicManifestTests(unittest.TestCase):
         )
 
     def test_gfx_child_slot_consumer_boundary(self) -> None:
-        document = self.by_topic["gfx-child-slot-consumer-boundary"]
+        document = self.by_topic["gfx-child-slot-consumer"]
 
         self.assertEqual(document["id"], "RVA-F-0105")
         self.assertEqual(document["scope"]["dispatchTarget"], "0x821FBC38")
@@ -484,7 +484,7 @@ class TopicManifestTests(unittest.TestCase):
         )
 
     def test_non_unit_production_threshold_boundary(self) -> None:
-        document = self.by_topic["non-unit-production-threshold-boundary"]
+        document = self.by_topic["non-unit-production-threshold"]
 
         self.assertEqual(document["id"], "RVA-F-0106")
         self.assertEqual(document["scope"]["function"], "0x82D13978")
@@ -504,7 +504,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("Raw words", document["currentEvidence"]["qualification"])
 
     def test_playable_interface_gate_ownership_boundary(self) -> None:
-        document = self.by_topic["playable-interface-gate-ownership-boundary"]
+        document = self.by_topic["playable-interface-flag-ownership"]
 
         self.assertEqual(document["id"], "RVA-F-0107")
         self.assertEqual(document["scope"]["global"], "0x8314F28C")
@@ -669,7 +669,7 @@ class TopicManifestTests(unittest.TestCase):
         )
 
     def test_gold_reserve_aggregate_lifecycle_boundary(self) -> None:
-        document = self.by_topic["gold-reserve-aggregate-lifecycle-boundary"]
+        document = self.by_topic["gold-reserve-aggregate-lifecycle"]
 
         self.assertEqual(document["id"], "RVA-F-0108")
         self.assertEqual(document["scope"]["aggregate"], "0x830ED544 + player*4")
@@ -684,7 +684,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_native_renderer_indexed_draw_caller_frontier(self) -> None:
-        document = self.by_topic["native-renderer-indexed-draw-caller-frontier"]
+        document = self.by_topic["native-renderer-indexed-draw-callers"]
 
         self.assertEqual(document["id"], "RVA-F-0109")
         self.assertEqual(document["scope"]["indexedDraw"], "0x82303C38")
@@ -698,7 +698,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_save_profile_owner_lifetime_boundary(self) -> None:
-        document = self.by_topic["save-profile-owner-lifetime-boundary"]
+        document = self.by_topic["save-profile-owner-lifetime"]
 
         self.assertEqual(document["id"], "RVA-F-0111")
         self.assertEqual(document["scope"]["ownerGlobal"], "0x8314EFE0")
@@ -714,7 +714,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_xbox_dds_map_authoring_consumer_boundary(self) -> None:
-        document = self.by_topic["xbox-dds-map-authoring-consumer-boundary"]
+        document = self.by_topic["xbox-dds-map-authoring-consumer"]
 
         self.assertEqual(document["id"], "RVA-F-0112")
         self.assertEqual(document["scope"]["terrainLoader"], "0x82C6E188")
@@ -748,7 +748,7 @@ class TopicManifestTests(unittest.TestCase):
         )
 
     def test_key2_game_start_registration_boundary(self) -> None:
-        document = self.by_topic["key2-game-start-registration-boundary"]
+        document = self.by_topic["key2-game-start-registration"]
 
         self.assertEqual(document["id"], "RVA-F-0114")
         self.assertEqual(document["referenceResults"]["combinedFunctionCount"], 2)
@@ -764,7 +764,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_frame_timing_field10_reader_boundary(self) -> None:
-        document = self.by_topic["frame-timing-field10-reader-boundary"]
+        document = self.by_topic["frame-timing-field10-reader"]
 
         self.assertEqual(document["id"], "RVA-F-0115")
         self.assertEqual(len(document["writerReconfirmation"]["fieldAccesses"]), 2)
@@ -783,7 +783,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_audio_stream_handle_lifecycle_boundary(self) -> None:
-        document = self.by_topic["audio-stream-handle-lifecycle-boundary"]
+        document = self.by_topic["audio-stream-handle-lifecycle"]
 
         self.assertEqual(document["id"], "RVA-F-0117")
         self.assertEqual(document["scope"]["slotSize"], "0x38")
@@ -1049,7 +1049,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertIn("renderer", unresolved)
 
     def test_native_renderer_resource_lifetime_boundary(self) -> None:
-        document = self.by_topic["native-renderer-resource-lifetime-boundary"]
+        document = self.by_topic["native-renderer-resource-lifetime"]
 
         self.assertEqual(document["id"], "RVA-F-0127")
         self.assertEqual(document["status"], "closed")
@@ -1068,7 +1068,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
     def test_native_renderer_ring_span_boundary(self) -> None:
-        document = self.by_topic["native-renderer-ring-span-boundary"]
+        document = self.by_topic["native-renderer-ring-span"]
 
         self.assertEqual(document["id"], "RVA-F-0128")
         self.assertEqual(document["status"], "closed")

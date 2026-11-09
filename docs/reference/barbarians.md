@@ -205,7 +205,7 @@ at `0x82DAF26C..0x82DAF29C`:
 | `DISPLAYCARD`, Q+0x3C | -1 | 556 |
 
 Names/defaults come from
-[`scenario-schema-boundary.json`](../../manifests/scenario-schema-boundary.json).
+[`scenario-schema.json`](../../manifests/scenario-schema.json).
 Only the aggression threshold and fecundity credit consumers are bound here;
 names alone do not prove other slot effects or a path specific to a scenario ID.
 
@@ -303,4 +303,4 @@ scenario-specific behavior remain separate.
 
 Exact scopes, native words, producer/reload qualifications, closed searches and
 the remaining publication/input discriminator are in
-[barbarian-spawn-population-boundary.json](../../manifests/barbarian-spawn-population-boundary.json).
+[barbarian-spawn-population.json](../../manifests/barbarian-spawn-population.json).

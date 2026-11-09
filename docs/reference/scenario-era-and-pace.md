@@ -3,9 +3,9 @@
 Native scenarios provide starting technologies and separate rule inputs. They
 do not establish that a player owns all technologies from earlier eras, or
 that one setting slows the whole game. The
-[starting-era finding](../../manifests/scenario-start-era-grant-boundary.json)
+[starting-era finding](../../manifests/scenario-start-era-grant.json)
 and
-[SPEEDMODE finding](../../manifests/scenario-speedmode-movement-boundary.json)
+[SPEEDMODE finding](../../manifests/scenario-speedmode-movement.json)
 record the conditional native behavior and its limits.
 
 ## Starting technology grants

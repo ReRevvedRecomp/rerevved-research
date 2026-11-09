@@ -28,7 +28,7 @@ selected block write; callback BLR alone would not suffice.
 | PS `0x82C2AB08` | Same pointer/`r4=0`, `r5=r1+0x900`, `r6=8` | `[0x8314F300]+0x1780` -> `r1+0x900..r1+0x97F`, `0x80` bytes |
 
 The shared
-[copy contract](../../manifests/native-renderer-shader-fetch-patch-boundary.json#/currentEvidence/shaderConstructionBoundary/metadataTransferBoundary)
+[copy contract](../../manifests/native-renderer-shader-fetch-patch.json#/currentEvidence/shaderConstructionBoundary/metadataTransferBoundary)
 bounds transfer/return for lengths at least 16 under its readable aligned
 source envelope, writable destination/stack, disjoint physical aliases,
 supported execution and retention premises. These requested lengths meet its
@@ -121,7 +121,7 @@ tracks dispatch `0x82C2D270`: selector `0` loads `0x82C2D2A0` and reaches
 
 `8` uses `0x82C2E5E8=0x82C2E85C`; `0x82C2E5C8=0x82C2E6FC` is unselected case-0.
 F360/FD08 call sampler setters `0x8268F140`/`0x8268EF98`. The
-[sampler boundary](../../manifests/native-renderer-sampler-shadow-write-boundary.json)
+[sampler boundary](../../manifests/native-renderer-sampler-shadow-write.json)
 records each window's explicit stores: 4 bytes `R+0x48C+0x18*i`, 4 bytes
 `R+0x490+0x18*i` (twice), OR 8-byte dirty `R+0x18`. Bounds `i` = `0..3`/`0..7`
 exclude same-base float shadows `D+0x780..D+0xD7F`/`D+0x1780..D+0x17FF`.

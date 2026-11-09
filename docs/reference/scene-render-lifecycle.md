@@ -73,7 +73,7 @@ Targets/stops:
 - [Scene render-tree update](../../manifests/scene-render-tree-update.json)
 - [`scene-root-references.json#/findings/RVA-F-0094`](../../manifests/scene-root-references.json#/findings/RVA-F-0094)
 - [`scene-root-references.json#/findings/RVA-F-0104`](../../manifests/scene-root-references.json#/findings/RVA-F-0104)
-- [Gameplay main-frame boundary](../../manifests/gameplay-main-frame-boundary.json)
+- [Gameplay main-frame boundary](../../manifests/gameplay-main-frame.json)
 - [Audio initialization and stream
   ownership](../../manifests/audio-initialization-stream-ownership.json)
 - [Catalog contract](../catalogs.md)

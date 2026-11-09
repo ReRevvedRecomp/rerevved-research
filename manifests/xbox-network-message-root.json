@@ -16,8 +16,8 @@
     { "topic": "combat-resolution-lifecycle", "use": "accepted Xbox command 0 Combat case" },
     { "topic": "rush-cost-producer", "use": "accepted Xbox command 6 Rush case" },
     { "topic": "unit-movement-lifecycle", "use": "accepted Xbox command 17 Move case and existing submit/consumer identities" },
-    { "topic": "combat-rng-save-reload-boundary", "use": "identifies the compared 0x82F7AD00 word as current main RNG state with conditional save/load transfer" },
-    { "topic": "spaceship-part-presentation-boundary", "use": "bounds the scalar projection and conditional nested command-drain phase" }
+    { "topic": "combat-rng-save-reload", "use": "identifies the compared 0x82F7AD00 word as current main RNG state with conditional save/load transfer" },
+    { "topic": "spaceship-part-presentation", "use": "bounds the scalar projection and conditional nested command-drain phase" }
   ],
   "currentEvidence": {
     "method": "foreground read-only Ghidra string, pointer, function, raw-word, and dispatch-table queries against the pinned image, with narrow generated-code corroboration only after exact function identification",
@@ -173,7 +173,7 @@
           "type": 51,
           "target": "0x82CDE768",
           "staticRole": "Conditionally clears one per-player bit in 0x830EE7E0 when IsHumanPlayer returns true for the value at 0x8312B8E4.",
-          "semanticEvidence": "Exact Xbox case words at 0x82CDE768..0x82CDE794 and playable-game-state-gates"
+          "semanticEvidence": "Exact Xbox case words at 0x82CDE768..0x82CDE794 and playable-game-state-requirements"
         },
         {
           "type": 52,
@@ -212,7 +212,7 @@
       ]
     }
   },
-  "nativeTurnNameEvidence": "native-human-turn-completion-boundary.json#/nativeCommandNames owns the selected Xbox debug-label map and the dispatcher record-type input join. These labels do not establish runtime ordering or synchronization semantics.",
+  "nativeTurnNameEvidence": "native-human-turn-completion.json#/nativeCommandNames owns the selected Xbox debug-label map and the dispatcher record-type input join. These labels do not establish runtime ordering or synchronization semantics.",
   "turnAndSyncAnchors": {
     "cases46And47": {
       "types": [46, 47],
@@ -247,7 +247,7 @@
         { "function": "0x82E2E078", "store": "0x82E2E2CC", "source": "The +0x134 word of the object referenced by neutral pointer global 0x8314EFC8." }
       ],
       "localRecordTransition": "Caller 0x82D86400 passes a local record at r1+0xA0 with mode 1 to 0x82CC29B8. On a flag-guarded path, the builder seeds a temporary from 0x82F7AD00, applies helper 0x822DE438, and writes the result to record +0x0C; the caller later copies that field to 0x82F7AD00.",
-      "currentStateIdentity": "combat-rng-save-reload-boundary.json#/headerStateTransferBoundary identifies 0x82F7AD00 as current main RNG state and bounds its conditional header save/load transfer. It does not identify this value as an immutable initial map seed.",
+      "currentStateIdentity": "combat-rng-save-reload.json#/headerStateTransferBoundary identifies 0x82F7AD00 as current main RNG state and bounds its conditional header save/load transfer. It does not identify this value as an immutable initial map seed.",
       "qualification": "This is the bounded generated candidate-writer set, not an executable-wide reference closure. The builder's outer flag branch can skip its field write. Other pointer, object, helper and local-record meanings remain unresolved. Current RNG-state identity proves neither complete generator restoration nor checksum coverage, delivery or resynchronization."
     },
     "case48": {
@@ -587,11 +587,11 @@
     },
     "hotjoinProgressBoundary": {
       "reader": "0x82D8F700 looks up the index in receiver +0x4 through 0x821B8CD0, compares the result with receiver +0xC, returns zero for that sentinel and otherwise reads result +0xC. The lookup helper's complete semantics remain opaque.",
-      "transferAttempt": "Exact entry 0x82D8FF78 has a selected per-index branch requiring a non-sentinel entry with state one. At 0x82D90084 it calls 0x82D8CB28 with the network-manager pointer, a native memory stream and the index. At 0x82D90094 it calls 0x82D8F800(receiver,index,2), without testing the preceding helper return. Pointer word 0x82F7BAC4 selects the transferring-state label at 0x82136998 for value two. Snapshot production and transfer-result semantics are owned by xbox-hotjoin-transfer-restore-boundary.json#/snapshotProducer and /queueOutcome.",
+      "transferAttempt": "Exact entry 0x82D8FF78 has a selected per-index branch requiring a non-sentinel entry with state one. At 0x82D90084 it calls 0x82D8CB28 with the network-manager pointer, a native memory stream and the index. At 0x82D90094 it calls 0x82D8F800(receiver,index,2), without testing the preceding helper return. Pointer word 0x82F7BAC4 selects the transferring-state label at 0x82136998 for value two. Snapshot production and transfer-result semantics are owned by xbox-hotjoin-transfer-restore.json#/snapshotProducer and /queueOutcome.",
       "selectedRemovalTail": "On the unequal-local-index branch of 0x82D906D0, 0x82D90834 and 0x82D90848 read the indexed state. Prior state two or three selects a local flag. 0x82D90868 writes state zero through 0x82D8F800; only the flagged path calls 0x82D901B0 at 0x82D9087C. Local presentation and numeric-command helper effects remain separately guarded.",
       "conditionalTurnRequest": "0x82D901B0 first requires a nonzero low byte from 0x82D8AA60. It scans indices from zero while signed-less-than the reloaded word at 0x82F700AC and suppresses its final request if any non-sentinel receiver +0x4 entry has state two or three. Missing entries and a nonpositive bound do not set that suppressing condition. If unsuppressed, 0x82D90278 calls 0x82D038E8 and 0x82D90298 submits numeric 46 with arguments one through three and separate target -1, and current 0x82F7AD00 as argument four.",
-      "nativeEntryEvidence": "xbox-hotjoin-transfer-restore-boundary.json#/nativeEntry establishes 0x82D8F878 from exact PE Exception metadata and its separate wrapper while preserving the configured containing-function limitation.",
-      "qualification": "Native labels and indexed progress do not prove player-facing admission or runtime recovery. State two follows an unchecked call. The conditional BeginTurn request does not verify restored world bytes, queued-command reconciliation or complete peer participation. xbox-hotjoin-transfer-restore-boundary.json owns the positive static stream, receive/restore and completion-control joins, plus their remaining admission, delivery and return-to-play limits."
+      "nativeEntryEvidence": "xbox-hotjoin-transfer-restore.json#/nativeEntry establishes 0x82D8F878 from exact PE Exception metadata and its separate wrapper while preserving the configured containing-function limitation.",
+      "qualification": "Native labels and indexed progress do not prove player-facing admission or runtime recovery. State two follows an unchecked call. The conditional BeginTurn request does not verify restored world bytes, queued-command reconciliation or complete peer participation. xbox-hotjoin-transfer-restore.json owns the positive static stream, receive/restore and completion-control joins, plus their remaining admission, delivery and return-to-play limits."
     },
     "case54": {
       "type": 54,
@@ -600,7 +600,7 @@
       "mismatchState": "0x82CDED90..0x82CDED98 clears bit 0x10 in 0x82FFE7C4 before 0x82CDED9C directly calls 0x82D0C3E8.",
       "calendarDataflow": "Within 0x82D0C3E8, 0x82D0C400 loads current turn 0x8312B8DC, 0x82D0C470 directly calls TurnToYear at 0x82CEFA20, and 0x82D0C490 stores the result at current year 0x8312B8E0."
     },
-    "projectionAndPhaseEvidence": "spaceship-part-presentation-boundary.json#/worldActorSaveSyncProjectionBoundary bounds 0x82CD4CF0's scalar projection and selected unit contribution; its worldActorSnapshotPhaseBoundary binds conditional nested drain before actor retirement. These are scalar samples and phase edges, not a bulk recovery snapshot or all-peer barrier.",
+    "projectionAndPhaseEvidence": "spaceship-part-presentation.json#/worldActorSaveSyncProjectionBoundary bounds 0x82CD4CF0's scalar projection and selected unit contribution; its worldActorSnapshotPhaseBoundary binds conditional nested drain before actor retirement. These are scalar samples and phase edges, not a bulk recovery snapshot or all-peer barrier.",
     "continuationEvidence": {
       "scripts": ["ghidra/DumpFunctions.java", "ghidra/DumpMemoryWords.java"],
       "functions": ["0x82CDDF08", "0x82D8FCC8", "0x82D8F800", "0x822DF948", "0x82D038E8"],
@@ -733,8 +733,8 @@
       "barbarian-capital-grace-feasibility.json#/queueResultBoundary",
       "xbox-resync-target-selection.json#/nativeFirstDesyncDiagnosticHookBoundary/localDrain",
       "xbox-resync-target-selection.json#/nativeCommandContextBoundary",
-      "spaceship-part-presentation-boundary.json#/worldActorSnapshotPhaseBoundary",
-      "spaceship-part-presentation-boundary.json#/worldActorSessionInfoWriterBoundary"
+      "spaceship-part-presentation.json#/worldActorSnapshotPhaseBoundary",
+      "spaceship-part-presentation.json#/worldActorSessionInfoWriterBoundary"
     ],
     "rolesAndBinding": "M is a current manager, C its +0x10 child, I the current child+0x1C info and Q the separate global command ring/cursors. For actual retained child table8215FA78, cells8215FA88/8215FA8C/8215FB80 bind +0x10/+0x14/+0x108 to CA4A18/CA49A8/82219D70. The pure getter returns U32[C+0x1C] without writes. The accepted setter/getter each sample +0x108 twice with only the first result checked; same live nonnull I and table retention are additional premises, not consequences of a first successful sample. Fresh global-manager and child samples across queue/update calls remain distinct.",
     "queueCallsAndRetry": "CE16C8 copies the selected queued record to its frame and, before actual CDDF08 dispatch at CE17B0, optionally requests current global-manager child+0x10 at CE17A8 with r4=0. On zero low-byte dispatcher result it reloads/decrements the consumer cursor and stores it at CE1804, then optionally requests a freshly sampled child+0x10 at CE1824 with r4=1. Under the retained class/info contract, these calls clear/set I+0x1E through CA4A60. A nonzero dispatcher low byte leaves consumption advanced; this is not a universal gameplay-application receipt. Zero preserves eligibility of that record for a later drain under the accepted cursor/frame/record and no-interference premises.",
@@ -832,19 +832,19 @@
           "sha256": "c06b828e673c2b6ca212b04c5cb5d3bdae0cdbea89df56607c5817e0ed0ee63c"
         },
         {
-          "source": "spaceship-part-presentation-boundary.json#/currentEvidence/worldActorGenerationJoin/packets/3/ranges/3",
+          "source": "spaceship-part-presentation.json#/currentEvidence/worldActorGenerationJoin/packets/3/ranges/3",
           "start": "0x82D8F5C0",
           "endExclusive": "0x82D8F6A0",
           "sha256": "47c6da98e0dbd718106506b528d85d25a3e155694858f1a81b9182ffb3057f6f"
         },
         {
-          "source": "spaceship-part-presentation-boundary.json#/currentEvidence/worldActorGenerationJoin/packets/6/ranges/0",
+          "source": "spaceship-part-presentation.json#/currentEvidence/worldActorGenerationJoin/packets/6/ranges/0",
           "start": "0x82CA49A8",
           "endExclusive": "0x82CA4A18",
           "sha256": "03116298884329a0b737a0c66a292a80c25a5ae004b7ef0574794e8d1749f07a"
         },
         {
-          "source": "spaceship-part-presentation-boundary.json#/currentEvidence/worldActorTransformAndInfoWriter/packets/3/ranges/0",
+          "source": "spaceship-part-presentation.json#/currentEvidence/worldActorTransformAndInfoWriter/packets/3/ranges/0",
           "start": "0x82CA4A18",
           "endExclusive": "0x82CA4A80",
           "sha256": "dc5b0594acef5fb2299a77121bb875ef90cc69adc447166d5a68844bcc58e2c2"
@@ -3245,9 +3245,9 @@
           "xbox-network-message-root.json#/nativeSocketAdmissionConnectionBindingBoundary/evidence",
           "xbox-network-message-root.json#/nativeSocketRegistryCallbackContinuationBoundary",
           "xbox-network-message-root.json#/nativeForcedConnectionRetirementBoundary",
-          "xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary",
-          "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary",
-          "xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary",
+          "xbox-hotjoin-transfer-restore.json#/returningConnectionCallbackBoundary",
+          "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary",
+          "xbox-hotjoin-transfer-restore.json#/nativeXSessionMembershipBoundary",
           "xbox-live-session-search-contract.json#/nativeSessionFailurePolicyBoundary",
           "ai-options-boundaries.json#/findings/RVA-F-0362/transportConstructorContextBoundary",
           "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportContextChildBoundary"
@@ -3275,31 +3275,31 @@
             "sha256": "7B1717028C7E5C51F5581FD3866C278151E095B4698412F241A88A0F614D0B01"
           },
           {
-            "source": "xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary",
+            "source": "xbox-hotjoin-transfer-restore.json#/returningConnectionCallbackBoundary",
             "start": "0x82CA0798",
             "endExclusive": "0x82CA0840",
             "sha256": "980A78AB01FE400477C08DCE975328EFCF5DB82FDCC33633F6B218AC9619F407"
           },
           {
-            "source": "xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary",
+            "source": "xbox-hotjoin-transfer-restore.json#/returningConnectionCallbackBoundary",
             "start": "0x82CA0180",
             "endExclusive": "0x82CA01D4",
             "sha256": "65ED3A1EC2EA019B2D5836E8CAD1591CA6E14DAEF224F334AC195D29E325A088"
           },
           {
-            "source": "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary",
+            "source": "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary",
             "start": "0x82C9FAD0",
             "endExclusive": "0x82C9FB38",
             "sha256": "471E836B6A7768C90998E16801E67A4341CFF6D6284CAE3FE1A2788CB92D02BD"
           },
           {
-            "source": "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary",
+            "source": "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary",
             "start": "0x82C9FF68",
             "endExclusive": "0x82C9FFE4",
             "sha256": "26AFBA132160B9FA87A97CB262ADB5BAE576C3415DE7728711FED9BFF52C01FD"
           },
           {
-            "source": "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary",
+            "source": "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary",
             "start": "0x82CA08D8",
             "endExclusive": "0x82CA0938",
             "sha256": "44D9C876B88FF8416B68ABAE211873FF8BBC8633D853AC4A353F4A44861E2FB1"
@@ -3594,9 +3594,9 @@
       "method": "Serialized foreground read-only exact-owner, four radius64 code-word windows and two radius16 service-table windows, pinned-image comparison and exact generated native-comment/call corroboration. Policy and retirement packets share the code-word query; only the named policy ranges are adopted here.",
       "reusedBoundaries": [
         "#/nativeSocketAdmissionConnectionBindingBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberNameSelectionBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeMemberNameSelectionBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeXSessionMembershipBoundary",
         "xbox-live-session-search-contract.json#/sessionLifecycle",
         "xbox-live-session-search-contract.json#/nativeSessionServiceResetBoundary/lookupContract"
       ],
@@ -3635,7 +3635,7 @@
         }
       ],
       "reusedScalar": {
-        "source": "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary/evidence/selectedWordRanges",
+        "source": "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary/evidence/selectedWordRanges",
         "start": "0x822DFC68",
         "endExclusive": "0x822DFC70",
         "sha256": "C9E230E520EEB20ED6A600AE4AE2B5CA550FDAEA9C565332620690CBB72D323F",
@@ -3934,7 +3934,7 @@
       },
       "reusedBoundaries": [
         "#/nativeConnectionAdmissionPolicyBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberNameSelectionBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeMemberNameSelectionBoundary",
         "xbox-live-session-search-contract.json#/nativeSessionServiceResetBoundary",
         "native-renderer-alternate-resolve-provider.json#/registryReceiverProvenance",
         "ai-options-boundaries.json#/findings/RVA-F-0362/reconciliationAdmissionBoundary/nativeResult",
@@ -3968,18 +3968,18 @@
       "#/nativeAdmissionScalarEnvelopeBoundary/evidence/selectedPointerCells/6",
       "#/nativeAdmissionSendBufferBoundary",
       "xbox-live-session-search-contract.json#/nativeSessionServiceResetBoundary/lookupContract",
-      "xbox-lobby-ready-gate.json#/readyRoutingKeyBoundary/routingConstruction",
-      "xbox-lobby-ready-gate.json#/readyRoutingKeyBoundary/registryJoin",
-      "xbox-lobby-ready-gate.json#/readyRoutingKeyBoundary/selectedAccessors",
-      "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberTransferRetirementBoundary/callerReceivers",
-      "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberTransferRetirementBoundary/memberPayloadRemoval",
-      "building-option-append-capacity-gate.json#/descriptorFields",
-      "building-option-append-capacity-gate.json#/capacityGate",
-      "building-option-append-capacity-gate.json#/inPlaceAppend",
-      "building-option-append-capacity-gate.json#/slowEdge",
-      "map-dimension-object-grid-boundary.json#/descriptorInitializationBoundary/selectedEmptyDescriptor",
-      "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberGraphicsRecordLifetimeBoundary/logging",
-      "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary/recordLookup"
+      "xbox-lobby-ready-check.json#/readyRoutingKeyBoundary/routingConstruction",
+      "xbox-lobby-ready-check.json#/readyRoutingKeyBoundary/registryJoin",
+      "xbox-lobby-ready-check.json#/readyRoutingKeyBoundary/selectedAccessors",
+      "xbox-hotjoin-transfer-restore.json#/nativeMemberTransferRetirementBoundary/callerReceivers",
+      "xbox-hotjoin-transfer-restore.json#/nativeMemberTransferRetirementBoundary/memberPayloadRemoval",
+      "building-option-append-capacity.json#/descriptorFields",
+      "building-option-append-capacity.json#/capacityGate",
+      "building-option-append-capacity.json#/inPlaceAppend",
+      "building-option-append-capacity.json#/slowEdge",
+      "map-dimension-object-grid.json#/descriptorInitializationBoundary/selectedEmptyDescriptor",
+      "xbox-hotjoin-transfer-restore.json#/nativeMemberGraphicsRecordLifetimeBoundary/logging",
+      "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary/recordLookup"
     ],
     "facts": {
       "descriptorOrPairEligibility": "CA5120 retains original S and full scalar n. It requests current S virtual+0x100, then accepted CA9810(descriptor,n). A low32-nonzero returned record makes CA5120 return literal 1. Otherwise it freshly requests S virtual+0x118, supplies that result H and original n to E46518 at CA5174, and returns a Boolean from that call's low8. The selected body has no local descriptor or H null guard before those consumers. Valid current descriptor/helper storage is required. Eligibility alone does not establish a final routed lookup record or completed send.",
@@ -4010,7 +4010,7 @@
       "Actual control registration/input/handler invocation, direct/queued capture, object/frame/header/buffer/output lifetime, transport delivery and completed game effects."
     ],
     "minimalProposal": "No eligibility, routing, index-normalization, pair-map, append, retirement or control-byte fix is selected. First bind one supported invocation's actual argument/current-generation/final-record/capture join, or the exact insertion/first-growth helper needed for a concrete writer question.",
-    "logging": "A future default-off passive observer inherits xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberGraphicsRecordLifetimeBoundary/logging's finite capture policy, caps, saturation/drop/incomplete handling, privacy exclusions and invalidation rules. It adds no getter, dereference, helper, lock, mutation or scheduling effect. Record only existing reads, requests, stores and normal returns using opaque attempt/S/Sw/H/table/descriptor/node/vector/object/buffer generations and categorical branch/zero/equality results. Keep initial descriptor lookup, fallback pair check, separate source lookup, insertion/append request, raw-J category, final record resolution, direct/routed argument origin and later capture receipts distinct. Emit no raw keys, scalar values, pointer/table/code bytes, payloads or identities. Missing, capped, dropped, changed-generation or unpaired receipts invalidate order/lifetime/delivery conclusions. Logging remains unimplemented and authorizes no runtime activity.",
+    "logging": "A future default-off passive observer inherits xbox-hotjoin-transfer-restore.json#/nativeMemberGraphicsRecordLifetimeBoundary/logging's finite capture policy, caps, saturation/drop/incomplete handling, privacy exclusions and invalidation rules. It adds no getter, dereference, helper, lock, mutation or scheduling effect. Record only existing reads, requests, stores and normal returns using opaque attempt/S/Sw/H/table/descriptor/node/vector/object/buffer generations and categorical branch/zero/equality results. Keep initial descriptor lookup, fallback pair check, separate source lookup, insertion/append request, raw-J category, final record resolution, direct/routed argument origin and later capture receipts distinct. Emit no raw keys, scalar values, pointer/table/code bytes, payloads or identities. Missing, capped, dropped, changed-generation or unpaired receipts invalidate order/lifetime/delivery conclusions. Logging remains unimplemented and authorizes no runtime activity.",
     "unrunCases": [
       "UNRUN: Initial descriptor lookup nonzero versus zero, followed by a fresh helper fallback and pair predicate low8 zero/nonzero. Eligibility and final routed-record availability are separate observations.",
       "UNRUN: Pair source key absent/present, empty/nonempty valid spans and target absent/first/later match under coherent current node/vector generations. No authority or global uniqueness expectation is assigned.",
@@ -4102,9 +4102,9 @@
         "qualification": "Accepted body and cell retain their canonical evidence. Separate source-cell corroboration supplies no additional body ownership."
       },
       "relatedEvidence": [
-        "xbox-lobby-ready-gate.json#/readyRoutingKeyBoundary/selectedAccessors",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberTransferRetirementBoundary/callerReceivers",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberTransferRetirementBoundary/memberPayloadRemoval"
+        "xbox-lobby-ready-check.json#/readyRoutingKeyBoundary/selectedAccessors",
+        "xbox-hotjoin-transfer-restore.json#/nativeMemberTransferRetirementBoundary/callerReceivers",
+        "xbox-hotjoin-transfer-restore.json#/nativeMemberTransferRetirementBoundary/memberPayloadRemoval"
       ],
       "locators": [
         "generated:rerevved/sub_82CA5120",
@@ -4611,12 +4611,12 @@
         "#/nativeConnectionApplicationAdmissionBoundary",
         "#/wireSerialization/baseEnvelope",
         "#/wireSerialization/embeddedRecord",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberNameSelectionBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeMemberNameSelectionBoundary",
         "xbox-live-session-search-contract.json#/nativeSessionServiceResetBoundary",
         "native-renderer-alternate-resolve-provider.json#/registryReceiverProvenance",
         "xbox-live-session-search-contract.json#/nativeSessionAllocationReturnBoundary",
-        "playable-game-state-gates.json#/turnOwner/resolverBoundary/resultObjectProduction/priorWordInvocationBoundary/exactProducerCallers/2",
+        "playable-game-state-requirements.json#/turnOwner/resolverBoundary/resultObjectProduction/priorWordInvocationBoundary/exactProducerCallers/2",
         "ai-options-boundaries.json#/findings/RVA-F-0332/multiplayerPostResetFrozenRosterCandidateBoundary/callerResultJoins"
       ],
       "locators": [
@@ -5091,11 +5091,11 @@
         "#/nativeConnectionGrowthCopyBoundary",
         "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportInputObjectBoundary",
         "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportQueueCopyBoundary",
-        "native-pause-resume-dispatch-boundary.json#/objectMessageBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary/removal",
+        "native-pause-resume-dispatch.json#/objectMessageBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeXSessionMembershipBoundary/removal",
         "xbox-live-session-search-contract.json#/nativeSessionAllocationReturnBoundary",
         "xbox-live-mode-entry-invite-contract.json#/nativeIdentityEntryHeapLifetimeBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary/disconnectLookup"
+        "xbox-hotjoin-transfer-restore.json#/nativeXSessionMembershipBoundary/disconnectLookup"
       ],
       "locators": [
         "ghidra/DumpFunctions.java:82CA6448,82CB2018,821D41F0,821D4090,82E7DEF8,82CB1BD0,821D4270,821D4078;exact entries before selected generated reads",
@@ -5328,9 +5328,9 @@
         "#/nativeConnectionGrowthCopyBoundary",
         "xbox-live-session-search-contract.json#/nativeSessionAllocationReturnBoundary",
         "xbox-live-mode-entry-invite-contract.json#/nativeIdentityEntryHeapLifetimeBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberStorageFailureBoundary/exceptionConstruction",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberStorageFailureBoundary/exceptionWrapperAndCopy",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberStorageFailureBoundary/sdkFailureContinuation"
+        "xbox-hotjoin-transfer-restore.json#/nativeMemberStorageFailureBoundary/exceptionConstruction",
+        "xbox-hotjoin-transfer-restore.json#/nativeMemberStorageFailureBoundary/exceptionWrapperAndCopy",
+        "xbox-hotjoin-transfer-restore.json#/nativeMemberStorageFailureBoundary/sdkFailureContinuation"
       ],
       "locators": [
         "ghidra/DumpFunctions.java:82E7DBE0,822DFAD0,82E7DE08,821C2F00,821D41C0;exact entries before selected generated reads",
@@ -6338,10 +6338,10 @@
         "#/nativeTransportReceiveBoundary",
         "#/nativeSocketAdmissionConnectionBindingBoundary/connectionCallbackCopy",
         "#/nativeSocketAdmissionConnectionBindingBoundary/constructedClosedCallbackJoin",
-        "xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary/construction",
-        "xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary/firstCallback",
-        "xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary/selectedListener",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary",
+        "xbox-hotjoin-transfer-restore.json#/returningConnectionCallbackBoundary/construction",
+        "xbox-hotjoin-transfer-restore.json#/returningConnectionCallbackBoundary/firstCallback",
+        "xbox-hotjoin-transfer-restore.json#/returningConnectionCallbackBoundary/selectedListener",
+        "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary",
         "#/nativeAdmissionScalarEnvelopeBoundary",
         "#/nativeDirectConnectionSendCaptureBoundary/evidence/selectedPrefixBytes"
       ],
@@ -7004,7 +7004,7 @@
       }
     ],
     "fragmentBoundary": "Selected numeric0 forwards opaque data, numeric types 1 through 5 retain their guarded control contracts, and nativeReceiveControlAndBufferRemovalBoundary classifies numeric type 6 as control/state/retirement requests and buffered removal as offset/compaction operations. No fragment-index,total-message or assembly-completion grammar is established by that read set. Classifier/filter/other callbacks and upper bulk streams retain their scope; this is not global absence or unsupported fragmentation. Do not import PS3/other-platform names or equate snapshot chunks with reliable-record storage. Reuse nativeReceiveFilterRegistrationBoundary for the selected entry-management owners and scoped caller negatives; no installed target or fragment format is supplied.",
-    "gameCallbackBoundary": "constructedDirectReceiveJoin now composes the accepted constructed-server table copy and G2 owner lookup with the direct receive wrapper and xbox-hotjoin-transfer-restore-boundary.json#/receiveToCommand. It conditionally identifies C+0x2C as C9FB38 for the same valid current construction. Actual invocation/retention, installed filters and their explicit continuation, decoder admission and native-command append remain separate receipts. This is not a universal client/other-constructor or live-instance identity claim.",
+    "gameCallbackBoundary": "constructedDirectReceiveJoin now composes the accepted constructed-server table copy and G2 owner lookup with the direct receive wrapper and xbox-hotjoin-transfer-restore.json#/receiveToCommand. It conditionally identifies C+0x2C as C9FB38 for the same valid current construction. Actual invocation/retention, installed filters and their explicit continuation, decoder admission and native-command append remain separate receipts. This is not a universal client/other-constructor or live-instance identity claim.",
     "minimalProposal": "No title or SDK behavior change is selected from local return words alone. Diagnose route, current target/filter forwarding, actual callback call/normal return, retained buffer/owner and subsequent command append before changing admission or retry policy. Do not force a missing callback, bypass filters, turn callback r3 into an invented status, reset sequence after a local failure, add an SDK GT2 layer or count a helper1 as gameplay delivery. A demonstrated missing intended consumer belongs to its installer/lifetime owner, with existing normal control/cleanup semantics preserved.",
     "diagnostics": "Future default-off bounded metadata should pair A125F4/A125F8 indexed and A12620/A12624 direct requests, actual A151E4/A151E8 or A156A4/A156A8 callback call/return, and A15248/A1524C or A15708/A1570C retirement requests. Record state/route/count/slot/target-presence categories, payload length class and numeric mode, opaque C/Sock/L/E/backing/attempt generations, observed counters and explicit loss, without a new lookup or speculative dereference. Distinguish no callback, filter called without proved forwarding, direct callback called, local0 after callback and later decoder/append. Actual target categories require a validated known target; log no raw function/data pointers, addresses, payload bytes, names/IDs or credentials. Read-only guest-state preservation and runtime-safe hook composition remain implementation gates.",
     "acceptance": [
@@ -7303,25 +7303,25 @@
           "sha256": "CBF1BF9BC4C3A91C0941D83474585B0F6A9F81708C3C4F9A5A3AC87287ABAF47"
         },
         {
-          "source": "xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary/evidence",
+          "source": "xbox-hotjoin-transfer-restore.json#/returningConnectionCallbackBoundary/evidence",
           "start": "0x82CA0798",
           "endExclusive": "0x82CA0840",
           "sha256": "980A78AB01FE400477C08DCE975328EFCF5DB82FDCC33633F6B218AC9619F407"
         },
         {
-          "source": "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary/evidence",
+          "source": "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary/evidence",
           "start": "0x82C9FAD0",
           "endExclusive": "0x82C9FB38",
           "sha256": "471E836B6A7768C90998E16801E67A4341CFF6D6284CAE3FE1A2788CB92D02BD"
         },
         {
-          "source": "xbox-hotjoin-transfer-restore-boundary.json#/currentEvidence",
+          "source": "xbox-hotjoin-transfer-restore.json#/currentEvidence",
           "start": "0x82C9FB38",
           "endExclusive": "0x82C9FBA0",
           "sha256": "C062222A95D1CD488A9F85D2E701B83A3AC0B081659E72A25EA61FE07B1BBE54"
         },
         {
-          "source": "xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary/evidence",
+          "source": "xbox-hotjoin-transfer-restore.json#/returningConnectionCallbackBoundary/evidence",
           "start": "0x821600B8",
           "endExclusive": "0x821600C4",
           "sha256": "A4EEE8C131552DBA70FF119E0CDD5F4761339A441CCEEC1F69F2BAE7FD201FD1"
@@ -7868,7 +7868,7 @@
       "serviceLookup": "CA9CA8 requests CAAAA8 on current registry8314F204 with the supplied descriptor+4 key. Zero service skips the message requests. Reuse its accepted finite registry/key/node contract. Lookup success alone does not prove this service equals the manager child or any receiver service.",
       "targetedReason": "For nonzero S, a stack object at SP+0x50 receives table8215F510, leading1005 at+0x10 and retained reason at+0x34. CA9D24 requests current S+0x3C(U5,target,1). The selected reason2 comes from the UI request above. The local target is passed as routing input, not stored as the reason.",
       "participantNotice": "After normal first-request return, a separate stack object at SP+0x90 receives table8215F524, leading1006 and retained target at+0x34. CA9D88 requests current S+0x44(U6,1). Neither request result is locally tested. Ordered local requests do not prove network order, peer acknowledgement, complete serialization/capture or removal.",
-      "reusedSendJoin": "For actual retained service table8215FA78, exact+0x3C cell chooses CA56E0 and+0x44 chooses CA6500. Reuse this record's nativeAdmissionScalarEnvelopeBoundary/routedSendOwner and xbox-hotjoin-transfer-restore-boundary.json#/nativePlayerCivilizationSelectionBoundary/broadcastMethod. They preserve routed-index transformation, separate descriptor/header samples, per-record send/capture and no aggregate delivery receipt. Do not infer all peers or the intended target received these objects."
+      "reusedSendJoin": "For actual retained service table8215FA78, exact+0x3C cell chooses CA56E0 and+0x44 chooses CA6500. Reuse this record's nativeAdmissionScalarEnvelopeBoundary/routedSendOwner and xbox-hotjoin-transfer-restore.json#/nativePlayerCivilizationSelectionBoundary/broadcastMethod. They preserve routed-index transformation, separate descriptor/header samples, per-record send/capture and no aggregate delivery receipt. Do not infer all peers or the intended target received these objects."
     },
     "reasonHandler": {
       "cell": "0x8215F520 = 0x82CAC250, selected table8215F510 slot+0x10",
@@ -8097,16 +8097,16 @@
       ],
       "navigationLimits": "Defined-string script returned10 below configured cap64 and reports no scanned count/truncation/cancellation. All ten modeled-reference counts are0. Raw six-address split query returned7 candidates below cap32, truncated false, with no emitted cancellation flag. Exact selected complete owners validate operand/flow use. No all-image indirect caller or string absence theorem follows.",
       "reusedContracts": [
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativePlayerCivilizationSelectionBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberNameSelectionBoundary/descriptorGuard",
+        "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativePlayerCivilizationSelectionBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeMemberNameSelectionBoundary/descriptorGuard",
         "xbox-live-session-search-contract.json#/nativeSessionServiceResetBoundary",
         "xbox-network-message-root.json#/nativeAdmissionScalarEnvelopeBoundary",
         "xbox-live-session-search-contract.json#/nativeArbitrationFailureFallbackBoundary/actualCaller",
-        "xbox-lobby-ready-gate.json#/nativeDepartureCallbackBoundary",
-        "xbox-lobby-ready-gate.json#/entryWait",
-        "xbox-lobby-ready-gate.json#/entryWaitExitBoundary",
-        "native-ui-event-queue-boundary.json#/deferredReaderBoundary",
+        "xbox-lobby-ready-check.json#/nativeDepartureCallbackBoundary",
+        "xbox-lobby-ready-check.json#/entryWait",
+        "xbox-lobby-ready-check.json#/entryWaitExitBoundary",
+        "native-ui-event-queue.json#/deferredReaderBoundary",
         "xbox-live-mode-entry-invite-contract.json#/nativeInviteGameplayTransitionBoundary"
       ]
     }
@@ -8270,13 +8270,13 @@
       "reusedContracts": [
         "xbox-network-message-root.json#/nativeHostKickBoundary",
         "xbox-network-message-root.json#/nativeRoutedSendEligibilityBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeReturningDescriptorOriginBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary/recordLookup",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionMapRetirementBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberTransferRetirementBoundary",
-        "xbox-lobby-ready-gate.json#/nativeDepartureCallbackBoundary",
-        "xbox-lobby-ready-gate.json#/entryParticipantSelectionBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeReturningDescriptorOriginBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeXSessionMembershipBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary/recordLookup",
+        "xbox-hotjoin-transfer-restore.json#/nativeConnectionMapRetirementBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeMemberTransferRetirementBoundary",
+        "xbox-lobby-ready-check.json#/nativeDepartureCallbackBoundary",
+        "xbox-lobby-ready-check.json#/entryParticipantSelectionBoundary",
         "xbox-live-session-search-contract.json#/nativeArbitrationFailureFallbackBoundary/fallbackWord",
         "xbox-live-session-search-contract.json#/nativeFrontendDisconnectBoundary/titleCallbackAndThreeRegistries",
         "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportMethodFrontierBoundary"

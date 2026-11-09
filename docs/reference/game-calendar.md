@@ -137,9 +137,9 @@ other opcode forms or other ending paths. A global replacement is unsupported.
 ## Evidence sources
 
 - [Game calendar state](../../manifests/game-calendar-state.json)
-- [Game turn-limit boundary](../../manifests/game-turn-limit-boundary.json)
-- [Scenario preset and selected load widths](../../manifests/scenario-speedmode-movement-boundary.json)
+- [Game turn-limit boundary](../../manifests/game-turn-limit.json)
+- [Scenario preset and selected load widths](../../manifests/scenario-speedmode-movement.json)
 - [City yield scheduling
-  producers](../../manifests/city-yield-scheduling-producer-boundary.json)
+  producers](../../manifests/city-yield-scheduling-producer.json)
 - [Civilization Unique Ability storage](../../manifests/civilization-bonus-storage.json)
 - [Catalog contract](../catalogs.md)

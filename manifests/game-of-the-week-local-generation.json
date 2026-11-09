@@ -26,19 +26,19 @@
       "use": "Identifies current-year word 0x8312B8E0 used by the GotW score and Year of Victory producer."
     },
     {
-      "topic": "playable-interface-gate-ownership-boundary",
+      "topic": "playable-interface-flag-ownership",
       "use": "Bounds the accepted ownership evidence for 0x8314F28C without identifying its publisher or installed target."
     },
     {
-      "topic": "gameplay-main-frame-boundary",
+      "topic": "gameplay-main-frame",
       "use": "Identifies the separately constructed callback object/table that is not bound to the configuration receiver."
     },
     {
-      "topic": "map-authoring-loader-boundary",
+      "topic": "map-authoring-loader",
       "use": "Supplies named .map versus procedural terrain and prebuilt texture format boundaries used by manualMapSeedBoundary."
     },
     {
-      "topic": "resource-density-generation-boundary",
+      "topic": "resource-density-generation",
       "use": "Supplies procedural-prefix fill/frame retention and post-terrain PRNG restoration qualifications used by manualMapSeedBoundary."
     },
     {
@@ -46,11 +46,11 @@
       "use": "Supplies selected content-record identity and manual writer/load finalization boundaries."
     },
     {
-      "topic": "combat-rng-save-reload-boundary",
+      "topic": "combat-rng-save-reload",
       "use": "Supplies default scalar transfer direction, header RNG and retained load-record qualifications."
     },
     {
-      "topic": "xbox-map-tile-semantics-boundary",
+      "topic": "xbox-map-tile-semantics",
       "use": "Identifies the logical terrain, flags and edge planes requested by the common save body."
     },
     {
@@ -1302,10 +1302,10 @@
       "reuse": [
         "#/configurationLookupBoundary",
         "#/postSetupCallBoundary",
-        "playable-interface-gate-ownership-boundary.json#/boundedNegative",
-        "playable-game-state-gates.json#/interfaceAvailability",
+        "playable-interface-flag-ownership.json#/boundedNegative",
+        "playable-game-state-requirements.json#/interfaceAvailability",
         "catalogs/symbols.json: RVA-SYM-0182",
-        "gameplay-main-frame-boundary.json#/callbackRegistration"
+        "gameplay-main-frame.json#/callbackRegistration"
       ],
       "researchBaseRevision": "9678517c0ceae7c09c26641010c0128988bc4c49",
       "nativeReportSha256": "3D224E05ACEA1D747F17644100CD641FD0571CF2BD9D66D6B0A668E04185F588"
@@ -1444,7 +1444,7 @@
         "reuse": [
           "#/configurationPublisherBoundary",
           "frontend-root-publication-mask-init.json#/staticResult",
-          "scene-active-gate-publication.json#/publication"
+          "scene-active-global-publication.json#/publication"
         ],
         "checks": "47 independent instruction encodings and 51 exact image/Ghidra words matched; 18 finite invented-state checks passed. No helper or indirect target was executed.",
         "flatImageBase": "0x82000000",
@@ -1583,7 +1583,7 @@
           "ai-stat-choice.json#/setupInputBoundary/calleeGuards/prologue",
           "ai-stat-choice.json#/setupReturnBoundary/prologueAndRetention/enteredSaveSuffix",
           "ai-stat-choice.json#/setupReturnBoundary/nullReceiverReturn/restore",
-          "scene-active-gate-publication.json#/publication"
+          "scene-active-global-publication.json#/publication"
         ],
         "checks": "Exact byte-set checks confirm the stated owner-word disjointness and table-overlap guards, including low32 wrap. Four invented saved-owner states distinguish full-register retention from low32 equality. These are static arithmetic checks, not target execution.",
         "qualification": "Exact header and next-header identities, full spans and requested line counts were checked before every generated read. The helper prefix was read as two guarded 40-line windows. Its first 19 instruction words end at the required external call; the next 15 words are incidental same-body context and establish no continuation through that call. No complete generated chunk was displayed."
@@ -2268,7 +2268,7 @@
     "mapSource": {
       "selection": "Reuse overrideBoundary/automaticSelector: (w mod N_sel)+1 is a one-based ordinal into expanded MapList ranges at 0x82E2B930 -> 0x82E2A690. Its scalar return is stored by 0x82DADCB4 at setup+0x138. 0x82DADCA8 bypasses that call for nonzero r5 and 0x82DADCBC stores r5. No map/scenario load occurs in this local selector/writer edge.",
       "construction": "0x82D86AB0..0x82D86ACC samples named-selector byte 0x8314F252. Its set arm passes selector pointer 0x83137F88; its clear arm passes zero at 0x82D86ACC. With low8 incoming r4 nonzero, 0x82D86AD0 calls 0x82D0F0D0. Constructor r3 is this optional name pointer, not a setup pointer. Nonzero r3 attempts 0x82D0ADE0 at 0x82D0F0F0; a nonzero low-byte return at 0x82D0F0F4 bypasses procedural construction through 0x82D0F0FC -> 0x82D10FC4. Null name or a zero loader result enters 0x82D0F100.",
-      "namedMap": "Reuse map-authoring-loader-boundary.json#/mapTileLoader: the named branch requests %s.map and loads one byte per cell. It is distinct from MapList ordinal selection and does not establish a week-selected .map. Its successful prefix also reads current setup+0x138 at 0x82D0AEC4, clears PRNG counter at 0x82D0AEC8 and stores the seed at 0x82D0AECC; changing that RNG cannot replace file-provided terrain bytes.",
+      "namedMap": "Reuse map-authoring-loader.json#/mapTileLoader: the named branch requests %s.map and loads one byte per cell. It is distinct from MapList ordinal selection and does not establish a week-selected .map. Its successful prefix also reads current setup+0x138 at 0x82D0AEC4, clears PRNG counter at 0x82D0AEC8 and stores the seed at 0x82D0AECC; changing that RNG cannot replace file-provided terrain bytes.",
       "visualSelection": "0x82C6EABC dispatches [0x8314F28C] vtable+0x54. 0x82C6EAC4 stores its return at terrain-owner+0x9C. If owner byte+0x54 is set, 0x82C6EAD4 calls 0x82C6E188: 0x82C6E1AC reads owner+0x9C as the Map%d argument when named-selector byte 0x8314F252 is clear; the set arm uses Map%s. These are height/blend/lightmap resources, not gameplay .map reads. Height-load failure clears the prebuilt flag through 0x82C6EB00. Candidate table 0x82120EB0 has +0x54 word 0x82E101E0 at 0x82120F04; that four-instruction getter loads [0x8314EFC8]+0x138 at 0x82E101E8. Actual installed receiver/slot, key, lookup success and ordering remain runtime conditions; the static candidate is not a live binding."
     },
     "setupAndWriterInventory": {
@@ -2383,7 +2383,7 @@
           "input": "after the procedural terrain work, immediately before 0x82D10FC0 -> 0x82D02C58 start-coordinate helper; not a pre-terrain reseed"
         }
       ],
-      "qualification": "Mutable LCG state/counter updates are draws, not evidence of reseeding. The local first-draw claim reuses resource-density-generation-boundary.json#/placementWriterBoundary/normalizationRetentionBoundary/preloadRetentionBoundary for fill/frame retention; actual modulus, normalization and complete execution remain inputs. No universal claim excludes external writes or unopened dispatch effects."
+      "qualification": "Mutable LCG state/counter updates are draws, not evidence of reseeding. The local first-draw claim reuses resource-density-generation.json#/placementWriterBoundary/normalizationRetentionBoundary/preloadRetentionBoundary for fill/frame retention; actual modulus, normalization and complete execution remain inputs. No universal claim excludes external writes or unopened dispatch effects."
     },
     "runtimeProbe": {
       "policy": "Default-off observer. The supplied report already identifies the later new-game origin; keep request/invocation identity, monotonic sequence, bounded validated reads and explicit event-cap truncation for implementation regression checks. Preserve all guest state and snapshot incoming LR before calls replace it. Exact build/log identity and terrain/visual capture remain useful qualification checks, not grounds to repeat the closed broad static searches.",
@@ -2942,7 +2942,7 @@
         "dependency": "The277-value set is tied to the exact three archive digests and effective content selection. An executable version, numeric bound1..300, or MapList count alone does not establish it. Revalidate after configuration/content replacement; preserve ordered MapList equivalence for weekly repeatability even when membership is unchanged.",
         "method": "Streamed SHA256; version6 FPK_ header/index with little-endian fields,14-byte header,4-byte-aligned length-delimited variable records and checked member spans. Parsed the single bounded XML member and expanded numeric ranges preserving order/duplicates; compared all three exact role sets and checked four signature bytes per entry. No duplicate names, case-fold collisions or overlapping member spans were found.",
         "parserProvenance": {
-          "status": "Implementation provenance is unverified here. The public grammar and independent guest locators are in fpk-v6-authoring-boundary.json.",
+          "status": "Implementation provenance is unverified here. The public grammar and independent guest locators are in fpk-v6-authoring.json.",
           "qualification": "The recorded archive observations remain tied to their source digests. Selected names in these exact archives were observed as raw ASCII length-delimited fields without NUL terminators. No broader text-encoding or full DDS-format claim is made. Reproduce index bounds and membership locally using the stated method."
         }
       },
@@ -3163,7 +3163,7 @@
       "save": "On the reached procedural prefix,0x82D0F124 loads the previous main state word from0x82F7AD00 and0x82D0F144 saves it at sp+0x88.",
       "mapSeed": "0x82D0F13C captures current setup+0x138 in r27;0x82D0F154 clears main counter+4 and0x82D0F164 installs that seed in main state. The accepted prefix guards bind the first terrain-coordinate draw separately.",
       "restore": "On reaching0x82D10FB0 with retained sp+0x88 and r16=0x82F7AD00, it reloads the saved word, clears counter+4 at0x82D10FB8, restores only state+0 at0x82D10FBC and calls0x82D02C58 at0x82D10FC0. It does not restore the old counter, modulus+8 or normalization+0x10 as a record snapshot.",
-      "startConsumption": "0x82D02C58 forms main RNG base0x82F7AD00 and reads normalization+0x10, modulus+8, counter+4 and state+0 at0x82D02CA0..0x82D02CD8. The reached selector-table loop0x82D02CF4..0x82D02D60 and random-coordinate arm0x82D02EA4..0x82D03084 consume that state. Existing selected-index, finite-retry, bounds, helper, output and paired-reordering qualifications in resource-density-generation-boundary.json#/initialSettlerSpawnBoundary remain required.",
+      "startConsumption": "0x82D02C58 forms main RNG base0x82F7AD00 and reads normalization+0x10, modulus+8, counter+4 and state+0 at0x82D02CA0..0x82D02CD8. The reached selector-table loop0x82D02CF4..0x82D02D60 and random-coordinate arm0x82D02EA4..0x82D03084 consume that state. Existing selected-index, finite-retry, bounds, helper, output and paired-reordering qualifications in resource-density-generation.json#/initialSettlerSpawnBoundary remain required.",
       "explanation": "If the earlier week initialization and intervening execution retain the stated relationship, the saved pre-terrain state is week-dependent even when the temporary map seed is identical. This explains how starts can differ while terrain and civilization match. It is not proof that the saved word equals the raw week, that all other inputs match, or that the specific reported displacement is caused by this edge. Paired runtime inputs/state/coordinate evidence is pending."
     },
     "otherInputs": [
@@ -4411,7 +4411,7 @@
         "game-of-the-week-local-generation.json#/leaderboardContract/R9",
         "game-of-the-week-local-generation.json#/leaderboardColumnMap/viewSelection",
         "game-of-the-week-local-generation.json#/leaderboardRetirementBoundary",
-        "xbox-lobby-ready-gate.json#/readyValueBoundary"
+        "xbox-lobby-ready-check.json#/readyValueBoundary"
       ]
     }
   },

@@ -22,7 +22,7 @@
       "use": "Supplies the earlier closure of state function 0x82C9D338, QoS producer 0x82C99628, and request-buffer producer 0x82C9CF70, which this record places inside the mode-2 table."
     },
     {
-      "topic": "xbox-session-create-teardown-boundary",
+      "topic": "xbox-session-create-teardown",
       "use": "Supplies the create wrapper 0x82A1EB38 exit groups and the destructor chain to delete request 0x000B0011 that this record reuses for teardown."
     },
     {
@@ -30,11 +30,11 @@
       "use": "Supplies the selected socket teardown, forced connection/control, receive and constructed callback contracts."
     },
     {
-      "topic": "xbox-hotjoin-transfer-restore-boundary",
+      "topic": "xbox-hotjoin-transfer-restore",
       "use": "Supplies connection user-data/listener, current member/index lookup and map retirement contracts."
     },
     {
-      "topic": "xbox-lobby-ready-gate",
+      "topic": "xbox-lobby-ready-check",
       "use": "Supplies the conditional later host participant selection and separate entry waits."
     },
     {
@@ -201,7 +201,7 @@
   "nativeCreateStartupBoundary": {
     "scope": "Selected host/join create callers, their startup helper, local-member status gate and pinned SDK startup wait. This establishes initializer/caller contracts, not a ready network, successful session create, remote authentication, player admission or measured wait.",
     "callerInputs": "Accepted vptr82160630 selects host C9B668 at+4 and join C9B4B8 at+8. Host retains Q=r3, a separate r4 value and descriptor D=r5; join retains Q=r3, separate r4, session-info pointer I=r5, length r6, descriptor D=r7 and kind r8. Host rejects null D. Join rejects null D or length!=60; this is not a null-I check. Both require low-byte E476B0 nonzero, then CB1140(U32[Q+0x48],U8[D+5]) true. Valid retained receivers/inputs, actual selected vptr, normal ABI/helper returns and noninterference remain premises.",
-    "signinAndMemberGate": "A false pre-sign-in result calls 8280DDE8 with (1,2) when D+5 is nonzero or (1,0) otherwise, then returns raw2. Otherwise host calls Q virtual+0x78 with kind0 at C9B6EC/C9B6F0; join passes original r8 as kind at C9B54C/C9B550. With selected target C99368, nativeLocalMemberIdentityBoundary in xbox-hotjoin-transfer-restore-boundary.json owns that producer. Both callers require raw producer result exactly1; another result, including its UI-branch2 or terminal3, reaches their then-unchanged local fallback3. It is not propagated as a pending result. They next require Q+4 nonnull and signed count at U32[Q+4]+0x24 greater than zero.",
+    "signinAndMemberGate": "A false pre-sign-in result calls 8280DDE8 with (1,2) when D+5 is nonzero or (1,0) otherwise, then returns raw2. Otherwise host calls Q virtual+0x78 with kind0 at C9B6EC/C9B6F0; join passes original r8 as kind at C9B54C/C9B550. With selected target C99368, nativeLocalMemberIdentityBoundary in xbox-hotjoin-transfer-restore.json owns that producer. Both callers require raw producer result exactly1; another result, including its UI-branch2 or terminal3, reaches their then-unchanged local fallback3. It is not propagated as a pending result. They next require Q+4 nonnull and signed count at U32[Q+4]+0x24 greater than zero.",
     "laterCreate": "After those gates join requests a 60-byte copy from I into Q+0x0C, then calls Q virtual+0x80 with D and stores returned flags at Q+0x50. Host calls that flags method with D, ORs its result with one and stores Q+0x50. Later helper/list processing leads to Q virtual+0x74 at host C9B808/C9B80C or join C9B650/C9B654, with Q, retained original r4 and D; that call's raw r3 is forwarded. Compatible copy/helper effects and retained identities remain premises. These local gates do not prove the final API create, advertisement or member admission; existing F-0243 owns the selected create wrapper.",
     "startupHelper": "E476B0 reads U8[U32[8314F204]+0xA8]. Nonzero supplies null parameters; zero constructs a 13-byte stack request with byte0=13, byte1=1 and the other requested bytes zero. At E47704/E47708 it calls 827F1040, which supplies caller1 and the parameter pointer and tail-branches to 827F0F88. Only result0 reaches A1F620 at E47718/E4771C. E476B0 returns one iff that second result is also zero, otherwise zero. F-0247 nativeDynamicExportBoundary owns 827F0F88's XamGetSystemVersion/dynamic-XNetStartupEx or ordinary-XNetStartup paths. This helper initializes networking; its Boolean alone is not network readiness.",
     "secondInitializer": "A1F620 passes fixed descriptor address82F38844 to A1F598. That function requires a nonnull descriptor and its first two U32 fields nonzero, otherwise returns 87. It calls 827F1218(2,&stackData) at A1F5D4/A1F5D8. The shim supplies caller1 and tail-branches to 827F1170, whose dynamic/ordinary WSA startup contract is separately accepted in F-0247. A nonzero WSA result is returned. On zero, A1F598 calls A1FB88 with destination82FA73B8 and those descriptor fields at A1F5F0/A1F5F4; a negative result becomes1627 and a nonnegative result becomes0. A1FB88 requests a 44-byte header copy, tests destination+8 bit0, returns 80004005 when set, otherwise computes/stores its selected header-derived offsets and returns 0. Compatible copy effects, valid backing arithmetic/ranges and normal returns remain conditions; no original class name or usable pool extent is assigned. These inspected helpers contain no matching XNet/WSA cleanup before returning failure; outer cleanup ownership is still active research.",
@@ -624,7 +624,7 @@
         "#/nativeSessionObjectRetirementBoundary",
         "#/nativeSessionAllocationReturnBoundary",
         "#/nativeCreateStartupBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeXSessionMembershipBoundary",
         "xbox-live-mode-entry-invite-contract.json#/transport"
       ],
       "locators": [
@@ -899,7 +899,7 @@
           "words": 19,
           "qualification": "Accepted prefix only; complete PE owner ends E6B054.",
           "sha256": "890AB31931D4B67756EEC75BD6429567A58B516750D7EE324FF66908788D8D51",
-          "acceptedSource": "game-start-formatting-boundary.json#/currentEvidence/selectedWordRanges/18",
+          "acceptedSource": "game-start-formatting.json#/currentEvidence/selectedWordRanges/18",
           "peMetadata": "0x821A1150",
           "peOwnerEndExclusive": "0x82E6B054"
         },
@@ -909,7 +909,7 @@
           "words": 24,
           "qualification": "True PE owner; exclude neighbor at D8B728 from accepted wider band.",
           "sha256": "AC7E3F69B8191EFB24C41ACDC4D69DF6D4B469A51C4806CE0B5E95A754615B31",
-          "acceptedSource": "game-start-formatting-boundary.json#/currentEvidence/selectedWordRanges/16",
+          "acceptedSource": "game-start-formatting.json#/currentEvidence/selectedWordRanges/16",
           "peMetadata": "0x8219D4A8",
           "peOwnerEndExclusive": "0x82D8B728"
         },
@@ -919,13 +919,13 @@
           "words": 43,
           "qualification": "True PE owner; exclude neighbor at D8E844 from accepted wider band.",
           "sha256": "8BB1CD11EFF01D9747ED5B2E92353674F454D0515D37F96BFB08A2BB30CAF98B",
-          "acceptedSource": "game-start-formatting-boundary.json#/currentEvidence/selectedWordRanges/17",
+          "acceptedSource": "game-start-formatting.json#/currentEvidence/selectedWordRanges/17",
           "peMetadata": "0x8219D5A8",
           "peOwnerEndExclusive": "0x82D8E844"
         }
       ],
       "reusedBoundaries": [
-        "game-start-formatting-boundary.json#/nativeRefusalBoundary",
+        "game-start-formatting.json#/nativeRefusalBoundary",
         "xbox-live-session-search-contract.json#/nativeOuterJoinRollbackBoundary",
         "xbox-live-session-search-contract.json#/nativeSessionObjectRetirementBoundary",
         "xbox-live-session-search-contract.json#/sessionLifecycle",
@@ -975,7 +975,7 @@
         "#/nativeSessionFailurePolicyBoundary",
         "#/nativeSessionObjectRetirementBoundary",
         "#/nativeSessionServiceResetBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeXSessionMembershipBoundary",
         "xbox-live-mode-entry-invite-contract.json#/transport",
         "xbox-live-mode-entry-invite-contract.json#/scenarioContext"
       ],
@@ -1079,11 +1079,11 @@
       "xbox-network-message-root.json#/nativeConnectionControlCallbackExpiryBoundary",
       "xbox-network-message-root.json#/nativeConnectionSendCapacityFallbackBoundary/stateSpecificFallbackContinuation",
       "xbox-network-message-root.json#/nativeSocketAdmissionConnectionBindingBoundary/constructedClosedCallbackJoin",
-      "xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary",
-      "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary",
-      "xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary",
-      "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionMapRetirementBoundary",
-      "xbox-lobby-ready-gate.json#/entryParticipantSelectionBoundary"
+      "xbox-hotjoin-transfer-restore.json#/returningConnectionCallbackBoundary",
+      "xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary",
+      "xbox-hotjoin-transfer-restore.json#/nativeXSessionMembershipBoundary",
+      "xbox-hotjoin-transfer-restore.json#/nativeConnectionMapRetirementBoundary",
+      "xbox-lobby-ready-check.json#/entryParticipantSelectionBoundary"
     ],
     "frontendAndBrowser": "Reuse nativeFrontendRegistryRetirementBoundary for E6AFF8's separately sampled managers, D8B6C8 secondary release and D8E798 primary service destruction. In its selected mode1 component with retained current table82160348, virtual+0x38 selects C9DA08. The complete16-word owner samples child=U32[component+0x54], skips its only direct child call when null, otherwise calls A0CB40 at C9DA28 and clears component+0x54 at C9DA30 only after normal return. The accepted publisher maps that field to A0C598's Server Browsing object. This is a browser-child request/clear, not the primary W+8 socket route. A0CB40's transitive effects remain unexpanded; no all-path no-disconnect claim follows from this local footprint. Raw return is not a normalized teardown result.",
     "primaryNetworkReach": "Under the accepted current key/registry/service-class and normal-return premises, primary destruction selects CA5A20. Within that body Q destruction precedes the later nonnull S+0x14 child slot0 request. The earlier CA73D8 failure route can already have cleared that field; no whole-route Q-before-network order is claimed. With current W table8215FC0C, selected slot0 ->822E2790 ->C9FFE8. For nonnull current W+8, C9FFE8 requests C9FE80 on one socket sample, then A083E8 on a later W+8 sample, and clears the field after normal return. Same socket generation across that reload requires retention. C9FE80's fixed83155F44 registry unlink precedes A083E8's A08948 connection traversal and A10F10 close/defer request. These are native socket operations beyond SDK delete, not completed teardown.",
@@ -1500,8 +1500,8 @@
           "xbox-live-session-search-contract.json#/nativeSessionObjectRetirementBoundary",
           "xbox-live-mode-entry-invite-contract.json#/nativeInviteGameplayTransitionBoundary",
           "frontend-gameplay-transition.json#/receivingState",
-          "key2-game-start-registration-boundary.json#/referenceResults",
-          "game-start-formatting-boundary.json#/stateTransitionBoundary"
+          "key2-game-start-registration.json#/referenceResults",
+          "game-start-formatting.json#/stateTransitionBoundary"
         ]
       }
     },
@@ -1723,7 +1723,7 @@
     "directCallers": "The complete selected raw-BL scan found C99120 only at C9C0D8 and C9C420, and C99018 only at C9C0E8 and C9C430. Each target had two matches below cap16, with Truncated=false and Cancelled=false. The accepted owners are migration C9BF98 and create C9C360. Thus this census adds no direct lobby-edit caller to these two helpers; it is not a global absence claim for settings messages or updates.",
     "pointerPublication": "The aligned exact-word scan, cap32, found only 82199AE8 for C99120 and 82199AD8 for C99018. Both are PE runtime-function start cells inside the Exception directory, not vtable registrations. Their descriptors bound C99120..C9929C and C99018..C99060. The query has no truncation/cancellation fields; each one-match result is below its cap and matched an independent full-image aligned scan.",
     "nativePublication": "Under accepted retained-object, actual-class, valid-settings, finite-collection, compatible-helper and normal-return premises, create and the selected successful migration branch replace Q+68 and serialize native contexts before requesting QoSListen with flags5. Migration uses Q+6C, while create supplies incoming settings. These requests are distinct from a UI edit producer, peer receipt, application of new settings, authority change or an earlier Ready flag withdrawal. Reuse the accepted allocation/failure and migration branches rather than treating either operation as a safe refresh hook.",
-    "readyBoundary": "Reuse xbox-lobby-ready-gate.json#/readyApplicationBoundary: the selected kind4 handler applies its Boolean to the indexed Ready map at D918CC, then can request a current lobby callback. The kind4 codec carries the selected one-byte flag after the base envelope, with no lobby-settings revision established by that contract. The accepted countdown gate can cancel when a present member is unready. No causal join from a settings edit or QoS success to this Ready write is established by the selected publishers or census. Complete native settings-message and invalidation coverage remains unknown.",
+    "readyBoundary": "Reuse xbox-lobby-ready-check.json#/readyApplicationBoundary: the selected kind4 handler applies its Boolean to the indexed Ready map at D918CC, then can request a current lobby callback. The kind4 codec carries the selected one-byte flag after the base envelope, with no lobby-settings revision established by that contract. The accepted countdown gate can cancel when a present member is unready. No causal join from a settings edit or QoS success to this Ready write is established by the selected publishers or census. Complete native settings-message and invalidation coverage remains unknown.",
     "minimalProposal": "No standalone native refresh or Ready-reset patch is selected. Do not repurpose create/migration or call game-start preparation merely to refresh a lobby. A supported change needs an owned edit producer, same-current-session/settings revision, stale-update policy, peer receipt/application and an explicit decision about withdrawal of earlier Ready. Actual host/member authority and countdown effects must be bound separately.",
     "logging": "Proposed default-off bounded stage records at C9C0D8/C9C420 (serialization request) and C9C0E8/C9C430 (listen request/result), correlated with opaque current-attempt/settings tags. Reuse D918CC for actual Ready application and the accepted countdown owner E4CB20 for re-evaluation. Distinguish edit, serialization, local API return, peer receipt, Ready application and countdown state. Preserve guest registers/conditions and avoid raw identities, addresses, context strings and payloads.",
     "remaining": "An actual native lobby edit/message producer and any existing Ready invalidation route remain unproved. A revisioned title/SDK protocol is a policy/design obligation, not a consequence of this negative. Actual settings changes, delivery, host-wait release and multiplayer acceptance are UNRUN. This bounded result does not finish the online inventory.",
@@ -1798,9 +1798,9 @@
         "xbox-live-session-search-contract.json#/nativeSessionObjectRetirementBoundary",
         "xbox-live-session-search-contract.json#/nativeSessionFailurePolicyBoundary",
         "xbox-live-session-search-contract.json#/nativeHostMigrationBoundary/callerBoundary",
-        "xbox-lobby-ready-gate.json#/gate",
-        "xbox-lobby-ready-gate.json#/readyApplicationBoundary",
-        "xbox-lobby-ready-gate.json#/readyValueBoundary"
+        "xbox-lobby-ready-check.json#/gate",
+        "xbox-lobby-ready-check.json#/readyApplicationBoundary",
+        "xbox-lobby-ready-check.json#/readyValueBoundary"
       ]
     }
   },
@@ -2042,10 +2042,10 @@
           "xbox-live-session-search-contract.json#/nativeHostMigrationBoundary/apiRequest",
           "xbox-live-session-search-contract.json#/nativeSessionServiceResetBoundary/lookupContract",
           "xbox-live-session-search-contract.json#/nativeArbitrationFailureFallbackBoundary/freshKeyAndClass",
-          "xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary",
-          "xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionMapRetirementBoundary",
-          "xbox-hotjoin-transfer-restore-boundary.json#/nativePlayerCivilizationSelectionBoundary/broadcastMethod",
-          "xbox-hotjoin-transfer-restore-boundary.json#/nativeReturningDescriptorOriginBoundary",
+          "xbox-hotjoin-transfer-restore.json#/nativeXSessionMembershipBoundary",
+          "xbox-hotjoin-transfer-restore.json#/nativeConnectionMapRetirementBoundary",
+          "xbox-hotjoin-transfer-restore.json#/nativePlayerCivilizationSelectionBoundary/broadcastMethod",
+          "xbox-hotjoin-transfer-restore.json#/nativeReturningDescriptorOriginBoundary",
           "xbox-network-message-root.json#/nativePlayerRemovalServiceBoundary/reasonService",
           "xbox-live-mode-entry-invite-contract.json#/nativeInviteGameplayTransitionBoundary"
         ]
@@ -2577,7 +2577,7 @@
       "Current retained R, listener L, UI dispatcher, registry/key/provider, stack, O=R+28, B=U32[R+24], contexts and Q must have valid compatible spans, ABI retention, normal helper returns and no destructive aliases/interference. Each virtual sample needs its stated actual current class. No helper result or numeric key alone proves object retention or generation.",
       "For the SDK writer barrier require a known completed admission on the SAME retained Service S, one request owning O and B, no duplicate/shared buffer or concurrent reuse/new admission, valid memory/notification fields and production KernelHooks. Cancellation must actually pass API validation and invoke S.Cancel. These premises are not implied by a raw result or event.",
       "Search-writer retirement is narrower than retiring native buffer readers, QoS users, APC/completion callbacks, UI notifications or the allocation. The selected release requests and field clears are not proof of successful frees or complete teardown.",
-      "The selected methods prove numerical UI helper requests, not a current controller handling an error or a failed attempt ending. Reuse native-ui-event-queue-boundary.json for conditional delivery. Do not invent a browse failure event, collapse all statuses or add a synchronous UI call from an arbitrary thread."
+      "The selected methods prove numerical UI helper requests, not a current controller handling an error or a failed attempt ending. Reuse native-ui-event-queue.json for conditional delivery. Do not invent a browse failure event, collapse all statuses or add a synchronous UI call from an arbitrary thread."
     ],
     "nativeCancellationAdapter": "Complete8281A6C8 preserves the incoming O argument, sets r4=1 atA6D4 and requests accepted XMsgCancelIORequest importE92B24 atA6D8. Its next instruction A6DC unconditionally sets full r3=0 before the epilogue. It does not test or expose the SDK result, inspect O/event state, or itself wait. The wait request belongs to the API call. Thus even a normally returned SDK87 is hidden by this adapter's local0. Reuse game-of-the-week-local-generation.json#/leaderboardContract/R5 only for accepted import/caller context, not as this exact owner extent or a native status guard.",
     "releaseAndResetOrder": "Reuse the accepted current-table82160450 C9CC68/C9C968 contract. C9CC68 first requests current R.v+38 atCC84/CC8C. Actual C9C968 requests the adapter only while signed32[R+1C]==1, otherwise returns without cancellation. C9CC68 ignores that result, conditionally requests free of nonnull R+50 then nonnull B=R+24 and clears each after normal return. It next requests nonnull Q=R+7C slot0(1) and clears after normal return. The result buffer therefore precedes the Q disposal request in this selected order. Compatible SDK writer retirement and native/QoS ownership must be established before calling this a safe allocation release.",
@@ -2756,11 +2756,11 @@
         "#/nativeSearchOutputCompletionBoundary",
         "#/nativeFrontendRegistryRetirementBoundary/modeTwoReleaseAndCancel",
         "xbox-live-mode-entry-invite-contract.json#/inviteDelivery/completion",
-        "native-ui-event-queue-boundary.json#/deferredReaderBoundary",
+        "native-ui-event-queue.json#/deferredReaderBoundary",
         "game-of-the-week-local-generation.json#/leaderboardContract/R5"
       ]
     },
-    "remaining": "game-start-formatting-boundary.json#/searchFailureUiBoundary composes the selected waiting-overlay events 16/17/22/23, preserving event-16 cleanup/setup continuation and event-17 no-cleanup evidence. These UI codes do not establish a terminal search-error exit. Actual current controller/attempt, successful delivery, other reached controller policy and complete native reader, QoS and callback cleanup remain unresolved. The same-service unique-writer barrier stays conditional. Reuse these contracts rather than repeat the wrappers or assume a waiting overlay is current. The broad goal remains incomplete."
+    "remaining": "game-start-formatting.json#/searchFailureUiBoundary composes the selected waiting-overlay events 16/17/22/23, preserving event-16 cleanup/setup continuation and event-17 no-cleanup evidence. These UI codes do not establish a terminal search-error exit. Actual current controller/attempt, successful delivery, other reached controller policy and complete native reader, QoS and callback cleanup remain unresolved. The same-service unique-writer barrier stays conditional. Reuse these contracts rather than repeat the wrappers or assume a waiting overlay is current. The broad goal remains incomplete."
   },
   "nativeArbitrationFailureFallbackBoundary": {
     "question": "What does the selected native caller receive after arbitration registration fails?",
@@ -2907,7 +2907,7 @@
           "endExclusive": "0x82CA4D6C",
           "metadata": "0x8219A170",
           "fresh": false,
-          "reusedSource": "xbox-lobby-ready-gate.json#/readyRoutingKeyBoundary/evidence/windows/5",
+          "reusedSource": "xbox-lobby-ready-check.json#/readyRoutingKeyBoundary/evidence/windows/5",
           "segments": [
             {
               "start": "0x82CA4D00",
@@ -3042,9 +3042,9 @@
         "#/nativeSessionObjectRetirementBoundary/constructorAndOrder",
         "#/nativeSessionServiceResetBoundary/primaryPublication",
         "#/nativeSessionServiceResetBoundary/lookupContract",
-        "xbox-lobby-ready-gate.json#/readyRoutingKeyBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary",
-        "xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberNameSelectionBoundary/callbackOwners"
+        "xbox-lobby-ready-check.json#/readyRoutingKeyBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeXSessionMembershipBoundary",
+        "xbox-hotjoin-transfer-restore.json#/nativeMemberNameSelectionBoundary/callbackOwners"
       ]
     },
     "remaining": "The selected CA9750 predicate and immediate notification/Start methods are now classified in nativeArbitrationGateAndNotificationBoundary. Actual jointly feasible failure/descriptor/list/S+0x98 states, outer match invocation, current flags/participants, dispatch/key provenance, cleanup and corrected retry remain unknown. Do not turn sign-bit arithmetic, an abstract empty list or a local return into failure reachability, admission or completed recovery."
@@ -3328,7 +3328,7 @@
         "#/nativeSessionServiceResetBoundary/primaryPublication",
         "#/nativeSessionServiceResetBoundary/lookupContract",
         "xbox-network-message-root.json#/nativeAdmissionScalarEnvelopeBoundary/selectedListenerConstruction",
-        "city-yield-scheduling-producer-boundary.json#/gateByteSourceBoundary"
+        "city-yield-scheduling-producer.json#/gateByteSourceBoundary"
       ]
     },
     "remaining": "Actual selected match/flag invocation, the jointly feasible failed-registration descriptor/list/parent/S+0x98 values, dispatch and incoming-key provenance, current owner generations, terminal refusal, cleanup and corrected retry remain unknown. These concrete state/identity gates are not satisfied by the initial predicate alone or a normal local return. No SDK/title behavior patch or broad online completion follows."

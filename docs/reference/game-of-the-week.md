@@ -83,7 +83,7 @@ an arbitrary seed nor prevents later overwrites.
 `0x82D86AD0` passes zero/named-map pointer according to `0x8314F252`;
 constructor r3 is name, not setup. Successful `0x82D0ADE0` `.map` load bypasses
 `0x82D0F0FC`; otherwise enters `0x82D0F100`.
-[Loader boundary](../../manifests/map-authoring-loader-boundary.json) owns
+[Loader boundary](../../manifests/map-authoring-loader.json) owns
 bytes; no week-to-name selection is proved.
 
 Procedural `0x82D0F11C` loads G from `0x8314EFC8` into r9; `0x82D0F13C` captures

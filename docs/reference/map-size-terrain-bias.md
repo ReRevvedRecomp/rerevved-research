@@ -3,10 +3,10 @@
 The recovered gameplay grid initializes to 32 by 32. Changing the amount of
 land inside that grid is a possible approach. Complete support for smaller or
 larger native dimensions is not established. The
-[object-grid finding](../../manifests/map-dimension-object-grid-boundary.json)
+[object-grid finding](../../manifests/map-dimension-object-grid.json)
 owns the additional fixed 32 constraint and climate boundary. The
-[authored-map loader](../../manifests/map-authoring-loader-boundary.json) and
-[resource placement finding](../../manifests/resource-density-generation-boundary.json)
+[authored-map loader](../../manifests/map-authoring-loader.json) and
+[resource placement finding](../../manifests/resource-density-generation.json)
 own the reused layout and start-placement contracts.
 
 ## Dimensions and backing
@@ -172,7 +172,7 @@ discriminator. No additional native query or broader terrain census followed.
 
 ## Named-map pre-plane initialization search
 
-The [edge/length boundary](../../manifests/xbox-map-tile-edge-and-length-boundary.json)
+The [edge/length boundary](../../manifests/xbox-map-tile-edge-and-length.json)
 records an initialized-image zero byte at `0x8311F68F`, just before edge plane
 `E=0x8311F690`. Its selected clear excludes that byte. A bounded search of the
 configured program returned no modeled prior store or exact-pointer-call candidate;

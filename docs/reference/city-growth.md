@@ -25,7 +25,7 @@ B  = T(B1) if word_24 bit 0x40 is set, otherwise B1
 Without overflow on nonnegative inputs, reduction is `floor((2*v + 1)/3)`;
 both flags apply it twice with intermediate rounding. There is no clamp before
 the bonus. Selected scalar initialization/calendar stores are recorded in the
-[capacity finding](../../manifests/city-population-cap-boundary.json#/growthBoundary).
+[capacity finding](../../manifests/city-population-cap.json#/growthBoundary).
 Flag meanings, complete writer coverage and runtime ranges remain unknown.
 
 When cumulative UEA 8, Faster city growth, is active, the ordinary integer
@@ -120,4 +120,4 @@ The selected city stream requests one population byte, 32 assignment-byte primit
 
 A population near 500 requires wider population access semantics, expanded or relocated assignment storage, coherent cap/grant rules and validation of formulas, AI, presentation, save and network formats. Those complete contracts and runtime safety remain unproved. The selected construction comparisons already use signed 32-bit threshold operands; threshold width is separate from population storage.
 
-Evidence: [city-population-cap-boundary.json](../../manifests/city-population-cap-boundary.json), RVA-F-0384, and its accepted mutation/growth dependencies.
+Evidence: [city-population-cap.json](../../manifests/city-population-cap.json), RVA-F-0384, and its accepted mutation/growth dependencies.

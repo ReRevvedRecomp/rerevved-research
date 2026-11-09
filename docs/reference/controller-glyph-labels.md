@@ -50,7 +50,7 @@ Named root placements bind buttonIcon1..5 to sprite97: buttonIcon1 at 0x70CD, bu
 All 41 buttonLegend action tags (43 decoded function/tag records) were checked; none pushes an exact Xbox/PS3 D-pad label. The exact hoa.FPK:gfx_loadingscreen.gfx entry 1 at index offset 0x36, payload offset 50636, size 15418, SHA-256 E32331E7A6455BA3B7ECBF431E60E650DAD740847D5E7AFE424BA940B6E7A5A8 was also checked: 13 action tags, 73 decoded records, no SetIcon token and no exact D-pad label push. Its only import tag in this parse is gfxfontlib.swf at 0x1C69.
 
 The selected native loading-tip route uses HTML image sources rather than
-buttonLegend97. `controller-glyph-family-default-boundary.json` owns the
+buttonLegend97. `controller-glyph-family-default.json` owns the
 native `XBOXVERTICAL`/`XBOXHORIZONTAL` producers and selective
 0x82E81F58/r3 seam. The names differ from timeline labels
 `DVERTICAL`/`DHORIZONTAL`.

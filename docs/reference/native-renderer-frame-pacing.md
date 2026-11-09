@@ -22,7 +22,7 @@ records these inputs:
 | Registration | `0x82E2AF20` registers table `0x82120D2C` slot 0 = `0x82E87D18`. Vector `+0x80`, start/end/capacity `+0x84`/`+0x88`/`+0x8C`. Null callback exits; nonnull start with capacity stores/advances; otherwise `0x821B4450` has unbound insertion/return/retention. |
 
 The
-[owner-slot boundary](../../manifests/native-renderer-callback-owner-slot-boundary.json)
+[owner-slot boundary](../../manifests/native-renderer-callback-owner-slot.json)
 binds `0x82D83C7C`: owner from `0x82FFD624`, retaining vptr `0x82121100`, uses
 `0x82121128` = no-op `0x821D5678`. Application service `+0x28` therefore neither
 visits `+0x84/+0x88/+0x8C` nor produces r5; timing-owner `+0x28` is separate.
@@ -81,7 +81,7 @@ The
 [setup-input manifest](../../manifests/native-renderer-presentation-setup-input.json)
 traces caller two before template `+0x34`, retaining exact stack/mapping
 details; helper mutation/final retention remain unresolved. The
-[remainder manifest](../../manifests/native-renderer-presentation-selector-remainder.json)
+[remainder manifest](../../manifests/native-renderer-presentation-selector-other-values.json)
 locates five calls in `0x82C15240`, each reloading `[0x8314F300]` and passing
 `U8(entry +0x0)`, `U8(entry +0x1)`, `U32(entry +0x4)`, `U32(entry +0x8)` or
 `U32(entry +0xC)` as r4. Prologue indices `0`, `8`, `4`, `16`, `168` precede

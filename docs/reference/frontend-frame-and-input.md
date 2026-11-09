@@ -23,14 +23,14 @@ two-word identity prefix:
   `0x821B3BB8` creates a `0x10`-byte state whose slot `+0x1C` builds the
   attract-movie playback object.
 
-The bounded [registration query](../../manifests/key2-game-start-registration-boundary.json)
+The bounded [registration query](../../manifests/key2-game-start-registration.json)
 found two initializers and the entry-table word. Neither initializer registers
 or dispatches the state. The separate
-[state-owner contract](../../manifests/game-start-formatting-boundary.json#/stateTransitionBoundary)
+[state-owner contract](../../manifests/game-start-formatting.json#/stateTransitionBoundary)
 binds the conditional entry call under the current-state and table premises.
 Actual registration, the request producer and natural entry remain unproved.
 
-The [entry lifetime contract](../../manifests/xbox-lobby-ready-gate.json#/nativeEntryControllerLifetimeBoundary)
+The [entry lifetime contract](../../manifests/xbox-lobby-ready-check.json#/nativeEntryControllerLifetimeBoundary)
 distinguishes the screen manager from the game header's loading object. The
 selected old frontend exit clears the manager global after a destructor
 request. A requested screen key and a separate loading object do not prove
@@ -44,7 +44,7 @@ numeric keys.
 
 Screen events use a separate queue from game commands. When the sampled
 controller's byte at `+0x0C` is nonzero, the dispatcher requests storage of
-the event and its argument. The [UI queue contract](../../manifests/native-ui-event-queue-boundary.json)
+the event and its argument. The [UI queue contract](../../manifests/native-ui-event-queue.json)
 owns this path. Its embedded queue count is at manager `+0x28`, separate
 from the requested screen key at `+0x10`.
 
@@ -53,7 +53,7 @@ requests the retained record's free. Controller and queue changes during
 that callback require separate lifetime evidence. A count change does not
 prove delivery, removal of the same front record or safe cancellation.
 
-The [screen-controller lifecycle](../../manifests/native-screen-controller-lifecycle-boundary.json)
+The [screen-controller lifecycle](../../manifests/native-screen-controller-lifecycle.json)
 owns the selected update, replacement and cleanup requests. Replacement is
 published before its entry call. A zero status byte uses a fresh current
 controller for another method request, without a following local clear.
@@ -87,7 +87,7 @@ The exact stores, alias guards and conditional table slot are in
 [`game-of-the-week-local-generation.json`](../../manifests/game-of-the-week-local-generation.json#/configurationPublisherBoundary).
 The separately captured runtime gate role is unchanged. The six incomplete
 writer candidates and unexpanded inventory of 29 reads remain bounded by
-[`playable-interface-gate-ownership-boundary.json`](../../manifests/playable-interface-gate-ownership-boundary.json).
+[`playable-interface-flag-ownership.json`](../../manifests/playable-interface-flag-ownership.json).
 
 ### Local-player result and lifetime
 
@@ -138,7 +138,7 @@ own `+0x34` to `BufferReadU32`, dispatching input `+0x4` for four bytes before
 conditional reversal. Shared receiver, actual bytes/source and `+0x8` zero
 remain unproved; sparse candidate-base search found no installer. Actual
 key/compatible ordinal remain open in the
-[resolver boundary](../../manifests/playable-game-state-gates.json).
+[resolver boundary](../../manifests/playable-game-state-requirements.json).
 
 ## Shared frame-timing owner
 
@@ -290,7 +290,7 @@ helper clears the mask, then copies a nonzero source or combines player
 predicates. Clear bits do not prove ordinary AI, and key 2 does not
 distinguish create/load. New-game-only ingress and safe civilization omission
 remain unproved. See
-[setup boundary](../../manifests/player-count-setup-boundary.json) .
+[setup boundary](../../manifests/player-count-setup.json) .
 
 The inner -1 setup bypass does not establish cancellation of its enclosing
 game-start state. `0x82E60F70` does not compare the outer setup return before
@@ -298,7 +298,7 @@ its guarded presentation continuation. That path can reach `0x82E225D0`'s
 indexed string argument and `0x82D3B830`'s narrow-string byte scan. Valid native
 inputs may satisfy this contract; invalid input and crash causation are not
 established by missing local checks. The
-[formatting boundary](../../manifests/game-start-formatting-boundary.json)
+[formatting boundary](../../manifests/game-start-formatting.json)
 owns exact branches, the application +0x60 identity, two argument slots,
 current/pending/requested-state transitions and bounded native refusal/reset
 routes, including the selected waiting-overlay event-16 cleanup and guarded
@@ -318,7 +318,7 @@ supplies construction/forwarding, not safe popup suppression.
 
 ## Evidence sources
 
-- [Native pause/resume dispatch](../../manifests/native-pause-resume-dispatch-boundary.json):
+- [Native pause/resume dispatch](../../manifests/native-pause-resume-dispatch.json):
   with matching live root and child tables, a selected zero-argument request
   can reach a global application object's `+0x70` child and its virtual `+0x10`.
   On the selected key-2 table this constructs a code-17 state message with a
@@ -334,11 +334,11 @@ supplies construction/forwarding, not safe popup suppression.
   receiver-relative event-byte reader still requires a same-singleton and
   store-before-read join.
 - [Frontend gameplay transition](../../manifests/frontend-gameplay-transition.json)
-- [Playable game state gates](../../manifests/playable-game-state-gates.json)
-- [`playable-interface-gate-ownership-boundary.json`](../../manifests/playable-interface-gate-ownership-boundary.json)
+- [Playable game state gates](../../manifests/playable-game-state-requirements.json)
+- [`playable-interface-flag-ownership.json`](../../manifests/playable-interface-flag-ownership.json)
 - [Attract-movie frame driver](../../manifests/attract-movie-frame-driver.json)
 - [Gameplay frame-timing owner](../../manifests/gameplay-frame-timing-owner.json)
-- [Gameplay main-frame boundary](../../manifests/gameplay-main-frame-boundary.json)
+- [Gameplay main-frame boundary](../../manifests/gameplay-main-frame.json)
 - [Controller input and glyph
   selection](../../manifests/controller-input-glyph-selection.json)
 - [Catalog contract](../catalogs.md)

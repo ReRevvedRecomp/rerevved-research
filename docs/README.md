@@ -6,6 +6,7 @@ Findings, evidence contracts and query workflow:
 
 - [Recovered game reference](reference/README.md) - findings by game system.
 - [Reference data](../data/README.md) - canonical labels and generated tables.
+- [Glossary](glossary.md) - technical terms used in the reference pages.
 
 ## Record evidence
 

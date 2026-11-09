@@ -92,7 +92,7 @@ admits only positive results, excluding valid BC dates and year zero before
 that producer submits the launch. The selected arrival evaluator accepts the
 signed date domain, with separate state and victory gates.
 
-The [arrival-year boundary](../../manifests/spaceship-launch-arrival-year-boundary.json)
+The [arrival-year boundary](../../manifests/spaceship-launch-arrival-year.json)
 records the field chain, native cancellation sentinel and a proposed
 `result != -1` admission contract. This is a static correction contract;
 actual dialog retention, launch delivery and repaired victory remain unobserved.
@@ -162,7 +162,7 @@ The shared spaceship screen also returns launch results. Positive results
 from its automatic callers can request command 32 at `0x82D1DFA4` or
 `0x82D1E000`. Refusing the whole screen or pending-part branch can therefore
 alter gameplay. Arrival presentation uses another wrapper of the same class.
-The [part-presentation boundary](../../manifests/spaceship-part-presentation-boundary.json)
+The [part-presentation boundary](../../manifests/spaceship-part-presentation.json)
 owns exact sites, field/result separation and the remaining completion,
 media, local-peer and lifecycle qualifications.
 
@@ -171,6 +171,6 @@ media, local-peer and lifecycle qualifications.
 - [Technology research cost](../../manifests/technology-research-cost.json)
 - [First-discovery rewards](../../manifests/technology-first-discovery-rewards.json)
 - [Science completion](../../manifests/science-completion.json)
-- [Spaceship launch arrival year](../../manifests/spaceship-launch-arrival-year-boundary.json)
+- [Spaceship launch arrival year](../../manifests/spaceship-launch-arrival-year.json)
 - [Starting technology grants](../../manifests/starting-technology-grants.json)
 - [City yield state credits](../../manifests/city-yield-state-credit.json)

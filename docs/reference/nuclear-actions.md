@@ -56,7 +56,7 @@ observed or static coverage does not establish this nuclear join.
 
 ## AI production and launch policy
 
-The [AI nuclear finding](../../manifests/ai-nuclear-weapon-gates.json)
+The [AI nuclear finding](../../manifests/ai-nuclear-weapon-requirements.json)
 separates ordinary unit production, acquisition through the Manhattan Project and
 autonomous launch. These are static boundaries; a natural AI acquisition-to-launch
 chain has not been observed.

@@ -10,9 +10,9 @@ These findings describe static paths under stated conditions. They do not
 prove actual inputs, completed setup or runtime effects. Each claim retains
 its conditions on returns, ownership and aliasing.
 
-- [Density boundary](../../manifests/resource-density-generation-boundary.json): setting/search limits.
-- [Writer boundary](../../manifests/resource-density-generation-boundary.json#/placementWriterBoundary): locators and retention.
-- [Scenario schema](../../manifests/scenario-schema-boundary.json): parsing.
+- [Density boundary](../../manifests/resource-density-generation.json): setting/search limits.
+- [Writer boundary](../../manifests/resource-density-generation.json#/placementWriterBoundary): locators and retention.
+- [Scenario schema](../../manifests/scenario-schema.json): parsing.
 - [Resource definitions](resource-definitions.md): 22 ordinals/technologies, including Oxen `0`, Iron `1`.
 - [Presence/identity](#presence-identity-and-the-selected-writer), [tile changes](#post-setup-tile-changes),
   [Abundant/Legendary](#abundant-and-legendary-feasibility), [setup probe](#paired-new-game-setup-probe-contract).
@@ -49,7 +49,7 @@ indices and normal helpers retain pointer `0x82F7AD00` and `+16`, thus reading
 state/counter.
 
 The
-[count boundary](../../manifests/resource-density-generation-boundary.json#/placementWriterBoundary/componentCountBoundary)
+[count boundary](../../manifests/resource-density-generation.json#/placementWriterBoundary/componentCountBoundary)
 binds label traversal: each visited cell increments its class once; outer-seed
 terrain zero negates the count afterward, otherwise retains positive. The
 eligible range of 2 through 8 is not a requested resource count or map quota.
@@ -72,7 +72,7 @@ completed-map runtime behavior remain unproved.
 
 ## Other presence writers
 
-[Record-coordinate writers](../../manifests/resource-density-generation-boundary.json#/placementWriterBoundary/recordPresenceWriterBoundary)
+[Record-coordinate writers](../../manifests/resource-density-generation.json#/placementWriterBoundary/recordPresenceWriterBoundary)
 lie outside terrain `2`/`5` conversion:
 
 | Owner/store | Guard |
@@ -81,7 +81,7 @@ lie outside terrain `2`/`5` conversion:
 | `0x82D1B400` / `0x82D1C40C` | Old `0x1` clear after required helper return/input retention |
 
 Record domain/caller inputs remain unknown. The
-[callback boundary](../../manifests/resource-density-generation-boundary.json#/placementWriterBoundary/recordPresenceWriterBoundary/callbackRetentionBoundary)
+[callback boundary](../../manifests/resource-density-generation.json#/placementWriterBoundary/recordPresenceWriterBoundary/callbackRetentionBoundary)
 binds initialized `+0xF4` to `0x82D7D950`: context `-1` resource read,
 initialized `+0x248` -> `0x82D7FCB0`, then `0x82D64B18`. Reader finitely returns
 `-1` or `0` through `21`. Lookup `-1`, nested flags selecting no call, and final
@@ -93,7 +93,7 @@ For nonnegative results, `0x821C6C28` finitely copies descriptor `+4` to `+8` if
 different, preserving `+0`/`+4` under frame exclusions. `0x821D6340` has finite
 bounds-fail, empty and all-zero-payload paths, retaining reset/caller state
 under frame/alias guards. Nonzero payload reaches
-[chain predicate](../../manifests/resource-density-generation-boundary.json#/placementWriterBoundary/recordPresenceWriterBoundary/callbackRetentionBoundary/nonnegativeHelperBoundary/nonzeroPayloadPredicateBoundary)
+[chain predicate](../../manifests/resource-density-generation.json#/placementWriterBoundary/recordPresenceWriterBoundary/callbackRetentionBoundary/nonnegativeHelperBoundary/nonzeroPayloadPredicateBoundary)
 `0x821B2D90`, dispatching current payload vtable `+0` at `0x821B2DB0`. After
 return it follows `+4` links: `1` for retained `0x8314F67C`, `0` for null.
 Current target, finite chain and retained registers/frames/domain words remain
@@ -102,7 +102,7 @@ whose capacity fast path is below; growth remains conditional. Query result is
 neither placement count nor success Boolean, and precedes more work.
 
 The
-[payload case](../../manifests/resource-density-generation-boundary.json#/placementWriterBoundary/recordPresenceWriterBoundary/callbackRetentionBoundary/nonnegativeHelperBoundary/nonzeroPayloadPredicateBoundary/payloadSlot0Boundary)
+[payload case](../../manifests/resource-density-generation.json#/placementWriterBoundary/recordPresenceWriterBoundary/callbackRetentionBoundary/nonnegativeHelperBoundary/nonzeroPayloadPredicateBoundary/payloadSlot0Boundary)
 binds constructor `0x82E54250` storing `0x82132AB8` in captured receiver;
 initialized slot `+0` = `0x821CC860`. Same live queried receiver plus retained
 vptr/cell selects this getter at `0x821B2DB0`. Three instructions return full64
@@ -124,7 +124,7 @@ nonaliasing remain required; no actual invocation/full completion is proved.
 ## Initial Settler coordinates
 
 The
-[start boundary](../../manifests/resource-density-generation-boundary.json#/initialSettlerSpawnBoundary)
+[start boundary](../../manifests/resource-density-generation.json#/initialSettlerSpawnBoundary)
 binds `Y[p]` at `0x830E343C+4*p`, `X[p]` at `0x830E345C+4*p`. Reached player `p`
 loads X/Y at `0x82D231B4`/`0x82D231B8`; `0x82D23258` conditionally requests
 `0x82D11750(p,0,X[p],Y[p])` (`0` = Settlers). No display-axis orientation
@@ -135,7 +135,7 @@ Selector `0x82D02C58` writes arrays. Encoded nonzero `k` gives `X=trunc(k/100)`,
 `Y=k-100*trunc(k/100)` without terrain/bounds validation. Procedural selection
 samples/filters/spaces candidates, calling `0x82CFFD08` mode `0` before stores
 and `1` after. The
-[helper contract](../../manifests/resource-density-generation-boundary.json#/initialSettlerSpawnBoundary/candidateHelperBoundary)
+[helper contract](../../manifests/resource-density-generation.json#/initialSettlerSpawnBoundary/candidateHelperBoundary)
 still requires actual RNG inputs, bounded indices and finite production;
 selector table is no proved permutation.
 
@@ -167,7 +167,7 @@ placement, and the founding marker is not a substitute spawn anchor.
 ## After the player-request loop
 
 The
-[post-request boundary](../../manifests/resource-density-generation-boundary.json#/initialSettlerSpawnBoundary/postSpawnPlacementBoundary)
+[post-request boundary](../../manifests/resource-density-generation.json#/initialSettlerSpawnBoundary/postSpawnPlacementBoundary)
 identifies a conditional insertion candidate:
 
 | Site | Contract |
@@ -191,7 +191,7 @@ are unproved.
 ## Creator return and retention
 
 The
-[creator contract](../../manifests/resource-density-generation-boundary.json#/initialSettlerSpawnBoundary/creatorReturnBoundary)
+[creator contract](../../manifests/resource-density-generation.json#/initialSettlerSpawnBoundary/creatorReturnBoundary)
 separates request, initialization and success. Retained type0 flags admit a scan
 of at most 256 player slots, selecting first owner/`+7` both `0xFF`. Exhaustion
 finitely returns `-1` without unit writes under memory/return guards; setup can
@@ -221,7 +221,7 @@ remain separate gates.
 ## India's adjacent grant and an Iron case
 
 The
-[spawn-relative case](../../manifests/resource-density-generation-boundary.json#/initialSettlerSpawnBoundary/ironPlacementCaseBoundary)
+[spawn-relative case](../../manifests/resource-density-generation.json#/initialSettlerSpawnBoundary/ironPlacementCaseBoundary)
 follows `0x82D23258` when civilization `0x830ECD28+4*p` equals `10` ,
 identified as `Indian` by
 [row 10](../../manifests/civilization-bonus-storage.json#/storage/rows/10) .
@@ -257,7 +257,7 @@ inputs, actual admitted candidate and completed positive refresh.
 ## Iron and the founding-city boundary
 
 The
-[Iron/capital case](../../manifests/resource-density-generation-boundary.json#/ironCapitalCaseBoundary)
+[Iron/capital case](../../manifests/resource-density-generation.json#/ironCapitalCaseBoundary)
 binds ordinal `1` , record `0x82F6FB14` , name/token `Iron` . In domain
 `0..39` per coordinate, context `-1` returns it exactly for presence, clear
 `0x1001` , Hill `4` , and signed sum remainder zero modulo `3` , under
@@ -272,7 +272,7 @@ consumes the resource on the city center. It does not place a resource nearby.
 Counter/mask/input/entry/helper guards prevent treating the marker as unique
 current-capital resolver or observed instance.
 
-[UEA36 continuation](../../manifests/resource-density-generation-boundary.json#/ironCapitalCaseBoundary/uea36RetentionBoundary):
+[UEA36 continuation](../../manifests/resource-density-generation.json#/ironCapitalCaseBoundary/uea36RetentionBoundary):
 `0x82D199DC -> 0x82CF0CB0(36,p,0)`. The
 [native return contract](../../manifests/civilization-bonus-storage.json#/nativeReturnContract)
 returns full-width `0`/`1` within four comparisons, writes no memory, and
@@ -281,7 +281,7 @@ change; saved register retains player. Generated host insertion is excluded.
 Caller sets `+3` to `2 + result`, adds clamped era `0..99`, overriding to `1`
 for sampled barbarian. Final population remains unproved.
 
-[Registered-child case](../../manifests/resource-density-generation-boundary.json#/ironCapitalCaseBoundary/uea36RetentionBoundary/sessionChildReturnBoundary):
+[Registered-child case](../../manifests/resource-density-generation.json#/ironCapitalCaseBoundary/uea36RetentionBoundary/sessionChildReturnBoundary):
 nonnull `+0x100` at `0x82D19A7C` selects `0x82A73340` under current
 owner/child/target/lifetime guards. Two instructions return zero-extended
 `+0x20`, without memory writes or other GPR/floating/control changes.
@@ -305,7 +305,7 @@ child effects, sidecar storage and earlier India-policy ordering.
 
 The
 [tile mutation
-boundary](../../manifests/resource-density-generation-boundary.json#/postSetupTileMutationBoundary)
+boundary](../../manifests/resource-density-generation.json#/postSetupTileMutationBoundary)
 distinguishes logical tile state from completed refresh and persistence.
 
 | Question | Static result |
@@ -426,7 +426,7 @@ reload/reconstruction remain separate gates.
 ## Abundant and Legendary feasibility
 
 The
-[feasibility boundary](../../manifests/resource-density-generation-boundary.json#/abundantLegendaryFeasibilityBoundary)
+[feasibility boundary](../../manifests/resource-density-generation.json#/abundantLegendaryFeasibilityBoundary)
 records the consumers, locators, capacity and conditions. Abundant can add
 native resource-presence flags under those conditions. Legendary preserves
 terrain and allows duplicates, but needs identity overrides when the chosen
@@ -576,7 +576,7 @@ recount satisfies both requirements.
 
 The
 [mutation seam
-boundary](../../manifests/resource-density-generation-boundary.json#/abundantLegendaryFeasibilityBoundary/mutationSeamBoundary)
+boundary](../../manifests/resource-density-generation.json#/abundantLegendaryFeasibilityBoundary/mutationSeamBoundary)
 owns this partial order, exact registers, packet evidence and remaining gates.
 It does not establish the complete order through the first frame.
 
@@ -667,7 +667,7 @@ No currently identified address satisfies all these requirements.
 
 The
 [probe
-contract](../../manifests/resource-density-generation-boundary.json#/abundantLegendaryFeasibilityBoundary/mutationSeamBoundary/pairedSetupProbeContract)
+contract](../../manifests/resource-density-generation.json#/abundantLegendaryFeasibilityBoundary/mutationSeamBoundary/pairedSetupProbeContract)
 defines twelve required fixed sites, optional discriminators, exact original
 instruction words and the coverage needed to interpret their order. These are
 verified native boundaries, not a runtime result or an emitted-hook guarantee.

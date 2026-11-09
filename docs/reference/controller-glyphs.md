@@ -1,7 +1,7 @@
 # Controller prompt families
 
 The
-[controller prompt finding](../../manifests/controller-glyph-family-default-boundary.json)
+[controller prompt finding](../../manifests/controller-glyph-family-default.json)
 records the static name and label paths for a proposed restart-required
 **Button Prompts: Xbox / PlayStation** option. No setting or hook was
 implemented. An owner-reported startup experiment forced the native family

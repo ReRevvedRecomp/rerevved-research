@@ -284,7 +284,7 @@ class NativeRendererD3DInventoryTests(unittest.TestCase):
         mutations.append(missing_basis)
         wrong_basis = copy.deepcopy(self.document)
         wrong_basis["unresolvedCoverage"]["evidenceBasis"] = [
-            "native-renderer-d3d-draw-lowering-frontier.json#/missing"
+            "native-renderer-d3d-draw-lowering.json#/missing"
         ]
         mutations.append(wrong_basis)
         for document, diagnostic in zip(

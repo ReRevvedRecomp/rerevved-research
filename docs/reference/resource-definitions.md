@@ -69,7 +69,7 @@ otherwise `3`; 22 rows uniquely cover:
 Setting presence cannot choose an arbitrary resource. Oxen and Cattle need
 different coordinate remainders. This reader proves no map dimensions, legality,
 yields, probabilities or completed placement. Its unread `+0x41` has separate
-[contribution consumers](../../manifests/resource-identity-override-boundary.json).
+[contribution consumers](../../manifests/resource-identity-override.json).
 
 ## Identity and player availability
 

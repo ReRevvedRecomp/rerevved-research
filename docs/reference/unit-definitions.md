@@ -32,7 +32,7 @@ army when the first capital is founded therefore still needs a way to preserve
 existing units, proof that founding completed, a save policy, allocation
 handling and evidence of actual callback lifetimes. No such grant or runtime
 outcome is established here. Exact gates, writes and qualifications are in the
-[army formation boundary](../../manifests/army-formation-command-boundary.json)
+[army formation boundary](../../manifests/army-formation-command.json)
 .
 
 ## Recovered layout and readers
@@ -285,7 +285,7 @@ namespaced identity in [Save storage](save-storage.md); creation-only selection
 remains unbound. Load owner `0x82D86400` can skip deserialization yet return
 locally true: neither that result nor the serializer hook proves restored OCC
 policy. Exact gates and unresolved command/dispatch edges are in
-[occ-settler-production-gates.json](../../manifests/occ-settler-production-gates.json).
+[occ-settler-production-requirements.json](../../manifests/occ-settler-production-requirements.json).
 
 ## Normal unit production cost
 
@@ -335,7 +335,7 @@ factor `+0x41`, description `+0x4C`. IDs 123 through 199 remain unvalidated; see
 
 Menu gates read signed technology `+0x42`, required building mask `+0x44` and
 forbidden mask `+0x48`; all 23 records are in
-[`building-menu-record-gates.json`](../../manifests/building-menu-record-gates.json).
+[`building-menu-record-requirements.json`](../../manifests/building-menu-record-requirements.json).
 The masks correspond to completion bits: Bank requires Market, Cathedral
 requires Temple, and University requires Library. Bits for later buildings
 hide earlier items. These local checks prove neither
@@ -386,7 +386,7 @@ retention, other writers and complete gameplay policy remain unproved. The
 conditional source and initialized mask matches are recorded in
 [the modifier record](../../manifests/building-wonder-cost-modifier-branches.json#/additionalCommonBranches/0).
 Bounded address searches found no writer, and the consumer lies in a Ghidra
-function gap; see [the source frontier](../../manifests/building-wonder-cost-gate-source-frontier.json).
+function gap; see [the source frontier](../../manifests/building-wonder-cost-check-sources.json).
 
 ### Building choices and completion fields
 
@@ -395,13 +395,13 @@ copies a fixed temporary-array tail: byte count `4 * (100 - k)`, returned
 visible count generator-count minus `k`. Parent destination is `+0x5DC`; return
 is stored at `+0x43C`. Neither wrapper nor child loop checks a 100-entry
 maximum; excessive native output is unproved. The
-[copy boundary](../../manifests/building-option-copy-capacity-boundary.json)
+[copy boundary](../../manifests/building-option-copy-capacity.json)
 establishes no safe new definition/ownership slot.
 
 Append helper `0x822D10C0` derives size/capacity from begin/end/capacity-end.
 Nonzero begin and size below capacity permit a four-byte write and end advance;
 otherwise `0x822D1150` owns unresolved growth/allocation/failure. The
-[capacity gate](../../manifests/building-option-append-capacity-gate.json) does
+[capacity gate](../../manifests/building-option-append-capacity.json) does
 not validate allocation or pointer invariants.
 
 After sufficient production, `0x82D02090` writes ordinary building bits,
@@ -420,13 +420,13 @@ unresolved, along with uninspected materializers.
 | --- | --- | --- |
 | `+0x24` | No non-stack READ/READ_WRITE in 272 instructions; no split-constant materializer for `0x8314FE4C` | [Flag frontier](../../manifests/spaceship-part-city-flag.json#/findings/RVA-F-0208) |
 | `+0x24` continuation | Next eight unique city-base functions after the followed path and first eight others: no direct non-stack READ/READ_WRITE in 428 instructions | [Materializers](../../manifests/spaceship-part-city-flag.json#/findings/RVA-F-0211) |
-| Era bits `+0x14`, `+0x18`, `+0x1C`, `+0x20` | No reads in 272 instructions across `[0x82D00000,0x82D20000)`; reproduced 31 city-base materializers, first eight after `0x82CEDF90` had none in 664 instructions | [Era-bit frontier](../../manifests/city-era-building-bit-reader-frontier.json) |
-| `+0x3A` | No READ operands in 272 instructions across `[0x82D00000,0x82D20000)` | [Stored-item frontier](../../manifests/city-stored-item-id-reader-frontier.json) |
+| Era bits `+0x14`, `+0x18`, `+0x1C`, `+0x20` | No reads in 272 instructions across `[0x82D00000,0x82D20000)`; reproduced 31 city-base materializers, first eight after `0x82CEDF90` had none in 664 instructions | [Era-bit frontier](../../manifests/city-era-building-bit-readers.json) |
+| `+0x3A` | No READ operands in 272 instructions across `[0x82D00000,0x82D20000)` | [Stored-item frontier](../../manifests/city-stored-item-id-readers.json) |
 | City base `0x8314FE28` | 654329 instructions produced 31 split-constant materializers below cap 64. `0x82CEDF90` reads indexed byte `+0`, then calls `0x82D038E8`, whose inspected prefix does not read that base. First eight other materializers: no direct `+0x3A` reads in 664 instructions | Same stored-item frontier |
 
 One gated sufficient-production wonder path copies `+0x38` to `+0x3A`; later
 behavior remains outside the
-[`non-unit-production-threshold-boundary.json`](../../manifests/non-unit-production-threshold-boundary.json).
+[`non-unit-production-threshold.json`](../../manifests/non-unit-production-threshold.json).
 
 The directly called city helper tests Courthouse index-14 in `+0x10`, selecting
 eight adjacent candidates or twenty with a second ring. This
@@ -500,8 +500,8 @@ indexed, indirect, computed, interior-string and undecoded readers remain open.
 `+0xCA` operand; scaled/indexed/other readers remain open. Choice tail
 `0x82E41538` calls `0x827F7C8C`, whose one-byte body has no instruction and
 references truncate at 64. It adds no reader evidence. See
-[text census](../../manifests/building-wonder-text-field-reference-boundary.json)
-and [consumer frontier](../../manifests/building-wonder-consumer-frontier.json).
+[text census](../../manifests/building-wonder-text-field-reference.json)
+and [consumer frontier](../../manifests/building-wonder-consumers.json).
 
 | Consumer evidence | Finding and remaining limit |
 | --- | --- |
@@ -552,9 +552,9 @@ The table below lists assigned definition fields.
 Exact values for each ID live in:
 
 - The [`building-record-identities-100-122.json`](../../manifests/building-record-identities-100-122.json)
-- The [`building-menu-record-gates.json`](../../manifests/building-menu-record-gates.json)
+- The [`building-menu-record-requirements.json`](../../manifests/building-menu-record-requirements.json)
 - The [wonder identities](../../manifests/wonder-records.json#/findings/RVA-F-0096) and their linked continuation packets
-- The [`wonder-outer-gate-record-fields.json`](../../manifests/wonder-outer-gate-record-fields.json)
+- The [`wonder-outer-check-record-fields.json`](../../manifests/wonder-outer-check-record-fields.json)
 
 No runtime probe has recorded an individual definition-field value or observed
 execution of a described effect. The recorded sessions establish some menu and
@@ -609,7 +609,7 @@ routing cannot be used as a contract for extending the table with arbitrary IDs.
 ### Item selection and admission
 
 The
-[`production-item-writer-decoded-frontier.json`](../../manifests/production-item-writer-decoded-frontier.json)
+[`production-item-writers.json`](../../manifests/production-item-writers.json)
 found no selection/validity rule within its recorded limits. A runtime write
 observer found command five storing its item into owner-matched city `+0x38` at
 `0x82CE0020`, without an ID check. Cost preview separately writes candidate IDs
@@ -666,7 +666,7 @@ Completion also checks/fills a 28-byte ordinal list at `+0x87..+0xA2`. The exact
 building-loop generated window reads city `+0`/`+0x10`, not list bytes; Ghidra's
 direct-field query covered zero decoded instructions. Callees/other readers
 remain open, and no runtime list filter was observed. See the
-[`building completion-list reader frontier`](../../manifests/building-completion-list-menu-reader-frontier.json).
+[`building completion-list reader frontier`](../../manifests/building-completion-list-menu-readers.json).
 
 ### Post-threshold effect branches
 
@@ -687,7 +687,7 @@ the
 [bounded search](../../manifests/great-wall-player-pair.json#/findings/RVA-F-0207);
 derived/indexed/computed/aliased/indirect readers remain open. Mode one skips
 the later tail; separate mode-two items 219/220 can enter it:
-[`wonder-post-threshold-helper-boundary.json`](../../manifests/wonder-post-threshold-helper-boundary.json).
+[`wonder-post-threshold-helper.json`](../../manifests/wonder-post-threshold-helper.json).
 
 Mode-two terminal indices 19/20 clear two bits and set `0x10000` in
 `0x82FFE7C4`. Exact-base scan found no decoded materializers, excluding neither
@@ -712,14 +712,14 @@ eligibility and item state, not gameplay-effect execution:
 
 | IDs | Static evidence | Runtime effect execution |
 |---|---|---|
-| Wonders 201, 202, 208, 211, 227 | Item-specific branches exist in the direct mode-one helper. Their local writes and calls are mapped in the [`wonder-post-threshold-helper-boundary.json`](../../manifests/wonder-post-threshold-helper-boundary.json) and [`great-wall-player-pair.json#/findings/RVA-F-0177`](../../manifests/great-wall-player-pair.json#/findings/RVA-F-0177), [`hanging-gardens-population-branch.json`](../../manifests/hanging-gardens-population-branch.json), [`oxford-technology-acquisition-branch.json`](../../manifests/oxford-technology-acquisition-branch.json), [`leonardo-unit-type-branch.json`](../../manifests/leonardo-unit-type-branch.json), and [`statue-of-liberty-population-branch.json`](../../manifests/statue-of-liberty-population-branch.json). | Not observed |
+| Wonders 201, 202, 208, 211, 227 | Item-specific branches exist in the direct mode-one helper. Their local writes and calls are mapped in the [`wonder-post-threshold-helper.json`](../../manifests/wonder-post-threshold-helper.json) and [`great-wall-player-pair.json#/findings/RVA-F-0177`](../../manifests/great-wall-player-pair.json#/findings/RVA-F-0177), [`hanging-gardens-population-branch.json`](../../manifests/hanging-gardens-population-branch.json), [`oxford-technology-acquisition-branch.json`](../../manifests/oxford-technology-acquisition-branch.json), [`leonardo-unit-type-branch.json`](../../manifests/leonardo-unit-type-branch.json), and [`statue-of-liberty-population-branch.json`](../../manifests/statue-of-liberty-population-branch.json). | Not observed |
 | Wonders 219-220 | A conditional mode-two path writes shared status bits and a halfword; their meanings and downstream consumers remain unknown. See [`wonder-mode-two.json#/findings/RVA-F-0179`](../../manifests/wonder-mode-two.json#/findings/RVA-F-0179). | Not observed |
 | Building 114 | The Courthouse bit selects a scan of eight or twenty coordinate candidates; one later path stores a selected or replacement ordinal byte at city `+0x58` plus a local index. The visible effect is unknown. See [`courthouse-city-coordinate-scan.json`](../../manifests/courthouse-city-coordinate-scan.json) and [city byte store](../../manifests/building-bit-selection.json#/findings/RVA-F-0203). | Not observed |
 | Buildings 101-106, 110, 112 | A direct post-completion city helper tests their presence bits and can change local weights on food, production, and trade component returns; a later path can store a selected or replacement ordinal byte at city `+0x58` plus a local index. The final city effect is unknown. See [bit arithmetic](../../manifests/building-postwrite-city-bit-arithmetic.json), [weighted score](../../manifests/building-bit-selection.json#/findings/RVA-F-0202), and [city byte store](../../manifests/building-bit-selection.json#/findings/RVA-F-0203). | Not observed |
 | Wonders 200, 206, 207, 209 | Bounded searches found no exact edge for the described effect within each packet's stated scope: [`pyramids-government-availability.json`](../../manifests/pyramids-government-availability.json), [`great-library-technology-transfer.json`](../../manifests/great-library-technology-transfer.json), [`east-india-sea-trade.json`](../../manifests/east-india-sea-trade.json), and [`shakespeare-city-culture.json`](../../manifests/shakespeare-city-culture.json). These are bounded negatives, not proof that no effect exists. | Not observed |
-| Wonders 203-205, 210, 212-218, 221-226, 228-232 | These IDs normalize into the helper's accepted 0-32 range on the direct city-update callsite but do not match one of its five explicit mode-one branches. This bounds only that helper path; other consumers remain possible. See the [`wonder-post-threshold-helper-boundary.json`](../../manifests/wonder-post-threshold-helper-boundary.json). | Not observed |
-| Wonders 233-236 | Normalized indices 33-36 branch away before the direct post-threshold helper body. The known vtable's earlier gate also rejects them on this path; other receiver states and paths remain unresolved. See the [`wonder-post-threshold-helper-boundary.json`](../../manifests/wonder-post-threshold-helper-boundary.json) and [`wonder-eligibility.json#/findings/RVA-F-0170`](../../manifests/wonder-eligibility.json#/findings/RVA-F-0170). | Not observed |
-| Buildings 100, 107-109, 111, 113, 115-122 | Stored descriptions are present, but no item-specific effect branch or bounded per-item negative packet is recorded here. The [consumer frontier](../../manifests/building-wonder-consumer-frontier.json) does not exclude indexed or indirect readers. | Not observed |
+| Wonders 203-205, 210, 212-218, 221-226, 228-232 | These IDs normalize into the helper's accepted 0-32 range on the direct city-update callsite but do not match one of its five explicit mode-one branches. This bounds only that helper path; other consumers remain possible. See the [`wonder-post-threshold-helper.json`](../../manifests/wonder-post-threshold-helper.json). | Not observed |
+| Wonders 233-236 | Normalized indices 33-36 branch away before the direct post-threshold helper body. The known vtable's earlier gate also rejects them on this path; other receiver states and paths remain unresolved. See the [`wonder-post-threshold-helper.json`](../../manifests/wonder-post-threshold-helper.json) and [`wonder-eligibility.json#/findings/RVA-F-0170`](../../manifests/wonder-eligibility.json#/findings/RVA-F-0170). | Not observed |
+| Buildings 100, 107-109, 111, 113, 115-122 | Stored descriptions are present, but no item-specific effect branch or bounded per-item negative packet is recorded here. The [consumer frontier](../../manifests/building-wonder-consumers.json) does not exclude indexed or indirect readers. | Not observed |
 
 Barracks 101 has no proved link to creation-record veteran bit. Raw displacement
 scan found no +0x3C store in
@@ -734,8 +734,8 @@ one only for corresponding bits among three from `+0x1DC`.
 Getter `0x82D7D2A8` reads frontend `+0x08`, forced zero for state 4 through
 6. Generic gate queries signed technology `+0x44`/`+0x46` (or `-1`),
 and other-player ownership for `+0x48`. IDs 200 through 236:
-[`wonder-outer-gate-record-fields.json`](../../manifests/wonder-outer-gate-record-fields.json).
-Indices 19/20 use [`wonder-outer-gate-special-19-20.json`](../../manifests/wonder-outer-gate-special-19-20.json).
+[`wonder-outer-check-record-fields.json`](../../manifests/wonder-outer-check-record-fields.json).
+Indices 19/20 use [`wonder-outer-check-special-19-20.json`](../../manifests/wonder-outer-check-special-19-20.json).
 
 All 60 direct frontend-pointer-reference functions yielded no proved root
 `+0x08` write;
@@ -792,7 +792,7 @@ depend on the accepted current-item domain, not arbitrary-ID validation. Neutral
 first writes prove no building/wonder completion, effects, queue advancement,
 overflow handling, creation, notification, runtime behavior or implementation
 safety. Exact addresses/stops:
-[`non-unit-production-threshold-boundary.json`](../../manifests/non-unit-production-threshold-boundary.json).
+[`non-unit-production-threshold.json`](../../manifests/non-unit-production-threshold.json).
 
 ## UnitType values
 
@@ -1145,7 +1145,7 @@ For the supported Galleon/Spy inputs and the human classifier arm, an empty
 fleet contributes 90 Gold, one loaded Spy brings the total to 165, and ten bring
 it to 840. The cargo contributions are therefore 75 and 750 Gold. These are
 derived native amounts; actual command delivery and reserve changes were not
-observed. [Sale valuation](../../manifests/unit-sale-refund-value-boundary.json)
+observed. [Sale valuation](../../manifests/unit-sale-refund-value.json)
 records membership, identity, arithmetic and preview/correction limits.
 The native register representation permits a correction at the value producers
 without changing the formatter. Such a correction still needs roster retention
@@ -1153,13 +1153,13 @@ across the classifier and a guard for nested carriers excluded by removal.
 
 ## Evidence sources
 
-- [Fleet scrap command boundary](../../manifests/fleet-scrap-command-boundary.json):
+- [Fleet scrap command boundary](../../manifests/fleet-scrap-command.json):
   army disbanding and unit deletion use different selected commands. Their
   inspected paths do not establish loaded-fleet refunds or cargo valuation.
 - [Unique Unit identity selection](../../manifests/unique-unit-identity-selection.json)
 - [AI candidate choice](../../manifests/ai-stat-choice.json)
 - [Unit-definition AI evaluation](../../manifests/unit-definitions-ai-evaluation.json)
 - [Production cost ownership](../../manifests/production-cost-ownership.json)
-- [`non-unit-production-threshold-boundary.json`](../../manifests/non-unit-production-threshold-boundary.json)
+- [`non-unit-production-threshold.json`](../../manifests/non-unit-production-threshold.json)
 - [Combat resolution lifecycle](../../manifests/combat-resolution-lifecycle.json)
 - [Unique Unit combat predicates](../../manifests/unique-unit-combat-predicates.json)

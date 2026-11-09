@@ -54,7 +54,7 @@ numeric map. Supported Xbox names:
 
 Selected turn-command debug labels are independently bound by the native
 mapper and its dispatcher input in
-[`native-human-turn-completion-boundary.json`](../../manifests/native-human-turn-completion-boundary.json#/nativeCommandNames).
+[`native-human-turn-completion.json`](../../manifests/native-human-turn-completion.json#/nativeCommandNames).
 They identify native names, without proving delivery or completed processing.
 
 | Case | Static contract |
@@ -81,7 +81,7 @@ contains AI/GameOver state; the startup pending word can be discarded without
 submission. Neither supplies a human request, and directly submitting
 `EndTurn` skips the earlier human/AI completion chain.
 
-The [completion manifest](../../manifests/native-human-turn-completion-boundary.json)
+The [completion manifest](../../manifests/native-human-turn-completion.json)
 owns the candidate guards and default-off observation contract. A calendar
 increment or a queued request alone does not count a completed world round.
 
@@ -91,12 +91,12 @@ Four candidate writers of `0x82F7AD00` are identified. Three copy object
 `+0x134` from `0x8314EFC8` (one via the second parameter). The fourth copies
 record `+0x0C` . A flag-guarded record builder seeds a temporary from the old
 word, applies `0x822DE438` , then stores it before the later copy. The
-[RNG transfer contract](../../manifests/combat-rng-save-reload-boundary.json#/headerStateTransferBoundary)
+[RNG transfer contract](../../manifests/combat-rng-save-reload.json#/headerStateTransferBoundary)
 identifies this word as current main RNG state, with conditional save/load
 transfer. It does not prove complete generator restoration or identify an
 immutable map seed. Other object meanings and writer closure remain unknown.
 
-The selected [loading-tip and game-helper random stream](../../manifests/native-game-random-state-boundary.json)
+The selected [loading-tip and game-helper random stream](../../manifests/native-game-random-state.json)
 uses state `0x8314F750`, distinct from the main combat state above. Both
 selected callers advance that stream, so retained draw order can affect
 which state a later helper consumes. Actual game-state effects, checksum
@@ -113,7 +113,7 @@ guarantee, complete peer receipt or arrival order is established. Exact gates:
 [case 55](../../manifests/xbox-network-message-root.json#/turnAndSyncAnchors/case55/returnSubmissionBoundary)
 and [case 60](../../manifests/xbox-network-message-root.json#/turnAndSyncAnchors/case60).
 
-The [scalar/phase contract](../../manifests/spaceship-part-presentation-boundary.json#/worldActorSaveSyncProjectionBoundary)
+The [scalar/phase contract](../../manifests/spaceship-part-presentation.json#/worldActorSaveSyncProjectionBoundary)
 owns the selected unit contribution and sample timing. Its conditional nested
 command drain can run before actor retirement. A scalar projection is not a
 bulk game-state recovery snapshot.
@@ -164,20 +164,20 @@ scalar differs, with no early exit. A selected peer shows the dialog and never
 its own name; other peers show a banner naming it. The manifest also lists the
 fields summed by `0x82CD4CF0`, which exclude AI research lists.
 
-The [lobby ready gate](../../manifests/xbox-lobby-ready-gate.json) owns the ready
+The [lobby ready gate](../../manifests/xbox-lobby-ready-check.json) owns the ready
 press, the host's all-ready countdown gate and two untimed loops on game entry.
 The last Ready getter return at `0x82E4C9F8` supplies the flag inverted by the
 local press. A nonzero flag requests unready through the existing type 4 path.
 This can distinguish the two requests without another getter, but it does not
 prove acknowledgement or the host's countdown change. The compatible indexed
 setter has no proved direct caller or registered pointer outside PE metadata.
-The [selected Ready application](../../manifests/xbox-lobby-ready-gate.json#/readyApplicationBoundary)
+The [selected Ready application](../../manifests/xbox-lobby-ready-check.json#/readyApplicationBoundary)
 instead writes the indexed flag inline and can notify the selected lobby
 callback to re-evaluate its countdown. Its member key has a conditional
-connection-record producer and a selected [route for a forwarded source index](../../manifests/xbox-lobby-ready-gate.json#/readyRoutingKeyBoundary).
+connection-record producer and a selected [route for a forwarded source index](../../manifests/xbox-lobby-ready-check.json#/readyRoutingKeyBoundary).
 The routing helper's key is captured during service construction, while
 current registry/descriptor/record identity, trace effects, field retention
-and delivery remain open. The [selected kind-4 factory](../../manifests/xbox-lobby-ready-gate.json#/readyKindFourFactoryBoundary)
+and delivery remain open. The [selected kind-4 factory](../../manifests/xbox-lobby-ready-check.json#/readyKindFourFactoryBoundary)
 is registered by a conditional native startup callback and constructs the
 Ready class with source key -1. The direct or forwarded route must still
 supply a valid current member key before application. Current startup,
@@ -189,61 +189,61 @@ premises. They also clobber guest registers and condition fields. A later
 content gate must preserve the handler's live/return context and current
 owner/key/role requirements. The local memory effects do not prove that move
 safe.
-The [selected callback construction and eligibility guards](../../manifests/xbox-lobby-ready-gate.json#/readyPressContextBoundary)
+The [selected callback construction and eligibility guards](../../manifests/xbox-lobby-ready-check.json#/readyPressContextBoundary)
 bind a stored tail wrapper to the parent controller under retained-field
 premises. Its row/member checks and local member comparison do not establish
-the role of a joining guest. The [selected component caller](../../manifests/xbox-lobby-ready-gate.json#/readyPressInvocationBoundary)
+the role of a joining guest. The [selected component caller](../../manifests/xbox-lobby-ready-check.json#/readyPressInvocationBoundary)
 discards the Ready return value. A distinct exit-completion action reaches
 lobby leave under its table/parent guards. Current rows, other invocation
 routes, callback retirement and safe cancellation during setup remain open.
-The [selected kind-1 receive path](../../manifests/xbox-lobby-ready-gate.json#/entrySlotReceiveBoundary)
+The [selected kind-1 receive path](../../manifests/xbox-lobby-ready-check.json#/entrySlotReceiveBoundary)
 can pass its supplied member key and four-byte value to the first wait's
 slot setter, then update a separate setup map. A current admitted key and
 retained non-sentinel value can satisfy one selected slot. Neither a
 constructed message nor that write proves departure or full host release.
-The [selected departure callback](../../manifests/xbox-lobby-ready-gate.json#/nativeDepartureCallbackBoundary)
+The [selected departure callback](../../manifests/xbox-lobby-ready-check.json#/nativeDepartureCallbackBoundary)
 requests separate kind-14, progress, internal-command and settings paths.
 Their local stores do not establish removal from either entry wait. Current
 callback/service identity, delivery and nested command/UI effects remain
 necessary before choosing a cancellation policy. The
-[selected lobby UI event 9 consumer](../../manifests/xbox-lobby-ready-gate.json#/nativeDepartureUiEventBoundary)
+[selected lobby UI event 9 consumer](../../manifests/xbox-lobby-ready-check.json#/nativeDepartureUiEventBoundary)
 can populate a row mapping, refresh its display fields and request button
 labels. Its gate and requests do not establish membership removal,
 countdown cancellation or a safe game-entry unwind. The separate
-[deferred screen-event queue](../../manifests/native-ui-event-queue-boundary.json)
+[deferred screen-event queue](../../manifests/native-ui-event-queue.json)
 can store an event for a later controller observation. Its count is not
 an acknowledgement or proof of completed handler effects.
 Recomputing the human mask does not guarantee that departure removes a player
 from a wait. A nonzero source mask is copied directly, and the actual mask/map
 update remains unproved. The
-[participant-selection contract](../../manifests/xbox-lobby-ready-gate.json#/entryParticipantSelectionBoundary)
+[participant-selection contract](../../manifests/xbox-lobby-ready-check.json#/entryParticipantSelectionBoundary)
 shows how absence of a record in the same retained native map can remove
 that index's first-wait requirement when the source word is zero and the
 stated count/range conditions hold. Missing service or descriptor is a
 different zero result. The
-[native removal contract](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionMapRetirementBoundary)
+[native removal contract](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeConnectionMapRetirementBoundary)
 identifies index-map mutation, a separate guarded connection-map arm and
 record disposal requests. Its returned traversal count is not a completed
 cleanup result. Actual invocation and the later same-map observation remain
 required. The service's
-[member callbacks](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberChildRetirementBoundary)
+[member callbacks](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeMemberChildRetirementBoundary)
 change local flags and issue separate backend requests before map erasure.
 Those effects and raw returns do not prove complete member removal.
 The selected
-[member providers and engine methods](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberBackendRetirementBoundary)
+[member providers and engine methods](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeMemberBackendRetirementBoundary)
 have separate descriptor reads, local state changes and delegated removal
 requests. The callback for the service's own index can request record
 construction and control updates. Its return of one does not establish full
 shutdown or completed cleanup.
-The [member graphics record contract](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberGraphicsRecordLifetimeBoundary)
+The [member graphics record contract](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeMemberGraphicsRecordLifetimeBoundary)
 separates three creation requests from conditional release requests. Their
 local statuses and output words do not establish resource ownership. Its
 flag query also permits a conditional exclusion of the own-index callback's
 record-construction arm. The later control update still runs.
-The [intervening status helper](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberOwnIndexStatusBoundary)
+The [intervening status helper](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeMemberOwnIndexStatusBoundary)
 conditionally enters a separate global request/cache path. Its numeric
 result does not establish member removal or preservation of the caller's flag.
-The [selected control 1010 contract](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberControl1010Boundary)
+The [selected control 1010 contract](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeMemberControl1010Boundary)
 binds a byte codec, local handler, policy loop and indexed child request.
 Its senders use different result adapters and policy arguments. Actual
 registration, capture, delivery and complete member effects remain open.
@@ -277,7 +277,7 @@ helper returns, are required. Search cancellation and session deletion
 requests remain distinct from completed cleanup and host release.
 
 The
-[hotjoin transfer/restore boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json)
+[hotjoin transfer/restore boundary](../../manifests/xbox-hotjoin-transfer-restore.json)
 owns the native compressed save-style snapshot, transfer-ID queue result,
 received-stream writes, shared mode-1 loader, completion mask and conditional
 path from a receive callback to a command append. Exception metadata
@@ -312,12 +312,12 @@ pointer. Reference model omits proven read/call; other writers remain open. All
 type-55 submit/no-submit paths merge before one type-54 site. Other cases remain
 neutral; shared targets prove no shared meaning.
 
-The [game-entry controller lifetime](../../manifests/xbox-lobby-ready-gate.json#/nativeEntryControllerLifetimeBoundary)
+The [game-entry controller lifetime](../../manifests/xbox-lobby-ready-check.json#/nativeEntryControllerLifetimeBoundary)
 separates the old screen manager's explicit global clear, a recorded screen
 request and the game header's loading object. That loading object has its
 own byte wait without a local timer. Its existence does not establish a
 current lobby controller during entry, completed cancellation or host release.
-The separate [screen-controller lifecycle](../../manifests/native-screen-controller-lifecycle-boundary.json)
+The separate [screen-controller lifecycle](../../manifests/native-screen-controller-lifecycle.json)
 records selected replacement and retirement requests. Pointer publication,
 entry status, local clears and completed ownership remain distinct.
 
@@ -357,43 +357,43 @@ are separate layers. No new reorder or retransmit implementation follows from
 this partial native audit.
 
 The hotjoin manifest's
-[connection callback boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/returningConnectionCallbackBoundary)
+[connection callback boundary](../../manifests/xbox-hotjoin-transfer-restore.json#/returningConnectionCallbackBoundary)
 identifies the installed vector and selected listener slots. The
-[connection-index boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeConnectionIndexBoundary)
+[connection-index boundary](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeConnectionIndexBoundary)
 follows selected raw callback paths into guarded native index allocation and
 disconnect forwarding. A native connection index is not an established
 XUID/game-player binding. Transport sequence handling and this allocation path
 do not establish fresh returning-player admission or successful recovery.
 
-The [member-name selector](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberNameSelectionBoundary)
+The [member-name selector](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeMemberNameSelectionBoundary)
 extends that path through a parsed 64-byte string field, case-insensitive setup
 string comparison and zero-result index lookup. Actual vacancy requires retained
 service/descriptor identity; validation, member-to-XSession binding and retirement
 remain active research. The bounded parser hardening seam is a proposal, not a
 malformed-peer or runtime failure observation.
 
-The [XSession membership boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeXSessionMembershipBoundary)
+The [XSession membership boundary](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeXSessionMembershipBoundary)
 joins selected parsed member fields to the native member-join wrapper before
 the later free-index scan, and traces the member-leave call before guarded
 retirement. Name-based candidate selection can occur earlier. Retained owner,
 record and descriptor identity, supported counts and helper effects remain
 conditions; neither API call establishes returning-player or world acceptance.
 
-The [member transfer-retirement contract](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberTransferRetirementBoundary)
+The [member transfer-retirement contract](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeMemberTransferRetirementBoundary)
 records selected state-six marking/reinsertion and separate member-collection
 requests. Queue count is restored by the paired normal operations under the
 recorded helper premises; terminal notification/disposal belongs to a later
 pump. Actual callback/storage effects and post-tail lifetimes remain open before
 complete cancellation or retry can be accepted.
 
-The [member storage/failure boundary](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeMemberStorageFailureBoundary)
+The [member storage/failure boundary](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeMemberStorageFailureBoundary)
 expands node acquisition, local disposal requests and failure continuation.
 A usable node and graceful failure require caller/ownership contracts; the
 selected native exception request reaches a pinned SDK handler that requests a
 debugger break and implements no guest unwind. Source binding, actual
 exception behavior and complete cancellation remain qualified.
 
-The [selected local-member producer](../../manifests/xbox-hotjoin-transfer-restore-boundary.json#/nativeLocalMemberIdentityBoundary)
+The [selected local-member producer](../../manifests/xbox-hotjoin-transfer-restore.json#/nativeLocalMemberIdentityBoundary)
 binds local address, sign-in and profile-XUID requests to the selected local
 record's user-index and count fields. Its pending-address back edge has no local
 deadline or cancellation check. Record-pointer storage and partial address

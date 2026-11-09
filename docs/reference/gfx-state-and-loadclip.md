@@ -71,5 +71,5 @@ unproved.
 
 - [GFx loadClip state provider](../../manifests/gfx-ui-loadclip-state-provider.json)
 - [GFx MovieClipLoader request
-  boundary](../../manifests/gfx-ui-moviecliploader-request-boundary.json)
+  boundary](../../manifests/gfx-ui-moviecliploader-request.json)
 - [Catalog contract](../catalogs.md)

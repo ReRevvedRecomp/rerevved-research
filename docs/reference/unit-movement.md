@@ -33,7 +33,7 @@ work, and rail, teleport, ship and aircraft cases require separate validation.
 Observer and visibility tests do not establish human/AI equivalence. No peer-local safety
 or native Instant option follows from these selected paths.
 
-Evidence: [unit-movement-presentation-boundary.json](../../manifests/unit-movement-presentation-boundary.json)
+Evidence: [unit-movement-presentation.json](../../manifests/unit-movement-presentation.json)
 (RVA-F-0383), with its ordinary lifecycle and presentation-producer dependencies.
 The static assessment supports conditional experiments, not an enabled option
 or observed acceleration.

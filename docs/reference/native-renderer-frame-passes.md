@@ -1,7 +1,7 @@
 # Native renderer frame passes
 
 The
-[frame-pass manifest](../../manifests/native-renderer-frame-pass-boundary.json)
+[frame-pass manifest](../../manifests/native-renderer-frame-pass.json)
 groups static fragments, not execution counts or total frame order. Alternate
 setup/end share guarded `0x82C71880`. Callback `0x82E87D18` reaches
 `0x82C7DF58`: service `bctrl` at `0x82C7E0F8` returns `0x82C7E0FC` before
@@ -32,7 +32,7 @@ Renderer `+0x550` still receives the incoming group. Allocation extent,
 current storage/vptr, helper returns and target/depth identity remain unproved.
 
 Wrapper D10 `+0x74` supplies a separate group; target/depth remain unknown. The
-[Resolve discriminator](../../manifests/native-renderer-resolve-destination-lifecycle-discriminator.json#/decisiveObservation/observationCoverage)
+[Resolve discriminator](../../manifests/native-renderer-resolve-destination-lifecycle.json#/decisiveObservation/observationCoverage)
 requires pre-`0x8250AFEC` item/provider-to-r6 linkage paired with same-call
 color/depth descriptor and EDRAM row, current run/image identity and successful
 reads. Native EDRAM diagnostics and Xenos descriptor events supply neither join;

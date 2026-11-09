@@ -183,7 +183,7 @@ literal request and has a direct owner.
 Reserve lifecycle follow-up found no additional source/caller: no exact base/
 owner-entry references and both bodies were non-returning thunks. This proves
 neither sole source nor consumer and leaves arithmetic unchanged:
-[`gold-reserve-aggregate-lifecycle-boundary.json`](../../manifests/gold-reserve-aggregate-lifecycle-boundary.json).
+[`gold-reserve-aggregate-lifecycle.json`](../../manifests/gold-reserve-aggregate-lifecycle.json).
 
 [`unique-era-ability-effect-ownership.json`](../../manifests/unique-era-ability-effect-ownership.json)
 owns qualifications/cell projection. Repaired complete yield accessors use
@@ -216,7 +216,7 @@ Production (56). No generic tile API or broader parity follows.
 - [Rush-cost producer](../../manifests/rush-cost-producer.json)
 - [Game calendar state](../../manifests/game-calendar-state.json)
 - [`gold-reserve-interest.json`](../../manifests/gold-reserve-interest.json)
-- [`gold-reserve-aggregate-lifecycle-boundary.json`](../../manifests/gold-reserve-aggregate-lifecycle-boundary.json)
+- [`gold-reserve-aggregate-lifecycle.json`](../../manifests/gold-reserve-aggregate-lifecycle.json)
 - [Starting technology grants](../../manifests/starting-technology-grants.json)
 - [`unique-era-ability-effect-ownership.json`](../../manifests/unique-era-ability-effect-ownership.json)
 - [Civilization information panel text

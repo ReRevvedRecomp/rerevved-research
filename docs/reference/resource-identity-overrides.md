@@ -7,7 +7,7 @@ title freezes Resources before setup, allowing pending Balanced to control
 India, but publishes tiles at recount after native object-creation attempts.
 
 The
-[override boundary](../../manifests/resource-identity-override-boundary.json)
+[override boundary](../../manifests/resource-identity-override.json)
 owns static read sets/calls/confidence/limits;
 [definitions](resource-definitions.md) owns IDs/access,
 [tile changes](resource-placement.md#post-setup-tile-changes)
@@ -49,7 +49,7 @@ formulas remain outside that negative.
 ## Mixed identity observation
 
 The
-[runtime qualification](../../manifests/resource-identity-override-boundary.json#/runtimeEvidence/mixedIdentityObservation)
+[runtime qualification](../../manifests/resource-identity-override.json#/runtimeEvidence/mixedIdentityObservation)
 records Balanced Oxen on native Cattle-remainder Grassland: it behaved as Oxen
 while Romans/Code of Laws also received Cattle food. Universal identity
 agreement remains open despite the direct census. A trace must distinguish

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check bounded gameplay-cost formula models against independent expectations.
 
-Each model covers one rule documented in docs/reference/gameplay-cost-arithmetic.md:
+Each model covers one rule documented in docs/reference/gameplay/gameplay-cost-arithmetic.md:
 rush cost, the AI unit-choice rush valuation, fleet sale value, technology cost,
 road cost and Gold reserve interest. A model compares the native integer
 arithmetic with a rational or literal expectation over small supplied input

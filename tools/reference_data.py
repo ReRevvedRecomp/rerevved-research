@@ -603,11 +603,11 @@ def check_repository(repo: Path) -> ReferenceData:
     data = load_reference_data(repo)
     documents = (
         (
-            repo / "docs" / "reference" / "civilization-bonuses.md",
+            repo / "docs" / "reference" / "gameplay" / "civilization-bonuses.md",
             _render_civilization_document,
         ),
         (
-            repo / "docs" / "reference" / "achievements.md",
+            repo / "docs" / "reference" / "interface" / "achievements.md",
             _render_achievement_document,
         ),
     )
@@ -626,11 +626,11 @@ def write_repository(repo: Path) -> tuple[ReferenceData, bool]:
     data = load_reference_data(repo)
     documents = (
         (
-            repo / "docs" / "reference" / "civilization-bonuses.md",
+            repo / "docs" / "reference" / "gameplay" / "civilization-bonuses.md",
             _render_civilization_document,
         ),
         (
-            repo / "docs" / "reference" / "achievements.md",
+            repo / "docs" / "reference" / "interface" / "achievements.md",
             _render_achievement_document,
         ),
     )

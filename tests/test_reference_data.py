@@ -32,11 +32,12 @@ class ReferenceDataTests(unittest.TestCase):
             "manifests/civilization-bonus-storage.json",
         ]
         if markdown:
-            (self.repo / "docs" / "reference").mkdir(parents=True)
+            for folder in ("gameplay", "interface"):
+                (self.repo / "docs" / "reference" / folder).mkdir(parents=True)
             inputs.extend(
                 (
-                    "docs/reference/civilization-bonuses.md",
-                    "docs/reference/achievements.md",
+                    "docs/reference/gameplay/civilization-bonuses.md",
+                    "docs/reference/interface/achievements.md",
                 )
             )
         for relative in inputs:
@@ -83,7 +84,7 @@ class ReferenceDataTests(unittest.TestCase):
 
     def test_rewrite_preserves_prose_and_then_returns_unchanged(self) -> None:
         self.prepare_repository(markdown=True)
-        path = self.repo / "docs" / "reference" / "civilization-bonuses.md"
+        path = self.repo / "docs" / "reference" / "gameplay" / "civilization-bonuses.md"
         expected = (
             "Before the tables.\n"
             + path.read_text(encoding="utf-8")
@@ -259,7 +260,7 @@ class ReferenceDataTests(unittest.TestCase):
     def test_markdown_drift_is_rejected(self) -> None:
         self.prepare_repository(markdown=True)
         self._replace(
-            "docs/reference/civilization-bonuses.md",
+            "docs/reference/gameplay/civilization-bonuses.md",
             "Factories provide triple Production",
             "Factories provide quadruple Production",
         )
@@ -459,7 +460,7 @@ class ReferenceDataTests(unittest.TestCase):
 
     def test_crossed_generated_markers_are_rejected(self) -> None:
         self.prepare_repository(markdown=True)
-        path = self.repo / "docs" / "reference" / "civilization-bonuses.md"
+        path = self.repo / "docs" / "reference" / "gameplay" / "civilization-bonuses.md"
         text = path.read_text(encoding="utf-8")
         begin = reference_data.BONUS_TABLE_BEGIN
         end = reference_data.BONUS_TABLE_END

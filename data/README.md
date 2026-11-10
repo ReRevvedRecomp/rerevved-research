@@ -10,7 +10,7 @@ the recovered game reference:
   Unique Era Ability (UEA) ID.
 - [`achievements.json`](achievements.json) is the source of the 50 retail achievement IDs,
   English names, unlocked and locked descriptions, gamerscore, icon image IDs and
-  native trigger-mapping status. Its [reference page](../docs/reference/achievements.md)
+  native trigger-mapping status. Its [reference page](../docs/reference/interface/achievements.md)
   separates extracted display metadata from native unlock evidence.
 
 Recovered civilization IDs, internal names, row order, and four UEA ID

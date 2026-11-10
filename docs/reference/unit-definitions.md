@@ -929,14 +929,18 @@ consumers before mutation.
 
 In the no-alternative path of `AITurnUnitFilter`, signed defense >= attack for
 the same player and type (stable across loads) enables two +8 threshold
-additions: unit `+0xC` bit `0x10` and indexed halfword bit `0x40`. The table's
-terrain and coordinate meaning is unknown.
+additions: unit `+0xC` bit `0x10` and indexed halfword bit `0x40`. The halfword
+table is the tile-flag plane at `0x8312A608`, indexed by `2*(40*a + b)` at the
+unit's own cell. This is a candidate identity (`RVA-F-0420`). The meaning of
+bit `0x40` is unknown.
 
 A later candidate replaces the ordinal and threshold only for a strictly greater
 signed score. Equality keeps the ordinal. Another loop short circuit can select
 without that comparison, though a normal exit bypasses it. A later predicate
-with unnamed byte-table and flag meanings can discard the ordinal and clear the
-queued destination. If a path bypasses that predicate and an opaque helper, the
+can discard the ordinal and clear the queued destination. It reads the same
+tile-flag plane and the terrain plane at `0x8312B288`, a signed byte per cell
+(candidate, `RVA-F-0420`). The flag bits and terrain values it tests have no
+known names. If a path bypasses that predicate and an opaque helper, the
 ordinal reaches original unit `+0x20`. Ordinals 0 through 7 also encode a
 numeric caller-output code without changing the ordinal. Another selection route
 writes the same field.
@@ -951,7 +955,7 @@ is not yet established.
 
 | Check or continuation | Contract |
 | --- | --- |
-| Candidate position | Positive signed movement budget; unit coordinates plus the decoded ordinal, and a signed horizontal remainder. `0x82CF0268` seeds a bounds Boolean, then may clear it through indexed cells and definition flags. Failed bounds do not skip reads; valid memory is still required and the meanings are unnamed. |
+| Candidate position | Positive signed movement budget; unit coordinates plus the decoded ordinal, and a signed horizontal remainder. `0x82CF0268` seeds a bounds Boolean, then may clear it through indexed cells and definition flags. Failed bounds do not skip reads; valid memory is still required. The indexed halfword and byte are the tile-flag and terrain planes, and their values are unnamed. |
 | Override | A zero result can be overridden by target bit `0x4` plus an indexed signed byte that matches an unidentified saved scalar. With the following bit `0x1` clear, zero clears the original queued destination and exits. Nonzero resets a fixed global, clears r22 and searches for units at the candidate position. |
 | No eligible unit | A definition-flag branch carries the original unit and coordinates into `0x82CB2430`. Its Boolean uses definition flags, original and candidate position bytes, halfwords and a matrix entry. `0x80000` forces zero, and `0x80` adds byte equality. Meanings remain unknown. |
 | Zero helper result | No memory or nonvolatile writes; it bypasses the selected-unit reload, keeping the original index and r22=0. A stable player reload and memory guards permit writes of a global flag and an original-unit flag, then `0x82D038E8` at `0x82D2CDE0`. |
@@ -962,7 +966,8 @@ Publication, delivery, dispatch, movement and compass mapping are not yet
 established. Effective stats and +8 adjustments are possible controls, but
 predicting behavior needs two proofs: the complete score, and that the
 stat-adjusted threshold stays unchanged. See the
-[AI choice manifest](../../manifests/ai-stat-choice.json).
+[AI choice manifest](../../manifests/ai-stat-choice.json). The plane identity
+is in [ai-stat-choice-map-planes.json](../../manifests/ai-stat-choice-map-planes.json).
 
 ## Additional count and model consumers
 

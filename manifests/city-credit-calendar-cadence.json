@@ -43,6 +43,14 @@
     {
       "topic": "gold-reserve-interest",
       "use": "Provides the interest store."
+    },
+    {
+      "topic": "barbarian-spawn-population",
+      "use": "Provides the saved incoming player and the city owner check in the Calendar loop (RVA-F-0268)."
+    },
+    {
+      "topic": "library-gold-credit-transaction",
+      "use": "Provides the entry owner snapshot and the reserve store (RVA-F-0245)."
     }
   ],
   "modeZeroSites": [
@@ -98,6 +106,22 @@
       }
     ],
     "qualification": "Predicates and results stay their own native reads. Stable state across callbacks is not presumed."
+  },
+  "reserveDestination": {
+    "confidence": "candidate",
+    "qualifies": "city-yield-credit-call.json (RVA-F-0227)",
+    "link": "CalendarTurnAdvance saves the incoming player p at frame +0x1E4 and, before the first mode-zero call at 0x82D1FC14, requires the city owner to equal p at 0x82D1F8F0..0x82D1F90C. The call passes the loop city to CityUpdate. CityUpdate saves the owner byte of that city at 0x82D1399C, 0x82D139B0 and 0x82D139D8, and its credit at 0x82D15610 stores the old reserve plus frame +0x7C to 0x830ED544 + 4*owner. So the reserve entry that the mode-zero call credits is 0x830ED544 + 4*p.",
+    "openConditions": [
+      "The city and its owner must stay the same between the Calendar check and the CityUpdate entry.",
+      "The call must reach the credit at 0x82D15610 with its operands valid. A cached branch, an earlier exit, another call target or a lost frame value prevents it. An override can make the added value zero.",
+      "This names a destination. It does not show that a given turn reaches the credit, or how many times."
+    ],
+    "locators": [
+      "barbarian-spawn-population.json#/recurringProductionBoundary/calendarScheduling/cityJoin",
+      "city-yield-credit-call.json#/turnDecisions/firstCachedPath",
+      "library-gold-credit-transaction.json#/cityRecord/owner",
+      "library-gold-credit-transaction.json#/creditStore/operands"
+    ]
   },
   "runtimeObservation": {
     "status": "not-observed",

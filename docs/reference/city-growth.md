@@ -1,7 +1,9 @@
 # City growth threshold
 
 `CityGrowthThresholdLookup` (`0x82CF1060`) uses population, a shared scalar and
-three flags. The gameplay meanings of the scalar and flags remain unknown.
+three flags. The gameplay meanings of the scalar and the flags remain unknown.
+Two of the flags have candidate producers, described in
+[Flag producers](#flag-producers).
 
 | Input | Storage | Use |
 | --- | --- | --- |
@@ -26,7 +28,7 @@ Without overflow on nonnegative inputs, reduction is `floor((2*v + 1)/3)`;
 both flags apply it twice with intermediate rounding. There is no clamp before
 the bonus. The selected stores for scalar initialization and the Calendar are
 recorded in the [capacity finding](../../manifests/city-population-cap.json#/growthBoundary).
-Flag meanings, complete writer coverage and runtime ranges remain unknown.
+Complete writer coverage and runtime ranges remain unknown.
 
 When cumulative UEA 8, Faster city growth, is active, the integer
 result is `max(20, B - 10)`. Otherwise the threshold is `B`. For wrapped signed
@@ -41,6 +43,38 @@ producers and the field's full meaning remain unknown. Evidence:
 The active floor can raise a baseline below 20. The proposed
 [economy bonus correction](economy-bonus-corrections.md#zulu-growth-without-increased-food-requirements)
 keeps that baseline while preserving the native benefit at larger values.
+
+## Flag producers
+
+These are candidates. Each links a store to a bit that the threshold reads, and
+neither is confirmed in a running game.
+
+Completing item 108 sets the `+0x10` bit `0x100`, the bit that subtracts two
+from the shared factor (candidate, `RVA-F-0416`). Item 108 is the stored name
+Aqueduct. The completion call `0x82D16158` reaches `0x82D02090` with the item
+number minus 100, and the store at `0x82D02164` sets one bit at that index. Index
+8 is `0x100`. With every other input equal, a city with the bit set uses factor
+`G - 2` where a city without it uses `G`. No percentage follows, and the page
+does not use the building's stored description. Open conditions:
+
+- Another store can change the bit before the threshold reads it. The Spy
+  demolition mission clears one selected building bit in this word, and other
+  writers have not been listed.
+- No completion of the item has been observed, and the bit is not shown to stay
+  set after the helper returns.
+
+A kidnapped Great Person of type 32 clears the `+0x3C` bit `0x2`, the bit that
+selects the first reduction (candidate, `RVA-F-0417`). Type 32 has the stored
+name Great Humanitarian. The store at `0x82CF7134` clears bit `1<<(type-31)` of
+the city halfword, which is `0x2` for type 32. The code that sets the bit is
+unknown, and so is what the bit means. Types 31 through 46 each clear their own
+bit. Type 47 clears no bit, and type 96 wraps to the same mask `0x2` as type 32.
+A completed kidnap and a changed growth threshold have not been observed.
+
+The `+0x24` bit `0x40` has no known producer. The shared factor at `0x830E45C8`
+has five recorded stores, listed in the
+[capacity finding](../../manifests/city-population-cap.json#/growthBoundary). Evidence:
+[city-growth-flag-producers.json](../../manifests/city-growth-flag-producers.json).
 
 ## Population bonus branches
 

@@ -29,6 +29,16 @@ same target-eligibility guarantees as the interactive menu. Choosing arbitrary
 mission IDs would skip those guarantees. The current static result does not
 establish a correction or feature for broader AI use.
 
+## Kidnapping and city growth
+
+The kidnap choice appears only when the target city's halfword at `+0x3C` is
+nonzero. When a kidnap succeeds in choosing a victim, the store at `0x82CF7134`
+clears bit `1<<(type-31)` of that halfword. For a victim of type 32, the stored
+name Great Humanitarian, it clears `0x2`. That is the bit that selects the first
+reduction in the [growth threshold](city-growth.md#flag-producers). This link
+is a candidate (`RVA-F-0417`). What sets the bit is unknown, and a completed
+kidnap with a changed threshold has not been observed.
+
 The [mission-selection finding](../../manifests/spy-mission-selection.json)
 holds the exact menu, dispatch, caller and target-range evidence. It also
 holds the limited negative results and the remaining runtime discriminator.

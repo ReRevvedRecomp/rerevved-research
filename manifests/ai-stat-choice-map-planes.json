@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0420",
+  "topic": "ai-stat-choice-map-planes",
+  "status": "open",
+  "confidence": "candidate",
+  "image": "image.json",
+  "question": "Are the halfword and byte tables that the AI unit filter and its candidate helper index the same tile-flag and terrain planes that resource placement uses?",
+  "scope": {
+    "flagPlane": "0x8312A608",
+    "terrainPlane": "0x8312B288",
+    "unitFilter": "0x82CBF570",
+    "thresholdWindow": "0x82CBF8A8..0x82CBF914",
+    "candidateHelper": "0x82CF0268",
+    "boundary": "The base address and the index arithmetic of three reads. The meaning of each flag bit and each terrain value read by the AI code is not covered, and neither is the score, the threshold or any movement."
+  },
+  "dependencies": [
+    { "topic": "ai-stat-choice", "use": "Provides the three indexed reads in the unit filter and its candidate helper." },
+    { "topic": "resource-density-generation", "use": "Provides the tile-flag plane, the terrain plane and the index 40*a + b (RVA-F-0273)." }
+  ],
+  "planes": {
+    "index": "For map coordinates (a, b) the cell index is i = 40*a + b. The flag plane holds an unsigned halfword at 0x8312A608 + 2*i. The terrain plane holds a signed byte at 0x8312B288 + i.",
+    "thresholdFlag": "The unit filter indexes 0x8312A608 with 2*(40*S16(unit +0x1C) + S16(unit +0x1E)), the cell under the unit. This matches the flag plane at the unit's own coordinates. Halfword bit 0x40 adds eight to the threshold.",
+    "candidateFlag": "The candidate helper 0x82CF0268 reads U16[0x8312A608 + 2*(40*X + Y)] for the candidate cell. This matches the flag plane at the candidate coordinates.",
+    "candidateTerrain": "The candidate helper reads S8[0x8312B288 + 40*X + Y] at 0x82CF03A0 and 0x82CF04E4 through 0x82CF04F4. This matches the terrain plane at the candidate coordinates. Resource placement records the same reads as movement checks on terrain."
+  },
+  "openConditions": [
+    "The base and index must stay valid between the stores that fill the planes and these reads. Actual map width is not proved, and 40 is the storage stride.",
+    "No bit of the flag halfword is named here. Bits 0x40, 0x1, 0x4 and 0x8000 each need their own reading.",
+    "The terrain values 0, 6 and 7 that the helper tests are not given gameplay names here."
+  ],
+  "currentEvidence": {
+    "method": "Existing accepted records linked by address. No new native query and no runtime probe.",
+    "entries": [
+      { "role": "threshold flag read", "address": "0x82CBF8A8..0x82CBF914", "result": "Halfword base 0x8312A608 with the unit's cell index.", "confidence": "strong" },
+      { "role": "candidate flag read", "address": "0x82CF02B4..0x82CF02D0", "result": "Halfword base 0x8312A608 with the candidate cell index.", "confidence": "strong" },
+      { "role": "candidate terrain read", "address": "0x82CF03A0, 0x82CF04E4", "result": "Signed byte base 0x8312B288 with the candidate cell index.", "confidence": "strong" }
+    ],
+    "locators": [
+      "ai-stat-choice.json#/currentEvidence/entries/1/claim",
+      "ai-stat-choice.json#/threshold/localExpression",
+      "ai-stat-choice.json#/stepGateBoundary/helperContract/indexedInputs",
+      "ai-stat-choice.json#/stepGateBoundary/helperContract/classBranches/1/result",
+      "ai-stat-choice.json#/stepGateBoundary/helperContract/classBranches/2/result",
+      "resource-density-generation.json#/postSetupTileMutationBoundary/representation"
+    ],
+    "qualification": "The AI reads and the placement planes are each accepted. Their identity by base and index is the new claim."
+  },
+  "guards": [
+    "Do not name the flag bits from this identity.",
+    "Do not read the plane identity as a score, a threshold or a movement result.",
+    "Do not treat the storage stride 40 as the map width."
+  ],
+  "conclusion": "The AI unit filter and its candidate helper read the same two planes that resource placement uses: the tile-flag halfwords at 0x8312A608 and the terrain bytes at 0x8312B288, both indexed by 40*a + b. The flag bits and terrain values the AI code tests remain unnamed."
+}

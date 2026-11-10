@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "family": "city-growth-flag-producers",
+  "findings": {
+    "RVA-F-0416": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0416",
+      "topic": "city-growth-aqueduct-flag",
+      "status": "open",
+      "confidence": "candidate",
+      "image": "image.json",
+      "question": "Does completing item 108 set the city +0x10 bit 0x100 that CityGrowthThresholdLookup reads as its two-point subtraction?",
+      "scope": {
+        "item": 108,
+        "itemRecord": "0x82F72638",
+        "completionCall": "0x82D16158",
+        "helper": "0x82D02090",
+        "helperStore": "0x82D02164",
+        "reader": "0x82CF1060",
+        "readerLoads": ["0x82CF1094", "0x82CF10A0"],
+        "boundary": "One static link between a completion store and a threshold read. It does not enumerate every writer of the bit, show that the bit stays set after the helper, or show that a completion ran. It does not measure growth speed."
+      },
+      "dependencies": [
+        { "topic": "city-growth-threshold", "use": "Provides the threshold arithmetic and the reads of city +0x10 bit 0x100." },
+        { "topic": "building-completion-state-writer", "use": "Provides the completion call, the item minus 100 argument and the shifted store into city +0x10." },
+        { "topic": "building-record-identities-100-122", "use": "Provides item 108 at record 0x82F72638 with the stored name Aqueduct." },
+        { "topic": "spy-mission-selection", "use": "Provides a second store that can clear the same city +0x10 bit." }
+      ],
+      "link": {
+        "completion": "The sufficient-production path calls 0x82D02090 at 0x82D16158 with the city index and the item ID minus 100. Item 108 gives normalized index 8.",
+        "store": "For normalized indices outside 19 through 22, 0x82D02164 ORs 1 shifted left by the index into city +0x10. Index 8 sets 1<<8, which is 0x100. 0x82D02158 stores the same shifted bit into the era word at city +0x14 + 4*era.",
+        "read": "CityGrowthThresholdLookup tests city +0x10 against 0x100 at 0x82CF1094 and 0x82CF10A0. A set bit subtracts two from the shared factor before the population multiplication.",
+        "effect": "With every other input equal, a city that has this bit set uses factor G - 2 where a city without it uses G. The recorded arithmetic is the whole effect. No percentage and no later speed result follows."
+      },
+      "openConditions": [
+        "The item normalization and the city base must be the same at the completion call and at the threshold read. Both are recorded in the dependencies, but no run confirms them together.",
+        "Another store can change the bit before the threshold reads it. The Spy demolition store at 0x82CF6F3C and 0x82CF6F40 clears one selected building bit in city +0x10, and its candidate IDs run from 1 to 22. Other writers have not been listed.",
+        "No completion of item 108 has been observed. The stored description of the item was not used to reach this link."
+      ],
+      "currentEvidence": {
+        "method": "Existing accepted records linked by address. No new native query and no runtime probe.",
+        "entries": [
+          { "role": "item identity", "address": "0x82F72638", "result": "Item 108 is the stored name Aqueduct.", "confidence": "strong" },
+          { "role": "completion call", "address": "0x82D16158", "result": "Calls 0x82D02090 with item ID minus 100.", "confidence": "strong" },
+          { "role": "bit store", "address": "0x82D02164", "result": "ORs 1 shifted by the normalized index into city +0x10.", "confidence": "strong" },
+          { "role": "threshold read", "address": "0x82CF1094", "result": "Loads city +0x10 and masks 0x100 at 0x82CF10A0.", "confidence": "strong" }
+        ],
+        "locators": [
+          "building-record-identities-100-122.json#/records/8",
+          "building-completion-state-writer.json#/callsite",
+          "building-completion-state-writer.json#/staticWriter/ordinaryBits",
+          "city-growth-threshold.json#/thresholdOwner/baseline/inputs/2",
+          "spy-mission-selection.json#/effectBoundary/demolition/wordWrite"
+        ],
+        "qualification": "Each side is accepted in its own record. The link between them is the only new claim, and it stays a candidate until a writer list and a retained read are shown."
+      },
+      "guards": [
+        "Do not read this as the building's described effect or as a growth percentage.",
+        "Do not infer the meaning of the other two flags in the threshold from this link.",
+        "Do not claim that the bit is set in a running game."
+      ],
+      "conclusion": "Completing item 108 is a candidate way to set city +0x10 bit 0x100, the bit that lowers the growth threshold factor by two. The writer list, the stability of the bit and a completed run are open."
+    },
+    "RVA-F-0417": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0417",
+      "topic": "city-growth-spy-clear",
+      "status": "open",
+      "confidence": "candidate",
+      "image": "image.json",
+      "question": "Does a kidnapped victim of type 32 clear city +0x3C bit 0x2, the bit that selects the first reduction in the growth threshold?",
+      "scope": {
+        "store": "0x82CF7134",
+        "victimType": 32,
+        "cityField": "city +0x3C",
+        "mask": "0x2",
+        "reader": "0x82CF1060",
+        "boundary": "One clearing store and the threshold bit it matches. No code that sets the bit is known. The kidnap mission result, the meaning of the bit and any growth effect are not shown."
+      },
+      "dependencies": [
+        { "topic": "city-growth-threshold", "use": "Provides the first reduction selected by city +0x3C bit 0x2." },
+        { "topic": "spy-mission-selection", "use": "Provides the kidnap store at 0x82CF7134 and the menu test on the same halfword." },
+        { "topic": "unit-definition-count-extent", "use": "Provides the stored name Great Humanitarian for type 32." }
+      ],
+      "link": {
+        "store": "0x82CF7110 rereads the victim type t. 0x82CF7118 loads the city halfword at +0x3C. 0x82CF711C through 0x82CF7134 store the halfword with bit 1<<(t-31) cleared.",
+        "typeThirtyTwo": "For t equal to 32 the cleared mask is 1<<1, which is 0x2. Type 32 has the stored name Great Humanitarian.",
+        "read": "CityGrowthThresholdLookup tests city +0x3C against 0x2 and then applies the first reduction. Clearing the bit removes that reduction for the city.",
+        "menu": "The kidnap menu entry appears only when this halfword is nonzero."
+      },
+      "openConditions": [
+        "No store or call that sets bit 0x2 is known. The clear does not show what the bit means or how it is set.",
+        "The victim type must be freshly read as 32 at the store, and the helper calls and the city halfword must stay valid up to the threshold read.",
+        "Kept types 31 through 46 each clear their own bit, so only type 32 clears bit 0x2 in that range. Type 47 clears no halfword bit, and type 96 wraps to mask 0x2 under the shift rules.",
+        "A kidnap that completes, and a later growth change, have not been observed."
+      ],
+      "currentEvidence": {
+        "method": "Existing accepted records linked by address. No new native query and no runtime probe.",
+        "entries": [
+          { "role": "halfword clear", "address": "0x82CF7134", "result": "Stores the city +0x3C halfword with bit 1<<(t-31) cleared.", "confidence": "strong" },
+          { "role": "type 32 identity", "address": "0x82F71358", "result": "Stored name Great Humanitarian.", "confidence": "strong" },
+          { "role": "threshold read", "address": "0x82CF10AC", "result": "Masks city +0x3C with 0x2 and branches at 0x82CF10B8.", "confidence": "strong" }
+        ],
+        "locators": [
+          "spy-mission-selection.json#/effectBoundary/kidnapping/cityAndVictim",
+          "spy-mission-selection.json#/effectBoundary/kidnapping/menuOperands",
+          "unit-definition-count-extent.json#/additionalNativeRecords/3",
+          "city-growth-threshold.json#/thresholdOwner/baseline/inputs/3"
+        ],
+        "qualification": "The clear is accepted in the Spy record and the bit read is accepted in the threshold record. Their link on type 32 is the only new claim."
+      },
+      "guards": [
+        "Do not name a setter for bit 0x2 from this clear.",
+        "Do not describe the bit as a Great Person flag or as a growth bonus.",
+        "Do not claim a successful kidnap or a changed growth threshold in a running game."
+      ],
+      "conclusion": "A kidnapped victim of type 32 clears city +0x3C bit 0x2 at 0x82CF7134. That is the bit that selects the first growth threshold reduction, so the clear is a candidate way to drop that reduction. What sets the bit is unknown."
+    }
+  }
+}

@@ -158,14 +158,26 @@ correctly.
 ## Effect ownership catalog
 
 An activation ID alone does not identify the code that applies the effect. The
-accepted classes of that code map distinct IDs onto all 64 retail cells:
+classes of that code map distinct IDs onto all 64 retail cells. The candidate
+row is not accepted:
 
 | Class of effect code | Distinct retail IDs | Retail cells | Boundary |
 | --- | --- | ---: | --- |
 | Shared cumulative lookup | 1, 3, 5, 8, 9, 10, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 28, 30, 32, 34, 35, 41, 42, 43, 47, 48, 50, 55, 56, 58, 59, 60 | 47 | An accepted producer consumes the result of `ActiveCivilizationBonusLookup` for the named effect. |
+| Candidate shared cumulative lookup | 26, 36 | 4 | The same producer and consumer test as the first row, held as a candidate with open conditions. |
 | Direct civilization and effect path | 40 | 1 | The mapped native effect bypasses the shared lookup. |
 | Mixed companion path | None | 0 | No native retail cell is accepted in this class. |
-| Unknown | 2, 4, 6, 7, 14, 26, 27, 36, 38, 46, 51, 61 | 16 | No accepted evidence that links the effect's producer and consumer establishes the native function. |
+| Unknown | 2, 4, 6, 7, 14, 27, 38, 46, 51, 61 | 12 | No accepted evidence that links the effect's producer and consumer establishes the native function. |
+
+The counts total 45 distinct IDs and 64 cells: 32 IDs and 47 cells accepted as
+shared, 2 IDs and 4 cells as candidates, 1 ID and 1 cell direct, and 10 IDs and
+12 cells unknown.
+
+UEA 6 and UEA 61 have partial defense evidence and stay unknown. The defense
+code at `0x82CF21C8..0x82CF2224` adds the signed definition defense, a
+cumulative query for 6, and a further query for 61 when the unit type is 9.
+The query arguments, the arithmetic and the effect names are not established.
+See the [defense record](../../manifests/barbarian-spawn-population.json#/timePolicyBoundary/effectiveStats/defense).
 
 The 95-site inventory requests 44 of 45 retail IDs. It offers search guidance.
 It is not proof of a named effect or of the full set of writers, and it does not
@@ -184,6 +196,8 @@ path.
 | 25 | CityUpdate queries `0x82D148BC` and adds half of the Gold intermediate that reaches it before storing at `frame+0x7C`. The income contribution is separate from the rush-rate and other AI valuation calls. The [correction contract](economy-bonus-corrections.md#gold-income-without-the-rush-penalty) preserves this income path. |
 | 42 | `0x82D13978` requires local `0x8` clear and the second indexed word zero. The query `0x82D15344` can bypass `0x82D15350..0x82D1536C`, which preserves four indexed halfwords and locals that are otherwise zeroed from `r22`. It is one Anarchy check. The dynamic field and predicate names and other paths remain open. |
 | 47 | `CalendarTurnAdvance` query `0x82D1F484` updates `0x830ED544 + player * 4` by `reserve + (reserve + 25) / 50`, with signed truncation. For a nonnegative reserve this is interest of 2 percent, rounded to the nearest, with halves rounding up. The query `0x82CF9FE8` in `0x82CF9F38` adds the same term to the aggregate without storing the reserve. [`gold-reserve-interest.json`](../../manifests/gold-reserve-interest.json) holds the negative boundary. |
+| 26 | Candidate Loyalty (`RVA-F-0418`). After `0x82D13978` creates a unit, the cumulative query at `0x82D15C18` selects an OR of `0x8` into the unit's `+0x10` word at `0x82D15C74`. The defense helper `0x82CFBED0` reads that bit as Loyalty and adds 50 percentage points of defense under its own owner and territory test. The store needs the live unit's definition flags `& 6` equal to 0 and a nonzero attack. It also needs a defense above attack, compared through an offset cached from the production item. Whether that offset matches the live unit type is unproved. Another source of Loyalty is not excluded. The 50 points are not a final 1.5 multiplier. |
+| 36 | Candidate new-city population (`RVA-F-0419`). `CityCreate` (`0x82D18D88`) calls the lookup at `0x82D199DC`, forms `2` plus 1 when the result is nonzero, and stores it in city `+0x03` at `0x82D19A04`. A second store at `0x82D19A2C` adds the creating player's era word, limited to 0 through 99. The effect is one more population than the same era gives without it, not a final population of 3. When the creator is the barbarian player, `0x82D19A40` overwrites the byte with 1. |
 | 40 | Capture `0x82D1B400` loads the new civilization at `0x82D1B74C` and tests Mongolian 14 at `0x82D1B758`. On equality it calls the creator at `0x82D1B784`. Otherwise it calls the regular reward at `0x82D1B8BC`. Replacing the table did not suppress it. The Horseback Riding extension became a mixed companion that is not in retail: a synthetic shared grant plus the separate check at `0x82D1B758`. |
 
 A follow-up on the reserve lifecycle found no additional source or caller. It
@@ -193,7 +207,9 @@ consumer, and it leaves the arithmetic unchanged:
 [`gold-reserve-aggregate-lifecycle.json`](../../manifests/gold-reserve-aggregate-lifecycle.json).
 
 [`unique-era-ability-effect-ownership.json`](../../manifests/unique-era-ability-effect-ownership.json)
-holds the qualifications and the projection onto cells. The repaired complete
+holds the qualifications and the projection onto cells. The candidates for 26
+and 36 are in
+[`unique-era-ability-class-candidates.json`](../../manifests/unique-era-ability-class-candidates.json). The repaired complete
 yield accessors use the cumulative lookup: Plains +1 Food (16), Sea +1 Food
 (28), Forest +1 Production (30), Desert +1 Food and +1 Trade (32), Hills +1
 Production (41) and Mountains +2 Production (56). No generic tile API or broader

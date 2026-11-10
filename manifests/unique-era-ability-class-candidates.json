@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "family": "unique-era-ability-class-candidates",
+  "findings": {
+    "RVA-F-0418": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0418",
+      "topic": "uea-26-loyalty-grant",
+      "status": "open",
+      "confidence": "candidate",
+      "image": "image.json",
+      "question": "Is UEA 26 the Loyalty grant that CityUpdate applies to a newly produced unit through the shared lookup?",
+      "scope": {
+        "ueaId": 26,
+        "cityUpdate": "0x82D13978",
+        "lookup": "0x82CF0CB0",
+        "query": "0x82D15C18",
+        "store": "0x82D15C74",
+        "retailCells": [
+          { "civilization": "Russian", "era": "Medieval" },
+          { "civilization": "Japanese", "era": "Modern" }
+        ],
+        "boundary": "One query and the store it selects, plus the accepted defense reader of the stored bit. No other creation route, no save round trip and no runtime delivery is covered."
+      },
+      "dependencies": [
+        { "topic": "unique-era-ability-effect-ownership", "use": "Provides the classification contract and the current unknown class for UEA 26." },
+        { "topic": "city-militia-scout-feasibility", "use": "Provides the query at 0x82D15C18 and the OR 0x8 store at 0x82D15C74." },
+        { "topic": "unit-special-upgrades", "use": "Provides the Loyalty index 3 reader and its 50 point defense term." },
+        { "topic": "civilization-bonus-storage", "use": "Provides the retail cells and the cumulative lookup contract." }
+      ],
+      "classification": {
+        "class": "sharedCumulativeLookup",
+        "effect": "Loyalty",
+        "producer": "After CityUpdate creates a unit, the cumulative UEA 26 query at 0x82D15C18 selects an OR of 0x8 into the returned unit slot's +0x10 word at 0x82D15C74. The live unit must also pass a candidate test (definition flags & 6 equal to 0 and a nonzero attack). A separate comparison of defense against attack uses an offset cached from the production item, and its equality with the live unit type is unproved.",
+        "consumer": "The Loyalty bit is Loyalty index 3. The defense helper 0x82CFBED0 turns it into an added 50 percentage points of defense under its own owner and territory test.",
+        "reason": "The lookup result selects a named effect store, and the stored bit has an accepted reader. That is the producer and consumer pair the classification contract asks for."
+      },
+      "openConditions": [
+        "The store also needs the unit definition flags to give 0 for flags & 6, a nonzero attack, and a defense that exceeds attack. The defense comparison uses an offset cached from the production item. Whether that offset equals the offset of the live unit type is not shown.",
+        "Another civilization path, another creation route or a later overwrite can still grant Loyalty. This finding does not show that UEA 26 is the only source.",
+        "The store is on the CityUpdate production path. It is not part of the grant in CityCreate.",
+        "Default stream persistence of the +0x10 word is a separate accepted record and needs its own conditions.",
+        "A query result that does not select the store, a store into another field, or a different bit consumed as Loyalty would remove this classification."
+      ],
+      "currentEvidence": {
+        "method": "Existing accepted records linked by address. No new native query and no runtime probe.",
+        "entries": [
+          { "role": "lookup query", "address": "0x82D15C18", "result": "Cumulative UEA 26 for the signed city owner.", "confidence": "strong" },
+          { "role": "bit store", "address": "0x82D15C74", "result": "OR 0x8 into the unit +0x10 word.", "confidence": "strong" },
+          { "role": "defense reader", "address": "0x82CFBED0", "result": "Loyalty index 3 branch with a 50 point defense term.", "confidence": "strong" }
+        ],
+        "locators": [
+          "city-militia-scout-feasibility.json#/upgradeInitialization/nativeLoyalty",
+          "city-militia-scout-feasibility.json#/foundingMilitiaContract/duplicates/uea26",
+          "unit-special-upgrades.json#/loyaltyDefenseBoundary",
+          "unit-special-upgrades.json#/persistence",
+          "civilization-bonus-storage.json#/storage/rows"
+        ],
+        "qualification": "Producer and consumer are each accepted. Reading them as one effect for UEA 26 is the new claim."
+      },
+      "guards": [
+        "Do not read the 50 point term as a final 1.5 multiplier.",
+        "Do not treat this as a rule for every defensive unit.",
+        "Do not infer that no other source of Loyalty exists."
+      ],
+      "conclusion": "UEA 26 is a candidate Loyalty grant: its cumulative query selects the OR 0x8 store at 0x82D15C74 in CityUpdate, and the bit is the one the defense helper reads as Loyalty. The unit conditions, other sources and runtime delivery are open."
+    },
+    "RVA-F-0419": {
+      "schemaVersion": 1,
+      "id": "RVA-F-0419",
+      "topic": "uea-36-new-city-population",
+      "status": "open",
+      "confidence": "candidate",
+      "image": "image.json",
+      "question": "Is UEA 36 the one extra population that CityCreate adds to a new city through the shared lookup?",
+      "scope": {
+        "ueaId": 36,
+        "cityCreate": "0x82D18D88",
+        "lookup": "0x82CF0CB0",
+        "call": "0x82D199DC",
+        "stores": ["0x82D19A04", "0x82D19A2C"],
+        "override": "0x82D19A40",
+        "retailCells": [
+          { "civilization": "Chinese", "era": "Ancient" },
+          { "civilization": "Roman", "era": "Modern" }
+        ],
+        "boundary": "The CityCreate call, its use in the population byte and the barbarian overwrite. The dispatch after 0x82D19A7C, the return of CityCreate and later changes to population are not covered."
+      },
+      "dependencies": [
+        { "topic": "unique-era-ability-effect-ownership", "use": "Provides the classification contract and the current unknown class for UEA 36." },
+        { "topic": "resource-density-generation", "use": "Provides the call, the stores and the barbarian overwrite in CityCreate." },
+        { "topic": "city-growth-threshold", "use": "Provides city +0x03 as the population byte of the same city record." },
+        { "topic": "civilization-bonus-storage", "use": "Provides the retail cells and the native lookup return contract." }
+      ],
+      "classification": {
+        "class": "sharedCumulativeLookup",
+        "effect": "New city population",
+        "producer": "0x82D199DC calls the lookup with ID 36 and the creating player in cumulative mode. 0x82D199E0 through 0x82D199FC compute q = 2 + (result != 0), and 0x82D19A04 stores q in city +0x03.",
+        "second": "0x82D19A2C stores q plus the creating player's era word, clamped to 0 through 99, into city +0x03.",
+        "override": "When the creating player is the barbarian player, 0x82D19A40 overwrites city +0x03 with 1.",
+        "effectSize": "The effect is one more population than the same era gives without it. It is not a final population of 3."
+      },
+      "openConditions": [
+        "The city and the creating player must be the ones recorded at the call. The helper writes no memory, so only the CityCreate frame needs to stay valid.",
+        "Another civilization path or a later write to city +0x03 can change the result.",
+        "The barbarian check reads the barbarian player when it runs. A barbarian creator ends at population 1 whatever UEA 36 returns.",
+        "The era word is read once before the first store. No actual era or supported population range is selected here.",
+        "A different record at this base, or a mismatch in the call, result or store, would remove this classification."
+      ],
+      "currentEvidence": {
+        "method": "Existing accepted records linked by address. No new native query and no runtime probe.",
+        "entries": [
+          { "role": "lookup call", "address": "0x82D199DC", "result": "Lookup with ID 36 in cumulative mode, returning at 0x82D199E0.", "confidence": "strong" },
+          { "role": "first store", "address": "0x82D19A04", "result": "Stores 2 plus the Boolean result in city +0x03.", "confidence": "strong" },
+          { "role": "second store", "address": "0x82D19A2C", "result": "Adds the clamped era word.", "confidence": "strong" },
+          { "role": "barbarian overwrite", "address": "0x82D19A40", "result": "Overwrites city +0x03 with 1.", "confidence": "strong" }
+        ],
+        "locators": [
+          "resource-density-generation.json#/ironCapitalCaseBoundary/uea36RetentionBoundary",
+          "resource-density-generation.json#/ironCapitalCaseBoundary/uea36RetentionBoundary/resultConsumer/baseByte",
+          "resource-density-generation.json#/ironCapitalCaseBoundary/uea36RetentionBoundary/resultConsumer/eraAddition",
+          "resource-density-generation.json#/ironCapitalCaseBoundary/uea36RetentionBoundary/resultConsumer/excludedPlayerOverride",
+          "civilization-bonus-storage.json#/nativeReturnContract",
+          "city-growth-threshold.json#/thresholdOwner/baseline/inputs/1"
+        ],
+        "qualification": "The call and the stores are accepted. Reading them as the UEA 36 effect, on the same population byte the growth threshold uses, is the new claim."
+      },
+      "guards": [
+        "Do not write the effect as a population of 3.",
+        "Do not apply it to barbarian-created cities.",
+        "Do not infer that no other source of starting population exists."
+      ],
+      "conclusion": "UEA 36 is a candidate new-city population effect: CityCreate adds 1 to the base population of 2 when the cumulative lookup is active, before the era addition, and a barbarian creator ends at 1. Other sources, later changes and runtime delivery are open."
+    }
+  }
+}

@@ -19,7 +19,7 @@
       },
       "dependencies": [
         { "topic": "building-wonder-cost-identities", "use": "Identifies initialized wonder +0x40 as a signed production factor." },
-        { "topic": "building-wonder-consumers", "use": "Records the earlier bounded definition-table materializer search." },
+        { "topic": "building-wonder-consumers", "use": "Records the earlier definition-table materializer search, within the inspected scope." },
         { "topic": "wonder-claim-slot-state", "use": "Identifies the first word of each mutable eight-byte wonder slot as owner or -1 sentinel." }
       ],
       "staticResult": {
@@ -40,10 +40,10 @@
         "qualification": "No invocation, slot value, accumulator result, final cost, or described gameplay effect was observed."
       },
       "currentEvidence": {
-        "method": "Foreground read-only raw-word windows checked both split-base candidates and the first wonder field arithmetic. Ghidra has no containing function or decoded instructions at these interior addresses. The registered generated function sub_82CB2E48 was used only to corroborate exact raw spans, including a bounded post-collection read of the stack-local accumulator.",
+        "method": "Foreground read-only raw-word windows checked both split-base candidates and the first wonder field arithmetic. Ghidra has no containing function or decoded instructions at these interior addresses. The registered generated function sub_82CB2E48 was used only to corroborate exact raw spans, including a post-collection read of the stack-local accumulator, within the inspected scope.",
         "entries": [
           { "role": "building pointer", "address": "0x82CB2F48..0x82CB2F74", "result": "Forms building base and spills its pointer before a local field read is identified." },
-          { "role": "wonder factor", "address": "0x82CB35A4..0x82CB35D4", "result": "Forms wonder base and loads/sign-extends +0x40 after a -1 slot gate." },
+          { "role": "wonder factor", "address": "0x82CB35A4..0x82CB35D4", "result": "Forms wonder base and loads and sign-extends +0x40 after a -1 slot check." },
           { "role": "accumulator writes", "address": "0x82CB35D8..0x82CB3604", "result": "Derives a numeric value from the factor and adds it to two indexed words." },
           { "role": "accumulator bases", "address": "0x82CB2F1C..0x82CB2F24,0x82CB35D0", "result": "Forms global base 0x830ECCC8 in r15 and stack-local base r1+0xD0 in r8; both use the claim-slot owner index." },
           { "role": "adjacent fields", "address": "0x82CB3608..0x82CB3660", "result": "Checks two further slots and reads the next two stride-spaced +0x40 cells." },
@@ -82,7 +82,7 @@
         "copyFunction": "0x82D02AB8",
         "copySite": "0x82D02B1C..0x82D02B2C",
         "stopCondition": "Run raw split-constant queries with cap 32 for source, exact destination, and enclosing base; verify one complete copy loop and first local uses of the six enclosing-base pairs, stopping at data-dependent selectors, out-of-window branches, or indirect dispatch.",
-        "boundary": "This packet identifies one eight-word copy and a possible indexed alias of its destination. It does not prove the alias is reached with an index into the copied words, identify their meaning, all computed readers, or a final production-cost path."
+        "boundary": "This finding identifies one eight-word copy and a possible indexed alias of its destination. It does not prove the alias is reached with an index into the copied words, identify their meaning, all computed readers, or a final production-cost path."
       },
       "dependencies": [
         { "topic": "wonder-factor-array-accumulation", "use": "Identifies the owner-indexed global factor accumulation at 0x830ECCC8." },
@@ -91,17 +91,17 @@
       "staticResult": {
         "referenceCensus": "A raw split-constant query returned seven candidate pairs without truncation below cap 32: 0x82CB2F1C+0x82CB2F24, 0x82CC5768+0x82CC5770, 0x82CC578C+0x82CC5794, 0x82D02AF0+0x82D02AF8, 0x82D05384+0x82D0538C, 0x82D83038+0x82D83050, and 0x82E86E8C+0x82E86E98. These raw pairs are not a complete reader inventory.",
         "copy": "At 0x82D02AF0..0x82D02B04, 0x82D02AB8 forms source 0x830ECCC8. At 0x82D02AC8..0x82D02AD4 it forms base 0x83122898, then 0x82D02B0C sets destination to base +0x4C = 0x831228E4. The 0x82D02B14 count of eight, ctr setup, word load at 0x82D02B1C, four-byte pointer increments, word store at 0x82D02B24, and backward branch at 0x82D02B2C copy eight words from 0x830ECCC8..0x830ECCE4 to 0x831228E4..0x83122900. The copy destination's purpose is not established.",
-        "otherCandidates": "Narrow generated-function inspection associated the other raw pairs with 0x82CC4040, 0x82D052C8, 0x82D82E88, and 0x82E86A30. Their base construction or indexed/delegated use does not establish a word's gameplay meaning. Ghidra has no containing function at the raw candidate sites.",
-        "destinationBoundary": "A follow-up decoded-materializer query scanned 654329 decoded instructions for exact destination 0x831228E4 and returned zero below cap 32. A raw split-constant query for that exact address also returned zero below cap 32. A separate raw query for enclosing base 0x83122898 returned six candidates without truncation below cap 32. At 0x82DD4068, sub_82DD4058 reads 0x83122898+0x20+4*(r3 & 0x3FFFFFFF); low-30-bit indices 11..18 address the copied range. Its sole direct caller at 0x82DD4708 passes r5 as r3; the sole direct caller of that function at 0x82DD5198 loads r5 from a runtime pointer. At 0x82DD46F0, that first caller also reads 0x83122898+4*(r5 & 0x3FFFFFFF); indices 19..26 address the copied range. At 0x82DF92CC, sub_82DF91F8 reads 0x83122898+4*(r11 & 0x3FFFFFFF), where r11 comes from an indirect object result or -1; indices 19..26 address the copied range. None of these bounded paths proves an actual copied-word read.",
+        "otherCandidates": "Narrow generated-function inspection associated the other raw pairs with 0x82CC4040, 0x82D052C8, 0x82D82E88, and 0x82E86A30. Their base construction or indexed or delegated use does not establish a word's gameplay meaning. Ghidra has no containing function at the raw candidate sites.",
+        "destinationBoundary": "A follow-up decoded-materializer query scanned 654329 decoded instructions for exact destination 0x831228E4 and returned zero below cap 32. A raw split-constant query for that exact address also returned zero below cap 32. A separate raw query for enclosing base 0x83122898 returned six candidates without truncation below cap 32. At 0x82DD4068, sub_82DD4058 reads 0x83122898+0x20+4*(r3 & 0x3FFFFFFF); low-30-bit indices 11..18 address the copied range. Its sole direct caller at 0x82DD4708 passes r5 as r3; the sole direct caller of that function at 0x82DD5198 loads r5 from a runtime pointer. At 0x82DD46F0, that first caller also reads 0x83122898+4*(r5 & 0x3FFFFFFF); indices 19..26 address the copied range. At 0x82DF92CC, sub_82DF91F8 reads 0x83122898+4*(r11 & 0x3FFFFFFF), where r11 comes from an indirect object result or -1; indices 19..26 address the copied range. None of these paths, within the inspected scope, proves an actual copied-word read.",
         "remainingBasePairs": "The copy pair 0x82D02AC8+0x82D02AD4 writes the destination. The 0x82D0E05C+0x82D0E060 pair first reads base +0 in a dynamic four-byte loop; its bound does not prove entry into the copied range. The 0x82DD49D8+0x82DD49E0 pair first reads base +0 at 0x82DD4A10; a prior branch target lies outside the inspected window. The 0x82DF92B8+0x82DF92C0 pair carries the constructed base in r8 to the indexed load at 0x82DF92CC, not in r10 after its later overwrite. Branch targets and indirect effects beyond the local windows remain unclassified.",
-        "costBoundary": "A separate raw direct-caller census for the accepted cost helper 0x82CF1278 returned 21 callsites without truncation below cap 32. No direct edge from the six generated functions associated with the accumulator base pairs was established in the bounded check. Longer paths and indirect dispatch remain outside this packet."
+        "costBoundary": "A separate raw direct-caller census for the accepted cost helper 0x82CF1278 returned 21 callsites without truncation below cap 32. No direct edge from the six generated functions associated with the accumulator base pairs was established in the check, within the inspected scope. Longer paths and indirect dispatch remain outside this finding."
       },
       "runtimeObservation": {
         "status": "not-observed",
         "qualification": "No global value, copy execution, destination use, or final production-cost effect was observed at runtime."
       },
       "currentEvidence": {
-        "method": "Foreground read-only Ghidra queries checked raw split-address candidates for source, exact destination, and enclosing base, decoded exact-destination materializers, direct callers of the accepted cost helper, and the exact indexed reader's direct caller chain. Complete raw-word windows verified the copy and bounded first uses of the enclosing base; narrow generated-function windows corroborated register aliases and registered functions. Ghidra's decoded function bodies end at save thunks in these regions.",
+        "method": "Foreground read-only Ghidra queries checked raw split-address candidates for source, exact destination, and enclosing base, decoded exact-destination materializers, direct callers of the accepted cost helper, and the exact indexed reader's direct caller chain. Complete raw-word windows verified the copy and the first uses of the enclosing base, within the inspected scope; narrow generated-function windows corroborated register aliases and registered functions. Ghidra's decoded function bodies end at save thunks in these regions.",
         "entries": [
           { "role": "raw materializers", "address": "0x830ECCC8", "result": "Seven candidate pairs under cap 32, without truncation." },
           { "role": "copy source", "address": "0x82D02AF0..0x82D02B04", "result": "Forms 0x830ECCC8 and moves it to the source pointer." },
@@ -129,7 +129,7 @@
           "generated:rerevved/sub_82DD46D0:0x82DD46E0..0x82DD4708",
           "generated:rerevved/sub_82DF91F8:0x82DF92B8..0x82DF92D8"
         ],
-        "qualification": "The raw pair inventories are bounded by query form, and Ghidra provides no enclosing functions at the indexed candidate sites. The copy is byte-address exact; no index reaching its destination is established. Conditional branches, indirect results, and later consumers remain unclassified."
+        "qualification": "The raw pair inventories are limited by query form, and Ghidra provides no enclosing functions at the indexed candidate sites. The copy is byte-address exact; no index reaching its destination is established. Branches taken only under a condition, indirect results, and later consumers remain unclassified."
       },
       "guards": [
         "Do not identify the global or copied destination as the final cost without their consumers.",
@@ -216,7 +216,7 @@
           "generated:rerevved/sub_82D0E340:0x82D0E548..0x82D0E56C",
           "generated:rerevved/sub_82D1B400:0x82D1B628..0x82D1B650"
         ],
-        "qualification": "The decoded materializer search covers its defined lis-plus-split-low form only. The raw search covers lis/addi or lis/ori candidates in initialized memory and does not establish direction or lifetime by itself. The inspected reads are at +4, while the selected writer stores at +0; computed aliases, other pointer provenance, the global's meaning, and runtime behavior remain unresolved."
+        "qualification": "The decoded materializer search covers its defined lis-plus-split-low form only. The raw search covers lis-plus-addi or lis-plus-ori candidates in initialized memory and does not establish direction or lifetime by itself. The inspected reads are at +4, while the selected writer stores at +0; computed aliases, other pointer provenance, the global's meaning, and runtime behavior remain unresolved."
       },
       "catalogPromotion": {
         "newSymbols": ["RVA-SYM-0404", "RVA-SYM-0405", "RVA-SYM-0406"],
@@ -230,7 +230,7 @@
         "Do not assign a gameplay, display, AI, or final-cost meaning to global 0x830E8DD0.",
         "Do not infer runtime execution or a visible effect from static code."
       ],
-      "conclusion": "One static path converts the post-collection stack-local accumulator read at 0x82CB379C and writes a single-precision result to 0x830E8DD0 plus 64 bytes per loop iteration. Two other bounded paths load a float from the same base plus 64-byte-scaled indices and an additional four-byte offset. They do not prove a consumer of the written +0 cell. The global's purpose, consumers of the same cell, valid indices, final-cost connection, and runtime effect remain unresolved."
+      "conclusion": "One static path converts the post-collection stack-local accumulator read at 0x82CB379C and writes a single-precision result to 0x830E8DD0 plus 64 bytes per loop iteration. Two other paths, within the inspected scope, load a float from the same base plus 64-byte-scaled indices and an additional four-byte offset. They do not prove a consumer of the written +0 cell. The global's purpose, consumers of the same cell, valid indices, final-cost connection, and runtime effect remain unresolved."
     }
   }
 }

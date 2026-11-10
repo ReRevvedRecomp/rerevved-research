@@ -5,7 +5,7 @@
   "status": "closed",
   "confidence": "strong",
   "image": "image.json",
-  "question": "Where does the title couple bounded source references, vertex format, descriptor mapping, and fill subtype?",
+  "question": "Where does the title couple source references (limited by an authoritative count), vertex format, descriptor mapping, and fill subtype?",
   "scope": {
     "primaryCaller": "0x821F4948",
     "alternateCaller": "0x821FBC38",
@@ -14,10 +14,10 @@
     "simpleWriter": "0x822CA118",
     "complexWriter": "0x822CA718",
     "descriptorResize": "0x82269590",
-    "boundary": "This packet covers the two direct caller forms, bounded source-reference encoding, format and writer selection, and the descriptor tuple emitted by the simple and complex paths. It does not claim logo-specific runtime values, transform ownership, shader programs, renderer variants, presentation conclusions, or patch advice."
+    "boundary": "This finding covers the two direct caller forms, source-reference encoding limited by the authoritative count, format and writer selection, and the descriptor tuple emitted by the simple and complex paths. It does not claim logo-specific runtime values, which object or code manages the transforms, shader programs, renderer variants, presentation conclusions, or patch advice."
   },
   "dependencies": [
-    { "topic": "gfx-source-count-contract", "use": "bounded source base/count and 0x28-byte entry contract" },
+    { "topic": "gfx-source-count-contract", "use": "source base and count limits and 0x28-byte entry contract" },
     { "topic": "gfx-draw-producer", "use": "current simple vertex writer and downstream draw boundary" }
   ],
   "currentEvidence": {
@@ -63,7 +63,7 @@
         "instructionCount": 424
       }
     ],
-    "qualification": "Each function identity is supported by its current caller/callee placement, field layout, branch role, and recorded body metrics."
+    "qualification": "Each function identity is supported by its current caller and callee placement, field layout, branch role, and recorded body metrics."
   },
   "functionContract": {
     "inputs": {
@@ -71,8 +71,8 @@
       "r4": "generated geometry context",
       "r5": "pointer-backed source-entry base",
       "r6": "authoritative source-entry count",
-      "r7": "optional accounting owner",
-      "r8": "configuration owner"
+      "r7": "object managing optional accounting",
+      "r8": "object managing configuration"
     },
     "meshStateFields": {
       "+0x14": "eligibility state byte",
@@ -80,7 +80,7 @@
       "+0x18": "byte copied into temporary build state",
       "+0x1C": "0x28-byte descriptor-array base",
       "+0x20": "descriptor-array count",
-      "+0x34": "vertex output count/object",
+      "+0x34": "vertex output count or object",
       "+0x40": "vertex sink pointer whose first word is the active numeric format"
     },
     "configFields": {
@@ -88,11 +88,11 @@
       "+0x24": "GFxRenderConfig RendererCapBits",
       "+0x28": "GFxRenderConfig RendererVtxFmts"
     },
-    "result": "The function appends bounded mesh descriptors, selects the vertex writer from the source-bearing and numeric-format state, updates descriptor and vertex counts, and records completion or overflow state."
+    "result": "The function appends mesh descriptors up to a limit, selects the vertex writer from the source-bearing and numeric-format state, updates descriptor and vertex counts, and records completion or overflow state."
   },
   "callers": {
-    "primary": "0x821F4948 obtains the paired source base/count through the source provider and calls 0x822688C0 with the mesh output, geometry context, source pair, request owner, and request owner's config pointer kept distinct.",
-    "alternate": "0x821FBC38 calls 0x822688C0 from two branches with the source base/count contract, r7 equal to zero, and its live config owner in r8.",
+    "primary": "0x821F4948 obtains the paired source base and count through the source provider and calls 0x822688C0 with the mesh output, geometry context, source pair, request object, and the request object's config pointer kept distinct.",
+    "alternate": "0x821FBC38 calls 0x822688C0 from two branches with the source base and count contract, r7 equal to zero, and its live config object in r8.",
     "result": "Both callers forward source cardinality and config state independently; neither writes the descriptor tuple before the coupled build."
   },
   "sourceReferenceEncoder": {
@@ -102,11 +102,11 @@
       "+0x88": "authoritative source-entry count",
       "+0x8C": "resource-bearing source-reference flag"
     },
-    "behavior": "Each derived source ordinal is compared with the authoritative count. A bounded 0x28-byte entry whose raw +0x0 byte is nonzero is tagged with 0x40000000 and sets temporary byte +0x8C to 1.",
+    "behavior": "Each derived source ordinal is compared with the authoritative count. An in-range 0x28-byte entry whose raw +0x0 byte is nonzero is tagged with 0x40000000 and sets temporary byte +0x8C to 1.",
     "qualification": "No source count, resource ordinal, or asset identity is asserted."
   },
   "formatAndWriterSelection": {
-    "formatGate": "When the existing sink format is zero, format 3 is the default. Format 4 is selected only when RendererVtxFmts +0x28 reports bit 0x10, the Vertex_XY16iCF32 format, and mesh-state +0x17 is already set or at least one bounded source entry has a nonzero raw +0x0 byte. RenderFlags +0x1C and RendererCapBits +0x24 independently gate EdgeAA eligibility.",
+    "formatGate": "When the existing sink format is zero, format 3 is the default. Format 4 is selected only when RendererVtxFmts +0x28 reports bit 0x10, the Vertex_XY16iCF32 format, and mesh-state +0x17 is already set or at least one in-range source entry has a nonzero raw +0x0 byte. RenderFlags +0x1C and RendererCapBits +0x24 independently control EdgeAA eligibility.",
     "formatCommit": "The format-4 branch stores 1 to mesh-state +0x17 before configuring the temporary sink.",
     "writerBranch": "After source-reference encoding, temporary +0x8C equal to zero or selected format equal to 3 selects simple writer 0x822CA118. Temporary +0x8C nonzero with selected format not equal to 3 selects complex writer 0x822CA718.",
     "result": "Source recognition alone does not select the complex writer; the source-bearing flag and numeric format must agree."
@@ -124,8 +124,8 @@
     "simpleWriter": "0x822CA118 emits geometry without changing the initialized mapping count, selectors, or subtype.",
     "complexWriter": {
       "noResource": "subtype 0, count 0, selectors [-1,-1,-1]",
-      "oneResource": "subtype 2, count 1, one untagged bounded selector, remaining selectors -1",
-      "twoDistinctResources": "subtype 3, count 2, two distinct untagged bounded selectors, third selector -1"
+      "oneResource": "subtype 2, count 1, one untagged in-range selector, remaining selectors -1",
+      "twoDistinctResources": "subtype 3, count 2, two distinct untagged in-range selectors, third selector -1"
     },
     "result": "The complex writer publishes mapping cardinality and fill subtype as one descriptor result rather than independent fields."
   },
@@ -168,7 +168,7 @@
     "scripts": ["ghidra/DumpFunctions.java", "ghidra/FindFieldRefs.java"],
     "targets": ["0x821F4948", "0x821FBC38", "0x822688C0", "0x82269590", "0x822C9580", "0x822CA118", "0x822CA718"],
     "program": "rerevved_image.bin",
-    "qualification": "These Xenon-heavy functions truncate at their save-register thunks in Ghidra, so the function starts are confirmed there while the bounded field and control-flow claims are corroborated from generated bodies."
+    "qualification": "These Xenon-heavy functions truncate at their save-register thunks in Ghidra, so the function starts are confirmed there while the field and control-flow claims, whose scope is limited, are corroborated from generated bodies."
   },
   "guards": [
     "Do not claim logo source count, resource ordinal, config word, natural tuple, or an unverified validation tuple.",

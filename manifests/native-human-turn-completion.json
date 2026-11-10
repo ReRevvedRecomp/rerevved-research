@@ -14,13 +14,13 @@
   },
   "dependencies": [
     { "topic": "xbox-network-message-root", "use": "Five-word command record, numeric dispatch cases, completion masks and separate routing target." },
-    { "topic": "game-calendar-state", "use": "Current turn/year and conditional calendar advancement." },
-    { "topic": "playable-game-state-requirements", "use": "Conservative live availability and local/human classification, with its pointer and lifetime limits." },
-    { "topic": "frontend-root-publication-mask-init", "use": "Conditional application-owner construction and frontend-root publication." }
+    { "topic": "game-calendar-state", "use": "Current turn and year, and calendar advancement that applies only under a condition." },
+    { "topic": "playable-game-state-requirements", "use": "Conservative live availability and local and human classification, with its pointer and lifetime limits." },
+    { "topic": "frontend-root-publication-mask-init", "use": "Application-owner construction and frontend-root publication, which apply only under a condition." }
   ],
   "nativeCommandNames": {
     "mapper": "0x82CD5400 bounds unsigned input to 0..65 and indexes table 0x82CD5420.",
-    "inputJoin": "Dispatcher 0x82CDDF18 loads record +0 into r30; 0x82CDDF40 copies r30 to r3 before the mapper call at 0x82CDDF58. This joins names to the native command type, conditional on normal intervening ABI retention.",
+    "inputJoin": "Dispatcher 0x82CDDF18 loads record +0 into r30; 0x82CDDF40 copies r30 to r3 before the mapper call at 0x82CDDF58. This links names to the native command type, only when values stay unchanged across normal intervening ABI calls.",
     "selectedLabels": [
       { "type": 12, "name": "Settle" },
       { "type": 13, "name": "Fortify" },
@@ -38,16 +38,16 @@
       { "type": 63, "name": "GameOver" }
     ],
     "criticalJoins": "Type 50: cell 0x82CD54E8 -> 0x82CD5774 -> text 0x82156DA0. Type 54: cell 0x82CD54F8 -> 0x82CD57A4 -> text 0x82156DC8. Type 63: cell 0x82CD551C -> 0x82CD5810 -> text 0x82156E24.",
-    "unitOrderJoins": "Type12: cell0x82CD5450 ->0x82CD55C4 ->text0x82156C54 Settle; type13: cell0x82CD5454 ->0x82CD55D0 ->text0x82156C5C Fortify; type14: cell0x82CD5458 ->0x82CD55DC ->text0x82156C64 Sentry. The selected dispatcher-table cells0x82CDE044/48/4C contain0x82CE02D4/04E8/06B0 respectively. These labels do not define cancellation or AI behavior.",
+    "unitOrderJoins": "Type 12: cell 0x82CD5450 ->0x82CD55C4 ->text 0x82156C54 Settle; type 13: cell 0x82CD5454 ->0x82CD55D0 ->text 0x82156C5C Fortify; type 14: cell 0x82CD5458 ->0x82CD55DC ->text 0x82156C64 Sentry. The selected dispatcher-table cells 0x82CDE044/48/4C contain 0x82CE02D4/04E8/06B0 respectively. These labels do not define cancellation or AI behavior.",
     "qualification": "These are selected Xbox-native debug labels. A label does not prove actual human input, delivery, authority, runtime ordering, synchronization barriers or checksum coverage."
   },
   "humanCompletionBoundary": {
     "owner": "0x82D259E8",
     "selectedPath": "0x82D269B4..0x82D26A70",
     "gates": "The selected player's bit must be present in 0x830EE7E4 and absent in 0x830EE7DC; the player must pass local-or-nonhuman classification; status 0x82FFE7C4 bit 0x2000 must be clear. The path sets the staged bit at 0x82D26A28 and resolves local identity again.",
-    "localPublication": "On the second local equality, 0x82D26A38 calls 0x82D038E8(0). The call at 0x82D26A5C requests ImDone (50) with retained selected player, args2/3=-1, arg4 from 0x82F7AD00 and separate target=-1. It then clears status bit 2, calls 0x82D07CE0 and returns 1. The other branch requests AIDone (52) through 0x82CD5848.",
-    "observationSeam": "0x82D26A38 is the earliest selected point after the shared completion gates and second local equality. 0x82D26A5C exposes the final request arguments. A default-off observer must preserve the complete guest context and read current valid memory without mutation. These interior points are not callable functions.",
-    "deliveryLimit": "Staging, submission, receipt and completed processing are distinct. Neither the staged bit nor the owner's return proves a delivered request or a completed world round."
+    "localPublication": "On the second local equality, 0x82D26A38 calls 0x82D038E8(0). The call at 0x82D26A5C requests ImDone (50) with the selected player unchanged, arg2 and arg3 = -1, arg4 from 0x82F7AD00 and separate target=-1. It then clears status bit 2, calls 0x82D07CE0 and returns 1. The other branch requests AIDone (52) through 0x82CD5848.",
+    "observationSeam": "0x82D26A38 is the earliest selected point after the shared completion checks and second local equality. 0x82D26A5C exposes the final request arguments. A default-off observer must preserve the complete guest context and read current valid memory without mutation. These interior points are not callable functions.",
+    "deliveryLimit": "Staging, submission, receipt and completed processing are distinct. Neither the staged bit nor the function's return proves a delivered request or a completed world round."
   },
   "downstreamCommandChain": {
     "relation": "After the ImDone (50) request at 0x82D26A5C, the static internal submissions are 50 to 48 (0x82CDE75C..0x82CDE760), 48 to 53 on its guarded completion path (0x82CDE8EC), 53 to 55 on one of two optional paths (0x82CDEAD0 or 0x82CDEC18) and 53 to 54 on the common path (0x82CDEC40). Case 55 also submits type 60 (0x82CDED58). Case 54 clears sync-mismatch bit 0x10 in 0x82FFE7C4 and enters 0x82D0C3E8, which stores the year for the current turn.",
@@ -63,12 +63,12 @@
     "qualification": "Each edge is a static call with a literal type. Runtime reachability, multiplicity, order, delivery and completed processing are not observed, and the labels do not give the types a readiness, barrier or checksum meaning."
   },
   "status40Candidate": {
-    "consumer": "0x82D26970..0x82D269B0 tests status bit 0x40, selected-player/local equality and an unstaged player before joining the shared completion gates. With bit 0x40 clear, the selected path continues current-unit handling at 0x82D26ACC.",
-    "writer": "0x82E2C2E0 retains its incoming receiver. After 0x82E2B960, it tests receiver word +4 bit 0x100; the admitted arm sets status bit 0x40 at 0x82E2C3A8. Its entry first writes through receiver +0x40 without a null guard. The current receiver, flag producer, invocation cadence and physical action are not bound; this is application state rather than an identified input-event parameter.",
+    "consumer": "0x82D26970..0x82D269B0 tests status bit 0x40, selected-player and local equality and an unstaged player before joining the shared completion checks. With bit 0x40 clear, the selected path continues current-unit handling at 0x82D26ACC.",
+    "writer": "0x82E2C2E0 keeps its incoming receiver. After 0x82E2B960, it tests receiver word +4 bit 0x100; the arm that passes the test sets status bit 0x40 at 0x82E2C3A8. Its entry first writes through receiver +0x40 without a null guard. The current receiver, flag producer, invocation cadence and physical action are not established; this is application state rather than an identified input-event parameter.",
     "receiverLimit": "The method occupies +0x14 in application tables 0x82120D68 and 0x82121100. Derived constructor 0x82E294D0 ORs bit 1 into owner +4, preserving rather than creating bit 0x100. The interface gate at 0x8314F28C is a separate object and is not this receiver.",
     "helperLimit": "The 24-instruction 0x82E2B960 replaces its incoming receiver with scene globals and has no direct receiver +4 store. Its opaque calls do not close aliases or callback writes. Expanding scene presentation descendants does not identify an input operation.",
-    "activeCandidate": "A full-function wrapper around 0x82D259E8 could provisionally request completion by temporarily setting previously-clear bit 0x40 under current playable, same-match, latched-local-human and once-per-round guards, rejecting status 0x14000. It must preserve the original function and native completion checks, own and restore only its temporary bit in the then-current status word on every supported exit, and observe admission before treating the request as consumed. Missing physical-button identity alone does not reject this deliberate request candidate.",
-    "unresolvedSafety": "The consumer bypasses the selected current-unit continuation. A timely native clear of bit 0x40 is not proved; the selected stores preserve it, while the initializer's whole-word clear is not per-request consumption. Temporary-bit ownership, nested/concurrent native writes, callbacks, exit restoration, ordinary processing and completed-round ordering require validation. This is not an accepted active hook."
+    "activeCandidate": "A full-function wrapper around 0x82D259E8 could provisionally request completion by temporarily setting previously-clear bit 0x40 under current playable, same-match, latched-local-human and once-per-round guards, rejecting status 0x14000. It must preserve the original function and native completion checks, take responsibility for and restore only its temporary bit in the then-current status word on every supported exit, and observe whether the request is accepted before treating it as consumed. Missing physical-button identity alone does not reject this deliberate request candidate.",
+    "unresolvedSafety": "The consumer bypasses the selected current-unit continuation. A timely native clear of bit 0x40 is not proved; the selected stores preserve it, while the initializer's whole-word clear is not per-request consumption. Which code is responsible for the temporary bit, nested and concurrent native writes, callbacks, exit restoration, normal processing and completed-round ordering require validation. This is not an accepted active hook."
   },
   "rejectedIngresses": {
     "pendingWord": "0x8314F11C is initialized by 0x82D25170 and unconditionally cleared at 0x82D25CA8 even when a prefix request is skipped. Writing it does not provide human End Turn or reliable acceptance.",
@@ -78,19 +78,19 @@
   },
   "idleRoundContract": {
     "setting": "A nonnegative integer N controls completed world rounds of human inactivity; default 100, zero leaves native behavior unchanged. It is not wall-clock time or a calendar edit.",
-    "latch": "Latch match generation, human identity and initial round once. Request at most once per admitted round; a frame counter or queued request is not completed work.",
-    "rearm": "Require natural ImDone receipt, subsequent AI/completion processing and EndTurn processing, then completed BeginTurn processing and stable playable return of the same human in the next native round. Calendar 0x82D1EC44 increments only on its selected first-human arm and may precede later work; its write alone cannot complete the counter.",
-    "lifecycle": "Pause on modal, unknown state, identity change, defeat, victory or menu transition. Invalidate stale state on load/new game unless an explicit persistence contract rebinds it; an equal round number is not match identity. Countdown persistence and multiplayer policy remain separate decisions.",
+    "latch": "Latch match generation, human identity and initial round once. Request at most once per accepted round; a frame counter or queued request is not completed work.",
+    "rearm": "Require natural ImDone receipt, subsequent AI and completion processing and EndTurn processing, then completed BeginTurn processing and stable playable return of the same human in the next native round. Calendar 0x82D1EC44 increments only on its selected first-human arm and may precede later work; its write alone cannot complete the counter.",
+    "lifecycle": "Pause on modal, unknown state, identity change, defeat, victory or menu transition. Invalidate stale state on load or new game unless an explicit persistence contract re-establishes its identity with the current match; an equal round number is not match identity. Countdown persistence and multiplayer policy remain separate decisions.",
     "qualification": "This specifies required observation and adoption guards, not an observed ordering or a delivered configurable mod."
   },
   "runtimeAcceptance": {
     "status": "not-observed",
-    "wrapperBaseline": "Observe full owner entry/exit depth, live status and intervening writers, current lifecycle/player/round/interface gate, completion admission and subsequent native processing. Bind nested consumers and native ownership changes before a deliberate temporary-bit experiment.",
-    "firstProbe": "Correlate a real human End Turn with current 0x82E2C2E0 receiver/vptr/+4/+0x40, status-bit publication, 0x82D26970 admission and ImDone request/receipt in one match/player/round. Reject this receiver route if the action does not take it.",
-    "activeProbe": "Only after proving temporary-bit ownership and all-exit restoration, test N=0/1/100, duplicate/deferred entry, modal interruption, human/turn change, failed submission, save/load and terminal state. Require actual NPC progress and exact release of human control after N completed rounds."
+    "wrapperBaseline": "Observe full function entry and exit depth, live status and intervening writers, current lifecycle, player, round and interface gate, completion acceptance and subsequent native processing. Identify nested consumers and native ownership changes before a deliberate temporary-bit experiment.",
+    "firstProbe": "Correlate a real human End Turn with current 0x82E2C2E0 receiver, vptr, +4 and +0x40, status-bit publication, 0x82D26970 acceptance and ImDone request and receipt in one match, player and round. Reject this receiver route if the action does not take it.",
+    "activeProbe": "Only after proving which code is responsible for the temporary bit and that every exit restores it, test N=0, 1 and 100, duplicate or deferred entry, modal interruption, human or turn change, failed submission, save and load, and terminal state. Require actual NPC progress and exact release of human control after N completed rounds."
   },
   "currentEvidence": {
-    "method": "Serialized foreground read-only Ghidra queries; supported-image word and SHA-256 checks; bounded generated corroboration and independent PPC decoding.",
+    "method": "Serialized foreground read-only Ghidra queries; supported-image word and SHA-256 checks; generated corroboration of limited scope and independent PPC decoding.",
     "locators": [
       "ghidra/FindRawGlobalStoreCandidates.java:0x8314F11C,0x82FFE7C4",
       "ghidra/FindDirectCallers.java:0x82CD5400,0x82E2C2E0",
@@ -111,14 +111,14 @@
     "unitOrderMapWords": 27,
     "unitOrderLabels": 3,
     "boundedSearches": "The pending-word census returned one raw lis/D-form candidate. The status census returned 45 rows without truncation; radius-eight windows covered 44 unique store sites and 737 words. A same-source immediate-set discriminator found only the selected GameOver and bit-0x40 writers. The raw direct-call census found no call to 0x82E2C2E0; pointer placement supplied two candidate table cells and a separate .pdata row.",
-    "qualification": "Syntactic scans exclude equivalent constructions, retained bases and indexed/computed aliases. No-match and untruncated output do not prove complete absence. Ghidra truncates several function models; exact words corroborate the selected local claims, not universal effects or runtime safety."
+    "qualification": "Syntactic scans exclude equivalent constructions, kept bases and indexed or computed aliases. No-match and untruncated output do not prove complete absence. Ghidra truncates several function models; exact words corroborate the selected local claims, not universal effects or runtime safety."
   },
   "guards": [
-    "Observe interior seams with complete context preservation; do not call them as native entry points.",
-    "Do not inject startup pending state, AI/GameOver bits, or the downstream EndTurn command as a human completion shortcut.",
-    "Do not equate a scene/application object with the separate interface gate or retain guest pointers across lifecycle transitions.",
+    "Observe interior hook points with complete context preservation; do not call them as native entry points.",
+    "Do not inject startup pending state, AI or GameOver bits, or the downstream EndTurn command as a human completion shortcut.",
+    "Do not equate a scene or application object with the separate interface gate or retain guest pointers across lifecycle transitions.",
     "Do not count frames, submissions or an early calendar increment as completed rounds.",
-    "A demonstrated native bit clear, different input receiver or different path may refine the candidate; actual admission, restoration and round processing are still required before active adoption."
+    "A demonstrated native bit clear, different input receiver or different path may refine the candidate; actual acceptance, restoration and round processing are still required before active adoption."
   ],
-  "conclusion": "The guarded local-human ImDone producer and a context-preserving observation seam are bound. A temporary status-bit-0x40 request at the full owner entry is a conditional active candidate; bit ownership/restoration, nested consumers and completed-round ordering prevent a runtime-safe active-hook claim."
+  "conclusion": "The guarded local-human ImDone producer and a context-preserving observation hook point are identified. A temporary status-bit-0x40 request at the full function entry is an active candidate that applies only under conditions; which code is responsible for and restores the bit, nested consumers and completed-round ordering prevent a runtime-safe active-hook claim."
 }

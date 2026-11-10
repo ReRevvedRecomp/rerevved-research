@@ -10,12 +10,12 @@
     "functions": ["0x82CD5A70", "0x82CF0CB0", "0x82CF1F70"],
     "tables": ["0x82F700D8"],
     "fields": ["unit definition +0x42", "unit definition +0x50"],
-    "boundary": "This packet identifies the base movement byte, three retail UEA increments, bounded Jaguar/Impi hook facts inside the effective movement accessor, and the owner-observed Jaguar movement acceptance. It does not establish the gameplay meaning of the special return beyond Jaguar exclusion, name every pre-UEA modifier, UEA 29, the auxiliary signed halfword, every caller, movement-budget scaling, AI, save, scenario, multiplayer, or broader presentation and runtime behavior."
+    "boundary": "This finding identifies the base movement byte, three retail UEA increments, Jaguar and Impi hook facts within the inspected scope inside the effective movement accessor, and the owner-observed Jaguar movement acceptance. It does not establish the gameplay meaning of the special return beyond Jaguar exclusion, name every pre-UEA modifier, UEA 29, the auxiliary signed halfword, every caller, movement-budget scaling, AI, save, scenario, multiplayer, or broader presentation and runtime behavior."
   },
   "dependencies": [
     { "topic": "unit-definitions-ai-evaluation", "use": "Provides the accepted 0x82F700D8 unit-definition table, 0x94-byte records, and internal UnitType names." },
     { "topic": "civilization-bonus-storage", "use": "Provides the accepted cumulative ActiveCivilizationBonusLookup contract and retail UEA placements." },
-    { "topic": "unit-movement-lifecycle", "use": "Provides the separate ordinary movement-budget and command lifecycle boundary." }
+    { "topic": "unit-movement-lifecycle", "use": "Provides the separate non-specialized movement-budget and command lifecycle boundary." }
   ],
   "baseMovement": {
     "definitionTable": "0x82F700D8",
@@ -24,23 +24,23 @@
     "width": "signed byte",
     "accessor": "0x82CF1F70",
     "retainedRegister": "r26",
-    "result": "The accessor starts the retained movement value with signed definition byte +0x42, then applies applicable local modifiers and UEA increments; a separate special return is described below."
+    "result": "The accessor starts the preserved movement value with signed definition byte +0x42, then applies applicable local modifiers and UEA increments; a separate special return is described below."
   },
   "accessor": {
     "function": "0x82CF1F70",
     "semanticName": "EffectiveUnitMovementLookup",
-    "inputs": { "player": "r3 retained in r30", "unitType": "r4 retained in r28" },
+    "inputs": { "player": "r3 preserved in r30", "unitType": "r4 preserved in r28" },
     "ordinaryReturn": {
       "auxiliaryLoad": "0x82CF218C",
       "signExtend": "0x82CF2190",
       "addComposedMovement": "0x82CF2194",
-      "result": "The ordinary return adds retained composed movement r26 to a signed auxiliary halfword. scenario-speedmode-movement.json#/result owns its conditional authored-field identity; broader movement-budget and game-pace meanings remain unproved."
+      "result": "The non-special return adds the composed movement preserved in r26 to a signed auxiliary halfword. scenario-speedmode-movement.json#/result defines its authored-field identity, which applies only under a condition; broader movement-budget and game-pace meanings are not shown."
     },
     "specialReturn": {
       "predicate": "0x82CF2154..0x82CF2174",
       "returnCalculation": "0x82CF2180",
-      "result": "One bounded special path adds constant r25 instead of composed movement r26.",
-      "qualification": "The predicate and gameplay meaning of this override remain unresolved; the three UEA increments are therefore claimed for the ordinary composed return path, not every return."
+      "result": "One special path, within the inspected scope, adds constant r25 instead of composed movement r26.",
+      "qualification": "The predicate and gameplay meaning of this override remain unresolved; the three UEA increments are therefore claimed for the non-special composed return path, not every return."
     }
   },
   "retailUeaOwners": [
@@ -56,7 +56,7 @@
       "callsite": "0x82CF20E4",
       "resultTest": "0x82CF20E8",
       "increment": "0x82CF20F0",
-      "result": "When definition flag 0x200 is set and cumulative UEA 3 is active, the accessor adds one to retained composed movement."
+      "result": "When definition flag 0x200 is set and cumulative UEA 3 is active, the accessor adds one to the preserved composed movement."
     },
     {
       "ueaId": 12,
@@ -65,7 +65,7 @@
       "ueaIdArgument": { "address": "0x82CF20FC", "value": 12, "flow": "branches through 0x82CF2100 to the common lookup setup at 0x82CF2110" },
       "commonLookup": { "mode": { "address": "0x82CF2110", "value": 0 }, "player": { "address": "0x82CF2114", "source": "r30" }, "callsite": "0x82CF2118", "resultTest": "0x82CF211C" },
       "increment": "0x82CF2124",
-      "result": "When UnitType is 10 and cumulative UEA 12 is active, the accessor adds one to retained composed movement."
+      "result": "When UnitType is 10 and cumulative UEA 12 is active, the accessor adds one to the preserved composed movement."
     },
     {
       "ueaId": 55,
@@ -74,7 +74,7 @@
       "ueaIdArgument": { "address": "0x82CF210C", "value": 55, "flow": "falls through to the common lookup setup at 0x82CF2110" },
       "commonLookup": { "mode": { "address": "0x82CF2110", "value": 0 }, "player": { "address": "0x82CF2114", "source": "r30" }, "callsite": "0x82CF2118", "resultTest": "0x82CF211C" },
       "increment": "0x82CF2124",
-      "result": "When UnitType is 6 and cumulative UEA 55 is active, the accessor adds one to retained composed movement; this branch is not a claim that every Warrior-definition identity receives the effect."
+      "result": "When UnitType is 6 and cumulative UEA 55 is active, the accessor adds one to the preserved composed movement; this branch is not a claim that every Warrior-definition identity receives the effect."
     }
   ],
   "inventoryCorrection": {
@@ -89,10 +89,10 @@
       { "role": "effective movement accessor", "address": "0x82CF1F70", "confidence": "strong" },
       { "role": "UEA 3 lookup", "address": "0x82CF20E4", "confidence": "strong" },
       { "role": "UEA 12 and 55 common lookup", "address": "0x82CF2118", "confidence": "strong" },
-      { "role": "ordinary composed return", "address": "0x82CF2194", "confidence": "strong" }
+      { "role": "non-special composed return", "address": "0x82CF2194", "confidence": "strong" }
     ],
     "locators": ["ghidra/DumpMemoryWords.java:0x82CF2098..0x82CF2198", "generated:rerevved/sub_82CF1F70", "unit-definitions-ai-evaluation#/unitDefinitions/records/6", "unit-definitions-ai-evaluation#/unitDefinitions/records/10"],
-    "qualification": "The static query performed no runtime action. Static evidence establishes the base byte, exact predicates, lookup dataflow, increments, and ordinary return composition; all other movement modifiers and consumers remain outside the packet. The separate owner-observed result is recorded in runtimeAcceptance."
+    "qualification": "The static query performed no runtime action. Static evidence establishes the base byte, exact predicates, lookup dataflow, increments, and non-special return composition; all other movement modifiers and consumers remain outside this finding. The separate owner-observed result is recorded in runtimeAcceptance."
   },
   "currentImageFacts": {
     "warriorDefinition": {
@@ -109,15 +109,15 @@
       "identityQualification": "The title's semantic identity table maps Aztec plus Warrior to Jaguar Warrior; this is not a claim that the native guest identity selector was recovered for Jaguar.",
       "specialReturnPredicate": "0x82CF2154..0x82CF2174",
       "specialReturn": "The accepted current-image hook evidence excludes Jaguar from the special return.",
-      "ordinaryComposition": "Jaguar remains on the ordinary composed path: signed definition +0x42, local modifiers, cumulative UEA lookup, and ordinary return composition at 0x82CF2194.",
-      "hookContract": "The accepted current-image hook contract observes the ordinary EffectiveUnitMovementLookup result at 0x82CF1F70; it does not replace the accessor or establish a broader movement rule."
+      "ordinaryComposition": "Jaguar remains on the non-special composed path: signed definition +0x42, local modifiers, cumulative UEA lookup, and non-special return composition at 0x82CF2194.",
+      "hookContract": "The accepted current-image hook contract observes the non-special EffectiveUnitMovementLookup result at 0x82CF1F70; it does not replace the accessor or establish a broader movement rule."
     },
     "nativeImpiControl": {
       "ueaId": 55,
       "result": "Native Impi UEA 55 is the control for the UnitType 6 cumulative lookup and +1 increment path; it does not establish the same result for every Warrior-definition identity."
     },
     "limits": {
-      "runtime": "The dated runtimeAcceptance records the bounded Jaguar result; complete runtime coverage and cadence remain unverified. Native Impi was a static reference, not a runtime-tested control.",
+      "runtime": "The dated runtimeAcceptance records the Jaguar result within the inspected scope; complete runtime coverage and cadence remain unverified. Native Impi was a static reference, not a runtime-tested control.",
       "ai": "No AI movement-parity claim is established.",
       "presentation": "The owner observed the Jaguar's displayed movement in runtimeAcceptance; broader presentation coverage remains unverified."
     }
@@ -131,7 +131,7 @@
     "mod": "aztec-jaguar-movement",
     "enabledResult": "A newly created Jaguar displayed and spent one additional movement point relative to the native baseline.",
     "disabledRestartResult": "With both Jaguar mods disabled and the title restarted, a newly created Jaguar returned to native one movement.",
-    "qualification": "This records the owner's bounded gameplay acceptance, not a captured runtime probe or an independent replay. It does not establish save/load persistence, AI parity, or runtime behavior for Impi and other identities."
+    "qualification": "This records the owner's gameplay acceptance within the inspected scope, not a captured runtime probe or an independent replay. It does not establish save and load persistence, AI parity, or runtime behavior for Impi and other identities."
   },
   "guards": [
     "Do not infer that UEA 3 selects a single UnitType; the accepted predicate is definition flag 0x200.",
@@ -140,5 +140,5 @@
     "Do not equate the effective movement stat directly with unit-record movement budget +0x02 or command path cost.",
     "Do not claim complete AI, presentation, save, scenario, multiplayer, or runtime parity."
   ],
-  "conclusion": "EffectiveUnitMovementLookup at 0x82CF1F70 reads signed definition byte +0x42 and owns three retail movement UEAs on its ordinary composed return: UEA 3 adds one under definition flag 0x200, UEA 12 adds one for Riflemen UnitType 10, and UEA 55 adds one on the UnitType 6 branch when active. The current-image Warrior definition has +0x50 bit 0 clear, and accepted Jaguar hook evidence excludes Jaguar from the special return while native Impi UEA 55 supplies the static control case. UEA 12 reaches a merged common callsite. On 2026-09-05 the owner accepted one additional displayed and spendable Jaguar movement point, with native one movement restored after disabling both Jaguar mods and restarting. No broad Warrior-definition, AI, presentation, or complete runtime movement claim is made."
+  "conclusion": "EffectiveUnitMovementLookup at 0x82CF1F70 reads signed definition byte +0x42 and applies three retail movement UEAs on its non-special composed return: UEA 3 adds one under definition flag 0x200, UEA 12 adds one for Riflemen UnitType 10, and UEA 55 adds one on the UnitType 6 branch when active. The current-image Warrior definition has +0x50 bit 0 clear, and accepted Jaguar hook evidence excludes Jaguar from the special return while native Impi UEA 55 supplies the static control case. UEA 12 reaches a merged common callsite. On 2026-09-05 the owner accepted one additional displayed and spendable Jaguar movement point, with native one movement restored after disabling both Jaguar mods and restarting. No broad Warrior-definition, AI, presentation, or complete runtime movement claim is made."
 }

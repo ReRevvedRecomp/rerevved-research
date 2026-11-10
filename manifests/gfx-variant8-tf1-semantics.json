@@ -13,7 +13,7 @@
     "textureBind": "0x82302758",
     "fillApply": "0x82302A50",
     "fillConstruct": "0x82302C98",
-    "boundary": "This packet covers descriptor-subtype flow, active-fill resource fields, variants 7 and 8, the immediate secondary bind, and the two selected HLSL sources. It does not claim logo-specific runtime values, injected descriptor state, vertex-shader linkage, active microcode traces, presentation conclusions, repair advice, runtime hooks, or patches."
+    "boundary": "This finding covers descriptor-subtype flow, active-fill resource fields, variants 7 and 8, the immediate secondary bind, and the two selected HLSL sources. It does not claim logo-specific runtime values, injected descriptor state, vertex-shader linkage, active microcode traces, presentation conclusions, repair advice, runtime hooks, or patches."
   },
   "dependencies": [
     { "topic": "gfx-coupled-fill-producer", "use": "native descriptor subtype and resource-cardinality invariant" },
@@ -69,7 +69,7 @@
     "result": "The subtype tested by the active-fill renderer is the descriptor subtype produced with the resource mapping."
   },
   "variantContract": {
-    "common": "For textured active fill type 3, 0x82302A50 binds primary record +0x2C through 0x82302758 as renderer slot 0 with mode 4.",
+    "common": "For textured active fill type 3, 0x82302A50 sets renderer slot 0 to primary record +0x2C through 0x82302758 with mode 4.",
     "variant7": {
       "condition": "Active fill subtype is exactly 1 or 2.",
       "selection": "The fill selects base shader variant 7 and does not issue the secondary slot-1 texture bind.",
@@ -100,7 +100,7 @@
     "selector": "0x82302620 adjusts the requested variant for the optional alternate bank, skips work when it matches cached index +0x20, selects renderer field (variant + 21) * 4, submits that shader object, and updates the cache.",
     "variant7": { "field": "+0x70", "table": "0x82F7B9F8", "source": "0x82168C10" },
     "variant8": { "field": "+0x74", "table": "0x82F7B9FC", "source": "0x82168900" },
-    "qualification": "The HLSL strings establish the declared pixel interfaces. This packet does not claim vertex-program pairing, compiled microcode trace, interpolator masks, constant values, or runtime shader selection."
+    "qualification": "The HLSL strings establish the declared pixel interfaces. This finding does not claim vertex-program pairing, compiled microcode trace, interpolator masks, constant values, or runtime shader selection."
   },
   "staticQuery": {
     "mode": "foreground-read-only",
@@ -110,7 +110,7 @@
       "0x82F7B9F8", "0x82F7B9FC", "0x82168C10", "0x82168900"
     ],
     "program": "rerevved_image.bin",
-    "qualification": "Several Xenon-heavy functions truncate at save-register thunks in Ghidra. Ghidra confirms their maintained starts, the active-fill decompilation, pointer-table values, and full HLSL strings; generated version 1.3 bodies corroborate the bounded instruction and field claims."
+    "qualification": "Several Xenon-heavy functions truncate at save-register thunks in Ghidra. Ghidra confirms their maintained starts, the active-fill decompilation, pointer-table values, and full HLSL strings; the recompiled version 1.3 copies of the functions corroborate the instruction and field claims."
   },
   "guards": [
     "Do not claim injected logo descriptor, resource selectors, runtime texture descriptors, null-SRV observation, black-output diagnosis, or presentation claim.",
@@ -119,5 +119,5 @@
     "Do not populate or clear slot 1, force a subtype or vertex format, edit descriptor fields, or change SDK invalid-texture handling.",
     "Static evidence does not establish a runtime hook, launch, or guest-memory write."
   ],
-  "conclusion": "Version 1.3 defines the subtype-coupled base shader split: native subtype 2 carries one resource and selects variant 7's s0-only pixel interface, while native subtype 3 carries two resources and selects variant 8's s0/s1 interface after the secondary slot-1 bind. Renderer mode and flags can select adjusted banks. A null secondary record returns without changing slot 1, but no such runtime state is asserted here."
+  "conclusion": "Version 1.3 defines the subtype-coupled base shader split: native subtype 2 carries one resource and selects variant 7's s0-only pixel interface, while native subtype 3 carries two resources and selects variant 8's s0 and s1 interface after the secondary slot-1 bind. Renderer mode and flags can select adjusted banks. A null secondary record returns without changing slot 1, but no such runtime state is asserted here."
 }

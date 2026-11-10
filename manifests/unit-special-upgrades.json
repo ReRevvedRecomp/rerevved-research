@@ -180,7 +180,7 @@
       "group": "Universal",
       "description": "Healing beyond friendly territory is the described effect; the direct consumer remains unresolved.",
       "consumerStatus": "unresolved",
-      "qualification": "The bounded unit-record scan found no consumer that both loads +0x10 and masks 0x80. A nearby 0x80 test belongs to unit-definition flags and is not Medic."
+      "qualification": "The unit-record scan, within the inspected scope, found no consumer that both loads +0x10 and masks 0x80. A nearby 0x80 test belongs to unit-definition flags and is not Medic."
     },
     {
       "index": 8,
@@ -197,7 +197,7 @@
   "storage": {
     "address": "0x830F2C00 + (player * 256 + unit) * 0x54",
     "recordOffset": "0x10",
-    "baseRelation": "0x830F2BF0 + 0x10 == 0x830F2C00: the address names the +0x10 word inside the fixed unit table at 0x830F2BF0 (stride 0x54, 256 records per player), not a separate runtime owner or a dead reference constant.",
+    "baseRelation": "0x830F2BF0 + 0x10 == 0x830F2C00: the address names the +0x10 word inside the fixed unit table at 0x830F2BF0 (stride 0x54, 256 records per player), not a separate runtime structure that holds, replaces and releases it, or a dead reference constant.",
     "width": 4,
     "encoding": "Bits zero through eight follow the supported-image string order.",
     "rankSeparation": "Runtime unit signed byte +0x05 stores rank. Veteran and Elite are rank states and are not bits in this word.",
@@ -223,28 +223,28 @@
   },
   "combatConsumerSearch": {
     "functions": ["0x82CD7A60", "0x82CD9970", "0x82CF2230", "0x82CF21A0", "0x82CEFF98", "0x82CF4990"],
-    "result": "No bit-specific consumer for masks 0x2, 0x8, 0x10, or 0x20 was found in the dispatcher, combat resolver, effective attack or defense accessors, eligibility helper, or upgrade counter. Guerilla mask 0x4 has the separate static consumer at 0x82CFC0A8. 0x82CD7A60 tests +0x10 only as a whole-word nonzero gate and is a separate dispatcher path from combat resolver 0x82CD9970.",
+    "result": "No bit-specific consumer for masks 0x2, 0x8, 0x10, or 0x20 was found in the dispatcher, combat resolver, effective attack or defense accessors, eligibility helper, or upgrade counter. Guerilla mask 0x4 has the separate static consumer at 0x82CFC0A8. 0x82CD7A60 tests +0x10 only as a whole-word nonzero check and is a separate dispatcher path from combat resolver 0x82CD9970.",
     "qualification": "This negative result covers only direct reads of +0x10 in the listed functions. The consumers for masks 0x2, 0x8, 0x10 and 0x20 are in the two helper loops that the resolver calls at stage 0x82CDAB9C..0x82CDAC18 (defense helper 0x82CFBED0 for bits 3, 4 and 5, attack helper 0x82CFC0A8 for bits 1 and 2). Those helpers are outside the searched functions, so this negative does not conflict with them. Loyalty is in loyaltyDefenseBoundary. The point values for Infiltration, Engineer and Leadership are in combat-strength.json#/specialUpgradePoints. Medic has no consumer found."
   },
   "loyaltyDefenseBoundary": {
     "status": "proved selected branch; conditional retained combat path",
     "owner": "0x82CFBED0",
-    "unit": "Entry r3=p,r4=j selects U=0x830F2BF0+0x54*(256*p+j); r5 is presentation mode. Owner byte U+0 and signed halfword coordinates U+0x1C/+0x1E are the ordinary creator fields.",
-    "selection": "The0..8 bit loop reads U+0x10 at0x82CFBF48. Its idx-3 switch at0x82CFBF58..7C maps index3 through U32[0x82CFBF80]=0x82CFBFD0. This is the missing derived helper, not a reversal of combatConsumerSearch's bounded no-direct-read result.",
-    "predicate": "0x82CFBFD0..0x82CFBFE8 forms i=40*X+Y and compares U8[0x830E8790+i] with U8[U+0]. Mismatch skips. Match optionally calls0x82E6A3E0 at0x82CFC008 when presentation mode!=-1, then adds50 to r21 at0x82CFC00C. The helper returns accumulated r21 at0x82CFC09C. No local rank or movement write occurs.",
-    "combatJoin": "Accepted ordinary unit-vs-unit resolver0x82CD9970 calls this with defender owner r25 and slot r30 at0x82CDAC10;0x82CDAC18 adds its result to the prior defender modifier r17 in r29. Rank-derived50 is added into r27 at0x82CDAD70/74. Under retained intervening state,0x82CDB39C multiplies effective defense r22 by that modifier r27 into r23. The selected Loyalty term is therefore additive50 percentage points to defense, not a flat+50 unit-stat write or an attack bonus. Other bonuses and later rules can change the total; no unconditional final1.5 multiplier is claimed.",
-    "attackSeparation": "The adjacent attack helper0x82CFC0A8 switch maps index3 through U32[0x82CFC190]=0x82CFC380 (skip/loop), rather than its separate index2 Guerilla branch. Do not substitute Guerilla or Engineer for Loyalty.",
-    "homeTerritory": "The stored description calls this home territory. The exact proved machine predicate is equality between the ordinary unit-owner byte and the coordinate-indexed territory-plane byte. Actual territory-plane publication/ownership semantics, supported readable coordinates and retention remain premises; the description is not proof of every territory writer.",
-    "conditions": "Valid p/j/U/plane and bit/coordinate retention, normal required helper/presentation returns, finite strings, no destructive aliases and ordinary resolver-role retention through the selected joins. No new runtime, army, AI prediction or all-combat-mode parity observation.",
-    "evidence": "city-militia-scout-feasibility.json#/foundingMilitiaContract/verification owns current image/native-word checks and exact generated preflights."
+    "unit": "Entry r3=p,r4=j selects U=0x830F2BF0+0x54*(256*p+j); r5 is presentation mode. Owner byte U+0 and signed halfword coordinates U+0x1C/+0x1E are the non-specialized creator fields.",
+    "selection": "The 0..8 bit loop reads U+0x10 at 0x82CFBF48. Its idx-3 switch at 0x82CFBF58..7C maps index 3 through U32[0x82CFBF80]=0x82CFBFD0. This is the missing derived helper, not a reversal of combatConsumerSearch's no-direct-read result, which is limited to the inspected scope.",
+    "predicate": "0x82CFBFD0..0x82CFBFE8 forms i=40*X+Y and compares U8[0x830E8790+i] with U8[U+0]. Mismatch skips. Match optionally calls 0x82E6A3E0 at 0x82CFC008 when presentation mode != -1, then adds 50 to r21 at 0x82CFC00C. The helper returns accumulated r21 at 0x82CFC09C. No local rank or movement write occurs.",
+    "combatJoin": "Accepted non-specialized unit-vs-unit resolver 0x82CD9970 calls this with defender owner r25 and slot r30 at 0x82CDAC10; 0x82CDAC18 adds its result to the prior defender modifier r17 in r29. Rank-derived 50 is added into r27 at 0x82CDAD70/74. While the intervening state stays unchanged, 0x82CDB39C multiplies effective defense r22 by that modifier r27 into r23. The selected Loyalty term is therefore additive 50 percentage points to defense, not a flat +50 unit-stat write or an attack bonus. Other bonuses and later rules can change the total; no unconditional final 1.5 multiplier is claimed.",
+    "attackSeparation": "The adjacent attack helper 0x82CFC0A8 switch maps index 3 through U32[0x82CFC190]=0x82CFC380 (skip or loop), rather than its separate index 2 Guerilla branch. Do not substitute Guerilla or Engineer for Loyalty.",
+    "homeTerritory": "The stored description calls this home territory. The exact proved machine predicate is equality between the non-specialized unit-owner byte and the coordinate-indexed territory-plane byte. Actual territory-plane publication and ownership semantics, supported readable coordinates and whether those values stay unchanged remain premises; the description is not proof of every territory writer.",
+    "conditions": "Valid p, j, U and plane values and bit and coordinate values that stay unchanged, normal required helper and presentation returns, finite strings, no destructive aliases and non-specialized resolver roles that stay unchanged through the selected links. No new runtime, army, AI prediction or all-combat-mode parity observation.",
+    "evidence": "city-militia-scout-feasibility.json#/foundingMilitiaContract/verification defines the current image and native-word checks and exact generated preflights."
   },
   "terrainCombatHookBoundary": {
     "status": "proposed-rule-boundary",
-    "scope": "Separate ordinary-combat Forest terrain hook evidence; it is not the native Guerilla consumer.",
+    "scope": "Separate Forest terrain hook evidence for non-specialized combat; it is not the native Guerilla consumer.",
     "participants": {
       "table": "0x830F2BF0",
       "coordinateFields": ["+0x1C", "+0x1E"],
-      "result": "The ordinary combat participant records expose the coordinates used by the terrain lookup."
+      "result": "The non-specialized combat participant records expose the coordinates used by the terrain lookup."
     },
     "forest": {
       "table": "0x8312B288",
@@ -261,7 +261,7 @@
       "register": "r23",
       "result": "The proposed defense hook carries the scalar in r23 and includes a displaced compare and resume sequence."
     },
-    "qualification": "This bounds a possible ordinary Forest combat rule insertion point. It does not prove that the native Guerilla bit feeds the hook, that byte 3 denotes home or enemy territory, or that either static path has been runtime confirmed."
+    "qualification": "This delimits a possible Forest combat rule insertion point for non-specialized combat. It does not prove that the native Guerilla bit feeds the hook, that byte 3 denotes home or enemy territory, or that either static path has been runtime confirmed."
   },
   "presentation": {
     "strings": [
@@ -278,12 +278,12 @@
   "persistence": {
     "tableReset": "0x82D05D50 clears the complete unit table allocation, including the upgrade word.",
     "status": "conditional bit-preserving default-stream word transfer",
-    "sessionEntry": "Accepted0x82D81560 ->0x82D81654 calls0x82CC4040(mode0,stream,alternate); load0x82D86400 ->0x82D86674 calls mode1. See resource-density-generation.json#/postSetupTileMutationBoundary/serialization for the wrapper and mode qualifications.",
-    "unitLoop": "0x82CC4510..0x82CC4548 traverses0x830F2BF0 through+0x2A000 in0x54-byte steps,2048 records (8*256).0x82CC4538 calls0x82CC1DA0(U,stream,alternate,mode,marker).",
-    "field": "0x82CC1DA0 captures mode in r27 and U in r31. The selected field address is U+0x10; mode1 calls0x822DE438 at0x82CC2048, mode0 calls0x822DE4A0 at0x82CC2064, and marker advances4. No Loyalty mask or rank conversion is applied to this32-bit transfer.",
-    "load": "Default alternate=0:0x822DE438 ->0x822D93E8 at0x822DE488. The latter calls current stream+4 at0x822D9418 with count4 and destination U+0x10. If native-endian marker0x82F78854 differs from stream+8,0x822D9468..84 reverses bytes0/3 and1/2 in the destination; otherwise it retains their order.",
-    "save": "Default alternate=0:0x822DE4A0 ->0x821D3EA0 at0x822DE4D8. The latter uses the source word directly or a reversed four-byte stack copy according to the same endian metadata, then calls current stream+8 at0x821D3F78 with count4. The selected local byte swap does not modify the live source word.",
-    "verdict": "With completing four-byte stream operations, matching format/endian metadata, correct mode/default-alternate inputs and retained source/destination identity/lifetime, bit0x8 survives save/load with all other+0x10 bits. Whole save success, alternate-stream modes, later overwrite and actual round-trip execution remain unobserved. Loading this word is not a founding event and must not allocate the extra Militia.",
+    "sessionEntry": "Accepted 0x82D81560 -> 0x82D81654 calls 0x82CC4040(mode 0, stream, alternate); load 0x82D86400 -> 0x82D86674 calls mode 1. See resource-density-generation.json#/postSetupTileMutationBoundary/serialization for the wrapper and mode qualifications.",
+    "unitLoop": "0x82CC4510..0x82CC4548 traverses 0x830F2BF0 through+0x2A000 in 0x54-byte steps,2048 records (8*256).0x82CC4538 calls 0x82CC1DA0(U,stream,alternate,mode,marker).",
+    "field": "0x82CC1DA0 captures mode in r27 and U in r31. The selected field address is U+0x10; mode 1 calls 0x822DE438 at 0x82CC2048, mode 0 calls 0x822DE4A0 at 0x82CC2064, and marker advances 4. No Loyalty mask or rank conversion is applied to this 32-bit transfer.",
+    "load": "Default alternate=0: 0x822DE438 -> 0x822D93E8 at 0x822DE488. The latter calls current stream+4 at 0x822D9418 with count 4 and destination U+0x10. If native-endian marker 0x82F78854 differs from stream+8, 0x822D9468..84 reverses bytes 0/3 and 1/2 in the destination; otherwise it retains their order.",
+    "save": "Default alternate=0: 0x822DE4A0 -> 0x821D3EA0 at 0x822DE4D8. The latter uses the source word directly or a reversed four-byte stack copy according to the same endian metadata, then calls current stream+8 at 0x821D3F78 with count 4. The selected local byte swap does not modify the live source word.",
+    "verdict": "With completing four-byte stream operations, matching format and endian metadata, correct mode and default-alternate inputs and preserved source and destination identity and lifetime, bit 0x8 survives save and load with all other +0x10 bits. Whole save success, alternate-stream modes, later overwrite and actual round-trip execution remain unobserved. Loading this word is not a founding event and must not allocate the extra Militia.",
     "evidence": "city-militia-scout-feasibility.json#/foundingMilitiaContract/verification"
   },
   "veteranGrantPath": {
@@ -292,7 +292,7 @@
     "rankRise": "Commands 1 and 42 reach 0x82CDFAE8 and then 0x82CD7A60. It increments rank +0x05 at 0x82CD85CC (record in r16, also frame +132) or at 0x82CD8BB8 (record in r22), both only below rank 3. The result flags are read at 0x82CD8F8C and 0x82CD9334. The rank 2 arms sit behind local player compares at 0x82CD8FD4 and 0x82CD9374.",
     "rank2Arms": "The rank 2 arms at 0x82CD921C and 0x82CD9594 use the Veteran text at 0x82157438. They clear 0x830E45B4, set unit +0x0C bit 0x00800000 and 0x82FFE7C4 bit 0x01000000, store unit action +0x28 = 2 (0x82CD9274 and 0x82CD95CC), call the advisor 0x82CE8338 (0x82CD9294 and 0x82CD960C) and restore 0x830E45B4. The arm has no wait of its own. Rank 3 stores no action here.",
     "continuation": "A nonzero return continues at 0x82CDFAEC to the post-combat advance: 0x82CD69B8 at 0x82CDFCC0, or queued command 17 at 0x82CDFCA8.",
-    "actionUpdater": "The per-frame updater 0x82D5FFC8 (call 0x82E107AC) owns the action. Action 2 selects clip 69, or clip 1069 when +0x10 is nonzero and that clip has a duration (0x82D624EC..0x82D62528). The child clock at 0x83024F18 + 292*I + 4 + 4*c advances only at 0x82D61358..0x82D61370, by the frame milliseconds at 0x8314F04C.",
+    "actionUpdater": "The per-frame updater 0x82D5FFC8 (call 0x82E107AC) is responsible for holding, replacing and releasing the action's state. Action 2 selects clip 69, or clip 1069 when +0x10 is nonzero and that clip has a duration (0x82D624EC..0x82D62528). The child clock at 0x83024F18 + 292*I + 4 + 4*c advances only at 0x82D61358..0x82D61370, by the frame milliseconds at 0x8314F04C.",
     "actionEnd": "The action ends only at 0x82D629DC (+0x28 = -1). That needs the clock to reach the clip duration (0x82D62810), the sequence lookup 0x82D5E368 -> 0x82D99470 -> 0x82C5FD38 to return true (0x82D62850), the child to be on that clip (0x82D62860) and the 0x82FFE7C4 sign bit to be clear (0x82D62874). There is no timeout. A false lookup reaches 0x82D629F0 -> 0x82D62B50 with the action still 2.",
     "translationSkip": "While the action is above 0 and not 7 or 9, 0x82D617E4..0x82D6185C branches to 0x82D621CC. That skips the only entry to translation 0x82D61860..0x82D62030 and its busy set at 0x82D61A18. An action held at 2 therefore keeps the drawn unit on its old tile after the logical move, and this arm no longer holds the move's wait.",
     "openHolds": "Other holds are not tied to this path: the unit skip on +0x0C bit 0x00400000 (0x82D60834), the tile test (0x82D60870), the child skips at 0x82D622A8 and 0x82D62388, the sign bit branch to action 9 (0x82D62540) and a model replaced under the action. Bit 0x00800000 has no unit consumer in a mask search of 0x82CC0000..0x82E40000. Whether +0x28 actually stays 2 for any unit is not shown, and no runtime state was captured.",
@@ -307,12 +307,12 @@
       { "role": "AI promotion chooser", "address": "0x82CF45D8", "confidence": "strong" },
       { "role": "Blitz post-action consumer", "address": "0x82D2CB28", "confidence": "strong" },
       { "role": "Scout mode selector", "address": "0x82CD6D84", "confidence": "strong" },
-      { "role": "Guerilla territory-gated attack consumer", "address": "0x82CFC0A8", "confidence": "strong" },
+      { "role": "Guerilla attack consumer with a territory requirement", "address": "0x82CFC0A8", "confidence": "strong" },
       { "role": "defense point helper for Loyalty, Engineer and Leadership", "address": "0x82CFBED0", "confidence": "strong" },
       { "role": "attack point helper for Infiltration and Guerilla", "address": "0x82CFC0A8", "confidence": "strong" },
       { "role": "combat result rank increment", "addresses": ["0x82CD85CC", "0x82CD8BB8"], "confidence": "strong" },
       { "role": "Veteran action updater", "address": "0x82D5FFC8", "confidence": "strong" },
-      { "role": "ordinary-combat Forest terrain hook boundary", "addresses": ["0x830F2BF0", "0x8312B288", "0x82CDB4E0", "0x82CDB538"], "confidence": "strong" },
+      { "role": "Forest terrain hook boundary for non-specialized combat", "addresses": ["0x830F2BF0", "0x8312B288", "0x82CDB4E0", "0x82CDB538"], "confidence": "strong" },
       { "role": "unit presentation record copy", "address": "0x82D81BA0", "confidence": "strong" }
     ],
     "locators": [
@@ -324,7 +324,7 @@
       "generated:rerevved/sub_82CF45D8",
       "generated:rerevved/sub_82D11AD8"
     ],
-    "qualification": "Identity, storage, the normal grant behavior, Blitz's direct consumer, Scout's downstream mode selection and the Infiltration, Guerilla, Loyalty, Engineer and Leadership point branches are statically strong. The Medic consumer and runtime behavior remain unproved."
+    "qualification": "Identity, storage, the normal grant behavior, Blitz's direct consumer, Scout's downstream mode selection and the Infiltration, Guerilla, Loyalty, Engineer and Leadership point branches are statically strong. The Medic consumer and runtime behavior are not yet established."
   },
   "guards": [
     "Do not model Veteran or Elite as special-upgrade bits; they use rank byte +0x05.",
@@ -332,10 +332,10 @@
     "Do not claim that setting the March bit alone updates movement; the native grant command also changes +0x02.",
     "Do not claim that setting Scout alone refreshes its UI; the native grant command explicitly invokes 0x82D11AD8.",
     "Do not translate the Guerilla comparison into home or enemy territory ownership; attacker record +0x00 and the territory-table relation remain semantically unresolved.",
-    "Treat the Forest terrain hook as a proposed ordinary-combat rule boundary separate from the native Guerilla consumer, and preserve its displaced compares and resumes.",
-    "Do not call situational combat, healing, city-defense-stat display, +1 view, presentation, save/load, armies, or AI runtime-confirmed without a default-off probe.",
+    "Treat the Forest terrain hook as a proposed rule boundary for non-specialized combat separate from the native Guerilla consumer, and preserve its displaced compares and resumes.",
+    "Do not call situational combat, healing, city-defense-stat display, +1 view, presentation, save and load, armies, or AI runtime-confirmed without a default-off probe.",
     "Do not read the Infiltration, Engineer and Leadership point branches as runtime behavior; they rest on static word replay. The earlier direct-reader negative in combatConsumerSearch covers only the functions listed there.",
     "Do not read the Veteran action path as the cause of any display symptom. It shows only which conditions end the action and which code skips translation while it is held."
   ],
-  "conclusion": "The supported image defines exactly nine special upgrades stored as bits zero through eight in runtime unit word +0x10. Command type 22 spends one Elite rank step and sets the selected bit. Blitz has an exact movement consumer after an action. March has an immediate movement side effect. Scout selects an exact downstream mode and triggers an immediate rebuild. Guerilla has a statically proved territory comparison that affects only attack at 0x82CFC0A8. The ordinary-combat Forest evidence at 0x82CDB4E0 and 0x82CDB538 is a separate proposed hook boundary using participant coordinates and terrain byte 3. It does not establish a connection to Guerilla or runtime behavior. The separate Loyalty branch now binds its defense-only+50 term under the exact owner/territory comparison, and serialization through the default stream conditionally preserves the full upgrade word. Infiltration, Engineer and Leadership add attack or defense points through the same two helper loops (combat-strength.json#/specialUpgradePoints). Medic, exact presentation, territory semantics and runtime or alternate-stream behavior remain open."
+  "conclusion": "The supported image defines exactly nine special upgrades stored as bits zero through eight in runtime unit word +0x10. Command type 22 spends one Elite rank step and sets the selected bit. Blitz has an exact movement consumer after an action. March has an immediate movement side effect. Scout selects an exact downstream mode and triggers an immediate rebuild. Guerilla has a statically proved territory comparison that affects only attack at 0x82CFC0A8. The Forest evidence for non-specialized combat at 0x82CDB4E0 and 0x82CDB538 is a separate proposed hook boundary using participant coordinates and terrain byte 3. It does not establish a connection to Guerilla or runtime behavior. The separate Loyalty branch now ties its defense-only +50 term to the exact owner and territory comparison, and serialization through the default stream preserves the full upgrade word, only under the stated conditions. Infiltration, Engineer and Leadership add attack or defense points through the same two helper loops (combat-strength.json#/specialUpgradePoints). Medic, exact presentation, territory semantics and runtime or alternate-stream behavior remain open."
 }

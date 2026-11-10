@@ -28,7 +28,7 @@
   "dependencies": [
     {
       "topic": "city-yield-state-credit",
-      "use": "Provides the accepted reserve credit, mode gates, UEA 42 clearing, and separate owner-byte branch that this result pins to exact operands."
+      "use": "Provides the accepted reserve credit, mode checks, UEA 42 clearing, and separate owner-byte branch that this result pins to exact operands."
     },
     {
       "topic": "library-city-yield-writers",
@@ -52,7 +52,7 @@
     },
     {
       "topic": "unique-era-ability-effect-ownership",
-      "use": "Provides the UEA 23 accumulator and UEA 42 gate identities adjacent to the Gold operands."
+      "use": "Provides the UEA 23 accumulator and UEA 42 check identities adjacent to the Gold operands."
     },
     {
       "topic": "playable-game-state-requirements",
@@ -64,7 +64,7 @@
     "capacity": "The accepted reader loop at 0x82CF9F44..0x82CF9F58 covers 128 slots of stride 0xBC. Callers are responsible for the index range.",
     "owner": "0x82D1399C loads city byte +0x00, 0x82D139B0 sign-extends it, and 0x82D139D8 saves it at stack +0x84. This entry snapshot is the owner used by the aggregate rows and the credit. 0x82D1538C and 0x82D154EC later reread the live signed byte +0x00 for comparisons only.",
     "secondByte": "City byte +0x01 is read signed only at 0x82D153A4..0x82D153A8 for the excluded-player comparison. Its meaning remains unassigned.",
-    "library": "0x82D14650..0x82D14654 loads the 32-bit big-endian word at city +0x10 through retained base r25. 0x82D146C4 tests mask 0x20 (Library 105), equivalent to bit 0x20 of byte +0x13. Mask 0x1000 (University 112) at 0x82D14698 takes precedence.",
+    "library": "0x82D14650..0x82D14654 loads the 32-bit big-endian word at city +0x10 through preserved base r25. 0x82D146C4 tests mask 0x20 (Library 105), equivalent to bit 0x20 of byte +0x13. Mask 0x1000 (University 112) at 0x82D14698 takes precedence.",
     "goldCache": "City +0x46 is a halfword. 0x82D14ED0 stores the low 16 bits of the 32-bit stack +0x7C value. The accepted reader sign-extends it."
   },
   "cacheBoundary": {
@@ -78,7 +78,7 @@
       "goldCacheAddress": "r31 + r27 = 0x8314FE28 + index*0xBC + 0x46.",
       "owner": "r17 = signed entry owner from stack +0x84, loaded at 0x82D14E98.",
       "ownerTimesFour": "r19 = low32 owner*4, written at 0x82D14684 from r18 after every path reloads r18 from stack +0x84.",
-      "aggregateBase": "Not retained. r29 held 0x830EE388 through 0x82D152FC but becomes stack +0x90 at 0x82D15378 or zero at 0x82D1535C.",
+      "aggregateBase": "Not preserved. r29 held 0x830EE388 through 0x82D152FC but becomes stack +0x90 at 0x82D15378 or zero at 0x82D1535C.",
       "goldValue": "Stack +0x7C. On the fallthrough path it equals the value whose low 16 bits were stored at 0x82D14ED0. On the clearing path it is zero and city +0x46 is zero."
     },
     "pathEquality": "r15, r31, r17, r19, and r24..r27 are identical on all three predecessor paths. r29, r30, r20, stack +0x7C, and city +0x40..+0x46 differ by path.",
@@ -100,7 +100,7 @@
     "localUse": "CityUpdate does not read 0x830ECD28 on the selected path. The comparison with 6 at 0x82D1468C reads 0x830ED3D8 + owner*4 and is not a civilization test."
   },
   "nativeOverrides": {
-    "uea42": "0x82D15350..0x82D1536C clears city +0x42, +0x40, +0x44, and +0x46, retained r20, r29, r30, and stack +0x7C together, so cache and credit Gold stay consistent at zero.",
+    "uea42": "0x82D15350..0x82D1536C clears city +0x42, +0x40, +0x44, and +0x46, plus the preserved registers r20, r29, r30, and stack +0x7C together, so cache and credit Gold stay consistent at zero.",
     "excludedOwner": "For any mode that passes 0x82D15380, 0x82D15388..0x82D153B0 compares live signed city bytes +0x00 and +0x01 with the excluded-player word 0x82F700B0. When both match, 0x82D153C0..0x82D153EC zeroes stack +0x7C, r18, r20, r29, and stack +0x78, 0x82D154AC stores one to city +0x03, and 0x82D154B0 writes city +0x38. City +0x46 is not rewritten, so the native credit adds zero Gold while the cache keeps its value.",
     "scienceOnlyClear": "Otherwise 0x82D154B8..0x82D154F8 compares the live owner byte with the local-player resolver result (-1 when manager +0x10 is null). When they differ and halfword 0x8314F1D4 is nonzero, 0x82D15524 zeroes r20. This clear affects Science only; stack +0x7C and r18 are unchanged.",
     "truncation": "The credit adds the full 32-bit stack +0x7C value while city +0x46 holds only its low 16 bits."

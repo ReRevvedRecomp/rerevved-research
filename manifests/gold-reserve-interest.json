@@ -9,7 +9,7 @@
   "scope": {
     "functions": ["0x82CF0CB0", "0x82CF9F38", "0x82D1EAB0"],
     "globals": ["0x830ED544"],
-    "boundary": "This packet identifies the cumulative UEA 47 gameplay mutation and one read-side aggregate consumer. It does not name the broader 0x82CF9F38 aggregate, prove every reserve writer or reader, establish runtime cadence under every game mode, or claim presentation, AI, save, scenario, or multiplayer parity."
+    "boundary": "This finding identifies the cumulative UEA 47 gameplay change and one consumer that reads the aggregate. It does not name the broader 0x82CF9F38 aggregate, prove every reserve writer or reader, establish runtime cadence under every game mode, or claim presentation, AI, save, scenario, or multiplayer parity."
   },
   "dependencies": [
     {
@@ -36,17 +36,17 @@
     "base": "0x830ED544",
     "index": "player * 4",
     "width": "32-bit word",
-    "qualification": "Both accepted paths address the same player-indexed word. This packet names it from the player-facing UEA 47 effect and its direct arithmetic; it does not recover the complete player-state layout or every access."
+    "qualification": "Both accepted paths address the same player-indexed word. This finding names it from the player-facing UEA 47 effect and its direct arithmetic; it does not recover the complete player-state layout or every access."
   },
   "arithmetic": {
     "term": "signed divide toward zero of (reserve + 25) by 50",
     "nonnegativeEquivalent": "floor((reserve + 25) / 50)",
-    "interpretation": "For an ordinary nonnegative reserve, the code adds 2 percent rounded to the nearest integer with a half-unit rounded upward. Negative reserve behavior follows the exact signed divide-toward-zero expression and is not generalized as symmetric rounding."
+    "interpretation": "For a nonnegative reserve, the code adds 2 percent rounded to the nearest integer with a half-unit rounded upward. Negative reserve behavior follows the exact signed divide-toward-zero expression and is not generalized as symmetric rounding."
   },
   "mutationOwner": {
     "function": "0x82D1EAB0",
     "semanticName": "CalendarTurnAdvance",
-    "player": "incoming r3 retained in r24",
+    "player": "incoming r3 kept in r24",
     "lookupArguments": {
       "mode": { "address": "0x82D1F470", "value": 0 },
       "player": { "address": "0x82D1F474", "source": "r24" },
@@ -65,7 +65,7 @@
   },
   "readSideConsumer": {
     "function": "0x82CF9F38",
-    "player": "incoming r4 retained in r27",
+    "player": "incoming r4 kept in r27",
     "lookupArguments": {
       "mode": { "address": "0x82CF9FDC", "value": 0 },
       "player": { "address": "0x82CF9FE0", "source": "r27" },
@@ -80,7 +80,7 @@
     "divisor": { "address": "0x82CFA000", "value": 50 },
     "divide": "0x82CFA00C",
     "aggregateAdd": "0x82CFA010",
-    "result": "When cumulative UEA 47 is active, the function adds the same exact interest term to its retained aggregate before returning. The inactive path returns the aggregate without that term."
+    "result": "When cumulative UEA 47 is active, the function adds the same exact interest term to the aggregate it holds before returning. The inactive path returns the aggregate without that term."
   },
   "currentEvidence": {
     "method": "One foreground read-only current-image query with two 25-word windows, exact verification of 26 selected words and branch targets, and narrow generated-code corroboration of 0x82D1EAB0 and 0x82CF9F38.",
@@ -95,13 +95,13 @@
       "generated:rerevved/sub_82D1EAB0",
       "generated:rerevved/sub_82CF9F38"
     ],
-    "qualification": "No runtime action was performed. The query established the exact local lookup and arithmetic paths; generated code supplied only bounded register provenance and the retained aggregate context."
+    "qualification": "No runtime action was performed. The query established the exact local lookup and arithmetic paths; generated code supplied only limited register provenance and the aggregate context the function holds."
   },
   "guards": [
     "Do not replace the exact signed divide-toward-zero expression with floating-point multiplication.",
-    "Do not infer a complete player-state layout or reserve access closure from the accepted base word.",
-    "Do not claim that 0x82CF9F38 is solely an interest function; it computes a broader retained aggregate before the bounded UEA 47 term.",
+    "Do not infer a complete player-state layout or the full set of reserve accesses from the accepted base word.",
+    "Do not claim that 0x82CF9F38 is solely an interest function; it computes a broader aggregate before the UEA 47 term.",
     "Do not infer runtime cadence, presentation, AI, save, scenario, or multiplayer parity from these static consumers."
   ],
-  "conclusion": "UEA 47 uses cumulative lookup ownership in both accepted consumers. CalendarTurnAdvance mutates the player reserve at 0x830ED544 + player*4 by adding signed (reserve + 25) / 50, while 0x82CF9F38 adds the same term to a separate returned aggregate without storing the reserve."
+  "conclusion": "UEA 47 uses the cumulative lookup in both accepted consumers. CalendarTurnAdvance mutates the player reserve at 0x830ED544 + player*4 by adding signed (reserve + 25) / 50, while 0x82CF9F38 adds the same term to a separate returned aggregate without storing the reserve."
 }

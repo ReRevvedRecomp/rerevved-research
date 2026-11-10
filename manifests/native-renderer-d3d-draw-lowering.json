@@ -5,7 +5,7 @@
   "status": "closed",
   "confidence": "strong",
   "image": "image.json",
-  "question": "In the supported version-1.3 Ghidra reference graph, are the only references to GraphicsFlushAndIssue 0x826A3568 the accepted direct callsites at 0x82303E3C and 0x82303E8C inside GfxIndexedDraw 0x82303C38, or does any additional code or data reference create an unclassified draw-submission frontier?",
+  "question": "In the supported version-1.3 Ghidra reference graph, are the only references to GraphicsFlushAndIssue 0x826A3568 the accepted direct callsites at 0x82303E3C and 0x82303E8C inside GfxIndexedDraw 0x82303C38, or does any additional code or data reference leave an unexplained draw-submission caller?",
   "scope": {
     "target": "0x826A3568",
     "acceptedCaller": "0x82303C38",
@@ -17,7 +17,7 @@
       "0x826A3568",
       "0x82303C38"
     ],
-    "boundary": "This packet tests only whether the maintained version-1.3 Ghidra reference graph reproduces the accepted direct draw-submission edge. It does not inspect another function, decompile code, read generated code, execute the game, instrument runtime behavior, interpret PM4, or make a host-renderer claim."
+    "boundary": "This finding tests only whether the maintained version-1.3 Ghidra reference graph reproduces the accepted direct draw-submission edge. It does not inspect another function, decompile code, read generated code, execute the game, instrument runtime behavior, interpret PM4, or make a host-renderer claim."
   },
   "dependencies": [
     {
@@ -50,21 +50,21 @@
       }
     ],
     "result": "The unrepaired query reported zero references and the forward listing emitted 0x82303EA8 for both requested callsites.",
-    "qualification": "This baseline does not interpret the missing bytes or explain the analysis gap; it bounds the unrepaired Ghidra graph only, does not falsify the repaired callsites accepted by RVA-REL-0349, and establishes only that the maintained listing cannot discriminate the reference-index mismatch at these two sites. It does not establish that no indirect, split, or missing reference exists."
+    "qualification": "This baseline does not interpret the missing bytes or explain the analysis gap; it covers the unrepaired Ghidra graph only, does not falsify the repaired callsites accepted by RVA-REL-0349, and establishes only that the maintained listing cannot discriminate the reference-index mismatch at these two sites. It does not establish that no indirect, split, or missing reference exists."
   },
   "currentEvidence": {
     "method": "A foreground read-only replay used the four named repair scripts, the exact two-address listing discriminator, and one DumpReferences.java query in a fresh disposable copy of the supported version-1.3 Ghidra project.",
     "boundary": "The settled accepted evidence is recorded at #/repairedReferenceIndex.",
     "result": "The repaired reference index reports exactly the two accepted unconditional direct callsites at 0x82303E3C and 0x82303E8C inside 0x82303C38 for target 0x826A3568.",
-    "qualification": "This closes the maintained repaired Ghidra reference frontier only. Indirect or unrecovered references remain outside the index; no runtime execution, PM4 semantics, host D3D coverage, or visible rendering claim is established."
+    "qualification": "This closes the question for the maintained repaired Ghidra reference index only. Indirect or unrecovered references remain outside the index; no runtime execution, PM4 semantics, host D3D coverage, or visible rendering claim is established."
   },
   "guards": [
     "Do not infer that GraphicsFlushAndIssue has no callers from an unrepaired or zero-reference Ghidra result.",
-    "Preserve the exact callsites at 0x82303E3C and 0x82303E8C and their owner 0x82303C38.",
-    "Do not infer runtime execution, PM4 semantics, host D3D coverage, or visible rendering from this static packet.",
+    "Preserve the exact callsites at 0x82303E3C and 0x82303E8C and the function that contains them, 0x82303C38.",
+    "Do not infer runtime execution, PM4 semantics, host D3D coverage, or visible rendering from this static finding.",
     "Do not infer that indirect or unrecovered references are absent; the closed boundary covers only the maintained repaired Ghidra reference index for 0x826A3568."
   ],
-  "conclusion": "The maintained repaired Ghidra reference frontier for GraphicsFlushAndIssue 0x826A3568 is closed at strong confidence: the accepted repair and listing gates reproduce exactly two unconditional direct call references, from 0x82303E3C and 0x82303E8C in GfxIndexedDraw 0x82303C38. Indirect or unrecovered references remain outside the reference index, and no runtime, PM4, host-renderer, or visible-rendering claim is made.",
+  "conclusion": "The question of further references to GraphicsFlushAndIssue 0x826A3568 in the maintained repaired Ghidra reference index is closed at strong confidence: the accepted repair and listing checks reproduce exactly two unconditional direct call references, from 0x82303E3C and 0x82303E8C in GfxIndexedDraw 0x82303C38. Indirect or unrecovered references remain outside the reference index, and no runtime, PM4, host-renderer, or visible-rendering claim is made.",
   "repairedReferenceIndex": {
     "status": "accepted",
     "method": "Foreground read-only validation of a fresh disposable copy used the four named repair scripts, then DumpInstructions.java at 0x82303E3C and 0x82303E8C with instruction count 1, then one DumpReferences.java query for 0x826A3568.",
@@ -158,7 +158,7 @@
       ],
       "accepted": true
     },
-    "result": "The accepted repair and listing gates reproduced exactly two direct call references from 0x82303E3C and 0x82303E8C to 0x826A3568 in owner 0x82303C38, with no other code or data row in the maintained repaired reference index.",
+    "result": "The accepted repair and listing checks reproduced exactly two direct call references from 0x82303E3C and 0x82303E8C to 0x826A3568 in function 0x82303C38, with no other code or data row in the maintained repaired reference index.",
     "qualification": "Indirect or unrecovered references remain outside the maintained Ghidra reference index."
   }
 }

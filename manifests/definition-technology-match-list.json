@@ -15,26 +15,26 @@
     "wonderField": "+0x44",
     "rawCandidates": ["0x82CEACA0+0x82CEACA8", "0x82CEAD24+0x82CEAD2C"],
     "stopCondition": "Resolve the two nearby raw split-address candidates, their field reads, incoming comparison value, local loop bounds, and the direct caller supplying that value; stop before following other callees or assigning the list's downstream meaning.",
-    "boundary": "This packet covers one function's two local record scans and its one raw direct caller. It does not classify the function's full output, indirect callers, other branches, text and asset consumers, or runtime execution."
+    "boundary": "This finding covers one function's two local record scans and its one raw direct caller. It does not classify the function's full output, indirect callers, other branches, text and asset consumers, or runtime execution."
   },
   "dependencies": [
     { "topic": "building-menu-record-requirements", "use": "Identifies building record +0x42 as a signed technology ID and the initialized 23-record block." },
-    { "topic": "wonder-outer-check-record-fields", "use": "Identifies wonder record +0x44 as a signed technology ID on the generic outer gate." },
+    { "topic": "wonder-outer-check-record-fields", "use": "Identifies wonder record +0x44 as a signed technology ID on the generic outer check." },
     { "topic": "building-wonder-consumers", "use": "Records the earlier decoded-materializer and text-consumer search limits." },
     { "topic": "starting-technology-grants", "use": "Identifies the caller 0x82D09208 as generic TechnologyAcquire and its incoming r4 as the technology ID." }
   ],
   "staticResult": {
     "selector": "The sole raw direct caller, generic TechnologyAcquire 0x82D09208, preserves its incoming technology ID r4 in r16 at 0x82D09214 and calls 0x82CEA5A0 at 0x82D0A890 with r3 = r16. At 0x82CEA5B8 the callee preserves that r3 in r18. Both local loops compare their signed record halfword with this technology ID on that direct-call path; indirect callers and other selector policies remain unclassified.",
-    "buildingLoop": "At 0x82CEACA0..0x82CEACB0, the function constructs building base 0x82F71FD8 and adds +0x42. It loads a signed halfword at 0x82CEACC4..0x82CEACC8, compares it with r18 at 0x82CEACCC, and advances the field pointer by 0xCC at 0x82CEAD18. The loop reads live count 0x830E45CC at 0x82CEAC94 and 0x82CEAD10; this packet does not prove that count's runtime value.",
-    "wonderLoop": "At 0x82CEAD24..0x82CEAD4C, the function constructs wonder base 0x82F73238 and adds +0x44. After a separate call at 0x82CEAD60, it loads a signed halfword at 0x82CEAD6C..0x82CEAD70 and compares it with r18 at 0x82CEAD74. It advances the field pointer by 0x14C at 0x82CEADC4 and stops when it reaches base +0x2B10 at 0x82CEADD8..0x82CEADDC. From the initial base +0x44, this bounds this loop to 33 positions, corresponding to initialized IDs 200 through 232, subject to its earlier branch and call results.",
-    "textBoundary": "Neither of these two local record loops reads the building name/token/description offsets or wonder name/short-token/art-token/description offsets. The function's other sources and called routines remain outside this result."
+    "buildingLoop": "At 0x82CEACA0..0x82CEACB0, the function constructs building base 0x82F71FD8 and adds +0x42. It loads a signed halfword at 0x82CEACC4..0x82CEACC8, compares it with r18 at 0x82CEACCC, and advances the field pointer by 0xCC at 0x82CEAD18. The loop reads live count 0x830E45CC at 0x82CEAC94 and 0x82CEAD10; this finding does not show that count's runtime value.",
+    "wonderLoop": "At 0x82CEAD24..0x82CEAD4C, the function constructs wonder base 0x82F73238 and adds +0x44. After a separate call at 0x82CEAD60, it loads a signed halfword at 0x82CEAD6C..0x82CEAD70 and compares it with r18 at 0x82CEAD74. It advances the field pointer by 0x14C at 0x82CEADC4 and stops when it reaches base +0x2B10 at 0x82CEADD8..0x82CEADDC. From the initial base +0x44, this limits the loop to 33 positions, corresponding to initialized IDs 200 through 232, subject to its earlier branch and call results.",
+    "textBoundary": "Neither of these two local record loops reads the building name, token, or description offsets, or the wonder name, short-token, art-token, or description offsets. The function's other sources and called routines remain outside this result."
   },
   "runtimeObservation": {
     "status": "not-observed",
-    "qualification": "No call of 0x82CEA5A0, selector value, generated list entry, text use, or effect was observed at runtime in this packet."
+    "qualification": "No call of 0x82CEA5A0, selector value, generated list entry, text use, or effect was observed at runtime in this finding."
   },
   "currentEvidence": {
-    "method": "A two-target foreground read-only raw split-constant scan reached its global 16-candidate cap and was stopped. Separately bounded raw-word queries followed the two nearby pairs in 0x82CEA5A0, its entry and wonder-loop bound. One raw direct-caller query found one callsite below cap 16, and exact raw windows checked its incoming argument flow. Narrow generated-function windows corroborated register flow where Ghidra has eight-byte entry bodies and no containing functions at interior addresses.",
+    "method": "A two-target foreground read-only raw split-constant scan reached its global 16-candidate cap and was stopped. Separate raw-word queries over fixed windows followed the two nearby pairs in 0x82CEA5A0, its entry, and the wonder-loop limit. One raw direct-caller query found one callsite below cap 16, and exact raw windows checked its incoming argument flow. Narrow generated-function windows corroborated register flow where Ghidra has eight-byte entry bodies and no containing functions at interior addresses.",
     "entries": [
       { "role": "capped base scan", "address": "0x82F71FD8,0x82F73238", "result": "Seven building-base and nine wonder-base raw pairs emitted under lookahead eight; global cap 16 reached, so the list is incomplete." },
       { "role": "incoming comparison value", "address": "0x82CEA5B8", "result": "Incoming r3 is copied to r18." },
@@ -53,7 +53,7 @@
       "generated:rerevved/sub_82CEA5A0:0x82CEACA0..0x82CEADDC",
       "generated:rerevved/sub_82D09208:0x82D09214,0x82D0A88C..0x82D0A890"
     ],
-    "qualification": "Raw address candidates alone prove no consumer. Exact guest words establish the pair constructions, signed halfword loads and comparisons, loop strides, and the caller's r4-to-r3 handoff; generated exact-function windows corroborate register retention. Ghidra's listing ends both entries at save-register thunks. The 16-candidate base scan is truncated and cannot bound all table consumers."
+    "qualification": "Raw address candidates alone prove no consumer. Exact guest words establish the pair constructions, signed halfword loads and comparisons, loop strides, and the caller's r4-to-r3 handoff; generated exact-function windows corroborate that the registers keep their values. Ghidra's listing ends both entries at save-register thunks. The 16-candidate base scan is truncated and cannot show the full set of table consumers."
   },
   "guards": [
     "Do not interpret the list or its tagged entries as a player-facing technology notification without an output consumer.",

@@ -5,7 +5,7 @@
   "status": "closed",
   "confidence": "strong",
   "image": "image.json",
-  "question": "What minimum serialized and title-specific transform contract positions one retained NiTriShapeData vertex through its owning NiTriShape and exact NiNode ancestry?",
+  "question": "What minimum serialized and title-specific transform contract positions one stored NiTriShapeData vertex through the NiTriShape that holds it and its exact NiNode ancestry?",
   "idAssignment": {
     "status": "canonical",
     "result": "RVA-F-0125 is the canonical identifier for this manifest."
@@ -29,7 +29,7 @@
       "0x82D7A820",
       "0x82D7A8A8"
     ],
-    "boundary": "The packet reads the exact NiAVObject stream methods, descriptor-parent chain, inherited transform-composer slots, one world-composition body, the pinned profile schema, and accepted NIF manifests. It does not follow a retail renderer, animation, skinning, or unrelated guest subsystem."
+    "boundary": "This finding reads the exact NiAVObject stream methods, descriptor-parent chain, inherited transform-composer slots, one world-composition body, the pinned profile schema, and accepted NIF manifests. It does not follow a retail renderer, animation, skinning, or unrelated guest subsystem."
   },
   "serializedLayout": {
     "owner": "NiAVObject introduces the transform fields. Exact NiNode inherits NiAVObject directly. Exact NiTriShape inherits them through NiTriBasedGeom -> NiGeometry -> NiAVObject.",
@@ -59,7 +59,7 @@
     "presence": "Translation, Rotation, and Scale have no per-field presence byte or profile condition. NiAVObject reader 0x8234C4A0 invokes all three reads unconditionally after Flags, and writer 0x8234C708 mirrors them. A truncated block is not an absent transform and supplies no defaulting path.",
     "endianness": "The accepted title profile is endian type 0. The profile parser consumes these scalar values in the title container's big-endian representation.",
     "uniformity": "Scale is exactly one f32, not a vector. World composer 0x82D7A8A8 multiplies the child and parent scale scalars and uses the parent scalar for every translated component. Non-uniform object scale is not representable in this supported serialized contract.",
-    "schemaQualification": "Pinned nifxml revision 970a6238218a106daaeb89a61bcda0eeaf9d08c4 corroborates the field order, widths, Matrix33 column-major storage declaration, and identity defaults. Title-specific ownership and behavior are promoted from the guest reader, writer, descriptors, inherited slots, and composer rather than from format names alone."
+    "schemaQualification": "Pinned nifxml revision 970a6238218a106daaeb89a61bcda0eeaf9d08c4 corroborates the field order, widths, Matrix33 column-major storage declaration, and identity defaults. Which title class holds the fields, and title-specific behavior, are promoted from the guest reader, writer, descriptors, inherited slots, and composer rather than from format names alone."
   },
   "runtimeLayout": {
     "parentPointer": "+0x18",
@@ -136,16 +136,16 @@
     "root": "When object +0x18 is null, 0x82D7A8A8 copies the complete 64-byte local region at +0x20 to the world region at +0x60. Thus W_root = L_root exactly.",
     "matrixConvention": "The scalar translation path reads the runtime matrix columns at relative offsets (0,4,8), (16,20,24), and (32,36,40) and computes output components as rows dot the input vector. Together with the serialized Matrix33 column-major declaration, this proves column-vector application. Helper 0x82D7A820 receives destination, parent matrix, and local matrix in that order and writes the nine dot products for R_parent * R_local.",
     "localApplication": "The composition law is the affine action Apply(L, v) = t + s * (R * v). For the serialized uniform scalar, the represented order is rotation, then uniform scale, then translation; uniform scale commutes algebraically with rotation, but translation is last.",
-    "implementationFormula": "For retained NiTriShapeData position v, v_world = Apply(L_rootNode, Apply(L_nextNode, ... Apply(L_parentNode, Apply(L_shape, v)) ...)). Equivalently compute each object's W with the parented equations and then v_world = t_shapeWorld + s_shapeWorld * (R_shapeWorld * v).",
+    "implementationFormula": "For stored NiTriShapeData position v, v_world = Apply(L_rootNode, Apply(L_nextNode, ... Apply(L_parentNode, Apply(L_shape, v)) ...)). Equivalently compute each object's W with the parented equations and then v_world = t_shapeWorld + s_shapeWorld * (R_shapeWorld * v).",
     "orderedPseudocode": [
-      "p = retained NiTriShapeData vertex position",
+      "p = stored NiTriShapeData vertex position",
       "p = shape.translation + shape.scale * MulColumnMajor(shape.rotation, p)",
       "for node in ancestors_from_shape_parent_to_selected_root:",
       "    p = node.translation + node.scale * MulColumnMajor(node.rotation, p)",
       "return p"
     ],
     "termEvidence": {
-      "vertex": "RVA-F-0123 proves the retained three-f32 vertex-position record and triangle selection.",
+      "vertex": "RVA-F-0123 proves the stored three-f32 vertex-position record and triangle selection.",
       "shape": "RVA-F-0124 proves NiTriShape.Data -> NiTriShapeData; the exact NiTriShape descriptor chain and +0x7C table slot prove its inherited local transform and composer.",
       "nodes": "RVA-F-0124 proves the exact footer-root NiNode graph; the NiNode descriptor and +0x7C table slot prove each node uses the same composer.",
       "order": "0x82D7A8A8 proves the parent scale, rotation, and translation equations; 0x82D7A820 supplies the ordered matrix product.",
@@ -155,23 +155,23 @@
   "inspectionAncestry": {
     "status": "Existing inspection-tool ancestry retention is unverified here.",
     "requiredMethod": "For the supported exact Footer root -> NiNode.Children -> NiTriShape population in RVA-F-0124, retain the shape local transform and every ancestor NiNode transform through the selected footer root. Apply the shape term first and traverse parents toward the root.",
-    "qualification": "This requirement follows the title transform law. No inspection-tool assembly, ancestor-path retention, shape selection or root selection implementation is verified here. Unsupported non-NiNode intermediates, animation controllers, skin instances and effects remain outside scope."
+    "qualification": "This requirement follows the title transform law. No implementation of inspection-tool assembly, shape selection or root selection, or of keeping the complete ancestor path available for transform assembly, is verified here. Unsupported non-NiNode intermediates, animation controllers, skin instances and effects remain outside scope."
   },
   "shapeAndDisplayBoundary": {
     "proved": "NiTriShape inherits the NiAVObject local fields and carries the exact same world-composer slot as NiNode. Therefore its local transform is the innermost object term applied to its referenced NiTriShapeData positions in the deterministic CPU-side assembly formula.",
-    "boundedNegative": "The bounded read set did not join the resulting NiTriShape world fields to a retail renderer vertex submission or prove runtime update cadence. It therefore does not claim a retail draw-call ordering or execution path.",
-    "inspectionImpact": "The missing retail renderer join does not remove a term from the proved structural transform chain. It remains a parity boundary, not a blocker to applying the closed CPU-side assembly formula to an inspection tool's retained geometry."
+    "boundedNegative": "The limited read set did not link the resulting NiTriShape world fields to a retail renderer vertex submission or prove runtime update cadence. It therefore does not claim a retail draw-call ordering or execution path.",
+    "inspectionImpact": "The missing retail renderer link does not remove a term from the proved structural transform chain. It remains a parity boundary, not a blocker to applying the closed CPU-side assembly formula to an inspection tool's stored geometry."
   },
   "identityAndAbsence": {
     "identity": "Pinned schema defaults are translation (0,0,0), identity Matrix33, and scale 1. These values form identity under the title composition law.",
     "rootBehavior": "A parentless title object copies local state to world state without alteration.",
-    "absence": "There is no serialized transform-absence case for exact NiNode or NiTriShape in this profile. An inspection tool must consume all three fields and reject truncation when parsing the bounded block rather than silently substitute identity for missing bytes.",
+    "absence": "There is no serialized transform-absence case for exact NiNode or NiTriShape in this profile. An inspection tool must consume all three fields and reject truncation when parsing the block within its length limit rather than silently substitute identity for missing bytes.",
     "qualification": "Schema defaults guide wholly synthetic field values; they are not evidence that the title accepts omitted serialized fields."
   },
   "boundedNegatives": [
-    "No non-uniform object scale field or alternate non-uniform composition path exists in the bounded supported NiAVObject contract.",
-    "No exact retail renderer consumer was followed, so render submission, update cadence, and GPU matrix layout remain unproved.",
-    "Neither the title composer nor accepted geometry packets identify world-axis meaning, units, or handedness.",
+    "No non-uniform object scale field or alternate non-uniform composition path exists in the limited supported NiAVObject contract.",
+    "No exact retail renderer consumer was followed, so render submission, update cadence, and GPU matrix layout are not yet established.",
+    "Neither the title composer nor accepted geometry findings identify world-axis meaning, units, or handedness.",
     "Triangle winding remains unresolved; RVA-F-0123 proves selector order and normal construction but not front-face interpretation.",
     "This evidence does not support coordinate conversion, transpose, axis swap, winding reversal, or a bounds policy.",
     "Animation, skinning, controller evaluation, and unsupported scene-object ancestry were not inspected."
@@ -186,7 +186,7 @@
         "confidence": "strong"
       },
       {
-        "role": "derived ownership",
+        "role": "derived class that holds the fields",
         "address": "0x82F8E10C, 0x82F8E384, 0x82F8E604, 0x82F8E32C, and 0x82F8E118",
         "result": "Exact descriptor initialization proves NiNode -> NiAVObject and NiTriShape -> NiTriBasedGeom -> NiGeometry -> NiAVObject.",
         "confidence": "strong"
@@ -200,13 +200,13 @@
       {
         "role": "world composition",
         "address": "0x82D7A8A8 and 0x82D7A820",
-        "result": "The complete scalar body proves scale and translation composition, parentless local-to-world copy, and matrix argument order; the bounded generated VMX body corroborates R_parent * R_local.",
+        "result": "The complete scalar body proves scale and translation composition, parentless local-to-world copy, and matrix argument order; the limited generated VMX body corroborates R_parent * R_local.",
         "confidence": "strong"
       },
       {
-        "role": "supported scene and geometry join",
+        "role": "supported scene and geometry link",
         "address": "RVA-F-0123 and RVA-F-0124",
-        "result": "Accepted manifests supply the retained position records, exact shape-to-data edge, and complete exact-NiNode ancestry for the supported 261-entry aggregate population.",
+        "result": "Accepted manifests supply the stored position records, exact shape-to-data edge, and complete exact-NiNode ancestry for the supported 261-entry aggregate population.",
         "confidence": "strong"
       }
     ],
@@ -221,12 +221,12 @@
       "manifest:RVA-F-0124",
       "Implementation ancestry retention is unverified here; use the guest transform locators above."
     ],
-    "privacy": "No new retail archive or NIF payload was opened. The packet reuses only RVA-F-0124's privacy-preserving aggregate counts and retains no filename, string, hash, payload, byte sample, or per-file identifier.",
+    "privacy": "No new retail archive or NIF payload was opened. This finding reuses only RVA-F-0124's privacy-preserving aggregate counts and keeps no filename, string, hash, payload, byte sample, or per-file identifier.",
     "qualification": "The descriptor and table evidence used exact addresses derived from exact type-string references and parent-descriptor arguments. No executable-wide sweep, runtime probe, or unconstrained caller traversal was performed."
   },
   "implementationContract": {
     "status": "transformed-static-assembly-supported",
-    "supported": "An inspection tool may apply the ordered CPU-side formula to each retained NiTriShapeData position using the NiTriShape object and ancestors in immediate-parent-to-root order. Matrix multiplication must use the proved column-major, column-vector convention and the serialized uniform scale.",
+    "supported": "An inspection tool may apply the ordered CPU-side formula to each stored NiTriShapeData position using the NiTriShape object and ancestors in immediate-parent-to-root order. Matrix multiplication must use the proved column-major, column-vector convention and the serialized uniform scale.",
     "excluded": "Axis conversion, handedness conversion, winding changes, normal transformation policy, animation, skinning, bounds claims, renderer parity, and GPU resource implementation remain outside this contract.",
     "remainingEvidence": "Retail rendering parity would require an exact NiGeometry or NiTriShape consumer that reads world rotation +0x60, world translation +0x90, or world scale +0x9C and passes a proved transform carrier toward geometry submission."
   },
@@ -235,11 +235,11 @@
     "result": "No catalog entity is added. These title-private NIF layouts, descriptor chains, table slots, composition rules, and inspection-tool assembly implications are fully scoped by this manifest."
   },
   "guards": [
-    "Preserve RVA-F-0125 as this packet's canonical Research main manifest ID.",
+    "Preserve RVA-F-0125 as this finding's canonical Research main manifest ID.",
     "Do not infer retail renderer consumption or runtime update order from the object-side composer.",
     "Do not infer axis meaning, units, handedness, triangle winding, coordinate conversion, or bounds safety.",
     "Do not extend the formula through animation, skinning, controllers, effects, or unsupported non-NiNode scene intermediates.",
-    "Do not implement texture, material, camera, renderer, export, or editing work from this packet."
+    "Do not implement texture, material, camera, renderer, export, or editing work from this finding."
   ],
-  "conclusion": "Exact NiNode and NiTriShape objects inherit NiAVObject's unconditional serialized Translation (three f32), Rotation (nine f32), and uniform Scale (one f32). Title composer 0x82D7A8A8 forms s_world = s_parent * s_local, R_world = R_parent * R_local, and t_world = t_parent + s_parent * (R_parent * t_local), with parentless world equal to local. The matrix is serialized column-major and acts on column vectors. For the supported exact scene graph, apply the NiTriShape local transform first, then every NiNode ancestor from immediate parent to root. This defines a deterministic static assembly method; implementation ancestry retention is unverified here. Retail renderer consumption, axes, handedness, winding, normal transformation, animation, skinning, and bounds remain explicitly unresolved."
+  "conclusion": "Exact NiNode and NiTriShape objects inherit NiAVObject's unconditional serialized Translation (three f32), Rotation (nine f32), and uniform Scale (one f32). Title composer 0x82D7A8A8 forms s_world = s_parent * s_local, R_world = R_parent * R_local, and t_world = t_parent + s_parent * (R_parent * t_local), with parentless world equal to local. The matrix is serialized column-major and acts on column vectors. For the supported exact scene graph, apply the NiTriShape local transform first, then every NiNode ancestor from immediate parent to root. This defines a deterministic static assembly method; whether the implementation keeps the complete ancestor path available for transform assembly is unverified here. Retail renderer consumption, axes, handedness, winding, normal transformation, animation, skinning, and bounds remain explicitly unresolved."
 }

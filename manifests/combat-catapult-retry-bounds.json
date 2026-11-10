@@ -50,7 +50,7 @@
     },
     {
       "question": "Which starting states?",
-      "answer": "All 4294967296 state words and any draw counter word, with the stated modulus and scale retained."
+      "answer": "All 4294967296 state words and any draw counter word, with the stated modulus and scale unchanged."
     },
     {
       "question": "What is the exact 4:1 bound?",
@@ -75,11 +75,11 @@
     "completedScalars": "100 and 100",
     "weightedAndWoundReduced": "400 and 100",
     "lateWeights": "1200 and 300",
-    "units": "Both on Grassland (terrain byte 1), rank 1, army bytes 0, stored casualty halfwords 0, relevant tile, definition and participant flags select the ordinary path, optional ability contributions 0.",
+    "units": "Both on Grassland (terrain byte 1), rank 1, army bytes 0, stored casualty halfwords 0, relevant tile, definition and participant flags select the non-specialized path, optional ability contributions 0.",
     "civilizationGuards": "Attacker civilization is neither 6 nor 13. Wonder 10 is unclaimed. Current signed halfword 0x830E8FFA is 0. The mode, difficulty and ownership guards keep the neutral scalars.",
-    "factorSelection": "The attacker indexed civilization word in the array rooted at 0x830ECD28 is not 13, Catapult definition bit 0x2 is clear and the defender is not the Barbarian player. These select factor 7 at 0x82CDB75C. Then 400 < 7*100 takes 0x82CDB818, which copies retained r22 = 0 before 0x82CDB7BC stores zero through 0x830E4554. 0x82CDB468 supplies that zero. The factor 4 alternative would use r20 = 1 at 0x82CDB7A0 and give a nonzero override, so it is excluded.",
+    "factorSelection": "The attacker indexed civilization word in the array rooted at 0x830ECD28 is not 13, Catapult definition bit 0x2 is clear and the defender is not the Barbarian player. These select factor 7 at 0x82CDB75C. Then 400 < 7*100 takes 0x82CDB818, which copies the kept r22 = 0 before 0x82CDB7BC stores zero through 0x830E4554. 0x82CDB468 supplies that zero. The factor 4 alternative would use r20 = 1 at 0x82CDB7A0 and give a nonzero override, so it is excluded.",
     "terrain": "Grassland 1 needs the nonzero terrain branches 0x82CDAFF4..0x82CDAFFC and 0x82CDB09C..0x82CDB0A4. Catapult flags 0x00200028 have the tested bit 0x2 clear, so the halving arms are bypassed. Terrain 0 is Sea and is not this land source.",
-    "qualification": "Source conditions. File initial values are not claimed as runtime invariants and no natural matching battle was observed. Override retention from 0x82CDB7BC to the later load needs the selected same owner assignment census and normal helper ABI."
+    "qualification": "Source conditions. File initial values are not claimed as runtime invariants and no natural matching battle was observed. The override staying valid from 0x82CDB7BC to the later load needs the selected same owner assignment census and normal helper ABI."
   },
   "completeStateReduction": {
     "constants": {
@@ -90,7 +90,7 @@
       "F0": "F0(x) = low32(a*x + c)",
       "F": "F(x) = F0(x) modulo M"
     },
-    "ordinalZeroInterval": "With the retained scale, ordinal 0 occurs exactly for stepped states in I = [0, 477217221].",
+    "ordinalZeroInterval": "With the scale unchanged, ordinal 0 occurs exactly for stepped states in I = [0, 477217221].",
     "exactLoss": "For late weights 1200 and 300 a comparison loses exactly from state 3435963993 upward.",
     "conservativeLoss": {
       "threshold": 3221216243,
@@ -145,7 +145,7 @@
   },
   "forcedSelection": {
     "override": "The nonzero attacker favoring override loaded at 0x82CDC6C4 forces selection value 1, which removes a defender figure. Its gameplay name is unresolved. The source path supplies it. A large displayed ratio alone does not.",
-    "source": "On the default factor 7 route, 0x82CDB774 and 0x82CDB778 compare the actual source attack with 7 times the source defense. 0x82CDB77C takes the zero route only for strict less than, so equality can reach the nonzero path. The Catapult base attack byte 4 passes the following nonzero test, and retained r20 = 1 is stored through 0x830E4554 at 0x82CDB7A0. Definition flag 2 is clear, which bypasses the secondary store at 0x82CDB7BC. The pointer and pointee must keep this value from 0x830E4554 to the 0x82CDC6C4 load under the override carrier and selection store contracts in combat-outcome.json.",
+    "source": "On the default factor 7 route, 0x82CDB774 and 0x82CDB778 compare the actual source attack with 7 times the source defense. 0x82CDB77C takes the zero route only for strict less than, so equality can reach the nonzero path. The Catapult base attack byte 4 passes the following nonzero test, and the kept r20 = 1 is stored through 0x830E4554 at 0x82CDB7A0. Definition flag 2 is clear, which bypasses the secondary store at 0x82CDB7BC. The pointer and pointee must keep this value from 0x830E4554 to the 0x82CDC6C4 load under the override carrier and selection store contracts in combat-outcome.json.",
     "conditions": "Non-Barbarian opponent, factor 7 civilization and definition conditions, no added abilities, support or halving, zero casualties, history 0 and 0, and the fixed generator inputs.",
     "examples": [
       {
@@ -164,13 +164,13 @@
       }
     ],
     "controls": "Numeric source controls 699 and 100, and 700 and 100, separate the strict source boundary. They are arithmetic controls, not additional unit constructions.",
-    "outcome": "The defender has only bit 0. Both possible random comparison values are overwritten by selection value 1. The ordinal 0 search eventually removes that defender bit. The ordinary attacker keeps bit 0. The healthy Army keeps all three bits 0x49 and passes the final army gate. History becomes 0 and 2, so neither the history equals 1 rejection nor protected elimination can retry. A winning selection returns on the first attempt.",
+    "outcome": "The defender has only bit 0. Both possible random comparison values are overwritten by selection value 1. The ordinal 0 search eventually removes that defender bit. The non-specialized attacker keeps bit 0. The healthy Army keeps all three bits 0x49 and passes the final army check. History becomes 0 and 2, so neither the history equals 1 rejection nor protected elimination can retry. A winning selection returns on the first attempt.",
     "drawBound": "The complete state certificate gives at most 174 ordinal draws from any state, including modulus folds. Adding one comparison and one publication draw gives at most 176 draws for all 4294967296 starting states and any draw counter. No new scan is needed. This follows from the forced selection and is separate from the zero override retry bound.",
-    "checks": "Source to load and removal checks for definition 1 single and Army sources reject broken override retention and source boundary mutations. The result conditions are in combat-victory-survival.json."
+    "checks": "Source to load and removal checks for definition 1 single and Army sources reject an override that does not stay valid and source boundary mutations. The result conditions are in combat-victory-survival.json."
   },
   "guards": [
     "The proof covers selection only. Applying the winning selection to the original units has the separate result and lifetime conditions in combat-victory-survival.json.",
-    "It is not a probability estimate, not an all unit theorem and not a proof of every later whole battle state change.",
+    "It is not a probability estimate, not an all-unit proof and not a proof of every later whole battle state change.",
     "Other rows of the protection table inherit no all state guarantee from this kernel.",
     "The native retry cap 1000 is not a draw count. The 1000 cap fallthrough alone does not prove a protected loss."
   ],

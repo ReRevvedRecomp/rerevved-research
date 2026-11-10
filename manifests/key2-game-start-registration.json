@@ -5,7 +5,7 @@
   "status": "closed",
   "confidence": "strong",
   "image": "image.json",
-  "question": "Does one bounded caller register the accepted key-2 state with the frontend state owner, and is the game-start dispatch edge statically explicit?",
+  "question": "Does one caller in the limited reference set register the accepted key-2 state with the frontend state code, and is the game-start dispatch edge statically explicit?",
   "scope": {
     "factory": "0x821B0AF0",
     "stateKeyOffset": "+0x4",
@@ -15,7 +15,7 @@
     "slotTarget": "0x82E60F70",
     "functionCap": 8,
     "emittedFunctions": ["0x821B0AF0", "0x82E60D50"],
-    "boundary": "The combined exact-reference and aligned-placement set contains two functions. Only those bodies were read; UI behavior, runtime entry, neighboring slots, and broader state-owner discovery remain outside scope."
+    "boundary": "The combined exact-reference and aligned-placement set contains two functions. Only those bodies were read; UI behavior, runtime entry, neighboring slots, and broader discovery of state-handling code remain outside scope."
   },
   "dependencies": [{ "topic": "frontend-gameplay-transition", "use": "Provides the accepted key-2 state factory, vtable, and slot-+0x4 target." }],
   "referenceResults": {
@@ -30,16 +30,16 @@
     { "function": "0x82E60D50", "result": "Stores key 2 at incoming-object +0x4, installs vtable 0x8211EBD0, and returns. It contains no registration or dispatch call." }
   ],
   "boundedNegative": {
-    "result": "No direct key-2 registration owner or statically explicit dispatch caller is modeled in the bounded set. The slot target is represented only by the accepted data word at 0x8211EBD4.",
-    "effect": "These exact-reference and placement queries do not resolve registration or natural entry. game-start-formatting.json#/stateTransitionBoundary separately binds the selected state owner and conditional entry call. That indirect route does not alter these bounded counts.",
-    "falsificationCondition": "An additional reference or aligned placement within the defined queries would invalidate their counts. This bounded result excludes no indirect state-owner callsite, including the separately accepted conditional dispatch."
+    "result": "No function that registers key 2 directly and no statically explicit dispatch caller is modeled in the limited set. The slot target is represented only by the accepted data word at 0x8211EBD4.",
+    "effect": "These exact-reference and placement queries do not resolve registration or natural entry. game-start-formatting.json#/stateTransitionBoundary separately shows the selected state code and the entry call that runs only under a condition. That indirect route does not alter these limited counts.",
+    "falsificationCondition": "An additional reference or aligned placement within the defined queries would invalidate their counts. This limited result excludes no indirect callsite of the state code, including the separately accepted dispatch that runs only under a condition."
   },
-  "catalogPromotion": { "newEntities": [], "updatedEntities": ["RVA-VTBL-0018", "RVA-SLOT-0026"], "result": "The existing vtable and slot gain the bounded registration/dispatch qualification; no owner or dispatch relation is added." },
+  "catalogPromotion": { "newEntities": [], "updatedEntities": ["RVA-VTBL-0018", "RVA-SLOT-0026"], "result": "The existing vtable and slot gain the limited registration and dispatch qualification; no state-code or dispatch relation is added." },
   "currentEvidence": {
     "method": "Three sequential foreground read-only Ghidra queries: exact references to all three anchors, aligned vtable pointer placements, and exact bodies for the two emitted functions.",
     "locators": ["ghidra/DumpReferences.java:0x821B0AF0,0x8211EBD0,0x82E60F70", "ghidra/FindPointerValues.java:0x8211EBD0", "ghidra/DumpFunctions.java:0x821B0AF0,0x82E60D50"],
-    "qualification": "The slot-target body is not an emitted caller or placement function in these queries. game-start-formatting.json#/stateTransitionBoundary owns the selected conditional state-owner callsite. Actual registration storage, request producer, UI behavior and runtime execution remain unproved here."
+    "qualification": "The slot-target body is not an emitted caller or placement function in these queries. game-start-formatting.json#/stateTransitionBoundary covers the selected callsite of the state code, which runs only under a condition. Actual registration storage, request producer, UI behavior and runtime execution are not yet established here."
   },
-  "guards": ["Do not infer registration from construction or vtable placement.", "Do not infer runtime dispatch from the table data word alone.", "Do not assign UI action, gameplay success, or state-owner behavior."],
-  "conclusion": "The bounded reference graph exposes two key-2/vtable initializers and the accepted slot-target data word, with no registration or dispatch in those two bodies. The separate conditional state-owner dispatch belongs to game-start-formatting.json#/stateTransitionBoundary; registration and natural entry remain distinct questions."
+  "guards": ["Do not infer registration from construction or vtable placement.", "Do not infer runtime dispatch from the table data word alone.", "Do not assign UI action, gameplay success, or state-handling behavior."],
+  "conclusion": "The limited reference graph exposes two key-2/vtable initializers and the accepted slot-target data word, with no registration or dispatch in those two bodies. The separate dispatch to the state code, which runs only under a condition, belongs to game-start-formatting.json#/stateTransitionBoundary; registration and natural entry remain distinct questions."
 }

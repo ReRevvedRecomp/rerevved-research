@@ -10,16 +10,16 @@
     "functions": ["0x82E2AF20", "0x82E2AFD0", "0x82E87D18", "0x82C7DF58", "0x82E43B50", "0x82D526A0", "0x82E60F70"],
     "tables": ["0x82120D2C"],
     "globals": ["0x8314F280", "0x8314F284", "0x8314F288", "0x8314F28C"],
-    "boundary": "Static evidence establishes callback registration and the broad update chain. The bounded runtime probe proves that the driver continues during owner-observed playable gameplay on the AudioGameStartInit thread; it does not prove that every callback slot or downstream manager shares that thread."
+    "boundary": "Static evidence establishes callback registration and the broad update chain. The runtime probe, limited to the captured run, proves that the driver continues during owner-observed playable gameplay on the AudioGameStartInit thread; it does not prove that every callback slot or downstream manager shares that thread."
   },
   "dependencies": [
     {
       "topic": "gameplay-frame-timing-owner",
-      "use": "shared timing owner and timing-advance method"
+      "use": "shared timing object and timing-advance method"
     },
     {
       "topic": "scene-render-tree-update",
-      "use": "bounded scene-manager update helper reached by the candidate driver"
+      "use": "limited scene-manager update helper reached by the candidate driver"
     },
     {
       "topic": "attract-movie-frame-driver",
@@ -50,7 +50,7 @@
         "confidence": "confirmed"
       }
     ],
-    "qualification": "The callback begins before game start and remains active through playable gameplay. Its application-wide lifetime is broader than the playable-state availability gate that G1 must identify."
+    "qualification": "The callback begins before game start and remains active through playable gameplay. Its application-wide lifetime is broader than the availability check for the playable state that G1 must identify."
   },
   "staticQuery": {
     "scripts": [
@@ -82,7 +82,7 @@
     "slotTarget": "0x82E87D18",
     "driverCallInstruction": "0x82E87D80",
     "driver": "0x82C7DF58",
-    "result": "Callback slot 0 targets 0x82E87D18. The callback performs bounded pre-work, calls 0x82C7DF58 once, and conditionally performs bounded post-work according to the driver's return."
+    "result": "Callback slot 0 targets 0x82E87D18. The callback performs limited pre-work, calls 0x82C7DF58 once, and performs limited post-work only when the driver's return calls for it."
   },
   "candidateFrameWork": {
     "driver": "0x82C7DF58",
@@ -96,11 +96,11 @@
       "receiverGlobal": "0x8314F084",
       "callInstruction": "0x82E43BDC",
       "target": "0x82D526A0",
-      "result": "After its bounded gates pass, the helper loads the pointer published at 0x8314F084 into r3 and directly calls 0x82D526A0.",
-      "boundary": "This receiver flow does not assign the target an original audio-manager method name or identify the helper's anonymous gate globals and fields. Global 0x8314F084 remains distinct from scene-tree global 0x8314F08C."
+      "result": "After its checks pass, the helper loads the pointer published at 0x8314F084 into r3 and directly calls 0x82D526A0.",
+      "boundary": "This receiver flow does not assign the target an original audio-manager method name or identify the helper's anonymous check globals and fields. Global 0x8314F084 remains distinct from scene-tree global 0x8314F08C."
     },
-    "result": "The driver advances the shared timing owner, consumes its timing values across several manager calls, services bounded global owners, and reaches the scene-manager update through 0x82E43B50 when its gates pass.",
-    "boundary": "The broad shape and runtime capture establish a playable frame boundary, but they do not assign original subsystem names or make this callback a playable-state availability gate."
+    "result": "The driver advances the shared timing object, consumes its timing values across several manager calls, services a limited set of global objects, and reaches the scene-manager update through 0x82E43B50 when its checks pass.",
+    "boundary": "The broad shape and runtime capture establish a playable frame boundary, but they do not assign original subsystem names or make this callback an availability check for the playable state."
   },
   "runtimeProbe": {
     "status": "captured",
@@ -125,7 +125,7 @@
     ],
     "ownerObservation": "During the same uninterrupted run, the owner reached a controllable map and moved a unit one tile successfully while the post-start samples continued.",
     "processExitCode": 0,
-    "result": "The driver was already active before game start, AudioGameStartInit ran on the same session thread, and every sampled post-start hit through frame 7800 retained that thread. The owner-observed one-tile move proves that the callback continued during playable gameplay; the application then exited normally.",
+    "result": "The driver was already active before game start, AudioGameStartInit ran on the same session thread, and every sampled post-start hit through frame 7800 stayed on that thread. The owner-observed one-tile move proves that the callback continued during playable gameplay; the application then exited normally.",
     "qualification": "Runtime addresses are session-local, cumulative cadence includes startup time, and the unrelated ObjectIcons VFS lookup error did not interrupt the observed playable run."
   },
   "rejectedLeads": {

@@ -13,7 +13,7 @@
     "selectedSlot": "0x4",
     "selectedLeaf": "0x82E92BD4",
     "boundedDirectAdapters": ["0x82A1D678", "0x82A1D720"],
-    "boundary": "This packet resolves one exact handle-close leaf and the wrapper's signed-status conversion. It does not classify every caller, prove handle ownership, cover session teardown paths, or establish runtime close behavior."
+    "boundary": "This finding resolves one exact handle-close leaf and the wrapper's signed-status conversion. It does not classify every caller, prove which code is responsible for the handle, cover session teardown paths, or establish runtime close behavior."
   },
   "dependencies": [
     {
@@ -62,7 +62,7 @@
     "failurePath": "A negative status branches at 0x8280DA9C to 0x8280DAA8, calls 0x8281B498 with the returned status still in r3, and then returns Boolean zero.",
     "successPath": "A nonnegative status returns Boolean one through 0x8280DAA0..0x8280DAA4.",
     "boundedCallerResult": "Direct adapters 0x82A1D678 and 0x82A1D720 call 0x8280DA78 with their incoming handle and discard its Boolean return. The wrapper is the observed status boundary for those two adapters.",
-    "qualification": "The complete direct-caller set and every session ownership or teardown path remain outside this packet. No runtime status was observed."
+    "qualification": "The complete direct-caller set and every path that holds or tears down the session remain outside this finding. No runtime status was observed."
   },
   "staticQuery": {
     "scripts": ["ghidra/DumpFunctions.java", "ghidra/DumpInstructions.java", "ghidra/DumpMemoryWords.java"],
@@ -71,9 +71,9 @@
   },
   "guards": [
     "Do not treat Boolean one as the raw NTSTATUS; the wrapper discards every nonnegative status value.",
-    "Do not infer that the two bounded adapters are the complete handle-close or session-close caller set.",
-    "Do not infer handle type, ownership, release count, teardown completeness, discovery behavior, or runtime success from this static leaf identity.",
+    "Do not infer that the two direct adapters are the complete handle-close or session-close caller set.",
+    "Do not infer handle type, which code is responsible for it, release count, teardown completeness, discovery behavior, or runtime success from this static leaf identity.",
     "Do not widen this result into the all-path 0x82A1EB38 teardown question."
   ],
-  "conclusion": "Version 1.3 wrapper 0x8280DA78 loads table 0x82F2FA9C through pointer cell 0x82F2FAC8 and selects slot +0x04, import thunk 0x82E92BD4 for xboxkrnl ordinal 0xCF NtClose. The wrapper observes the returned NTSTATUS by signed comparison: negative values reach helper 0x8281B498 and become Boolean zero, while nonnegative values become Boolean one. Bounded direct adapters 0x82A1D678 and 0x82A1D720 discard that Boolean."
+  "conclusion": "Version 1.3 wrapper 0x8280DA78 loads table 0x82F2FA9C through pointer cell 0x82F2FAC8 and selects slot +0x04, import thunk 0x82E92BD4 for xboxkrnl ordinal 0xCF NtClose. The wrapper observes the returned NTSTATUS by signed comparison: negative values reach helper 0x8281B498 and become Boolean zero, while nonnegative values become Boolean one. The two direct adapters 0x82A1D678 and 0x82A1D720 discard that Boolean."
 }

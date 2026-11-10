@@ -5,7 +5,7 @@
   "status": "closed",
   "confidence": "strong",
   "image": "image.json",
-  "question": "Does a bounded decoded field-write scan reveal the producer or validity rule for city current production item +0x38?",
+  "question": "Does a capped decoded field-write scan reveal the producer or validity rule for city current production item +0x38?",
   "scope": {
     "field": "city +0x38 signed halfword current item",
     "functionBand": "0x82CE0000 through 0x82D3FFFF",
@@ -16,7 +16,7 @@
   "dependencies": [
     { "topic": "non-unit-production-threshold", "use": "Establishes city +0x38 as the current production item read in the city update." },
     { "topic": "building-completion-state-writer", "use": "Provides the accepted building completion call reached from that current item." },
-    { "topic": "wonder-eligibility-dispatch-boundary", "use": "Provides the accepted wonder gate reached from that current item." }
+    { "topic": "wonder-eligibility-dispatch-boundary", "use": "Provides the accepted wonder eligibility check reached from that current item." }
   ],
   "decodedScan": {
     "scanRange": "[0x82CE0000,0x82D40000)",
@@ -42,10 +42,10 @@
     "placement": "Default-off one-city data write watch at 0x8314FE28 + 0xBC*selectedCityIndex + 0x38, width two bytes, armed immediately before one natural production selection and stopped after the first changed-value write or normal menu exit.",
     "requiredFields": "Selected city index, computed exact watched address, old and new signed halfword item IDs, guest program counter at write, guest r3 through r6, call return address, city owner byte +0x00, and the visible selected item name. A count cap of eight write events prevents unrelated repeated output.",
     "decisionRule": "A changed-value write for a known initialized item identifies a concrete producer to inspect statically for its source and bounds; no write means this watch placement or city index must be checked before broadening. A single known-item write cannot establish a global valid-ID rule or unsupported-ID rejection.",
-    "status": "Executed later with owner authorization; city-production-command-five-writer owns the runtime result."
+    "status": "Executed later with owner authorization; city-production-command-five-writer records the runtime result."
   },
   "currentEvidence": {
-    "method": "Two foreground read-only canonical-project FindFieldAccesses queries used exact offset +0x38 and WRITE filtering. The first bounded city-update caller depth to one; the second bounded the instruction-address band and stopped after at most 32 matches. A third foreground read-only raw-word query checked the three emitted store sites and the copy source.",
+    "method": "Two foreground read-only canonical-project FindFieldAccesses queries used exact offset +0x38 and WRITE filtering. The first limited the caller depth from the city update to one; the second limited the instruction-address band and stopped after at most 32 matches. A third foreground read-only raw-word query checked the three emitted store sites and the copy source.",
     "entries": [
       { "role": "decoded field-write cohort", "address": "0x82CE0000 through 0x82D3FFFF", "result": "Three exact-displacement writes among 8487 decoded instructions; cap 32 was not reached.", "confidence": "strong" },
       { "role": "copy source", "address": "0x82CFA108 through 0x82CFA10C", "result": "The halfword at source +0x38 is copied to destination +0x38.", "confidence": "strong" },
@@ -57,7 +57,7 @@
   "guards": [
     "Do not call the halfword copy an item-selection or validity producer.",
     "Do not identify the two word stores as city current-item stores without a proved city base.",
-    "Do not infer a global valid-ID rule or its absence from this bounded negative."
+    "Do not infer a global valid-ID rule or its absence from this negative result."
   ],
-  "conclusion": "The bounded decoded WRITE scan found no demonstrated item-selection or validity rule for city +0x38. Its only halfword store copied an input field, while two word stores lacked a city-record base. The later runtime discriminator identified an indexed command-five writer at 0x82CE0020, outside this scan's exact-displacement coverage; its submitting producer and any general building or wonder validity rule remain unresolved."
+  "conclusion": "The decoded WRITE scan found no demonstrated item-selection or validity rule for city +0x38. Its only halfword store copied an input field, while two word stores lacked a city-record base. The later runtime discriminator identified an indexed command-five writer at 0x82CE0020, outside this scan's exact-displacement coverage; its submitting producer and any general building or wonder validity rule remain unresolved."
 }

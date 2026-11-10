@@ -13,22 +13,22 @@
     "resourceResolver": "0x8225BC48",
     "resourceSubmit": "0x82266358",
     "batchDispatcher": "0x822683B0",
-    "boundary": "This packet covers pointer-backed source views, their authoritative counts, 0x28-byte entry indexing, and the mesh submit handoff. It does not claim runtime counts, asset identities, renderer-slot conclusions, shader variants, or guest writes."
+    "boundary": "This finding covers pointer-backed source views, their authoritative counts, 0x28-byte entry indexing, and the mesh submit handoff. It does not claim runtime counts, asset identities, renderer-slot conclusions, shader variants, or guest writes."
   },
   "currentEvidence": {
     "sourceViewBuilder": {
       "address": "0x821F3F48",
-      "method": "matching stack-view construction, source-provider flag gate, slot 0x50 output call, and primary/secondary base-count field addresses",
-      "result": "The current builder stores the four pointer/count outputs at view offsets 0x4, 0x8, 0x48, and 0x4C."
+      "method": "matching stack-view construction, source-provider flag check, slot 0x50 output call, and primary and secondary base and count field addresses",
+      "result": "The current builder stores the four pointer and count outputs at view offsets 0x4, 0x8, 0x48, and 0x4C."
     },
     "sourceFinalize": {
       "address": "0x821F4948",
-      "method": "exact body size and direct-call count plus matching source-provider flag, slot 0x44 base/count call, bounded-selector call, and 0x28-byte entry addressing",
+      "method": "exact body size and direct-call count plus matching source-provider flag, slot 0x44 base and count call, selector-check call, and 0x28-byte entry addressing",
       "result": "The current finalizer receives the primary base as the slot return value and the authoritative count through its output pointer."
     },
     "boundedSelectorCheck": {
       "address": "0x821F4B48",
-      "method": "matching current producer call structure plus slot 0x44 query, candidate/count comparison, 0x28-byte multiplication, and raw entry-byte filter",
+      "method": "matching current producer call structure plus slot 0x44 query, candidate and count comparison, 0x28-byte multiplication, and raw entry-byte filter",
       "result": "The current validator rejects candidate >= count before reading base + candidate * 0x28."
     },
     "resourceResolver": {
@@ -43,7 +43,7 @@
     },
     "batchDispatcher": {
       "address": "0x822683B0",
-      "method": "exact instruction count, body size, and direct-call count plus matching descriptor loop and source base/count forwarding",
+      "method": "exact instruction count, body size, and direct-call count plus matching descriptor loop and source base and count forwarding",
       "result": "The current dispatcher loads source base from context +0x4 and authoritative count from context +0x48 before calling 0x82266358."
     }
   },
@@ -75,7 +75,7 @@
       {
         "offset": "0x0",
         "size": "1 byte",
-        "role": "raw selector/type byte tested by the resource resolver"
+        "role": "raw selector or type byte tested by the resource resolver"
       },
       {
         "offset": "0x4",
@@ -85,7 +85,7 @@
       {
         "offset": "0x8",
         "size": "8 bytes",
-        "role": "two-word lookup/cache record"
+        "role": "two-word lookup or cache record"
       },
       {
         "offset": "0x10",
@@ -93,7 +93,7 @@
         "role": "six raw transform floats copied into resolved resource state"
       }
     ],
-    "result": "The current resolver consumes the same four bounded regions without assigning a public source-entry type."
+    "result": "The current resolver consumes the same four regions without assigning a public source-entry type."
   },
   "mappingSemantics": {
     "descriptorLayout": {
@@ -103,9 +103,9 @@
       "selectorCapacity": 3
     },
     "selectorMeaning": "Each non-0xFFFFFFFF selector is a zero-based ordinal into the pointer-backed 0x28-byte primary source array. It is not a style ID, resource ID, renderer slot, or hardware fetch index.",
-    "boundedCheck": "0x821F4B48 obtains base/count through provider slot 0x44, rejects candidate >= count, and only then reads base + candidate * 0x28.",
+    "boundedCheck": "0x821F4B48 obtains base and count through provider slot 0x44, rejects candidate >= count, and only then reads base + candidate * 0x28.",
     "submitTrust": "0x82266358 receives r5 source base and r6 source count, but its descriptor loop does not independently compare each selector with r6. Producer validation remains required.",
-    "result": "The authoritative count bounds readable entries; the descriptor count only bounds the number of selector words consumed."
+    "result": "The authoritative count limits readable entries; the descriptor count only limits the number of selector words consumed."
   },
   "submitHandoff": {
     "dispatcher": "0x822683B0",
@@ -114,20 +114,20 @@
     "sourceBase": "context +0x4 -> r5",
     "sourceCount": "context +0x48 -> r6",
     "entryAddress": "r5 + selector * 0x28",
-    "result": "The current dispatcher keeps the base/count pair through the submit boundary."
+    "result": "The current dispatcher keeps the base and count pair through the submit boundary."
   },
   "staticObservationContract": {
     "purpose": "Optional read-only provenance confirmation only; this evidence does not support adding a hook.",
     "viewProviderCall": {
       "preCall": "0x821F40D4",
       "postCall": "0x821F40D8",
-      "allowed": "Record provider identity, output pointer addresses, and the four resulting base/count words only."
+      "allowed": "Record provider identity, output pointer addresses, and the four resulting base and count words only."
     },
     "submitCall": {
       "preCall": "0x82268620",
-      "allowed": "Record descriptor pointer, source base, source count, and the bounded descriptor header through +0x10 only."
+      "allowed": "Record descriptor pointer, source base, source count, and the descriptor header through +0x10 only."
     },
-    "enumeration": "A bounded enumeration must cap count at 64, require an aligned non-null base and checked count * 0x28, validate the full guest range, and read only offsets 0x0, 0x4, 0x8, 0xC, and 0x10 through 0x24 for indices below count."
+    "enumeration": "An enumeration must cap count at 64, require an aligned non-null base and checked count * 0x28, validate the full guest range, and read only offsets 0x0, 0x4, 0x8, 0xC, and 0x10 through 0x24 for indices below count."
   },
   "staticQuery": {
     "mode": "foreground-read-only",
@@ -136,13 +136,13 @@
       "ghidra/FindFieldRefs.java"
     ],
     "program": "rerevved_image.bin",
-    "qualification": "The Xenon-heavy functions truncate at their save-register thunks in Ghidra. The current field and control-flow claims are corroborated by bounded generated-code windows and body metrics."
+    "qualification": "The Xenon-heavy functions truncate at their save-register thunks in Ghidra. The current field and control-flow claims are corroborated by narrow generated-code windows and body metrics."
   },
   "guards": [
     "Do not claim source count, selector membership, resource-bearing entry, renderer-slot, shader-variant, crash, or visual conclusions.",
     "Do not read an entry whose selector has not been proven below the authoritative source count.",
     "Do not interpret selector values as semantic style or resource identifiers.",
-    "Do not treat the submit routine's descriptor loop bound as a substitute for source-array membership validation."
+    "Do not treat the submit routine's descriptor loop limit as a substitute for source-array membership validation."
   ],
-  "conclusion": "Version 1.3 establishes the pointer-backed source-table contract: paired base/count production, 0x28-byte entries, zero-based selectors, producer-side bounds validation, and base/count forwarding into mesh resource submission."
+  "conclusion": "Version 1.3 establishes the pointer-backed source-table contract: paired base and count production, 0x28-byte entries, zero-based selectors, producer-side bounds validation, and base and count forwarding into mesh resource submission."
 }

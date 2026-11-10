@@ -18,7 +18,7 @@
     },
     {
       "topic": "native-renderer-resource-lifetime",
-      "use": "retained explicit buffer slots and the allocator reference inventory"
+      "use": "preserved explicit buffer slots and the allocator reference inventory"
     },
     {
       "topic": "native-renderer-creator-input-lifetime",
@@ -44,7 +44,7 @@
   "textureCreationWrapperBoundary": {
     "question": "What arguments, status returns and direct output store does texture wrapper 0x8257A278 provide?",
     "confidence": "strong",
-    "classification": "Complete selected local wrapper with conditional validation and header requests. Successful resource creation and lifetime remain unproved.",
+    "classification": "Complete selected local wrapper whose validation and header requests happen only under conditions. Successful resource creation and lifetime are not yet established.",
     "scope": "One complete PE body of 50 words. Generic validation status belongs to xbox-dds-map-role-texture-contract.json#/validationEntryStatusBoundary. Online caller and retirement composition belongs to xbox-hotjoin-transfer-restore.json#/nativeMemberGraphicsRecordLifetimeBoundary.",
     "acceptedInputs": [
       "#/currentEvidence/headerProducers/2",
@@ -52,25 +52,25 @@
       "native-renderer-d3d-runtime-surface.json#/currentEvidence/entries/215"
     ],
     "facts": {
-      "inputsAndHomes": "Incoming r3 is device/context, r4 width, r5 height, r6 mip count, r7 usage, r8 format, r9 pool and r10 output address. The wrapper homes width, height, mip count and format, and retains usage, pool and output. Low32 usage equal to -1 becomes 0.",
-      "earlyLocalStatus": "Low32 device/context zero or low32 output address zero returns full 0xFFFFFFFF8876086C. Those arms contain no direct store through output. At 0x8257A2EC it requests 0x82579E50 with pointers to local width, height, mip and format homes, depth pointer 0, retained usage/pool and stack type 3. A signed-low32-negative helper result returns raw r3 without reaching the direct output store.",
-      "headerRequestAndOutput": "After a nonnegative validation result it reloads the adjusted homes and at 0x8257A318 requests 0x8269AB90 with width, height, depth 1, mip count, usage, format, pool and type 3. At 0x8257A31C it stores the low32 result through output. A zero result then returns full 0xFFFFFFFF8007000E. A nonzero result returns full 0. Reuse currentEvidence/headerProducers/2 for the header/backing/template contract.",
-      "localOutputQualification": "No direct output store is a local instruction property. Actual retention of the caller's output word additionally requires valid disjoint frame/output storage and no helper, alias or interference write. The requested header and a nonzero scalar do not establish a valid current resource, ownership, host GPU allocation or installed-runtime success.",
-      "validationFrameAndType": "The type3 argument is stored at caller SP+0x54. With the validator's 0x1F0-byte frame it is read at callee SP+0x244. This composition requires the compatible native ABI and retained, disjoint local homes. The validator's adjusted outputs, rather than the original dimensions, are reloaded for the header request."
+      "inputsAndHomes": "Incoming r3 is device or context, r4 width, r5 height, r6 mip count, r7 usage, r8 format, r9 pool and r10 output address. The wrapper homes width, height, mip count and format, and preserves the values of usage, pool and output. Low32 usage equal to -1 becomes 0.",
+      "earlyLocalStatus": "Low32 device or context zero or low32 output address zero returns full 0xFFFFFFFF8876086C. Those arms contain no direct store through output. At 0x8257A2EC it requests 0x82579E50 with pointers to local width, height, mip and format homes, depth pointer 0, the preserved usage and pool values and stack type 3. A signed-low32-negative helper result returns raw r3 without reaching the direct output store.",
+      "headerRequestAndOutput": "After a nonnegative validation result it reloads the adjusted homes and at 0x8257A318 requests 0x8269AB90 with width, height, depth 1, mip count, usage, format, pool and type 3. At 0x8257A31C it stores the low32 result through output. A zero result then returns full 0xFFFFFFFF8007000E. A nonzero result returns full 0. Reuse currentEvidence/headerProducers/2 for the header, backing and template contract.",
+      "localOutputQualification": "No direct output store is a local instruction property. Whether the caller's output word actually stays unchanged additionally requires valid disjoint frame and output storage and no helper, alias or interference write. The requested header and a nonzero scalar do not establish a valid current resource, which code holds, replaces and releases it, host GPU allocation or installed-runtime success.",
+      "validationFrameAndType": "The type 3 argument is stored at caller SP+0x54. With the validator's 0x1F0-byte frame it is read at callee SP+0x244. This composition requires the compatible native ABI and preserved values in disjoint local homes. The validator's adjusted outputs, rather than the original dimensions, are reloaded for the header request."
     },
     "guards": [
-      "Require original save/restore ABI, retained nonvolatile inputs, valid bounded nonwrapping frame/output spans, normal compatible helpers and noninterference.",
+      "Require original save and restore ABI, preserved nonvolatile inputs, valid nonwrapping frame and output spans within the inspected scope, normal compatible helpers and noninterference.",
       "Do not replace a signed-low32 status test with full-width or Boolean success semantics. Keep the raw negative helper result distinct from the two constructed full-width error results.",
       "Do not infer zeroed output on an early error, supported failure activation, successful creation, lifetime or a stale-pointer defect."
     ],
     "unknowns": [
-      "Actual current device, helper/capability state, output storage generation and reached status arm.",
-      "Current header/backing validity, ownership, installed allocation effects and subsequent matching retirement."
+      "Actual current device, helper or capability state, output storage generation and reached status arm.",
+      "Current header and backing validity, which code holds, replaces and releases them, installed allocation effects and subsequent matching retirement."
     ],
-    "minimalProposal": "No fix is selected without supported failure activation and ownership evidence. Preserve native arguments, status widths, adjusted homes and output-store order.",
-    "nextStaticWork": "Reuse the validation status owner and accepted header producer before binding the selected caller's actual device, output storage, resource generation and ownership. A new helper or allocator query needs that exact unresolved join.",
+    "minimalProposal": "No fix is selected without supported failure activation and evidence of which code holds, replaces and releases the resource. Preserve native arguments, status widths, adjusted homes and output-store order.",
+    "nextStaticWork": "Reuse the code that holds, replaces and releases the validation status and the accepted header producer before showing the selected caller's actual device, output storage, resource generation and which code holds, replaces and releases the resource. A new helper or allocator query needs that exact unresolved link.",
     "evidence": {
-      "method": "Supplied radius-zero raw export, selected source operand comments, independent Capstone5.0.7 decoding and pinned image/PE comparison passed. No runtime result follows.",
+      "method": "Supplied radius-zero raw export, selected source operand comments, independent Capstone 5.0.7 decoding and pinned image-to-PE comparison passed. No runtime result follows.",
       "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
       "ownedInstructionWords": 50,
       "windows": [
@@ -158,7 +158,7 @@
           "generated/default/rerevved_recomp.157.cpp:8880",
           "generated/default/rerevved_recomp.163.cpp:8715"
         ],
-        "runtimeCheck": "Join each lock to the unlock of the same resource and count intent flags. The unlock returns no range, so a written range equal to the locked subresource stays an assumption for a write watch to back."
+        "runtimeCheck": "Link each lock to the unlock of the same resource and count intent flags. The unlock returns no range, so a written range equal to the locked subresource stays an assumption for a write watch to back."
       },
       {
         "address": "0x8269AF10",
@@ -507,7 +507,7 @@
       "importChain": "0x82E29160 tails to 0x8280DB58; attributes with bit 31 set go to 0x8280DEC8, which tails to MmFreePhysicalMemory 0x82E92434. The allocation side is 0x82E29168 -> 0x8280DAC0 -> 0x8280DE40 -> MmAllocatePhysicalMemoryEx 0x82E92654."
     },
     "tileResolve": {
-      "owner": "0x8250AC90 loops over count = [r26+4] tiles; with count above one it sets predication 0x8269CD20(G, 3 << (2 * tile)) (the shift advances by two per tile, generated/default/rerevved_recomp.60.cpp:9122), calls Resolve 0x8269E520 for the color targets and for depth, then clears predication and calls EndTiling 0x8269D320 with integer r4,r5,r6,r7,r9,r10 = 0, r8 unproved, and f1 as a separate floating argument slot.",
+      "owner": "0x8250AC90 loops over count = [r26+4] tiles; with count above one it sets predication 0x8269CD20(G, 3 << (2 * tile)) (the shift advances by two per tile, generated/default/rerevved_recomp.60.cpp:9122), calls Resolve 0x8269E520 for the color targets and for depth, then clears predication and calls EndTiling 0x8269D320 with integer r4,r5,r6,r7,r9,r10 = 0, r8 not yet established, and f1 as a separate floating argument slot.",
       "endTiling": "0x8269D320 runs its own per-tile Resolve loop only when its resolve-rect or destination argument is nonzero, then emits the replay through 0x826AC218.",
       "beginTilingCallers": "0x8269CE90 (from 0x8250F988) and 0x8269D7D8 (from 0x82C71880)."
     },
@@ -546,7 +546,7 @@
     "limits": "The census must be default-off and read-only. It must not enable itself from this manifest and must not infer persistent identity from a guest pointer alone.",
     "checks": [
       "Count each header producer per presented frame, and check sampled base pages that no producer covered.",
-      "Join each lock to the unlock of the same resource, count intent flags, and compare the written range with the locked subresource.",
+      "Link each lock to the unlock of the same resource, count intent flags, and compare the written range with the locked subresource.",
       "Compare the storage words of each sampled slot at draw time with the header in G[0x3100+4*slot].",
       "Count vertex buffer locks by flag, and check whether 0x1000 locks overwrite ranges the GPU still reads in the same frame.",
       "Check whether the first write notice for each new mirror falls inside a lock window of the same header.",
@@ -564,7 +564,7 @@
     "Do not name the lock flag bits with public lock names from familiarity; the effects recorded here are the evidence.",
     "Do not assume a 0x1000 vertex buffer lock waits for GPU reads; it waits only on +0x0C.",
     "Do not exclude computed-address writers to the fetch shadow outside the scanned region; only 0x8268CAA8-0x826C9C3F was scanned.",
-    "Do not bind by header pointer without checking storage words; G[0x3100+4*slot] is only as current as the last 0x8269AF10 call.",
+    "Do not tie a resource to a slot by header pointer without checking storage words; G[0x3100+4*slot] is only as current as the last 0x8269AF10 call.",
     "Do not extend the file fill result to movie, dynamic or untraced 0x82C... textures.",
     "Do not treat the G+0x33B0 early return in 0x8269BE70 as a general no-wait rule; its meaning is unresolved.",
     "Do not infer how often 0x82535298 runs or how soon an address is reused without a probe.",

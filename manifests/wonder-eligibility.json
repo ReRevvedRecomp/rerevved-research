@@ -15,15 +15,15 @@
         "outerGate": "0x82CF3608",
         "innerGate": "0x82CF0E28",
         "indirectCall": "0x82CF0EB0",
-        "boundary": "This packet follows the first direct gate call inside the outer helper and the inner helper's local return conditions. It stops at virtual slot +0x1E4; wonder-eligibility-virtual-target owns one observed implementation, wonder-outer-check-record-fields owns the later generic branch, and wonder-outer-check-special-19-20 owns the special branches."
+        "boundary": "This finding follows the first direct check call inside the outer helper and the inner helper's local return conditions. It stops at virtual slot +0x1E4; wonder-eligibility-virtual-target covers one observed implementation, wonder-outer-check-record-fields covers the later generic branch, and wonder-outer-check-special-19-20 covers the special branches."
       },
       "dependencies": [
-        { "topic": "non-unit-production-threshold", "use": "Provides the accepted sufficient-production wonder path and its neutral direct gate at 0x82D162EC." },
+        { "topic": "non-unit-production-threshold", "use": "Provides the accepted sufficient-production wonder path and its neutral direct check at 0x82D162EC." },
         { "topic": "wonder-post-threshold-helper", "use": "Provides the distinct later helper-body range of normalized indices 0 through 32." }
       ],
       "directChain": {
         "cityUpdate": "At 0x82D162E8 the path passes normalized wonder index r27 to 0x82CF3608; a zero return branches away before the promoted city writes.",
-        "outerHelper": "At 0x82CF361C, 0x82CF3608 calls 0x82CF0E28 with the same r3 index and returns zero immediately when that result is zero. The later generic branch and special indices 19 and 20 are mapped in separate packets.",
+        "outerHelper": "At 0x82CF361C, 0x82CF3608 calls 0x82CF0E28 with the same r3 index and returns zero immediately when that result is zero. The later generic branch and special indices 19 and 20 are mapped in separate findings.",
         "qualification": "A nonzero inner result is necessary but not sufficient for a nonzero outer result."
       },
       "innerGate": {
@@ -31,31 +31,31 @@
         "dynamicCondition": "When byte 0x8314F10B is zero and word at pointer 0x8314EFC8 + 4 differs from two, 0x82CF0E94 through 0x82CF0EB0 calls slot +0x1E4 of the object pointer stored at 0x8314F76C, passing r3 = 0x8314F76C, r4 = normalized index, and r5 = 0.",
         "dynamicResult": "A nonzero low byte from the indirect return makes this helper return one at 0x82CF0EB4 through 0x82CF0ECC.",
         "fallback": "If the dynamic result is zero or the dynamic condition is bypassed, the signed comparison at 0x82CF0EC0 returns one only for normalized indices below 21 and zero for indices at least 21.",
-        "qualification": "Wonder-eligibility-virtual-target identifies one observed slot target. Other implementations, receiver ownership, global-word meanings, and general runtime state remain unresolved. No lower-bound check is assigned to this helper from the bounded read set."
+        "qualification": "Wonder-eligibility-virtual-target identifies one observed slot target. Other implementations, which code holds, replaces and releases the receiver, global-word meanings, and general runtime state remain unresolved. No lower-bound check is assigned to this helper from the read set within the inspected scope."
       },
       "domainImplication": {
-        "normalized0Through20": "The common fallback can admit these indices, subject to the special index-one gate and later outer-helper conditions.",
-        "normalized21Through36": "The common fallback rejects these indices. Admission requires the dynamic condition and a nonzero indirect result, followed by the still-unclassified outer helper.",
-        "storedItemIds233Through236": "These correspond to normalized indices 33 through 36; even if the dynamic gate admits them, the separately accepted 0x82D16BA0 helper does not enter its interior body for indices at least 33.",
-        "qualification": "These are local gates on one city-update path, not global selection, display, validity, effect, or runtime rules."
+        "normalized0Through20": "The common fallback can allow these indices, subject to the special index-one check and later outer-helper conditions.",
+        "normalized21Through36": "The common fallback rejects these indices. Acceptance requires the dynamic condition and a nonzero indirect result, followed by the still-unclassified outer helper.",
+        "storedItemIds233Through236": "These correspond to normalized indices 33 through 36; even if the dynamic check allows them, the separately accepted 0x82D16BA0 helper does not enter its interior body for indices at least 33.",
+        "qualification": "These are local checks on one city-update path, not global selection, display, validity, effect, or runtime rules."
       },
       "currentEvidence": {
-        "method": "Exact-function generated-code windows localized the two direct calls and the inner dynamic branch; two sequential foreground read-only Ghidra raw-word queries corroborated the caller-to-callee branch, the special gate, the indirect slot load and call, and the fallback comparison.",
+        "method": "Exact-function generated-code windows localized the two direct calls and the inner dynamic branch; two sequential foreground read-only Ghidra raw-word queries corroborated the caller-to-callee branch, the special check, the indirect slot load and call, and the fallback comparison.",
         "entries": [
           { "role": "outer gate entry", "address": "0x82CF361C through 0x82CF3628", "result": "Raw words call 0x82CF0E28 and return zero when its result is zero.", "confidence": "strong" },
           { "role": "inner special gate", "address": "0x82CF0E3C through 0x82CF0E58", "result": "Raw words compare normalized index one and the unsigned halfword against two before a zero return.", "confidence": "strong" },
           { "role": "dynamic and fallback gate", "address": "0x82CF0E70 through 0x82CF0ED0", "result": "Raw words show the global conditions, receiver address, vtable slot +0x1E4, indirect call, low-byte return test, and signed threshold 21.", "confidence": "strong" }
         ],
         "locators": ["ghidra/DumpMemoryWords.java:0x82CF361C,0x82CF0E34 radius=12", "ghidra/DumpMemoryWords.java:0x82CF0EAC radius=20", "generated:rerevved/sub_82CF3608", "generated:rerevved/sub_82CF0E28"],
-        "qualification": "The raw words establish this packet's local static conditions. Wonder-eligibility-virtual-target owns the later observed slot target and return values."
+        "qualification": "The raw words establish this finding's local static conditions. Wonder-eligibility-virtual-target covers the later observed slot target and return values."
       },
       "guards": [
-        "Do not treat index below 21 as unconditional eligibility; the special gate and outer helper still apply. The later generic branch is mapped in wonder-outer-check-record-fields.",
-        "Do not treat a dynamic nonzero result as sufficient for the outer gate or complete wonder effects.",
+        "Do not treat index below 21 as eligibility without conditions; the special check and outer helper still apply. The later generic branch is mapped in wonder-outer-check-record-fields.",
+        "Do not treat a dynamic nonzero result as sufficient for the outer check or complete wonder effects.",
         "Do not infer that the stored records 233 through 236 are globally unavailable from the later helper-body limit.",
         "Do not infer runtime reachability or semantics from stored descriptions or dynamic slot shape."
       ],
-      "conclusion": "The city-update wonder path requires nonzero 0x82CF3608, whose first direct gate is 0x82CF0E28. That inner gate has an index-one special zero result, virtual slot +0x1E4 whose nonzero low-byte result can admit an index, and a fallback accepting only normalized indices below 21. For indices 21 through 36, the dynamic result is decisive on this local path; wonder-eligibility-virtual-target owns one observed implementation. The later generic and special outer branches are mapped separately; the later 0-through-32 helper-body gate remains separate."
+      "conclusion": "The city-update wonder path requires nonzero 0x82CF3608, whose first direct check is 0x82CF0E28. That inner check has an index-one special zero result, virtual slot +0x1E4 whose nonzero low-byte result can allow an index, and a fallback accepting only normalized indices below 21. For indices 21 through 36, the dynamic result is decisive on this local path; wonder-eligibility-virtual-target covers one observed implementation. The later generic and special outer branches are mapped separately; the later 0-through-32 helper-body check remains separate."
     },
     "RVA-F-0170": {
       "schemaVersion": 1,
@@ -64,15 +64,15 @@
       "status": "closed",
       "confidence": "confirmed",
       "image": "image.json",
-      "question": "Which function occupied the wonder gate's virtual slot +0x1E4 in one fresh-game run, and what index range can that function admit?",
+      "question": "Which function occupied the wonder check's virtual slot +0x1E4 in one fresh-game run, and what index range can that function allow?",
       "scope": {
         "dispatch": "0x82CF0EB0 in 0x82CF0E28",
         "observedFunction": "0x82D80C30",
         "functionRange": "0x82D80C30 through 0x82D80D78",
-        "boundary": "One fresh-game Stonehenge production session resolved the slot and observed normalized indices 0 through 32. The static packet classifies only 0x82D80C30. Other possible virtual implementations, caller selection of indices 33 through 36, later outer gates, and gameplay effects remain outside this packet."
+        "boundary": "One fresh-game Stonehenge production session resolved the slot and observed normalized indices 0 through 32. The static analysis in this finding classifies only 0x82D80C30. Other possible virtual implementations, caller selection of indices 33 through 36, later outer checks, and gameplay effects remain outside this finding."
       },
       "dependencies": [
-        { "topic": "wonder-eligibility-dispatch-boundary", "use": "Provides the inner gate, its indirect slot +0x1E4, and the fallback threshold at normalized index 21." },
+        { "topic": "wonder-eligibility-dispatch-boundary", "use": "Provides the inner check, its indirect slot +0x1E4, and the fallback threshold at normalized index 21." },
         { "topic": "wonder-post-threshold-helper", "use": "Provides the separate later helper-body limit at normalized index 32." }
       ],
       "staticFunction": {
@@ -83,15 +83,15 @@
           { "bit": 2, "normalizedIndices": "29 through 32", "sites": "0x82D80D20 through 0x82D80D3C", "return": "one when bit two is set and the index lies in this band" }
         ],
         "zeroReturn": "At 0x82D80D70 the function returns zero after the three bands fail. Therefore this implementation returns zero for normalized indices 33 through 36 regardless of the three tested bits.",
-        "optionalArgument": "When r5 is nonzero on a success branch, the function invokes 0x82E6A430 and 0x821B2AD8 before returning one. The observed inner-gate call passed r5 = 0, so these calls did not run on that path; their purpose remains unclassified.",
+        "optionalArgument": "When r5 is nonzero on a success branch, the function invokes 0x82E6A430 and 0x821B2AD8 before returning one. The observed inner-check call passed r5 = 0, so these calls did not run on that path; their purpose remains unclassified.",
         "qualification": "Wonder-eligibility-mask-source identifies this observed vtable's +0x1DC getter and its immediate frontend-root +8 source. Later +8 writers and bit meanings remain unknown. The three bands are local rules of this one observed +0x1E4 implementation, not a global valid-ID rule."
       },
       "localIds233Through236": {
         "menu": "The accepted 0x82CE2FD0 production-choice loop only visits normalized indices 0 through 32, so it cannot append IDs 233 through 236.",
-        "knownVtableGate": "For initialized vtable 0x82138768 at receiver 0x8314F76C, slot +0x1E4 is 0x82D80C30. That function returns zero for normalized indices 33 through 36. If the dynamic call is bypassed, the 0x82CF0E28 fallback also returns zero for these indices because they are at least 21. Thus the inner gate rejects IDs 233 through 236 on the accepted city-update path while this vtable is installed, before the outer gate and promoted city writes.",
+        "knownVtableGate": "For initialized vtable 0x82138768 at receiver 0x8314F76C, slot +0x1E4 is 0x82D80C30. That function returns zero for normalized indices 33 through 36. If the dynamic call is bypassed, the 0x82CF0E28 fallback also returns zero for these indices because they are at least 21. Thus the inner check rejects IDs 233 through 236 on the accepted city-update path while this vtable is installed, before the outer check and promoted city writes.",
         "laterHelper": "The separate 0x82D16BA0 helper also skips its interior body for normalized indices at least 33; its guard is not the pre-write validity check.",
-        "evidenceState": "The menu and gate implications are static joins of accepted exact paths. No call with normalized index 33 through 36 was observed at runtime. A capped receiver-materializer search did not prove absence of later vptr writes or other selection paths.",
-        "qualification": "These facts support excluding IDs 233 through 236 from the ordinary menu and from the known-vtable city-update gate. They do not establish a program-wide invalid-ID rule, alternate-vtable behavior, or effects."
+        "evidenceState": "The menu and check implications are static links between accepted exact paths. No call with normalized index 33 through 36 was observed at runtime. A capped receiver-materializer search did not prove absence of later vptr writes or other selection paths.",
+        "qualification": "These facts support excluding IDs 233 through 236 from the ordinary menu and from the known-vtable city-update check. They do not establish a program-wide invalid-ID rule, alternate-vtable behavior, or effects."
       },
       "runtimeObservation": {
         "date": "2026-09-22",
@@ -103,12 +103,12 @@
         "probe": "Default-off wonder_eligibility_probe observed before 0x82CF0EB0 and after 0x82CF0EB0 at 0x82CF0EB4. It deduplicated by normalized index and zero versus nonzero result, with a 128-event cap that was not reached.",
         "loggedEvents": 33,
         "loggedIndices": "Each normalized index 0 through 32 appeared once; 33 through 36 did not appear.",
-        "sharedValues": "All logged events had CTR 0x82D80C30, receiver 0x8314F76C, r5 = 0, return low byte zero, gate byte 0x00, and readable mode word one at *(0x8314EFC8)+4.",
+        "sharedValues": "All logged events had CTR 0x82D80C30, receiver 0x8314F76C, r5 = 0, return low byte zero, check byte 0x00, and readable mode word one at *(0x8314EFC8)+4.",
         "logSha256": "A9BA72F8AB2AC8923F880E4233CD7CF714A4D16FB0CDE7321E60BDFAA04C5EE5",
         "qualification": "The deduplicated log establishes at least one zero return for each logged index in this state. It does not establish total call counts, other gameplay states, other virtual targets, or execution for unlogged indices."
       },
       "currentEvidence": {
-        "method": "One default-off interactive Title probe resolved the dynamic target and return values. A foreground read-only canonical-project query identified the containing function but its decompiler stopped at a save thunk; a second bounded raw-word query established the three bit-and-range bands and zero return. One exact generated-code function window corroborated those addresses. A later exact-value read-only materializer scan tested the known receiver and vtable constants.",
+        "method": "One default-off interactive Title probe resolved the dynamic target and return values. A foreground read-only canonical-project query identified the containing function but its decompiler stopped at a save thunk; a second raw-word query limited to the inspected scope established the three bit-and-range bands and zero return. One exact generated-code function window corroborated those addresses. A later exact-value read-only materializer scan tested the known receiver and vtable constants.",
         "entries": [
           { "role": "runtime indirect call", "address": "0x82CF0EB0 through 0x82CF0EB4", "result": "Thirty-three deduplicated events resolved CTR 0x82D80C30 with low-byte zero for indices 0 through 32.", "confidence": "confirmed" },
           { "role": "first band", "address": "0x82D80C48 through 0x82D80CA4", "result": "Slot +0x1DC supplies bit zero; a one return requires index 21 through 24.", "confidence": "strong" },
@@ -120,12 +120,12 @@
         "qualification": "The configured Ghidra decompiler truncated at the save thunk, so raw current-image words and the narrow generated function support the static branch conditions. The runtime sample covers one receiver and one game state."
       },
       "guards": [
-        "Do not infer that indices 33 through 36 are never selected or globally invalid from their absence in this run or rejection by the known-vtable city-update gate.",
-        "Do not infer that a nonzero +0x1E4 result completes the outer eligibility gate or executes a wonder effect.",
+        "Do not infer that indices 33 through 36 are never selected or globally invalid from their absence in this run or rejection by the known-vtable city-update check.",
+        "Do not infer that a nonzero +0x1E4 result completes the outer eligibility check or executes a wonder effect.",
         "Do not assign a gameplay meaning to the +0x1DC bits or optional r5 output calls without their writers and consumers.",
         "Do not treat a stored wonder description as proof of its implemented effect."
       ],
-      "conclusion": "In the observed fresh-game state, the wonder gate's virtual slot +0x1E4 dispatched to 0x82D80C30 and returned zero for each logged normalized index 0 through 32. Static evidence shows that this implementation returns zero for indices 33 through 36. Together with the below-21 fallback, the known-vtable city-update gate rejects IDs 233 through 236; the ordinary production menu never enumerates them. Global validity, other targets, other selection paths, and effects remain unresolved."
+      "conclusion": "In the observed fresh-game state, the wonder check's virtual slot +0x1E4 dispatched to 0x82D80C30 and returned zero for each logged normalized index 0 through 32. Static evidence shows that this implementation returns zero for indices 33 through 36. Together with the below-21 fallback, the known-vtable city-update check rejects IDs 233 through 236; the ordinary production menu never enumerates them. Global validity, other targets, other selection paths, and effects remain unresolved."
     },
     "RVA-F-0171": {
       "schemaVersion": 1,
@@ -134,13 +134,13 @@
       "status": "closed",
       "confidence": "strong",
       "image": "image.json",
-      "question": "What supplies the three bits tested by the observed wonder gate implementation?",
+      "question": "What supplies the three bits tested by the observed wonder check implementation?",
       "scope": {
         "observedReceiver": "0x8314F76C",
         "vtable": "0x82138768",
         "slot": "0x1DC at 0x82138944",
         "target": "0x82D7D2A8",
-        "boundary": "This packet identifies one installed vtable's mask getter and its immediate source. It does not identify the writer, bit meanings, other vtables, or effects."
+        "boundary": "This finding identifies one installed vtable's mask getter and its immediate source. It does not identify the writer, bit meanings, other vtables, or effects."
       },
       "dependencies": [
         { "topic": "wonder-eligibility-virtual-target", "use": "Establishes the observed receiver, +0x1E4 target, and three bit tests." },
@@ -149,8 +149,8 @@
       "staticResult": {
         "vtableWords": "The current image has 0x82D7D2A8 at 0x82138944 (+0x1DC) and 0x82D80C30 at 0x8213894C (+0x1E4).",
         "maskGetter": "0x82D7D2A8 reads pointer global 0x8314EFC8. If nonzero and its +4 signed word is 4, 5, or 6, it returns zero. Otherwise it returns the word at +8 of the object pointed to by global 0x82FFD624.",
-        "consumer": "0x82D80C30 tests bits 0, 1, and 2 of this getter's return on its three bounded normalized-index bands.",
-        "qualification": "The +8 word's zero initialization and conditional close-and-zero path are recorded in frontend-root-publication-mask-init and frontend-root-vtable-offset8-clear. Its nonzero writer, handle kind, and mask-bit semantics remain unproved. The adjacent function 0x82D7D208 reads the same source and can combine its low three bits with another state record, so its result cannot be substituted for the +0x1DC getter."
+        "consumer": "0x82D80C30 tests bits 0, 1, and 2 of this getter's return on its three normalized-index bands, each limited to a range.",
+        "qualification": "The +8 word's zero initialization and close-and-zero path, which applies only when its condition holds, are recorded in frontend-root-publication-mask-init and frontend-root-vtable-offset8-clear. Its nonzero writer, handle kind, and mask-bit semantics remain not yet established. The adjacent function 0x82D7D208 reads the same source and can combine its low three bits with another state record, so its result cannot be substituted for the +0x1DC getter."
       },
       "runtimeObservation": {
         "source": "wonder-eligibility-virtual-target",
@@ -158,7 +158,7 @@
         "qualification": "Zero +0x1E4 returns do not identify the stored +8 word or show when any bit changes."
       },
       "currentEvidence": {
-        "method": "A foreground read-only canonical-project word query checked both exact vtable slots. A bounded decompilation of 0x82D7D2A8 identified its source and override; exact Ghidra references corroborated both global reads.",
+        "method": "A foreground read-only canonical-project word query checked both exact vtable slots. A decompilation of 0x82D7D2A8, limited to the inspected scope, identified its source and override; exact Ghidra references corroborated both global reads.",
         "entries": [
           { "role": "mask slot", "address": "0x82138944", "result": "Word is 0x82D7D2A8.", "confidence": "confirmed" },
           { "role": "gate slot", "address": "0x8213894C", "result": "Word is 0x82D80C30.", "confidence": "confirmed" },
@@ -172,7 +172,7 @@
         "Do not infer +8 values from the zero returns observed in one runtime state.",
         "Do not treat the state-code override or this implementation as a global valid-ID rule."
       ],
-      "conclusion": "For the observed vtable, the +0x1DC mask getter returns frontend-root +8 except when a nonzero context pointer has state code 4 through 6, in which case it returns zero. The +0x1E4 gate tests its low three bits for normalized indices 21 through 32. A conditional zero clear is known, but a nonzero root-field producer, bit meanings, runtime mask values, and effects remain unresolved."
+      "conclusion": "For the observed vtable, the +0x1DC mask getter returns frontend-root +8 except when a nonzero context pointer has state code 4 through 6, in which case it returns zero. The +0x1E4 check tests its low three bits for normalized indices 21 through 32. A zero clear that applies only under a condition is known, but a nonzero root-field producer, bit meanings, runtime mask values, and effects remain unresolved."
     },
     "RVA-F-0192": {
       "schemaVersion": 1,
@@ -198,15 +198,15 @@
           { "functions": ["0x82DB8258", "0x82CFF1F8", "0x82CFF1A8", "0x82D7D2A8", "0x82D7D208", "0x82D7CE90", "0x82DC36B0", "0x82D25170", "0x82D84560", "0x82E4B0F8"], "instructionsScanned": 323, "syntacticStores": 0, "truncated": false },
           { "functions": ["0x82E4AF68", "0x82D8A6A0", "0x82D898D0", "0x82E4F3E8", "0x82E0EC88", "0x82E0EC48", "0x82D8D430"], "instructionsScanned": 278, "syntacticStores": 1, "truncated": false }
         ],
-        "stopCondition": "Stop after all 60 direct-reference owners are checked or after a store is proved to use the pointer loaded from 0x82FFD624 as its base. Do not expand to functions without a direct recorded reference in this packet.",
+        "stopCondition": "Stop after all 60 functions with a direct reference are checked or after a store is proved to use the pointer loaded from 0x82FFD624 as its base. Do not expand to functions without a direct recorded reference in this finding.",
         "boundary": "The displacement scan covers decoded register-plus-0x08 writes inside these Ghidra-defined functions. It does not prove the absence of computed, indexed, indirect, constructor, or unlisted writes."
       },
       "dependencies": [
         { "topic": "wonder-eligibility-mask-source", "use": "Identifies the observed getter and frontend-root +0x08 source." },
-        { "topic": "frontend-root-publication-mask-init", "use": "Identifies a zero initialization in the constructor outside this direct-reference-owner census." }
+        { "topic": "frontend-root-publication-mask-init", "use": "Identifies a zero initialization in the constructor outside this census of functions with a direct reference." }
       ],
       "currentEvidence": {
-        "method": "One exact-reference query, seven bounded field-write batches, and one exact initialized-word query ran in the canonical version-1.3 Ghidra project, foreground and read-only. Three candidate function bodies were decompiled to compare each store base with the global-root read.",
+        "method": "One exact-reference query, seven field-write batches within the inspected scope, and one exact initialized-word query ran in the canonical version-1.3 Ghidra project, foreground and read-only. Three candidate function bodies were decompiled to compare each store base with the global-root read.",
         "entries": [
           { "role": "initial root pointer", "address": "0x82FFD624", "result": "The program image word is zero. This does not identify when or how a live root pointer is published." },
           { "role": "direct reference census", "address": "0x82FFD624", "result": "Ghidra returned 67 READ references in 60 distinct containing functions." },
@@ -221,14 +221,14 @@
           "ghidra/FindFieldAccesses.java:+0x08 WRITE; seven exact function batches in scope.queryBatches",
           "ghidra/DumpFunctions.java:0x82D5F858,0x82DE6D58,0x82D8D430"
         ],
-        "qualification": "No candidate was proved to store to frontend-root +0x08. Ghidra's thunk interpretation and truncated control flow limit the candidate-body inference. This is a direct-reference-owner census, not a program-wide writer search; no runtime mask value or bit transition was observed."
+        "qualification": "No candidate was proved to store to frontend-root +0x08. Ghidra's thunk interpretation and truncated control flow limit the candidate-body inference. This is a census of functions with a direct reference, not a program-wide writer search; no runtime mask value or bit transition was observed."
       },
       "guards": [
-        "Do not infer that frontend-root +0x08 has no writer from these three unproved candidate stores.",
+        "Do not infer that frontend-root +0x08 has no writer from these three candidate stores, which were not shown to write it.",
         "Do not assign gameplay meanings to the mask bits from this census.",
         "Do not extend this direct-reference result to constructors, computed addresses, indirect references, or functions missing from Ghidra's listing."
       ],
-      "conclusion": "None of the 60 functions with a direct Ghidra reference to 0x82FFD624 contains a proved store to the root's +0x08 word under this bounded scan. A separate constructor writes the initial zero, and the application-owner vtable has a conditional later zero clear recorded in frontend-root-vtable-offset8-clear. A nonzero writer and bit meanings remain unresolved. A decisive next observation would identify a nonzero +0x08 write and its value source."
+      "conclusion": "None of the 60 functions with a direct Ghidra reference to 0x82FFD624 contains a proved store to the root's +0x08 word under this scan, within the inspected scope. A separate constructor writes the initial zero, and the application-owner vtable has a later zero clear that applies only when its condition holds recorded in frontend-root-vtable-offset8-clear. A nonzero writer and bit meanings remain unresolved. A decisive next observation would identify a nonzero +0x08 write and its value source."
     }
   }
 }

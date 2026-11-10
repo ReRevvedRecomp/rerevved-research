@@ -13,7 +13,7 @@
     "flushAndIssueWrapper": "0x826A3568",
     "fetchRunEmitter": "0x826ACEA0",
     "ringRolloverWriter": "0x826AC610",
-    "boundary": "This packet traces only graphics-state dirty group +0x18, the slot-0 shadow entry at +0x480, and the guest command words emitted for that dirty run. It excludes runtime descriptor values, asset identity, host execution, later command processing, SDK state, hooks, and patches."
+    "boundary": "This finding traces only graphics-state dirty group +0x18, the slot-0 shadow entry at +0x480, and the guest command words emitted for that dirty run. It excludes runtime descriptor values, asset identity, host execution, later command processing, SDK state, hooks, and patches."
   },
   "dependencies": [
     {
@@ -26,7 +26,7 @@
     }
   ],
   "currentEvidence": {
-    "method": "current generated-code inspection of the exact dirty field, mask normalization, shadow stride, packet header, payload copy, rollover, and clear behavior, with foreground read-only Ghidra confirmation of function starts and bounded machine words",
+    "method": "current generated-code inspection of the exact dirty field, mask normalization, shadow stride, packet header, payload copy, rollover, and clear behavior, with foreground read-only Ghidra confirmation of function starts and the machine words at the cited sites",
     "entries": [
       {
         "role": "dirty consumer",
@@ -77,12 +77,12 @@
     "payload": "The direct path copies three consecutive guest 64-bit pairs from the selected shadow run, keeping six descriptor dwords in address order.",
     "directPath": "When the current command range has space, 0x826ACF80 begins the direct writer, emits alignment word 0x80000000 when required, emits the run header, and 0x826ACFA4 copies the shadow payload in 0x18-byte steps.",
     "rolloverPath": "When the current range lacks space, 0x826ACF18 calls 0x826AC610 with grouping width 6, the selected register base, the shadow cursor, and the run word count. That helper emits the same header and source dwords while advancing or rolling the command range.",
-    "result": "Renderer slot 0, selected shadow index 0x30, and normalized texture ordinal 0 are separate indices that converge on this bounded packet construction."
+    "result": "Renderer slot 0, selected shadow index 0x30, and normalized texture ordinal 0 are separate indices that converge on this packet construction."
   },
   "stateTransitions": {
     "skipConditions": [
       "0x8269AF10 skips descriptor reconstruction and the dirty update when its backend argument is null, although it still updates the selected-backend table.",
-      "0x82303C38 reaches 0x826A3568 only after its bounded draw gates pass.",
+      "0x82303C38 reaches 0x826A3568 only after its draw checks pass.",
       "0x826A3048 skips graphics-state group +0x18 when the 64-bit snapshot is zero and skips 0x826ACEA0 when the snapshot's low 32 bits are zero.",
       "No descriptor-content validity test occurs between the low-32 dirty-mask test and the packet emitter."
     ],

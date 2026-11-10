@@ -5,12 +5,12 @@
   "status": "closed",
   "confidence": "confirmed",
   "image": "image.json",
-  "question": "Where does version 1.3 commit ordinary unit movement state, start and wait for presentation, and perform exactly-once completion cleanup?",
+  "question": "Where does version 1.3 commit non-specialized unit movement state, start and wait for presentation, and perform exactly-once completion cleanup?",
   "scope": {
     "functions": ["0x82CE1950", "0x82CDDF08", "0x82CD69B8", "0x82D11AD8", "0x82E2A838"],
     "interiorEdges": ["0x82CDEDFC", "0x82CDF3A4", "0x82CD7580", "0x82CD758C", "0x82CD7590", "0x82CD75C4", "0x82CE16AC"],
     "globals": ["0x830E4548", "0x830F2BF0", "0x82FFE7C4"],
-    "boundary": "This packet maps ordinary Move command state and presentation ordering. It does not authorize changing a duration, skipping the pump loop, naming every unit flag, or claiming combat and specialized-unit paths share the same lifecycle."
+    "boundary": "This finding maps non-specialized Move command state and presentation ordering. It does not authorize changing a duration, skipping the pump loop, naming every unit flag, or claiming combat and specialized-unit paths share the same lifecycle."
   },
   "dependencies": [
     {
@@ -20,7 +20,7 @@
   ],
   "currentEvidence": {
     "method": "foreground read-only Ghidra function, instruction, raw-word, string, pointer, and field-access queries; narrow generated-code corroboration; and a default-off runtime probe over owner-performed moves",
-    "qualification": "The version 1.3 Ghidra project truncates the affected Xenon functions after a repaired thunk. Raw Ghidra words confirm the critical instructions, while generated code is used only for bounded control-flow and field corroboration."
+    "qualification": "The version 1.3 Ghidra project truncates the affected Xenon functions after a repaired thunk. Raw Ghidra words confirm the critical instructions, while generated code is used only for limited control-flow and field corroboration."
   },
   "commandPath": {
     "command": 17,
@@ -30,8 +30,8 @@
     "caseEntry": "0x82CDEDFC",
     "ordinaryUnitBranch": "0x82CDF3A4",
     "moveExecutor": "0x82CD69B8",
-    "result": "The submit path carries player, unit, and step arguments into command 0x11. The consumer selects the ordinary-unit branch and calls the movement executor once for the addressed unit, then scans same-player records for bounded linked-unit propagation.",
-    "qualification": "An owner-requested multi-tile order produced one adjacent Move command in the captured run. A full route is not carried by this command record and route ownership remains outside this packet."
+    "result": "The submit path carries player, unit, and step arguments into command 0x11. The consumer selects the non-specialized unit branch and calls the movement executor once for the addressed unit, then scans same-player records for linked-unit propagation of limited scope.",
+    "qualification": "An owner-requested multi-tile order produced one adjacent Move command in the captured run. A full route is not carried by this command record and which code manages the route remains outside this finding."
   },
   "unitRecord": {
     "table": "0x830F2BF0",
@@ -44,7 +44,7 @@
         "name": "movement_budget",
         "width": 1,
         "confidence": "confirmed",
-        "result": "The ordinary executor subtracts 3 or three times a bounded path-cost factor. Runtime observed 6 become 3 before presentation."
+        "result": "The executor subtracts 3 or three times a path-cost factor whose value is limited. Runtime observed 6 become 3 before presentation."
       },
       {
         "offset": "0xC",
@@ -84,7 +84,7 @@
         "name": "move_step",
         "width": 2,
         "confidence": "strong",
-        "result": "The executor stores the Move command's bounded step argument here before presentation."
+        "result": "The executor stores the Move command's step argument, whose value is limited, here before presentation."
       }
     ],
     "runtimeResult": "For one observed diagonal move, movement_budget changed 6 to 3, position changed (19,13) to (20,14), move_step changed -1 to 1, and lifecycle flags changed before presentation. No byte in the 0x54-byte record changed during the 821 ms presentation wait. Only lifecycle flags changed between the completion edge and command return."
@@ -150,15 +150,15 @@
       "generated:rerevved/sub_82D11AD8",
       "generated:rerevved/sub_82E2A838"
     ],
-    "truncationGuard": "FindFieldAccesses scanned only four indexed instructions in each affected function and found no fields. Do not treat that zero as negative evidence; use the raw-word and bounded generated corroboration recorded here."
+    "truncationGuard": "FindFieldAccesses scanned only four indexed instructions in each affected function and found no fields. Do not treat that zero as negative evidence; use the raw-word and limited generated corroboration recorded here."
   },
   "guards": [
     "Do not skip 0x82D11AD8 or the 0x82CD7590 pump loop; exactly-once cleanup at 0x82CD75C4 must remain reachable.",
     "Do not mutate movement_budget, position, queued destination, move step, or lifecycle flags to accelerate presentation.",
     "Do not treat 0x830E4548 as movement duration; G4 proved it is a shared post-action cooldown with input and command readers.",
-    "Preserve one presentation completion and one command completion for every ordinary Move command.",
+    "Preserve one presentation completion and one command completion for every non-specialized Move command.",
     "Treat specialized branches before 0x82CDF3A4, combat entry, city capture, modal interruption, and cross-turn path continuation as separate validation cases.",
     "The probe remains default-off and performs no guest writes or register mutation."
   ],
-  "conclusion": "Version 1.3 commits ordinary unit position, movement budget, step state, and lifecycle flags before calling the movement presenter. The selected unit record remains byte-identical while the same command thread pumps presentation, and the native completion edge at 0x82CD75C4 performs final flag cleanup before the common command return. G4 rejected the nearby post-action cooldown as a speed scalar, so this evidence does not support movement acceleration."
+  "conclusion": "Version 1.3 commits non-specialized unit position, movement budget, step state, and lifecycle flags before calling the movement presenter. The selected unit record remains byte-identical while the same command thread pumps presentation, and the native completion edge at 0x82CD75C4 performs final flag cleanup before the common command return. G4 rejected the nearby post-action cooldown as a speed scalar, so this evidence does not support movement acceleration."
 }

@@ -9,7 +9,7 @@
       "status": "closed",
       "confidence": "strong",
       "image": "image.json",
-      "question": "Does the bounded city gameplay interval contain a decoded direct writer of city +0x3C, whose bit 0x8 gates a final building-cost reduction?",
+      "question": "Does the inspected city gameplay interval contain a decoded direct writer of city +0x3C, whose bit 0x8 controls a final building-cost reduction?",
       "scope": {
         "consumer": "0x82CF1278",
         "consumerSite": "0x82CF152C..0x82CF153C",
@@ -39,7 +39,7 @@
       "dependencies": [
         {
           "topic": "building-wonder-cost-modifier-branches",
-          "use": "Establishes the city +0x3C bit-0x8 gate and its final half-cost arithmetic in the building route."
+          "use": "Establishes the city +0x3C bit-0x8 check and its final half-cost arithmetic in the building route."
         },
         {
           "topic": "building-record-identities-100-122",
@@ -47,7 +47,7 @@
         }
       ],
       "staticResult": {
-        "knownConsumer": "At 0x82CF152C..0x82CF153C, the cost helper tests bit 0x8 of city halfword +0x3C for its final half reduction in the building route. This is a static gate, not proof of branch activation or a named policy.",
+        "knownConsumer": "At 0x82CF152C..0x82CF153C, the cost helper tests bit 0x8 of city halfword +0x3C for its final half reduction in the building route. This is a static check, not proof of branch activation or a named policy.",
         "directWriteCheck": "FindFieldAccesses scanned 272 function-owned decoded instructions in [0x82D00000,0x82D20000) for direct +0x3C WRITE and READ_WRITE operands with its default R1 stack-base exclusion. It found zero accesses and did not reach the 32-site cap.",
         "rawDFormStoreCheck": "FindRawFieldStores examined 32768 aligned initialized executable words in [0x82D00000,0x82D20000) for D-form store displacement +0x3C. It found one candidate, 0x82D187A0 (word 0x917F003C), below cap 32. Ghidra words at 0x82D18700 and 0x82D18734 confirm lis r10,-31985 and addi r31,r10,-5752; narrow generated code in sub_82D17AE0 shows r31=0x830EE988, so the candidate writes 0x830EE9C4 rather than city address 0x8314FE64.",
         "exactAddressMaterializerCheck": "FindGlobalAddressAccesses scanned 654329 decoded instructions for exact address 0x8314FE64 with lookahead 8, first-use window 16, and cap 32. It emitted zero materializers and was not truncated. FindSplitConstantCandidates found zero raw split-constant candidates for the same exact address under cap 32.",
@@ -58,10 +58,10 @@
         "qualification": "No city +0x3C value, cost reduction activation, or visible building effect was observed at runtime."
       },
       "currentEvidence": {
-        "method": "Foreground read-only canonical-project direct field-write, raw executable D-form store, exact-address materializer, and raw split-constant candidate queries over bounded targets. One raw D-form candidate was excluded after its base was resolved through canonical image words and a narrow generated-function window.",
+        "method": "Foreground read-only canonical-project direct field-write, raw executable D-form store, exact-address materializer, and raw split-constant candidate queries over the inspected targets. One raw D-form candidate was excluded after its base was resolved through canonical image words and a narrow generated-function window.",
         "entries": [
           {
-            "role": "final building-cost reduction gate",
+            "role": "final building-cost reduction check",
             "address": "0x82CF152C..0x82CF1548",
             "result": "The building route tests city +0x3C bit 0x8 and, when set, applies the shared final half reduction.",
             "confidence": "strong"
@@ -98,12 +98,12 @@
         "qualification": "The decoded and raw store scans cover only the stated operand forms and executable interval; the exact-address searches do not exclude indexed or computed table accesses. Ghidra has no decoded function at the raw candidate, so its base is corroborated by exact memory words and the exact registered generated function. No runtime probe was performed."
       },
       "guards": [
-        "Do not infer that city +0x3C bit 0x8 has no writer from this bounded query.",
-        "Do not assign a policy or gameplay meaning to the city halfword from its cost-helper gate.",
+        "Do not infer that city +0x3C bit 0x8 has no writer from this query, which covers only the inspected scope.",
+        "Do not assign a policy or gameplay meaning to the city halfword from its cost-helper check.",
         "Do not treat the helper range 100 through 199 as validation of initialized building records.",
         "Do not infer runtime activation or a public modding interface from static cost arithmetic."
       ],
-      "conclusion": "The bounded decoded scan found no non-R1-base direct +0x3C WRITE or READ_WRITE operand among 272 function-owned instructions in [0x82D00000,0x82D20000). The sole raw D-form candidate in 32768 initialized executable words writes to 0x830EE9C4, not the city table. Decoded and raw split-constant searches for exact address 0x8314FE64 returned no candidates. The cost helper's city-bit gate is known, but its writer, source, policy meaning, and runtime activation remain unresolved; indexed/computed addressing and code outside the interval were not covered."
+      "conclusion": "The decoded scan found no non-R1-base direct +0x3C WRITE or READ_WRITE operand among 272 function-owned instructions in [0x82D00000,0x82D20000). The sole raw D-form candidate in 32768 initialized executable words writes to 0x830EE9C4, not the city table. Decoded and raw split-constant searches for exact address 0x8314FE64 returned no candidates. The cost helper's city-bit check is known, but its writer, source, policy meaning, and runtime activation remain unresolved; indexed and computed addressing and code outside the interval were not covered."
     },
     "RVA-F-0213": {
       "schemaVersion": 1,
@@ -143,27 +143,27 @@
           "0x82E1E1A8", "0x82E1E1E8", "0x82E1E498", "0x82E1E538"
         ],
         "fieldAccessCap": 32,
-        "accessForms": "Decoded direct register-plus-displacement WRITE or READ_WRITE at +0x3C, excluding the default R1 stack base; no caller or callee closure.",
+        "accessForms": "Decoded direct register-plus-displacement WRITE or READ_WRITE at +0x3C, excluding the default R1 stack base; no full set of callers or callees.",
         "stopCondition": "Reproduce the exact city-table-base materializer census, then inspect only the next eight unique unexamined candidate functions. Stop at a direct +0x3C write with city-pointer provenance, ambiguous pointer provenance, 32 direct accesses, or the eight-function cap.",
         "boundary": "This checks only direct register-plus-displacement stores in the selected decoded function bodies. It does not cover indexed, computed, aliased, indirect, functionless, or out-of-sample stores, and it does not establish the field's source, policy meaning, or runtime activation."
       },
       "dependencies": [
-        { "topic": "building-cost-city-flag-writer-frontier", "use": "Establishes the city +0x3C bit-0x8 final building-cost reduction and the prior bounded writer searches." },
+        { "topic": "building-cost-city-flag-writer-frontier", "use": "Establishes the city +0x3C bit-0x8 final building-cost reduction and the prior writer searches within the inspected scope." },
         { "topic": "city-era-building-bit-readers", "use": "Records the first eight unique exact city-table-base materializer functions inspected after the initial 0x82CEDF90 path." },
         { "topic": "spaceship-part-city-flag-materializer-frontier", "use": "Records the next eight exact city-table-base materializer functions already inspected for direct city-field reads." }
       ],
       "staticResult": {
-        "knownConsumer": "At 0x82CF152C..0x82CF153C, the building route tests bit 0x8 of city halfword +0x3C for a final half-cost reduction. This static gate does not prove branch activation or a named policy.",
+        "knownConsumer": "At 0x82CF152C..0x82CF153C, the building route tests bit 0x8 of city halfword +0x3C for a final half-cost reduction. This static check does not prove branch activation or a named policy.",
         "materializerSelection": "The exact city-table-base scan emitted 31 decoded materializers below cap 64. After excluding the previously followed 0x82CEDF90 path and the sixteen candidate functions already inspected in city-era-building-bit-readers and spaceship-part-city-flag-materializer-frontier, the next eight unique functions are listed in scope.",
         "directWriteCheck": "FindFieldAccesses scanned 231 function-owned decoded instructions across the eight candidate functions for non-R1-base direct +0x3C WRITE or READ_WRITE operands. It found zero accesses, did not reach cap 32, and was not truncated.",
         "producerBoundary": "This sample adds no direct +0x3C writer. Other city-table-base materializers, indexed or computed stores, aliases, indirect writes, functionless instructions, and code outside the selected functions remain unresolved."
       },
       "runtimeObservation": {
         "status": "not-observed",
-        "priorObservation": "The source cost packet records no city +0x3C value, final half-cost activation, or visible building effect. This continuation is static-only."
+        "priorObservation": "The source cost finding records no city +0x3C value, final half-cost activation, or visible building effect. This continuation is static-only."
       },
       "currentEvidence": {
-        "method": "Foreground read-only canonical-project exact city-table-base materializer census followed by FindFieldAccesses restricted to the next eight unique unexamined function owners; no generated-code follow-up because the direct-write query emitted no candidate.",
+        "method": "Foreground read-only canonical-project exact city-table-base materializer census followed by FindFieldAccesses restricted to the next eight unique unexamined functions; no generated-code follow-up because the direct-write query emitted no candidate.",
         "entries": [
           { "role": "exact city-table-base materializers", "address": "0x8314FE28", "result": "31 materializers among 654329 decoded instructions; cap 64 was not reached. The eight candidates in scope follow the prior 17 excluded functions." },
           { "role": "next eight direct writer checks", "address": "0x82DFB6B0,0x82E1DE28,0x82E1E060,0x82E1E168,0x82E1E1A8,0x82E1E1E8,0x82E1E498,0x82E1E538", "result": "Zero non-R1-base direct +0x3C WRITE or READ_WRITE operands across 231 function-owned instructions; cap 32 was not reached." }
@@ -177,15 +177,15 @@
       "catalogPromotion": {
         "newEntities": [],
         "updatedEntities": ["RVA-SYM-0323"],
-        "result": "The existing cost-helper symbol gains this bounded writer-sample limit; no writer relation or field meaning is added."
+        "result": "The existing cost-helper symbol gains this writer-sample limit; no writer relation or field meaning is added."
       },
       "guards": [
         "Do not infer that city +0x3C bit 0x8 has no writer from this eight-function sample.",
-        "Do not assign a policy or gameplay meaning to the city halfword from its cost-helper gate.",
+        "Do not assign a policy or gameplay meaning to the city halfword from its cost-helper check.",
         "Do not infer final prices or runtime activation from the static cost arithmetic.",
         "Do not treat the helper's 100-through-199 route as validation of every building ID in that range."
       ],
-      "conclusion": "The exact city-table-base scan reproduced 31 materializers below cap 64. The next eight unique unexamined functions contained no non-R1-base direct +0x3C WRITE or READ_WRITE operand across 231 function-owned instructions. This bounded sample adds no writer of the city half-cost flag; other materializers and indexed, computed, aliased, indirect, functionless, and out-of-sample stores remain unresolved."
+      "conclusion": "The exact city-table-base scan reproduced 31 materializers below cap 64. The next eight unique unexamined functions contained no non-R1-base direct +0x3C WRITE or READ_WRITE operand across 231 function-owned instructions. This sample adds no writer of the city half-cost flag; other materializers and indexed, computed, aliased, indirect, functionless, and out-of-sample stores remain unresolved."
     },
     "RVA-F-0214": {
       "schemaVersion": 1,
@@ -194,7 +194,7 @@
       "status": "closed",
       "confidence": "strong",
       "image": "image.json",
-      "question": "Do the remaining exact city-table-base materializer functions contain a direct write to city +0x3C, whose bit 0x8 gates a final building-cost reduction?",
+      "question": "Do the remaining exact city-table-base materializer functions contain a direct write to city +0x3C, whose bit 0x8 controls a final building-cost reduction?",
       "scope": {
         "consumer": "0x82CF1278",
         "consumerSite": "0x82CF152C..0x82CF153C",
@@ -234,9 +234,9 @@
         "candidateCap": 23,
         "queryBatchCap": 8,
         "fieldAccessCapPerBatch": 32,
-        "accessForms": "Decoded direct register-plus-displacement WRITE or READ_WRITE at +0x3C, excluding the default R1 stack base; no caller or callee closure.",
+        "accessForms": "Decoded direct register-plus-displacement WRITE or READ_WRITE at +0x3C, excluding the default R1 stack base; no full set of callers or callees.",
         "stopCondition": "Inspect only the 23 remaining exact city-table-base materializer functions in batches of at most eight. Stop at a direct +0x3C write with city-pointer provenance, ambiguous pointer provenance, 32 direct accesses in a batch, or exhaustion of the candidate set.",
-        "boundary": "Together with the eight candidate functions in building-cost-city-flag-materializer-frontier, this completes the direct-displacement check over all 31 materializer function owners. It does not cover indexed, computed, aliased, indirect, functionless, or unmaterialized stores, or establish the field's source, policy meaning, or runtime activation."
+        "boundary": "Together with the eight candidate functions in building-cost-city-flag-materializer-frontier, this completes the direct-displacement check over all 31 materializer functions. It does not cover indexed, computed, aliased, indirect, functionless, or unmaterialized stores, or establish the field's source, policy meaning, or runtime activation."
       },
       "dependencies": [
         { "topic": "building-cost-city-flag-writer-frontier", "use": "Establishes the city +0x3C bit-0x8 final building-cost reduction and prior interval, raw-store, and exact-address searches." },
@@ -245,8 +245,8 @@
         { "topic": "spaceship-part-city-flag-materializer-frontier", "use": "Records the next eight exact city-table-base candidate functions used to order the census." }
       ],
       "staticResult": {
-        "knownConsumer": "At 0x82CF152C..0x82CF153C, the building route tests bit 0x8 of city halfword +0x3C for a final half-cost reduction. This static gate does not prove branch activation or a named policy.",
-        "materializerCensus": "The exact city-table-base query emitted 31 split-constant materializers among 654329 decoded instructions, below cap 64. The eight functions in the prior packet and the 23 functions listed here account for all 31 unique function owners.",
+        "knownConsumer": "At 0x82CF152C..0x82CF153C, the building route tests bit 0x8 of city halfword +0x3C for a final half-cost reduction. This static check does not prove branch activation or a named policy.",
+        "materializerCensus": "The exact city-table-base query emitted 31 split-constant materializers among 654329 decoded instructions, below cap 64. The eight functions in the prior finding and the 23 functions listed here account for all 31 unique functions.",
         "directWriteBatches": [
           { "functions": "firstBatch", "scannedInstructions": 714, "matches": 0, "truncated": false },
           { "functions": "middleBatch", "scannedInstructions": 399, "matches": 0, "truncated": false },
@@ -254,14 +254,14 @@
           { "functions": "tailBatch", "scannedInstructions": 415, "matches": 0, "truncated": false }
         ],
         "directWriteTotal": "Across the 23 functions, FindFieldAccesses scanned 1586 function-owned decoded instructions and found zero non-R1-base direct +0x3C WRITE or READ_WRITE operands. Each batch remained below cap 32 and was not truncated.",
-        "producerBoundary": "Together with the eight-function sample in the dependency packet, no direct +0x3C writer is established in any of the 31 exact city-table-base materializer functions. Other address forms and functions without a decoded split-constant materializer remain unresolved."
+        "producerBoundary": "Together with the eight-function sample in the dependency finding, no direct +0x3C writer is established in any of the 31 exact city-table-base materializer functions. Other address forms and functions without a decoded split-constant materializer remain unresolved."
       },
       "runtimeObservation": {
         "status": "not-observed",
-        "priorObservation": "The source cost packet records no city +0x3C value, final half-cost activation, or visible building effect. This continuation is static-only."
+        "priorObservation": "The source cost finding records no city +0x3C value, final half-cost activation, or visible building effect. This continuation is static-only."
       },
       "currentEvidence": {
-        "method": "Four foreground read-only canonical-project FindFieldAccesses queries checked disjoint groups of the remaining exact city-table-base materializer function owners. Each used offset +0x3C, WRITE and READ_WRITE filters, zero caller and callee depth, and cap 32.",
+        "method": "Four foreground read-only canonical-project FindFieldAccesses queries checked disjoint groups of the remaining exact city-table-base materializer functions. Each used offset +0x3C, WRITE and READ_WRITE filters, zero caller and callee depth, and cap 32.",
         "entries": [
           { "role": "first remaining batch", "address": "0x82CE1C10,0x82CE1CB0,0x82CE1F98,0x82CEDF90,0x82CEF3D8,0x82CF1148,0x82CF1AF0,0x82CF7DE0", "result": "Zero direct +0x3C WRITE or READ_WRITE operands across 714 function-owned instructions; cap 32 was not reached." },
           { "role": "middle remaining batch", "address": "0x82CF7F70,0x82CF8148,0x82CF8240,0x82CF8290,0x82CF82C8,0x82CF9348,0x82CFF528,0x82D80368", "result": "Zero direct +0x3C WRITE or READ_WRITE operands across 399 function-owned instructions; cap 32 was not reached." },
@@ -284,11 +284,11 @@
       },
       "guards": [
         "Do not infer that city +0x3C bit 0x8 has no writer from the exact-base direct-displacement census.",
-        "Do not assign a policy or gameplay meaning to the city halfword from its cost-helper gate.",
+        "Do not assign a policy or gameplay meaning to the city halfword from its cost-helper check.",
         "Do not infer final prices or runtime activation from static cost arithmetic.",
         "Do not treat the helper's 100-through-199 route as validation of every building ID in that range."
       ],
-      "conclusion": "The exact city-table-base scan emitted 31 materializers below cap 64. A direct +0x3C WRITE or READ_WRITE query over all 31 function owners, recorded across this packet and building-cost-city-flag-materializer-frontier, found zero accesses in 1817 function-owned decoded instructions. This closes only the exact-base direct-displacement sample; indexed, computed, aliased, indirect, functionless, and unmaterialized stores, the field's source and policy meaning, and runtime activation remain unresolved."
+      "conclusion": "The exact city-table-base scan emitted 31 materializers below cap 64. A direct +0x3C WRITE or READ_WRITE query over all 31 functions, recorded across this finding and building-cost-city-flag-materializer-frontier, found zero accesses in 1817 function-owned decoded instructions. This closes only the exact-base direct-displacement sample; indexed, computed, aliased, indirect, functionless, and unmaterialized stores, the field's source and policy meaning, and runtime activation remain unresolved."
     },
     "RVA-F-0216": {
       "schemaVersion": 1,
@@ -297,7 +297,7 @@
       "status": "closed",
       "confidence": "strong",
       "image": "image.json",
-      "question": "Do generated bodies for all exact city-table-base materializer owners expose a store statically joined to city +0x3C or an overlapping word?",
+      "question": "Do generated bodies for all exact city-table-base materializer functions expose a store statically linked to city +0x3C or an overlapping word?",
       "scope": {
         "cityTable": "0x8314FE28",
         "cityStride": "0xBC",
@@ -307,16 +307,16 @@
         "mask": "0x0008",
         "functionOwnerSet": "The 31 exact city-table-base materializers enumerated in building-cost-city-flag-materializer-frontier and building-cost-city-flag-materializer-continuation.",
         "candidateCap": 31,
-        "stopCondition": "Review only generated bodies corresponding to the 31 exact Ghidra materializer owners. Stop the candidate set at 31 bodies; do not follow callers, callees, or unresolved pointer chains.",
-        "boundary": "This is a bounded review of the listed generated bodies and Ghidra direct-displacement checks. A store through an unresolved pointer may alias city +0x3C; functionless, unmaterialized, and out-of-set writers are not excluded."
+        "stopCondition": "Review only generated bodies corresponding to the 31 exact Ghidra materializer functions. Stop the candidate set at 31 bodies; do not follow callers, callees, or unresolved pointer chains.",
+        "boundary": "This is a review limited to the listed generated bodies and Ghidra direct-displacement checks. A store through an unresolved pointer may alias city +0x3C; functionless, unmaterialized, and out-of-set writers are not excluded."
       },
       "dependencies": [
-        { "topic": "building-cost-city-flag-writer-frontier", "use": "Establishes the cost-helper city +0x3C bit-0x8 gate and earlier bounded writer checks." },
-        { "topic": "building-cost-city-flag-materializer-frontier", "use": "Lists the first eight exact city-table-base materializer owners and their direct-offset scan." },
-        { "topic": "building-cost-city-flag-materializer-continuation", "use": "Lists the remaining 23 owners and completes the direct-offset scan over all 31." }
+        { "topic": "building-cost-city-flag-writer-frontier", "use": "Establishes the cost-helper city +0x3C bit-0x8 check and earlier writer checks within the inspected scope." },
+        { "topic": "building-cost-city-flag-materializer-frontier", "use": "Lists the first eight exact city-table-base materializer functions and their direct-offset scan." },
+        { "topic": "building-cost-city-flag-materializer-continuation", "use": "Lists the remaining 23 functions and completes the direct-offset scan over all 31." }
       ],
       "staticResult": {
-        "directDisplacementCensus": "Across all 31 exact city-table-base materializer owners, Ghidra FindFieldAccesses found no non-R1-base direct +0x3C WRITE or READ_WRITE operand in 1817 function-owned instructions. The two source packets retain the per-query counts, candidate sets, and caps.",
+        "directDisplacementCensus": "Across all 31 exact city-table-base materializer functions, Ghidra FindFieldAccesses found no non-R1-base direct +0x3C WRITE or READ_WRITE operand in 1817 function-owned instructions. The two source findings retain the per-query counts, candidate sets, and caps.",
         "generatedBodyAudit": {
           "matchedFunctionOwners": 31,
           "ownersWithNonStackStores": 11,
@@ -334,7 +334,7 @@
             { "function": "0x82CEDF90", "sites": ["0x82CEE058", "0x82CEE0A8"], "destination": "Fixed address 0x8314F1CA, not a city-row address." },
             { "function": "0x82CFF528", "sites": ["0x82CFF8B4"], "destination": "Fixed address 0x830EE53C, not a city-row address." },
             { "function": "0x82E557A0", "sites": ["0x82E55920", "0x82E5592C", "0x82E55968"], "destination": "Two pointer destinations have unresolved provenance; the third store copies through caller-provided r5 output." },
-            { "function": "0x82E57820", "sites": ["0x82E57870", "0x82E578A4", "0x82E5794C", "0x82E57950", "0x82E57958", "0x82E57980", "0x82E579D8", "0x82E57A00", "0x82E57A08", "0x82E57A0C", "0x82E57A10", "0x82E57A14", "0x82E57A20", "0x82E57A24", "0x82E57A28", "0x82E57A38", "0x82E57A50"], "destination": "Most stores use an entry-object or helper-returned pointer. At 0x82E57980, stb r29,0x88D(r7) uses r7 loaded from [r11+0x38], after r11 is loaded from [r30-0xD78] and r30 carries entry argument r4. The caller/object provenance and any city-table alias remain unresolved." },
+            { "function": "0x82E57820", "sites": ["0x82E57870", "0x82E578A4", "0x82E5794C", "0x82E57950", "0x82E57958", "0x82E57980", "0x82E579D8", "0x82E57A00", "0x82E57A08", "0x82E57A0C", "0x82E57A10", "0x82E57A14", "0x82E57A20", "0x82E57A24", "0x82E57A28", "0x82E57A38", "0x82E57A50"], "destination": "Most stores use an entry-object or helper-returned pointer. At 0x82E57980, stb r29,0x88D(r7) uses r7 loaded from [r11+0x38], after r11 is loaded from [r30-0xD78] and r30 carries entry argument r4. The caller and object provenance and any city-table alias remain unresolved." },
             { "function": "0x82E8AEC8", "sites": ["0x82E8AEE8", "0x82E8AF04", "0x82E8AF0C", "0x82E8AF10", "0x82E8AF18"], "destination": "The body writes city-row fields at +0xB0, +0xB4, and +0xB8, plus two fixed global destinations; exact row-field behavior is recorded separately below." }
           ]
         },
@@ -344,17 +344,17 @@
           "otherFields": "Stores zero at each row +0xB0 and +0xB4.",
           "semanticBoundary": "These are static field writes only. The pointer target's role, field meanings, consumers, runtime invocation, and any relationship to buildings or wonders are unknown. This initializer does not establish a city +0x3C writer."
         },
-        "opaqueStoreBoundary": "Ghidra decodes 0x82E57980 as stb r29,0x88D(r7). At function entry, r30 receives r4; 0x82E57960 then loads r11 from [r30-0xD78], and 0x82E57970 loads r7 from [r11+0x38]. The caller/object provenance does not identify the pointee. Stop at this ambiguous provenance; do not follow callers or assign a city-field meaning.",
-        "producerBoundary": "No writer is established by the tested direct-displacement forms or by locally resolved destinations in these 31 generated bodies. The opaque pointer stores, other aliases, functionless instructions, unmaterialized code, and code outside the 31-owner set remain unresolved."
+        "opaqueStoreBoundary": "Ghidra decodes 0x82E57980 as stb r29,0x88D(r7). At function entry, r30 receives r4; 0x82E57960 then loads r11 from [r30-0xD78], and 0x82E57970 loads r7 from [r11+0x38]. The caller and object provenance does not identify the pointee. Stop at this ambiguous provenance; do not follow callers or assign a city-field meaning.",
+        "producerBoundary": "No writer is established by the tested direct-displacement forms or by locally resolved destinations in these 31 generated bodies. The opaque pointer stores, other aliases, functionless instructions, unmaterialized code, and code outside the 31-function set remain unresolved."
       },
       "runtimeObservation": {
         "status": "not-observed",
-        "qualification": "No city +0x3C value, final cost reduction activation, invocation of the reviewed initializer, or visible city/building/wonder effect was observed."
+        "qualification": "No city +0x3C value, final cost reduction activation, invocation of the reviewed initializer, or visible city, building or wonder effect was observed."
       },
       "currentEvidence": {
-        "method": "Matched all 31 exact city-table-base Ghidra materializer owners to generated function bodies and reviewed every non-stack store destination, without following callers, callees, or unresolved pointers. Foreground read-only Ghidra listings corroborated the opaque store and the separate 128-row city-field loop.",
+        "method": "Matched all 31 exact city-table-base Ghidra materializer functions to generated function bodies and reviewed every non-stack store destination, without following callers, callees, or unresolved pointers. Foreground read-only Ghidra listings corroborated the opaque store and the separate 128-row city-field loop.",
         "entries": [
-          { "role": "complete direct-displacement census", "address": "0x8314FE28", "result": "The 31-owner set is listed across the two dependency packets; direct +0x3C WRITE and READ_WRITE queries found zero matches in 1817 instructions." },
+          { "role": "complete direct-displacement census", "address": "0x8314FE28", "result": "The 31-function set is listed across the two dependency findings; direct +0x3C WRITE and READ_WRITE queries found zero matches in 1817 instructions." },
           { "role": "generated store census", "address": "31 function owners", "result": "Matched all 31 bodies; enumerated 39 non-stack stores in 11 bodies. None has a locally resolved destination equal to city row +0x3C or an overlapping word." },
           { "role": "opaque pointer store", "address": "0x82E57960..0x82E57980", "result": "Ghidra confirms the pointer loads and byte store; the pointee remains unknown, so a city alias is not excluded." },
           { "role": "city-row field loop", "address": "0x82E8AEC8..0x82E8AF20", "result": "Ghidra confirms the 0xBC-stride loop writes 0x8314F0A8 at row +0xB8 and zero at row +0xB0 and +0xB4 for 128 positions; meanings and consumers are unknown." }
@@ -379,20 +379,20 @@
           "generated:rerevved/sub_82E57820:0x82E57870..0x82E57A50",
           "generated:rerevved/sub_82E8AEC8:0x82E8AEE8..0x82E8AF18"
         ],
-        "qualification": "The 31-owner negative is limited to exact city-table-base materializers and locally resolved generated-code destinations. It does not exclude unknown pointer aliases or establish runtime activation or field meaning."
+        "qualification": "The 31-function negative is limited to exact city-table-base materializers and locally resolved generated-code destinations. It does not exclude unknown pointer aliases or establish runtime activation or field meaning."
       },
       "catalogPromotion": {
         "newEntities": ["RVA-SYM-0403"],
         "updatedEntities": ["RVA-SYM-0323"],
-        "result": "The cost-helper symbol gains this bounded computed-writer result. A new function symbol records only the statically mapped city-row +0xB0/+0xB4/+0xB8 writes; no policy meaning or gameplay effect is added."
+        "result": "The cost-helper symbol gains this computed-writer result within the inspected scope. A new function symbol records only the statically mapped city-row +0xB0, +0xB4 and +0xB8 writes; no policy meaning or gameplay effect is added."
       },
       "guards": [
-        "Do not infer that city +0x3C bit 0x8 has no writer from these bounded forms or the 31-body review.",
+        "Do not infer that city +0x3C bit 0x8 has no writer from these forms within the inspected scope or the 31-body review.",
         "Do not treat the opaque 0x82E57980 pointer destination as either a city alias or proof that no city alias exists.",
         "Do not assign meaning to city-row fields +0xB0, +0xB4, or +0xB8, or to pointer 0x8314F0A8, without consumer evidence.",
         "Do not infer final prices, runtime activation, or a visible building or wonder effect from static arithmetic."
       ],
-      "conclusion": "Ghidra direct-displacement scans across all 31 exact city-table-base materializer owners found no direct +0x3C write in 1817 instructions. A generated-body review matched all 31 owners and enumerated 39 non-stack stores; none has a locally resolved destination at city row +0x3C or an overlapping word. At 0x82E57980, the store destination remains behind an unresolved argument-derived pointer chain, so a city alias is not excluded. The separate loop at 0x82E8AEC8 writes city-row fields +0xB0, +0xB4, and +0xB8 for 128 stride positions; their meanings and consumers remain unknown. No city +0x3C source, cost activation, or visible effect is established."
+      "conclusion": "Ghidra direct-displacement scans across all 31 exact city-table-base materializer functions found no direct +0x3C write in 1817 instructions. A generated-body review matched all 31 functions and enumerated 39 non-stack stores; none has a locally resolved destination at city row +0x3C or an overlapping word. At 0x82E57980, the store destination remains behind an unresolved argument-derived pointer chain, so a city alias is not excluded. The separate loop at 0x82E8AEC8 writes city-row fields +0xB0, +0xB4, and +0xB8 for 128 stride positions; their meanings and consumers remain unknown. No city +0x3C source, cost activation, or visible effect is established."
     }
   }
 }

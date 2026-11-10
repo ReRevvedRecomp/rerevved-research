@@ -35,7 +35,7 @@
       "0x82D1FCB8..0x82D1FD78",
       "0x82D1FD60..0x82D1FE20"
     ],
-    "boundary": "All 24 sites in the accepted raw direct-call inventory have bounded local mode writes. This does not classify indirect calls, whole-function reachability, every city argument, all branch inputs, actual credit cadence, or runtime behavior."
+    "boundary": "All 24 sites in the accepted raw direct-call inventory have local mode writes, established within the inspected local windows. This does not classify indirect calls, whole-function reachability, every city argument, all branch inputs, actual credit cadence, or runtime behavior."
   },
   "dependencies": [
     {
@@ -44,7 +44,7 @@
     },
     {
       "topic": "game-calendar-state",
-      "use": "Identifies the current turn word at 0x8312B8DC and the accepted turn-transition owner."
+      "use": "Identifies the current turn word at 0x8312B8DC and the accepted turn-transition function."
     },
     {
       "topic": "library-city-yield-writers",
@@ -83,7 +83,7 @@
     "cancelled": false,
     "decodedSites": 1,
     "undefinedOwnerSites": 23,
-    "qualification": "Only 0x82CEE0BC has a decoded instruction and modeled owner in the configured listing. Exact-function generated windows corroborate the raw words for all 24 local mode sequences; eight use mode one, thirteen use mode -1, and three use mode zero. These counts describe sites, not invocation or credit counts."
+    "qualification": "Only 0x82CEE0BC has a decoded instruction and modeled enclosing function in the configured listing. Exact-function generated windows corroborate the raw words for all 24 local mode sequences; eight use mode one, thirteen use mode -1, and three use mode zero. These counts describe sites, not invocation or credit counts."
   },
   "selectedCalls": [
     {
@@ -112,14 +112,14 @@
       "modeWrite": "0x82CB6D40",
       "mode": 1,
       "functionOwner": "0x82CB44E0",
-      "qualification": "The mode write is local; the retained r3 city input is not assigned by this result."
+      "qualification": "The mode write is local; the city input preserved in r3 is not assigned by this result."
     },
     {
       "callSite": "0x82CB6E20",
       "modeWrite": "0x82CB6E14",
       "mode": 1,
       "functionOwner": "0x82CB44E0",
-      "qualification": "The mode write is local; the retained r3 city input is not assigned by this result."
+      "qualification": "The mode write is local; the city input preserved in r3 is not assigned by this result."
     },
     {
       "callSite": "0x82CE0170",
@@ -257,14 +257,14 @@
   ],
   "modeConsequences": {
     "recursive": "The selected self-calls at 0x82D13B38 and 0x82D13B5C pass mode one, which bypasses the selected yield and reserve-credit block. The self-calls at 0x82D1644C and 0x82D16A78 pass mode -1, which can refresh selected city values but branches past the selected reserve credit.",
-    "turn": "All three selected calls in CalendarTurnAdvance pass mode zero. They are conditional callsites, not an unconditional three-call sequence or three observed credits. They can enter the continuing credit path established by city-yield-state-credit, subject to its entry paths and later native overrides.",
+    "turn": "All three selected calls in CalendarTurnAdvance pass mode zero. They are callsites reached only when conditions hold, not an unconditional three-call sequence or three observed credits. They can enter the continuing credit path established by city-yield-state-credit, subject to its entry paths and later native overrides.",
     "otherCalls": "Six additional local sequences pass mode one and eleven pass mode -1. Thus every mode-zero site in this direct inventory lies in CalendarTurnAdvance. This does not exclude indirect calls or prove that any calendar call executes once per city turn."
   },
   "turnDecisions": {
-    "firstCachedPath": "At 0x82D1FA48..0x82D1FA74, a nonzero retained byte predicate, an odd low bit of current turn plus retained city index r25, or signed current turn below twenty branches to 0x82D1FAE0. The local continuing cached path consumes city +0x48 and branches at 0x82D1FADC to 0x82D1FC18, bypassing the first mode-zero call at 0x82D1FC14.",
-    "firstCallBypass": "On the selected path reaching 0x82D1FBC8, a nonzero retained byte predicate or nonzero halfword at the base pointer loaded from stack +0x78 reaches 0x82D1FC0C. Otherwise an odd current turn also reaches that call block, while an even turn at least twenty branches at 0x82D1FC08 to 0x82D1FC18. The halfword is indexed by the value saved at stack +0x1E4 multiplied by 32; its meaning remains unassigned.",
+    "firstCachedPath": "At 0x82D1FA48..0x82D1FA74, a nonzero kept byte predicate, an odd low bit of current turn plus kept city index r25, or signed current turn below twenty branches to 0x82D1FAE0. The local continuing cached path consumes city +0x48 and branches at 0x82D1FADC to 0x82D1FC18, bypassing the first mode-zero call at 0x82D1FC14.",
+    "firstCallBypass": "On the selected path reaching 0x82D1FBC8, a nonzero kept byte predicate or nonzero halfword at the base pointer loaded from stack +0x78 reaches 0x82D1FC0C. Otherwise an odd current turn also reaches that call block, while an even turn at least twenty branches at 0x82D1FC08 to 0x82D1FC18. The halfword is indexed by the value saved at stack +0x1E4 multiplied by 32; its meaning remains unassigned.",
     "laterCalls": "The local branch at 0x82D1FD14 can bypass the mode-zero call at 0x82D1FD20, and the branch at 0x82D1FDBC can bypass the mode-zero call at 0x82D1FDC8. Their arithmetic inputs and enclosing paths are not classified as scheduling intervals or player-facing rules.",
-    "qualification": "These are selected local branch facts. The two retained byte predicates, indexed halfword meaning, complete city/owner selection, branch composition, and frequency remain unresolved. Bypassing 0x82D1FC14 does not prove that a whole turn performs no later city update or reserve credit."
+    "qualification": "These are selected local branch facts. The two kept byte predicates, indexed halfword meaning, complete city and owner selection, branch composition, and frequency remain unresolved. Bypassing 0x82D1FC14 does not prove that a whole turn performs no later city update or reserve credit."
   },
   "runtimeObservation": {
     "status": "not-observed",
@@ -288,14 +288,14 @@
       "generated:rerevved/sub_82D17830",
       "generated:rerevved/sub_82D178A8"
     ],
-    "qualification": "The local mode sequences are checked against raw words. The two retained r3 inputs at 0x82CB6D50 and 0x82CB6E20 remain unassigned. No indirect target, complete caller route, runtime call, or credit cadence is inferred."
+    "qualification": "The local mode sequences are checked against raw words. The two inputs preserved in r3 at 0x82CB6D50 and 0x82CB6E20 remain unassigned. No indirect target, complete caller route, runtime call, or credit cadence is inferred."
   },
   "guards": [
     "Do not award a per-turn bonus on every city-update entry: selected mode-one and mode-minus-one calls are not selected reserve-credit events.",
-    "Do not treat the first mode-zero turn call as the only native city-update call in that owner.",
+    "Do not treat the first mode-zero turn call as the only native city-update call in that function.",
     "Do not infer three credits, no later credit after a cached branch, or once-per-city cadence from these selected callsites.",
-    "Do not identify the retained predicates or indexed halfword as Chinese civilization identity.",
-    "Do not infer a safe plugin arithmetic contract, runtime result, presentation parity, or save/load acceptance from these static gates."
+    "Do not identify the kept predicates or indexed halfword as Chinese civilization identity.",
+    "Do not infer a safe plugin arithmetic contract, runtime result, presentation parity, or save and load acceptance from these static checks."
   ],
-  "conclusion": "All 24 inventoried direct city-update sites have local mode writes: eight mode-one sites and thirteen mode-minus-one sites bypass the selected reserve credit, while three conditional mode-zero sites lie in CalendarTurnAdvance. These site counts do not establish invocation counts, exclude indirect calls, or prove one credit per city turn. Cached and bypass paths and the exact city/owner scheduling contract remain required for a fixed gold addition."
+  "conclusion": "All 24 inventoried direct city-update sites have local mode writes: eight mode-one sites and thirteen mode-minus-one sites bypass the selected reserve credit, while three mode-zero sites, each reached only under a condition, lie in CalendarTurnAdvance. These site counts do not establish invocation counts, exclude indirect calls, or prove one credit per city turn. Cached and bypass paths and the exact city and owner scheduling contract remain required for a fixed gold addition."
 }

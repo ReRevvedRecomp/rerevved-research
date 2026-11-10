@@ -21,7 +21,7 @@
       "0x82E806E0",
       "0x82E840C0"
     ],
-    "boundary": "This packet proves a static byte model for new version-6 archives with unique non-empty ASCII basenames and uncompressed payloads. It does not implement a writer, prove non-ASCII names, establish duplicate-name support, assign the two optional metadata words a semantic type, prove scenario or DDS content, or establish runtime acceptance."
+    "boundary": "This finding proves a static byte model for new version-6 archives with unique non-empty ASCII basenames and uncompressed payloads. It does not implement a writer, prove non-ASCII names, establish duplicate-name support, assign the two optional metadata words a semantic type, prove scenario or DDS content, or establish runtime acceptance."
   },
   "publicEvidence": [
     {
@@ -40,9 +40,9 @@
     }
   ],
   "staticEvidence": {
-    "method": "foreground read-only DumpFunctions, DumpFunctionNeighborhoodBatch, DumpMemoryWords, and DumpDataValues queries with narrow raw-word decoding where the configured Xenon project truncates at save/restore thunks",
+    "method": "foreground read-only DumpFunctions, DumpFunctionNeighborhoodBatch, DumpMemoryWords, and DumpDataValues queries with narrow raw-word decoding where the configured Xenon project truncates at save and restore thunks",
     "mode": "foreground-read-only",
-    "qualification": "Exact initialized words, calls, byte loops, comparisons, and public parser structure agree on the admitted grammar. No retail payload was read, no runtime was launched, and no dynamic acceptance is claimed."
+    "qualification": "Exact initialized words, calls, byte loops, comparisons, and public parser structure agree on the accepted grammar. No retail payload was read, no runtime was launched, and no dynamic acceptance is claimed."
   },
   "grammar": {
     "byteOrder": "Every scalar serialized by this grammar is little-endian. Names, alignment bytes, metadata bytes, and payloads are byte strings.",
@@ -76,12 +76,12 @@
     "encoding": "The Xbox path operates on bytes and proves no Unicode encoding. The five required authoring names are ASCII and need no broader encoding claim.",
     "termination": "No terminator is serialized or counted. A zero byte inside the counted name is outside the supported writer subset because later string operations terminate on zero.",
     "case": "ASCII case-insensitive for registered lookup. Bytes outside ASCII A through Z are not folded by 0x827F19C0.",
-    "separators": "Queries normalize slash to backslash and, in the observed current lookup mode, index the basename. The supported writer subset therefore uses separator-free basenames; path-bearing archive entries remain outside this packet.",
+    "separators": "Queries normalize slash to backslash and, in the observed current lookup mode, index the basename. The supported writer subset therefore uses separator-free basenames; path-bearing archive entries remain outside this finding.",
     "duplicates": "The index compares names after a hash match. A distinct-name CRC collision is diagnosed and the new candidate is rejected rather than chained under the same hash. Exact duplicate-name replacement also consults the 8-byte metadata and call flags; its complete tie rule remains unresolved, so a writer must reject duplicate names after ASCII folding.",
-    "maximum": "No smaller semantic maximum was recovered. The guest requires a positive signed 32-bit length and successful allocation/read; the writer subset caps at 0x7FFFFFFC so align4 cannot wrap."
+    "maximum": "No smaller semantic maximum was recovered. The guest requires a positive signed 32-bit length and successful allocation and read; the writer subset caps at 0x7FFFFFFC so align4 cannot wrap."
   },
   "payloadRules": {
-    "compression": "No compression flag, compressed size, logical size, codec identifier, checksum, or decompression branch is present in the admitted version-6 record path. payloadSize is the stored byte count.",
+    "compression": "No compression flag, compressed size, logical size, codec identifier, checksum, or decompression branch is present in the accepted version-6 record path. payloadSize is the stored byte count.",
     "placement": "Offsets are absolute and independently recorded. Contiguous payloads beginning at tableEnd are representable; the format does not require payload alignment.",
     "ordering": "Unique-name lookup is hash indexed rather than payload-order indexed. A conforming writer may choose one deterministic record order and place payloads in that order; imported order is preservation data, not a new-archive invariant.",
     "gapsAndTrailingBytes": "Offsets can represent gaps and trailing unreferenced bytes, but a canonical new archive emits neither.",
@@ -89,7 +89,7 @@
   },
   "integrity": {
     "present": [
-      "The FPK_ signature and required zero header byte are parser gates.",
+      "The FPK_ signature and required zero header byte are parser checks.",
       "The in-memory name hash indexes lookup but is not serialized."
     ],
     "absent": [
@@ -139,19 +139,19 @@
       "non-ASCII encoding and folding",
       "a smaller practical guest allocation limit"
     ],
-    "writerRequirements": "An archive writer requires an explicit model exposing names and raw metadata, folded-duplicate and CRC-collision rejection, bounded arithmetic, a new destination and independent read-back. No existing writer or extraction implementation is verified here."
+    "writerRequirements": "An archive writer requires an explicit model exposing names and raw metadata, folded-duplicate and CRC-collision rejection, arithmetic checked against its limits, a new destination and independent read-back. No existing writer or extraction implementation is verified here."
   },
   "deliveryRuling": {
     "fpk": "The archive layer no longer blocks static representation of the five required wholly original named entries. No donor archive or retail metadata is required for the unique-name zero-metadata subset.",
-    "prepositionedRoute": "STFS remains unnecessary for the statically admitted prepositioned XUID-0 marketplace directory route, but the exact ContentManager hierarchy, immediate child directory, and root dlc.fpk are still required.",
+    "prepositionedRoute": "STFS remains unnecessary for the statically accepted prepositioned XUID-0 marketplace directory route, but the exact ContentManager hierarchy, immediate child directory, and root dlc.fpk are still required.",
     "remainingBlockers": "Scenario XML completeness, Xbox DDS production, menu and gameplay acceptance, save identity, and multiplayer equality remain separate. FPK byte representability does not make the bundle playable."
   },
   "guards": [
     "Do not infer Xbox behavior from the PS3 comparison implementation.",
     "Do not describe the synthetic one-byte payloads as semantically valid scenario, map, or DDS content.",
     "Do not claim support for duplicate names, path-bearing entry names, non-ASCII names, compression, archive mutation, or donor-based repacking.",
-    "Do not implement a writer, STFS package, installer, title patch, SDK path change, activation action, or runtime probe from this packet.",
-    "Do not call the prepositioned route installable or playable without the remaining content and runtime gates."
+    "Do not implement a writer, STFS package, installer, title patch, SDK path change, activation action, or runtime probe from this finding.",
+    "Do not call the prepositioned route installable or playable without the remaining content and runtime requirements."
   ],
   "conclusion": "A complete deterministic version-6 byte model exists for a wholly original archive with unique non-empty ASCII basenames and raw payloads. The header is 14 bytes; each record is 20 plus aligned name bytes; names are non-terminated; the two metadata words may be zero when names are unique; size and absolute offset are the only payload descriptors; and no serialized checksum, cryptographic signature, compression descriptor, aggregate size, or footer exists in the examined header and record path. Registered lookup folds ASCII case, normalizes query separators and, in the observed current mode, selects a basename before indexing by a derived raw CRC-32. This closes static FPK byte representation for the prepositioned route while leaving scenario, DDS, and runtime acceptance as separate blockers."
 }

@@ -15,12 +15,12 @@
     "coupledFillBuild": "0x822688C0",
     "textureBind": "0x82302758",
     "textureBackendEnsure": "0x82305FD8",
-    "boundary": "This packet identifies the renderer capability snapshot that controls complex textured mesh generation and correlates its failed first query with exact image-shape writer selection. It provides no basis for forcing capability bits or patching descriptors."
+    "boundary": "This finding identifies the renderer capability snapshot that controls complex textured mesh generation and correlates its failed first query with exact image-shape writer selection. It provides no basis for forcing capability bits or patching descriptors."
   },
   "dependencies": [
     {
       "topic": "gfx-coupled-fill-producer",
-      "use": "current bounded-source, writer-selection, and descriptor-production contract"
+      "use": "current contract for count-limited sources, writer selection, and descriptor production"
     },
     {
       "topic": "gfx-source-count-contract",
@@ -78,9 +78,9 @@
     "function": "0x822688C0",
     "readSite": "0x8226896C",
     "extractSite": "0x82268978",
-    "behavior": "The coupled-fill build tests RendererVtxFmts bit 0x10, which represents Vertex_XY16iCF32 support. Format 3 is the default; format 4 additionally requires that capability and the mesh latch or a bounded resource-bearing source.",
-    "qualification": "RenderFlags +0x1C and RendererCapBits +0x24 independently gate EdgeAA eligibility.",
-    "descriptorResult": "The simple and complex writer outcomes remain those recorded by gfx-coupled-fill-producer; the bounded title session adds the natural source count and descriptor tuple recorded in runtimeEvidence."
+    "behavior": "The coupled-fill build tests RendererVtxFmts bit 0x10, which represents Vertex_XY16iCF32 support. Format 3 is the default; format 4 additionally requires that capability and the mesh latch or a resource-bearing source within the count limit.",
+    "qualification": "RenderFlags +0x1C and RendererCapBits +0x24 independently control EdgeAA eligibility.",
+    "descriptorResult": "The simple and complex writer outcomes remain those recorded by gfx-coupled-fill-producer; the limited title session adds the natural source count and descriptor tuple recorded in runtimeEvidence."
   },
   "textureBind": {
     "function": "0x82302758",
@@ -89,7 +89,7 @@
     "ensureCallSite": "0x82302790",
     "ensureTarget": "0x82305FD8",
     "behavior": "The bind path reads renderer-texture backend +0x28 and calls the ensure routine only when that field is null, then reloads the field for submission.",
-    "qualification": "The bounded title session did not observe the resolve-image, resolve-output, or texture-bind markers, so it does not establish a resolved image, bind, backend value, or visible result."
+    "qualification": "The limited title session did not observe the resolve-image, resolve-output, or texture-bind markers, so it does not establish a resolved image, bind, backend value, or visible result."
   },
   "staticQuery": {
     "mode": "foreground-read-only",
@@ -157,17 +157,17 @@
         }
       ],
       "filesystemFallbackObserved": false,
-      "qualification": "The exact-name resource/open observations occurred in the same bounded title sessions as the natural descriptor. Dynamic descriptor, resource, image, and output pointers are not promoted as stable identities."
+      "qualification": "The exact-name resource and open observations occurred in the same limited title sessions as the natural descriptor. Dynamic descriptor, resource, image, and output pointers are not promoted as stable identities."
     },
     "presentationBoundary": {
-      "lastObserved": "natural descriptor at coupled-fill entry/source 0x527f9e1c",
+      "lastObserved": "natural descriptor at coupled-fill entry with source 0x527f9e1c",
       "downstreamMarkers": {
         "resolveImage": false,
         "resolveOutput": false,
         "textureBind": false
       },
-      "result": "The natural path stopped being observable after descriptor/resource creation and before the first resolver or bind marker. The run then encountered repeated ObjectIcons VFS failures and exited with illegal instruction.",
-      "qualification": "This identifies the first bounded observation boundary, not a causal proof that the boundary caused missing presentation."
+      "result": "The natural path stopped being observable after descriptor and resource creation and before the first resolver or bind marker. The run then encountered repeated ObjectIcons VFS failures and exited with illegal instruction.",
+      "qualification": "This identifies the first observation boundary within the limited session, not a causal proof that the boundary caused missing presentation."
     },
     "excluded": [
       "format or descriptor validation writes",
@@ -178,7 +178,7 @@
       "status": "bounded",
       "session": "title/loading-screen",
       "date": "2026-08-16",
-      "method": "default-off SDK texture-cache log of each distinct key committed to a load, over a bounded 25 second launch",
+      "method": "default-off SDK texture-cache log of each distinct key committed to a load, over a launch limited to 25 seconds",
       "distinctKeys": 41,
       "guestUploadShapes": {
         "64x64": 46,
@@ -201,8 +201,8 @@
       "tiledRgbaKeys": "Four 64x64 content keys plus two 1280x720 endian-0 presentation surfaces.",
       "nearestMiss": "1AEA1000:1024:256:1024:0:18:1, an untiled DXT1 key of matching geometry and unrelated format.",
       "result": "No tiled k_8_8_8_8 endian-2 key outside the 64x64 class was committed to a load. GFx images outside that class do not reach the GPU.",
-      "qualification": "The enumeration is bounded to one session and records key identity only. It does not establish which guest function omits the fetch constant, nor any asset identity for a loaded key.",
-      "scopeCorrection": "The shape table is bounded to the loading screen. A later 95 second interactive session counted 189440 binds at 0x82302758 with no null, unreadable, or bad-reference cases, and recorded 64x64, 16x16, 32x32, and 256x128 bound shapes. Image-sized textures therefore do bind. Do not read this table as a general claim that only 64x64 reaches the GPU.",
+      "qualification": "The enumeration is limited to one session and records key identity only. It does not establish which guest function omits the fetch constant, nor any asset identity for a loaded key.",
+      "scopeCorrection": "The shape table is limited to the loading screen. A later 95 second interactive session counted 189440 binds at 0x82302758 with no null, unreadable, or bad-reference cases, and recorded 64x64, 16x16, 32x32, and 256x128 bound shapes. Image-sized textures therefore do bind. Do not read this table as a general claim that only 64x64 reaches the GPU.",
       "survivingClaim": "No 1024x256 tiled k_8_8_8_8 key was committed to a load, and no 1024x256 bind occurred in 189440 counted samples."
     },
     "capsInitialization": {
@@ -241,7 +241,7 @@
     "rendererBoundary": {
       "status": "settled",
       "date": "2026-08-16",
-      "session": "title/menu, interactive",
+      "session": "title and menu, interactive",
       "statement": "The GFx core never offers the missing images to the renderer. Every renderer stage downstream of that handoff is correct.",
       "site": "0x82303B68",
       "siteRole": "Textured-fill setter. Writes draw-state kind 2 and copies a nine-word fill descriptor whose word 0 is the texture.",

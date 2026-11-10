@@ -10,7 +10,7 @@
     "functions": ["0x82CDDF08", "0x82CD9970", "0x82D11AD8", "0x82D7F838", "0x82E2A838"],
     "interiorEdges": ["0x82CDF74C", "0x82CD9C08", "0x82CDCB34", "0x82CDCDB8", "0x82CDCEB4", "0x82CDD1A4", "0x82CDD930", "0x82CDD938", "0x82CDD958", "0x82CDD978", "0x82CDDEF8"],
     "globals": ["0x82FFE7C4", "0x830E45BC", "0x830F2BF0"],
-    "boundary": "This packet decides ordering for one observed unit-versus-unit combat path. It does not name RNG, damage, XP, promotion, retreat, or capture fields; establish a speed mutation; or claim city, naval, air, defeat, and capture paths are equivalent."
+    "boundary": "This finding decides ordering for one observed unit-versus-unit combat path. It does not name RNG, damage, XP, promotion, retreat, or capture fields; establish a speed mutation; or claim city, naval, air, defeat, and capture paths are equivalent."
   },
   "dependencies": [
     {
@@ -20,7 +20,7 @@
   ],
   "currentEvidence": {
     "method": "foreground read-only Ghidra function and raw-word queries; narrow generated-code corroboration; and a default-off runtime probe over an owner-performed unit-versus-unit attack",
-    "qualification": "The version 1.3 Ghidra project truncates the affected Xenon functions after repaired save-register thunks. Raw Ghidra words confirm the critical instructions, while generated code is used only for bounded control-flow corroboration."
+    "qualification": "The version 1.3 Ghidra project truncates the affected Xenon functions after repaired save-register thunks. Raw Ghidra words confirm the critical instructions, while generated code is used only to corroborate the local control flow."
   },
   "commandPath": {
     "command": 0,
@@ -43,7 +43,7 @@
       "defenderPlayer": "r1+1596",
       "defenderUnit": "r1+1604"
     },
-    "runtimeResult": "The clean capture selected attacker 0/2 at 0x830F2C98 and defender 5/2 at 0x8310D098. The first complete record pair was retained as the baseline for the remainder of the command."
+    "runtimeResult": "The clean capture selected attacker 0/2 at 0x830F2C98 and defender 5/2 at 0x8310D098. The first complete record pair was kept as the baseline for the remainder of the command."
   },
   "presentation": {
     "auxiliaryCalls": ["0x82CDCB34", "0x82CDCDB8", "0x82CDCEB4", "0x82CDD1A4"],
@@ -57,7 +57,7 @@
     "completionEdge": "0x82CDD978",
     "resolverEnd": "0x82CDDEF8",
     "targetResult": "The observed 0x82D7F838 target indexes the same 0x54-byte attacker and defender records, prepares both through 0x82D7DEE8, and calls 0x82D66B20 before returning success. Its runtime role is accepted as the main combat presentation entry for this path.",
-    "qualification": "Ghidra decompilation stops at the target's save-register thunk. Raw words at 0x82D7F838, 0x82D7F8A8, 0x82D7F8B4, 0x82D7F930, and 0x82D7FA04 plus narrow generated code corroborate the bounded body."
+    "qualification": "Ghidra decompilation stops at the target's save-register thunk. Raw words at 0x82D7F838, 0x82D7F8A8, 0x82D7F8B4, 0x82D7F930, and 0x82D7FA04 plus narrow generated code corroborate only the inspected part of the target's body."
   },
   "runtimeProbe": {
     "status": "captured",
@@ -82,7 +82,7 @@
       },
       "result": "Both participant records changed after the main presentation began and before its native completion edge. Combat result-relevant title state is therefore advanced during the observed presentation interval rather than being fixed entirely beforehand."
     },
-    "probeCorrection": "An initial capture showed that 0x82CD9970 and participant selection are revisited hundreds of times before one resolver end. The corrected probe counts those passes but retains only the first valid participant snapshot, eliminating baseline replacement without changing guest state."
+    "probeCorrection": "An initial capture showed that 0x82CD9970 and participant selection are revisited hundreds of times before one resolver end. The corrected probe counts those passes but keeps only the first valid participant snapshot, eliminating baseline replacement without changing guest state."
   },
   "staticQuery": {
     "scripts": ["ghidra/DumpFunctions.java", "ghidra/DumpMemoryWords.java", "ghidra/FindStrings.java", "ghidra/FindPointerValues.java"],
@@ -93,16 +93,16 @@
   "historicalToolReferences": [
     {
       "locator": "ghidra/FindConstantArgCalls.java",
-      "qualification": "Retained as cited in the original combat query record. The implementation was not found in the maintained checkout or available path history, so its producer identity and replay remain unresolved. No equivalence to a maintained helper is asserted; the original zero-result query remains excluded as negative evidence by staticQuery.truncationGuard."
+      "qualification": "Kept as cited in the original combat query record. The implementation was not found in the maintained checkout or available path history, so its producer identity and replay remain unresolved. No equivalence to a maintained helper is asserted; the original zero-result query remains excluded as negative evidence by staticQuery.truncationGuard."
     }
   ],
   "guards": [
     "Do not skip 0x82D7F838, 0x82CDD938, or the 0x82CDD958 pump loop; the observed interval advances both participant records.",
     "Do not write the observed unit-record offsets to force a result; their individual combat meanings are not accepted.",
-    "Do not treat 0x82FFE7C4 or 0x830E45BC as a presentation-only speed scalar without bounded producer and reader evidence from G4.",
+    "Do not treat 0x82FFE7C4 or 0x830E45BC as a presentation-only speed scalar without evidence from G4 covering the producer and reader.",
     "Preserve the native completion edge at 0x82CDD978 and resolver end at 0x82CDDEF8 exactly once.",
     "Native-path semantic parity is accepted for the passed land victory, land defeat, city no-capture, city capture, and owner-confirmed naval cases. Air, retreat or withdrawal, and promotion or veteran results become required only if evidence establishes a distinct pace producer, completion path, or failure.",
     "The probe remains debug-only, default-off, and performs no guest writes or register mutation."
   ],
-  "conclusion": "Version 1.3 combat is not a presentation-only wait on the observed unit-versus-unit path. The resolver revisits participant state hundreds of times while the main 0x82D7F838 presentation target and its pump are active, and both 0x54-byte unit records change before the native completion edge. Instant combat is therefore Class B/deeper-lifecycle work unless G4 finds a narrower state-machine-preserving speed producer; a hard skip is rejected."
+  "conclusion": "Version 1.3 combat is not a presentation-only wait on the observed unit-versus-unit path. The resolver revisits participant state hundreds of times while the main 0x82D7F838 presentation target and its pump are active, and both 0x54-byte unit records change before the native completion edge. Instant combat is therefore Class B, requiring deeper lifecycle work, unless G4 finds a narrower state-machine-preserving speed producer; a hard skip is rejected."
 }

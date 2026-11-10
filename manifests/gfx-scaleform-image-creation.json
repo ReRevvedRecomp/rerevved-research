@@ -20,7 +20,7 @@
     "textureFactory": "0x82302DC8",
     "textureVtable": "0x82169EC4",
     "uploadTarget": "0x82304CF0",
-    "boundary": "This packet establishes the generic external-image creation path. It does not prove that GFX_MainMenu_logo.dds used this path at runtime or that the engine type-7 texture registry participates."
+    "boundary": "This finding establishes the generic external-image creation path. It does not prove that GFX_MainMenu_logo.dds used this path at runtime or that the engine type-7 texture registry participates."
   },
   "currentEvidence": {
     "tagLoader": {
@@ -35,8 +35,8 @@
     },
     "stateSnapshotBuilder": {
       "address": "0x82216D18",
-      "method": "foreground read-only target confirmation plus exact current generated-code mapping of the ten-entry state-kind table, consecutive output-field sequence, and retained-state replacement stores; the Ghidra decompiler truncates at 0x82216D20",
-      "result": "The current snapshot builder requests state kinds 10, 11, 12, 15, 21, 16, 19, 18, 20, and 25 and stores their retained outputs at offsets 0x10 through 0x34 in that order. Only the state-kind-10 opener and state-kind-12 creator have bounded downstream roles."
+      "method": "foreground read-only target confirmation plus exact current generated-code mapping of the ten-entry state-kind table, consecutive output-field sequence, and the stores that replace state that stays valid while held; the Ghidra decompiler truncates at 0x82216D20",
+      "result": "The current snapshot builder requests state kinds 10, 11, 12, 15, 21, 16, 19, 18, 20, and 25 and stores their outputs, which stay valid while held, at offsets 0x10 through 0x34 in that order. Only the state-kind-10 opener and state-kind-12 creator have downstream roles, limited to the inspected opener and creator paths."
     },
     "resourceCreator": {
       "address": "0x822189A8",
@@ -55,18 +55,18 @@
     },
     "rendererConstructor": {
       "address": "0x82301D00",
-      "method": "current vtable materialization and bounded constructor-field validation",
+      "method": "current vtable materialization and validation of the constructor fields examined here",
       "result": "The current renderer constructor installs vtable 0x82169E30."
     },
     "textureFactory": {
       "address": "0x82302DC8",
-      "method": "matching 0x30-byte allocation, renderer-owner field, zeroed dimensions/backend fields, current texture-vtable store, and renderer-vtable slot",
+      "method": "matching 0x30-byte allocation, renderer field, zeroed dimension and backend fields, current texture-vtable store, and renderer-vtable slot",
       "result": "The current factory allocates a 0x30-byte renderer texture, installs vtable 0x82169EC4, stores the renderer at +0x1C, and clears +0x20, +0x24, and +0x28."
     },
     "uploadTarget": {
       "address": "0x82304CF0",
       "method": "current texture-vtable slot plus matching decoded-image selection, dimension writes, backend allocation, upload, and backend-field store",
-      "result": "The current upload method consumes decoded-image data and dimensions, records width and height at +0x20/+0x24, and stores the created backend texture at +0x28."
+      "result": "The current upload method consumes decoded-image data and dimensions, records width and height at +0x20 and +0x24, and stores the created backend texture at +0x28."
     }
   },
   "externalImageTag": {
@@ -87,9 +87,9 @@
     "snapshotBuilder": "0x82216D18",
     "stateKinds": [10, 11, 12, 15, 21, 16, 19, 18, 20, 25],
     "snapshotFields": [
-      { "offset": "0x10", "stateKind": 10, "downstreamRole": "bounded external-file opener" },
+      { "offset": "0x10", "stateKind": 10, "downstreamRole": "external-file opener, limited to the inspected path" },
       { "offset": "0x14", "stateKind": 11 },
-      { "offset": "0x18", "stateKind": 12, "downstreamRole": "bounded external-image creator" },
+      { "offset": "0x18", "stateKind": 12, "downstreamRole": "external-image creator, limited to the inspected path" },
       { "offset": "0x1C", "stateKind": 15 },
       { "offset": "0x20", "stateKind": 21 },
       { "offset": "0x24", "stateKind": 16 },
@@ -106,8 +106,8 @@
     "vtable": "0x8213CF28",
     "createSlot": "0x4",
     "createTarget": "0x821E2F80",
-    "result": "The snapshot builder replaces and stores all ten retained outputs in the recorded order. Separately, the version 1.3 loader publishes a state-kind-12 object whose create slot resolves directly to the external-image callback.",
-    "qualification": "State kind is a numeric GFx identity, not a gameplay enumeration. The roles, concrete types, ownership, lifetime, and runtime values of kinds 11, 15, 21, 16, 19, 18, 20, and 25 remain unresolved; timing, callback, availability, and input are not interchangeable."
+    "result": "The snapshot builder replaces and stores all ten outputs that stay valid while held in the recorded order. Separately, the version 1.3 loader publishes a state-kind-12 object whose create slot resolves directly to the external-image callback.",
+    "qualification": "State kind is a numeric GFx identity, not a gameplay enumeration. The roles, concrete types, which code holds and releases each object, lifetime, and runtime values of kinds 11, 15, 21, 16, 19, 18, 20, and 25 remain unresolved; timing, callback, availability, and input are not interchangeable."
   },
   "fileDecodeHandoff": {
     "resourceCreator": "0x822189A8",
@@ -130,7 +130,7 @@
     "rendererField": "0x1C",
     "dimensionsFields": ["0x20", "0x24"],
     "backendField": "0x28",
-    "result": "The current renderer table binds slot 0x8 to the 0x30-byte texture factory. The produced texture table binds slot 0x8 to the upload method, closing the static decoded-image-to-backend-texture path."
+    "result": "The current renderer table ties slot 0x8 to the 0x30-byte texture factory. The produced texture table ties slot 0x8 to the upload method, which completes the static decoded-image-to-backend-texture path."
   },
   "staticQuery": {
     "mode": "foreground-read-only",

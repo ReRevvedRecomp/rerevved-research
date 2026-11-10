@@ -13,7 +13,7 @@
     "templateInitializer": "0x8269A378",
     "backendCreator": "0x8269AB90",
     "fetchSelector": "0x8269AF10",
-    "boundary": "This packet covers the persistent backend object, its six template dwords, renderer upload and bind ownership, slot-local descriptor merging, and the dirty-state boundary. It excludes runtime texture identities, captured descriptor values, command-packet emission, host execution, SDK cache keys, runtime hooks, and patches."
+    "boundary": "This finding covers the persistent backend object, its six template dwords, the renderer upload and bind functions that create, store and use it, slot-local descriptor merging, and the dirty-state boundary. It excludes runtime texture identities, captured descriptor values, command-packet emission, host execution, SDK cache keys, runtime hooks, and patches."
   },
   "dependencies": [
     { "topic": "gfx-decoded-image-upload", "use": "current renderer upload and backend upload boundary" },
@@ -21,7 +21,7 @@
     { "topic": "gfx-variant8-tf1-semantics", "use": "static renderer slot selection and null-record guard" }
   ],
   "currentEvidence": {
-    "method": "current generated-code inspection of exact object fields, call order, selector index, bit merge, and dirty state, with foreground read-only Ghidra confirmation of function starts and bounded machine words",
+    "method": "current generated-code inspection of exact object fields, call order, selector index, bit merge, and dirty state, with foreground read-only Ghidra confirmation of function starts and machine words in fixed windows",
     "entries": [
       {
         "role": "renderer bind",
@@ -75,7 +75,7 @@
       "bind": "0x823027A4 loads the graphics-state pointer before the call at 0x823027B8 to 0x8269AF10."
     },
     "backendUploadBoundary": "0x82304CF0 forwards selected base and mip sources through 0x82578E00, but those source pointers do not replace the persistent backend object stored at renderer texture +0x28.",
-    "result": "The renderer upload owns backend creation and storage; the later bind consumes that same field to select guest fetch state."
+    "result": "The renderer upload creates and stores the backend object; the later bind consumes that same field to select guest fetch state."
   },
   "backendTexture": {
     "size": "0x34",
@@ -91,7 +91,7 @@
     ],
     "construction": "0x8269AB90 allocates 0x34 bytes and calls 0x8269A378 at 0x8269AC1C. The initializer constructs all six template words. The creator then merges allocation-derived address portions into dword 1 at +0x20 and dword 5 at +0x30.",
     "completion": "The final creator patch is the +0x30 store at 0x8269ACA4; the persistent backend template is complete after that instruction.",
-    "qualification": "Fields before +0x1C participate in allocation and backend ownership but are not assigned original class or platform API names here."
+    "qualification": "Fields before +0x1C participate in allocation and in which code holds and releases the backend, but are not assigned original class or platform API names here."
   },
   "fetchSelection": {
     "function": "0x8269AF10",
@@ -109,7 +109,7 @@
       { "offset": "renderer slot + 0x2EAE", "role": "lower bound merged into dword 4 bits 2 through 5" },
       { "offset": "renderer slot + 0x2EC8", "role": "upper bound merged into dword 4 bits 6 through 9" }
     ],
-    "qualification": "The renderer slot, guest shadow index, and later hardware fetch ordinal are distinct values. This packet stops before normalization or packet emission."
+    "qualification": "The renderer slot, guest shadow index, and later hardware fetch ordinal are distinct values. This finding stops before normalization or command-packet emission."
   },
   "descriptorMerge": {
     "wordOrder": "Six guest big-endian 32-bit dwords in increasing address order.",
@@ -125,7 +125,7 @@
     "completion": "Dword 2 is stored first. Dwords 0, 1, 3, and 5 follow. The dword-4 store at 0x8269B00C completes the selected six-word shadow descriptor.",
     "dirtyState": "0x8269B010 ORs the supplied 64-bit mask into graphics state +0x18. The store at 0x8269B014 then records the selected backend pointer in the slot +0xC40 table.",
     "nullBackend": "When r5 is zero, the merge and dirty update are skipped, but the selected backend table is still updated with the null pointer before prior-backend cleanup.",
-    "result": "The selected shadow entry keeps bounded slot-local state rather than copying the backend template byte-for-byte."
+    "result": "The selected shadow entry keeps slot-local state, including the bounds merged into dword 4, rather than copying the backend template byte-for-byte."
   },
   "staticQuery": {
     "mode": "foreground-read-only",

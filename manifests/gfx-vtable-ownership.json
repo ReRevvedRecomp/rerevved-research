@@ -20,7 +20,7 @@
     ],
     "commonTarget": "0x821FBC38",
     "ownerConstructor": "0x82214450",
-    "boundary": "This packet covers direct vptr stores, three slot +0x2C dispatch edges, base initialization followed by vptr replacement, and two directly constructed child pointers. It excludes semantic class names, unclassified slots, destruction, exclusive lifetime, runtime dispatch, hooks, and patches."
+    "boundary": "This finding covers direct vptr stores, three slot +0x2C dispatch edges, base initialization followed by vptr replacement, and two directly constructed child pointers. It excludes semantic class names, unclassified slots, destruction, exclusive lifetime, runtime dispatch, hooks, and patches."
   },
   "dependencies": [
     {
@@ -55,7 +55,7 @@
         "confidence": "strong"
       },
       {
-        "role": "owner constructor",
+        "role": "constructor of the containing object",
         "address": "0x82214450",
         "confidence": "strong",
         "instructionCount": 100
@@ -160,7 +160,7 @@
       { "offset": "0x94", "store": "0x822145CC" }
     ],
     "result": "The constructor directly allocates and initializes two 0x3C child objects, then stores their pointers in the parent at offsets +0x90 and +0x94.",
-    "qualification": "Construction proves direct containment. Destruction, release order, aliasing, and exclusive lifetime remain unresolved, so ownership confidence remains strong."
+    "qualification": "Construction proves direct containment. Destruction, release order, aliasing, and exclusive lifetime remain unresolved, so confidence in the responsibility assessment, which code holds and releases the children, remains strong."
   },
   "staticQuery": {
     "mode": "foreground-read-only",
@@ -181,7 +181,7 @@
     "Do not infer semantic class names from table shape, address proximity, or shared slot targets.",
     "Do not infer inheritance beyond the observed initializer call and subsequent vptr replacement.",
     "Do not classify unrecorded slots or copy neighboring slot meanings between the four tables.",
-    "Do not promote destruction, exclusive ownership, release order, runtime dispatch, or visible behavior without separate evidence.",
+    "Do not promote destruction, exclusive responsibility for holding and releasing the child objects, release order, runtime dispatch, or visible behavior without separate evidence.",
     "Static evidence does not establish a runtime hook, launch, guest-memory write, Recomp patch, or SDK change."
   ],
   "conclusion": "Version 1.3 defines four related function-pointer tables. Three slot +0x2C entries dispatch through 0x821F80D0 or 0x821F8600 to 0x821FBC38. The 0x82214450 constructor first receives base table 0x8213D408, replaces it with 0x8213F088, and directly constructs two 0x3C children with table 0x8213D2B8 at parent offsets +0x90 and +0x94."

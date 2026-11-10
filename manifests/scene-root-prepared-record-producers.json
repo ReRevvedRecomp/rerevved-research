@@ -5,18 +5,18 @@
   "status": "closed",
   "confidence": "confirmed",
   "image": "image.json",
-  "question": "Which bounded version 1.3 writes produce prepared-record word 0x0 and byte 0x1C before scene-root content slot 0 consumes them?",
+  "question": "Which version 1.3 writes produce prepared-record word 0x0 and byte 0x1C before scene-root content slot 0 consumes them?",
   "scope": {
     "functions": ["0x82D51160", "0x82D4F678"],
     "preparedRecordFields": ["0x0", "0x1C"],
     "sourceObjectField": "0x6",
-    "boundary": "This packet proves two exact record producers and one dependent constant selection. It does not define either complete type, semantic field names, runtime values, or runtime success."
+    "boundary": "This finding proves two exact record producers and one dependent constant selection. It does not define either complete type, semantic field names, runtime values, or runtime success."
   },
   "dependencies": [
     { "topic": "scene-root-content-construction", "use": "current recursive caller, prepared-record slot-0 consumer, and stack-record boundary" }
   ],
   "currentEvidence": {
-    "method": "identified prepared-record producer 0x82D4F678 called by 0x82D51160 by source-halfword, sign-extension, record-write, byte-gate, generated-code, and foreground read-only Ghidra corroboration",
+    "method": "identified prepared-record producer 0x82D4F678 called by 0x82D51160 by source-halfword, sign-extension, record-write, byte-check, generated-code, and foreground read-only Ghidra corroboration",
     "entries": [
       {
         "role": "prepared-record populate",
@@ -24,7 +24,7 @@
         "confidence": "confirmed"
       }
     ],
-    "qualification": "The function uses the r4 record argument, r5 source argument, source offset 0x6, destination offset 0x0, caller-zeroed byte 0x1C, and -1/-2 selection for word 0x18."
+    "qualification": "The function uses the r4 record argument, r5 source argument, source offset 0x6, destination offset 0x0, caller-zeroed byte 0x1C, and the selection of -1 or -2 for word 0x18."
   },
   "staticQuery": {
     "scripts": ["ghidra/DumpFunctions.java", "ghidra/DumpInstructions.java"],
@@ -68,11 +68,11 @@
     "dependentWriteInstruction": "0x82D4F740",
     "dependentRecordOffset": "0x18",
     "result": "The population function reads prepared-record byte 0x1C. Zero selects constant -2 for record word 0x18; a nonzero byte preserves the preceding constant -1 for that word.",
-    "boundary": "The original meanings of byte 0x1C and the -1/-2 values remain unresolved."
+    "boundary": "The original meanings of byte 0x1C and the values -1 and -2 remain unresolved."
   },
   "guards": [
-    "Do not assign semantic names to the prepared-record fields, source-object halfword, or -1/-2 values.",
-    "Do not define a complete prepared-record or source-object type from this bounded slice.",
+    "Do not assign semantic names to the prepared-record fields, source-object halfword, or -1 and -2 values.",
+    "Do not define a complete prepared-record or source-object type from this slice.",
     "Do not enter child collections or later scene-root content polymorphic dispatch.",
     "Do not infer successful runtime record construction or rendering."
   ],

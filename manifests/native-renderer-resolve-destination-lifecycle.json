@@ -5,7 +5,7 @@
   "status": "closed",
   "confidence": "strong",
   "image": "image.json",
-  "question": "Can static guest code uniquely bind the resource passed in r6 at Resolve callsite 0x8250AFEC to the accepted NiXenonExplicitBuffersData creation and lifetime chain?",
+  "question": "Can static guest code uniquely tie the resource passed in r6 at Resolve callsite 0x8250AFEC to the accepted NiXenonExplicitBuffersData creation and lifetime chain?",
   "scope": {
     "rendererEntry": "0x8250AC90",
     "providerBoundary": "0x8250AE84 through 0x8250AEA4",
@@ -13,7 +13,7 @@
     "resolveCallsite": "0x8250AFEC",
     "candidateVtable": "0x8204767C",
     "candidateProvider": "0x82517860",
-    "boundary": "This packet follows only the current-group item selection, NiXenon2DBufferData base filter, virtual +0x0C output, and unchanged register path to the exact Resolve call. It reuses accepted candidate creation, descriptor, selector, cleanup, and allocator-frontier facts without widening their searches. It does not inspect arbitrary group members, allocator callers, descriptors, assets, SDK internals, or runtime captures."
+    "boundary": "This finding follows only the current-group item selection, NiXenon2DBufferData base filter, virtual +0x0C output, and unchanged register path to the exact Resolve call. It reuses accepted candidate creation, descriptor, selector, cleanup, and allocator facts, including the open allocator question, without widening their searches. It does not inspect arbitrary group members, allocator callers, descriptors, assets, SDK internals, or runtime captures."
   },
   "dependencies": [
     {
@@ -26,7 +26,7 @@
     },
     {
       "topic": "native-renderer-resource-lifetime",
-      "use": "Provides the accepted two-slot retention and cleanup boundary and the bounded negative for allocation generation and recycling."
+      "use": "Provides the accepted boundary for the two slots (what stays valid, and cleanup) and the negative result for allocation generation and recycling, limited to what that result searched."
     }
   ],
   "exactDispatch": {
@@ -37,12 +37,12 @@
     "dynamicEdge": "No instruction between item selection and Resolve compares the selected item's vptr or provider slot with 0x8204767C or 0x82517860. Because the group returns a base-compatible object through virtual enumeration, static code does not uniquely select the concrete provider used by the runtime item."
   },
   "candidateChain": {
-    "provider": "For vptr 0x8204767C, slot +0x0C is 0x82517860. That provider reads selector +0x98, selects retained object +0x90 or +0x94, writes it to the first output, writes zero to the second output, and returns true.",
+    "provider": "For vptr 0x8204767C, slot +0x0C is 0x82517860. That provider reads selector +0x98, selects stored object +0x90 or +0x94, writes it to the first output, writes zero to the second output, and returns true.",
     "creationAndPublication": "Accepted dependency evidence shows factory 0x825184D0 creating the 0x9C-byte container, obtaining two objects through device creator 0x82533DB8, storing them at +0x90 and +0x94, setting +0x98 to zero, and callers publishing the container into the default render-target group later enumerated through renderer +0x550.",
     "headerAndBacking": "Accepted dependency evidence shows 0x82533DB8 allocating a 0x34-byte header, deriving primary and optional secondary backing sizes, allocating through 0x82E29168, and patching page-aligned bases into header +0x20 and optionally +0x30 through 0x826B7140. Exact runtime dimensions, format or usage inputs, and lower allocation generation remain unresolved.",
-    "mutationAndReuse": "Accepted dependency evidence shows present virtual 0x82517E38 selecting the same retained slot and flipping +0x98 between zero and one after its present path. The selector is alternating frame state, not allocation or contents generation. No scalar generation, replacement, invalidation, or dirty publication field is accepted for either retained object or its backing.",
-    "release": "Accepted dependency evidence shows 0x82518678 atomically releasing and clearing both retained entries, destroying an entry when its reference count reaches zero, and 0x82518E88 invoking cleanup before freeing the container. The lower backing deallocation and address-reuse policy remain unresolved behind the capped 0x82E29168 allocator frontier.",
-    "qualification": "Every fact in this object is conditional on the exact runtime selected item using vptr 0x8204767C. The static dispatch path does not establish that condition, so these facts are not promoted as the lifecycle of the exact Resolve r6 resource."
+    "mutationAndReuse": "Accepted dependency evidence shows present virtual 0x82517E38 selecting the same stored slot and flipping +0x98 between zero and one after its present path. The selector is alternating frame state, not allocation or contents generation. No scalar generation, replacement, invalidation, or dirty publication field is accepted for either stored object or its backing.",
+    "release": "Accepted dependency evidence shows 0x82518678 atomically releasing and clearing both stored entries, destroying an entry when its reference count reaches zero, and 0x82518E88 invoking cleanup before freeing the container. The lower backing deallocation and address-reuse policy remain unresolved behind the capped 0x82E29168 allocator, which remains an open question.",
+    "qualification": "Every fact in this object holds only when the exact runtime selected item uses vptr 0x8204767C. The static dispatch path does not establish that condition, so these facts are not promoted as the lifecycle of the exact Resolve r6 resource."
   },
   "decisiveObservation": {
     "status": "required",
@@ -56,11 +56,11 @@
       "selected vtable [vptr + 0x0C] provider target",
       "only when vptr is exactly 0x8204767C and provider is 0x82517860: selector [r30 + 0x98]; read selected slot [r30 + 0x90 + 4 * selector] only after validating selector 0 or 1"
     ],
-    "emittedValues": "Emit only the concrete vptr, provider target, candidate selector when admitted, and a Boolean stating whether the selected slot equals r6. Do not emit r30, r6, slot pointers, descriptor contents, backing addresses, payloads, or guest writes.",
+    "emittedValues": "Emit only the concrete vptr, provider target, candidate selector when the candidate layout is accepted, and a Boolean stating whether the selected slot equals r6. Do not emit r30, r6, slot pointers, descriptor contents, backing addresses, payloads, or guest writes.",
     "alternatives": [
       {
         "condition": "vptr = 0x8204767C, provider = 0x82517860, selector is 0 or 1, and selected-slot-equals-r6 is true",
-        "result": "The exact runtime Resolve destination is joined to the accepted explicit-buffer container and its conditional creator, alternating reuse, and cleanup chain. Allocation and contents generation plus lower backing recycling would remain unresolved."
+        "result": "The exact runtime Resolve destination is linked to the accepted explicit-buffer container and its creator (which applies only under a condition), alternating reuse, and cleanup chain. Allocation and contents generation plus lower backing recycling would remain unresolved."
       },
       {
         "condition": "a different readable vptr or provider target",
@@ -68,22 +68,22 @@
       },
       {
         "condition": "the candidate vptr matches but selector is outside 0 or 1, selected-slot-equals-r6 is false, or a required word is unreadable",
-        "result": "The observation contradicts the admitted candidate layout or boundary and must be rejected pending a narrower placement or state explanation."
+        "result": "The observation contradicts the accepted candidate layout or boundary and must be rejected pending a narrower placement or state explanation."
       }
     ],
     "observationCoverage": {
-      "nativeRoute": "At title revision 75df5c52ca90a5ea77690a90cf965ff8d79bac92, the existing native completion logs expose decoded color and optional depth EDRAM fields, but not this exact selected-item/provider-to-r6 join or a common observation key. The ordinary renderer Resolve line is emitted only for global Resolve sequence 1 and is suppressed on an unreadable destination descriptor; its absence is an inconclusive coverage gap, not a reachability negative.",
-      "sceneRoute": "Scene-resource capture is admitted only with the Xenos backend. Its Resolve and target-bind events record descriptors or raw headers, but not this provider join or actual target EDRAM bases. Combining unrelated native and Xenos rows cannot establish a same-call target identity.",
-      "prerequisite": "A closing observation needs an explicitly enabled, default-off observer at the exact boundary, supported access to the selected-item context, successful bounded reads, and current title/SDK/executable/image identity. Do not assume r30 retention at a different hook entry or substitute a historical image digest.",
-      "knownAlternate": "RVA-F-0142 supplies historical evidence for vptr 0x82047628 with provider 0x82517800. A current exact-boundary row with that pair is an alternate identity result; candidate selector and selected-slot equality are inapplicable, and no +0x90/+0x94/+0x98 candidate read is admitted.",
-      "targetCompanion": "Concrete bound color/depth identity requires a separately scoped same-call target row with an opaque observation key, descriptor words, EDRAM fields, source slot/index, and explicit read status. This does not widen the provider row's emitted fields or establish F0265 incoming-group +0x74/+0x78 identity, allocation generation, target names, or cadence."
+      "nativeRoute": "At title revision 75df5c52ca90a5ea77690a90cf965ff8d79bac92, the existing native completion logs expose decoded color and optional depth EDRAM fields, but not this exact link from the selected item and provider to r6, or a common observation key. The ordinary renderer Resolve line is emitted only for global Resolve sequence 1 and is suppressed on an unreadable destination descriptor; its absence is an inconclusive coverage gap, not a reachability negative.",
+      "sceneRoute": "Scene-resource capture is allowed only with the Xenos backend. Its Resolve and target-bind events record descriptors or raw headers, but not this provider link or actual target EDRAM bases. Combining unrelated native and Xenos rows cannot establish a same-call target identity.",
+      "prerequisite": "A closing observation needs an explicitly enabled, default-off observer at the exact boundary, supported access to the selected-item context, successful limited reads, and current title, SDK, executable and image identity. Do not assume r30 still holds the same value at a different hook entry or substitute a historical image digest.",
+      "knownAlternate": "RVA-F-0142 supplies historical evidence for vptr 0x82047628 with provider 0x82517800. A current exact-boundary row with that pair is an alternate identity result; candidate selector and selected-slot equality are inapplicable, and no +0x90/+0x94/+0x98 candidate read is allowed.",
+      "targetCompanion": "Concrete bound color and depth identity requires a separately scoped same-call target row with an opaque observation key, descriptor words, EDRAM fields, source slot and index, and explicit read status. This does not widen the provider row's emitted fields or establish F0265 incoming-group +0x74/+0x78 identity, allocation generation, target names, or cadence."
     },
     "decisiveResult": "One successful exact-callsite record distinguishes the concrete provider while directly joining it to the r6 output. Existing capped logs cannot prove that the exact callsite was not reached. This manifest defines the observation but does not authorize or execute it."
   },
   "boundedNegative": {
-    "result": "Static guest code proves the base-compatible per-item dispatch and exact first-output-to-r6 dataflow, but it does not uniquely bind the runtime item to NiXenonExplicitBuffersData vptr 0x8204767C or provider 0x82517860.",
+    "result": "Static guest code proves the base-compatible per-item dispatch and exact first-output-to-r6 dataflow, but it does not uniquely tie the runtime item to NiXenonExplicitBuffersData vptr 0x8204767C or provider 0x82517860.",
     "effect": "The candidate factory, resource-header builder, backing allocator, selector, and cleanup remain accepted facts, but they cannot yet supply allocation identity, mutation generation, release, or reuse policy for the exact Resolve destination.",
-    "falsificationCondition": "The exact callsite observation records the admitted candidate identity and selected-slot equality, or returns one different concrete provider identity for a bounded static trace."
+    "falsificationCondition": "The exact callsite observation records the accepted candidate identity and selected-slot equality, or returns one different concrete provider identity for a static trace limited to the selected path."
   },
   "currentEvidence": {
     "method": "Foreground read-only DumpFunctionNeighborhoodBatch.java, DumpFunctions.java, and DumpMemoryWords.java queries against the canonical version-1.3 project, followed by one narrow exact-function generated-code window for sub_8250AC90 and reuse of accepted topic manifests.",
@@ -120,16 +120,16 @@
       "repository": "rerevved",
       "revision": "75df5c52ca90a5ea77690a90cf965ff8d79bac92",
       "windows": [
-        "src/app.cpp:930-984, Xenos-only trace and scene-capture admission",
-        "config/rerevved_hooks.toml:38-50,207-213,249-252, native completion and provider/Resolve hook arguments",
-        "src/rerevved_hooks.cpp:502-604,935-998, existing provider/Resolve observations and capped ordinary logging",
+        "src/app.cpp:930-984, Xenos-only trace and the rule that allows scene capture",
+        "config/rerevved_hooks.toml:38-50,207-213,249-252, native completion and provider and Resolve hook arguments",
+        "src/rerevved_hooks.cpp:502-604,935-998, existing provider and Resolve observations and capped ordinary logging",
         "src/gpu/diagnostics/native_renderer_guest_state.cpp:90-110, global Resolve sequence",
-        "src/gpu/completion/guest_progress_hooks.cpp:413-587, native target/depth EDRAM diagnostics",
-        "src/gpu/guest_d3d/guest_render_capture.h:236-313, bound color/depth descriptor and EDRAM decoding",
+        "src/gpu/completion/guest_progress_hooks.cpp:413-587, native target and depth EDRAM diagnostics",
+        "src/gpu/guest_d3d/guest_render_capture.h:236-313, bound color and depth descriptor and EDRAM decoding",
         "src/gpu/diagnostics/scene_resource_capture.cpp:1445-1479,1534-1542,1739-1753,1816-1819,2833-2892, scene descriptors, revision preamble and unavailable ordered target readback"
       ]
     },
-    "qualification": "The configured project truncates sub_8250AC90 at its save thunk, so exact image words provide the instruction anchors and the generated exact function supplies bounded register-flow corroboration. No incomplete body or absent reference is used as proof of a concrete type. The pinned host source describes observation coverage and prerequisites only; it is not a new runtime result."
+    "qualification": "The configured project truncates sub_8250AC90 at its save thunk, so exact image words provide the instruction anchors and the generated exact function supplies limited register-flow corroboration. No incomplete body or absent reference is used as proof of a concrete type. The pinned host source describes observation coverage and prerequisites only; it is not a new runtime result."
   },
   "catalogPromotion": {
     "newEntities": [],
@@ -143,5 +143,5 @@
     "Do not implement a persistent native mirror or infer backing retirement from this static result.",
     "Do not launch a capture from this manifest; runtime observation requires separate Title authorization and ownership."
   ],
-  "conclusion": "The exact guest path preserves the current-group item in r30, filters it only through the NiXenon2DBufferData base, dispatches that item's virtual +0x0C, and passes the unchanged first output in r6 to Resolve at 0x8250AFEC. It never checks the concrete vptr, so static code cannot join the exact runtime destination to the accepted NiXenonExplicitBuffersData factory, header/backing creator, alternating selector, cleanup, or allocator frontier. One read-only record immediately before 0x8250AFEC can close that edge by reporting only the r30 vptr, its +0x0C provider, the admitted selector, and selected-slot-equals-r6 Boolean. Until that result exists, allocation identity, contents generation, lower backing recycling, and a persistent Title mirror remain unauthorized."
+  "conclusion": "The exact guest path preserves the current-group item in r30, filters it only through the NiXenon2DBufferData base, dispatches that item's virtual +0x0C, and passes the unchanged first output in r6 to Resolve at 0x8250AFEC. It never checks the concrete vptr, so static code cannot link the exact runtime destination to the accepted NiXenonExplicitBuffersData factory, header and backing creator, alternating selector, cleanup, or the open allocator question. One read-only record immediately before 0x8250AFEC can close that edge by reporting only the r30 vptr, its +0x0C provider, the selector when the candidate layout is accepted, and selected-slot-equals-r6 Boolean. Until that result exists, allocation identity, contents generation, lower backing recycling, and a persistent Title mirror remain unauthorized."
 }

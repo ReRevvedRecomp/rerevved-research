@@ -5,7 +5,7 @@
   "status": "open",
   "confidence": "candidate",
   "image": "image.json",
-  "question": "Where can resolved numbered or named heights DDS bytes be replaced before parsing, and which buffer-ownership and native byte-transfer conditions apply?",
+  "question": "Where can resolved numbered or named heights DDS bytes be replaced before parsing, and which conditions apply to the code that holds, replaces and releases the buffer, and to native byte transfer?",
   "scope": {
     "handoffOwners": [
       "0x822F9888",
@@ -20,8 +20,8 @@
       "0x8269A238",
       "0x8269A160"
     ],
-    "boundary": "Selected common file-wrapper return, height creation and source-buffer release, and local resource lock/cleanup bodies. Existing formatter, resolver ordering, DDS parser/upload and CPU-reader contracts are reused. This is a static hook candidate, not runtime acceptance or an allocator-compatibility theorem.",
-    "qualification": "Require the original save/restore ABI, normal helper return, valid nonalias stack/object/guest storage, retained filename and buffer contents, sufficient backing, and nonwrapping address/size arithmetic. Selected word equality does not prove unqueried child effects, current providers or whole-project identity."
+    "boundary": "Selected common file-wrapper return, height creation and source-buffer release, and local resource lock and cleanup bodies. Existing formatter, resolver ordering, DDS parser and upload, and CPU-reader contracts are reused. This is a static hook candidate, not runtime acceptance or a proof of allocator compatibility.",
+    "qualification": "Require the original save/restore ABI, normal helper return, valid nonalias stack, object and guest storage, the filename and buffer contents preserved unchanged, sufficient backing, and nonwrapping address and size arithmetic. Selected word equality does not prove unqueried child effects, current providers or whole-project identity."
   },
   "dependencies": [
     {
@@ -34,7 +34,7 @@
     },
     {
       "topic": "xbox-dds-map-role-consumer",
-      "use": "Height creation and the distinct blend/lightmap type7 cold-file chains."
+      "use": "Height creation and the distinct blend and lightmap type 7 cold-file chains."
     },
     {
       "topic": "xbox-dds-map-role-texture-contract",
@@ -42,16 +42,16 @@
     },
     {
       "topic": "xbox-heights-authoring-contract",
-      "use": "Retail-observed height profile, conditional cleanup row-copy/unlock composition and the still-open native sample-byte transfer; no complete authoring recipe is inferred.",
+      "use": "Retail-observed height profile, the cleanup row-copy and unlock composition, which applies only under a condition, and the still-open native sample-byte transfer; no complete authoring recipe is inferred.",
       "locators": ["xbox-heights-authoring-contract.json#/copyBackRepresentationBoundary", "xbox-heights-authoring-contract.json#/retailObservedProfile"]
     },
     {
       "topic": "gfx-file-opener-handoff",
-      "use": "The GFx type11 opener and its common-loader fallback differ from the native height ingress."
+      "use": "The GFx type 11 opener and its common-loader fallback differ from the native height entry point."
     },
     {
       "topic": "gfx-logo-texture-resource",
-      "use": "The bounded accepted logo override at 0x82E87B90 is a separate ownership and call path."
+      "use": "The accepted logo override at 0x82E87B90, within the inspected scope, is a separate call path, and a separate matter of which code holds, replaces and releases the buffer."
     }
   ],
   "recommendedHook": {
@@ -63,7 +63,7 @@
     "registers": {
       "r1": "T, the current wrapper stack pointer",
       "r30": "Original NUL-terminated filename pointer, captured from incoming r4",
-      "r3": "A, the resolved allocation base; zero is a load miss/failure",
+      "r3": "A, the resolved allocation base; zero is a load miss or failure",
       "r31": "C, the output-pointer cell captured from incoming r3"
     },
     "length": "For nonnull A with valid prefix storage, L=BE U32[A]. L excludes the four-byte prefix and includes the complete DDS file, including its DDS header.",
@@ -73,16 +73,16 @@
       "value": "BE U32[T+0x68] == 0x822F98BC",
       "binding": "The wrapper saves incoming LR at oldSP-8 and allocates a 0x70-byte frame. The height call at 0x822F98B8 sets LR=0x822F98BC. For that caller, C=heightSP+0x94=T+0x104. This return address is unique among the seven enumerated direct wrapper callers; indirect callers remain unknown."
     },
-    "nameFilter": "Combine the saved-height-caller check with a bounded exact match of the actual caller-built filename at r30. Capture that string at runtime before trusting a name filter: its exact prefix, path and case are not fixed here. Do not substitute the higher-level bare role name, assume case folding, use only a suffix, or treat caller identity as a unique map identity. Preserve the A==0 failure path.",
+    "nameFilter": "Combine the saved-height-caller check with an exact match of the actual caller-built filename at r30, within the inspected scope. Capture that string at runtime before trusting a name filter: its exact prefix, path and case are not fixed here. Do not substitute the higher-level bare role name, assume case folding, use only a suffix, or treat caller identity as a unique map identity. Preserve the A==0 failure path.",
     "resume": "Preserve the frame, saved link, filename, output-cell address and required ABI state. Resume the original store. The nonnull arm subsequently stores P=A+4 to C at 0x822D6514/0x822D6518 and returns P; do not substitute P where this hook expects allocation base A.",
-    "qualification": "Both selected direct and stream arms request L+4 storage and construct the same prefix/payload layout. Allocator rounding/effects, complete-read semantics, writable backing and ordinary interface/retention premises remain open.",
+    "qualification": "Both selected direct and stream arms request L+4 storage and construct the same prefix and payload layout. Allocator rounding and effects, complete-read semantics, writable backing, the ordinary interface premises, and the premise that values stay unchanged remain open.",
     "corroboration": "The selected register, prefix and saved-link tuple is statically corroborated. Runtime hook operation, name-filter identity and writable backing are not established."
   },
   "requestCoverage": {
-    "numberedAndNamed": "Numbered and named reach rests on map-authoring-loader.json#/textureLoader: the cited base-format branches construct the height role name and request 0x822F9888. This finding does not independently close the exact caller-built prefix/path/case or observe runtime reach.",
-    "resolvedSources": "0x82E806E0 returns either a direct-opener result or a selected stream/source allocation before the hook. Reuse map-content-precedence.json#/resolverOrder for bare names. Do not generalize that bare-name ordering to a named selector containing path separators.",
-    "sharedLoads": "Cold-load qualification applies to the blend/lightmap type7 path through sub_82C8E150, whose cache can bypass this wrapper. It does not describe sub_822F9888, which reaches the wrapper for every nonnull, nonempty name. The wrapper is shared by the direct callers listed below, so a height override must discriminate its caller/name.",
-    "logoComparison": "This is not the logo hook 0x82E87B90 in GFx owner 0x82E87B28. The logo's accepted type11 File Data path has a different lifetime. The GFx filesystem fallback joins lower common loader 0x82E806E0, not proof that the native height path reaches the logo instruction.",
+    "numberedAndNamed": "Numbered and named reach rests on map-authoring-loader.json#/textureLoader: the cited base-format branches construct the height role name and request 0x822F9888. This finding does not independently close the exact caller-built prefix, path and case or observe runtime reach.",
+    "resolvedSources": "0x82E806E0 returns either a direct-opener result or a selected stream or source allocation before the hook. Reuse map-content-precedence.json#/resolverOrder for bare names. Do not generalize that bare-name ordering to a named selector containing path separators.",
+    "sharedLoads": "Cold-load qualification applies to the blend and lightmap type 7 path through sub_82C8E150, whose cache can bypass this wrapper. It does not describe sub_822F9888, which reaches the wrapper for every nonnull, nonempty name. The wrapper is shared by the direct callers listed below, so a height override must discriminate its caller and name.",
+    "logoComparison": "This is not the logo hook 0x82E87B90 in the GFx code at 0x82E87B28. The logo's accepted type 11 File Data path has a different lifetime. The GFx filesystem fallback links to lower common loader 0x82E806E0, not proof that the native height path reaches the logo instruction.",
     "heightIngress": "Within sub_822F9888 there is no cache lookup or early exit before 0x822F98B8 -> 0x822D64C0 beyond a null or empty incoming name, under the original ABI. Any warm bypass at this immediate call boundary must occur in one of its three direct callers; their behavior is uncharacterized.",
     "heightDirectCallers": [
       {
@@ -138,53 +138,53 @@
         "lr": "0x82C8E284"
       }
     ],
-    "directCensusQualification": "Exact generated direct-call enumeration and selected native branch validation bind these seven wrapper callers and three height callers. The wrapper return addresses are distinct. Only indirect callers remain unknown."
+    "directCensusQualification": "Exact generated direct-call enumeration and selected native branch validation show these seven wrapper callers and three height callers. The wrapper return addresses are distinct. Only indirect callers remain unknown."
   },
   "heightParserHandoff": {
-    "postLoad": "0x822F98BC captures P from heightSP+0x94 into r29. That height-local point is after resolution but has no proven ABI-retained filename register or slot; the single wrapper hook retains both name and allocation.",
+    "postLoad": "0x822F98BC captures P from heightSP+0x94 into r29. That height-local point is after resolution but has no proven filename register or slot that the ABI preserves; the single wrapper hook preserves both name and allocation.",
     "reusedStackCell": "At 0x822F98CC, 0x82C988B8 receives the same cell C. It stores zero on its null-global arm, otherwise requests 0x821B3AD8, freshly reloads global 0x82F8E270 and stores global+0xBC to C. File P remains separately in r29. Do not mistake the later C value for file bytes.",
     "creationCall": "At 0x822F991C -> 0x8257B8A8, r3=U32[C] is the getter result, r4=P, r5=BE U32[P-4], and r10=0x28000058. 0x822F9914 retains A=P-4 in r26. Other fixed arguments remain the existing role-consumer contract.",
-    "qualification": "Getter child effects, fresh global validity and retention of r29, C and A remain premises. An argument-only override at the later creation call would need its own ownership/alias analysis; it is not the recommended single-point contract.",
-    "callerBuiltName": "The higher-level height caller builds the filename through sub_827F2830. This finding does not fix the resulting prefix, path or case at the wrapper. Capture the bounded r30 string for the intended numbered/named request before trusting an exact-name filter.",
+    "qualification": "Getter child effects, fresh global validity, and the premise that the values preserved in r29, C and A stay unchanged, remain premises. An argument-only override at the later creation call would need its own analysis of which code holds, replaces and releases the buffer, and of aliasing; it is not the recommended single-point contract.",
+    "callerBuiltName": "The higher-level height caller builds the filename through sub_827F2830. This finding does not fix the resulting prefix, path or case at the wrapper. Capture the r30 string, within the inspected scope, for the intended numbered or named request before trusting an exact-name filter.",
     "sizeChecks": "After the hook, the only file-size consumer seen in the selected creation handoff is r5=BE U32[P-4], loaded at 0x822F98E0 and passed at 0x822F991C. An equal-size copy with the prefix unchanged satisfies that observed size consumer. Parser internals beyond the selected handoff window were not read for this finding; additional parser-internal size checks are not excluded or closed by this result."
   },
   "sourceAllocationAndOwnership": {
     "streamAllocation": "For a nonzero reported size L, 0x82E807E8/0x82E807EC requests low32(L+4) bytes from 0x82D3DBA0. 0x82E807FC writes BE length L at A and requests file bytes into A+4 through the selected 0x82E48590 or 0x82D38448 read helper. A zero read-helper result requests 0x82D3D9F0(A) at 0x82E80840 and returns zero.",
-    "wrapperOldValue": "A preexisting nonzero output P passed to 0x822D64C0 is first sent as P-4 to 0x82D3D9F0, then C is cleared before loading. The ordinary height caller initializes C to zero, so that old-value branch is not selected for this invocation.",
-    "heightCreationFailure": "A nonzero creation result requests release through sub_82D3D9F0 with r3=A at call 0x822F9954, LR 0x822F9958, then returns 0 under ordinary intervening diagnostic/context-helper effects. The release descendants are unqueried.",
-    "heightSuccess": "After selected descriptor/lock/extraction and temporary-resource cleanup, call 0x822F9A58, LR 0x822F9A5C, requests release through sub_82D3D9F0 with r3=A before return 1. Source-file storage must remain valid through this request, not merely through parser entry. The release descendants are unqueried.",
+    "wrapperOldValue": "A preexisting nonzero output P passed to 0x822D64C0 is first sent as P-4 to 0x82D3D9F0, then C is cleared before loading. The non-specialized height caller initializes C to zero, so that old-value branch is not selected for this invocation.",
+    "heightCreationFailure": "A nonzero creation result requests release through sub_82D3D9F0 with r3=A at call 0x822F9954, LR 0x822F9958, then returns 0 under non-specialized intervening diagnostic and context-helper effects. The release descendants are unqueried.",
+    "heightSuccess": "After selected descriptor, lock and extraction and temporary-resource cleanup, call 0x822F9A58, LR 0x822F9A5C, requests release through sub_82D3D9F0 with r3=A before return 1. Source-file storage must remain valid through this request, not merely through parser entry. The release descendants are unqueried.",
     "releaseDispatch": "0x82D3D9F0 retains A, obtains a manager through 0x82D3DA78, and conditionally queries 0x82D2E3D0(manager+0x1080,A,outputCell) at 0x82D3DA24. A nonzero low-byte result selects 0x82D2E960 at 0x82D3DA40; the other arm calls 0x827F5780(A) at 0x82D3DA4C. Those children and allocator membership are unqueried.",
-    "resourceCleanupDistinction": "0x8258AED8 operates on resource/lock-state object slots, not a locally bound raw DDS allocation A. The height caller requests release through sub_82D3D9F0 on the two recorded exits; its sub_827F5780/sub_82D2E960 paths remain unqueried, so actual freeing and allocator compatibility are not asserted.",
+    "resourceCleanupDistinction": "0x8258AED8 operates on resource and lock-state object slots, not a raw DDS allocation A held locally. The height caller requests release through sub_82D3D9F0 on the two recorded exits; its sub_827F5780 and sub_82D2E960 paths remain unqueried, so actual freeing and allocator compatibility are not asserted.",
     "directAllocation": "sub_82D38C80 samples L at 0x82D38CDC and, for nonzero L, requests low32(L+4) bytes through 0x82D3DBA0 at 0x82D38D00. It stores BE length L at A at 0x82D38D10, requests L bytes into A+4 through 0x82D38448 at 0x82D38D20, and requests release through 0x82D3D9F0(A) at 0x82D38D30 on a zero read-helper result. Both common-loader direct-return sites therefore use the same layout as the stream arm.",
-    "sharedCapacity": "With nonwrapping L+4, ordinary allocator effects and retained valid storage, both direct and stream arms supply the requested L+4-byte block: four prefix bytes and L file bytes. This records the allocation request/capacity contract, not allocator rounding, successful complete delivery by 0x82D38448 or writability of the returned range; those remain premises."
+    "sharedCapacity": "With nonwrapping L+4, non-specialized allocator effects and valid storage that is preserved, both direct and stream arms supply the requested L+4-byte block: four prefix bytes and L file bytes. This records the allocation request and capacity contract, not allocator rounding, successful complete delivery by 0x82D38448 or writability of the returned range; those remain premises."
   },
   "replacementContract": {
-    "recommendedMode": "Equal-size in-place copying at 0x822D6508 is supported under the listed premises: confirmed caller, runtime-captured exact-name identity, nonnull allocation, replacement length==L, valid nonwrapping prefix/payload backing and writable guest range [A+4,A+4+L). Copy the complete DDS to A+4 while retaining r3=A and the BE prefix. This retains allocation identity and satisfies the observed r5 size consumer; it does not establish runtime safety or unread parser checks.",
-    "retailProfile": "The observed candidate in xbox-heights-authoring-contract.json#/retailObservedProfile is a 524416-byte complete heights DDS. Use that size only after validating both the intended donor and the current prefix; it is not a mandatory-size theorem. This candidate does not close authored sample values, scale, dimensions or runtime acceptance.",
-    "donorLifetime": "A separately retained donor buffer can serve only as the copy source and must remain valid through copy completion. The destination remains the native file allocation. A host source buffer is not itself a guest pointer replacement.",
+    "recommendedMode": "Equal-size in-place copying at 0x822D6508 is supported under the listed premises: confirmed caller, runtime-captured exact-name identity, nonnull allocation, replacement length==L, valid nonwrapping prefix and payload backing and writable guest range [A+4,A+4+L). Copy the complete DDS to A+4 while preserving r3=A and the BE prefix. This preserves allocation identity and satisfies the observed r5 size consumer; it does not establish runtime safety or unread parser checks.",
+    "retailProfile": "The observed candidate in xbox-heights-authoring-contract.json#/retailObservedProfile is a 524416-byte complete heights DDS. Use that size only after validating both the intended donor and the current prefix; it is not a proof that the size is mandatory. This candidate does not close authored sample values, scale, dimensions or runtime acceptance.",
+    "donorLifetime": "A separately preserved donor buffer can serve only as the copy source and must remain valid through copy completion. The destination remains the native file allocation. A host source buffer is not itself a guest pointer replacement.",
     "pointerSubstitution": "If replacing r3 instead, supply a compatible guest allocation A_new with valid 4+L_new backing, BE U32[A_new]=L_new and complete DDS bytes at A_new+4. Native code derives P_new and requests release through sub_82D3D9F0(A_new). Account for displaced A through its compatible release policy; overwriting r3 alone leaves that allocation unaccounted for. Actual free-path effects and compatibility remain open.",
     "systemHeapRuling": "The logo's never-freed SystemHeapAlloc pointer pattern is not a corroborated splice at this site. The native height success and creation-failure paths still request release through sub_82D3D9F0 for the substituted base. Effects of sub_827F5780/sub_82D2E960 and allocator compatibility are unqueried; a never-freed lifetime cannot be assumed. A borrowed pointer without the BE prefix also violates the local layout."
   },
   "nativeByteTransfer": {
     "verdict": "open",
-    "localHandoff": "The selected post-load wrapper/height/getter instructions publish pointers and length/context fields, not a sample-pair conversion. Retention through ordinary helpers remains required. Reuse the selected DDS parser/copy/extraction facts in xbox-dds-map-role-texture-contract.json; they do not establish complete file-to-CPU byte identity.",
-    "localResourceResult": "Complete selected bodies 0x8269A238, 0x8269A160 and 0x8258AED8 contain no direct payload-pair swap, byte-reversed load/store, pixel loop or pixel-byte copy. Their child effects and resource generation still gate a byte-order claim.",
+    "localHandoff": "The selected post-load wrapper, height and getter instructions publish pointers and length and context fields, not a sample-pair conversion. It remains required that values stay unchanged through ordinary helpers. Reuse the selected DDS parser, copy and extraction facts in xbox-dds-map-role-texture-contract.json; they do not establish complete file-to-CPU byte identity.",
+    "localResourceResult": "Complete selected bodies 0x8269A238, 0x8269A160 and 0x8258AED8 contain no direct payload-pair swap, byte-reversed load or store, pixel loop or pixel-byte copy. Their child effects and resource generation must still be established before any byte-order claim.",
     "lockPublication": "0x8269A238 calls 0x8269A160 at 0x8269A268 and publishes returned pitch and pointer to output+0/+4 at 0x8269A2B8/0x8269A2BC. An optional offset record adjusts the pointer. Neither pointer publication nor format-bit arithmetic proves it is the original source-payload storage.",
     "lockFrontiers": [
-      "xbox-heights-authoring-contract.json#/lockBackingTransferBoundary binds the0x8269A1B8 ->0x82699C98 metadata delegation under retained ordinary non-tail level-zero geometry; its geometry-helper effects remain qualified.",
-      "The same boundary closes0x82698FC8 as a scalar factor leaf: selected format index24 returns1,1. Pitch multiplication is metadata and supplies no sample conversion.",
-      "xbox-heights-authoring-contract.json#/resourceEffectCompositionBoundary joins the selected fence/getter interfaces and conditional non-owner-thread metadata merge. Wait/flush callbacks/imports, actual path selection, byte generation, visibility and fresh offset retention remain open; normal wait return is not completion."
+      "xbox-heights-authoring-contract.json#/lockBackingTransferBoundary shows the 0x8269A1B8 -> 0x82699C98 metadata delegation when the ordinary non-tail level-zero geometry stays unchanged; its geometry-helper effects remain qualified.",
+      "The same boundary closes 0x82698FC8 as a scalar factor leaf: selected format index 24 returns 1,1. Pitch multiplication is metadata and supplies no sample conversion.",
+      "xbox-heights-authoring-contract.json#/resourceEffectCompositionBoundary links the selected fence and getter interfaces and the non-owner-thread metadata merge, which applies only under a condition. Wait and flush callbacks and imports, actual path selection, byte generation, visibility and whether fresh offsets stay unchanged remain open; normal wait return is not completion."
     ],
     "cleanupFrontiers": [
-      "0x8258AEF0..0x8258AF08 -> 0x82698FB0: input is sampled object+8 if nonzero, otherwise sampled object+4 if nonzero. xbox-heights-authoring-contract.json#/copyBackRepresentationBoundary binds its resource/page forwarding and adopts accepted unlock/count/cache-range effects. Actual pairing, written range, visibility and backing generation remain conditional.",
-      "0x8258AF5C -> 0x8258ADF0: reached only after fresh object+4,+8,+16 nonzero tests and bit0 of object+0 clear. After intervening 0x821D5678 requests, r3/r4 reload object+8/+4. xbox-heights-authoring-contract.json#/copyBackRepresentationBoundary binds conditional byte-preserving rows from the former wrapper's returned backing to the latter's, signed minimum pitch, fresh row/pitch homes and subsequent accepted unlock effects. Incoming flags0 does not establish these fields, successful lock outputs or same-generation identity.",
+      "0x8258AEF0..0x8258AF08 -> 0x82698FB0: input is sampled object+8 if nonzero, otherwise sampled object+4 if nonzero. xbox-heights-authoring-contract.json#/copyBackRepresentationBoundary shows its resource and page forwarding and adopts accepted unlock, count and cache-range effects. Actual pairing, written range, visibility and backing generation remain dependent on conditions.",
+      "0x8258AF5C -> 0x8258ADF0: reached only after fresh object+4,+8,+16 nonzero tests and bit 0 of object+0 clear. After intervening 0x821D5678 requests, r3/r4 reload object+8/+4. xbox-heights-authoring-contract.json#/copyBackRepresentationBoundary shows byte-preserving rows, which apply only under a condition, from the former wrapper's returned backing to the latter's, signed minimum pitch, fresh row and pitch homes and subsequent accepted unlock effects. Incoming flags0 does not establish these fields, successful lock outputs or same-generation identity.",
       "0x8258AF78/0x8258AF8C/0x8258AFB4 -> 0x826981D8 receives nonzero current object+8/+12/+4; 0x8258AFA0 -> 0x8268CE38 receives nonzero object+16. Local slot clearing does not establish the helpers' payload or allocation effects."
     ],
-    "preCopyAndRepresentation": "xbox-heights-authoring-contract.json#/copyBackRepresentationBoundary closes the local 0x8258BB50 metadata path with no child call and a connected 0x8258ADF0 cleanup row-copy edge; neither locally swaps sample pairs. It adopts existing unlock/cache effects rather than treating 0x82697F38 as an unexamined helper. Accepted upload tiling through 0x826B7E00->0x826B7550 at 0x8257948C supplies the next selected byte-moving discriminator; its byte/lane semantics and same-backing join remain unclosed.",
-    "composition": "Selected upload cleanup precedes the later height extraction under the existing creation chain. A same-resource, same-level-0, same-generation join through selected conversion/storage effects is still required. Retail-observed LE16 file samples and unsigned BE16 CPU consumption remain separate facts; the native transfer is not closed."
+    "preCopyAndRepresentation": "xbox-heights-authoring-contract.json#/copyBackRepresentationBoundary closes the local 0x8258BB50 metadata path with no child call and a connected 0x8258ADF0 cleanup row-copy edge; neither locally swaps sample pairs. It adopts existing unlock and cache effects rather than treating 0x82697F38 as an unexamined helper. Accepted upload tiling through 0x826B7E00->0x826B7550 at 0x8257948C supplies the next selected byte-moving discriminator; its byte and lane semantics and the same-backing link remain unclosed.",
+    "composition": "Selected upload cleanup precedes the later height extraction under the existing creation chain. A same-resource, same-level-0, same-generation link through selected conversion and storage effects is still required. Retail-observed LE16 file samples and unsigned BE16 CPU consumption remain separate facts; the native transfer is not closed."
   },
   "currentEvidence": {
-    "method": "Serialized foreground read-only function queries and selected native-word reads from the supported program, comparison with the pinned flat image, raw operand/branch decoding and clipped exact-owner generated corroboration. Truncated decompiler output was not used as complete-body evidence. Exact generated direct-call/LR enumeration and a bounded direct-opener read corroborate the source-arm capacity and coverage qualifications.",
+    "method": "Serialized foreground read-only function queries and selected native-word reads from the supported program, comparison with the pinned flat image, raw operand and branch decoding and clipped generated corroboration from the exact containing function. Truncated decompiler output was not used as complete-body evidence. Exact generated direct-call and LR enumeration and a direct-opener read within the inspected scope corroborate the source-arm capacity and coverage qualifications.",
     "supportedImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
     "locators": [
       "ghidra/DumpFunctions.java:0x822F9888,0x822D64C0,0x82E806E0,0x8258AED8,0x8269A238",
@@ -206,16 +206,16 @@
       "generated:rerevved/sub_82C839B0,sub_82C83C38,sub_82C8D038,sub_82E63900,sub_822D6420,sub_82C8E150",
       "generated:rerevved/sub_82C6E188,sub_82C6E368,sub_82C6E4D8"
     ],
-    "qualification": "The initial 411 and additional 73 selected native query words matched the pinned image. This is selected-word equality, not whole-database identity or a runtime result. Generated caller enumeration is corroborated at its direct branch sites; indirect callers and upstream warm-bypass behavior remain unknown. Known thunk repairs/truncation do not establish unqueried helper effects. No project repair or runtime execution was performed."
+    "qualification": "The initial 411 and additional 73 selected native query words matched the pinned image. This is selected-word equality, not whole-database identity or a runtime result. Generated caller enumeration is corroborated at its direct branch sites; indirect callers and upstream warm-bypass behavior remain unknown. Known thunk repairs and truncation do not establish unqueried helper effects. No project repair or runtime execution was performed."
   },
   "unresolved": [
-    "Allocator rounding/effects, actual complete-read semantics of 0x82D38448 and the other selected read helper, writable backing and concrete source/provider identity; the direct/stream L+4 allocation layout itself is bound.",
-    "Exact runtime caller-built filename prefix/path/case after sub_827F2830, and warm bypass behavior in the three height callers; indirect wrapper/height callers remain unknown.",
+    "Allocator rounding and effects, actual complete-read semantics of 0x82D38448 and the other selected read helper, writable backing and concrete source and provider identity; the direct and stream L+4 allocation layout itself is shown.",
+    "Exact runtime caller-built filename prefix, path and case after sub_827F2830, and warm bypass behavior in the three height callers; indirect wrapper and height callers remain unknown.",
     "Parser-internal size checks beyond the selected creation handoff window; equal-size copying satisfies only the observed r5=BE U32[P-4] consumer.",
-    "Compatibility of arbitrary replacement allocations with the current manager/fallback release path, and safe invocation of the native allocator from a host hook.",
-    "Getter/current-global and other opaque-helper alias effects and retention of the same filename, file allocation and creation context.",
-    "Native file-to-CPU sample transfer through parser/conversion conditions, the listed resource lock/cleanup children and the same-resource/level-0 generation join.",
-    "Successful runtime hook reachability, authored DDS acceptance, world/sample joins and actual TerrainZScale delivery."
+    "Compatibility of arbitrary replacement allocations with the current manager and fallback release path, and safe invocation of the native allocator from a host hook.",
+    "Getter and current-global and other opaque-helper alias effects, and whether the same filename, file allocation and creation context stay unchanged.",
+    "Native file-to-CPU sample transfer through parser and conversion conditions, the listed resource lock and cleanup children and the same-resource, level-0 generation link.",
+    "Successful runtime hook reachability, authored DDS acceptance, world and sample links and actual TerrainZScale delivery."
   ],
   "guards": [
     "Apply scope.qualification to every corroborated static tuple. The hook remains a candidate; this is not implementation or runtime proof.",
@@ -223,8 +223,8 @@
     "Keep the BE32 allocation-length prefix, little-endian DDS header and unresolved sample-byte transfer separate.",
     "Use the saved caller and runtime-captured complete intended filename; preserve load failure and the other enumerated wrapper consumers.",
     "An equal-size copy is supported only under the listed backing, writability, alias, helper and arithmetic premises. The observed r5 length consumer is not an exhaustive parser-size contract.",
-    "Describe sub_82D3D9F0 as a release request while its free paths are unqueried. Resource cleanup and scalar-deleting object release do not bind raw DDS freeing or sample swapping.",
-    "Do not infer SystemHeapAlloc compatibility, successful full read, helper retention or a closed LE16-to-BE16 transfer from local pointer arithmetic or memcpy."
+    "Describe sub_82D3D9F0 as a release request while its free paths are unqueried. Resource cleanup and scalar-deleting object release do not show raw DDS freeing or sample swapping.",
+    "Do not infer SystemHeapAlloc compatibility, successful full read, values staying unchanged across helpers, or a closed LE16-to-BE16 transfer from local pointer arithmetic or memcpy."
   ],
-  "conclusion": "0x822D6508 has a corroborated static candidate tuple for the cited numbered/named height route, with unique direct-caller LR 0x822F98BC. Both direct and stream source arms request L+4 prefix/payload storage. Equal-size copying into A+4 is supported under the listed premises and satisfies the observed r5 size consumer. Exact filename identity requires runtime capture; free-path compatibility, unread parser checks and the LE16-to-BE16 transfer remain open."
+  "conclusion": "0x822D6508 has a corroborated static candidate tuple for the cited numbered or named height route, with unique direct-caller LR 0x822F98BC. Both direct and stream source arms request L+4 prefix and payload storage. Equal-size copying into A+4 is supported under the listed premises and satisfies the observed r5 size consumer. Exact filename identity requires runtime capture; free-path compatibility, unread parser checks and the LE16-to-BE16 transfer remain open."
 }

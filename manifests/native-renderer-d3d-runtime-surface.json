@@ -5,11 +5,11 @@
   "status": "open",
   "confidence": "candidate",
   "image": "image.json",
-  "question": "Which functions in the bounded region 0x8268CAA8-0x826C9C3F does title code call directly, and what role does each function body support?",
+  "question": "Which functions in the region 0x8268CAA8-0x826C9C3F does title code call directly, and what role does each function body support?",
   "scope": {
     "region": "0x8268CAA8-0x826C9C3F; the nominal D3D band 0x82690000-0x826BFFFF is a subset",
-    "surfaceRule": "A function is in this surface when it lies in the bounded region 0x8268CAA8-0x826C9C3F and title code outside the region calls it directly or tail-branches to it. Ten sampler setters with no direct call are also listed because the static state table registers them. Membership is an address-range criterion, not D3D ownership.",
-    "roleRule": "Each role comes only from that function body's evidence: device fields, register shadows, dirty words, resource headers, or a static state-table entry. Address proximity never assigns a role or D3D ownership.",
+    "surfaceRule": "A function is in this surface when it lies in the region 0x8268CAA8-0x826C9C3F and title code outside the region calls it directly or tail-branches to it. Ten sampler setters with no direct call are also listed because the static state table registers them. Membership is an address-range criterion, not proof that a function belongs to D3D.",
+    "roleRule": "Each role comes only from that function body's evidence: device fields, register shadows, dirty words, resource headers, or a static state-table entry. Address proximity never assigns a role and never shows that a function belongs to D3D.",
     "classificationScale": "Entries use the repository vocabulary. confirmed means a known anchor accepted in a dependency manifest, or a setter identified by the static state table. strong means device-field, register-shadow or resource-header behavior in the body identifies the role. candidate means shape only.",
     "middleware": [
       "0x826BF6B8",
@@ -109,7 +109,7 @@
         "engineCallers": 1,
         "engineCallSites": 1,
         "definition": "generated/default/rerevved_recomp.147.cpp:12357",
-        "evidence": "Reset(device, presentation params): returns 0 or 0x8007000E; calls ringInit 0x8269C8E0, 0x8269C810, 0x826A5EB8 (gamma/display init) and 0x826A60F8; one caller 0x8250A688; reinitializes ring and display state",
+        "evidence": "Reset(device, presentation params): returns 0 or 0x8007000E; calls ringInit 0x8269C8E0, 0x8269C810, 0x826A5EB8 (gamma and display init) and 0x826A60F8; one caller 0x8250A688; reinitializes ring and display state",
         "sampleCallers": [
           "0x8250A688"
         ]
@@ -121,7 +121,7 @@
         "engineCallers": 3,
         "engineCallSites": 3,
         "definition": "generated/default/rerevved_recomp.188.cpp:12746",
-        "evidence": "writes current thread ID from 0x8280DA68 to device +0x2A88 at0x8268CF38; native-renderer-d3d-completion-contract.json#/threadOwnership owns the value interpretation and source identity",
+        "evidence": "writes current thread ID from 0x8280DA68 to device +0x2A88 at 0x8268CF38; native-renderer-d3d-completion-contract.json#/threadOwnership defines the value interpretation and source identity",
         "sampleCallers": [
           "0x82C98760",
           "0x82D83888",
@@ -135,7 +135,7 @@
         "engineCallers": 2,
         "engineCallSites": 2,
         "definition": "generated/default/rerevved_recomp.81.cpp:12641",
-        "evidence": "executes eieio then writes zero to device +0x2A88 at0x8268CF58; native-renderer-d3d-completion-contract.json#/threadOwnership owns the value interpretation and source identity",
+        "evidence": "executes eieio then writes zero to device +0x2A88 at 0x8268CF58; native-renderer-d3d-completion-contract.json#/threadOwnership defines the value interpretation and source identity",
         "sampleCallers": [
           "0x82C987D0",
           "0x82D83888"
@@ -162,7 +162,7 @@
         "engineCallers": 2,
         "engineCallSites": 2,
         "definition": "generated/default/rerevved_recomp.186.cpp:12334",
-        "evidence": "notifies the same callback with 1, stores the current thread ID from0x8280DA68 in +0x2A88, clears +0x2ABE bit 2 under the +0x3A60 critical section; native-renderer-d3d-completion-contract.json#/threadOwnership owns the value interpretation and source identity",
+        "evidence": "notifies the same callback with 1, stores the current thread ID from 0x8280DA68 in +0x2A88, clears +0x2ABE bit 2 under the +0x3A60 critical section; native-renderer-d3d-completion-contract.json#/threadOwnership defines the value interpretation and source identity",
         "sampleCallers": [
           "0x82C98910",
           "0x82E63490"
@@ -187,7 +187,7 @@
         "engineCallers": 1,
         "engineCallSites": 1,
         "definition": "generated/default/rerevved_recomp.81.cpp:12650",
-        "evidence": "calls device publication 0x826A63E8 and ring/device init chain; single engine caller 0x8250F2B0 (NiXenon renderer init)",
+        "evidence": "calls device publication 0x826A63E8 and ring and device init chain; single engine caller 0x8250F2B0 (NiXenon renderer init)",
         "sampleCallers": [
           "0x8250F2B0"
         ]
@@ -2184,7 +2184,7 @@
         "engineCallers": 4,
         "engineCallSites": 4,
         "definition": "generated/default/rerevved_recomp.191.cpp:12884",
-        "evidence": "fills a four-word descriptor {blob, header size 0x28 plus a conditional 0x340 when blob word 0 bit 0 is set plus blob[1], blob + blob[1], blob[2]}; same size rule as the shader creators 0x826944D8/0x826945E8; no 0x26D0 record selection (Ghidra decompile agrees)",
+        "evidence": "fills a four-word descriptor {blob, header size 0x28 plus 0x340 when blob word 0 bit 0 is set plus blob[1], blob + blob[1], blob[2]}; same size rule as the shader creators 0x826944D8/0x826945E8; no 0x26D0 record selection (Ghidra decompile agrees)",
         "sampleCallers": [
           "0x825AB368",
           "0x826EAE10",
@@ -3379,7 +3379,7 @@
         "engineCallers": 1,
         "engineCallSites": 1,
         "definition": "generated/default/rerevved_recomp.122.cpp:13162",
-        "evidence": "stores tile-rect count +0x31CC and rects +0x31D4/+0x32C4, sets tiling flags +0x2ABF, programs scissor/viewport and clears via 0x826A2970",
+        "evidence": "stores tile-rect count +0x31CC and rects +0x31D4/+0x32C4, sets tiling flags +0x2ABF, programs scissor and viewport and clears via 0x826A2970",
         "sampleCallers": [
           "0x8250F988"
         ]
@@ -3940,7 +3940,7 @@
         "engineCallers": 6,
         "engineCallSites": 6,
         "definition": "generated/default/rerevved_recomp.108.cpp:12926",
-        "evidence": "per-type offset of resource address: VB +0x18, IB/shader +0x20 style, textures via 0x826B7140",
+        "evidence": "per-type offset of resource address: VB +0x18, IB and shader +0x20 style, textures via 0x826B7140",
         "sampleCallers": [
           "0x82518280",
           "0x82534428",
@@ -4045,7 +4045,7 @@
         "engineCallers": 2,
         "engineCallSites": 2,
         "definition": "generated/default/rerevved_recomp.224.cpp:13278",
-        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool and int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
         "sampleCallers": [
           "0x82567F40",
           "0x825689C8"
@@ -4058,7 +4058,7 @@
         "engineCallers": 3,
         "engineCallSites": 4,
         "definition": "generated/default/rerevved_recomp.152.cpp:13525",
-        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool and int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
         "sampleCallers": [
           "0x825690D8",
           "0x82569A40",
@@ -4072,7 +4072,7 @@
         "engineCallers": 2,
         "engineCallSites": 2,
         "definition": "generated/default/rerevved_recomp.13.cpp:13256",
-        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool and int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
         "sampleCallers": [
           "0x82567F40",
           "0x825689C8"
@@ -4085,7 +4085,7 @@
         "engineCallers": 1,
         "engineCallSites": 1,
         "definition": "generated/default/rerevved_recomp.13.cpp:13265",
-        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool and int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
         "sampleCallers": [
           "0x82569848"
         ]
@@ -4097,7 +4097,7 @@
         "engineCallers": 16,
         "engineCallSites": 47,
         "definition": "generated/default/rerevved_recomp.157.cpp:13196",
-        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool and int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
         "sampleCallers": [
           "0x825712B8",
           "0x825712F0",
@@ -4113,7 +4113,7 @@
         "engineCallers": 2,
         "engineCallSites": 2,
         "definition": "generated/default/rerevved_recomp.43.cpp:12875",
-        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool/int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
+        "evidence": "above the nominal band; critical sections and globals 0x82F1BF58/0x82FA0CFC; 0x826C79D0 sets bool and int constants and textures through 0x82692788..0x826928A0 and 0x8269AF10",
         "sampleCallers": [
           "0x82577208",
           "0x82578168"
@@ -5140,16 +5140,16 @@
     ],
     "automaticIndexBoundary": {
       "entry": "0x826A3608",
-      "method": "Serialized foreground read-only DumpMemoryWords at 0x826A3708 and 0x826A3908, radius64: 258 rows/257 unique words matched the supported flat image. Installed Capstone5.0.7 PowerPC64 big-endian decoded all252 words in [0x826A3608,0x826A39F8). The listing stopped at the save-thunk gap; no complete listing or generated-body corroboration was used.",
+      "method": "Serialized foreground read-only DumpMemoryWords at 0x826A3708 and 0x826A3908, radius64: 258 rows and 257 unique words matched the supported flat image. Installed Capstone 5.0.7 PowerPC64 big-endian decoded all 252 words in [0x826A3608,0x826A39F8). The listing stopped at the save-thunk gap; no complete listing or generated-body corroboration was used.",
       "flatSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
       "selectedBeSha256": "202dcc9c0ad7751a5c2444f74597df25b6a1cb8af484acce2fd69571be13dfa3",
-      "inputs": "G=r3,type=r4,base=r5,remaining=r6 retained in nonvolatile registers;160-byte frame. Save23/restore23 ABI at 0x827F7C74/0x827F7CC4 is a normal compiler-convention premise, not a new complete thunk proof.",
+      "inputs": "G=r3,type=r4,base=r5,remaining=r6 preserved in nonvolatile registers;160-byte frame. Save23/restore23 ABI at 0x827F7C74/0x827F7CC4 is a normal compiler-convention premise, not a new complete thunk proof.",
       "orderedDirty": "0x826A3628..0x826A383C snapshots G00/G08/G10/G18/G20, runs selected ACFF8/ADD88/fresh-G28-AC8C8/ACC60/ACEA0/ACD20 groups in accepted lowerer order, replaces full64 D with ADD88/AC8C8 returns and clears each processed nonzero qword. No temporary UP stride override occurs locally. Descendant effects remain in the dirty-helper and pressure contracts.",
-      "iteration": "0x826A384C reads G30/G38 and calls C588 iff unsigned cursor>limit. Let C be its actual resulting cursor. Emit2 common words. If low32 remaining<=65535,n=remaining; otherwise d=W(0x82115418+U(type<<3)),n=(floor(65535/d)&~1)*d through divwu/mullw, with zero-divisor trap at0x826A3894. No local type/table guard. Untiled adds3 words; tiled adds12. Publish G30=C+20 or C+56 at0x826A39CC.",
-      "tiled": "With G2ABC bit0 set, read E=G33C8/limitG33CC; call C170 at0x826A3914 iff U(E+16)>limit and use its return without local null/failure recheck. Store C+8 atE+0 at0x826A3920 and E+16 atG33C8 at0x826A3930. No local rectangle-halfword store.",
-      "recurrence": "At0x826A39C8 compute full-GPR remaining-n. If nonzero, read step=W(0x8211541C+U(type<<3)),update remaining=remaining-n+step and base=base+n-step,loop0x826A384C. Low32 comparisons/division coexist with full-GPR recurrence. Zero remaining still emits once.",
-      "localReturnAndNegative": "Before tail thunk,last local r3=C+8 untiled or25 tiled. No HRESULT/caller-use meaning is established. Apart from frame/named callee effects, local stores are dirty clears,command words,E+0/G33C8 and G30. No local B818 geometry take,G3484..3494 staging/out-cell stores,geometry copy or A2FF0 call. This is a local negative,not a transitive helper negative.",
-      "qualification": "The simple recurrence needs zero-extended32 inputs,valid readable table,normal helper/nonvolatile ABI and nonwrapping arithmetic. Finite large-count progress additionally needs nonzero d and n>step. Actual table/type domain,complete ABI,helper closure,physical command/list generation,PM4 execution,natural runtime reach and consume admission remain unproved. Runtime attribution must distinguish actual roots,wrapper children and commits; scalar totals do not join occurrences."
+      "iteration": "0x826A384C reads G30/G38 and calls C588 iff unsigned cursor>limit. Let C be its actual resulting cursor. Emit 2 common words. If low32 remaining<=65535,n=remaining; otherwise d=W(0x82115418+U(type<<3)),n=(floor(65535/d)&~1)*d through divwu/mullw, with zero-divisor trap at 0x826A3894. No local type or table guard. Untiled adds 3 words; tiled adds 12. Publish G30=C+20 or C+56 at 0x826A39CC.",
+      "tiled": "With G2ABC bit 0 set, read E=G33C8/limitG33CC; call C170 at 0x826A3914 iff U(E+16)>limit and use its return without local null/failure recheck. Store C+8 at E+0 at 0x826A3920 and E+16 at G33C8 at 0x826A3930. No local rectangle-halfword store.",
+      "recurrence": "At 0x826A39C8 compute full-GPR remaining-n. If nonzero, read step=W(0x8211541C+U(type<<3)),update remaining=remaining-n+step and base=base+n-step,loop 0x826A384C. Low32 comparisons and division coexist with full-GPR recurrence. Zero remaining still emits once.",
+      "localReturnAndNegative": "Before tail thunk,last local r3=C+8 untiled or 25 tiled. No HRESULT or caller-use meaning is established. Apart from frame and named callee effects, local stores are dirty clears,command words,E+0/G33C8 and G30. No local B818 geometry take,G3484..3494 staging or out-cell stores,geometry copy or A2FF0 call. This is a local negative,not a transitive helper negative.",
+      "qualification": "The simple recurrence needs zero-extended32 inputs,valid readable table,normal helper/nonvolatile ABI and nonwrapping arithmetic. Finite large-count progress additionally needs nonzero d and n>step. Actual table and type domain, complete ABI, the full set of helper paths, physical command and list generation, PM4 execution, natural runtime reach and consume acceptance are not yet established. Runtime attribution must distinguish actual roots,wrapper children and commits; scalar totals do not link occurrences."
     },
     "qualification": "Roles come from device-field, shadow-register and resource-header behavior in generated code, and from the static tables. They are not runtime-observed. Hooks placed on function bodies miss the inline shadow writers. The separately identified AutomaticIndex local boundary uses exact supported-image words and retains its own ABI, helper and runtime qualifications."
   },
@@ -5160,9 +5160,9 @@
   },
   "guards": [
     "Do not infer runtime call frequency or ordering from static caller counts.",
-    "Do not treat the nominal band or the bounded region as D3D ownership; roles come from each body's evidence.",
+    "Do not treat the nominal band or the region as showing that a function belongs to D3D; roles come from each body's evidence.",
     "Do not assume per-function hooks capture all VS and PS constant or fetch-shadow updates; the inline writers bypass them.",
     "Do not assume a table-registered setter without an observed selector is used by the title."
   ],
-  "conclusion": "Title code directly calls 277 functions in the bounded region 0x8268CAA8-0x826C9C3F, at 5540 call sites. Each role comes from that body's evidence; six of the functions are effect-library middleware, not D3D. Ten more sampler setters are registered only in the device state table, and four of them have a statically observed type selector. Render and sampler states are table-driven: static tables at 0x82F1A600 (101 entries) and 0x82F1AAC0 (20 entries) are copied by 0x826A5C50 to device +0x40/+0x224 and +0x1D4/+0x3B8, and the title also calls through those device slots. The pixel shader is bound at device +0x3194 by 0x82692948, and the vertex shader at +0x3198 by 0x82692C48."
+  "conclusion": "Title code directly calls 277 functions in the region 0x8268CAA8-0x826C9C3F, at 5540 call sites. Each role comes from that body's evidence; six of the functions are effect-library middleware, not D3D. Ten more sampler setters are registered only in the device state table, and four of them have a statically observed type selector. Render and sampler states are table-driven: static tables at 0x82F1A600 (101 entries) and 0x82F1AAC0 (20 entries) are copied by 0x826A5C50 to device +0x40/+0x224 and +0x1D4/+0x3B8, and the title also calls through those device slots. The pixel shader is selected as the current shader by 0x82692948, with its reference stored at device +0x3194, and the vertex shader is selected by 0x82692C48, with its reference stored at +0x3198."
 }

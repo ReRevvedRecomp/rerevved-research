@@ -15,11 +15,11 @@
   "dependencies": [
     {
       "topic": "save-profile-storage",
-      "use": "Provides the selected-user resolver, selected device field, content enumeration owner, and 0x164 UI record stride."
+      "use": "Provides the selected-user resolver, selected device field, content enumeration function, and 0x164 UI record stride."
     }
   ],
   "currentEvidence": {
-    "method": "foreground read-only Ghidra queries, narrow generated-code comparison, hook-placement tests, and a default-off runtime load/overwrite matrix",
+    "method": "foreground read-only Ghidra queries, narrow generated-code comparison, hook-placement tests, and a default-off runtime load and overwrite matrix",
     "entries": [
       {
         "role": "save slot picker",
@@ -37,17 +37,17 @@
         "confidence": "confirmed"
       },
       {
-        "role": "manual save owner",
+        "role": "manual save function",
         "address": "0x82D82510",
         "confidence": "confirmed"
       },
       {
-        "role": "manual load owner",
+        "role": "manual load function",
         "address": "0x82D84238",
         "confidence": "confirmed"
       }
     ],
-    "qualification": "The runtime matrix observed one existing manual slot, save0.sve. Other manual and autosave identifiers retain the same statically proved field contract but were not individually exercised."
+    "qualification": "The runtime matrix observed one existing manual slot, save0.sve. Other manual and autosave identifiers keep the same statically proved field contract but were not individually exercised."
   },
   "staticQuery": {
     "scripts": [
@@ -73,8 +73,8 @@
     "uiRecordStride": "0x164",
     "internalFilenameOffset": "0x108",
     "runtimeValue": "save0.sve",
-    "result": "Both manual save and manual load owners derive the storage name from the selected content record at offset 0x108. The runtime probe observed the same normalized NUL-terminated identifier on load and overwrite-save.",
-    "boundary": "Use the filename only inside the selected user/device content namespace; filename alone is not a process-global key."
+    "result": "Both manual save and manual load functions derive the storage name from the selected content record at offset 0x108. The runtime probe observed the same normalized NUL-terminated identifier on load and overwrite-save.",
+    "boundary": "Use the filename only inside the content namespace for the selected user and device; filename alone is not a process-global key."
   },
   "loadBoundary": {
     "function": "0x82D84238",
@@ -85,7 +85,7 @@
       "identifierValid": true
     },
     "result": "Function entry receives the selected content record before content open and before the native deserializer call, so a missing or mismatched sidecar can stop the load without modifying native save data.",
-    "boundary": "A mismatch policy and owner-facing warning UI remain implementation work."
+    "boundary": "A mismatch policy and a warning UI remain implementation work."
   },
   "saveBoundary": {
     "function": "0x82D82510",
@@ -101,7 +101,7 @@
     "boundary": "Failure and device-removal outcomes were not forced; the static branch keeps them distinguishable from success."
   },
   "sidecarContract": {
-    "key": "selected user/device content namespace plus the normalized internal filename from record offset 0x108",
+    "key": "content namespace for the selected user and device plus the normalized internal filename from record offset 0x108",
     "loadRule": "Resolve and compare the sidecar at 0x82D84238 before native content open or deserialization.",
     "saveRule": "Write a temporary host sidecar and atomically replace the namespaced sidecar only after 0x82D829E8 reports success.",
     "nativeFormat": "unchanged",
@@ -109,7 +109,7 @@
   },
   "guards": [
     "Do not use the display label as the sidecar key.",
-    "Do not use the internal filename without its selected user/device content namespace.",
+    "Do not use the internal filename without the content namespace for its selected user and device.",
     "Do not commit a sidecar before file finalization succeeds.",
     "Do not infer manual-load success from slot selection or content enumeration.",
     "Do not edit or append to the native save format."

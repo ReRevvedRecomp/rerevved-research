@@ -11,7 +11,7 @@
     "tables": ["0x82131A18", "0x82121320"],
     "testWord": "0x82E5522C",
     "branchWord": "0x82E55230",
-    "boundary": "This packet binds the frontend flag test inside the shared state entry and the two state tables that reach it. It does not name the flag's configuration source, search for its other readers, or bind audio, fade or runtime playback."
+    "boundary": "This finding shows the frontend flag test inside the shared state entry and the two state tables that reach it. It does not name the flag's configuration source, search for its other readers, or establish audio, fade or runtime playback behavior."
   },
   "dependencies": [
     {
@@ -40,11 +40,11 @@
       "entrySlot": "+0x4 = 0x82E551D8",
       "slot18": "+0x18 = 0x82E60348",
       "slot1C": "+0x1C = 0x82E60360",
-      "result": "The AttractMovie table shares the entry; its +0x18 and +0x1C words name different targets. Their bodies are outside this packet."
+      "result": "The AttractMovie table shares the entry; its +0x18 and +0x1C words name different targets. Their bodies are outside this finding."
     }
   ],
   "currentEvidence": {
-    "method": "Foreground read-only Ghidra queries for the state-table words, the test and branch words and the bounded factory and intro slot bodies, with narrow generated-code corroboration of the entry, whose configured-project listing is truncated.",
+    "method": "Foreground read-only Ghidra queries for the state-table words, the test and branch words and the factory and intro slot bodies, with narrow generated-code corroboration of the entry, whose configured-project listing is truncated.",
     "locators": [
       "ghidra/DumpMemoryWords.java:0x82131A18",
       "ghidra/DumpMemoryWords.java:0x82121324",
@@ -54,12 +54,12 @@
       "ghidra/DumpFunctions.java:0x82E54FF0",
       "generated:rerevved/sub_82E551D8"
     ],
-    "qualification": "The configured project decodes 0x82E551D8 as bad instruction data, so the entry's control flow rests on the exact image words and the generated owner sub_82E551D8. The object's vtable word at +0x0 distinguishes the intro state from the AttractMovie state."
+    "qualification": "The configured project decodes 0x82E551D8 as bad instruction data, so the entry's control flow rests on the exact image words and the recompiled copy of the function, sub_82E551D8. The object's vtable word at +0x0 distinguishes the intro state from the AttractMovie state."
   },
   "guards": [
     "Do not clear frontend bit 0x1000 to skip only the intro; the AttractMovie state shares this entry and test.",
     "Do not assign a state meaning to frontend +0x78 or infer that the no-movie path preserves audio, fade or input timing.",
-    "Do not name bit 0x1000's configuration key or infer its retail value from this packet."
+    "Do not name bit 0x1000's configuration key or infer its retail value from this finding."
   ],
   "conclusion": "Shared frontend movie-state entry 0x82E551D8 tests frontend bit 0x1000 at 0x82E5522C. A zero r9 there takes the guest's own no-movie path through vtable slot +0x18. Restricting that to objects whose vtable is 0x82131A18 selects only the IntroMovie.bik state, whose slot +0x18 target 0x82E54FD8 stores 1 to frontend +0x78."
 }

@@ -17,7 +17,7 @@
     "boundary": "The six tests are a local path inventory, not a complete inventory of this helper, all city-bit consumers, or actual building effects. The earlier Courthouse bit-14 test is recorded separately."
   },
   "dependencies": [
-    { "topic": "building-completion-state-writer", "use": "Establishes the ordinary 1-shifted-by-normalized-index producer of city +0x10 bits." },
+    { "topic": "building-completion-state-writer", "use": "Establishes the producer of city +0x10 bits as 1 shifted by the normalized index." },
     { "topic": "building-record-identities-100-122", "use": "Supplies exact initialized names for the tested normalized indices." },
     { "topic": "courthouse-city-coordinate-scan", "use": "Establishes the earlier separate bit-14 reader in this helper." }
   ],
@@ -32,7 +32,7 @@
       { "address": "0x82D01470", "mask": "0x00000030", "itemIds": [104, 105], "storedNames": ["Market", "Library"], "register": "r22" },
       { "address": "0x82D01488..0x82D0148C", "mask": "0x00001400", "itemIds": [110, 112], "storedNames": ["Bank", "University"], "register": "r22", "qualification": "The first mask is 0x1C00; the next instruction clears bit 11 before the zero test, leaving effective mask 0x1400. Item 111 Cathedral does not satisfy the final test by itself." }
     ],
-    "laterBoundary": "A later branch starting at 0x82D014A4 can replace these registers, including r20 at 0x82D014B8. This packet does not follow r20/r21/r22 to a final city field or visible effect."
+    "laterBoundary": "A later branch starting at 0x82D014A4 can replace these registers, including r20 at 0x82D014B8. This finding does not follow r20, r21 or r22 to a final city field or visible effect."
   },
   "runtimeObservation": {
     "status": "not-observed",
@@ -41,7 +41,7 @@
   "currentEvidence": {
     "method": "Foreground read-only canonical-project raw-word windows at the exact test block, with narrow generated-function register-flow corroboration. The six sites are below cap 32 and stop at the first r10 overwrite. Existing manifests supply the city-bit writer and initialized record identities.",
     "entries": [
-      { "role": "city word and first two tests", "address": "0x82D013EC..0x82D01428", "result": "Loads city +0x10 and tests masks 0x4 and 0x8 before conditional r20 arithmetic." },
+      { "role": "city word and first two tests", "address": "0x82D013EC..0x82D01428", "result": "Loads city +0x10 and tests masks 0x4 and 0x8 before r20 arithmetic that runs only when a mask bit is set." },
       { "role": "remaining same-word tests", "address": "0x82D0143C..0x82D014BC", "result": "Tests masks 0x2, 0x40, 0x30, and effective 0x1400 before r10 is overwritten." }
     ],
     "locators": [
@@ -50,7 +50,7 @@
       "ghidra/DumpMemoryWords.java:0x82D01378,0x82D01438 radius=3",
       "generated:rerevved/sub_82D00C78:0x82D013EC..0x82D014BC"
     ],
-    "qualification": "Current-image words establish the masks and branch instructions; the narrow generated function joins the city-word register and local arithmetic where Ghidra's decompilation truncates. The register values' later semantic role and effect remain unknown."
+    "qualification": "Current-image words establish the masks and branch instructions; the narrow generated function links the city-word register and local arithmetic where Ghidra's decompilation truncates. The register values' later semantic role and effect remain unknown."
   },
   "guards": [
     "Do not equate r20, r21, or r22 with food, production, trade, science, culture, or happiness from record descriptions.",
@@ -58,5 +58,5 @@
     "Do not infer a final city output from local arithmetic that can be superseded on a later branch.",
     "Do not report runtime behavior from this static path."
   ],
-  "conclusion": "The directly called city helper tests six more masks of ordinary building-presence word city +0x10 after its accepted Courthouse test. They cover eight initialized building identities, conditionally updating three intermediate registers. Their output meanings, final gameplay effects, and runtime execution remain unresolved."
+  "conclusion": "The directly called city helper tests six more masks of the building-presence word city +0x10 after its accepted Courthouse test. They cover eight initialized building identities, updating three intermediate registers when their tests pass. Their output meanings, final gameplay effects, and runtime execution remain unresolved."
 }

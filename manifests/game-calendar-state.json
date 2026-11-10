@@ -40,7 +40,7 @@
         "confidence": "confirmed"
       },
       {
-        "role": "calendar turn/year update function",
+        "role": "calendar turn and year update function",
         "address": "0x82D1EAB0",
         "confidence": "confirmed"
       }
@@ -54,10 +54,10 @@
     "initialTurn": 0,
     "initialYear": -4000,
     "converterResult": "Starting at -4000, each positive turn advances by 100 while the year is negative, 50 while below 1000, 25 while below 1700, 10 while below 1900, 5 while below 1950, and 2 thereafter.",
-    "updateFlow": "At0x82D1EC3C..0x82D1EC50 the transition loads current turn, adds1, stores low32, passes that exact value to0x82CEFA20 and stores low32 year at0x8312B8E0. Initialization has converter-derived paths; selected deserialization separately requests saved year and turn, so recomputation on every load is not inferred.",
+    "updateFlow": "At 0x82D1EC3C..0x82D1EC50 the transition loads current turn, adds 1, stores low32, passes that exact value to 0x82CEFA20 and stores low32 year at 0x8312B8E0. Initialization has converter-derived paths; selected deserialization separately requests saved year and turn, so recomputation on every load is not inferred.",
     "presentationCorroboration": "0x82E08CC8 passes 0x8312B8DC and 0x8312B8E0 as integer arguments to a diagnostic that formats pre-collection memory and RSX measurements followed by turn and year. The recorded format text is 61 UTF-8 bytes excluding terminator, SHA-256 692CEA47C800DFCABD6EB5C66D3B785AAE19A2E0FD51E8E19B3934EF07B80FE7; its original encoding is not established.",
-    "eventYearConsumer": "Follow-on packet calendar-event-year-consumer proves that complete function 0x82DF9FD0 compares object field +0x444 with 0x8312B8E0 and immediately returns 1 when the years differ.",
-    "formatBoundary": "Complete0x82CF3920..0x82CF39B0 tests signed input r4 against zero, requests negative/positive magnitude formatting through0x82E6A430 or selects a separate zero pointer, then requests0x821B2AD8. The positive arm has no local2100 clamp or year-indexed table. Descendant formatting/string allocation, main-HUD ownership and final wording remain unproved."
+    "eventYearConsumer": "Follow-on finding calendar-event-year-consumer proves that complete function 0x82DF9FD0 compares object field +0x444 with 0x8312B8E0 and immediately returns 1 when the years differ.",
+    "formatBoundary": "Complete 0x82CF3920..0x82CF39B0 tests signed input r4 against zero, requests negative or positive magnitude formatting through 0x82E6A430 or selects a separate zero pointer, then requests 0x821B2AD8. The positive arm has no local 2100 clamp or year-indexed table. Descendant formatting and string allocation, which code is responsible for the main HUD, and final wording are not yet established."
   },
   "runtimeProbe": {
     "status": "complete",
@@ -81,31 +81,31 @@
       "generated:rerevved/sub_82CF3920:0x82CF3920..0x82CF39B0",
       "generated:rerevved/sub_82DF7648:0x82DF7674..0x82DF7690"
     ],
-    "truncationGuard": "The maintained Ghidra program truncates the turn-transition and load owners after save-register thunks. Ghidra directly decompiles the converter and recovers bounded scalar references; generated code supplies the exact increment, converter call, and store sequence.",
-    "lateCalendarVerification": "Fresh native converter32 words, transition6, formatter37 and caller8 matched image.json. Independent checks covered277 late-curve inputs, four cap/prior/next/warning tuples and the first signed32 year-wrap pair. These are static results, separate from the earlier1025/1050 runtime observation."
+    "truncationGuard": "The maintained Ghidra program truncates the turn-transition and load functions after save-register thunks. Ghidra directly decompiles the converter and recovers scalar references of limited scope; generated code supplies the exact increment, converter call, and store sequence.",
+    "lateCalendarVerification": "Fresh native converter 32 words, transition 6, formatter 37 and caller 8 matched image.json. Independent checks covered 277 late-curve inputs, four cap, prior, next and warning tuples and the first signed32 year-wrap pair. These are static results, separate from the earlier 1025 and 1050 runtime observation."
   },
   "guards": [
     "Do not derive the displayed year independently from era; era and year are separate guest values.",
-    "Publish the calendar scalars only when the corresponding guest reads and player-state gate are valid.",
+    "Publish the calendar scalars only when the corresponding guest reads and the player-state check are valid.",
     "Do not treat the retail debug formatter as runtime observation of a rendered UI string.",
     "Do not assume AD wording for year zero until the owner-visible presentation is checked.",
-    "No completed display, save/load, peer agreement or arbitrary-turn correctness beyond2100 is established by late-calendar arithmetic alone."
+    "No completed display, save and load, peer agreement or arbitrary-turn correctness beyond 2100 is established by late-calendar arithmetic alone."
   ],
   "conclusion": "Version 1.3 maintains the current turn at 0x8312B8DC and the visible calendar year at 0x8312B8E0. Static initialization and transition evidence is confirmed by the owner-observed 1025 AD to 1050 AD turn transition.",
   "dependencies": [
     {
       "topic": "scenario-speedmode-movement",
-      "use": "Complete converter preset-independence and selected32-bit year/turn load requests, with helper/delivery guards."
+      "use": "Complete converter preset-independence and selected 32-bit year and turn load requests, with helper and delivery guards."
     },
     {
       "topic": "city-yield-scheduling-producer",
-      "use": "Selected start-year threshold search and initialization publication, with retained pointer/frame guards."
+      "use": "Selected start-year threshold search and initialization publication, with guards that the pointer and frame stay valid."
     }
   ],
   "lateCalendar": {
-    "completeConverter": "All32 instructions0x82CEFA20..0x82CEFA9C contain only register/CR integer arithmetic and branches, with no memory access or call. Signed32 input<=0 returns-4000. Positive input iterates once per turn. The1800 and1900 thresholds both choose10-year increments; the merged schedule in calendar.converterResult is unchanged.",
-    "speedAndScenario": "No SPEEDMODE/scenario value is an input to this complete body. The same input turn has the same output year. The exact transition publication sequence has no speed/scenario transform. This does not establish sole writers, per-round cadence or absence of upstream/later changes.",
-    "curve": "Turn118 gives1950. For118<=T<1073740967 the stored signed year isY=2*T+1714. No2100/2500 clamp or finite calendar table ends this path.",
+    "completeConverter": "All 32 instructions 0x82CEFA20..0x82CEFA9C contain only register and CR integer arithmetic and branches, with no memory access or call. Signed32 input <= 0 returns -4000. Positive input iterates once per turn. The 1800 and 1900 thresholds both choose 10-year increments; the merged schedule in calendar.converterResult is unchanged.",
+    "speedAndScenario": "No SPEEDMODE or scenario value is an input to this complete body. The same input turn has the same output year. The exact transition publication sequence has no speed or scenario transform. This does not establish sole writers, per-round cadence or absence of upstream or later changes.",
+    "curve": "Turn 118 gives 1950. For 118<=T<1073740967 the stored signed year is Y=2*T+1714. No 2100 or 2500 clamp or finite calendar table ends this path.",
     "witnesses": [
       {
         "limitYear": 2100,
@@ -132,14 +132,14 @@
         "warningTurn": 388
       }
     ],
-    "witnessQualification": "Warning values are arithmetic five-turn leads, not a selected deadline policy. Absolute turns are converter inputs, not elapsed turns from every scenario start. Finite values through2500 fit signed16 and signed32.",
-    "startDate": "Accepted initialization0x82D24F20..0x82D24F6C reads a signed16 record+0x3E year threshold and can increment a retained turn until conversion reaches it, excluding zero or<=-4000 thresholds. Scenarios can select the starting point without changing the converter curve; initial turn, record/frame identity and retention remain premises.",
-    "wrap": "T1073740966 produces2147483646; the next step atT1073740967 yields low32 word0x80000000, stored/interpreted as-2147483648. PPC64 addi retains upper bits, but cmpwi and stw consume low32. Subsequent signed tests select a negative-year band, invalidating the simple late curve. Input turns with signed low32<=0 separately return-4000. No unbounded arithmetic claim follows.",
+    "witnessQualification": "Warning values are arithmetic five-turn leads, not a selected deadline policy. Absolute turns are converter inputs, not elapsed turns from every scenario start. Finite values through 2500 fit signed16 and signed32.",
+    "startDate": "Accepted initialization 0x82D24F20..0x82D24F6C reads a signed16 record+0x3E year threshold and can increment a kept turn until conversion reaches it, excluding zero or <= -4000 thresholds. Scenarios can select the starting point without changing the converter curve; initial turn, record and frame identity, and whether they stay valid, remain premises.",
+    "wrap": "T1073740966 produces 2147483646; the next step at T1073740967 yields low32 word 0x80000000, stored and interpreted as -2147483648. PPC64 addi keeps upper bits, but cmpwi and stw consume low32. Subsequent signed tests select a negative-year band, invalidating the simple late curve. Input turns with signed low32 <= 0 separately return -4000. No unbounded arithmetic claim follows.",
     "cost": "The converter loops once per positive input turn; this is a static linear-work observation, not a timing measurement.",
-    "displayCaller": "At0x82DF7684 the chart-label owner0x82DF7648 calls the converter;0x82DF7688 moves its return to r4 and0x82DF7690 calls0x82CF3920. Positive2500 follows the same local formatter branch as2100. A completed visible HUD/date update beyond2100 remains unobserved.",
-    "saveWidth": "Reuse scenario-speedmode-movement.json: selected deserialization0x82CC424C and0x82CC42B8 asks0x822D93E8 for four bytes into current year and current turn respectively. No2100/2500 scalar-width cap is imposed there. Current virtual+4 delivery, complete save/load, byte order and retained coherent values remain separate gates.",
-    "storedHistoryWidth": "Generated-code lead, not a confirmed bug: 0x82CE62A0, 0x82CEB348 and 0x82CC75B8 use signed16 stored history turns before conversion, so turn 32768 would read as negative. Turn 393 fits. The writer and any truncation policy are not joined to these readers, so no actual history failure is claimed.",
-    "consumerBoundary": "No year-indexed table occurs inside the complete converter or formatter. This is not a full-image year-consumer, history-schema, result/UI or supported-Unlimited-domain closure."
+    "displayCaller": "At 0x82DF7684 the chart-label function 0x82DF7648 calls the converter; 0x82DF7688 moves its return to r4 and 0x82DF7690 calls 0x82CF3920. Positive 2500 follows the same local formatter branch as 2100. A completed visible HUD or date update beyond 2100 remains unobserved.",
+    "saveWidth": "Reuse scenario-speedmode-movement.json: selected deserialization 0x82CC424C and 0x82CC42B8 asks 0x822D93E8 for four bytes into current year and current turn respectively. No 2100 or 2500 scalar-width cap is imposed there. Current virtual+4 delivery, complete save and load, byte order and coherent values that stay valid remain separate requirements.",
+    "storedHistoryWidth": "Generated-code lead, not a confirmed bug: 0x82CE62A0, 0x82CEB348 and 0x82CC75B8 use signed16 stored history turns before conversion, so turn 32768 would read as negative. Turn 393 fits. The writer and any truncation policy are not linked to these readers, so no actual history failure is claimed.",
+    "consumerBoundary": "No year-indexed table occurs inside the complete converter or formatter. This is not a complete accounting of year consumers across the image, the history schema, results and UI, or the supported-Unlimited domain."
   },
   "dominationDates": {
     "question": "Which calendar year is the earliest at which the palace-count Domination arm can be reached for a given minimum of elapsed turns?",

@@ -14,7 +14,7 @@
     "renderTargetGroupResolve": "0x8250AC90",
     "clearEntry": "0x826A2970",
     "clearEmitter": "0x826A22F8",
-      "boundary": "This packet proves a bounded callback-to-tiling edge and exact static operation order inside independent renderer fragments, with the alternate setup and end rows sharing one guarded 0x82C71880 local bracket. The partialOrder array uses fragment identifiers; only localEdges within one fragment are ordered. Manifest RVA-F-0262 records conditional accepted-frame receiver and vtable relations to 0x8250F988 and 0x8250AC90, subject to their explicit field/helper predicates, plus a bounded local order; no total order joins those relations to the clear, resolve, or presentation fragments, and this packet does not identify world pass names, concrete targets, depth surfaces, EDRAM bases, runtime frequency, or complete frame execution."
+      "boundary": "This finding proves a callback-to-tiling edge, within the inspected scope, and exact static operation order inside independent renderer fragments, with the alternate setup and end rows sharing one guarded 0x82C71880 local bracket. The partialOrder array uses fragment identifiers; only localEdges within one fragment are ordered. Manifest RVA-F-0262 records accepted-frame receiver and vtable relations to 0x8250F988 and 0x8250AC90, which depend on conditions, subject to their explicit field and helper predicates, plus a local order within the inspected scope; no total order links those relations to the clear, resolve, or presentation fragments, and this finding does not identify world pass names, concrete targets, depth surfaces, EDRAM bases, runtime frequency, or complete frame execution."
   },
   "dependencies": [
     {
@@ -31,7 +31,7 @@
     },
     {
       "topic": "native-renderer-anchor-draw-sites",
-      "use": "Accepted ClearF and clear-emitter ABI, default extents, viewport/scissor clipping, and selected MRT iteration."
+      "use": "Accepted ClearF and clear-emitter ABI, default extents, viewport and scissor clipping, and selected MRT iteration."
     },
     {
       "topic": "native-renderer-vdswap",
@@ -39,11 +39,11 @@
     },
     {
       "topic": "native-renderer-resolve-destination-lifecycle",
-      "use": "Accepted provider-output-to-r6 dataflow and the conditional 0x82517860 explicit-buffer provider candidate."
+      "use": "Accepted provider-output-to-r6 dataflow and the 0x82517860 explicit-buffer provider candidate, which applies only under a condition."
     },
     {
       "topic": "native-renderer-frame-dispatch-ownership",
-      "use": "Conditional receiver 0x82F8E270 publication, vtable 0x82047050 installation, +0x15C relation to 0x8250F988, +0x160 relation to 0x8250AC90, their explicit field/helper predicates, and bounded local order."
+      "use": "Receiver 0x82F8E270 publication, which depends on a condition, vtable 0x82047050 installation, +0x15C relation to 0x8250F988, +0x160 relation to 0x8250AC90, their explicit field and helper predicates, and local order within the inspected scope."
     }
   ],
   "frameEntry": {
@@ -57,15 +57,15 @@
       "driver": "0x82C7DF58",
       "virtualDispatch": "global frame-service object vtable +0x5C; bctrl instruction at 0x82C7E0F8, return address 0x82C7E0FC",
       "directContinuation": "0x82C7E104 -> 0x82C71A00",
-      "guard": "The driver stores incoming r4 low byte and enters this dispatch/direct continuation only when that byte is nonzero; the static call does not prove execution cadence or return behavior.",
-      "result": "After the bounded virtual dispatch returns, the broad driver statically calls 0x82C71A00. The caller and virtual evidence identify the title frame path that contains three static 0x82C71880 helper sites."
+      "guard": "The driver stores incoming r4 low byte and enters this dispatch and direct continuation only when that byte is nonzero; the static call does not prove execution cadence or return behavior.",
+      "result": "After the virtual dispatch returns (within the inspected scope), the broad driver statically calls 0x82C71A00. The caller and virtual evidence identify the title frame path that contains three static 0x82C71880 helper sites."
     },
-    "qualification": "The global frame-service object is runtime-published and its virtual target at +0x5C is not recovered statically. The direct 0x82C7E104 call is retained because it is present in generated code after that dispatch; it does not prove every frame takes the path."
+    "qualification": "The global frame-service object is runtime-published and its virtual target at +0x5C is not recovered statically. The direct 0x82C7E104 call is recorded because it is present in generated code after that dispatch; it does not prove every frame takes the path."
   },
   "partialOrder": [
     {
       "fragment": "callback-tiling",
-      "operation": "accepted callback to bounded frame tiling path",
+      "operation": "accepted callback to frame tiling path within the inspected scope",
       "entry": "0x82E87D18 -> 0x82C7DF58 -> 0x82C71A00",
       "localEdges": [
         "0x82E87D18 registration -> 0x82C7DF58 at 0x82E87D80",
@@ -82,7 +82,7 @@
       "edramBase": "unknown",
       "clear": "delegated to the 0x82C71880 helper path",
       "resolveDestination": "none proven on this path",
-      "consumers": "0x82C71880 return and later frame-driver work; conditional +0x15C and +0x160 receiver/vtable relations, their explicit field/helper predicates, and local order are recorded in manifest RVA-F-0262, while other concrete pass consumers remain unknown",
+      "consumers": "0x82C71880 return and later frame-driver work; +0x15C and +0x160 receiver and vtable relations that depend on conditions, their explicit field and helper predicates, and local order are recorded in manifest RVA-F-0262, while other concrete pass consumers remain unknown",
       "predicatedTiling": "unknown",
       "executionQualification": "The three helper sites are static callsites, not three executions; invocation count, return path, and frame cadence remain unresolved.",
       "confidence": "strong",
@@ -112,7 +112,7 @@
       "resolveDestination": "none proven",
       "consumers": "clear-emitter selected MRT iteration; after the setup return, the same guarded arm may make its sibling end call",
       "predicatedTiling": "not proven",
-      "guard": "The setup/end arm is guarded by global bit 0x8, a nonnull global pointer, receiver byte +0xA3 nonzero, and middleware word +8 equal to zero.",
+      "guard": "The setup and end arm is guarded by global bit 0x8, a nonnull global pointer, receiver byte +0xA3 nonzero, and middleware word +8 equal to zero.",
       "executionQualification": "The ClearF sites are static callsites; whether the guarded arm executes, returns, or repeats remains unresolved.",
       "confidence": "candidate",
       "evidence": [
@@ -137,12 +137,12 @@
       "target": "unknown",
       "depth": "unknown",
       "edramBase": "unknown",
-      "clear": "no direct ClearF call in the bounded end helper",
+      "clear": "no direct ClearF call in the end helper within the inspected scope",
       "resolveDestination": "none proven",
-      "consumers": "replay/state cleanup through 0x8269C888 and device state helpers",
+      "consumers": "replay and state cleanup through 0x8269C888 and device state helpers",
       "predicatedTiling": "unknown",
-      "guard": "The setup/end arm is guarded by global bit 0x8, a nonnull global pointer, receiver byte +0xA3 nonzero, and middleware word +8 equal to zero.",
-      "executionQualification": "The helper's command and replay calls are static callsites; the end callsite is conditional on the setup helper returning, and no execution count, return behavior, or frame cadence is proved.",
+      "guard": "The setup and end arm is guarded by global bit 0x8, a nonnull global pointer, receiver byte +0xA3 nonzero, and middleware word +8 equal to zero.",
+      "executionQualification": "The helper's command and replay calls are static callsites; the end callsite is reached only when the setup helper returns, and no execution count, return behavior, or frame cadence is proved.",
       "confidence": "candidate",
       "evidence": [
         "generated:rerevved/sub_8269DB20",
@@ -151,13 +151,13 @@
     },
     {
       "fragment": "renderer-table-pass",
-      "operation": "renderer-table tiling and dynamic draw/state pass candidate",
+      "operation": "renderer-table tiling and dynamic draw and state pass candidate",
       "entry": "0x8250F988",
       "localEdges": [
         "0x8250F988 -> 0x8269CE90 at 0x8250FA44 when [r20+4] > 1",
         "0x8250F988 -> command-span emitter sites 0x8250FAC8, 0x8250FAFC, 0x8250FC74, 0x8250FC9C, 0x8250FD8C, 0x8250FDB4",
         "0x8250F988 renderer receiver +0x14C callback; renderer +0x550 group receiver +0x48 and +0x4C callbacks",
-        "Conditional frame +0x15C entry r4 can be stored to renderer +0x550 after the F988 provider and low-byte guards; later F60/+0x48/+0x4C loads use current +0x550 values whose equality with the incoming pointer remains conditional across intervening helpers, storage, alias, and vptr checks; the bounded group handoff is recorded in RVA-F-0265"
+        "Frame +0x15C entry r4, depending on a condition, can be stored to renderer +0x550 after the F988 provider and low-byte guards; later F60, +0x48, and +0x4C loads use current +0x550 values whose equality with the incoming pointer depends on conditions across intervening helpers, storage, alias, and vptr checks; the group handoff, within the inspected scope, is recorded in RVA-F-0265"
       ],
       "tableEvidence": "0x820471AC contains 0x8250F988 immediately before 0x820471B0 containing 0x8250AC90; a second paired table records 0x8217EFD0 -> 0x8250F988 and 0x8217EE98 -> 0x8250AC90",
       "calls": [
@@ -174,7 +174,7 @@
       "edramBase": "unknown",
       "clear": "no direct 0x826A2970 call in this function; command-span masks 3, 0, and record-loop emissions are proven",
       "resolveDestination": "none in this function",
-      "consumers": "renderer receiver +0x14C callback, current group loaded from renderer +0x550 for callbacks +0x48 and +0x4C, and current +0x550 input to F60 +0x60/+0x58 attachment selection; equality with the original frame input and concrete draw/state/resource consumers remain unresolved",
+      "consumers": "renderer receiver +0x14C callback, current group loaded from renderer +0x550 for callbacks +0x48 and +0x4C, and current +0x550 input to F60 +0x60/+0x58 attachment selection; equality with the original frame input and concrete draw, state, and resource consumers remain unresolved",
       "predicatedTiling": "BeginTiling arguments include r4=1, r6=r20+8, r7=0, and r9=0; predication meaning is unresolved",
       "executionQualification": "The BeginTiling, emitter, and dynamic callback sites are static callsites; guard outcomes, callback returns, and runtime cadence remain unresolved.",
       "confidence": "strong",
@@ -205,9 +205,9 @@
       "edramBase": "unknown",
       "clear": "predication is set with 0x8269CD20(G, 3 << (2 * tile)) and cleared before EndTiling; this is a resolve bracket state operation, not a proved color clear",
       "resolveDestination": "r6 at 0x8250AFB8 is the first output of the selected item virtual +0x0C; the exact candidate provider 0x82517860 selects +0x90 or +0x94 only when vptr 0x8204767C is observed",
-      "consumers": "conditional candidate 0x82517860 -> 0x82517E38 -> 0x826A4638; exact provider and same-frame consumer remain unresolved",
-      "predicatedTiling": "strong: when group count [r26+4] > 1, each color/depth Resolve is under a tile mask, then predication clears before EndTiling",
-      "resolveOrder": "Within each guarded tile/provider arm, depth Resolve 0x8250AE20 precedes indexed color Resolve 0x8250AFEC; the two static sites are not two proved executions.",
+      "consumers": "candidate 0x82517860 -> 0x82517E38 -> 0x826A4638, which applies only under a condition; exact provider and same-frame consumer remain unresolved",
+      "predicatedTiling": "strong: when group count [r26+4] > 1, each color and depth Resolve is under a tile mask, then predication clears before EndTiling",
+      "resolveOrder": "Within each guarded tile and provider arm, depth Resolve 0x8250AE20 precedes indexed color Resolve 0x8250AFEC; the two static sites are not two proved executions.",
       "guards": "The tile bracket requires [r26+4] > 1; the depth and indexed-color Resolve arms retain their surrounding nonnull and low-byte provider checks, while the exact provider identity remains unresolved.",
       "executionQualification": "The two Resolve addresses are static callsites, not two executions; tile count, provider guards, returns, completion, and cadence remain unresolved.",
       "confidence": "strong",
@@ -258,7 +258,7 @@
       "target": "bound RT0 or selected bound MRT slots; concrete surface unknown",
       "depth": "bound depth at +0x30A8 for default extent selection; concrete surface unknown",
       "edramBase": "unknown",
-      "clear": "r4 mask, r5 optional rectangle, r6 float4 color, f1 depth, r8 stencil; emitter clips viewport/scissor and iterates selected MRT slots",
+      "clear": "r4 mask, r5 optional rectangle, r6 float4 color, f1 depth, r8 stencil; emitter clips viewport and scissor and iterates selected MRT slots",
       "resolveDestination": "none",
       "consumers": "device-owned lower clear commands",
       "predicatedTiling": "unknown for the outer pass; tiled MRT membership is unresolved",
@@ -285,7 +285,7 @@
         "0x826A4630 tails to 0x826A4150",
         "0x826A4638 -> VdSwap 0x82E92454 at 0x826A4884"
       ],
-      "target": "presentation source descriptor identity is conditional on the earlier Resolve correlation",
+      "target": "presentation source descriptor identity depends on the earlier Resolve correlation",
       "depth": "not applicable",
       "edramBase": "not applicable",
       "clear": "none",
@@ -301,21 +301,21 @@
     }
   ],
   "unresolved": [
-    "The accepted callback-to-0x82C71A00 path has conditional receiver/vtable relations to 0x8250F988 and 0x8250AC90 in manifest RVA-F-0262; both require the global to retain the same 0x8250F0E8-initialized object with vptr 0x82047050 at dispatch and satisfy their explicit field/helper predicates, and retention remains unresolved.",
-    "Manifest RVA-F-0265 conditionally maps the nonzero +0x98 frame arm's selected +0xAC/+0xB0 pointer through 0x821D6DD0 and F988 to a guarded renderer +0x550 store, then to later current-field group slots +0x60/+0x58 and +0x48/+0x4C; intervening helper returns, field retention, storage validity, aliasing, vptr state, indirect slot targets, and concrete resource meanings remain unresolved.",
+    "The accepted callback-to-0x82C71A00 path has receiver and vtable relations, which depend on conditions, to 0x8250F988 and 0x8250AC90 in manifest RVA-F-0262; both require the global to still hold the same 0x8250F0E8-initialized object with vptr 0x82047050 at dispatch and satisfy their explicit field and helper predicates, and whether the global keeps that object remains unresolved.",
+    "Manifest RVA-F-0265 maps, under conditions, the nonzero +0x98 frame arm's selected +0xAC/+0xB0 pointer through 0x821D6DD0 and F988 to a guarded renderer +0x550 store, then to later current-field group slots +0x60/+0x58 and +0x48/+0x4C; intervening helper returns, whether the field keeps its value, storage validity, aliasing, vptr state, indirect slot targets, and concrete resource meanings remain unresolved.",
     "No static evidence names the candidate operations as shadow, terrain, water, fog, unit, effects, labels, or UI passes.",
     "No fixed EDRAM base, concrete color target, concrete depth target, or complete tiled MRT set is proved.",
-    "The exact provider vptr and consumer for Resolve destination r6 at 0x8250AFEC remain unresolved; 0x82517860 is conditional on vptr 0x8204767C.",
-    "The order between the callback tiling path, 0x8250F988, the conditional 0x8250AC90 relation, and presentation cannot be made total from the bounded static frontier.",
+    "The exact provider vptr and consumer for Resolve destination r6 at 0x8250AFEC remain unresolved; 0x82517860 applies only for vptr 0x8204767C.",
+    "The order between the callback tiling path, 0x8250F988, the 0x8250AC90 relation, which depends on a condition, and presentation cannot be made total from the static evidence within the inspected scope.",
     "Static code does not prove runtime frequency, frame execution, clear cadence, Resolve completion, or visible output."
   ],
   "nextDiscriminator": {
     "site": "Before publication: F988 0x82500200 incoming-group slots +0x74/+0x78 and the separate D10 renderer-receiver +0x74; after publication: current renderer +0x550 consumers F60 +0x60/+0x58 and F988 +0x48/+0x4C, plus renderer binding fields +0x3098..+0x30A8",
-    "question": "Can independent evidence identify the concrete provider, resource, color target, or depth object across the pre-store +0x74/+0x78 frontier and the later current-+0x550 group consumers?",
-    "limits": "Treat the F0262 receiver, vptr, branch, helper, and retention requirements plus the F0265 provider, low-byte store, intervening-return, field-retention, storage-validity, alias, and vptr conditions as conditional. Keep F988's incoming-group +0x74/+0x78 path distinct from D10's renderer-receiver +0x74 source. Do not infer target/depth identity, execution, pass names, or total frame order from slot adjacency, masks, static calls, table proximity, async worker 0x826ABEA8, or alternate present 0x82517E38."
+    "question": "Can independent evidence identify the concrete provider, resource, color target, or depth object across the open question at the pre-store +0x74 and +0x78 slots and the later current-+0x550 group consumers?",
+    "limits": "Treat the F0262 receiver, vptr, branch, helper, and unchanged-value requirements plus the F0265 provider, low-byte store, intervening-return, unchanged-field, storage-validity, alias, and vptr conditions as depending on conditions. Keep F988's incoming-group +0x74/+0x78 path distinct from D10's renderer-receiver +0x74 source. Do not infer target or depth identity, execution, pass names, or total frame order from slot adjacency, masks, static calls, table proximity, async worker 0x826ABEA8, or alternate present 0x82517E38."
   },
   "currentEvidence": {
-    "method": "Foreground read-only Ghidra queries against image.json, bounded raw direct-branch and data scans, generated-code windows for exact function bodies, and reuse of accepted renderer manifests.",
+    "method": "Foreground read-only Ghidra queries against image.json, raw direct-branch and data scans limited to the inspected scope, generated-code windows for exact function bodies, and reuse of accepted renderer manifests.",
     "queries": [
       {
         "question": "initial renderer seed batch",
@@ -330,7 +330,7 @@
           "0x826A4638",
           "0x826ABEA8"
         ],
-        "bound": "eight exact function expansions; canonical bodies are retained only for identity and call-list comparison because save-thunk or bad-data truncation affects renderer entries"
+        "bound": "eight exact function expansions; canonical bodies are kept only for identity and call-list comparison because save-thunk or bad-data truncation affects renderer entries"
       },
       {
         "question": "frame-entry expansion batch",
@@ -405,7 +405,7 @@
         "bound": "six exact centers with word radius 32; renderer table and vtable context only"
       },
       {
-        "question": "later frame/global windows",
+        "question": "later frame and global windows",
         "script": "ghidra/DumpMemoryWords.java",
         "targets": [
           "0x8314F280",
@@ -484,15 +484,15 @@
       "RVA-REL-0585"
     ],
     "structs": [],
-    "result": "Only exact function identities and bounded direct call edges are promoted. Pass names, target identities, EDRAM bases, provider subclass identity, and total frame order remain qualified or unresolved."
+    "result": "Only exact function identities and direct call edges within the inspected scope are promoted. Pass names, target identities, EDRAM bases, provider subclass identity, and total frame order remain qualified or unresolved."
   },
   "guards": [
     "Do not equate async device worker 0x826ABEA8 with the world-frame root.",
     "Do not infer a pass identity from renderer-table adjacency, a vtable slot, or a candidate helper label.",
     "Do not treat a missing canonical caller or reference as absence proof; the configured listing has gaps and save-thunk truncation.",
     "Do not infer EDRAM base, target surface, depth surface, runtime execution, or visible output from static call order alone.",
-    "Do not apply the conditional 0x82517860 +0x90/+0x94 layout unless the exact Resolve item's vptr is observed as 0x8204767C.",
+    "Do not apply the 0x82517860 +0x90/+0x94 layout, which holds only under a condition, unless the exact Resolve item's vptr is observed as 0x8204767C.",
     "Do not make the research manifest a title runtime or renderer implementation dependency."
   ],
-  "conclusion": "The accepted frame callback 0x82E87D18 reaches broad driver 0x82C7DF58, which has a bounded virtual-dispatch-to-0x82C71A00 edge; that caller contains three static 0x82C71880 helper callsites. Manifest RVA-F-0262 adds conditional receiver/vtable relations from that frame path to both 0x8250F988 and 0x8250AC90, with the +0x15C sibling dispatch preceding the first +0x160 call and a second +0x160 call later in the same bounded frame body. Manifest RVA-F-0265 further maps the nonzero +0x98 arm's selected frame-owner pointer through DD0 to F988's incoming r4 and its guarded +0x550 store; the pre-store +0x74/+0x78 provider path and later current-+0x550 group-slot selection are separate bounded stages, and equality between the incoming pointer and later group values remains conditional across intervening returns, field retention, storage validity, aliasing, and vptr state. Both renderer relations require the global to retain the same object initialized by 0x8250F0E8 with vptr 0x82047050 and satisfy their explicit field/helper predicates; bounded reset stores and historical captures do not prove retention or a unique global type. The alternate-tiling arm contains sibling setup and end callsites from 0x82C71880: setup at 0x82C71900 reaches ClearF and the clear emitter, then conditional on setup return the same helper calls end at 0x82C71944; end contains replay and state cleanup without a direct Resolve callsite in its bounded body. Independently, renderer-table method 0x8250F988 has a static BeginTiling callsite under a count guard and dynamic draw/state callback callsites, while 0x8250AC90 has guarded static depth then indexed-color Resolve callsites under per-tile predication, clears predication, and has an EndTiling callsite with null resolve arguments. ClearF target defaults, the Resolve provider-output path, and sibling pre-swap-before-VdSwap calls are exact bounded facts. The two renderer relations, clear, resolve, and presentation fragments have no total order beyond the bounded local frame order, concrete target/depth surfaces and EDRAM bases are unknown, execution counts and cadence remain unresolved, and the total world-pass hierarchy remains open."
+  "conclusion": "The accepted frame callback 0x82E87D18 reaches broad driver 0x82C7DF58, which has a virtual-dispatch-to-0x82C71A00 edge, within the inspected scope; that caller contains three static 0x82C71880 helper callsites. Manifest RVA-F-0262 adds receiver and vtable relations, which depend on conditions, from that frame path to both 0x8250F988 and 0x8250AC90, with the +0x15C sibling dispatch preceding the first +0x160 call and a second +0x160 call later in the same frame body within the inspected scope. Manifest RVA-F-0265 further maps the nonzero +0x98 arm's selected frame-owner pointer through DD0 to F988's incoming r4 and its guarded +0x550 store; the pre-store +0x74/+0x78 provider path and later current-+0x550 group-slot selection are separate stages within the inspected scope, and equality between the incoming pointer and later group values depends on conditions across intervening returns, the field keeping its value, storage validity, aliasing, and vptr state. Both renderer relations require the global to still hold the same object initialized by 0x8250F0E8 with vptr 0x82047050 and satisfy their explicit field and helper predicates; reset stores within the inspected scope and historical captures do not prove that the global keeps that object or has a unique type. The alternate-tiling arm contains sibling setup and end callsites from 0x82C71880: setup at 0x82C71900 reaches ClearF and the clear emitter, then, only when setup returns, the same helper calls end at 0x82C71944; end contains replay and state cleanup without a direct Resolve callsite in its body within the inspected scope. Independently, renderer-table method 0x8250F988 has a static BeginTiling callsite under a count guard and dynamic draw and state callback callsites, while 0x8250AC90 has guarded static depth then indexed-color Resolve callsites under per-tile predication, clears predication, and has an EndTiling callsite with null resolve arguments. ClearF target defaults, the Resolve provider-output path, and sibling pre-swap-before-VdSwap calls are exact facts within the inspected scope. The two renderer relations, clear, resolve, and presentation fragments have no total order beyond the local frame order within the inspected scope, concrete target and depth surfaces and EDRAM bases are unknown, execution counts and cadence remain unresolved, and the total world-pass hierarchy remains open."
 }

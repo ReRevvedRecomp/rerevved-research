@@ -693,7 +693,7 @@ class TopicManifestTests(unittest.TestCase):
         self.assertEqual(document["referenceResult"]["directCodeCallers"], [])
         self.assertEqual(document["referenceResult"]["decompiledCallerFunctions"], [])
         self.assertIn(
-            "No direct caller-family ownership", document["boundedNegative"]["result"]
+            "No direct caller family is promoted", document["boundedNegative"]["result"]
         )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 
@@ -759,7 +759,8 @@ class TopicManifestTests(unittest.TestCase):
             ["0x821B0AF0", "0x82E60D50"],
         )
         self.assertIn(
-            "No direct key-2 registration owner", document["boundedNegative"]["result"]
+            "No function that registers key 2 directly",
+            document["boundedNegative"]["result"],
         )
         self.assertEqual(document["catalogPromotion"]["newEntities"], [])
 

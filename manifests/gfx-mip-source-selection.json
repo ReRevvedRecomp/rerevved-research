@@ -5,11 +5,11 @@
   "status": "closed",
   "confidence": "strong",
   "image": "image.json",
-  "question": "Which version 1.3 helpers calculate decoded-image level extents and select a bounded mip source?",
+  "question": "Which version 1.3 helpers calculate decoded-image level extents and select a mip source?",
   "scope": {
     "formatExtent": "0x821E04A8",
     "mipSelector": "0x821E0568",
-    "boundary": "This packet covers the two decoded-image record helpers only. It does not identify the renderer upload entry, backend format names, pixel channels, or runtime texture contents."
+    "boundary": "This finding covers the two decoded-image record helpers only. It does not identify the renderer upload entry, backend format names, pixel channels, or runtime texture contents."
   },
   "currentEvidence": {
     "method": "current ReXGlue generated-function fingerprints followed by foreground read-only Ghidra queries",
@@ -35,7 +35,7 @@
       "generated:rerevved/sub_821E04A8",
       "generated:rerevved/sub_821E0568"
     ],
-    "qualification": "Ghidra decompiles 0x821E04A8 completely. The version 1.3 listing for 0x821E0568 remains truncated after its save-register thunk, so its full control flow is corroborated by the uniquely matched generated body."
+    "qualification": "Ghidra decompiles 0x821E04A8 completely. The version 1.3 listing for 0x821E0568 remains truncated after its save-register thunk, so its full control flow is corroborated by the uniquely matched recompiled copy of the function."
   },
   "recordLayout": {
     "size": "0x1C",
@@ -46,7 +46,7 @@
       { "offset": "0xC", "role": "row pitch or row stride" },
       { "offset": "0x10", "role": "base data pointer" },
       { "offset": "0x14", "role": "data-region byte extent" },
-      { "offset": "0x18", "role": "level count or level bound" }
+      { "offset": "0x18", "role": "level count or level limit" }
     ],
     "result": "The version 1.3 selector reads seven words at offsets 0x0 through 0x18 and treats the input as a vptr-less record."
   },
@@ -65,10 +65,10 @@
     "address": "0x821E0568",
     "levelZero": "Returns the pointer stored at record offset 0x10 and optionally writes width, height, and pitch from offsets 0x4, 0x8, and 0xC.",
     "laterLevels": "Halves width and height with a floor of one for each level, accumulates the per-format extent from 0x821E04A8, and computes the pitch rule for the selected format.",
-    "bounds": "Returns the derived pointer only while it remains below base pointer + byte extent from offsets 0x10 and 0x14. A level beyond the bound returns zero.",
+    "bounds": "Returns the derived pointer only while it remains below base pointer + byte extent from offsets 0x10 and 0x14. A level beyond the limit returns zero.",
     "result": "The record layout, level loop, format constants, output writes, and exclusive upper-bound check match the established source semantics."
   },
-  "conclusion": "Version 1.3 establishes the decoded-image record layout and bounded mip selection semantics at 0x821E04A8 and 0x821E0568.",
+  "conclusion": "Version 1.3 establishes the decoded-image record layout and bounds-checked mip selection semantics at 0x821E04A8 and 0x821E0568.",
   "guards": [
     "Do not assign public texture-format names to the numeric selectors.",
     "Do not infer pixel channel order, tiling, or backend upload behavior from these helpers.",

@@ -9,7 +9,7 @@
       "status": "closed",
       "confidence": "strong",
       "image": "image.json",
-      "question": "Do bounded decoded-use and raw split-constant searches identify a writer for global word 0x82FFE7C8, used by the final wonder cost reduction?",
+      "question": "Do decoded-use and raw split-constant searches, within the inspected scope, identify a writer for global word 0x82FFE7C8, used by the final wonder cost reduction?",
       "scope": {
         "target": "0x82FFE7C8",
         "knownConsumers": [
@@ -44,25 +44,25 @@
           "decodedInstructions": 0,
           "referencesToCandidateAddress": 0
         },
-        "stopCondition": "Inspect at most 32 raw split-constant candidates. Stop at the first candidate whose code ownership or address-use provenance is ambiguous; promote only a writer whose store and target address are supported by decoded Ghidra evidence.",
-        "boundary": "The existing exact signed/unsigned displacement search found only the known lwz at 0x82D25330 among function-owned decoded instructions. The new decoded materializer search found none. The raw candidate scan found two lis-plus-split-low patterns, but the first inspected address has no containing Ghidra function or decoded instruction; it does not establish executable code, an access, a store, or a writer. The second candidate was not inspected after reaching the ambiguity stop condition."
+        "stopCondition": "Inspect at most 32 raw split-constant candidates. Stop at the first candidate whose containing function or address-use provenance is ambiguous; promote only a writer whose store and target address are supported by decoded Ghidra evidence.",
+        "boundary": "The existing exact signed and unsigned displacement search found only the known lwz at 0x82D25330 among decoded instructions inside functions. The new decoded materializer search found none. The raw candidate scan found two lis-plus-split-low patterns, but the first inspected address has no containing Ghidra function or decoded instruction; it does not establish executable code, an access, a store, or a writer. The second candidate was not inspected after reaching the ambiguity stop condition."
       },
       "dependencies": [
-        { "topic": "building-wonder-cost-modifier-branches", "use": "Establishes the final wonder reduction, its 0x82FFE7C8 gate, the known separate reader, and the bounded signed/unsigned displacement query." }
+        { "topic": "building-wonder-cost-modifier-branches", "use": "Establishes the final wonder reduction, its check on 0x82FFE7C8, the known separate reader, and the signed and unsigned displacement query, within the inspected scope." }
       ],
       "staticResult": {
-        "decodedDisplacementSearch": "The dependency packet's FindScalarUses query matched only 0x82D25330 lwz r11,-0x1838(r11), which reads 0x82FFE7C8. No store matched the queried D-form displacement among function-owned decoded instructions.",
+        "decodedDisplacementSearch": "The dependency finding's FindScalarUses query matched only 0x82D25330 lwz r11,-0x1838(r11), which reads 0x82FFE7C8. No store matched the queried D-form displacement among decoded instructions inside functions.",
         "decodedMaterializerSearch": "FindGlobalAddressAccesses scanned 654329 decoded instructions for split-constant materializers of 0x82FFE7C8 with lookahead 8, first-use window 16, and cap 32. It emitted zero materializers and was not truncated.",
-        "rawCandidateSearch": "FindSplitConstantCandidates found two raw lis-plus-addi/ori candidates at 0x82CC4100/0x82CC4104 and 0x82CC4134/0x82CC4138, below cap 32. The scan does not confirm instruction decoding, code ownership, register lifetime, or access direction.",
+        "rawCandidateSearch": "FindSplitConstantCandidates found two raw lis-plus-addi/ori candidates at 0x82CC4100/0x82CC4104 and 0x82CC4134/0x82CC4138, below cap 32. The scan does not confirm instruction decoding, the containing function, register lifetime, or access direction.",
         "candidateBoundary": "DumpFunctionNeighborhood at 0x82CC4100 found no containing function, zero decoded instructions in 0x82CC40F0..0x82CC4110, and no references to the candidate address. The candidate's code and pointer provenance are therefore ambiguous, so the inspection stopped without treating either raw pattern as a writer.",
         "producerBoundary": "No writer, policy meaning, or relationship between the two consumers is established. Other address forms, indexed or computed writes, functionless and undecoded code, and the uninspected second raw candidate remain unresolved."
       },
       "runtimeObservation": {
         "status": "not-observed",
-        "priorObservation": "The cost-modifier packet records no runtime value, final cost activation, indirect call target, or visible effect. This investigation is static-only."
+        "priorObservation": "The cost-modifier finding records no runtime value, final cost activation, indirect call target, or visible effect. This investigation is static-only."
       },
       "currentEvidence": {
-        "method": "Foreground read-only queries against the configured canonical Ghidra project reproduced a decoded exact-address materializer scan, a raw exact split-constant candidate scan, and one bounded function-neighborhood check at the first candidate. The raw scan stopped after that candidate proved ambiguous.",
+        "method": "Foreground read-only queries against the configured canonical Ghidra project reproduced a decoded exact-address materializer scan, a raw exact split-constant candidate scan, and one function-neighborhood check at the first candidate, within the inspected scope. The raw scan stopped after that candidate proved ambiguous.",
         "entries": [
           { "role": "decoded exact-address materializers", "address": "0x82FFE7C8", "result": "Zero split-constant materializers among 654329 decoded instructions; cap 32 was not reached." },
           { "role": "raw split-constant candidates", "address": "0x82CC4100,0x82CC4134", "result": "Two candidate pairs formed 0x82FFE7C8 in initialized memory; the raw scan was not truncated at cap 32." },
@@ -79,13 +79,13 @@
       "catalogPromotion": {
         "newEntities": [],
         "updatedEntities": ["RVA-SYM-0401"],
-        "result": "The existing global-word symbol gains this bounded writer-search boundary; no write relation or policy meaning is added."
+        "result": "The existing global-word symbol gains this writer-search boundary, which covers only the inspected scope; no write relation or policy meaning is added."
       },
       "guards": [
         "Do not treat either raw split-constant candidate as executable code or as a writer without instruction and access-direction evidence.",
         "Do not infer a policy or gameplay meaning for 0x82FFE7C8 from either consumer's threshold.",
         "Do not infer a runtime value, final price, or activation from the static cost branch.",
-        "Do not infer that the global has no writer from the bounded materializer and displacement forms checked here."
+        "Do not infer that the global has no writer from the materializer and displacement forms checked here, which cover only the inspected scope."
       ],
       "conclusion": "The decoded exact-address and prior direct-displacement searches found no writer candidate within their tested forms. A raw search found two split-constant candidates, but the first inspected candidate has no Ghidra function or decoded instructions, so its code and use provenance are ambiguous. Following the stop condition, no candidate was promoted as a writer; the producer, policy meaning, relationship between consumers, and runtime behavior remain unresolved."
     },
@@ -96,7 +96,7 @@
       "status": "closed",
       "confidence": "strong",
       "image": "image.json",
-      "question": "Do the two raw split-constant candidates form global word 0x82FFE7C8 on conditional game-state transfer paths, and in which modes?",
+      "question": "Do the two raw split-constant candidates form global word 0x82FFE7C8 on game-state transfer paths that apply only under a condition, and in which modes?",
       "scope": {
         "target": "0x82FFE7C8",
         "candidates": [
@@ -114,7 +114,7 @@
           "direction": "The address is passed as the four-byte source pointer."
         },
         "stopCondition": "Inspect only the two candidates recorded by building-wonder-cost-global-writer-frontier. Stop at the direct helper calls and the helper contracts already recorded in the catalog; do not follow indirect buffer targets or assign a policy meaning to the word.",
-        "listingBoundary": "Ghidra defines an eight-byte function at 0x82CC4040 containing mfspr r12,LR and bl 0x827F7C64, and returns no containing function or instructions around 0x82CC4134. The raw words and narrow generated-code path corroborate the candidate instructions, but Ghidra function ownership and decoded-body evidence remain absent."
+        "listingBoundary": "Ghidra defines an eight-byte function at 0x82CC4040 containing mfspr r12,LR and bl 0x827F7C64, and returns no containing function or instructions around 0x82CC4134. The raw words and narrow generated-code path corroborate the candidate instructions, but evidence of a containing Ghidra function and decoded-body evidence remain absent."
       },
       "dependencies": [
         { "topic": "building-wonder-cost-global-writer-frontier", "use": "Identifies the two exact raw candidate pairs for 0x82FFE7C8 and the prior stop boundary." },
@@ -130,14 +130,14 @@
           "guard": "At 0x82CC4110..0x82CC411C, r20 is compared with zero and r29 with zero; the zero path reaches 0x82CC4134.",
           "transfer": "Generated code forms 0x82FFE7C8 at 0x82CC4134..0x82CC4138 and directly calls BufferWriteU32 at 0x82CC4140. The helper contract forwards a four-byte source through buffer virtual slot +0x8 and conditionally reverses the source value."
         },
-        "boundary": "These are conditional helper paths, not proof of runtime invocation or an end-to-end external save/network format. Ghidra's listing does not own or decode the serializer body at these candidate addresses; the instruction interpretation comes from the narrow generated-code path corroborated against exact raw words. The concrete buffer virtual targets are not followed."
+        "boundary": "These helper paths apply only under a condition. They are not proof of runtime invocation or an end-to-end external save or network format. Ghidra's listing does not define a function for, or decode, the serializer body at these candidate addresses; the instruction interpretation comes from the narrow generated-code path corroborated against exact raw words. The concrete buffer virtual targets are not followed."
       },
       "runtimeObservation": {
         "status": "not-observed",
-        "priorObservation": "No runtime value, serializer invocation, external transfer representation, cost-gate activation, final price, or visible effect was observed; this continuation is static-only."
+        "priorObservation": "No runtime value, serializer invocation, external transfer representation, cost-check activation, final price, or visible effect was observed; this continuation is static-only."
       },
       "currentEvidence": {
-        "method": "Foreground read-only canonical Ghidra raw-word queries checked both split-constant candidates and their mode guards. A bounded function-neighborhood query checked ownership at 0x82CC4134. Generated-code corroboration was limited to sub_82CC4040 lines covering 0x82CC40D8..0x82CC4144; helper contracts were taken from the existing catalog identities.",
+        "method": "Foreground read-only canonical Ghidra raw-word queries checked both split-constant candidates and their mode guards. A function-neighborhood query, within the inspected scope, checked whether a function contains 0x82CC4134. Generated-code corroboration was limited to sub_82CC4040 lines covering 0x82CC40D8..0x82CC4144; helper contracts were taken from the existing catalog identities.",
         "entries": [
           { "role": "mode-one guard and transfer words", "address": "0x82CC40D8..0x82CC4108", "result": "The raw image words match the mode-one comparison, null-auxiliary guard, address materialization, and direct branch at 0x82CC4108; generated code identifies the branch target as BufferReadU32." },
           { "role": "mode-zero guard words", "address": "0x82CC4110..0x82CC411C", "result": "The raw image words match the mode-zero comparison and null-auxiliary guard reaching 0x82CC4134." },
@@ -153,13 +153,13 @@
           "generated:rerevved/sub_82CC4040:0x82CC40D8..0x82CC4144",
           "manifests/xbox-network-message-root.json#/wireSerialization/embeddedRecord"
         ],
-        "qualification": "DumpMemoryWords records raw words rather than decoded instructions. The Ghidra listing has no function body at these addresses, so generated-code interpretation is only promoted where it matches the exact raw words. This bounded check does not inventory other writers, consumers, aliases, or caller paths."
+        "qualification": "DumpMemoryWords records raw words rather than decoded instructions. The Ghidra listing has no function body at these addresses, so generated-code interpretation is only promoted where it matches the exact raw words. This check, within the inspected scope, does not inventory other writers, consumers, aliases, or caller paths."
       },
       "catalogPromotion": {
         "newEntities": [],
         "updatedEntities": ["RVA-SYM-0333", "RVA-SYM-0401"],
         "newRelations": ["RVA-REL-0533", "RVA-REL-0534", "RVA-REL-0535", "RVA-REL-0536"],
-        "result": "The catalog records the two conditional helper calls and the serializer's destination/source use of the existing global. It does not assign the word a policy name or claim runtime activation."
+        "result": "The catalog records the two helper calls that run only under a condition and the serializer's destination and source use of the existing global. It does not assign the word a policy name or claim runtime activation."
       },
       "guards": [
         "Do not infer a policy, difficulty, or gameplay setting from the threshold or repeated address.",
@@ -167,7 +167,7 @@
         "Do not claim the indirect buffer targets, cost reduction activation, final cost, or visible effect are established.",
         "Do not treat the missing Ghidra body as proof that the generated path is absent from the image."
       ],
-      "conclusion": "The two candidates from the prior bounded raw scan match conditional mode-one and mode-zero transfer paths in generated code, and their exact guard, materialization, and call words match the canonical image. Mode one passes 0x82FFE7C8 as the BufferReadU32 destination; mode zero passes it as the BufferWriteU32 source. Ghidra still provides no decoded function body or owner for these candidate addresses. The external format, concrete virtual targets, word meaning, runtime value, cost activation, and visible effect remain unresolved."
+      "conclusion": "The two candidates from the prior raw scan, within the inspected scope, match mode-one and mode-zero transfer paths in generated code that run only under a condition, and their exact guard, materialization, and call words match the canonical image. Mode one passes 0x82FFE7C8 as the BufferReadU32 destination; mode zero passes it as the BufferWriteU32 source. Ghidra still provides no decoded function body, and no function that contains these candidate addresses. The external format, concrete virtual targets, word meaning, runtime value, cost activation, and visible effect remain unresolved."
     },
     "RVA-F-0219": {
       "schemaVersion": 1,
@@ -202,7 +202,7 @@
       },
       "dependencies": [
         { "topic": "building-wonder-cost-modifier-branches", "use": "Establishes the signed less-than-two read of 0x82FFE7C8 and the local guards before receiver slot +0x80." },
-        { "topic": "building-wonder-cost-global-transfer", "use": "Establishes the two conditional transfer paths that pass the same word through BufferReadU32 and BufferWriteU32." }
+        { "topic": "building-wonder-cost-global-transfer", "use": "Establishes the two transfer paths, each running only under a condition, that pass the same word through BufferReadU32 and BufferWriteU32." }
       ],
       "staticResult": {
         "readerPath": "In function 0x82D25170, the signed word at 0x82FFE7C8 is compared with two at 0x82D25334. On the below-two path that passes the additional local state checks, generated code uses r31 = 0x8314F76C as the receiver for virtual slot +0x80 at 0x82D25368, with r4 = 13 and r5 = -1.",
@@ -216,12 +216,12 @@
         "priorObservation": "No runtime receiver value, vtable target, branch activation, cost effect, or visible behavior was observed; this investigation is static-only."
       },
       "currentEvidence": {
-        "method": "A foreground read-only exact-address materializer scan and reference dump checked receiver address 0x8314F76C; a raw-word query sampled the initial image word. The existing bounded cost-reader query and a narrow generated-code window corroborate the guarded slot call.",
+        "method": "A foreground read-only exact-address materializer scan and reference dump checked receiver address 0x8314F76C; a raw-word query sampled the initial image word. The existing cost-reader query, within the inspected scope, and a narrow generated-code window corroborate the guarded slot call.",
         "entries": [
           { "role": "receiver materializers", "address": "0x8314F76C", "result": "The scan examined 633469 decoded instructions, emitted 32 matches, and reported truncation at cap 32; this is not a complete address-use inventory." },
           { "role": "references to receiver address", "address": "0x8314F76C", "result": "The reference manager returned 56 references; the list does not prove initialization or a unique virtual target." },
           { "role": "initial image word", "address": "0x8314F76C", "result": "The flat-image word is 0x00000000; no runtime value is inferred." },
-          { "role": "guarded indirect call", "address": "0x82D25330..0x82D25368", "result": "The signed less-than-two branch and local state gates precede a slot +0x80 call on r31 with arguments 13 and -1; the indirect target is unresolved." }
+          { "role": "guarded indirect call", "address": "0x82D25330..0x82D25368", "result": "The signed less-than-two branch and local state checks precede a slot +0x80 call on r31 with arguments 13 and -1; the indirect target is unresolved." }
         ],
         "locators": [
           "ghidra/FindGlobalAddressAccesses.java:0x8314F76C lookahead=8 firstUseWindow=16 cap=32",
@@ -237,14 +237,14 @@
         "newEntities": [],
         "updatedEntities": ["RVA-SYM-0401"],
         "newRelations": [],
-        "result": "The existing global-word symbol records the conditional receiver address and arguments while preserving the unresolved target and runtime boundary."
+        "result": "The existing global-word symbol records the receiver address and arguments, which apply only under a condition, while preserving the unresolved target and runtime boundary."
       },
       "guards": [
         "Do not infer the receiver's runtime vtable, dynamic value, or validity from the zero word in the flat image.",
         "Do not infer a writer or absence of a writer from the capped materializer scan or the reference count.",
         "Do not infer the slot +0x80 implementation, a policy meaning, cost activation, or visible effect from the branch and arguments."
       ],
-      "conclusion": "The separate less-than-two reader reaches an indirect slot +0x80 call on receiver address 0x8314F76C with arguments 13 and -1 after its local guards. The supported flat image contains zero at that receiver address, and an exact-address materializer scan emits 32 matches and is truncated. These static results do not resolve the runtime receiver, target, effect, or the word's policy meaning; the bounded search stops at the cap."
+      "conclusion": "The separate less-than-two reader reaches an indirect slot +0x80 call on receiver address 0x8314F76C with arguments 13 and -1 after its local guards. The supported flat image contains zero at that receiver address, and an exact-address materializer scan emits 32 matches and is truncated. These static results do not resolve the runtime receiver, target, effect, or the word's policy meaning; the search stops at the cap."
     }
   }
 }

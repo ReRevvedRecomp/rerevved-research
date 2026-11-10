@@ -5,15 +5,15 @@
   "status": "closed",
   "confidence": "strong",
   "image": "image.json",
-  "question": "Which version 1.3 guest functions produce and submit the bounded GFx indexed-draw state?",
+  "question": "Which version 1.3 guest functions produce and submit the limited GFx indexed-draw state?",
   "scope": {
     "draw": "0x82303C38",
     "rendererVtable": "0x82169E30",
     "drawSlot": "0x3C",
-    "boundary": "This packet covers the static renderer gates, fill and transform setup, indexed issue call, and current geometry producers. It does not claim runtime draw counts, buffer contents, asset identity, pixel visibility, render-target state, or presentation conclusions."
+    "boundary": "This finding covers the static renderer checks, fill and transform setup, indexed issue call, and current geometry producers. It does not claim runtime draw counts, buffer contents, asset identity, pixel visibility, render-target state, or presentation conclusions."
   },
   "currentEvidence": {
-    "method": "current normalized fingerprints and bounded generated-code inspection followed by foreground read-only Ghidra queries",
+    "method": "current normalized fingerprints and limited generated-code inspection followed by foreground read-only Ghidra queries",
     "entries": [
       {
         "role": "affine composer",
@@ -74,7 +74,7 @@
     "qualification": "Exact confidence is limited to the matrix setter. The other identities are supported by current control flow, field accesses, call relationships, and renderer-vtable placement; body metrics alone are not treated as identity proof.",
     "nativeInputRefinement": {
       "wordEvidence": {
-        "method": "Read-only canonical mapped-word query; all153 selected BE32 words matched the independently hashed flat image. Capstone5.0.7 PPC64 BE decoded every selected word. No runtime or whole-program mapped rehash is claimed.",
+        "method": "Read-only canonical mapped-word query; all 153 selected BE32 words matched the independently hashed flat image. Capstone 5.0.7 PPC64 BE decoded every selected word. No runtime or whole-program mapped rehash is claimed.",
         "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
         "querySha256": "42523bdaa9829d6cd83e7cbdb28c48d6b58aaa1819e3682850ab28decd25c97a",
         "qualification": "Two complete small scalar functions and two partial movie-owner windows. Native-word support does not establish current object identity, aliases, floating environment, helper behavior, lifetime or decoder semantics.",
@@ -97,8 +97,8 @@
       },
       "composer": {
         "function": "0x82259C80",
-        "inputs": "r3 points to six binary32 P fields p0..p5 at byte offsets0,4,8,C,10,14; r4 points to M fields m0..m5 at the same offsets. Selected producer copies renderer R+E4..F8 into its separate128-byte frame at SP+60..74 before calling the composer at0x8230391C. Existing draw setup supplies M=R+FC.",
-        "operators": "mul, mad and add mean the native fmuls, fused fmadds and fadds with their respective single-precision results and retained floating environment, not host real-number algebra or separately rounded multiply/add.",
+        "inputs": "r3 points to six binary32 P fields p0..p5 at byte offsets 0,4,8,C,10,14; r4 points to M fields m0..m5 at the same offsets. Selected producer copies renderer R+E4..F8 into its separate 128-byte frame at SP+60..74 before calling the composer at 0x8230391C. Existing draw setup supplies M=R+FC.",
+        "operators": "mul, mad and add mean the native fmuls, fused fmadds and fadds with their respective single-precision results and preserved floating environment, not host real-number algebra or separately rounded multiply and add.",
         "results": [
           "c0=mad(m3,p1,mul(m0,p0))",
           "c3=mad(m3,p4,mul(m0,p3))",
@@ -107,12 +107,12 @@
           "c2=add(mad(p1,m5,mul(p0,m2)),p2)",
           "c5=add(mad(p4,m5,mul(p3,m2)),p5)"
         ],
-        "storeOrder": "32-bit stores c0,c3,c1,c4,c2,c5 to r3 offsets0,C,4,10,8,14 at0x82259CA8/CBC/CD0/CE4/CFC/0x82259D14. All original P operands are retained before the first store; M operands are reloaded between stores. The leaf makes no call, leaves integer r10 and r3 unchanged and returns at0x82259D18.",
-        "aliasBoundary": "Snapshot equations require readable retained operands and nonoverlap of composer output with reloaded M inputs, or an exact ordered alias proof. Arbitrary overlapping input/output records do not satisfy the snapshot equations."
+        "storeOrder": "32-bit stores c0,c3,c1,c4,c2,c5 to r3 offsets 0,C,4,10,8,14 at 0x82259CA8/CBC/CD0/CE4/CFC/0x82259D14. All original P operands are kept before the first store; M operands are reloaded between stores. The leaf makes no call, leaves integer r10 and r3 unchanged and returns at 0x82259D18.",
+        "aliasBoundary": "Snapshot equations require readable operands that stay unchanged and nonoverlap of composer output with reloaded M inputs, or an exact ordered alias proof. Arbitrary overlapping input and output records do not satisfy the snapshot equations."
       },
       "shadowWrites": {
         "function": "0x823038D8",
-        "constants": "Selected address arithmetic loads Z from0x8211B944 and H from0x8211CE4C; independently hashed flat bytes contain00000000 and3F800000 respectively. Retention/readability of those words is required.",
+        "constants": "Selected address arithmetic loads Z from 0x8211B944 and H from 0x8211CE4C; independently hashed flat bytes contain 00000000 and 3F800000 respectively. Those words must stay unchanged and readable.",
         "records": [
           {
             "offset": "0x780",
@@ -135,13 +135,13 @@
             "registerWords": "0x400C..0x400F"
           }
         ],
-        "order": "R+0xB8 is separately loaded before each record at0x82303924/3974/3994/39B4. First-record32-bit stores are+780,+78C,+788,+784; later records store ascending lane offsets. c0 is also stored locally at SP+50 before the first shadow store. Each record is followed by a64-bit dirty load/OR/store at its sampled G+0, OR mask8000000000000000; final store0x823039D0.",
-        "boundary": "These are direct shadow stores, not a call to0x82692588. One stable G is a retention premise, not a consequence of repeated loads. Native code contains no hosted aspect injection; any hosted modification between composition and upload is a separate source effect and changes the selected input values."
+        "order": "R+0xB8 is separately loaded before each record at 0x82303924/3974/3994/39B4. First-record 32-bit stores are +780,+78C,+788,+784; later records store ascending lane offsets. c0 is also stored locally at SP+50 before the first shadow store. Each record is followed by a 64-bit dirty load, OR and store at its sampled G+0, OR mask 8000000000000000; final store 0x823039D0.",
+        "boundary": "These are direct shadow stores, not a call to 0x82692588. One stable G is a premise that G stays valid, not a consequence of repeated loads. Native code contains no hosted aspect injection; any hosted modification between composition and upload is a separate source effect and changes the selected input values."
       },
       "guards": [
-        "Preserve exact instruction order, single-precision/FMA and floating-environment behavior; no host bit-equivalence claim follows from the displayed equations.",
-        "Preserve readable stack/renderer/constant/shadow mappings, same-instance retention and all relevant alias/concurrent-writer exclusions through each actual read/store.",
-        "Do not infer shader semantics, native admission, viewport/pixel parity or immutable GPU input ownership from these CPU stores."
+        "Preserve exact instruction order, single-precision and FMA and floating-environment behavior; no host bit-equivalence claim follows from the displayed equations.",
+        "Preserve readable stack, renderer, constant and shadow mappings, the same instance staying valid, and all relevant alias and concurrent-writer exclusions through each actual read/store.",
+        "Do not infer shader semantics, native acceptance, viewport or pixel parity or immutable GPU input ownership from these CPU stores."
       ]
     }
   },
@@ -158,13 +158,13 @@
       "0x82303DA8 calls active-fill producer 0x82302A50.",
       "0x82303DB4 calls composed-transform producer 0x823038D8 with renderer matrix state at +0xFC."
     ],
-    "issue": "0x82303E3C and 0x82303E8C call 0x826A3568 with primitive value 4. Large draws are split into bounded chunks; the remainder path multiplies the incoming triangle count by three for the submitted index count.",
+    "issue": "0x82303E3C and 0x82303E8C call 0x826A3568 with primitive value 4. Large draws are split into chunks of limited size; the remainder path multiplies the incoming triangle count by three for the submitted index count.",
     "indexedUpWrapper": {
       "function": "0x826A3568",
-      "identityEvidence": "gfx-dirty-fetch-packet.json currentEvidence identifies the current 40-instruction wrapper; its source-copy and return contract is corroborated by the bounded generated body at 0x826A3568..0x826A3608.",
+      "identityEvidence": "gfx-dirty-fetch-packet.json currentEvidence identifies the current 40-instruction wrapper; its source-copy and return contract is corroborated by the generated body, limited to 0x826A3568..0x826A3608.",
       "entry": "r3 is graphics state G from renderer +0xB8; r4 is primitive; r5 is minimum vertex a; r6 is vertex count b; r7 is index count n; r8 is the source index pointer; r9 is the guest index-format word; r10 is the source vertex pointer; the guest word at entry SP+84 is vertex stride s.",
-      "lowering": "0x826A35AC calls 0x826A3048 with r5=-a, the format in r8, stride in r9, and local vertex/index output pointers. A nonzero lowerer return skips both copies and the final cursor store.",
-      "lowererOutputs": "On the successful lowerer path, 0x826A3524..0x826A353C stores the prepared cursor at G+0x3484 and the vertex/index output pointers at G+0x3488 and G+0x348C, then writes those pointers to the wrapper's output locals.",
+      "lowering": "0x826A35AC calls 0x826A3048 with r5=-a, the format in r8, stride in r9, and local vertex and index output pointers. A nonzero lowerer return skips both copies and the final cursor store.",
+      "lowererOutputs": "On the successful lowerer path, 0x826A3524..0x826A353C stores the prepared cursor at G+0x3484 and the vertex and index output pointers at G+0x3488 and G+0x348C, then writes those pointers to the wrapper's output locals.",
       "vertexCopy": "0x826A35C8 calls 0x827F8550 with source r10(entry)+a*s and byte count b*s, using the lowerer's vertex output as destination.",
       "indexCopy": "0x826A35F4 calls 0x827F8550 from r8(entry) with the index byte count rounded up to four bytes. The element size is four when format bit 0x4 is set and two otherwise.",
       "completion": "On that path, 0x826A35F8..0x826A35FC copies G+0x3484 into G+0x30. The final r3 is left by the second copy call; it is not the lowerer's zero success status.",
@@ -178,9 +178,9 @@
       "object": "The shader-state helper 0x826ADD88 loads the vertex object from G+0x3198.",
       "variantMetadata": "For variant v, 0x826ADA38 reads a relative word at VS+896+8*v. The metadata begins at VS+relative+872; its first two words are code offset and byte size. The resource base is VS+32.",
       "cpuPatch": "0x826ADA38 copies the selected variant into an owned command allocation and calls 0x826AD150 at 0x826ADB6C with r3=VS, r4=the copied code buffer, r5=vertex declaration, r6=G+0x30F0, and r7=variant. The return site is 0x826ADB70. The helper patches that buffer before its caller publishes the command cursor.",
-      "persistentSelection": "At the common exit 0x826AE5B8, r30 is G, r31 is VS, r19 is the regular persistent variant or -1, and r15 is the conditional variant or -1. The regular block 0x826AE538..0x826AE5B4 emits only when r19 is not -1. With metadata=VS+[VS+896+8*r19]+872, raw=[VS+32]+[metadata], its physical program pointer is (raw & 0x1FFFFFFF)+(((raw >> 20)+512)&0x1000) and its instruction count is [metadata+4] >> 2.",
+      "persistentSelection": "At the common exit 0x826AE5B8, r30 is G, r31 is VS, r19 is the regular persistent variant or -1, and r15 is the variant used only under a condition, or -1. The regular block 0x826AE538..0x826AE5B4 emits only when r19 is not -1. With metadata=VS+[VS+896+8*r19]+872, raw=[VS+32]+[metadata], its physical program pointer is (raw & 0x1FFFFFFF)+(((raw >> 20)+512)&0x1000) and its instruction count is [metadata+4] >> 2.",
       "persistentPatch": "0x826ADC48 can patch the persistent resource through 0x826AD150 at 0x826ADD0C, returning at 0x826ADD10. Its compatible-cache path reuses the existing variant; both successful paths allow the caller to select that variant for emission.",
-      "qualification": "A -1 regular variant does not establish absence of a vertex shader: an immediate program may have been emitted, or existing state retained. Conditional program selection is separate. These static selection contracts do not establish resource lifetime or runtime shader identity."
+      "qualification": "A -1 regular variant does not establish absence of a vertex shader: an immediate program may have been emitted, or existing state kept. Selection of a program under a condition is separate. These static selection contracts do not establish resource lifetime or runtime shader identity."
     },
     "pixelShader": {
       "object": "0x826ADD88 loads the pixel object PS from G+0x3194; the metadata starts at PS+[PS+64]+40 and contains code offset and byte size.",
@@ -188,10 +188,10 @@
     },
     "viewport": {
       "call": "GFx setup 0x82302F60 calls 0x826903A0 at 0x823032B4 with the viewport at its stack +144. That wrapper forwards x, y, width, height, minDepth, and maxDepth to 0x82690138.",
-      "retained": "0x82690138 retains six floats at G+0x3168..G+0x317C: x, y, clipped width, clipped height, minDepth, maxDepth. It writes derived viewport scale/offset values at G+0x2908..G+0x291C.",
+      "retained": "0x82690138 keeps six floats at G+0x3168..G+0x317C: x, y, clipped width, clipped height, minDepth, maxDepth. It writes derived viewport scale and offset values at G+0x2908..G+0x291C.",
       "scissor": "0x8268F9C0 intersects the viewport with the explicit scissor when G+0x2E50 is nonzero. It stores the packed top-left and bottom-right shadow words at G+0x28C4 and G+0x28C8. This describes the CPU shadow, not later tiled command overrides."
     },
-    "evidence": "Foreground read-only DumpFunctions.java and DumpInstructions.java queries against image.json's program, corroborated by the exact generated bodies of 0x826ADA38, 0x826AD150, 0x826ADD88, 0x82690138, 0x826903A0, and 0x8268F9C0. The configured Ghidra database truncates at Xenon save thunks or undecoded instructions; generated bodies supply the bounded arithmetic and store sequences where the listing has gaps. No repaired database or runtime output is implied."
+    "evidence": "Foreground read-only DumpFunctions.java and DumpInstructions.java queries against image.json's program, corroborated by the exact generated bodies of 0x826ADA38, 0x826AD150, 0x826ADD88, 0x82690138, 0x826903A0, and 0x8268F9C0. The configured Ghidra database truncates at Xenon save thunks or undecoded instructions; generated bodies supply the arithmetic and store sequences, whose scope is limited, where the listing has gaps. No repaired database or runtime output is implied."
   },
   "geometry": {
     "rendererFields": [
@@ -209,7 +209,7 @@
     "indexProducer": {
       "function": "0x822C9F78",
       "result": "The current function keeps the format-3 and format-4 branches, triangle-record traversal, and the format-3 index-times-eight output addressing pattern.",
-      "qualification": "Numeric format values are retained without assigning public hardware format names or runtime buffer contents."
+      "qualification": "Numeric format values are kept without assigning public hardware format names or runtime buffer contents."
     }
   },
   "fillAndTransform": {
@@ -245,7 +245,7 @@
       "0x823038D8", "0x82259C80", "0x822C9F78", "0x822CA118", "0x82169E30"
     ],
     "program": "rerevved_image.bin",
-    "qualification": "Several Xenon-heavy functions truncate at save-register thunks in Ghidra. Their bounded field and call claims are corroborated by the generated version 1.3 bodies; the renderer vtable resolves as initialized memory and the affine composer decompiles directly."
+    "qualification": "Several Xenon-heavy functions truncate at save-register thunks in Ghidra. Their field and call claims, whose scope is limited, are corroborated by the generated version 1.3 bodies; the renderer vtable resolves as initialized memory and the affine composer decompiles directly."
   },
   "guards": [
     "Do not claim count-30 observations, traced buffers, reconstructed vertices or indices, shader constants, or asset identity.",
@@ -254,5 +254,5 @@
     "Do not infer that a texture bound by this generic path is GFX_MainMenu_logo.dds.",
     "Static evidence does not establish a runtime hook or guest-memory write."
   ],
-  "conclusion": "Version 1.3 establishes the bounded GFx indexed-draw architecture: renderer state setters feed guarded slot +0x3C draw submission, active fill and composed transform are applied before the indexed issue call, and the current vertex and index producers use their static layout contracts."
+  "conclusion": "Version 1.3 establishes the limited GFx indexed-draw architecture: renderer state setters feed guarded slot +0x3C draw submission, active fill and composed transform are applied before the indexed issue call, and the current vertex and index producers use their static layout contracts."
 }

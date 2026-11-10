@@ -51,7 +51,7 @@
       "backendTable": "The backend pointer table is G+(slot+0xC40)*4; dirty state is G+0x18.",
       "bindingCalls": ["0x82E335A8", "0x82E3361C", "0x82E33690", "0x82E36784"],
       "cleanupCalls": ["0x82E398CC", "0x82E39920", "0x82E39974", "0x82E399EC"],
-      "qualification": "The post-draw calls clear backend binding entries for slots 0 through 3; they do not zero the six-word fetch shadows. The setter decompile is thunk-truncated; the field mapping is corroborated by its bounded generated body. This identifies a capture window, not backing lifetime or GPU completion."
+      "qualification": "The post-draw calls clear backend binding entries for slots 0 through 3; they do not zero the six-word fetch shadows. The setter decompile is thunk-truncated; the field mapping is corroborated by a narrow window of its recompiled copy. This identifies a capture window, not backing lifetime or GPU completion."
     },
     "pixelLiterals": {
       "call": "0x826ADEF8 calls 0x826ADB98 and returns to 0x826ADEFC with r3=G, r4=PS+0x28 and r5=[PS+0x18], where PS=[G+0x3194].",
@@ -63,10 +63,10 @@
     },
     "slotZeroOrigin": {
       "wordEvidence": {
-        "method": "Read-only canonical mapped-word query; all153 selected BE32 words matched the independently hashed flat image. Capstone5.0.7 PPC64 BE decoded every selected word. No runtime or whole-program mapped rehash is claimed.",
+        "method": "Read-only canonical mapped-word query; all 153 selected BE32 words matched the independently hashed flat image. Capstone 5.0.7 PPC64 BE decoded every selected word. No runtime or whole-program mapped rehash is claimed.",
         "flatImageSha256": "5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680",
         "querySha256": "42523bdaa9829d6cd83e7cbdb28c48d6b58aaa1819e3682850ab28decd25c97a",
-        "qualification": "Two complete small scalar functions and two partial movie-owner windows. Native-word support does not establish current object identity, aliases, floating environment, helper behavior, lifetime or decoder semantics.",
+        "qualification": "Two complete small scalar functions and two partial windows of the movie code. Native-word support does not establish current object identity, aliases, floating environment, helper behavior, lifetime or decoder semantics.",
         "ranges": [
           {
             "start": "0x82E305F8",
@@ -84,28 +84,28 @@
           }
         ]
       },
-      "entry": "0x82E305F8 allocates an880-byte frame with stwu at0x82E30600. Let S be its new SP. Entry low32 r3/r4 are stored as32-bit words at S+384/S+38C at0x82E30604/608, above the local frame in home cells. These are not fields of a newly allocated movie object.",
+      "entry": "0x82E305F8 allocates an 880-byte frame with stwu at 0x82E30600. Let S be its new SP. Entry low32 r3 and r4 are stored as 32-bit words at S+384 and S+38C at 0x82E30604 and 0x82E30608, above the local frame in home cells. These are not fields of a newly allocated movie object.",
       "orderedReads": [
         "0x82E33538/53C: Pa=W(S+38C), j=W(Pa+14).",
-        "0x82E33540/544/548/54C/550: n=Z32(j<<5), reload Pb=W(S+38C), form Pb+78+n, then read backend B from its+10 cell. In the checked no-wrap domain and with Pa=Pb=P, that cell is P+88+32*j.",
-        "0x82E33554 stores B at S+25C.0x82E33558/55C writes local slot0 at S+258. Repeated local reads through0x82E33584 feed the signed-right/logical-right mask sequence.",
-        "If those local slot reads retain0, the full64 mask stored at S+250 at0x82E33594 is0000000080000000, not8000000000000000.",
-        "0x82E33598/59C/5A0/5A4 reload full64 mask into r6, B into r5, set r4=0 and load G=W(S+384) into r3.0x82E335A8 calls0x8269AF10 without a preceding local nonnull-B test."
+        "0x82E33540/544/548/54C/550: n=Z32(j<<5), reload Pb=W(S+38C), form Pb+78+n, then read backend B from its +10 cell. In the checked no-wrap domain and with Pa=Pb=P, that cell is P+88+32*j.",
+        "0x82E33554 stores B at S+25C. 0x82E33558/55C writes local slot 0 at S+258. Repeated local reads through 0x82E33584 feed the signed-right and logical-right mask sequence.",
+        "If those local slot reads keep the value 0, the full 64-bit mask stored at S+250 at 0x82E33594 is 0000000080000000, not 8000000000000000.",
+        "0x82E33598/59C/5A0/5A4 reload full 64-bit mask into r6, B into r5, set r4=0 and load G=W(S+384) into r3. 0x82E335A8 calls 0x8269AF10 without a preceding local nonnull-B test."
       ],
-      "acceptedConsumer": "Reuse gfx-backend-fetch-descriptor RVA-F-0031 fetchSelection/descriptorMerge for slot0 six-word shadow G+480 and backend cell G+3100. Nonnull B merges its fields and ORs the supplied full64 mask into Q(G+18); null backend may preserve the old fetch shadow. This origin proof does not replace that accepted merge contract.",
+      "acceptedConsumer": "Reuse gfx-backend-fetch-descriptor RVA-F-0031 fetchSelection and descriptorMerge for slot 0 six-word shadow G+480 and backend cell G+3100. Nonnull B merges its fields and ORs the supplied full 64-bit mask into Q(G+18); null backend may preserve the old fetch shadow. This origin proof does not replace that accepted merge contract.",
       "guards": [
-        "Home cells, actual Pa/Pb, index and local slot reads need retention/readability through their ordered accesses; entry spills do not exclude intervening helper, alias or concurrent writes.",
-        "A sufficient preflight checks readable home cells/P+14 and checked P+88+32*j+4<=2^32 before narrowing the backend-cell address. No record count or allocation extent is proved; j is not statically in range. This checked-domain formula is not a general theorem about wrapping or high-address native effective addresses.",
-        "Retain the actual descriptor/backend/shadow/backing incarnation and later reader. Do not assign Y/U/V/channel semantics, decoder frame selection, decode completion, first-safe reuse or current shader identity from slot0 or the draw tuple."
+        "Home cells, actual Pa and Pb, index and local slot reads need to stay unchanged and readable through their ordered accesses; entry spills do not exclude intervening helper, alias or concurrent writes.",
+        "A sufficient preflight checks readable home cells and P+14 and checked P+88+32*j+4<=2^32 before narrowing the backend-cell address. No record count or allocation extent is proved; j is not statically in range. This checked-domain formula is not a general proof about wrapping or high-address native effective addresses.",
+        "Require the same descriptor, backend, shadow and backing object to stay identical and valid through the later read. Do not assign Y, U, V or channel semantics, decoder frame selection, decode completion, first-safe reuse or current shader identity from slot 0 or the draw tuple."
       ]
     }
   },
   "guards": [
     "Do not infer visible movie or shader identity from the call tuple alone.",
     "Do not infer that renderer slot order equals pixel shader binding order.",
-    "Do not retain borrowed guest descriptors or plane pointers across the post-draw cleanup.",
+    "Do not hold on to borrowed guest descriptors or plane pointers across the post-draw cleanup.",
     "Keep original lowering, state emission, memory copy and cursor publication active during input validation.",
-    "Static CPU-readable resource addresses do not establish native resource ownership, release/reuse safety or GPU-write completion."
+    "Static CPU-readable resource addresses do not establish which code holds and releases the native resource, whether it is safe to release or reuse, or GPU-write completion."
   ],
   "conclusion": "For the four-vertex tuple, the call at 0x82E39878 submits stride-20 vertices through the existing nonindexed wrapper. The wrapper synchronously copies 80 bytes before returning, after which the caller clears backend binding entries. The pixel path supplies the PS+0x28 literal-table header and PS+0x18 backing to the shared resource literal loader. These exact boundaries support runtime input correlation while preserving original guest execution."
 }

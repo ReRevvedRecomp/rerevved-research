@@ -5,7 +5,7 @@
   "status": "closed",
   "confidence": "confirmed",
   "image": "image.json",
-  "question": "What does the version 1.3 InGameScreenRun allocation own, and what is its first explicit area-resource edge?",
+  "question": "What object does the version 1.3 InGameScreenRun allocation create, and what is its first explicit area-resource edge?",
   "scope": {
     "functions": ["0x82DD32D0", "0x82DCE090", "0x82C92950"],
     "globals": ["0x8314F238", "0x82F7A6A0"],
@@ -14,7 +14,7 @@
     "strings": ["0x8212EA24"]
   },
   "currentEvidence": {
-    "method": "identified 0x82DD32D0, 0x82DCE090, 0x82C92950, 0x82F7A6A0, and 0x8212FBE8 by the allocation/retained-field shape, HOA name table, first type-1 registry lookup, destination field, and constructor vtable store",
+    "method": "identified 0x82DD32D0, 0x82DCE090, 0x82C92950, 0x82F7A6A0, and 0x8212FBE8 by the allocation and stored-field shape, HOA name table, first type-1 registry lookup, destination field, and constructor vtable store",
     "entries": [
       {
         "role": "InGameScreenRun",
@@ -22,7 +22,7 @@
         "confidence": "strong"
       },
       {
-        "role": "Hall of Achievements owner constructor",
+        "role": "Hall of Achievements object constructor",
         "address": "0x82DCE090",
         "confidence": "confirmed"
       },
@@ -37,12 +37,12 @@
         "confidence": "confirmed"
       },
       {
-        "role": "HOA owner vtable",
+        "role": "HOA object vtable",
         "address": "0x8212FBE8",
         "confidence": "confirmed"
       }
     ],
-    "qualification": "Version 1.3 allocates 0xD0 bytes for this owner; the retained owner and first-resource fields are 0x8 and 0x14."
+    "qualification": "Version 1.3 allocates 0xD0 bytes for this object. The stored object field and the first-resource field are 0x8 and 0x14."
   },
   "staticQuery": {
     "scripts": ["ghidra/FindStrings.java", "ghidra/DumpReferences.java", "ghidra/FindFieldAccesses.java"],
@@ -55,8 +55,8 @@
     "constructor": "0x82DCE090",
     "vtable": "0x8212FBE8",
     "retainedOffset": "0x8",
-    "result": "The current entry allocates a 0xD0-byte object, calls the Hall of Achievements resource-owner constructor, and retains it at receiver offset 0x8.",
-    "boundary": "The imported InGameScreenRun identity does not make the object a playable game-map owner."
+    "result": "The current entry allocates a 0xD0-byte object, calls the Hall of Achievements constructor, and stores the result at receiver offset 0x8.",
+    "boundary": "The imported InGameScreenRun identity does not show that the object holds a playable game map."
   },
   "constructorVptrWriteQuery": {
     "function": "0x82DCE090",
@@ -65,8 +65,8 @@
     "callerDepth": 0,
     "scannedInstructions": 2,
     "matchCount": 0,
-    "result": "A bounded FindFieldAccesses query found no helper-recognized direct register-plus-displacement write to offset 0x0 in HallOfAchievementsEnvironmentCtor.",
-    "boundary": "The result does not disprove the established generated-code vtable installation. It only leaves a new catalog installs-vtable relation unproved by this query."
+    "result": "A FindFieldAccesses query limited to two instructions found no helper-recognized direct register-plus-displacement write to offset 0x0 in HallOfAchievementsEnvironmentCtor.",
+    "boundary": "The result does not disprove the established generated-code vtable installation. It only means this query does not establish a new catalog installs-vtable relation."
   },
   "firstAreaResource": {
     "loader": "0x82C92950",
@@ -76,18 +76,18 @@
     "nameAddress": "0x8212EA24",
     "name": "HOA_01Main.xml",
     "destinationOffset": "0x14",
-    "result": "The constructor requests type-1 HOA_01Main.xml from the shared resource registry and supplies owner offset 0x14 as the destination.",
+    "result": "The constructor requests type-1 HOA_01Main.xml from the shared resource registry and supplies object offset 0x14 as the destination.",
     "boundary": "Static evidence does not prove a cache hit, successful parsing, or runtime display."
   },
   "vtableSlot0": {
     "target": "0x821C6AB8",
-    "result": "Follow-on packet hall-of-achievements-vtable-slot0 proves that slot +0x0 contains 0x821C6AB8, whose complete body only returns address 0x8314F5D0.",
+    "result": "The follow-on finding hall-of-achievements-vtable-slot0 shows that slot +0x0 contains 0x821C6AB8, whose complete body only returns address 0x8314F5D0.",
     "boundary": "The slot is not classified as destruction, release, presentation, or screen behavior, and the returned global remains neutral."
   },
   "guards": [
     "Do not reinterpret HOA_01Main.xml as a playable map or scenario.",
     "Do not infer runtime load success from the static lookup.",
-    "Do not infer an allocation size other than the current 0xD0-byte owner."
+    "Do not infer an allocation size other than the current 0xD0-byte object."
   ],
-  "conclusion": "The version 1.3 object constructed from InGameScreenRun is a 0xD0-byte Hall of Achievements resource owner with vtable 0x8212FBE8; its first bounded area edge requests type-1 HOA_01Main.xml into owner offset 0x14."
+  "conclusion": "The version 1.3 object constructed from InGameScreenRun is a 0xD0-byte Hall of Achievements object with vtable 0x8212FBE8; its first area edge requests type-1 HOA_01Main.xml into object offset 0x14."
 }

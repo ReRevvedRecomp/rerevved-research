@@ -1931,7 +1931,84 @@
         ],
         "interpretation": "Interpretation: the object at +0x10 is the network session object of existing records, and slot +0x100 returns its descriptor. The sites ask whether a player ordinal is in the session's map, which is the test for a human player when the human mask word is 0. With this, the route from the generator entry to the store at 0x82CB6D08 has one unresolved indirect call left in the evaluator's callees (0x82CF0EB0), so the reading that the helper sees the item the city held on entry is close to shown.",
         "falsificationCondition": "A word at 0x8215FB78 other than 0x82A73340, or a store or call in the body at 0x82A73340, would falsify the table and getter reading. An object with a different table at word +0x10 of the object at 0x8314EFE0 would not falsify it, but the reading would not apply to that object.",
-        "result": "Each of the 8 sites skips its call when the word at +0x10 of the object at 0x8314EFE0 is 0. The located stores to that word write 0 at set-up and on one later path, and on a third path the result of a map lookup whose entries are objects built by 0x82CB12F0 with the function table 0x8215FA78. Slot +0x100 of that table is 0x82A73340, which is lwz r3, 0x20(r3) and blr: it returns the word at +0x20 of the object and writes nothing. For an object of that class the 8 calls do not write the city halfword +0x38. This is a static reading: the class of the object at run time was not observed, the store scan covers one address range and one store form, and 0x82CF0EB0 and 41 other sites in the reached functions stay unresolved."
+        "result": "Each of the 8 sites skips its call when the word at +0x10 of the object at 0x8314EFE0 is 0. The located stores to that word write 0 at set-up and on one later path, and on a third path the result of a map lookup whose entries are objects built by 0x82CB12F0 with the function table 0x8215FA78. Slot +0x100 of that table is 0x82A73340, which is lwz r3, 0x20(r3) and blr: it returns the word at +0x20 of the object and writes nothing. For an object of that class the 8 calls do not write the city halfword +0x38. This is a static reading: the class of the object at run time was not observed, the store scan covers one address range and one store form, and 0x82CF0EB0 and 41 other sites in the reached functions stay unresolved. The site 0x82CF0EB0 is examined in availabilityIndirectCallBoundary."
+      },
+      "availabilityIndirectCallBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "What does the indirect call at 0x82CF0EB0 reach? It is the one indirect site in the functions reached from the evaluator's direct callees that purchaseIndirectCallBoundary left unresolved.",
+        "scope": {
+          "site": "0x82CF0EB0",
+          "function": "0x82CF0E28",
+          "objectWord": "0x8314F76C",
+          "table": "0x82138768",
+          "slot": "+0x1E4",
+          "target": "0x82D80C30",
+          "innerSlot": "+0x1DC",
+          "innerTarget": "0x82D7D2A8",
+          "thirdArgument": 0,
+          "boundary": "The claim covers the one site 0x82CF0EB0, the store to word +0x0 of the object at 0x8314F76C found by the scan, and the bodies of 0x82D80C30 and 0x82D7D2A8 for a third argument of 0. It does not cover the other indirect sites in the reached functions."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/purchaseIndirectCallBoundary: 0x82CF0EB0 calls slot +0x1E4 of the table of the object at 0x8314F76C and was not resolved; the other three indirect sites in the functions reached from the evaluator's direct callees (0x82D8A3C8, 0x82D8AB38, 0x82D8AB54) use the object at word +0x10 of the object at 0x8314EFE0",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/purchaseRouteCalleeBoundary: the evaluator calls 0x82CF3608 at 0x82CB47F8"
+        ],
+        "callSite": [
+          "0x82CF0E28..0x82CF0EE0 is one function with argument r3 kept in r31. A scan found 6 direct calls to it; 0x82CF361C is the one in 0x82CF3608.",
+          "0x82CF0E3C..0x82CF0E58: returns 0 when the argument is 1 and the halfword at 0x830E8FE2 is 2.",
+          "0x82CF0E70..0x82CF0E90: the indirect call is skipped when the byte at 0x8314F10B is not 0, or when the word at +0x4 of the object whose pointer is the word at 0x8314EFC8 equals 2.",
+          "0x82CF0E94..0x82CF0EB0: r3 = 0x8314F76C, r4 = the argument, r5 = 0; the target is the word at +0x1E4 of the table whose address is the word at 0x8314F76C.",
+          "0x82CF0EB4..0x82CF0ECC: a nonzero low byte of the result gives the return value 1. Otherwise the function returns 1 when the argument is below 0x15 and 0 when it is 0x15 or more.",
+          "The function has no store outside its stack frame."
+        ],
+        "tableWord": [
+          "The word at 0x8314F76C is 0 in the image file.",
+          "0x82D7E758 forms 0x8314F76C in r31 itself (0x82D7E764..0x82D7E76C) and stores the table address 0x82138768 to word +0x0 (0x82D7E770..0x82D7E780). It is called from 0x82E895B4 in a function that then passes 0x82E904F0 to 0x827F1518 (0x82E895A0..0x82E895D0).",
+          "A scan of 0x82100000..0x82F00000 found the address 0x82138768 formed at one place, 0x82D7E770.",
+          "A scan for a stw with displacement 0x0 through a register that had just been given the address 0x8314F76C (within 15 instructions) found one store, 0x82D7E780.",
+          "A second store lies outside that scan: 0x82E904F0, the address passed to 0x827F1518 after the call to 0x82D7E758, branches to 0x821D5740 with r3 = 0x8314F76C, and 0x821D5740 stores the table address 0x82138538 to word +0x0 of its argument at 0x821D590C. Slot +0x1E4 of that table is 0x822DF8A0, which was not read. When 0x82E904F0 runs was not established.",
+          "0x8314F76C is formed 352 times by addi and its word +0x0 is loaded 233 times in direct form. Of the sites that put the address in r3, 151 are followed by an indirect call."
+        ],
+        "slot0x1E4": [
+          "The word at 0x8213894C (table + 0x1E4) is 0x82D80C30.",
+          "0x82D80C30..0x82D80D78 keeps r3, r4 and r5 in r31, r30 and r29. Three times it calls slot +0x1DC of the table at word +0x0 of r31 (0x82D80C54, 0x82D80CB8, 0x82D80D1C) and tests one bit of the result: bit 0x1 with r30 in 0x15..0x18 (0x82D80C58..0x82D80C70); bit 0x2 with r30 in 0x19..0x1C (0x82D80CBC..0x82D80CD4); bit 0x4 with r30 in 0x1D..0x20 (0x82D80D20..0x82D80D38). When a test holds it returns 1; when none holds it returns 0 (0x82D80D70).",
+          "When a test holds and r29 is not 0, it calls 0x82E6A430 and 0x821B2AD8 before returning 1 (for example 0x82D80C74..0x82D80C98). With r29 = 0 these two calls are skipped (0x82D80C74..0x82D80C78 branches to 0x82D80C9C).",
+          "With r29 = 0 the function makes no direct call other than the register save helper. It has no store outside its stack frame and no halfword store."
+        ],
+        "slot0x1DC": [
+          "The word at 0x82138944 (table + 0x1DC) is 0x82D7D2A8.",
+          "0x82D7D2A8..0x82D7D2F4, 20 instructions: when the word at 0x8314EFC8 is not 0 and the word at +0x4 of that object is in 4..6, it returns 0. Otherwise it returns the word at +0x8 of the object whose pointer is the word at 0x82FFD624. It makes no call and no store."
+        ],
+        "routeConsequence": [
+          "The functions reached from the evaluator's 10 direct callees hold 4 indirect sites. Three reach the two instruction function 0x82A73340 for the object class of purchaseIndirectCallBoundary. The fourth, 0x82CF0EB0, reaches 0x82D80C30 and through it 0x82D7D2A8 for the table 0x82138768. Under those two class conditions, none of the code reached from those callees contains a halfword store."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CF0EB0",
+            "0x82D80CD4",
+            "0x82D7D2C8",
+            "0x82138944",
+            "0x82D7E780",
+            "0x82E895B4"
+          ],
+          "radius": 64,
+          "distinctWords": 774,
+          "outputSha256": "39B62D89AE7D6BEAEE25A57F310C18827E64A962FC164F575438DDDF4818F410",
+          "imageMatch": "The 774 distinct words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The scans (the forms of 0x8314F76C, the places that form 0x82138768, the stores to word +0x0 and the direct calls to 0x82CF0E28) were read from the flat image, not from Ghidra."
+        },
+        "qualification": [
+          "Static reading only. The table at 0x8314F76C was not observed at run time.",
+          "The store scan finds a store to word +0x0 only when it follows the forming of the address within 15 instructions. A function that receives the address as an argument and stores another table (for example a constructor of a derived class) would not be found.",
+          "Whether the indirect call happens depends on the byte at 0x8314F10B and the object at 0x8314EFC8, which were not identified here.",
+          "What the word at +0x8 of the object at 0x82FFD624 holds, and what items 0x15..0x20 are, was not established.",
+          "The 41 other indirect sites in the functions reached from the generator's callees stay unclassified.",
+          "The class of the object at word +0x10 of the object at 0x8314EFE0 at run time stays unobserved."
+        ],
+        "interpretation": "Interpretation: 0x82CF0E28 looks like an availability test for an item number: items 0x15..0x20 are allowed when a bit of a global option word is set and otherwise by a fixed limit of 0x15. With this and purchaseIndirectCallBoundary, the evaluator's own callees have no remaining unresolved indirect call. The reading that the cost helper sees the item the city held when the evaluator was entered now rests on the two class conditions and on the generator's callees.",
+        "falsificationCondition": "A word at 0x8213894C other than 0x82D80C30 or a word at 0x82138944 other than 0x82D7D2A8, a store outside the stack frame or a further call in 0x82D80C30 on the path with r5 = 0, or a store or call in 0x82D7D2A8, would falsify the table and target reading. A different table at 0x8314F76C at run time would not falsify it, but the reading would not apply to that table.",
+        "result": "The call at 0x82CF0EB0 uses slot +0x1E4 of the function table whose address is the word at 0x8314F76C. The store found by the scan, 0x82D7E780, writes that word with the table address 0x82138768; a second store at 0x821D590C, reached through 0x82E904F0, writes the table address 0x82138538. Slot +0x1E4 of that table is 0x82D80C30. With the third argument 0, as this site passes it, 0x82D80C30 makes no direct call other than the register save helper, makes up to three indirect calls through slot +0x1DC of the same table, and has no store outside its stack frame. Slot +0x1DC is 0x82D7D2A8, which makes no call and no store. So for that table the call at 0x82CF0EB0 reaches no store outside a stack frame in the code read here. This is a static reading: the table at 0x8314F76C was not observed at run time, the store scan finds a store only near where the address is formed, and the 41 other indirect sites in the functions reached from the generator's callees stay unclassified."
       }
     },
     "RVA-F-0331": {

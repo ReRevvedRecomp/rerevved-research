@@ -617,6 +617,17 @@ the calls happen in a single player game is not known, and `0x82CF0EB0` and 41
 other sites in the reached functions stay unresolved. The record is
 [purchase indirect call finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/purchaseIndirectCallBoundary).
 
+The site `0x82CF0EB0` in `0x82CF0E28` calls slot `+0x1E4` of the table at
+`0x8314F76C`. The store at `0x82D7E780` puts table `0x82138768` there; a second store at
+`0x821D590C`, reached through `0x82E904F0`, puts table `0x82138538` there and was
+not followed. Slot `+0x1E4` of table `0x82138768` is `0x82D80C30`, which with a third argument of 0 calls slot `+0x1DC`
+(`0x82D7D2A8`) up to three times and has no store outside its stack frame;
+`0x82D7D2A8` makes no call and no store. This is a static reading: the store
+scan finds a store only near where the address is formed, the table was not
+observed at run time, and 41 other indirect sites reached from the generator's
+callees stay unclassified. The record is
+[item test call finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/availabilityIndirectCallBoundary).
+
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's
 current item is 104 (Market) or 110 (Bank). The AI turn function `0x82CB6E48`

@@ -67,6 +67,17 @@ Whether the state from the grants is still intact at the era 0 request, and at
 the first reader of the era, depends on the dispatches in between, so the
 earlier ownership grant window does not show that setup finishes safely.
 
+Interpretation: a STARTERA value in place before the first read at
+`0x82D22A78` is the value every later player and the value 4 test see, within
+the inspected code. Outside their stack frames, the loop stores to per-player
+tables, the random state, the ownership words and the tally, none inside the
+scenario block, while eligibility `0x82CE2C50` and its inspected callees store
+to fixed words outside the scenario block. Not inspected:
+`0x82D8AB00` and the virtual call at `0x82D8A3C8`, on the research cost path.
+The candidate range and player count are assumed in range. Static only, so it
+does not show delivery, a finished grant loop, or first turn, load or peer
+behavior ([finding](../../../manifests/scenario-start-era-grant.json#/grantWindowInputStoreBoundary)).
+
 The grant loop has no cap on rejected draws. The candidate factor is the double
 `48.0` at `0x8216AD68`. The actual random scale, the valid candidate set and
 the eventual supply of 24 eligible technologies are not established for every

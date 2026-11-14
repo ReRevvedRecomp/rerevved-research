@@ -848,6 +848,112 @@
       "qualification": "Generated EOF bodies remain excluded from complete semantic claims. The selected grant prefix includes an earlier failure epilogue; thunk semantics are not added. Factor bytes are data, not instructions."
     }
   },
+  "grantWindowInputStoreBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "Between the first STARTERA read at 0x82D22A78 and the last test at 0x82D22C1C, can a store in the grant loop of setup function 0x82D217C8, or in the code it calls, change STARTERA at Q+0x1C (0x830E8FEC)?",
+    "scope": {
+      "functionCap": 8,
+      "owners": [
+        "0x82D217C8",
+        "0x82CE2C50",
+        "0x82CEF6A8",
+        "0x82CEF4E8",
+        "0x82CF0EE8",
+        "0x82CEF7A0",
+        "0x82CD5A70",
+        "0x82D8A3A0"
+      ],
+      "boundary": "The grant window 0x82D22A78..0x82D22C20 and the inspected callees reached from it. Two callees reached only through research cost 0x82CF0EE8, 0x82D8AB00 and the virtual +0x100 target at 0x82D8A3C8, were not inspected."
+    },
+    "windowStores": [
+      {
+        "site": "0x82D22B0C",
+        "store": "stw zero",
+        "target": "word at 0x830EE390 + 0x28*p"
+      },
+      {
+        "site": "0x82D22B10",
+        "store": "sth player bit",
+        "target": "halfword at 0x830E9060 + 2*p"
+      },
+      {
+        "site": "0x82D22B1C",
+        "store": "stwx positive STARTERA",
+        "target": "era word at 0x830ECD08 + 4*p"
+      },
+      {
+        "site": "0x82D22B50, 0x82D22B58, 0x82D22B70",
+        "store": "stw",
+        "target": "random state words at 0x8314F754 and 0x8314F750"
+      },
+      {
+        "site": "0x82D22BDC",
+        "store": "stwx",
+        "target": "ownership word at 0x830EDC48 + 4*c"
+      },
+      {
+        "site": "0x82D22BE8",
+        "store": "stwx",
+        "target": "acquisition tally at 0x830EDD08 + 4*p"
+      }
+    ],
+    "stackSlots": "Q is the active scenario block at 0x830E8FD0, 128 bytes, ending at 0x830E904F. The window stores to the stack only at frame+0x78 (0x82D22B7C) and frame+0xB0 (0x82D22B94). The reloads at 0x82D22BF0..0x82D22BFC read the count pointer from frame+0x64 and the saved Q pointer from frame+0x68. No store in the window writes those two slots. p is the player ordinal (r25, with 4*p in r29). c is the random candidate (r31). The random state base r20 is formed at 0x82D21A88.",
+    "aliasArithmetic": "Low 32 bit address arithmetic for target 0x830E8FEC. The halfword table needs p = -58; it starts at 0x830E9060, 16 bytes after the end of Q. The era word needs p = -3911 and the tally needs p = -4935. The word at 0x830EE390 + 0x28*p has no whole p, because the distance -21412 is not a multiple of 40. The ownership word needs c = -4887, which is low 32 bits of c equal to 0x3FFFECE9 modulo 2^30, since slwi by 2 at 0x82D22BB8 drops the top two bits. The random state words are fixed addresses outside Q. So for player ordinals 0 and above within the supported player count, and for a candidate not congruent to 0x3FFFECE9 modulo 2^30, no window store lands on Q+0x1C.",
+    "eligibility": "0x82CE2C50..0x82CE2DFC (108 words) is the only call in the window, at 0x82D22BAC. Its only store outside the frame is word 0x8312D7AC, at 0x82CE2CBC, 0x82CE2D14 and 0x82CE2DF0. It calls 0x82CEF6A8 (at 0x82CE2C70, 0x82CE2CE4, 0x82CE2DD4), 0x82CE2280 (at 0x82CE2C90, only when halfword 0x8314F1CC is nonzero) and 0x82CF0EE8 (at 0x82CE2D34, only when at least one of the three prerequisites is not owned, test at 0x82CE2D24), plus the register save and restore thunks. Direct callers of 0x82CE2C50 from an aligned raw bl scan (cap 64, not truncated) are six sites: 0x82CECE8C, 0x82CED678, 0x82D07328, 0x82D22BAC, 0x82DD7990 and 0x82DD79CC. Indirect callers are not covered.",
+    "callees": [
+      "0x82CEF6A8..0x82CEF750 (ownership test, 43 words plus one zero padding word at 0x82CEF754): no store outside its frame. One call, 0x82CEF704 -> 0x82CEF4E8 with r3 = 17 and r5 = -1.",
+      "0x82CEF4E8..0x82CEF65C (94 words, complete): no store outside its frame and no call other than the register save and restore thunks.",
+      "0x82CE2280..0x82CE23FC: already recorded in prerequisiteExclusionClosureBoundary of this manifest. It writes only its 48-byte stack workspace and an r31 spill. Reused, not re-inspected.",
+      "0x82CF0EE8..0x82CF105C (research cost, 94 words, complete): one store outside the frame, word 0x8312CF3C at 0x82CF0F58. Calls 0x82CEF7A0 (0x82CF0F5C), 0x82CEF6A8 (0x82CF0F70), 0x82CD5A70 (0x82CF0FA0) and 0x82D8A3A0 (0x82CF0FB8).",
+      "0x82CEF7A0..0x82CEF824 (34 words, complete): stores outside the frame are the depth counter word 0x83156340 (0x82CEF7B8, 0x82CEF81C) and word 0x8312CF3C (0x82CEF800). It calls only itself (0x82CEF804).",
+      "0x82CD5A70..0x82CD5ADC (28 words, complete): no store outside its frame. It calls 0x82D8AB00 at 0x82CD5AC0 only when word 0x8312E608 is zero. 0x82D8AB00 was not inspected.",
+      "0x82D8A3A0..0x82D8A3F0 (21 words, complete): no store outside its frame. When the word at object+0x10 is nonzero it makes a virtual call through slot +0x100 at 0x82D8A3C8. That target was not resolved."
+    ],
+    "fixedTargets": "Every fixed store target found is 0x8312D7AC, 0x8312CF3C, 0x83156340, 0x8314F750, 0x8314F754 or one of the indexed tables in windowStores. None is inside Q.",
+    "uninspected": "0x82D8AB00 and the virtual +0x100 target at 0x82D8A3C8 were not inspected. Both are reached only through research cost 0x82CF0EE8.",
+    "interpretation": "Interpretation, not observation. Within the inspected scope, one write of STARTERA into Q+0x1C before the read at 0x82D22A78 is the value every per-player reload at 0x82D22BFC and the value 4 test at 0x82D22C18 see. The planned readback check stays required because of the two uninspected callees.",
+    "guards": [
+      "0x82D8AB00 and the virtual +0x100 target at 0x82D8A3C8 were not inspected. Both are reached only through research cost 0x82CF0EE8.",
+      "The register save and restore thunks were not re-inspected; they are treated as writing only the caller's stack save area.",
+      "The candidate range and the supported player count are premises, not results. Stack frames of callees sit below the setup frame; a callee that wrote above its own frame is not excluded.",
+      "Other threads or interrupt-time writers, the scenario publisher 0x82DAEFD8 running during the loop, and code before 0x82D22A78 or after 0x82D22C20 are outside this result.",
+      "Static only. It does not show that a hooked value is delivered, that the grant loop finishes, or first turn, load or peer behavior."
+    ],
+    "falsification": "A store in an inspected body whose target can equal 0x830E8FEC for supported indices falsifies the result that no inspected store reaches Q+0x1C. A change of STARTERA by 0x82D8AB00 or by the virtual +0x100 target would invalidate the interpretation on that path.",
+    "currentEvidence": {
+      "scripts": [
+        "ghidra/DumpMemoryWords.java",
+        "ghidra/FindDirectCallers.java"
+      ],
+      "nativeWindows": [
+        "0x82D22A78..0x82D22C20",
+        "0x82CE2C50..0x82CE2DFC",
+        "0x82CEF6A8..0x82CEF754",
+        "0x82CEF7A0..0x82CEF824",
+        "0x82CF0EE8..0x82CF105C",
+        "0x82CD5A70..0x82CD5ADC",
+        "0x82D8A3A0..0x82D8A3F0",
+        "0x82CEF4E8..0x82CEF65C"
+      ],
+      "verification": "Two read-only memory word queries: 972 requested word rows, 800 distinct addresses, all matched image.json; 162 rows, 95 distinct addresses, all matched. Eight windows, 530 words, every word decoded independently from the pinned flat image. One read-only direct caller query for 0x82CE2C50 found 6 callers.",
+      "querySha256": [
+        "ee6ed2ee05e1211279e0230e664851f39791af99d658a9a46e4914b99e54c2b1",
+        "2924026385b7a758668e66960143231fc48999d82ded7060807e6c39bc75bd21"
+      ],
+      "generatedCorroboration": [
+        "generated:rerevved/sub_82D217C8:0x82D22A78..0x82D22C20",
+        "generated:rerevved/sub_82CE2C50:0x82CE2C50..0x82CE2DFC",
+        "generated:rerevved/sub_82CEF6A8:0x82CEF6A8..0x82CEF750",
+        "generated:rerevved/sub_82CEF4E8:0x82CEF4E8..0x82CEF65C",
+        "generated:rerevved/sub_82CF0EE8:0x82CF0EE8..0x82CF105C",
+        "generated:rerevved/sub_82CEF7A0:0x82CEF7A0..0x82CEF824",
+        "generated:rerevved/sub_82CD5A70:0x82CD5A70..0x82CD5ADC",
+        "generated:rerevved/sub_82D8A3A0:0x82D8A3A0..0x82D8A3F0"
+      ],
+      "qualification": "Static analysis only; no game was launched. The result covers the inspected code within the inspected scope and is not a proof for every path."
+    }
+  },
   "nativeScenarioTransferBoundary": {
     "status": "closed",
     "confidence": "strong",

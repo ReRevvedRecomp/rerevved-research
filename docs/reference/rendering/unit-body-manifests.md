@@ -52,6 +52,8 @@ Interpretation: the attachment table is read as part of the body load, after the
 
 A load call on a member that already exists was not found in the searches listed. Each located load call is on a member constructed just before it, in the member loop `0x82D99EB8` and in `0x82D99CE8`. The name builder `0x82D7FE40` constructs a new group with `0x82D99BB0` on each call, before it builds the name. Slot `+0x1A4` of the table `0x82138768`, `0x82D7D9B0`, calls slot `+0xC` of a record's group with r4 = 1 and stores 0 to the group word of the records that hold that group. Five recorded sites call slot `+0x1A4` and then slot `+0x1A0` with r5 = 1. Interpretation: a body is brought back by removing the group of the unit and building a new one through the name builder, so a name chosen there applies on each body load found. See the `memberReloadSearch` section of the manifest.
 
+Four functions set bits in the table at `0x83129988`: `0x82CE2478`, `0x82D076D8`, `0x82D0BB10` and `0x82D11AD8`. None of them contains a call through slot `+0x1A0` or `+0x1A4`. The function `0x82D11AD8` calls `0x82D11750`, which fills an unused record and does not take an existing one. These are negative results of the searches listed in the `tileTableWrites` section of the manifest. Interpretation: no rebuild of the group of a unit when a tile bit is set was found, and the call in `0x82D11AD8` makes a new unit.
+
 ## The function 0x82DC4F68
 
 The function `0x82DC4F68` builds `<asset name>.XML` from the unit type row: the type is the word at object `+0x30` and the name is row `+0x20`. It is slot `+0x20` of the function table at `0x8212FFD0`, and `0x82DC5270`, which loads the file, is slot `+0x1C`.
@@ -76,7 +78,9 @@ Interpretation: the four nine word tables are one parent class and three child c
 - What the table at `0x83129988` holds, what the object pointed to by the word at `0x8314EFE0` is, and what the compared registers hold were not established.
 - The 14 sites of the scan outside `0x82CF0000..0x82D80000` were not read and may use other tables.
 - Of the 40 other indirect call sites through member slot `+0xB0` or `+0xB4`, 39 were not read. The other 14 direct call sites of the loader `0x82C63820` were not examined. A load call on an existing member could be in one of them.
-- What a unit created with a zero low byte of `r5` shows when its tile bit is set later was not established. No code was found that calls slot `+0x1A4` and slot `+0x1A0` after a change of the table at `0x83129988`.
+- The effects of the calls of `0x82CE8338` made by the functions that set bits in the table at `0x83129988` were not read.
+- Whether a unit record without loaded members is drawn, and how, was not established.
+- What calls slot `+0x5C` of the table `0x82138768` (`0x82D86400`), and so how often the record loop `0x82D7F550` runs, was not established.
 - What calls slot `+0x4` of the table `0x82164E00` was not established. `0x82C55BA0`, which holds the one direct call of `0x82C631D0`, has no direct caller found.
 - Whether a constructor for the table `0x8212FFD0` exists that forms its address in a way the scans miss was not established.
 - What the objects built by `0x82E72008` and `0x82E72108` are was not established. They store the table `0x8212FF9C`.

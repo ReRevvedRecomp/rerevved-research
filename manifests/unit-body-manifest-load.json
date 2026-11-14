@@ -233,6 +233,27 @@
     },
     "result": "A load call on a member that already exists was not found in the searches listed. Each located load call is on a member constructed just before it. The name builder constructs a new group on each call. Slot +0x1A4 calls slot +0xC of a record's group with r4 = 1 and clears the group word of the records that hold it. The five sites that call slot +0x1A4 and then slot +0x1A0 with r5 = 1 are the one sequence found that gives a record a new group. Static reading."
   },
+  "tileTableWrites": {
+    "question": "When a bit of the table at 0x83129988 is set after a unit was created with a zero low byte of r5, does any code give the record of that unit a new group? Static reading.",
+    "references": "A scan of 0x821B0000..0x82F00000 for an add of -0x6678 to a register that was loaded with the high half 0x8313 within the 15 instructions before found 31 sites in 29 functions.",
+    "stores": {
+      "function0x82CE2478": "0x82CE2478..0x82CE25E8. 0x82CE2554..0x82CE2578 call 0x82D8A3A0 with the word at 0x8314EFE0 and set bit (result) of the table byte at an index built from two values (the first times 40 plus the second). No direct caller was found.",
+      "function0x82D076D8": "0x82D076D8..0x82D07CD8. r31 is 1 shifted left by r28 (0x82D0773C). 0x82D077DC..0x82D07804 set that bit in the byte at index r25 of a second table in r14 and of the table at 0x83129988. 0x82D07998 also ors a shifted bit into the table byte at index r31, after r10 loads the table address from frame +0x98 at 0x82D07980. It has several direct callers, among them 0x82CD0A78, 0x82CD6DAC and 0x82CDEE84.",
+      "function0x82D0BB10": "0x82D0BB10..0x82D0C1DC. 0x82D0BD04..0x82D0BD24 set bit r28 of the table byte at index r22. 0x82D0BD2C..0x82D0BD34 then call 0x82D8A3A0 with the word at 0x8314EFE0 and continue at 0x82D0BD38 when r28 equals the result, else at 0x82D0C0CC. Its one direct caller is 0x82CDFF84.",
+      "function0x82D11AD8": "0x82D11AD8..0x82D13518 (r3, r4). When r4 is not 0 it fills the 0x640 bytes of the table with 0 (0x82D11B1C..0x82D11B3C). It stores to the table through r20 at 0x82D11C1C, 0x82D11ED0 and 0x82D12318, each an or of a bit into the byte read just before. 0x82D12598 ors a mask into a table byte through r7, and 0x82D12654 ors a shifted bit through r9; both registers load the table address saved at frame +0x94. It has several direct callers, among them 0x82CBF548, 0x82CC170C and 0x82CD758C.",
+      "function0x82D83370": "0x82D83370..0x82D834E8. 0x82D83384..0x82D83400 clear bit 0 of each byte of the table and of the table at 0x83129FC8, over (word at 0x82F77364) rows of (word at 0x82F77448) bytes with a row step of 40. Its one direct caller is 0x82E2C758.",
+      "search": "The store search looked for a byte store indexed by, or based on, the register that received the table address within the next 13 instructions. It was extended by reading 0x82D11AD8, where the address is kept in r20."
+    },
+    "calls": {
+      "slotCalls": "None of 0x82CE2478, 0x82D076D8, 0x82D0BB10 and 0x82D11AD8 contains a load of a word at +0x1A0 or +0x1A4 that is moved to the count register and called. The scan recorded in nameBuilderCalls lists no site in them.",
+      "directCalls": "Of the nine functions that hold a slot +0x1A0 site, 0x82D11AD8 calls 0x82D11750 at 0x82D12880. The other three functions make no such direct call.",
+      "event0x82CE8338": "0x82D076D8 calls 0x82CE8338 at 0x82D07B9C and 0x82D07C9C. 0x82D0BB10 calls it at 0x82D0BF90. The record ai-options-boundaries.json (RVA-F-0330) records six-argument calls of 0x82CE8338. The arguments passed here were not read.",
+      "object0x8314F76C": "0x82D0BB10 forms the address 0x8314F76C at 0x82D0BBA0 and 0x82D11AD8 forms it at 0x82D11DA0. 0x82D11AD8 calls slot +0x80 of that object at 0x82D122B0 with r4 = 0x15 and r5 = 4 or 0x10. The other indirect calls on that object in the two functions were not read."
+    },
+    "function0x82D11750": "0x82D11750(r3, r4, r5, r6). When r4 is not negative and bit 0x2 of the type row word +0x50 for type r4 is set, it calls 0x82CF4C40 with the same arguments and returns (0x82D117D0..0x82D11800). Otherwise it searches the 0x100 records of 0x830F2BF0 + 0x5400 * r3 for one whose bytes +0x0 and +0x7 are both 0xFF (0x82D11784..0x82D117C0). It returns -1 when there is none. Otherwise it fills that record with 0 and then with new values (0x82D11804..0x82D118C4) before the recorded site at 0x82D11978.",
+    "recordLoopCaller": "The one direct caller of the record loop 0x82D7F550 is 0x82D86870, in the function that starts at 0x82D86400. That function is slot +0x5C of the table 0x82138768 (the word at 0x821387C4). No direct caller of 0x82D86400 was found.",
+    "result": "A call of slot +0x1A4 or slot +0x1A0 that follows a set bit of the table at 0x83129988, or any other code that gives the record of an existing unit a new group on that change, was not found in the searches listed. Four functions that set bits in the table were found: 0x82CE2478, 0x82D076D8, 0x82D0BB10 and 0x82D11AD8. None of them contains an indirect call through a word at +0x1A0 or +0x1A4. 0x82D11AD8 calls 0x82D11750, which fills an unused record and does not take an existing one. Static reading."
+  },
   "memberBytes": {
     "bytes": "Member bytes +0x89, +0x8A and +0x8B.",
     "scan": "A scan of 0x82C50000..0x82DD0000 for byte loads and stores with displacement 0x89, 0x8A or 0x8B found, in functions of this class: the constructor stores (0x82D9B7EC, 0x82D9B7F0, 0x82D9B7F4); the store at 0x82D9C358; loads at 0x82D9BC88 and 0x82D9BCCC in 0x82D9B9F0; a load at 0x82D9A410 in 0x82D9A3F8.",
@@ -306,7 +327,7 @@
   },
   "verification": {
     "script": "ghidra/DumpMemoryWords.java",
-    "method": "Seven foreground read-only runs of the script. The first run covered 16 target addresses, each window from the target minus 0x100 to the target plus 0x100. The second run is in secondRun, the third in thirdRun, the fourth in fourthRun, the fifth in fifthRun, the sixth in sixthRun and the seventh in seventhRun. Ranges outside those windows, and the scans of the function0x82DC4F68 section, were read or run on the flat image.",
+    "method": "Eight foreground read-only runs of the script. The first run covered 16 target addresses, each window from the target minus 0x100 to the target plus 0x100. The second run is in secondRun, the third in thirdRun, the fourth in fourthRun, the fifth in fifthRun, the sixth in sixthRun, the seventh in seventhRun and the eighth in eighthRun. Ranges outside those windows, and the scans of the function0x82DC4F68 section, were read or run on the flat image.",
     "targets": [
       "0x82D7FF40", "0x82D80140", "0x82DC4FB0", "0x82DC52D0",
       "0x82D9D030", "0x82D9D1A8", "0x82D9C7A0", "0x82D9C150",
@@ -390,6 +411,17 @@
       "distinctWords": 774,
       "outputSha256": "8D347799D8A1046A10E10331EA56CFE3BAEBDFBEA91A71EEB1E28B8049F210B4",
       "imageMatch": "The 774 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The caller lists, the table words, the scans, the word at 0x82F700AC and the ranges outside those windows were read from the flat image."
+    },
+    "eighthRun": {
+      "targets": [
+        "0x82CE2578", "0x82D07804", "0x82D0BD24", "0x82D11B30",
+        "0x82D11ED0", "0x82D12318", "0x82D833D0", "0x82D117C0",
+        "0x82D7F5B0", "0x82D86870"
+      ],
+      "radius": 64,
+      "distinctWords": 1290,
+      "outputSha256": "DD76D6DBA60D38EB8EBA183113A26618DBB9CDEAA0F2675E4283B6A4C713F85C",
+      "imageMatch": "The 1290 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The scans, the caller lists, the call lists of the four functions and the word at 0x821387C4 were read from the flat image."
     }
   },
   "limits": [
@@ -409,11 +441,16 @@
     "What the table at 0x83129988 holds, what the object pointed to by the word at 0x8314EFE0 is, and what the compared registers hold were not established.",
     "The six functions with r5 = 1 were read only around the call.",
     "The caller lists of nameBuilderCalls are of direct calls; lists marked \"among others\" are cut at five.",
-    "The memberReloadSearch result is a negative result: it holds for the searches listed and does not show that no reload exists.",
+    "The memberReloadSearch and tileTableWrites results are negative results: each holds for the searches listed and does not show that no reload, and no such code, exists.",
     "Of the 40 other indirect call sites through member slot +0xB0 or +0xB4, 39 were not read; 0x82D81528 was. A member could be loaded from one of them.",
     "The other 14 direct call sites of the loader 0x82C63820 were not examined; a function outside the member table that is given a member would be missed.",
     "Slot +0xC of the group (0x821D0F48), 0x82D99BB0, 0x822DB7A8, 0x82D9B278 and 0x82C58918 were not read.",
-    "What a unit created with a zero low byte of r5 shows when its tile bit is set later was not established. No code was found that calls slot +0x1A4 and slot +0x1A0 after a change of the table at 0x83129988.",
+    "The store search of tileTableWrites can miss a store that keeps the table address in a register for longer, as 0x82D11AD8 does, or that forms the address another way. The other 24 functions that form the address were not read for stores.",
+    "The four functions that set bits in the table were read around their stores and for their call lists, not in full. The effects of their calls of 0x82CE8338 were not read.",
+    "The code of 0x82D0BB10 from 0x82D0BD38, taken when r28 equals the result of 0x82D8A3A0, was not read beyond its call list.",
+    "What slot +0x80 of the object at 0x8314F76C does was not read.",
+    "What calls slot +0x5C of the table 0x82138768 (0x82D86400), and so how often the record loop 0x82D7F550 runs, was not established.",
+    "Whether a unit record without loaded members is drawn, and how, was not established. Nothing was observed at run time.",
     "The five sites that call slot +0x1A4 and then slot +0x1A0 were read only around the calls; what makes each run was not established.",
     "The second route 0x82D99CE8 adds members 3 to 8 to a group; what record byte +0x4 holds was not established.",
     "That the list at group +0x78 to +0x7C holds the members created by 0x82D99EB8 is an assumption; 0x822DB7A8 was not read.",
@@ -461,6 +498,10 @@
     "Interpretation: the three sites that compute r5 are unit creation functions. The five sites that call slot +0x1A4 first rebuild the group of a unit after its type byte changes, such as an upgrade. 0x82D7F550 rebuilds the groups of the units in its loop over records, such as after a game is loaded.",
     "Interpretation: 0x82D7D9B0 removes the group of a unit.",
     "Interpretation: for a body of its own for Chinese or Spanish Archers, the body is loaded on creation for visible units and on these rebuild calls, through the same name builder at the sites that call 0x82D7FE40, so one change of the name there covers those sites.",
+    "Interpretation: the four functions that set bits in the table at 0x83129988 reveal tiles to a player: one for the local player alone, two for a given player, and 0x82D11AD8 as a full recount.",
+    "Interpretation: no rebuild of the group of a unit on a reveal was found in these functions. If one exists, it is likely behind their calls of 0x82CE8338, or in the per frame code of the display object, neither of which was read.",
+    "Interpretation: 0x82D11750 creates a unit, so its call in 0x82D11AD8 is not a rebuild of an existing unit.",
+    "Interpretation: for a body of its own for Chinese or Spanish Archers, this leaves the earlier reading in place: each body load found starts in the name builder.",
     "Interpretation: a member is not loaded twice: a body is brought back by removing the whole group of the unit (slot +0x1A4, whose log line calls it a unit destroy) and building a new one through the name builder with r5 = 1.",
     "Interpretation: the five sites that call slot +0x1A4 and then slot +0x1A0 change the type of a unit and rebuild its group. None of them was shown to react to a tile becoming visible.",
     "Interpretation: 0x82D99CE8 adds the further figures of an army to the group, and record byte +0x4 marks an army.",
@@ -472,7 +513,8 @@
     "Do not infer the contents of any attachment file, the path of 0x82C63820 that runs for a unit, that a member released by 0x82D9B080 is loaded again later, or that no reload exists.",
     "Do not infer that no code creates an object with the table 0x8212FFD0. In the scans run, the addresses of the four nine word tables are stored in destructors and no constructor was found.",
     "Do not infer what the two worker name functions build names for.",
-    "Do not infer what the table at 0x83129988 holds, or that the five sites whose object was not traced call 0x82D7FE40."
+    "Do not infer what the table at 0x83129988 holds, or that the five sites whose object was not traced call 0x82D7FE40.",
+    "Do not infer that a unit's group is rebuilt, or that it is not rebuilt, when a bit of the table at 0x83129988 is set."
   ],
   "falsification": [
     "A read of 0x82D7FE40 showing a different name source, a different suffix rule or a different civilization word than recorded here would falsify the name builder section.",
@@ -483,7 +525,8 @@
     "A call of slot +0x18 in 0x82C63820 on a path where the word at member +0x14 is 0, or a store to member byte +0x8C in 0x82D9CF30 before 0x82D9D1DC, would falsify the memberSlot0x18 section.",
     "A path from 0x82D80248 with a zero low byte of r28 that reaches 0x82D8029C without the loop test, or a read of 0x82D9B080 that leaves the word at member +0x14 in place, would falsify the flag0x200Release and memberRelease0x82D9B080 parts.",
     "A decode of 0x82CF5338..0x82CF53A8 in which a clear bit gives r5 = 1, or a site in 0x82CF0000..0x82D80000 that matches the scan pattern and is not among the nine recorded, would falsify the nameBuilderCalls section.",
-    "A second direct caller of 0x82D99BB0 would falsify the constructor caller count. A located call of member slot +0xB0, +0xB4 or +0x14 on a member taken from the list at group +0x78 would change the negative result of the memberReloadSearch section."
+    "A second direct caller of 0x82D99BB0 would falsify the constructor caller count. A located call of member slot +0xB0, +0xB4 or +0x14 on a member taken from the list at group +0x78 would change the negative result of the memberReloadSearch section.",
+    "A located call through slot +0x1A0 or +0x1A4 in 0x82CE2478, 0x82D076D8, 0x82D0BB10 or 0x82D11AD8, or a further store to the table at 0x83129988 that is followed by such a call, would change the negative result of the tileTableWrites section."
   ],
-  "conclusion": "In the functions read here, 0x82D7FE40 builds the body file name from the asset name in the unit type row and appends \".xml\" unless the name contains \".kfm\", replacing the name by civilization for type 0 and by other words for types 0x1D, 0x1E, 0x1F and 0x20. The unit group creates up to three members, and each loads the file in 0x82D9CF30, which substitutes \"Legion.xml\" or \"Knight.xml\" when the test 0x82E80120 fails. The attachment table \"<name>_Attachments.xml\" is tested in 0x82D9C748 and read in 0x82D9C050, which selects rows by a four letter civilization key from 0x82D9BE28. The selection 0x821D0BD0 collects each node of kind 1 whose \"civ\" attribute equals the whole key, compared without regard to the case of ASCII letters, and 0x82D9C050 attempts one piece load for each collected node and loads nothing when none is collected. Slot +0x18 of the member table is called by 0x82C63820 at two sites, each after the word at member +0x14 is not 0, and by 0x82C631D0; two paths of 0x82C63820 return without calling it, and 0x82D9CF30 stores member byte +0x8C after its call of 0x82C63820. On the name builder route with a zero low byte of r5, 0x82D7FE40 passes flags 0x200, or 0x210 for type 0x18, and, after a group call that returns a nonzero low byte, calls 0x82D9B080 on each nonzero entry of the list at group +0x78 to +0x7C, which calls slot +0x0 of the object at member +0x14 and stores 0 there; a later load of such a member was not found. 0x82DC4F68 is slot +0x20 of the function table 0x8212FFD0. In the scans run, the addresses of the four nine word tables are stored in destructors and no constructor was found. The worker name functions are not established. A scan of 0x821B0000..0x82F00000 found 23 indirect calls through a word loaded from slot +0x1A0 of a register, nine of them in 0x82CF0000..0x82D80000. Six of those nine pass r5 = 1. Three pass r5 = 1 when a compared register value equals a value read through the object pointed to by the word at 0x8314EFE0 or when a bit of a signed byte in the table at 0x83129988 is set, and r5 = 0 otherwise. At five of the nine sites the object was not traced to 0x8314F76C, the 14 other sites were not read, and what the table and the object hold was not established. In the searches listed in memberReloadSearch, no load of an existing member was found: each located load call is on a member constructed just before it, and the name builder constructs a new group on each call. Slot +0x1A4 calls slot +0xC of a record's group with r4 = 1 and clears the group word of the records that hold it, and five sites call it and then slot +0x1A0 with r5 = 1. Static reading."
+  "conclusion": "In the functions read here, 0x82D7FE40 builds the body file name from the asset name in the unit type row and appends \".xml\" unless the name contains \".kfm\", replacing the name by civilization for type 0 and by other words for types 0x1D, 0x1E, 0x1F and 0x20. The unit group creates up to three members, and each loads the file in 0x82D9CF30, which substitutes \"Legion.xml\" or \"Knight.xml\" when the test 0x82E80120 fails. The attachment table \"<name>_Attachments.xml\" is tested in 0x82D9C748 and read in 0x82D9C050, which selects rows by a four letter civilization key from 0x82D9BE28. The selection 0x821D0BD0 collects each node of kind 1 whose \"civ\" attribute equals the whole key, compared without regard to the case of ASCII letters, and 0x82D9C050 attempts one piece load for each collected node and loads nothing when none is collected. Slot +0x18 of the member table is called by 0x82C63820 at two sites, each after the word at member +0x14 is not 0, and by 0x82C631D0; two paths of 0x82C63820 return without calling it, and 0x82D9CF30 stores member byte +0x8C after its call of 0x82C63820. On the name builder route with a zero low byte of r5, 0x82D7FE40 passes flags 0x200, or 0x210 for type 0x18, and, after a group call that returns a nonzero low byte, calls 0x82D9B080 on each nonzero entry of the list at group +0x78 to +0x7C, which calls slot +0x0 of the object at member +0x14 and stores 0 there; a later load of such a member was not found. 0x82DC4F68 is slot +0x20 of the function table 0x8212FFD0. In the scans run, the addresses of the four nine word tables are stored in destructors and no constructor was found. The worker name functions are not established. A scan of 0x821B0000..0x82F00000 found 23 indirect calls through a word loaded from slot +0x1A0 of a register, nine of them in 0x82CF0000..0x82D80000. Six of those nine pass r5 = 1. Three pass r5 = 1 when a compared register value equals a value read through the object pointed to by the word at 0x8314EFE0 or when a bit of a signed byte in the table at 0x83129988 is set, and r5 = 0 otherwise. At five of the nine sites the object was not traced to 0x8314F76C, the 14 other sites were not read, and what the table and the object hold was not established. In the searches listed in memberReloadSearch, no load of an existing member was found: each located load call is on a member constructed just before it, and the name builder constructs a new group on each call. Slot +0x1A4 calls slot +0xC of a record's group with r4 = 1 and clears the group word of the records that hold it, and five sites call it and then slot +0x1A0 with r5 = 1. Four functions that set bits in the table at 0x83129988 were found: 0x82CE2478, 0x82D076D8, 0x82D0BB10 and 0x82D11AD8. None of them contains an indirect call through a word at +0x1A0 or +0x1A4, and 0x82D11AD8 calls 0x82D11750, which fills an unused record. A call that gives the record of an existing unit a new group after a bit of the table is set was not found in the searches listed in tileTableWrites. Static reading."
 }

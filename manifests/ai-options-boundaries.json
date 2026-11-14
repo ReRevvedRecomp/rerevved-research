@@ -748,7 +748,7 @@
         ],
         "interpretation": "Interpretation: for buildings and wonders the AI pays the price a human would be quoted. The order of operations issue recorded for the AI unit rush value does not apply to this arm, because the price has no divide. The AI buys only for a city whose +0x2C halfword has bit 0x20 set, and never for a Barbarian city or a city on the first outcome of the 0x82CB3F08 comparison. What remains for the AI rush valuation question is runtime observation and the meaning of the policy inputs, not the price arithmetic.",
         "falsificationCondition": "Different stored constants at the cited frame stores, a further store to those frame slots, or different arithmetic at the cited producer or arm addresses would falsify the corresponding reading.",
-        "result": "For buildings and wonders the per-player word the AI arm compares and debits is the Gold table at 0x830ED544, the same table the human rush producer compares its amount with. The AI price ((f + 1) * E + 2) * (cost - progress), doubled for wonders, uses the same arithmetic and inputs as the human producer. This differs from units, where the recorded AI value and the human rush differ in order of operations. This is a static reading."
+        "result": "For buildings and wonders the per-player word the AI arm compares and debits is the Gold table at 0x830ED544, the same table the human rush producer compares its amount with. The AI price ((f + 1) * E + 2) * (cost - progress), doubled for wonders, uses the same arithmetic and inputs as the human producer. This differs from units, where the recorded AI value and the human rush differ in order of operations. This is a static reading. The item match is recorded in purchaseItemMatchBoundary."
       },
       "cityRoleFlagBoundary": {
         "status": "closed",
@@ -1499,6 +1499,92 @@
         "interpretation": "Interpretation: call 1 marks each of the player's own Settlers type units as a Defend target, and call 6 marks the player's own city tiles as Defend targets with a priority that grows with city size. Calls 2, 9 and 11, and the role 0x4 route of call 10, mark foreign units and cities as Attack targets; the role 0x110 route of call 10 marks an Explore target; call 11 uses a fixed priority 0x20 for each foreign city that passes its tests. Call 4 is the AirAttack target for a tile flagged in the flags byte, call 5 the Explore target, and call 13 the Settle target for a candidate city site scored by 0x82D02530.",
         "falsificationCondition": "A different constant, table address or test at a cited address, or a runtime observation that a cited call passes a different priority than recorded, would falsify the corresponding reading.",
         "result": "The 13 add calls are placed in 0x82CB6E48: one in a walk over the player's unit records, nine in the tile walk, one in a walk over city records, one in a later walk over unit records and one in a separate block. Positions are the unit, tile or city position, or a neighbour tile. Priorities are constants (0x28, 0x64, 0x20), small computed values held to 8..0x30, or values read back from a per-tile priority byte table. The tests directly before each call are recorded. This is a static reading; the full conditions were not analysed and the tables the tests read are mostly not identified."
+      },
+      "purchaseItemMatchBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "When the AI building and wonder purchase arm in the evaluator 0x82CB44E0 calls the cost helper 0x82CF1278(city, -1) at 0x82CB6B80, is the city's item halfword +0x38 the item the evaluator has just selected?",
+        "scope": {
+          "functions": [
+            "0x82CB44E0",
+            "0x82CF1278",
+            "0x82CEBC38"
+          ],
+          "windows": [
+            "0x82CB6B00..0x82CB6E80",
+            "0x82CF1200..0x82CF1580",
+            "0x82CEBB80..0x82CEBD80",
+            "0x82CB6320..0x82CB6520",
+            "0x82CB5440..0x82CB5640"
+          ],
+          "boundary": "The listed windows were read, with the halfword store list over the evaluator 0x82CB44E0..0x82CB6E44, the decode of the generator 0x82CEBC38..0x82CECE00 and a scan of direct calls to 0x82CF1278 from the flat image. The claim is about instructions in the evaluator and the generator. The bodies of the callees on the route were not read."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/item103ReturnRouteBoundary: the route from 0x82CB5520 to the arm, r25 = the selected item read at 0x82CB5544, the price arithmetic 0x82CB6B78..0x82CB6BFC and the stores in the arm",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/purchaseArmInputBoundary: the inputs E, f and Gold",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/playerGoalWordBoundary: the goal word test at 0x82CB6C6C..0x82CB6C9C",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleWriterBoundary: the AI turn function calls 0x82CEBC38(city, -1) for each city after it assigns the role; the city production function 0x82D13978 stores -1 to +0x38 after a Settlers type unit",
+          "Existing manifest record: 0x82CECBA4..0x82CECBB4 in the generator 0x82CEBC38 calls the evaluator 0x82CB44E0(city index, candidate array, prefix count, total count), and the returned ordinal is assigned through 0x82CB42B8"
+        ],
+        "helperRead": [
+          "0x82CF1284..0x82CF128C: r29 = 0xBC * city, r30 = 0x8314FE28.",
+          "0x82CF1298..0x82CF12BC: r3 = 10, or 10 minus the signed halfword at 0x830E9050 + 2 * (city owner byte) when that halfword is above 0.",
+          "0x82CF12C0..0x82CF12D0: when the second argument is -1, the item is the signed city halfword +0x38.",
+          "0x82CF12D4..0x82CF12E0: when the item is below 100 or at least 300, the helper returns at 0x82CF1550 with r3 unchanged, that is 10 or the reduced value. It is not a cost of any item.",
+          "0x82CF12E4..0x82CF132C: for items 100 to 199 the base is the signed byte +0x41 of the 0xCC byte record at 0x82F71FD8 times r3; for items 200 to 299 it is the signed halfword +0x40 of the 0x14C byte record at 0x82F73238 times r3. Later steps reduce it (0x82CF1330..0x82CF154C) and were not analysed.",
+          "A scan found 21 direct calls to this helper. Three pass an explicit item: 0x82CB6410 (the evaluator's candidate scoring), 0x82CE2C10 and 0x82CE2C34. The purchase arm call 0x82CB6B80 passes -1."
+        ],
+        "orderOfOperations": [
+          "For a selected item r25 with 100 <= r25 < 300, not 219 or 220:",
+          "1. 0x82CB6B78..0x82CB6B84: r27 = 0x82CF1278(city, -1), the helper's value for the item stored at +0x38.",
+          "2. 0x82CB6B88..0x82CB6B94: m = 2 when r25 is at least 200, else 1. This uses the selected item.",
+          "3. 0x82CB6BC8..0x82CB6BF8: progress H = the signed city halfword +0x36; P = ((f + 1) * E + 2) * (r27 - H) * m.",
+          "4. 0x82CB6C6C..0x82CB6C9C: with the goal word equal to 2, the test reads the city halfword +0x38 minus 100 and continues for 4 or 10. This reads the stored item, before step 5.",
+          "5. 0x82CB6CE8..0x82CB6D08: the Gold word is lowered by P (0x82CB6CFC) and r25 is stored to the city halfword +0x38 (0x82CB6D08).",
+          "6. 0x82CB6D10..0x82CB6D34: the halfword +0x36 becomes H + (P / ((f + 1) * E + 2)) / m, with f and E read again (0x82CB6CB0..0x82CB6CF8). Register r27 is reused for E from 0x82CB6CB0. With unchanged f, E and progress and no arithmetic overflow, +0x36 receives the low 16 bits of the helper value of step 1.",
+          "7. 0x82CB6D40..0x82CB6D5C: 0x82D13978(city, 1) is called and bit 0x400 of the city word +0x24 is set."
+        ],
+        "secondBlock": "0x82CB6D60..0x82CB6E2C is reached after the first purchase or when its checks skip it, and continues when P is not above the Gold word read again, bit 0x10000 of the city word +0x24 is set, r25 is 0x6B (item 107) and a word at +0x78 of the pointer in frame +0x98 is -1. It stores 0x6B to +0x38 (0x82CB6DE8), lowers Gold by P and adds P / ((f + 1) * E + 2) to +0x36 without the division by m. Its conditions were read only as listed.",
+        "storesBeforeTheCall": [
+          "In the evaluator's instructions 0x82CB44E0..0x82CB6E44 there are nine halfword stores, all indexed: 0x82CB6864, 0x82CB6930, 0x82CB6954, 0x82CB6A34, 0x82CB6A58, 0x82CB6D08, 0x82CB6D34, 0x82CB6DE8 and 0x82CB6E10. None is before 0x82CB5520. The stores of r25 to +0x38 at 0x82CB6864, 0x82CB6930 and 0x82CB6A34 are in the block 0x82CB674C..0x82CB6A8C, which a selected item of 100 or more does not enter (recorded in item103ReturnRouteBoundary).",
+          "The generator 0x82CEBC38, decoded over 0x82CEBC38..0x82CECE00, has no halfword store instruction. It reads +0x38 in the early return test at 0x82CEBC70..0x82CEBC80 and again at 0x82CEBFA0. In the early return test, when bit 0x400 of the city word +0x24 is set and the stored item is at least 200, it returns 0 (0x82CEBC58..0x82CEBC8C).",
+          "The evaluator's scoring compares the stored item with a candidate at 0x82CB6408..0x82CB6440: for a candidate r29 = r7 + 0xC8 it calls 0x82CF1278(city, r29), divides r31 by the result, and doubles the quotient when the city halfword +0x38 equals r29. The code therefore allows the stored item to differ from a candidate."
+        ],
+        "consequence": [
+          "The helper (step 1, load at 0x82CF12CC) and the goal word test (step 4, load at 0x82CB6C84) read +0x38 separately, both before the selected item is stored there. The progress rewrite (step 6) derives from the step 1 value. The factor m (step 2) reads the selected item r25. Callees that were not read could change +0x38 before or between the two reads.",
+          "When the selected item equals the stored item, r27 is the helper's value for the selected item.",
+          "When they differ and the stored item is 100 to 299, r27 is the helper's value for the stored item and the progress written in step 6 derives from that value.",
+          "When the stored item is below 100 (a unit, or -1) or at least 300, r27 is 10 or less. P is then ((f + 1) * E + 2) * (r27 - H) * m, and the arm returns without a purchase when that is 0 or less (0x82CB6BFC). With the goal word equal to 2 the Market or Bank test of step 4 then fails for such a stored item."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CB6C00",
+            "0x82CB6D80",
+            "0x82CF1300",
+            "0x82CF1480",
+            "0x82CEBC80",
+            "0x82CB6420",
+            "0x82CB5540"
+          ],
+          "radius": 64,
+          "distinctWords": 837,
+          "outputSha256": "1EC9587DA78976032723961D5F7284511EA762401715A017B474F821B648A13C",
+          "imageMatch": "All 837 words match the supported flat image (SHA-256 in manifests/image.json). They cover 0x82CB6B00..0x82CB6E80, 0x82CF1200..0x82CF1580, 0x82CEBB80..0x82CEBD80, 0x82CB6320..0x82CB6520 and 0x82CB5440..0x82CB5640. The halfword store lists over the evaluator and the generator and the scan of calls to 0x82CF1278 were read from the flat image."
+        },
+        "qualification": [
+          "Static reading only. No AI purchase was observed, so how often the stored and selected items differ in play is not known.",
+          "The store search covers halfword store instructions in the two decoded functions. A callee on the route (0x821B8CD0, the indirect calls, 0x82CF0CB0, the candidate listing in the generator) could write +0x38; those bodies were not read.",
+          "The value +0x38 holds when the AI turn calls the generator is not established for the general case. The only recorded store of -1 is the Settlers case in 0x82D13978.",
+          "The helper's later reductions (0x82CF1330..0x82CF154C) were not analysed.",
+          "0x82D13978(city, 1) after the purchase was not reopened, so whether the raised progress completes the selected item on that call is not shown.",
+          "The second block's conditions were read only as listed.",
+          "This does not show a defect in retail behavior. It shows that the two values come from different reads."
+        ],
+        "interpretation": "Interpretation: the arm behaves as a rush of the item in production when the AI reselects the item the city already holds, which the doubled score at 0x82CB6440 favours. When the AI switches a city from one building to another in the same step, the price and the new progress come from the old item's cost and the new item receives that progress; whether that overpays or underpays depends on the two costs. When the city held a unit or nothing, the helper value is 10 or less and the arm returns without a purchase once the progress is at least that value.",
+        "falsificationCondition": "An instruction in the evaluator 0x82CB44E0 or the generator 0x82CEBC38 on the route for a selected item of 100 or more that stores the selected item to the city halfword +0x38 before 0x82CB6B80, or a helper body at 0x82CF12C0..0x82CF12D0 that does not read +0x38 when its second argument is -1, would falsify the reading.",
+        "result": "On the route for a selected item of 100 or more, no instruction in the evaluator or the generator stores to the city halfword +0x38 before the call to 0x82CF1278(city, -1) at 0x82CB6B80, and the helper reads +0x38 when its second argument is -1. The helper and the goal word test therefore read +0x38 before the selected item is stored there, and the progress derives from the helper value, while the factor m uses the selected item. The two agree when the selected item equals the stored item. This is a static reading; the callees on the route were not read and could change +0x38."
       }
     },
     "RVA-F-0331": {

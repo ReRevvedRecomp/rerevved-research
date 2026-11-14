@@ -570,6 +570,32 @@ Interpretation: the player's own Settlers type units and own city tiles are
 Defend targets, and foreign units and cities are Attack targets. The record is
 [target call site finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/targetCallSiteBoundary).
 
+The purchase arm prices the item through the cost helper `0x82CF1278(city, -1)`
+at `0x82CB6B80`, which reads the city halfword `+0x38`. In the evaluator
+`0x82CB44E0`, for a selected item from 100 through 299, except 219 and 220,
+the order is:
+
+1. The helper is called. Its value C is the cost of the item stored at `+0x38`
+   when that item is 100 through 299, otherwise 10 or a reduced value.
+2. The factor m is set from the selected item (2 from item 200, else 1).
+3. The price is `((f + 1) * E + 2) * (C - H) * m`, with H the city halfword
+   `+0x36`.
+4. The goal word test (`0x82CB6C6C..0x82CB6C9C`) reads the stored `+0x38`.
+5. Gold is lowered and the selected item is stored to `+0x38` (`0x82CB6D08`).
+6. The progress `+0x36` is rewritten from f, E and the progress read again;
+   with those unchanged it receives C.
+
+In the instructions of the evaluator and of the generator `0x82CEBC38`, no store
+to `+0x38` comes before `0x82CB6B80` on this route, so the helper and the goal
+word test read `+0x38` before the selected item is stored there, the progress
+derives from the helper value, and the factor m uses the selected item. The two agree when the selected item equals
+the stored item. This is a static reading: the callees on the route were not
+read and could change `+0x38`, no AI purchase was observed, and the value `+0x38` holds when the
+generator is called is not established. It does not show a defect.
+Interpretation: when the AI switches a city between buildings in one step, the
+price and progress come from the old item's cost. The record is
+[purchase item match finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/purchaseItemMatchBoundary).
+
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's
 current item is 104 (Market) or 110 (Bank). The AI turn function `0x82CB6E48`

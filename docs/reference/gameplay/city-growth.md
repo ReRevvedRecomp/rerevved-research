@@ -94,6 +94,16 @@ no producer, but did not exclude aliases, bulk copies or all writers. Zeros in
 the image and known call sites do not establish the live mask, or that it stays
 unchanged across calls.
 
+A wider static search covered the whole code range for the mask source word
+`0x8314F1B0`: tracked base registers at any distance, block calls, indexed and
+multiple-word stores, and data words holding its address. Within the inspected
+scope it found eight loads, no store, no covering block call and no data
+pointer. This is a search result, not a proof. The scanners follow no control
+flow, indexed stores have unknown indexes, untracked bases are not covered, and
+host-side writes are outside the search. Interpretation: if no writer exists,
+the mask is decided by the session predicate alone. The details are in
+[the search record](<../../../manifests/occ-gold-population-reward.json#/maskSourceWriterSearchBoundary>).
+
 The helper's save14 and restore14 at `0x82D019E8` and `0x82D019EC` can restore the outer
 owner, ordinal and loop pointer despite reuse of `r31`, provided every child
 preserves the saved bytes and the city and marker bytes. It updates workers,

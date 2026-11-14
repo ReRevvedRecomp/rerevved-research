@@ -90,6 +90,7 @@ Pages are grouped in folders by system.
 - [Native renderer resolve resources](rendering/native-renderer-resolve-resources.md) - the 0x34 byte resource header read by Resolve and its two buffer objects.
 - [NIF scene data and draw inputs](rendering/nif-scene-draw-inputs.md) - triangle geometry, transforms, material and texture records of a NIF shape, and why no loaded shape is yet tied to a draw call.
 - [Movie draw plane setup](rendering/movie-draw-binding.md) - how movie code hands its first texture plane to the draw, the strip draw and cleanup, and the unknown decoder and clock.
+- [Unit body manifests](rendering/unit-body-manifests.md) - how a created unit's body file name is built, the member load, the name replacement after a failed test, the attachment table and civilization key, and what is not established.
 
 ## Content
 

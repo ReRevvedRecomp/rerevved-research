@@ -68,13 +68,22 @@
     "scripts": [
       "ghidra/DumpFunctions.java",
       "ghidra/DumpMemoryWords.java",
-      "ghidra/FindPointerValues.java"
+      "ghidra/FindPointerValues.java",
+      "ghidra/FindDirectCallers.java"
     ],
     "generatedCorroboration": [
       "generated:rerevved/sub_82D10FD8:0x82D10FD8..0x82D11170,0x82D11304..0x82D1143C,0x82D11708..0x82D11750",
       "generated:rerevved/sub_82D02AB8:0x82D02AB8..0x82D02B2C",
       "generated:rerevved/sub_82D1EAB0:0x82D1EC3C..0x82D1EC50",
-      "generated:rerevved/sub_82CEFA20:0x82CEFA20..0x82CEFA9C"
+      "generated:rerevved/sub_82CEFA20:0x82CEFA20..0x82CEFA9C",
+      "generated:rerevved/sub_821BD0E0:0x821BD0E0..0x821BD11C",
+      "generated:rerevved/sub_82DC1E08:0x82DC1E08..0x82DC1E60",
+      "generated:rerevved/sub_82DC22A0:0x82DC22A0..0x82DC23AC",
+      "generated:rerevved/sub_82DF8410:0x82DF8674..0x82DF875C",
+      "generated:rerevved/sub_82DA6BF0:0x82DA6E4C..0x82DA6E70",
+      "generated:rerevved/sub_82D5E1D8:0x82D5E334..0x82D5E35C",
+      "generated:rerevved/sub_82DBA080:0x82DBA1DC..0x82DBA208",
+      "generated:rerevved/sub_82C7AFD8:0x82C7AFD8..0x82C7B038"
     ],
     "qualification": "The configured Ghidra models truncate the evaluator and result writer after save-register thunks. Their metadata identifies entries only; native words and narrow generated windows support the stated local contracts, not complete coverage of the functions. No new runtime observation was made.",
     "limitExtension": {
@@ -142,8 +151,32 @@
       "addiNegative2100": 13,
       "addiNegative2090": 0
     },
-    "comparisonCandidates": "Besides the deadline compare, 0x821BD108 in 0x821BD0E0 and 0x82D5E348/0x82DBA1F0 in 0x82D5E1D8/0x82DBA080 compare an incoming argument against discrete constants. Complete selected bodies do not read the current-year global. 0x82DC1E24 in 0x82DC1E08 rejects argument r4>2100 before a possible object+0x11C store; it also has no local current-year read. Their argument provenance is not a calendar-limit proof, so none is an accepted deadline replacement site.",
-    "addressAndCodeCandidates": "Five positive addi candidates use nonzero register bases; 0x82DF86F0 instead supplies literal 2100 as r4 to 0x82DC22A0. Negative-addi candidates include address construction. These are numeric matches, not shown to be year-limit readers.",
+    "comparisonCandidates": "Besides the deadline compare, 0x821BD0E0 tests an incoming code against 30, 1200, 1220, 40, 50 and 2100, with its 2100 compare at 0x821BD108. 0x82D5E1D8 and 0x82DBA080 test an incoming value against 3100, 2006, 2100 and 5010, with their 2100 compares at 0x82D5E348 and 0x82DBA1F0. 0x82DC1E24 in 0x82DC1E08 rejects signed r4 above 2100 before a store at object+0x11C. Within the inspected scope these are request codes, not calendar limits (see requestCodeBoundary). Complete selected bodies do not read the current-year global. The source of the value tested in 0x82D5E1D8 and 0x82DBA080 was not traced, so none of these is an accepted deadline replacement site.",
+    "addressAndCodeCandidates": "Five positive addi candidates add 2100 to nonzero register bases and were not inspected further. 0x82DF86F0 instead loads literal 2100 into r4 for 0x82DC22A0, only when the record code is 1200; it is a request code (see requestCodeBoundary). Negative-addi candidates include address construction. These are numeric matches, not shown to be year-limit readers.",
+    "requestCodeBoundary": {
+      "question": "Are the other immediate 2100 values in this search calendar year limits that a Turn Limit above 2100 would have to change?",
+      "membershipTest": "0x821BD0E0..0x821BD11C is a complete leaf of 16 words. It returns 1 when signed r4 equals one of 30, 1200, 1220, 40, 50 or 2100, and otherwise 0. The compares are at 0x821BD0E0, 0x821BD0E8, 0x821BD0F0, 0x821BD0F8, 0x821BD100 and 0x821BD108.",
+      "stateTable": "0x82DF8410..0x82DF87BC is complete (236 words). It returns when byte object+0x464 is nonzero, and otherwise sets that byte. It works on five 12-byte records at 0x82FFD630: word +0 is the current code, word +4 an elapsed counter and word +8 the next code. Each record starts with code 30. The function handles each record whose object pointer is nonzero (pointer array at object+0x458, stride 0x14). 0x82DF8674 calls 0x82E59F98(object, code). The float return times the float at 0x8216A530 (1000.0) becomes an integer period, with 0 replaced by 1. The counter adds the word at 0x8314F04C. 0x82DF86D4 calls 0x82DC22A0(object, code, counter modulo period, 0). Only when the code equals 1200 (0x82DF86DC), 0x82DF86F0 loads literal 2100 into r4 and 0x82DF8718 calls 0x82DC22A0(object, 2100, counter modulo period, 1). When the counter plus the 0x8314F04C word exceeds the period, code 1200 sets next code 50 (0x82DF874C) and code 1220 sets next code 40 (0x82DF8744). Then the code becomes the next code and the counter is zeroed. The codes this function writes or passes are 30, 40, 50, 1200, 1220 and 2100, which is exactly the set accepted by 0x821BD0E0. Its only direct caller is 0x82DF89DC.",
+      "codeRequest": "0x82DC22A0..0x82DC23AC is complete (68 words). r4 is the code and r5 an integer time. It looks up object+0x28 in the registry at 0x831560D0 through 0x822FBD80, and passes the result and the code to 0x82C7AFD8. That function truncates the code to 16 bits at 0x82C7B01C before calling 0x82C96528. A zero result at either step returns early. At 0x82DC234C, r5 is sign-extended, converted to float and multiplied by the float at 0x8216A524 (0.001). Then 0x82C95D60 is called with the word at object+0x14. The only direct callers are 0x82DF86D4 and 0x82DF8718 (aligned raw bl scan, cap 64, not truncated).",
+      "setter": "0x82DC1E08..0x82DC1E60 is complete (23 words). r4 is the code. A signed code above 2100 (0x82DC1E24, 0x82DC1E28) returns with no store. Otherwise, when the word at object+0x14 is nonzero, it calls 0x82C95788, and 0x82DC1E48 stores the code at object+0x11C. The only direct caller is 0x82DA6E70, inside 0x82DA6BF0 (same scan). It passes its entry r8, kept in r26, and reaches the call only when signed r26 is at least 2000 (0x82DA6E4C, 0x82DA6E50). That caller therefore stores codes 2000 through 2100.",
+      "secondCodeSet": "0x82D5E334..0x82D5E354 (in 0x82D5E1D8) and 0x82DBA1DC..0x82DBA1FC (in 0x82DBA080) apply the same test of r3 against 3100, 2006, 2100 and 5010. Any match branches to 0x82D5E360 or 0x82DBA208. The words just before each test are inline jump table data. The source of r3 was not traced.",
+      "addImmediates": "Six raw addi words have immediate 2100. 0x82DF86F0 has base r0 and is the literal load described above. Five add 2100 to a base register: 0x826B206C (r24), 0x82AB91B4, 0x82ABA3D8, 0x82ABAC6C and 0x82ABD020 (r31). Those five were not inspected further.",
+      "noCalendarRead": "No word in the four complete bodies (0x821BD0E0, 0x82DF8410, 0x82DC22A0 and 0x82DC1E08) has low 16 bits 0xB8D4, 0xB8D8, 0xB8DC or 0xB8E0. None of them directly addresses the scenario, start turn, current turn (0x8312B8DC) or current year (0x8312B8E0) scalar. Their callees were not inspected.",
+      "verification": "One foreground read-only DumpMemoryWords query requested 810 word rows, covering 808 distinct addresses, and all matched image.json. The eight windows hold 401 words in total. 37 opcode and operand assertions passed. One foreground read-only FindDirectCallers query covered targets 0x82DC1E08, 0x82DC22A0 and 0x82DF8410, with cap 64 per target, and was not truncated. It covers direct bl only; indirect, tail and computed callers are not covered. Ghidra has no usable model of these functions: 0x82DC1E08 decompiles as bad data, 0x82DC22A0 truncates after its save thunk and 0x82DF86F0 has no containing function. The claims rest on native words and the recompiled copies. No game was launched.",
+      "windows": [
+        "0x821BD0E0..0x821BD11C",
+        "0x82DC1E08..0x82DC1E60",
+        "0x82DC22A0..0x82DC23AC",
+        "0x82DF8410..0x82DF87BC",
+        "0x82DA6E4C..0x82DA6E70",
+        "0x82D5E334..0x82D5E35C",
+        "0x82DBA1DC..0x82DBA208",
+        "0x82C7AFD8..0x82C7B038"
+      ],
+      "querySha256": "030391eb3fb0deefc8185b0be566113e44ee6db171557c54a84815bd3fd44f97",
+      "qualification": "The meaning of the codes, the object types, the dynamic inputs of the callers and any indirect caller are unresolved. This covers only the listed aligned immediate forms, and the qualification of literalSearchBoundary still applies. Other opcode forms, data and resource constants, computed or indirect readers, formatter descendants and HUD or advisor providers are not covered. This is a static result. It does not show that dates above 2100 display correctly, or that a longer game ends or continues correctly.",
+      "result": "Within the inspected scope none of these sites is a calendar limit. The deadline compare at 0x82D11380 and the warning compare at 0x82D11320 stay the only shown year limit tests, and a higher Turn Limit needs no change at these sites. This is a static result."
+    },
     "qualification": "This covers only the listed aligned immediate forms. Other opcode forms, constants in data and resources, computed, indirect or aliased readers, formatter descendants, HUD and advisor providers and other ending paths are not exhaustively covered. Do not globally replace every occurrence of 2100.",
     "script": "ghidra/FindPointerValues.java"
   }

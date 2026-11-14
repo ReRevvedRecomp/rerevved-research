@@ -181,12 +181,30 @@ extension needs a warning rule that fits the elapsed 200 test, other victories
 left intact, and compatible peers and saves. These local tests and stores do not
 prove a finished ending or continued play.
 
-A search of aligned immediate forms found five signed compares with 2100 and
-one with 2090 (the counts by form are in the
+Within the inspected scope, the other immediate 2100 values are numeric request
+codes of unresolved meaning, not calendar year limits. One set of codes is 30,
+40, 50, 1200, 1220 and 2100. A second set is 2006, 3100, 2100 and 5010. One
+store rejects codes above 2100. The inspected functions do not directly address
+the year, so raising the Turn Limit does not need these sites changed. Five more
+instructions add 2100 to a register and were not inspected.
+
+How the code does it. A search of aligned immediate forms found five signed
+compares with 2100 and one with 2090 (the counts by form are in the
 [turn limit manifest](../../../manifests/game-turn-limit.json)). Only the deadline
-and warning compares are shown to read the current year as a limit. Other hits
-test incoming arguments or build addresses. The search leaves out computed
-constants, resource text, aliased or indirect readers, other opcode forms and
+compare at `0x82D11380` and the warning compare at `0x82D11320` are shown to read
+the current year as a limit. The first code set is tested by `0x821BD0E0` and
+written by `0x82DF8410`, which loads 2100 at `0x82DF86F0` for `0x82DC22A0`. The
+store that rejects codes above 2100 is `0x82DC1E08` (compare at `0x82DC1E24`).
+The second set is tested in `0x82D5E1D8` and `0x82DBA080`, with 2100 compares at
+`0x82D5E348` and `0x82DBA1F0`. The four complete functions do not directly
+address the year, turn or scenario scalars, and their callees were not
+inspected. The meaning of the codes, the object types, the dynamic inputs of the
+callers and any indirect caller are unknown. Details are in the
+[request code results](../../../manifests/game-turn-limit.json#/literalSearchBoundary/requestCodeBoundary).
+This is a static result. It does not show that dates above 2100 display
+correctly, or that a longer game ends or continues correctly. The search leaves
+out computed constants, constants in data and resource text, aliased or indirect
+readers, other opcode forms, formatter descendants, HUD and advisor providers and
 other ending paths. Replacing every 2100 is unsupported.
 
 ## Evidence boundaries

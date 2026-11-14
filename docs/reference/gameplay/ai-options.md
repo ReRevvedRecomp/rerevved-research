@@ -640,6 +640,21 @@ at `0x8314F10B` is not 0 was not analysed, and no assignment was observed. The
 record is
 [city item assignment finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemAssignmentBoundary).
 
+The 15 sites not read there are recorded in
+[city item store sites finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemStoreSitesBoundary).
+Seven groups: 2 sites in `0x82CD9970` that store through the unit record array
+`0x830F2BF0` and do not address a city; 4 sites in `0x82CE9490` that form two
+pairs of a temporary store and a restore; 4 stores of -1 (`0x82CE0E3C`,
+`0x82CF76EC`, `0x82D1AEB0`, `0x82D1C77C`); 2 stores of the result of the default
+item function `0x82CFE828` when the byte at `0x8314F10B` is not 0; 1 store of
+an item argument in `0x82D04C98`, with no located call; 1 store of `0xC8` plus
+a choice in `0x82CFD758`; and 1 field by field record copy in `0x82CFA028`,
+whose one located call at `0x82D04DCC` passes unit records. Register values
+across alternative paths remain unverified. The conditions into the reset
+blocks and the 34 scan sites outside functions that form the city array
+address were not read. None of these stores
+was observed.
+
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's
 current item is 104 (Market) or 110 (Bank). The AI turn function `0x82CB6E48`

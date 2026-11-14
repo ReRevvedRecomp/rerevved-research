@@ -2191,7 +2191,175 @@
         ],
         "interpretation": "Interpretation: each AI turn the generator chooses again for every city. If the choice is the item already stored nothing is sent; otherwise event 5 changes the city's item, which is the same event a player's own choice would use. So when the purchase arm runs, the stored item is normally the choice of an earlier turn, or the creation default, or -1 after the production function reset it, and the evaluator's selected item replaces it either in the purchase arm itself or through event 5 just after. The values -10 to -13 look like menu entries that are not items.",
         "falsificationCondition": "A word at 0x82CDE028 other than 0x82CDFFF8, a handler body at 0x82CDFFF8..0x82CE0024 that does not store r29 to the city halfword +0x38, or a path in 0x82CB42B8 for an item other than -10 to -13 that differs from the stored item and does not call 0x82CE1950 with id 5, would falsify the reading.",
-        "result": "After the evaluator returns an ordinal, the generator does not store the chosen item itself. It calls 0x82CB42B8, which for an item that differs from the city halfword +0x38 (and is not one of the values -10 to -13) submits event 5 through 0x82CE1950. The handler for event 5 at 0x82CDFFF8 in the dispatcher 0x82CDDF08 stores the item to the city halfword +0x38 when the city's owner byte matches. When the chosen item equals the stored item, 0x82CB42B8 submits nothing. So a city enters the next generator call with the last item assigned this way unless another store changed it. A scan lists 27 candidate stores to +0x38 in 12 functions that form the city array address; this finding reads those in the assignment path and cites those already recorded, and 15 of the candidates were not read. This is a static reading: the route when the byte at 0x8314F10B is not 0 was not analysed and no assignment was observed."
+        "result": "After the evaluator returns an ordinal, the generator does not store the chosen item itself. It calls 0x82CB42B8, which for an item that differs from the city halfword +0x38 (and is not one of the values -10 to -13) submits event 5 through 0x82CE1950. The handler for event 5 at 0x82CDFFF8 in the dispatcher 0x82CDDF08 stores the item to the city halfword +0x38 when the city's owner byte matches. When the chosen item equals the stored item, 0x82CB42B8 submits nothing. So a city enters the next generator call with the last item assigned this way unless another store changed it. A scan lists 27 candidate stores to +0x38 in 12 functions that form the city array address; this finding reads those in the assignment path and cites those already recorded, and 15 of the candidates were not read. This is a static reading: the route when the byte at 0x8314F10B is not 0 was not analysed and no assignment was observed. The 15 sites not read here are recorded in cityItemStoreSitesBoundary."
+      },
+      "cityItemStoreSitesBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "What do the 15 candidate stores to the city halfword +0x38 that cityItemAssignmentBoundary left unread do, and can any of them change that halfword between two AI generator calls?",
+        "scope": {
+          "generator": "0x82CEBC38",
+          "dispatcher": "0x82CDDF08",
+          "cityArrayAddress": "0x8314FE28",
+          "cityRecordSize": "0xBC",
+          "cityField": "+0x38",
+          "sites": 15,
+          "scopeNote": "The claim covers the 15 sites listed in the parts below and the code windows read around them. It does not cover the 12 sites read in cityItemAssignmentBoundary, the 34 scan sites in functions that do not form the city array address, or the conditions that lead to these sites beyond the tests named."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemAssignmentBoundary: the scan, the 27 candidate sites in 12 functions, the 15 sites not read, the dispatcher 0x82CDDF08 with its 66 entry table at 0x82CDE014, the event 5 handler and the byte at 0x8314F10B",
+          "City records are 0xBC bytes at 0x8314FE28 and the generator is 0x82CEBC38, as in the record above"
+        ],
+        "sitesNotAddressingCity": {
+          "function": "0x82CD9970",
+          "sites": [
+            "0x82CDBDFC",
+            "0x82CDBE04"
+          ],
+          "entries": [
+            "Both sites are halfword stores through registers set to r19 + 0x38 (0x82CDBDD8, 0x82CDBDE0).",
+            "r19 is loaded from frame word +0xDC at 0x82CDA2EC. That word is stored once in the function, at 0x82CD99A8, from r28 = 0x830F2BF0 (0x82CD9988, 0x82CD9998). 0x830F2BF0 is the array of 0x54 byte unit records.",
+            "The same block reads halfwords +0x1C and +0x1E through r14 and r19 (0x82CDBD28..0x82CDBD38).",
+            "In linear order no instruction between 0x82CDA2EC and the two stores writes r19. So the two sites store to +0x38 from the unit array base, with r14 and r18 as record offsets. They do not address a city."
+          ]
+        },
+        "temporaryStoreAndRestore": {
+          "function": "0x82CE9490",
+          "callSites": [
+            "0x82E01574",
+            "0x82E069C8",
+            "0x82E06A8C"
+          ],
+          "sites": [
+            "0x82CE9CC4",
+            "0x82CE9D84",
+            "0x82CE9DFC",
+            "0x82CE9E20"
+          ],
+          "entries": [
+            "r23 is the word at +0x198 of a block at r28 (0x82CE94B4). r24 is 0x8314FE28 (0x82CE9640).",
+            "First pair: 0x82CE9CA8..0x82CE9CC4 forms 0xBC * r23 and r24 + 0x38, loads the old halfword into r24 (0x82CE9CC0) and stores r25 there (0x82CE9CC4). After calls to 0x82D8A3A0, 0x82CEF160 and 0x82E6A3E0 it stores r24 back at 0x82CE9D84.",
+            "Second pair: 0x82CE9DD4..0x82CE9DFC, for r25 below 0xC8, loads the old halfword into r26 (0x82CE9DF8) and stores r25 there (0x82CE9DFC). It then calls 0x82CF1278(r23, -1) and 0x82E6A430, and stores r26 back at 0x82CE9E20.",
+            "Whether each path from a store reaches its restore was read only along the straight line between them. On that line each pair restores the old value."
+          ]
+        },
+        "storesOfMinusOne": {
+          "sites": [
+            "0x82CE0E3C",
+            "0x82CF76EC",
+            "0x82D1AEB0",
+            "0x82D1C77C"
+          ],
+          "entries": [
+            "0x82CE0E3C is in the dispatcher 0x82CDDF08, in the code after the entry 15 target 0x82CE090C. The next higher table target is beyond this site. The city r18 is the result of 0x82CFF528 on two signed halfwords +0x1C and +0x1E of a record (0x82CE0CD0..0x82CE0CFC). r29 = 0xBC * r18, r28 = 0x8314FE28 and r25 = r28 + 0x38. The item is read from +0x38 (0x82CE0D5C).",
+            "Item in 0..0x63 (0x82CE0D64..0x82CE0DB0): the block stores to +0x36 the product of 0x82CF1148(city, -1) and the signed byte +0x44 of the unit type row, halved.",
+            "Item in 0x64..0xC7 (0x82CE0DB4..0x82CE0DE4): the block calls 0x82D02090(city, item - 0x64), stores 0 to +0x36, reads +0x38 again and stores it to +0x3A.",
+            "Item in 0xC8..0x12B (0x82CE0DE8..0x82CE0E54): when the word at 0x830E5148 + 8 * (item - 0xC8) is -1 and 0x82CF3608(item - 0xC8, signed city owner byte) is not 0, the block stores -1 to +0x38 (0x82CE0E3C) and 0 to +0x36 (0x82CE0E48) and calls 0x82D16BA0(item - 0xC8, city, 3, 1).",
+            "0x82CF76EC is in 0x82CF7428, called at 0x82CDF1A8 in the dispatcher code after the entry 17 target 0x82CDEDFC. r24 = 0x8314FE28 and r31 = 0xBC * city, with the city index a signed byte loaded at 0x82CF7664. After a byte is stored to city +0x3 (0x82CF76A4), when that byte is 0 and bit 0 of city word +0x10 is set (0x82CF76A8..0x82CF76C0), the block stores to +0x3, +0x10, +0x4, +0x36, then -1 to +0x38 (0x82CF76EC), then +0x3C.",
+            "0x82D1AEB0 is in 0x82D1AC70 (city r3 kept in r17, r4 kept in r21). It is called at 0x82CE0F0C and 0x82CE0F24 (dispatcher, after the entry 15 target), 0x82D1D7D0 and 0x82D1F8D0. r16 = -1 (0x82D1AC98), r30 = 0x8314FE28 and r31 = 0xBC * city. The block 0x82D1AE60..0x82D1AEB4 stores to many fields of the city, including r16 to +0x3A (0x82D1AEA8) and to +0x38 (0x82D1AEB0).",
+            "0x82D1C77C is in 0x82D1B400 (city r3). It is called at 0x82CDF4C8 (after the entry 27 target 0x82CDF4C0), 0x82CDF9F8 (after the entry 0 target 0x82CDF74C), 0x82CDFC48 and 0x82CDFD80 (after the entry 42 target 0x82CDFA74). r26 = 0xBC * city and r21 = 0x8314FE28. The block 0x82D1C730..0x82D1C77C stores to many fields, including -1 to +0x3A (0x82D1C778) and to +0x38 (0x82D1C77C)."
+          ]
+        },
+        "storesOfDefaultItem": {
+          "sites": [
+            "0x82D1AEF8",
+            "0x82D1C78C"
+          ],
+          "entries": [
+            "0x82D1AEF8 in 0x82D1AC70: after the block above, when the byte at 0x8314F10B is not 0 (loaded at 0x82D1AE68, tested at 0x82D1AEAC, branch at 0x82D1AEEC), the code calls the default item function 0x82CFE828(r17) and stores the result to +0x38.",
+            "0x82D1C78C in 0x82D1B400: when the byte at 0x8314F10B is not 0 (loaded at 0x82D1C754, tested at 0x82D1C770, branch at 0x82D1C780), the code calls 0x82CFE828(r16) and stores the result to +0x38.",
+            "When the byte is 0 the halfword keeps the -1 stored just before."
+          ]
+        },
+        "storeOfArgument": {
+          "function": "0x82D04C98",
+          "sites": [
+            "0x82D04CC8"
+          ],
+          "entries": [
+            "0x82D04C98..0x82D04CE0 takes city r3 and item r4. It calls 0x82CB3F08(city) and stores the item to city +0x38 at 0x82D04CC8.",
+            "No direct call or branch to 0x82D04C98 was found. Its address appears as a data word once, at 0x8219B1E8, in a list of pairs of a function address and a word. The neighbouring pairs name 0x82D04448 and 0x82D04CE8."
+          ]
+        },
+        "storeOfChoice": {
+          "function": "0x82CFD758",
+          "callSites": [
+            "0x82D29E2C"
+          ],
+          "sites": [
+            "0x82CFE324"
+          ],
+          "entries": [
+            "0x82CFE28C..0x82CFE2A8 calls 0x82CE8338(2, 0, 0, 0, 0, 1). The result is kept in r31 and compared with -1 (0x82CFE2AC).",
+            "0x82CFE2E8..0x82CFE2FC: an index (the word at +0xC of the result of an indirect call, or -1) selects a word from the table at 0x830ECCE8. When that word is -1 the store is skipped.",
+            "0x82CFE300..0x82CFE334: the city is the word at 0x830ECCE8 + 4 * (result of 0x82D8A3A0). The code stores r31 + 0xC8 to city +0x38 (0x82CFE324), calls 0x82CF1278(city, -1) and stores that result minus 1 to +0x36 (0x82CFE334).",
+            "The branch taken when the result is -1 was not read."
+          ]
+        },
+        "recordCopy": {
+          "function": "0x82CFA028",
+          "callSites": [
+            "0x82D04DCC"
+          ],
+          "sites": [
+            "0x82CFA10C"
+          ],
+          "entries": [
+            "The site 0x82CFA10C is in the function 0x82CFA028, which starts after the end of 0x82CF9F38. It copies fields from the record at r4 to the record at r3 one by one. +0x38 is copied at 0x82CFA108..0x82CFA10C.",
+            "One direct call was found, at 0x82D04DCC in 0x82D04CE8. That caller forms both pointers from the unit record array 0x830F2BF0 with stride 0x54. On that call the site does not address a city."
+          ]
+        },
+        "consequence": [
+          "With these 15 sites and the 12 read before, each of the 27 candidate sites has a reading.",
+          "The sites that can leave a value other than the last assigned item in a city of the array are: the evaluator, event 5, creation and production (recorded before); the four stores of -1; the two stores of the default item; 0x82CFE324; and 0x82D04CC8 if it is ever called.",
+          "The two temporary pairs restore the old value on the straight path."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CDBDFC",
+            "0x82CD99A0",
+            "0x82CDA2EC",
+            "0x82CE0E00",
+            "0x82CE9CC4",
+            "0x82CE9E00",
+            "0x82CF76EC",
+            "0x82CFA10C",
+            "0x82CFE2F0",
+            "0x82D04CC8",
+            "0x82D1AEB0",
+            "0x82D1C77C"
+          ],
+          "radius": 64,
+          "distinctWords": 1498,
+          "outputSha256": "7DDB415D515F918DF6102F302F5DC3CBDA7E3D5246BF4DD95A8B8492B4119634",
+          "imageMatch": "The 1498 distinct words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. Register sources outside those windows (0x82CE94B4, 0x82CE9640, 0x82CF7494, 0x82D1AC88..0x82D1ACA8, 0x82D1B410..0x82D1B420), the caller lists, the dispatcher table and the data word search were read from the flat image."
+        },
+        "limits": [
+          "Static reading only. None of these stores was observed.",
+          "Register sources were followed in linear address order, not by control flow. In 0x82D1B400, r16 is the argument at 0x82D1B410 and is also written at 0x82D1BBF0. Which value reaches 0x82D1C784 was not settled.",
+          "The dispatcher entry of a call site is taken as the highest table target not above it. Other entries may share that code.",
+          "The conditions that lead into the reset blocks of 0x82D1AC70 and 0x82D1B400, and into the block of 0x82CF7428 beyond the two tests named, were not read.",
+          "0x82CFF528, 0x82D02090, 0x82D16BA0, 0x82CF3608, 0x82CE8338, 0x82CFE828 and 0x82CB3F08 were not read here.",
+          "What the table at 0x830ECCE8 and the table at 0x830E5148 hold was not established.",
+          "The 34 scan sites in functions that do not form the city array address stay unexamined, and the scan limits of cityItemAssignmentBoundary apply.",
+          "What the pairs at 0x8219B1E8 are was not established."
+        ],
+        "interpretation": [
+          "Interpretation: the two pairs in 0x82CE9490 look like a display that asks for the cost of an item by putting it in the city for a moment.",
+          "Interpretation: the stores of -1 look like a wonder already taken by another player (0x82CE0E3C is in the handler that also fills the progress of the current item), a city that is destroyed (0x82CF7428) and a city that changes hands or is reset (0x82D1AC70, 0x82D1B400).",
+          "Interpretation: the byte at 0x8314F10B decides whether such a city gets a default item at once or keeps -1 until its player or the AI generator chooses.",
+          "Interpretation: 0x82CFD758 looks like a reward that starts a wonder in one city of the local player with the cost almost paid.",
+          "Interpretation: for the AI purchase arm this means a city can enter the generator with -1 after such a reset, besides the cases recorded before."
+        ],
+        "falsificationConditions": [
+          "A base register at 0x82CDBDFC or 0x82CDBE04 that holds the city array address instead of 0x830F2BF0 would falsify the reading that these two sites do not address a city.",
+          "A path in 0x82CE9490 that leaves a store at 0x82CE9CC4 or 0x82CE9DFC without reaching its restore at 0x82CE9D84 or 0x82CE9E20 would falsify the reading that the pairs restore the old value.",
+          "A different value than -1 stored at 0x82CE0E3C, 0x82CF76EC, 0x82D1AEB0 or 0x82D1C77C, or a different test of the byte at 0x8314F10B before 0x82D1AEF8 or 0x82D1C78C, would falsify the reading of those sites.",
+          "A located call to 0x82D04C98 would require checking whether its store can occur between two generator calls. A call to 0x82CFA028 other than 0x82D04DCC with a city record as target would change the reading of 0x82CFA10C."
+        ],
+        "result": "Of the 15 sites, 3 do not address a city in the code read: 0x82CDBDFC and 0x82CDBE04 store from the unit record array base 0x830F2BF0, and 0x82CFA10C is in a record copy whose one located call passes unit records. The other 12 address the city array 0x8314FE28. Four are two pairs of a temporary store and a restore in 0x82CE9490, which is called from 0x82E01574, 0x82E069C8 and 0x82E06A8C. Four store -1 at 0x82CE0E3C, 0x82CF76EC, 0x82D1AEB0 and 0x82D1C77C. Two store the result of the default item function 0x82CFE828 when the byte at 0x8314F10B is not 0 (0x82D1AEF8, 0x82D1C78C). One (0x82D04CC8) stores an item given as an argument, in a function with no located call. One (0x82CFE324) stores 0xC8 plus a choice to one city. With the 12 sites read before, each of the 27 candidates has a reading. This is a static reading: none of these stores was observed."
       }
     },
     "RVA-F-0331": {

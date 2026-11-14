@@ -505,12 +505,28 @@ seven labelled bits are:
 | `0x80` | Naval |
 
 The evaluator replaces the value with 8 or 4 in two cases. This is a static
-reading. The names come from the labels only, and the writers of the halfword
-are not located. Interpretation: the halfword is a per-city AI role set, and
+reading. The names come from the labels only. The writers of the halfword are
+listed below. Interpretation: the halfword is a per-city AI role set, and
 the AI buys buildings and wonders only in cities marked Improve. The
 substituted values 8 and 4 correspond to Defend only and Attack only, so
 neither case passes the bit `0x20` check of this purchase arm. The record is
 [city role flag finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleFlagBoundary).
+
+Four code places store to the city halfword `+0x2C`. City creation
+`0x82D18D88` stores 8 at `0x82D19CA4`. The AI turn function `0x82CB6E48` stores
+2 to at most one city per player at `0x82CB9FE8`. Its loop at
+`0x82CB9FF8..0x82CBA320` then replaces the value for the player's other cities
+with `0x20`, 4, `0x80` or a byte from a per-player record at `0x830EF3F0`. The
+city production function `0x82D13978` stores `0x20` at `0x82D15E8C` after a
+completed unit whose definition has `+0x50` bit 0 set. With a nonzero human
+mask the store runs when the bit of the city's player is clear; with a zero
+mask a lookup that was not analysed decides. Every store writes the whole
+value. This is a static reading.
+Other store forms, record copies and saved-file loads are not covered, and the
+per-player record byte is not identified. Interpretation: a new city starts as
+Defend, and an AI city can buy a building or wonder only while its latest role
+from these writers is Improve. The record is
+[city role writer finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleWriterBoundary).
 
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's

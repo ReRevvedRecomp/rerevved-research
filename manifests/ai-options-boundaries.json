@@ -854,7 +854,7 @@
         ],
         "interpretation": "Interpretation: the halfword +0x2C is a per-city AI role set. The AI buys buildings and wonders only in cities marked Improve. The evaluator's substitutions of 8 and 4 are the Defend and Attack bits: a city that fails the 0x82CB3F08 comparison is treated as Defend only, and a city of the Barbarian ordinal as Attack only, so neither buys. The remaining policy input, the table at 0x830E5250 (128 bytes per player, compared with 2), needs its own question.",
         "falsificationCondition": "Different bit masks or label addresses at the cited test sites, different label bytes at the cited addresses, or a consumer of the halfword that contradicts a label would falsify the corresponding reading.",
-        "result": "A text routine at 0x82D5C000 walks the city records and appends one fixed label per set bit of the city halfword +0x2C. Bit 0x20 appends the label Improve. The seven labelled bits are Settle, Attack, Defend, Explore, Improve, AirAttack and Naval. The purchase arm therefore needs the bit this routine labels Improve, and the two values the evaluator substitutes, 8 and 4, are the bits labelled Defend and Attack. This is a static reading, and the names come from the labels only."
+        "result": "A text routine at 0x82D5C000 walks the city records and appends one fixed label per set bit of the city halfword +0x2C. Bit 0x20 appends the label Improve. The seven labelled bits are Settle, Attack, Defend, Explore, Improve, AirAttack and Naval. The purchase arm therefore needs the bit this routine labels Improve, and the two values the evaluator substitutes, 8 and 4, are the bits labelled Defend and Attack. This is a static reading, and the names come from the labels only. The writers of the halfword are recorded in cityRoleWriterBoundary."
       },
       "playerGoalWordBoundary": {
         "status": "partial",
@@ -1031,6 +1031,102 @@
         "interpretation": "Interpretation: the table at 0x8311DD10 is a size per connected map region, with water regions negative, and region id 0 means not assigned. Words 1 to 31 of each player record are that player's mode for each region. The goal word therefore keeps the selection's value, and the purchase arm reads the AI player's goal index.",
         "falsificationCondition": "A store of a nonzero value to the word at 0x8311DD10, a builder call that passes id 0, or a runtime read showing that word nonzero when the later loop runs would falsify this result.",
         "result": "The later loop's k = 0 pass runs only when the word at 0x8311DD10 is nonzero. That table holds a tile count per map region id. The builder 0x82D03190 zeroes it and assigns ids from 1, and no located store writes a nonzero value to entry 0. The k = 0 pass is therefore skipped, and the goal word at 0x830E5250 + 128 * p keeps the value the selection stored. This rests on the located writers only and on static reading."
+      },
+      "cityRoleWriterBoundary": {
+        "status": "partial",
+        "confidence": "strong",
+        "question": "What writes the city halfword +0x2C, the role flags that the purchase arm tests for bit 0x20?",
+        "scope": {
+          "functions": [
+            "0x82D18D88",
+            "0x82CB6E48",
+            "0x82D13978"
+          ],
+          "windows": [
+            "0x82CB9E30..0x82CBA3B0",
+            "0x82D15CE0..0x82D15EE0",
+            "0x82D19B00..0x82D19D00",
+            "0x82D18DA0..0x82D18FA0",
+            "0x82CB6DE0..0x82CB6FE0",
+            "0x82D13890..0x82D13A90"
+          ],
+          "boundary": "The listed windows were read, with the register sources at 0x82D159A4, 0x82D159CC, 0x82D15A0C and 0x82D15AAC and the range 0x82D19AC0..0x82D19B00 from the flat image. The part of 0x82D18D88 between 0x82D18EBC and 0x82D19AC0, the callee 0x82CB2D68, the tests that skip the first AI turn block, the score that picks its city, and the routes into each block were not read."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleFlagBoundary: the bit labels, the city record base 0x8314FE28 and size 0xBC",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/purchaseArmInputBoundary: the purchase arm needs bit 0x20; 0x8312E608 is the human mask word",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/goalWordLaterLoopBoundary: 0x8311E3D0 is the per-tile region byte map and 0x8312B288 a per-tile byte table, both indexed by 40 * X + Y",
+          "Existing records: 0x82CB6E48 is the AI turn function; among the initialized unit definitions only type 0 Settlers and type 1 FSettler have definition +0x50 bit 0 set; 0x82D18D88 is the function a city creation request calls; 0x830E7B10 is a per-tile unit presence byte table"
+        ],
+        "search": [
+          "The earlier scan looked for sites that form the absolute field address 0x8314FE54 and found no store. The writers keep the city base in a saved register and add 0x2C separately. Three offline flat-image searches over the code range 0x82010000..0x82F6F000 (4,029,440 words) were used.",
+          "An offline flat-image search for every sth or sthu with displacement 0x2C and a base other than r1 found 21 sites. One is in game code that copies a record field by field (0x82CFA0DC, source r4, destination r3; what it copies was not read). The other 20 were not read as city stores: five were decoded and use an object pointer in r31 (0x82DAE31C, 0x82DAF328, 0x82DAF378) or are byte or other stores, and the rest were not decoded.",
+          "An offline flat-image search for every addi rX, rY, 0x2C (rY not r0 or r1) followed within 40 instructions by an indexed halfword access that uses rX (scannerSha256 945591E95A74530D500B57638464F0F00906A8CB1D1D68E171A092F92A376710) found 698 addi sites, 15 with such an access. Two are the recorded readers (0x82CB45CC, 0x82CC927C). Three are city stores: 0x82CB9FE8, 0x82D15E8C and 0x82D19CA4. The other ten use a base that is not the city table in the windows read (0x82343E34, 0x82CB9004, 0x82CBC89C, 0x82CBD86C, 0x82CBDD74, 0x82CBE20C, 0x82D2B7C8, 0x82D2B9EC, 0x82D5A4EC, 0x82D5BB74).",
+          "An offline flat-image search with a wider variant (400 instructions, also reporting sth rS, 0(rX)) added the pointer walk that starts at 0x82CBA020, with six stores."
+        ],
+        "cityCreation": [
+          "0x82D18E08..0x82D18E18: r18 = 0x8314FE28, kept at frame +0x70.",
+          "0x82D18E98..0x82D18EB8: r16 = 0xBC * slot index, kept at frame +0x74; 0x827F7BB0 is called with (record address, 0, 0xB0).",
+          "0x82D19AC4, 0x82D19AD8: r17 = frame +0x70, r19 = frame +0x74.",
+          "0x82D19C84..0x82D19CA4: r8 = r17 + 0x2C, r3 = 8, sthx r3, r19, r8. The new record's +0x2C becomes 8.",
+          "Every branch in 0x82D19AC0..0x82D19CA4 other than a call stays inside that range, so a pass that reaches 0x82D19AC0 reaches the store if the called functions return. The part of the function between 0x82D18EBC and 0x82D19AC0 was not read."
+        ],
+        "settleSelection": [
+          "Frame +0x54 holds 0x8314FE28 (0x82CB6F10, 0x82CB6F58, 0x82CB6F6C); r31 loads it at 0x82CB9E30. r30 is the player index. r20 starts at -1 (0x82CB9E34).",
+          "0x82CB9E40..0x82CB9E70: two tests on per-player words skip the whole block to 0x82CB9FF8. They were not analysed.",
+          "0x82CB9E7C..0x82CB9FC8: a walk over 128 city records (step 0xBC, end at base + 0x5E00) that scores each city and keeps the index of the highest score in r20. A city is skipped when its owner byte +0x0 is not the player, its population byte +0x3 is 2 or less, bit 0x10000 of its word +0x24 is set, or its halfword +0x42 is 0 (0x82CB9E84..0x82CB9ECC). The remaining tests and the score were not analysed.",
+          "0x82CB9FCC..0x82CB9FF4: when a best score above 0 exists, 2 is stored to the +0x2C halfword of city r20 (sthx r9, r11, r10 at 0x82CB9FE8 with r11 = 0xBC * r20 and r10 = base + 0x2C), then 0x82CEBC38(r20, -1) and 0x82D00C78(r20) are called."
+        ],
+        "roleLoop": {
+          "setup": "0x82CB9FF8..0x82CBA040: r31 = base + 0x2C (0x82CBA020), r28 = 0 (the city index), r26 = 0x20, r23 = 0x80. r18 = frame +0x74 = 0x8312B288, r19 = frame +0x80 = 0x830EF3F0, r17 = frame +0x78 = 0x830E7B10, r15 = frame +0x6C = 0x8311E3D0, r14 = frame +0x90 = 0x83137E58, r21 = 0x830EDD08, frame +0xAC = 0x830EE4E8 (constants formed at 0x82CB6EE4..0x82CB6F74 and 0x82CBA038).",
+          "skip": "Each pass (0x82CBA044..0x82CBA320; r31 += 0xBC, r28 += 1, until r31 reaches base + 0x5E2C) skips the city when its owner byte is not the player, its population byte is 0 or less, or its index equals r20, the city chosen by the first block (0x82CBA048..0x82CBA078).",
+          "steps": [
+            "1. 0x82CBA07C..0x82CBA08C: if bit 0x10000 of the city word +0x24 is set, the halfword becomes 0x20. Continue at step 6.",
+            "2. 0x82CBA0A8..0x82CBA0E0: 0x82CB2D68 is called with (player, 0x1C, city X from +0x30, city Y from +0x32, 0, the region byte of the city tile from 0x8311E3D0). Result -1 goes to step 5.",
+            "3. 0x82CBA0E4..0x82CBA120: the result r3 selects a 14 byte record at 0x830EF3F0 + 14 * (128 * player + r3). Its signed byte +1 is stored to the halfword (0x82CBA120).",
+            "4. 0x82CBA124..0x82CBA1BC, with (a, b) the record's signed bytes +3 and +4. If the byte at 0x8312B288 + 40 * a + b is 0, the halfword becomes 0x80 (0x82CBA140). Then, if the word at 0x83137E54 is below the word at 0x83137E50, that first word is incremented (0x82CBA180..0x82CBA184) and 0x80 stays. Otherwise the halfword becomes 4 when the player's word at 0x830EE4E8 + 4 * player has a bit of mask 0x6 set and the city halfword +0x42 is not 0, and 0x20 in every other case (0x82CBA14C..0x82CBA178). Then, if the city halfword +0x42 is 0, the byte at 0x830E7B10 + 40 * X + Y is not 0 and the word at 0x830EDD08 + 4 * player is above 3, the halfword becomes 0x20 (0x82CBA188..0x82CBA1B0). 0x82CBA1B4..0x82CBA1BC stores 0 to the record's halfword +8.",
+            "5. Result -1, 0x82CBA220..0x82CBA254: the halfword becomes 4 when the player's word at 0x830EE4E8 + 4 * player has bit 0x4 set and the city halfword +0x42 is not 0, and 0x20 otherwise (0x82CBA250).",
+            "6. 0x82CBA1C0..0x82CBA1D0 (also 0x82CBA090..0x82CBA0A0 for step 1): 0x82CEBC38(city, -1) and 0x82D00C78(city) are called. The remainder of the pass (0x82CBA1D4..0x82CBA308) reads the current item and was not analysed."
+          ],
+          "storedValues": "For every city of the player that passes the skip tests, this loop replaces the whole halfword each time it runs. The values it can store are 0x20, 4, 0x80 and the record byte. Values 8, 0x10 and 0x40 are not stored as constants here; within what was read they can only come from the record byte."
+        },
+        "unitCompletion": [
+          "0x82D13984..0x82D13998: r23 = the city index argument r3, r14 = 0x8314FE28 kept at frame +0x74, r31 = 0xBC * r23.",
+          "0x82D15D38..0x82D15D44: the block runs only when bit 0 of the word at r21 + r15 is set. r21 = 0x94 * r25 (0x82D159CC) and r15 = r30 + 0x50 (0x82D15A0C), with r25 the completed item. That r30 is the unit definition table address was taken from the 0x94 record size and the +0x50 offset, not traced.",
+          "0x82D15D48..0x82D15DC8: the block lowers the city population byte +0x3 by 1 (0x82D15D60..0x82D15D68), calls 0x82CF0CB0(0x2D, r30, 0), lowers the population byte again when that call returns 0 and a per-player word is not 5 (0x82D15D70..0x82D15DA4), stores 0 to the city word +0x78, calls 0x82D00C78(city) and stores -1 to the city halfword +0x38 (r16 = base + 0x38, set at 0x82D159A4).",
+          "0x82D15DC0..0x82D15E8C: r26 is the signed city owner byte (0x82D15AAC). When the human mask word at 0x8312E608 is not 0, the store is skipped when bit r26 of it is set. When the mask word is 0, a lookup through the object at the word 0x8314EFE0 decides (0x82D15DF8..0x82D15E70); it was not analysed. When not skipped, 0x20 is stored to the city halfword +0x2C (sthx r10, r31, r9 at 0x82D15E8C with r9 = frame +0x74 + 0x2C)."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CB9F30",
+            "0x82CBA130",
+            "0x82CBA2B0",
+            "0x82D15DE0",
+            "0x82D19C00",
+            "0x82D18EA0",
+            "0x82CB6EE0",
+            "0x82D13990"
+          ],
+          "radius": 64,
+          "distinctWords": 998,
+          "outputSha256": "474D3C940A21D84734A89EFAC597DC33BCFD453A8F4D5BDD14A05964451D0F35",
+          "imageMatch": "All 998 words match the supported flat image (SHA-256 in manifests/image.json)."
+        },
+        "qualification": [
+          "Static reading only. No AI turn, city creation or unit completion was observed.",
+          "The three searches cover a store with displacement 0x2C, and a pointer formed by adding 0x2C that is used within the search window. A store through another form (for example a pointer to a different record offset, or a block copy or a saved-file load of the whole record) is not excluded. The record copy at 0x82CFA0DC and the save and load of city records were not read.",
+          "The contents of the 14 byte records at 0x830EF3F0 and their byte +1 are not identified, so which values step 3 of the role loop can store is not established. 0x82CB2D68 was not read.",
+          "The tests that skip the first AI turn block and the score that picks its city were not analysed.",
+          "The meanings of city word +0x24 bit 0x10000, city halfword +0x42, the words at 0x83137E50 and 0x83137E54, the word at 0x830EE4E8 + 4 * player and the word at 0x830EDD08 + 4 * player (recorded elsewhere only as a technology acquisition tally) are not established here.",
+          "Which route reaches 0x82CB9E30 in the AI turn function, and so when the first block and the role loop run, was not read. 0x82CEBC38 and 0x82D00C78 were not read.",
+          "For the unit completion store the lookup used when the human mask word is 0 was not analysed, and the route into the block before 0x82D15D38 was read only for the registers named.",
+          "The path from 0x82D18EBC to 0x82D19AC0 in city creation was not read, so an earlier return is not excluded."
+        ],
+        "interpretation": "Interpretation: a new city starts as Defend (8). Each AI turn, one city may be marked Settle (2), and every other city of the player is given a fresh role: Improve (0x20) by default, Attack (4) or Naval (0x80) in the cases above, or the role carried by the per-player record that 0x82CB2D68 selects. The unit completion store is the Settlers case: a city that has just completed Settlers or FSettler loses population, drops its current item and, for a player not in the human mask, is marked Improve. Since the purchase arm needs bit 0x20, an AI city can buy a building or wonder only while its latest role from these writers is Improve.",
+        "falsificationCondition": "A different stored value at a cited store site (0x82D19CA4, 0x82CB9FE8, the role loop stores, 0x82D15E8C), a city base other than 0x8314FE28 in the cited registers, or a runtime observation that a cited store writes a value different from the recorded value would falsify the corresponding reading.",
+        "result": "Four code places store to the city halfword +0x2C, always as a whole value and never as a single bit set or cleared. City creation 0x82D18D88 stores 8 at 0x82D19CA4. The AI turn function 0x82CB6E48 stores 2 to at most one city per player at 0x82CB9FE8, then replaces the value for the player's other cities with 0x20, 4, 0x80 or a byte from a per-player record at 0x830EF3F0. The city production function 0x82D13978 stores 0x20 at 0x82D15E8C after a completed unit whose definition has +0x50 bit 0 set. With a nonzero human mask the store runs when the bit of the city's player is clear; with a zero mask a lookup that was not analysed decides. This is a static reading; other store forms, record copies and saved-file loads are not covered, and the per-player record byte is not identified."
       }
     },
     "RVA-F-0331": {

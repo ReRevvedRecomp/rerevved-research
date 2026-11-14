@@ -523,10 +523,27 @@ mask the store runs when the bit of the city's player is clear; with a zero
 mask a lookup that was not analysed decides. Every store writes the whole
 value. This is a static reading.
 Other store forms, record copies and saved-file loads are not covered, and the
-per-player record byte is not identified. Interpretation: a new city starts as
+per-player records are described below. Interpretation: a new city starts as
 Defend, and an AI city can buy a building or wonder only while its latest role
 from these writers is Improve. The record is
 [city role writer finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleWriterBoundary).
+
+Each player has 128 records of 14 bytes at `0x830EF3F0`. A record holds a role
+byte (+0x1), the region byte (+0x2), X and Y (+0x3, +0x4), a role halfword
+(+0x6), a priority (+0x8, +0xA) and the low half of the word at `0x8312B8DC`
+(+0xC). The helper `0x82CB2538` adds or refreshes a record. The scan found 13
+direct call sites, all in the AI turn function `0x82CB6E48`. The role bytes
+they pass are `0x02`, `0x04`, `0x08`, `0x10` and `0x40`. The lookup
+`0x82CB2D68` skips records with priority 0 or less and records without a bit of
+mask `0x1C`. It scores a record as `priority * 1000 / (d + 2)`, where d is
+`(2 * max(dx, dy) + min(dx, dy)) / 2` for the X and Y distances dx and dy. Both
+divisions truncate toward zero; the highest score above 0 wins, and ties keep
+the earlier record. Within these callers, the role loop copies 4, 8 or `0x10`.
+This is a static reading. The conditions and priorities at the call sites were
+not analysed, and indirect calls and stores that do not go through the helper
+are not excluded. Interpretation: the records are the AI player's list of map
+targets to attack, defend or explore. The record is
+[target record finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/targetRecordBoundary).
 
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's

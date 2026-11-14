@@ -1126,7 +1126,187 @@
         ],
         "interpretation": "Interpretation: a new city starts as Defend (8). Each AI turn, one city may be marked Settle (2), and every other city of the player is given a fresh role: Improve (0x20) by default, Attack (4) or Naval (0x80) in the cases above, or the role carried by the per-player record that 0x82CB2D68 selects. The unit completion store is the Settlers case: a city that has just completed Settlers or FSettler loses population, drops its current item and, for a player not in the human mask, is marked Improve. Since the purchase arm needs bit 0x20, an AI city can buy a building or wonder only while its latest role from these writers is Improve.",
         "falsificationCondition": "A different stored value at a cited store site (0x82D19CA4, 0x82CB9FE8, the role loop stores, 0x82D15E8C), a city base other than 0x8314FE28 in the cited registers, or a runtime observation that a cited store writes a value different from the recorded value would falsify the corresponding reading.",
-        "result": "Four code places store to the city halfword +0x2C, always as a whole value and never as a single bit set or cleared. City creation 0x82D18D88 stores 8 at 0x82D19CA4. The AI turn function 0x82CB6E48 stores 2 to at most one city per player at 0x82CB9FE8, then replaces the value for the player's other cities with 0x20, 4, 0x80 or a byte from a per-player record at 0x830EF3F0. The city production function 0x82D13978 stores 0x20 at 0x82D15E8C after a completed unit whose definition has +0x50 bit 0 set. With a nonzero human mask the store runs when the bit of the city's player is clear; with a zero mask a lookup that was not analysed decides. This is a static reading; other store forms, record copies and saved-file loads are not covered, and the per-player record byte is not identified."
+        "result": "Four code places store to the city halfword +0x2C, always as a whole value and never as a single bit set or cleared. City creation 0x82D18D88 stores 8 at 0x82D19CA4. The AI turn function 0x82CB6E48 stores 2 to at most one city per player at 0x82CB9FE8, then replaces the value for the player's other cities with 0x20, 4, 0x80 or a byte from a per-player record at 0x830EF3F0. The city production function 0x82D13978 stores 0x20 at 0x82D15E8C after a completed unit whose definition has +0x50 bit 0 set. With a nonzero human mask the store runs when the bit of the city's player is clear; with a zero mask a lookup that was not analysed decides. This is a static reading; other store forms, record copies and saved-file loads are not covered, and the per-player record byte is not identified. The per-player records are described in targetRecordBoundary."
+      },
+      "targetRecordBoundary": {
+        "status": "partial",
+        "confidence": "strong",
+        "question": "What are the 14 byte per-player records at 0x830EF3F0, whose byte +0x1 the AI role loop copies to the city halfword +0x2C?",
+        "scope": {
+          "functions": [
+            "0x82CB2538",
+            "0x82CB2D68",
+            "0x82CB6E48"
+          ],
+          "windows": [
+            "0x82CB2500..0x82CB2700",
+            "0x82CB2CE0..0x82CB2EE0",
+            "0x82CBB3B0..0x82CBB5B0",
+            "0x82CC4CC8..0x82CC4EC8",
+            "0x82CB6EE0..0x82CB70E0",
+            "0x82CB7780..0x82CB7980",
+            "0x82CB79E0..0x82CB7BE0",
+            "0x82CB7F70..0x82CB8170",
+            "0x82CB8320..0x82CB8520",
+            "0x82CB8560..0x82CB8760",
+            "0x82CB9880..0x82CB9A80",
+            "0x82CBC290..0x82CBC490"
+          ],
+          "boundary": "The listed windows were read, and the caller scans were read from the flat image. The per-record call 0x82CC1AE0 at 0x82CC4DD8, the route to the zero fill at 0x82CBB4A0..0x82CBB4C0, the conditions, positions and priorities at the call sites, and the other accesses to the table through the address kept at frame +0x80 were not read."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleWriterBoundary: the role loop at 0x82CB9FF8..0x82CBA320 calls 0x82CB2D68 with (player, 0x1C, city X, city Y, 0, region byte) and stores the selected record's signed byte +0x1 to city +0x2C",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleFlagBoundary: the bit labels 0x2 Settle, 0x4 Attack, 0x8 Defend, 0x10 Explore, 0x20 Improve, 0x40 AirAttack, 0x80 Naval",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/goalWordLaterLoopBoundary: 0x8311E3D0 is the per-tile region byte map indexed by 40 * X + Y",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/playerGoalWordBoundary: the signed word at 0x8312B8DC is compared with 20 there; its meaning is not established"
+        ],
+        "tableShape": [
+          "Base 0x830EF3F0, 0x700 bytes per player (mulli by 0x700 at 0x82CB254C and 0x82CB2D70), 128 records of 0xE bytes (loop counts 0x80 at 0x82CB25C8 and 0x82CB2E34, step 0xE). The record address is 0x830EF3F0 + 14 * (128 * player + index).",
+          "0x82CC4DB8..0x82CC4DE8 walks 0x3800 bytes from the base in steps of 0xE and calls 0x82CC1AE0 for each record. 0x3800 bytes is 8 players, and the table ends at 0x830F2BF0.",
+          "0x82CBB4A0..0x82CBB4C0 in the AI turn function calls 0x827F7BB0 with (base + 0x700 * player, 0, 0x700) for the player at frame +0x1C4."
+        ],
+        "addHelper": {
+          "arguments": "r3 player, r4 role value, r5 X, r6 Y, r7 priority. r11 = 0x830EF3F0 (0x82CB2540, 0x82CB2548); r29 = r4 & 0xFF (0x82CB2560).",
+          "searchLoop": [
+            "0x82CB2568..0x82CB25CC runs over the player's 128 records.",
+            "A record matches when its signed byte +0x1 equals r29, its signed byte +0x3 equals X and its signed byte +0x4 equals Y (0x82CB2568..0x82CB2594). For a match whose signed halfword +0x8 is below the priority, the loop exits to the refresh at 0x82CB2658 (0x82CB2598..0x82CB25A4).",
+            "For every other record the loop keeps the index of the record with the lowest signed halfword +0xA below the lowest so far, starting from the new priority (0x82CB25A8..0x82CB25BC)."
+          ],
+          "refresh": "0x82CB2658..0x82CB269C stores r4 to halfword +0x6 and its low byte to byte +0x1, the priority to halfwords +0xA and +0x8, and the low 16 bits of the word at 0x8312B8DC to halfword +0xC. It returns the record index.",
+          "replace": "0x82CB25D0..0x82CB2654: when the priority is 0 or no record had a lower +0xA value, the helper returns -1 (0x82CB26A0). Otherwise it writes the kept record: byte +0x2 = the byte at 0x8311E3D0 + 40 * X + Y, byte +0x1 = low byte of r4, halfword +0x6 = r4, byte +0x3 = X, byte +0x4 = Y, halfwords +0xA and +0x8 = the priority, halfword +0xC = low 16 bits of the word at 0x8312B8DC. The return value is the kept index.",
+          "layout": "From these stores: +0x1 role byte, +0x2 region byte, +0x3 X, +0x4 Y, +0x6 role halfword, +0x8 priority, +0xA priority as first stored, +0xC low half of the word at 0x8312B8DC. Bytes +0x0 and +0x5 are not written by this helper."
+        },
+        "callers": {
+          "scan": "An offline flat-image scan of 0x82010000..0x82F6F000 for aligned bl words that target 0x82CB2538 found 13 sites, all inside the AI turn function 0x82CB6E48. The role value in r4 is a constant at each.",
+          "sites": [
+            {
+              "callSite": "0x82CB6FF4",
+              "roleValue": "0x108",
+              "lowByte": "0x08",
+              "label": "Defend"
+            },
+            {
+              "callSite": "0x82CB7808",
+              "roleValue": "0x4",
+              "lowByte": "0x04",
+              "label": "Attack"
+            },
+            {
+              "callSite": "0x82CB790C",
+              "roleValue": "0x4",
+              "lowByte": "0x04",
+              "label": "Attack"
+            },
+            {
+              "callSite": "0x82CB7AFC",
+              "roleValue": "0x40",
+              "lowByte": "0x40",
+              "label": "AirAttack"
+            },
+            {
+              "callSite": "0x82CB7FA0",
+              "roleValue": "0x110",
+              "lowByte": "0x10",
+              "label": "Explore"
+            },
+            {
+              "callSite": "0x82CB8070",
+              "roleValue": "0x408, 0x208 or 0x108",
+              "lowByte": "0x08",
+              "label": "Defend"
+            },
+            {
+              "callSite": "0x82CB813C",
+              "roleValue": "0x104",
+              "lowByte": "0x04",
+              "label": "Attack"
+            },
+            {
+              "callSite": "0x82CB8408",
+              "roleValue": "0x4",
+              "lowByte": "0x04",
+              "label": "Attack"
+            },
+            {
+              "callSite": "0x82CB8434",
+              "roleValue": "0x4",
+              "lowByte": "0x04",
+              "label": "Attack"
+            },
+            {
+              "callSite": "0x82CB85AC",
+              "roleValue": "0x4",
+              "lowByte": "0x04",
+              "label": "Attack"
+            },
+            {
+              "callSite": "0x82CB8718",
+              "roleValue": "0x4",
+              "lowByte": "0x04",
+              "label": "Attack"
+            },
+            {
+              "callSite": "0x82CB9990",
+              "roleValue": "0x108",
+              "lowByte": "0x08",
+              "label": "Defend"
+            },
+            {
+              "callSite": "0x82CBC398",
+              "roleValue": "0x102",
+              "lowByte": "0x02",
+              "label": "Settle"
+            }
+          ],
+          "note": "At 0x82CB8070 three li instructions feed r4 on different paths (0x82CB8034..0x82CB8050): 0x408 when a value in r3 is above 2, 0x208 when it is 2, and 0x108 otherwise. What that value is was not read. The priority is the constant 0x28 at 0x82CB6FF4 (0x82CB6FD4), 0x64 at 0x82CB8408 (0x82CB83F4) and 0x20 at 0x82CB8718 (0x82CB8700). The other priorities were not analysed."
+        },
+        "lookup": {
+          "arguments": "r3 player, r5 X, r6 Y are used. The r4 argument is overwritten at 0x82CB2D84 before any use, so the 0x1C the role loop passes is not read; the mask is fixed in the code.",
+          "loop": [
+            "0x82CB2D8C..0x82CB2E38 runs over the player's 128 records.",
+            "Skip when the signed halfword +0x8 is 0 or less (0x82CB2D8C..0x82CB2D98).",
+            "Skip when byte +0x1 has no bit of mask 0x1C (0x82CB2D9C..0x82CB2DA8).",
+            "dx = |X - byte +0x3|, dy = |Y - byte +0x4|, d = (2 * max(dx, dy) + min(dx, dy)) / 2 rounded toward zero (0x82CB2DAC..0x82CB2DFC).",
+            "score = (halfword +0x8 * 1000) / (d + 2) (0x82CB2DF8..0x82CB2E0C). The record with the highest score above 0 wins; ties keep the earlier record (0x82CB2E18..0x82CB2E28)."
+          ],
+          "returns": "The winning index or -1. The direct caller found by the same kind of scan is 0x82CBA0D8, the role loop."
+        },
+        "consequence": "The role byte stored by the 13 callers is 0x02, 0x04, 0x08, 0x10 or 0x40. The lookup passes records with a bit of mask 0x1C, so it can return records whose role byte is 0x04, 0x08 or 0x10. The role loop therefore copies 4, 8 or 0x10 from the eligible record with the highest positive score. Within these callers, records with role byte 0x02 or 0x40 are not returned by this lookup.",
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CB2600",
+            "0x82CB2DE0",
+            "0x82CBB4B0",
+            "0x82CC4DC8",
+            "0x82CB6FE0",
+            "0x82CB7880",
+            "0x82CB7AE0",
+            "0x82CB8070",
+            "0x82CB8420",
+            "0x82CB8660",
+            "0x82CB9980",
+            "0x82CBC390"
+          ],
+          "radius": 64,
+          "distinctWords": 1548,
+          "outputSha256": "F3E21E3EB53797B2992100BCCE9F80C491C9267CAB427DF7F82DAA1C7085DCB5",
+          "imageMatch": "All 1548 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The caller scans were read from the flat image."
+        },
+        "qualification": [
+          "Static reading only. No record was read at runtime.",
+          "The role values are the constants at the 13 direct call sites. An indirect call to the helper, or a store to the records that does not go through it, is not excluded. Other code in the AI turn function reaches the table through the address kept at frame +0x80; those accesses were not listed.",
+          "The conditions, positions and priorities at the call sites were not analysed, so what makes the AI add each kind of record is not shown.",
+          "The high bits 0x100, 0x200 and 0x400 of the role halfword +0x6 are not identified. Halfword +0x6 has no reader in what was read.",
+          "How the priority halfword +0x8 changes after a record is added was not read, apart from the store of 0 at 0x82CBA1BC recorded in cityRoleWriterBoundary.",
+          "0x82CC1AE0, the per-record call at 0x82CC4DD8, was not read; that the walk is the save or load of the table is an interpretation.",
+          "The route to the zero fill at 0x82CBB4A0..0x82CBB4C0 was not read.",
+          "The meaning of the word at 0x8312B8DC is not established."
+        ],
+        "interpretation": "Interpretation: the records are the AI player's list of map targets: places to attack, defend, explore, settle or strike from the air, each with a priority and the turn or time it was set. The role loop gives a city the role of the eligible Attack, Defend or Explore record with the highest positive score. A city with no such target falls back to Improve or Attack as recorded in cityRoleWriterBoundary. The walk at 0x82CC4DB8 is the saved-game transfer of the table.",
+        "falsificationCondition": "A different role constant at a cited call site, a different mask at 0x82CB2D9C..0x82CB2DA8, or a runtime observation that a cited call writes a role byte different from its recorded low byte would falsify the corresponding reading.",
+        "result": "Each player has 128 records of 14 bytes at 0x830EF3F0. A record holds a role value, a map position, the region byte of that position and a priority. One helper, 0x82CB2538, adds or refreshes a record; all 13 of its direct callers are in the AI turn function and pass constant role values. The lookup 0x82CB2D68 that the role loop calls returns records whose role byte has a bit of mask 0x1C set, so the byte the role loop copies is 4, 8 or 0x10 within these callers. This is a static reading."
       }
     },
     "RVA-F-0331": {

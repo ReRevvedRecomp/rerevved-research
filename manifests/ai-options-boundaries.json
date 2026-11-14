@@ -855,6 +855,108 @@
         "interpretation": "Interpretation: the halfword +0x2C is a per-city AI role set. The AI buys buildings and wonders only in cities marked Improve. The evaluator's substitutions of 8 and 4 are the Defend and Attack bits: a city that fails the 0x82CB3F08 comparison is treated as Defend only, and a city of the Barbarian ordinal as Attack only, so neither buys. The remaining policy input, the table at 0x830E5250 (128 bytes per player, compared with 2), needs its own question.",
         "falsificationCondition": "Different bit masks or label addresses at the cited test sites, different label bytes at the cited addresses, or a consumer of the halfword that contradicts a label would falsify the corresponding reading.",
         "result": "A text routine at 0x82D5C000 walks the city records and appends one fixed label per set bit of the city halfword +0x2C. Bit 0x20 appends the label Improve. The seven labelled bits are Settle, Attack, Defend, Explore, Improve, AirAttack and Naval. The purchase arm therefore needs the bit this routine labels Improve, and the two values the evaluator substitutes, 8 and 4, are the bits labelled Defend and Attack. This is a static reading, and the names come from the labels only."
+      },
+      "playerGoalWordBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "What is the per-player word at 0x830E5250 + 128 * p that the AI building and wonder purchase arm compares with 2, and what writes it?",
+        "scope": {
+          "functions": [
+            "0x82CB6E48",
+            "0x82D13978"
+          ],
+          "windows": [
+            "0x82CBA810..0x82CBA9F0",
+            "0x82CBABA0..0x82CBAEF0",
+            "0x82D13A18..0x82D13BF8",
+            "0x82CBB1D0..0x82CBB4A0",
+            "0x82CBA314..0x82CBA514"
+          ],
+          "boundary": "The goal selection in 0x82CB6E48 (0x82CBA880..0x82CBADC4), the candidate 2 scoring block, the later loop 0x82CBB1EC..0x82CBB410 and the reader at 0x82D13AFC..0x82D13B20 were read. The scoring blocks for candidates 0, 1 and 3, the tests inside the later loop and the other load sites were not read."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/purchaseArmInputBoundary: the purchase arm test of this word at 0x82CB6C6C..0x82CB6C9C",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleFlagBoundary: the table was left unidentified there",
+          "scenario-schema.json#/variators: MUSTWINBY is slot 10, QUICKWIN slot 11, CANNOTWINBY slot 17, all defaulting to 0; scenario block base 0x830E8FD0, so the halfwords at +0x14, +0x16 and +0x22",
+          "production-cost-ownership.json#/consumers/ai/1/normalCostGate: 0x82CB6E48 is the AI turn unit evaluation function and 0x830ED544 is the Gold table",
+          "building-record-identities-100-122.json: item 104 is Market, item 110 is Bank"
+        ],
+        "selection": {
+          "registers": "The player index p is the word at frame +0x1C4. r19 = 0x830E5250 (0x82CBA884, 0x82CBA88C), r23 = 0x830E8FD0 (0x82CBA890, 0x82CBA898), r29 = 0x830ED544 (0x82CBA8B4, 0x82CBA8DC), r25 = 20000 (0x82CBA8D8).",
+          "steps": [
+            "1. 0x82CBA8A0 stores r21 to the word at 0x830E5250 + 128 * p. The value of r21 at this point was not traced back; r21 is copied as the starting index of the two loops before it (0x82CBA774, 0x82CBA784).",
+            "2. 0x82CBA894..0x82CBA8A8: if bit 0x4 of the word at r15 + 4 * p is set, the scoring loop is skipped (to 0x82CBAD64). r15 is a base set earlier in the function.",
+            "3. Scoring loop, 0x82CBA8C0..0x82CBAD24: best score r20 = 0, candidate r21 = 0. For each candidate 0 to 3 a jump table at 0x82CBA900 selects the scoring block: candidate 0 at 0x82CBA910, candidate 1 at 0x82CBAA54, candidate 2 at 0x82CBABDC, candidate 3 at 0x82CBAB18. Each block leaves a score in r31 and continues at 0x82CBACD4.",
+            "4. Candidate 2 block, 0x82CBABDC..0x82CBACD0: among other inputs it loads the Gold word at 0x830ED544 + 4 * p (0x82CBAC4C), forms T = (20000 >> (2 * Q)) / 5 with Q the signed halfword at 0x830E8FD0 + 0x16 (0x82CBAC30, 0x82CBAC78..0x82CBACA8), and halves the score when Gold < T (0x82CBACC4..0x82CBACD0). The other inputs of this block and the bodies of the other three blocks were not analysed.",
+            "5. Scenario filter, 0x82CBACD4..0x82CBAD00, with M the signed halfword at 0x830E8FD0 + 0x14 and C the signed halfword at +0x22: when M is 0, the score becomes 0 if C equals candidate + 1; when M is not 0, the score becomes 0 unless M equals candidate + 1.",
+            "6. 0x82CBAD04..0x82CBAD18: a score greater than the best so far replaces it and stores the candidate index to the table word. Equal scores do not replace. 0x82CBAD1C..0x82CBAD24 moves to the next candidate while it is below 4.",
+            "7. 0x82CBAD28..0x82CBAD60: if the stored value is 1 and the signed word at 0x830ECC08 + 8 * p + 4 is above 0, the value becomes 0.",
+            "8. 0x82CBAD64..0x82CBAD78: if the signed word at 0x8312B8DC is below 20, the value becomes 0. This step is also reached when step 2 skips the loop.",
+            "9. 0x82CBAD7C..0x82CBADC0: M equal to 1, 2, 3 or 4 stores 0, 1, 2 or 3."
+          ],
+          "summary": "This selection code stores 0 to 3. MUSTWINBY values 1 to 4 force goals 0 to 3, and CANNOTWINBY values 1 to 4 exclude goals 0 to 3 from the scoring."
+        },
+        "laterLoop": {
+          "window": "0x82CBB1EC..0x82CBB410",
+          "loop": "After the selection, the same function runs a loop with k = 0 to 31 (r23 from 0, r25 = 4 * k up to 0x80; 0x82CBB214, 0x82CBB218, 0x82CBB404..0x82CBB410). A pass is skipped when the word at 0x8311DD10 + 4 * k is zero (the pointer stored to frame +0x7C at 0x82CBA414, loaded at 0x82CBB230; 0x82CBB234..0x82CBB23C).",
+          "stores": "Otherwise the pass stores to word 32 * p + k of this table (index formed at 0x82CBB34C..0x82CBB354, r19 still 0x830E5250): 3 at 0x82CBB368, 1 at 0x82CBB3E0, 2 or 5 at 0x82CBB3EC, and then 2 at 0x82CBB400 when p equals the word at 0xB0 of the pointer in frame +0x5C. The tests that choose between these values (0x82CBB240..0x82CBB3E8) were not analysed.",
+          "neighbours": "The same pass reads word 32 * p + k of the neighbouring tables at 0x830E5650, 0x830E5F50 and 0x830E63D0 (0x82CBB21C..0x82CBB224, 0x82CBB358, 0x82CBB3AC).",
+          "unresolved": "Each player's 128 bytes are 32 words indexed by k, and the pass with k = 0 writes the same word as the goal selection. Whether the k = 0 pass runs in play (whether the word at 0x8311DD10 is ever nonzero) was not resolved."
+        },
+        "readers": [
+          "Purchase arm (recorded): with the word equal to 2 the arm continues only when the city halfword +0x38 minus 100 is 4 or 10, that is item 104 (Market) or 110 (Bank).",
+          "0x82D13AFC..0x82D13B20 in 0x82D13978: reads the word for the player in r21; value 2 adds 25 to r30 and value 1 subtracts 25. r30 was set just before to 25, 50, 75 or 100 by a six-way jump table at 0x82D13AD0 (0x82D13AA4..0x82D13AF8). What r30 controls was not read.",
+          "Other load sites reported by the scan and not read for this question: 0x82CBD498 (compares with 3), 0x82CC8C10, 0x82CC9AA0, 0x82CCA1D8 (compares with 2 and 3), and later loads in the AI turn function at 0x82CBAE00, 0x82CBAFCC, 0x82CBB020 and 0x82CBB0BC."
+        ],
+        "tableShape": [
+          "Stride 128 bytes per player (slwi by 7 at every indexed site read).",
+          "The address 0x830E5250 is also the end of the wonder word table at 0x830E5148 (0x108 bytes). Several of the 39 scan hits recorded earlier form it as 0x830E5148 + 0x108 as a loop end (for example 0x82CE306C, 0x82CE7A6C, 0x82CEC60C, 0x82D1F64C in the form addi rX, rY, 0x108) and do not access this table.",
+          "0x82CC5B50 and 0x82CC5B74 pass 0x830E5250 with a count of 0x100 words to a helper pair (0x822DE4F0, 0x822DE570), which is 8 players times 32 words."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "two foreground read-only runs",
+          "runs": [
+            {
+              "targets": [
+                "0x82CBA900",
+                "0x82CBAC90",
+                "0x82CBAE00",
+                "0x82D13B08"
+              ],
+              "radius": 60,
+              "distinctWords": 455,
+              "outputSha256": "94C9C225F6554B9DECC8926FEED756108CF461ECCC92903B9C62F7021B2A1A35",
+              "coverage": "0x82CBA810..0x82CBA9F0, 0x82CBABA0..0x82CBAEF0 and 0x82D13A18..0x82D13BF8"
+            },
+            {
+              "targets": [
+                "0x82CBB2D0",
+                "0x82CBB3A0",
+                "0x82CBA414"
+              ],
+              "radius": 64,
+              "distinctWords": 310,
+              "outputSha256": "9B1E1C01183F9DFB4368C16284A358B07D86FAA9ACF27416FA61F2BA5467280B",
+              "coverage": "0x82CBB1D0..0x82CBB4A0 and 0x82CBA314..0x82CBA514"
+            }
+          ],
+          "imageMatch": "All 765 dumped words match the supported flat image (SHA-256 in manifests/image.json).",
+          "offlineScan": "The jump table targets for candidates 1 and 3 and the list of other load sites were read from the flat image. The site list comes from the offline flat-image scanner recorded in cityRoleFlagBoundary (scannerSha256 3BE9D1A51BF0B1C763F7291979239869D54EF85DC99E84A479E0362484A75B3F)."
+        },
+        "qualification": [
+          "Static reading only. No AI turn was observed choosing a goal, and no scenario with MUSTWINBY or CANNOTWINBY was run.",
+          "The goals are not named by the code read here. No text label for the four indices was found. Only candidate 2 has a recorded property: its score reads Gold against the 20000 based target.",
+          "The value stored at 0x82CBA8A0 before scoring was not traced. If every candidate scores 0 or less, that value stays.",
+          "The scoring blocks for candidates 0, 1 and 3, and the remaining inputs of candidate 2, were not analysed.",
+          "The meanings of the word at 0x830ECC08 + 8 * p + 4, the word at 0x8312B8DC and bit 0x4 of the r15 table word are not established here.",
+          "Unresolved: the later loop can overwrite the goal word in its k = 0 pass with 1, 2, 3 or 5. Whether that pass runs, and so which value the purchase arm and the other readers see, is not resolved. The meaning of k and of the table at 0x8311DD10 is not established.",
+          "Stores to this word outside 0x82CB6E48 are not excluded. The scan covers sites that form the table address.",
+          "Words 1 to 31 of each record are written only by the later loop, within what was read; their meaning is not identified."
+        ],
+        "interpretation": "Interpretation: the selection writes the AI player's current victory goal to word 0. MUSTWINBY and CANNOTWINBY are named for victory types, and the 20000 based Gold target in candidate 2 fits an economic victory, so goal 2 is probably the economic one. If the goal value is what the purchase arm reads, then under goal 2 the AI spends Gold only to finish a Market or a Bank, which keeps its Gold for the target. If the later loop's k = 0 pass runs, the arm instead reads that pass's value. If 0x8312B8DC is the turn counter, the below-turn-20 check writes 0 before the MUSTWINBY overrides; the later loop may overwrite the result.",
+        "falsificationCondition": "Different stored values or scenario offsets at the cited selection sites, a different index at the later loop stores, or a runtime read of the word that contradicts the stored range 0 to 3 for the selection would falsify the corresponding reading.",
+        "result": "The word at 0x830E5250 + 128 * p is a goal index 0 to 3 that the AI turn function 0x82CB6E48 chooses for the player. It scores four candidates, keeps the highest, and applies MUSTWINBY (force) and CANNOTWINBY (exclude) to candidates 0 to 3. Candidate 2 is the one whose score reads the player's Gold against a 20000 based target. With goal 2 the purchase arm buys only when the city's current item is 104 (Market) or 110 (Bank). Unresolved: a later loop in the same function (0x82CBB1EC..0x82CBB410) can write the same word again with 1, 2, 3 or 5, so the value the readers see is not settled. This is a static reading."
       }
     },
     "RVA-F-0331": {

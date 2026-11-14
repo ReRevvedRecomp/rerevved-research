@@ -512,6 +512,20 @@ substituted values 8 and 4 correspond to Defend only and Attack only, so
 neither case passes the bit `0x20` check of this purchase arm. The record is
 [city role flag finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleFlagBoundary).
 
+The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
+with 2. When that word equals 2, the arm continues only when the city's
+current item is 104 (Market) or 110 (Bank). The AI turn function `0x82CB6E48` writes that word at
+`0x82CBA880..0x82CBADC4`. It scores four candidates, keeps the highest, and
+stores its index 0 to 3. The scenario settings `MUSTWINBY` and `CANNOTWINBY`
+(values 1 to 4) force or exclude candidates 0 to 3. Candidate 2 halves its
+score when Gold is below `(20000 >> (2 * QUICKWIN)) / 5`. A later loop in the
+same function (`0x82CBB1EC..0x82CBB410`) can write up to 32 words per player, and its
+first pass can store 1, 2, 3 or 5 to the same word. Whether that pass runs is
+not resolved. This is a static reading, and no AI turn was observed.
+Interpretation: the selection writes the AI player's victory goal, and
+candidate 2 is probably the economic one. The record is
+[player goal word finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/playerGoalWordBoundary).
+
 The [AI findings](../../../manifests/ai-options-boundaries.json) hold the exact
 hook points, capacities and limits. Starting technology ownership and its
 activation timing are in

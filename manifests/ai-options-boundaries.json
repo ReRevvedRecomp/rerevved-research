@@ -608,7 +608,78 @@
         "required": "Correlate active and inactive UEA4, the coefficient before and after, candidate score, final choice and executed production without changing native inputs."
       },
       "falsification": "A different native owner or UEA argument or coefficient-to-score dataflow would falsify this valuation link. A separate strategic personality consumer would extend the boundary.",
-      "conclusion": "Civilization bonuses affect native production valuation. A separate contact decision between players consumes the Great Wall pair word. An Egyptian handler branch that depends on conditions can change a local selection which, if retained through an admitted invocation, reaches a warning and history path and native war request. General leader personalities, execution of the whole path and completed natural outcomes are not yet established."
+      "conclusion": "Civilization bonuses affect native production valuation. A separate contact decision between players consumes the Great Wall pair word. An Egyptian handler branch that depends on conditions can change a local selection which, if retained through an admitted invocation, reaches a warning and history path and native war request. General leader personalities, execution of the whole path and completed natural outcomes are not yet established.",
+      "item103ReturnRouteBoundary": {
+        "status": "closed",
+        "confidence": "strong",
+        "question": "For a selected item 103, which route leads from 0x82CB5520 in the evaluator 0x82CB44E0 to the return at 0x82CB6E30, and does r16 still hold the selected ordinal there?",
+        "scope": {
+          "functions": [
+            "0x82CB44E0"
+          ],
+          "windows": [
+            "0x82CB5460..0x82CB5640",
+            "0x82CB6608..0x82CB67E8",
+            "0x82CB6A90..0x82CB6E50"
+          ],
+          "boundary": "The instructions on every item 103 route from 0x82CB5520 to 0x82CB6E30 were read in the three dumped windows. The bodies of the callees on those routes were not read."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330",
+          "occ-settler-production-requirements.json",
+          "production-cost-ownership.json"
+        ],
+        "registers": [
+          "r16: selected ordinal, reloaded from frame +0xA0 at 0x82CB5528",
+          "r17 + r19: city record base used by the +0x38 item stores",
+          "r18: from frame +0x94",
+          "r20: city owner",
+          "r21: from frame +0xB8",
+          "r24: 0x830ECD08, set at 0x82CB6734 and 0x82CB673C",
+          "r25: selected item, read at 0x82CB5544",
+          "r26: r17 + 0x24, set at 0x82CB5520"
+        ],
+        "route": [
+          "1. 0x82CB5520..0x82CB555C: reload r16 (0x82CB5528) and r25 (0x82CB5544). Clear bit 0x40000 of the city word at r19 + r26. The re-set of that bit at 0x82CB5558 needs r18 = 0x20 and r25 < 100, so item 103 skips it.",
+          "2. First classifier, 0x82CB5560..0x82CB5588 or 0x82CB66A8..0x82CB672C: if the word at 0(r21) is nonzero, r11 = 1 when bit r20 of it is set (0x82CB556C..0x82CB5584, then b 0x82CB6730). If it is zero, control goes to 0x82CB66A8, which makes two indirect calls (0x82CB66CC and 0x82CB66EC, both through vtable +0x100) and calls 0x821B8CD0 at 0x82CB6704. r11 = 1 when the found word is nonzero.",
+          "3. 0x82CB6730..0x82CB6748: a nonzero classifier branches to 0x82CB6A90. With it zero, r25 >= 100 at 0x82CB6744 also branches to 0x82CB6A90. Item 103 therefore never enters the block 0x82CB674C..0x82CB6A8C, which holds the stores 0x82CB6864, 0x82CB6930 and 0x82CB6A34.",
+          "4. 0x82CB6A90..0x82CB6A94: r22 = frame +0x234, r23 = frame +0x80.",
+          "5. Second classifier, 0x82CB6A98..0x82CB6B54: the same two forms (mask bit test at 0x82CB6AA4..0x82CB6AC0, or indirect calls 0x82CB6AE8 and 0x82CB6B08 with 0x821B8CD0 at 0x82CB6B20). A nonzero result returns through 0x82CB6E30.",
+          "6. 0x82CB6B58..0x82CB6B74: return unless 100 <= r25 < 300 and r25 is not 220 or 219. Item 103 continues.",
+          "7. Price, 0x82CB6B78..0x82CB6BFC. 0x82CB6B80: r27 = 0x82CF1278(r22, -1). 0x82CB6B88..0x82CB6B94: r28 = 1 for r25 < 200, else 2; item 103 gives 1. 0x82CB6B98..0x82CB6BB8: E = word at 0x830ECD08 + 4 * r20, limited to 0..99. 0x82CB6BBC..0x82CB6BCC: Q = 0x82CF0CB0(0x19, r20, 0); f = 1 when Q is nonzero, else 0. 0x82CB6BD4..0x82CB6BF8: P = ((f + 1) * E + 2) * (r27 - H) * r28, where H is the signed halfword at the city record +0x36, in low 32-bit arithmetic. 0x82CB6BFC: P <= 0 returns through 0x82CB6E30.",
+          "8. Tests before the purchase, 0x82CB6C00..0x82CB6C9C, with G = the word at r23 + 4 * r20 and S = the word at frame +0x5C (the best score, per RVA-F-0330). P > G (0x82CB6C08) or r18 bit 0x20 clear (0x82CB6C0C..0x82CB6C14) skips the purchase to 0x82CB6D60. 0x82CB6C18..0x82CB6C68: the purchase continues to 0x82CB6C6C when the halfword at city +0x42 is zero and 100 * P < G * S, or when G >= 2000, or when P < S / 4 (signed, rounded toward zero), or when bits 0xF0000 of the city word at r19 + r26 are nonzero and S > 100. Otherwise it is skipped. 0x82CB6C6C..0x82CB6C9C: if the word at (frame +0xAC) + 128 * r20 is 2, the purchase needs the current city item (halfword +0x38) to be 104 or 110; otherwise it is skipped.",
+          "9. Purchase, 0x82CB6CA0..0x82CB6D5C. 0x82CB6CFC: G is replaced by G - P. 0x82CB6D08: the halfword at city +0x38 is set to r25. 0x82CB6D1C..0x82CB6D34: the halfword at city +0x36 becomes H + (P / ((f2 + 1) * E + 2)) / r28, with E and the query at 0x82CB6CDC read again (f2); with unchanged inputs this is the cost r27. 0x82CB6D50: call 0x82D13978(r22, 1). 0x82CB6D54..0x82CB6D5C: set bit 0x400 of the city word at r19 + r26.",
+          "10. 0x82CB6D60..0x82CB6D80: return when P > G (G read again), when bit 0x10000 of the city word is clear, or when r25 is not 107. Item 103 returns here. The block 0x82CB6D84..0x82CB6E2C, which holds the store 0x82CB6DE8 of item 107, is not entered for item 103.",
+          "11. 0x82CB6E30: r3 = r16, then the epilogue."
+        ],
+        "r16Preservation": "In the decoded range 0x82CB5520..0x82CB6E44 the only instruction with r16 as its destination is 0x82CB5528. r16 is a nonvolatile register. The calls on the item 103 routes are 0x821B8CD0, the four indirect calls, 0x82CF1278, 0x82CF0CB0 (twice) and 0x82D13978. Their bodies were not read. Under the normal ABI the evaluator returns the selected ordinal.",
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CB5550",
+            "0x82CB66F8",
+            "0x82CB6B80",
+            "0x82CB6D60"
+          ],
+          "radius": 60,
+          "distinctWords": 483,
+          "outputSha256": "F64A97CB6562D25E57600C1D325580DB07364FAA91471F961D94295858AD89A2",
+          "imageMatch": "All 483 words match the supported flat image (SHA-256 in manifests/image.json). They cover 0x82CB5460..0x82CB5640, 0x82CB6608..0x82CB67E8 and 0x82CB6A90..0x82CB6E50. The statement about r16 destinations over the whole range 0x82CB5520..0x82CB6E44 was read from the flat image; the dumped windows cover every instruction on the item 103 routes."
+        },
+        "qualification": [
+          "Static reading only. No AI turn was observed selecting or buying item 103.",
+          "r16 holding its value rests on the normal ABI for the callees named above, including four indirect calls whose targets are not resolved.",
+          "The route starts at 0x82CB5520. The fallback path that also reaches 0x82CB5520 (random choice stores at 0x82CB48F4 and 0x82CB551C) uses the same reload, so the route applies to whatever ordinal frame +0xA0 holds. Which ordinal maps to item 103 in a real turn is not shown.",
+          "The table at r23 (frame +0x80) is not identified. Reading it as the player's gold is an interpretation.",
+          "The meanings of the classifier words, r18 bit 0x20, city +0x42, the bits 0xF0000, 0x400 and 0x10000 of the city word, and the word at (frame +0xAC) + 128 * r20 are not established.",
+          "0x82D13978(city, 1) was not reopened. What it does after this purchase is not shown. The caller 0x82CECBB8 then runs its own assignment path with the returned ordinal, as already recorded.",
+          "The price formula is the arithmetic at this site only. It is not shown to equal the human rush price."
+        ],
+        "interpretation": "Interpretation: the tail is an AI purchase step for a selected building or wonder. It prices the remaining cost by era and by one query (selector 0x19), doubles it for wonders, and buys when the price fits the per-player word and one of the score tests passes. The bypass recorded for item 0 does not carry over, because item 103 can reach the store at 0x82CB6D08, but every route still returns the selected ordinal. The arm is a concrete input list for the open AI rush valuation question: the era word, query 0x19, cost minus progress, the best score and the r23 word.",
+        "falsificationCondition": "A write to r16 on an item 103 route after 0x82CB5528, a route from 0x82CB5520 that does not reach 0x82CB6E30, or a callee that does not keep r16 would falsify the return claim. Different price arithmetic or stores at the cited addresses would falsify the purchase reading.",
+        "result": "Every branch outcome for item 103 reaches 0x82CB6E30, and no instruction on those routes writes r16 after the reload at 0x82CB5528. Under the normal ABI the evaluator returns the selected ordinal. On the way, item 103 can pass through a purchase arm that stores the item to the city and subtracts a price from a per-player word. This is a static reading."
+      }
     },
     "RVA-F-0331": {
       "schemaVersion": 1,

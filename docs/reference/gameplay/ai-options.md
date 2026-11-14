@@ -471,6 +471,24 @@ candidate loop. The winner, the city assignment and execution stay open. Exact
 arithmetic is in the
 [score continuation finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/scoreContinuationBoundary).
 
+After the candidate loop, `0x82CB5528` reloads the selected ordinal. Item 103
+skips the unit block, passes two classifier tests and returns the ordinal at
+`0x82CB6E30`. No instruction on these routes writes `r16` after the reload.
+This relies on the callees keeping nonvolatile registers.
+
+The purchase arm `0x82CB6B78..0x82CB6D5C` prices item 103 as
+`P = ((f + 1) * E + 2) * (cost - progress) * m` in low 32-bit arithmetic.
+`progress` is the signed halfword at city `+0x36`. Here `m` is 1 for items 100
+to 199 and 2 for items 200 to 299, `E` is the per-player era word limited to
+0..99, and `f` is 1 when the `0x82CF0CB0` query with selector `0x19` is
+nonzero, else 0. When the tests pass, the arm subtracts `P` from a per-player
+word, stores the item at city `+0x38`, raises the progress halfword at `+0x36`
+and calls `0x82D13978`. This is a static reading. No AI turn was observed
+buying item 103, and the per-player word is not identified.
+Interpretation: this is an AI purchase step for a selected building or wonder.
+See the `item103ReturnRouteBoundary` section of
+[RVA-F-0330](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/item103ReturnRouteBoundary).
+
 The [AI findings](../../../manifests/ai-options-boundaries.json) hold the exact
 hook points, capacities and limits. Starting technology ownership and its
 activation timing are in

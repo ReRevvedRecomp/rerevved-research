@@ -34,7 +34,9 @@ The function `0x82D9BE28` derives a four letter key from the player of the unit 
 
 The function `0x82D9C050` opens the table through `0x82C92950` and selects rows with the key `civ`. For a row it reads `file` and `bone`, loads the file, and looks for `helmet`, `weapon` and `shield` in the bone name. It stores each piece count minus 1 in member bytes `+0x89` to `+0x8B`. The loads of those bytes found in the scan are in `0x82D9B9F0` and `0x82D9A3F8`. See the `civilizationKey`, `attachmentTable` and `memberBytes` sections.
 
-Interpretation: the attachment pieces differ by civilization through the `civ` rows of `<name>_Attachments.xml`, not through the body name.
+The selection `0x821D0BD0` walks each node below the node it is given, at any depth, and collects each node of kind 1 whose `civ` attribute equals the whole four letter key. The key is the first four characters of the civilization name string, such as `Roma` for index 0 and `Engl` for index `0xF`. The compare `0x827F27B0` ignores the case of ASCII letters. The function `0x82D9C050` attempts one piece load for each collected node, and a load that fails skips the node. When no node is collected it loads nothing and stores nothing to member bytes `+0x89` to `+0x8B`, and it has no default row. A later node whose piece loads overwrites a byte when that byte's word is the first of the three found in its bone string. The reader is called at `0x82D9CBF4` in `0x82D9C7F0`, which is slot `+0x18` of the member table `0x82135C90`. See the `rowSelection` part of the `attachmentTable` section.
+
+Interpretation: the attachment pieces differ by civilization through the `civ` rows of `<name>_Attachments.xml`, not through the body name. A unit of a civilization with no row gets no attachment pieces and no default set. Attachment pieces for Chinese or Spanish Archers can be chosen with rows keyed `Chin` and `Span` in the table for the body name the unit loads.
 
 ## The function 0x82DC4F68
 
@@ -52,8 +54,10 @@ Interpretation: the four nine word tables are one parent class and three child c
 
 - No unit creation or file load was observed.
 - No direct caller of `0x82D7FE40` was found. It is slot `+0x1A0` of the function table `0x82138768`. That the object at `0x8314F76C` holds this table at unit creation rests on a cited record in `ai-options-boundaries.json`, which also notes a second table store.
-- The functions `0x82E80120`, `0x82D9B9F0` and `0x82D9C4B8`, the `.kfm` branch and the row selection `0x821D0BD0` were not read. `0x82C92950` was read at its head. `0x82C63820` was not read, and the byte scan covered direct displacements in `0x82C50000..0x82DD0000`.
-- How an attachment row is matched to the four letter key, and what happens when no row matches, was not established.
+- The functions `0x82E80120`, `0x82D9B9F0` and `0x82D9C4B8`, and the `.kfm` branch were not read. `0x82C92950` was read at its head. `0x82C63820` was not read, and the byte scan covered direct displacements in `0x82C50000..0x82DD0000`.
+- The contents of any `_Attachments.xml` file were not examined, and no attachment table was read at run time.
+- What `0x82D32BA8` does when the attribute is missing was not established. The attribute read `0x8230A118` returns 0 then.
+- When slot `+0x18` of the member table `0x82135C90` runs, and so when the reader runs relative to the body load in `0x82D9CF30`, was not established.
 - Whether a constructor for the table `0x8212FFD0` exists that forms its address in a way the scans miss was not established.
 - What the objects built by `0x82E72008` and `0x82E72108` are was not established. They store the table `0x8212FF9C`.
 - The worker name functions `0x82D95A30` and the constructor containing the string use at `0x82E7A698` are not on the creation route read here. What they build names for was not established.

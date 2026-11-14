@@ -98,7 +98,21 @@
     "test": "0x82D9C748(member, out, r5) copies the name at member +0x10, calls 0x821B4948(out, 0x5C), appends \"_Attachments.xml\" (0x82132300) with 0x821B2A60 and tests the result with 0x82E80120. When the test fails it sets out to the string at 0x8211EC34 and clears bit 0x10000000 of member word +0x4.",
     "read": "0x82D9C050 (called at 0x82D9CBF4) calls 0x82D9BE28 at 0x82D9C0CC. It opens the table with 0x82C92950(word at 0x8314F238, frame address, 9, name, 0, 0) at 0x82D9C0F4 and selects rows with the key \"civ\" (0x82135B8C) through 0x821D0BD0 at 0x82D9C13C. For a row it reads \"file\" (0x821229FC) and \"bone\" (0x82135B90) with 0x8230A118, then loads the file with 0x82C92950(.., 1, file, 0, 0) at 0x82D9C1EC.",
     "pieceCounts": "For k = 0, 1, 2 it looks for \"helmet\" (0x82135B98), \"weapon\" (0x82135BA0) and \"shield\" (0x82128AA4) in the bone name with 0x827F1930 and stores (piece count - 1) to byte member +0x89 + k at 0x82D9C358.",
-    "opener": "0x82C92950(r3, r4, r5, r6 = name, r7, r8) spans 0x82C92950..0x82C92C34. Its first instructions were read: it copies the name to a 0x104 byte frame string, calls 0x822D6270 and 0x821D6EC0(.., 0x5C) on it, and looks the result up with 0x822E9A38(r3 + 4, string). The rest was not read."
+    "opener": "0x82C92950(r3, r4, r5, r6 = name, r7, r8) spans 0x82C92950..0x82C92C34. Its first instructions were read: it copies the name to a 0x104 byte frame string, calls 0x822D6270 and 0x821D6EC0(.., 0x5C) on it, and looks the result up with 0x822E9A38(r3 + 4, string). The rest was not read.",
+    "rowSelection": {
+      "arguments": "0x82D9C050(r3 = member, r4 = civ argument, r5 = pointer to the table name string).",
+      "emptyName": "0x82D9C064..0x82D9C0A0: the table name is compared with the string at 0x8211EC34, which is empty in the image file. When they are equal the function returns at 0x82D9C3D8 with no load. 0x82D9C748 sets the name to that string when its test of the table file fails.",
+      "request": "0x82D9C0C0..0x82D9C0CC build the key string at frame +0x54 with 0x82D9BE28(member, r4, frame +0x54). 0x82D9C0D8..0x82D9C100 open the table; when the returned object word at frame +0x5C is 0 the function goes to its end at 0x82D9C3D0. 0x82D9C104..0x82D9C13C clear a result list at frame +0x84 (first), +0x88 (end) and +0x8C, and build a request that holds a pointer to that list, the string \"civ\" (0x82135B8C) and the key string pointer. It calls 0x821D0BD0(word +0x18 of the table object, request) at 0x82D9C13C.",
+      "walk": "0x821D0BD0..0x821D0C60(r3 = node, r4 = request): a zero node returns. At 0x821D0BEC..0x821D0C1C, when node word +0x14 is 1 and 0x82D32BA8(request + 4, node) returns a nonzero low byte, the node is appended to the list at request word +0x0 through 0x822E55F0. At 0x821D0C20..0x821D0C58 it takes each child in turn through 0x82307818(node, previous child or 0) and calls itself on the child at 0x821D0C40. Every node below the node it is given is visited, at any depth. Its direct callers are 0x82D9C13C and its own call at 0x821D0C40.",
+      "test": "0x82D32BA8..0x82D32C48(r3 = pointer to the pair (name, value), r4 = node): it calls slot +0x18 of the node, and a zero result returns 0. It reads the attribute named by the first word of the pair with 0x8230A118 and copies the result to a frame string with 0x821B2AD8. At 0x82D32C14..0x82D32C28 it compares that string with the second word of the pair through 0x827F27B0 and returns 1 when the compare returns 0, else 0. Its one direct caller is 0x821D0C04.",
+      "compare": "0x827F27B0..0x827F2800, 21 instructions: it compares two strings byte by byte to the end of the second string. Where two bytes differ, each byte in 0x41..0x5A gets bit 0x20 set and the bytes are compared again. It returns the last difference, and 0 when the strings match to the terminator.",
+      "attributeRead": "0x8230A118 looks the name up in the container at +0x44 of its first argument through 0x82308B48. A found entry returns a pointer to its text. No entry returns 0 (0x8230A178..0x8230A17C, 0x8230A1DC).",
+      "noCollectedNode": "0x82D9C140..0x82D9C150: when first equals end, the function goes to 0x82D9C3B8, which frees the list when it is not 0 and ends. No piece is loaded and no byte +0x89 to +0x8B is stored on that path. There is no default row in this function.",
+      "collectedNodes": "0x82D9C198..0x82D9C3B0: otherwise a loop runs over the list, four bytes per entry. For each entry it calls slot +0x18 of the entry's object, reads \"file\" and \"bone\" from the result with 0x8230A118 and loads the file with 0x82C92950. When that returns a zero low byte or leaves the object word 0, it goes to the next entry (0x82D9C1F0..0x82D9C204). For a loaded piece it appends the piece to the list at member +0x70 (0x82D9C208..0x82D9C214). For k = 0, 1, 2 it looks for the word of that k in the bone string with 0x827F1930. At the first k that is found it stores (count of the list at member +0x70) - 1 to member byte +0x89 + k and leaves the k loop (0x82D9C2C4..0x82D9C358). A later node whose piece loads overwrites a byte when that byte's word is the first of the three found in its bone string.",
+      "keyStrings": "The key is the first four characters of the civilization name string at the pointer 0x82F7A348 + 4 * civ. Examples: index 0 starts with \"Roma\" and index 0xF starts with \"Engl\".",
+      "callers": "The one direct call of 0x82D9C050 is at 0x82D9CBF4, in the function that starts at 0x82D9C7F0. It passes the signed member byte +0x8C as the civ argument and the name from a call of 0x82D9C748 just before (0x82D9CBCC..0x82D9CBF4). 0x82D9C7F0 has no direct caller. Its address is the word at 0x82135CA8, which is slot +0x18 of the member table 0x82135C90.",
+      "result": "0x821D0BD0 collects each node of kind 1 whose \"civ\" attribute equals the whole four letter key, compared without regard to the case of ASCII letters. 0x82D9C050 attempts one piece load for each collected node; a load that fails skips the node. When no node is collected it loads nothing and stores nothing to member bytes +0x89 to +0x8B. Static reading."
+    }
   },
   "memberBytes": {
     "bytes": "Member bytes +0x89, +0x8A and +0x8B.",
@@ -173,7 +187,7 @@
   },
   "verification": {
     "script": "ghidra/DumpMemoryWords.java",
-    "method": "Two foreground read-only runs of the script. The first run covered 16 target addresses, each window from the target minus 0x100 to the target plus 0x100. The second run is in secondRun. Ranges outside those windows, and the scans of the function0x82DC4F68 section, were read or run on the flat image.",
+    "method": "Three foreground read-only runs of the script. The first run covered 16 target addresses, each window from the target minus 0x100 to the target plus 0x100. The second run is in secondRun and the third in thirdRun. Ranges outside those windows, and the scans of the function0x82DC4F68 section, were read or run on the flat image.",
     "targets": [
       "0x82D7FF40", "0x82D80140", "0x82DC4FB0", "0x82DC52D0",
       "0x82D9D030", "0x82D9D1A8", "0x82D9C7A0", "0x82D9C150",
@@ -205,6 +219,16 @@
       "outputSha256": "9F83861DEFA499F002A11EFA5901DDE69195C962CB47023C123E0332DBA78EC1",
       "imageMatch": "The 825 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100.",
       "scans": "The scans of the function0x82DC4F68 section were run on the flat image."
+    },
+    "thirdRun": {
+      "targets": [
+        "0x82D9C150", "0x82D9C2E8", "0x821D0C18", "0x82D32BF8",
+        "0x827F27D8", "0x8230A184", "0x82D9CBF4"
+      ],
+      "radius": 64,
+      "distinctWords": 876,
+      "outputSha256": "EB641AC91137B13FF0F031C8A9863C19E0402877E8B1E5D1B668D7DDEC214EA4",
+      "imageMatch": "The 876 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The key strings, the string at 0x8211EC34, the caller searches and the word at 0x82135CA8 were read from the flat image."
     }
   },
   "limits": [
@@ -212,8 +236,13 @@
     "The function 0x82D7FE40 is reached through a function table in the functions read here; no direct caller was found. That the object at 0x8314F76C holds table 0x82138768 when a unit is created rests on the cited record, which also notes a second table store.",
     "The function 0x82E80120 was not read. Whether it tests that a file exists is an interpretation from its use.",
     "The function 0x82C92950 was read at its head. How it opens and parses a file is not established.",
-    "The \".kfm\" branch of 0x82D9CF30, the functions 0x82D9C4B8, 0x82C63820 and 0x82D9B9F0, and the row selection 0x821D0BD0 were not read.",
-    "Whether the \"civ\" key of an attachment row is compared with the four letter key as a whole, and what happens when no row matches, was not established.",
+    "The \".kfm\" branch of 0x82D9CF30, the functions 0x82D9C4B8, 0x82C63820 and 0x82D9B9F0 were not read.",
+    "No attachment table was read at run time, and the contents of any \"_Attachments.xml\" file were not examined.",
+    "What a node of kind 1 is, and how 0x82307818 orders children, was not established; 0x82307818, 0x82308B48, 0x822E55F0 and 0x821B2AD8 were not read.",
+    "What 0x82D32BA8 does when the attribute is missing (0x8230A118 returns 0, which is passed to 0x821B2AD8) was not established.",
+    "When slot +0x18 of the member table runs, and so when the reader runs relative to the body load in 0x82D9CF30, was not established.",
+    "What a member with bytes +0x89 to +0x8B left at their constructor value shows was not established.",
+    "The member byte +0x8C holds the low byte of the civ argument of 0x82D9CF30, which is -1 on the routes recorded. A civ argument other than -1 would use that value as the civilization index. No caller that passes another value was found, and none was searched for beyond the routes recorded.",
     "The scans find a table address formed by lis with addi (nearest earlier writer within 400 instructions, by linear order, not by control flow) or by lis with ori. A constructor that forms the address another way, or loads it from memory, would be missed.",
     "The data word 0x82130018 at 0x82A6E8CC was not examined.",
     "An object could also get one of these tables by a copy of a whole object; that was not searched.",
@@ -231,12 +260,15 @@
     "Interpretation: the four nine word tables are one parent class and three child classes. The four word table at 0x8212FF9C is their base, since the destructor of the parent calls 0x821C79A0.",
     "Interpretation: the three child classes look like model viewers that differ in how they name the file: by unit type (0x82DC4F68), and two other ways.",
     "Interpretation: since no constructor was found, this code looks unused in this image.",
-    "Interpretation: the body name of a unit on the map does not pass through 0x82DC4F68."
+    "Interpretation: the body name of a unit on the map does not pass through 0x82DC4F68.",
+    "Interpretation: a row of the attachment table belongs to one civilization through civ=\"Roma\", civ=\"Chin\" and so on, and letter case does not matter. A unit of a civilization with no row gets no attachment pieces and no default set.",
+    "Interpretation: nodes of kind 1 are XML elements, and the walk visits the whole document, so the nesting of the rows does not matter.",
+    "Interpretation: for a body of its own for Chinese or Spanish Archers, the pieces can be chosen with rows keyed \"Chin\" and \"Span\" in the attachment table of the body name the unit loads. A new body name needs its own \"_Attachments.xml\", or the unit has no pieces."
   ],
   "guards": [
     "Do not infer from this record that a unit was created or a file was loaded at run time.",
     "Do not treat the missing file replacement as observed; the test function 0x82E80120 was not read.",
-    "Do not infer how an attachment row is matched to the civilization key, or what happens when no row matches.",
+    "Do not infer the contents of any attachment file, or when slot +0x18 of the member table runs.",
     "Do not infer that no code creates an object with the table 0x8212FFD0. In the scans run, the addresses of the four nine word tables are stored in destructors and no constructor was found.",
     "Do not infer what the two worker name functions build names for."
   ],
@@ -244,7 +276,8 @@
     "A read of 0x82D7FE40 showing a different name source, a different suffix rule or a different civilization word than recorded here would falsify the name builder section.",
     "A read of 0x82D9CF30 showing a replacement other than \"Legion.xml\" or \"Knight.xml\" on the route recorded here would falsify the fallback section.",
     "A read of 0x82D9C050 showing a different key string or a different row selection than recorded here would falsify the attachment table section.",
+    "A compare at 0x82D32C1C that is not 0x827F27B0, or a path from 0x82D9C150 that loads a piece when the list is empty, would falsify the rowSelection part.",
     "A located store of 0x8212FFD0 outside the two recorded stores, 0x821C7B24 and 0x82DC4C60, would change the section on that function."
   ],
-  "conclusion": "In the functions read here, 0x82D7FE40 builds the body file name from the asset name in the unit type row and appends \".xml\" unless the name contains \".kfm\", replacing the name by civilization for type 0 and by other words for types 0x1D, 0x1E, 0x1F and 0x20. The unit group creates up to three members, and each loads the file in 0x82D9CF30, which substitutes \"Legion.xml\" or \"Knight.xml\" when the test 0x82E80120 fails. The attachment table \"<name>_Attachments.xml\" is tested in 0x82D9C748 and read in 0x82D9C050, which selects rows by a four letter civilization key from 0x82D9BE28. 0x82DC4F68 is slot +0x20 of the function table 0x8212FFD0. In the scans run, the addresses of the four nine word tables are stored in destructors and no constructor was found. The worker name functions, the row matching and the no match case are not established. Static reading."
+  "conclusion": "In the functions read here, 0x82D7FE40 builds the body file name from the asset name in the unit type row and appends \".xml\" unless the name contains \".kfm\", replacing the name by civilization for type 0 and by other words for types 0x1D, 0x1E, 0x1F and 0x20. The unit group creates up to three members, and each loads the file in 0x82D9CF30, which substitutes \"Legion.xml\" or \"Knight.xml\" when the test 0x82E80120 fails. The attachment table \"<name>_Attachments.xml\" is tested in 0x82D9C748 and read in 0x82D9C050, which selects rows by a four letter civilization key from 0x82D9BE28. The selection 0x821D0BD0 collects each node of kind 1 whose \"civ\" attribute equals the whole key, compared without regard to the case of ASCII letters, and 0x82D9C050 attempts one piece load for each collected node and loads nothing when none is collected. 0x82DC4F68 is slot +0x20 of the function table 0x8212FFD0. In the scans run, the addresses of the four nine word tables are stored in destructors and no constructor was found. The worker name functions are not established. Static reading."
 }

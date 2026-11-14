@@ -484,10 +484,33 @@ to 199 and 2 for items 200 to 299, `E` is the per-player era word limited to
 nonzero, else 0. When the tests pass, the arm subtracts `P` from a per-player
 word, stores the item at city `+0x38`, raises the progress halfword at `+0x36`
 and calls `0x82D13978`. This is a static reading. No AI turn was observed
-buying item 103, and the per-player word is not identified.
+buying item 103. The per-player word is the Gold word; see
+[AI building and wonder purchase](gameplay-cost-arithmetic.md#ai-building-and-wonder-purchase).
 Interpretation: this is an AI purchase step for a selected building or wonder.
 See the `item103ReturnRouteBoundary` section of
 [RVA-F-0330](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/item103ReturnRouteBoundary).
+
+The purchase arm also needs bit `0x20` of the city halfword `+0x2C`. A text
+routine at `0x82D5C000` appends one label per set bit of that halfword. The
+seven labelled bits are:
+
+| Bit | Label |
+|---|---|
+| `0x2` | Settle |
+| `0x4` | Attack |
+| `0x8` | Defend |
+| `0x10` | Explore |
+| `0x20` | Improve |
+| `0x40` | AirAttack |
+| `0x80` | Naval |
+
+The evaluator replaces the value with 8 or 4 in two cases. This is a static
+reading. The names come from the labels only, and the writers of the halfword
+are not located. Interpretation: the halfword is a per-city AI role set, and
+the AI buys buildings and wonders only in cities marked Improve. The
+substituted values 8 and 4 correspond to Defend only and Attack only, so
+neither case passes the bit `0x20` check of this purchase arm. The record is
+[city role flag finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleFlagBoundary).
 
 The [AI findings](../../../manifests/ai-options-boundaries.json) hold the exact
 hook points, capacities and limits. Starting technology ownership and its

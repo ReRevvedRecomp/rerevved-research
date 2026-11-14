@@ -749,6 +749,112 @@
         "interpretation": "Interpretation: for buildings and wonders the AI pays the price a human would be quoted. The order of operations issue recorded for the AI unit rush value does not apply to this arm, because the price has no divide. The AI buys only for a city whose +0x2C halfword has bit 0x20 set, and never for a Barbarian city or a city on the first outcome of the 0x82CB3F08 comparison. What remains for the AI rush valuation question is runtime observation and the meaning of the policy inputs, not the price arithmetic.",
         "falsificationCondition": "Different stored constants at the cited frame stores, a further store to those frame slots, or different arithmetic at the cited producer or arm addresses would falsify the corresponding reading.",
         "result": "For buildings and wonders the per-player word the AI arm compares and debits is the Gold table at 0x830ED544, the same table the human rush producer compares its amount with. The AI price ((f + 1) * E + 2) * (cost - progress), doubled for wonders, uses the same arithmetic and inputs as the human producer. This differs from units, where the recorded AI value and the human rush differ in order of operations. This is a static reading."
+      },
+      "cityRoleFlagBoundary": {
+        "status": "closed",
+        "confidence": "strong",
+        "question": "What do the bits of the city halfword +0x2C mean, in particular bit 0x20, which the AI building and wonder purchase arm requires?",
+        "scope": {
+          "functions": [
+            "0x82D5C000"
+          ],
+          "windows": [
+            "0x82D5C000..0x82D5C5A0",
+            "0x82D5C5F0..0x82D5C7D0",
+            "0x8213BB58..0x8213BD38",
+            "0x82CC9180..0x82CC9360"
+          ],
+          "boundary": "The label routine 0x82D5C000 was read from its setup through the bit tests and the item string step, with the label bytes. The range 0x82D5C5A0..0x82D5C5F0 and the caller search were read from the flat image. The rest of each pass, including the call 0x82D5C7A8 -> 0x82D5BE58, the table targets at 0x82CC92A8 and the data word at 0x8219C8B8 were not read."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/purchaseArmInputBoundary",
+          "City records: base 0x8314FE28, size 0xBC, player byte +0x0, population byte +0x3, item halfword +0x38"
+        ],
+        "labelRoutine": {
+          "setup": "0x82D5C00C..0x82D5C0C4: r24 = 0x8314FE28 + 0x2C = 0x8314FE54 (0x82D5C00C, 0x82D5C014, 0x82D5C02C), with the city base kept at frame +0x60. r31 = 0x82FFD7C0, the text buffer the labels are appended to (0x82D5C050, 0x82D5C088). The label pointers are frame +0x54 = 0x8213BC20, r29 = 0x8213BC2C, frame +0x58 = 0x8213BC38, frame +0x5C = 0x8213BC44, frame +0x50 = 0x8213BC50 (stored at 0x82D5C08C, loaded again at 0x82D5C3A0), r14 = 0x8213BC5C and r15 = 0x8213BC68. The frame is set at 0x82D5C008.",
+          "loop": "0x82D5C0C8..0x82D5C7C0, one pass per city record. A pass is skipped (to 0x82D5C7AC) when the signed byte at r24 - 0x29 (city +0x3) is zero or less, or the byte at r24 - 0x2C (city +0x0) is 0xFF. 0x82D5C7B0 adds 0xBC to r24, and 0x82D5C7B8..0x82D5C7C0 loops while r24 is below the city base + 0x5E2C, which is 128 records.",
+          "afterBits": "0x82D5C454..0x82D5C49C reads the signed halfword at 0xC(r24), which is city +0x38 (the current item), and for a value 0..99 appends the string at 0x82F700D8 + 0x94 * item (the unit definition record start). The remainder of the pass was not read.",
+          "callers": "An aligned scan of the code range 0x82010000..0x82F6F000 for bl words targeting 0x82D5C000 found one site, 0x82D600DC. A byte search of the image for the word 0x82D5C000 found one data word, at 0x8219C8B8. What that word belongs to was not read."
+        },
+        "bitLabels": [
+          {
+            "testSite": "0x82D5C294",
+            "bit": "0x8",
+            "labelAddress": "0x8213BC20",
+            "labelText": " Defend:"
+          },
+          {
+            "testSite": "0x82D5C2D4",
+            "bit": "0x4",
+            "labelAddress": "0x8213BC2C",
+            "labelText": " Attack:"
+          },
+          {
+            "testSite": "0x82D5C314",
+            "bit": "0x10",
+            "labelAddress": "0x8213BC38",
+            "labelText": " Explore:"
+          },
+          {
+            "testSite": "0x82D5C354",
+            "bit": "0x2",
+            "labelAddress": "0x8213BC44",
+            "labelText": " Settle:"
+          },
+          {
+            "testSite": "0x82D5C394",
+            "bit": "0x20",
+            "labelAddress": "0x8213BC50",
+            "labelText": " Improve:"
+          },
+          {
+            "testSite": "0x82D5C3D4",
+            "bit": "0x40",
+            "labelAddress": "0x8213BC5C",
+            "labelText": " AirAttack:"
+          },
+          {
+            "testSite": "0x82D5C414",
+            "bit": "0x80",
+            "labelAddress": "0x8213BC68",
+            "labelText": " Naval:"
+          }
+        ],
+        "untestedBits": "Bit 0x1 and the bits above 0x80 are not tested by this routine. Each label starts with a space and ends with a colon. 0x82D5C28C loads the halfword at 0(r24), which is city +0x2C, and sign-extends it into r9 before the tests.",
+        "otherFormingSites": [
+          "An offline flat-image scanner (linear constant tracking, the same register model as the scanners recorded for the mask source search, scannerSha256 3BE9D1A51BF0B1C763F7291979239869D54EF85DC99E84A479E0362484A75B3F) read the code range 0x82010000..0x82F6F000, 4,029,440 words, and reported every addi or ori that forms the value 0x8314FE54 and every D-form access to it. It found three forming sites and one access.",
+          "0x82CB45C8 in the evaluator 0x82CB44E0, already recorded.",
+          "0x82D5C02C in the label routine, with its load at 0x82D5C28C.",
+          "0x82CC9270: 0x82CC9264..0x82CC92A4 reads the halfword +0x2C of the city whose index is the word at 0x830ECCE8 + 4 * r4, subtracts 4, and for a result 0..0x7C jumps through the table at 0x82CC92A8. Larger results go to 0x82CC9510. The table targets were not read.",
+          "Accesses that reach the field through a register base plus displacement 0x2C, without forming 0x8314FE54, are not covered. No store to the field was found by this scan, so its writers are not located."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82D5C0F0",
+            "0x82D5C2D0",
+            "0x82D5C4B0",
+            "0x82D5C6E0",
+            "0x8213BC48",
+            "0x82CC9270"
+          ],
+          "radius": 60,
+          "distinctWords": 724,
+          "outputSha256": "40D7FABEDF60AE82F360C825D63AC810E85BC6986F8E64D5DF4955BCD5C5F2C9",
+          "imageMatch": "All 724 words match the supported flat image (SHA-256 in manifests/image.json). They cover 0x82D5C000..0x82D5C5A0, 0x82D5C5F0..0x82D5C7D0, the label bytes 0x8213BB58..0x8213BD38 and 0x82CC9180..0x82CC9360. The range 0x82D5C5A0..0x82D5C5F0 and the caller search were read from the flat image."
+        },
+        "qualification": [
+          "Static reading only. The label text was not seen on screen or in a log, and no AI turn was observed.",
+          "The names are the labels this routine prints. Whether each bit drives the behavior its label suggests is shown only where a consumer is recorded: the purchase arm for bit 0x20.",
+          "The writers of the halfword +0x2C are not located, so what sets or clears the Improve bit is unknown.",
+          "The scan covers sites that form the absolute field address. Other access forms are not covered.",
+          "What the routine does with the text buffer afterwards, its caller 0x82D600DC and whether the routine runs in retail play are not shown.",
+          "The table at 0x830E5250, also read by the purchase arm, is still unidentified. The same scan model found 39 sites that form or load addresses in 0x830E5250..0x830E5650, including a save or load helper pair at 0x82CC5B50 and 0x82CC5B74 that passes it with a count of 0x100 words. None was read for meaning."
+        ],
+        "interpretation": "Interpretation: the halfword +0x2C is a per-city AI role set. The AI buys buildings and wonders only in cities marked Improve. The evaluator's substitutions of 8 and 4 are the Defend and Attack bits: a city that fails the 0x82CB3F08 comparison is treated as Defend only, and a city of the Barbarian ordinal as Attack only, so neither buys. The remaining policy input, the table at 0x830E5250 (128 bytes per player, compared with 2), needs its own question.",
+        "falsificationCondition": "Different bit masks or label addresses at the cited test sites, different label bytes at the cited addresses, or a consumer of the halfword that contradicts a label would falsify the corresponding reading.",
+        "result": "A text routine at 0x82D5C000 walks the city records and appends one fixed label per set bit of the city halfword +0x2C. Bit 0x20 appends the label Improve. The seven labelled bits are Settle, Attack, Defend, Explore, Improve, AirAttack and Naval. The purchase arm therefore needs the bit this routine labels Improve, and the two values the evaluator substitutes, 8 and 4, are the bits labelled Defend and Attack. This is a static reading, and the names come from the labels only."
       }
     },
     "RVA-F-0331": {

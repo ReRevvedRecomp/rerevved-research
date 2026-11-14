@@ -250,7 +250,8 @@ pays the price a human would be quoted.
 The two paths differ in what they test. The AI arm does not repeat the producer's
 three eligibility tests at this site. It adds its own score, policy and
 classifier tests, requires a positive price, and can buy only when the city
-halfword `+0x2C` has bit `0x20` set.
+halfword `+0x2C` has bit `0x20` set, the bit a text routine labels Improve (see
+[AI options](ai-options.md)).
 
 This is static reading only. No AI purchase was observed. The cost helper reads
 the city's current item, while the arm stores the selected item afterwards, so

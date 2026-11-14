@@ -589,12 +589,22 @@ In the instructions of the evaluator and of the generator `0x82CEBC38`, no store
 to `+0x38` comes before `0x82CB6B80` on this route, so the helper and the goal
 word test read `+0x38` before the selected item is stored there, the progress
 derives from the helper value, and the factor m uses the selected item. The two agree when the selected item equals
-the stored item. This is a static reading: the callees on the route were not
-read and could change `+0x38`, no AI purchase was observed, and the value `+0x38` holds when the
+the stored item. This is a static reading: the indirect calls on the route were
+not resolved and could change `+0x38`, no AI purchase was observed, and the value `+0x38` holds when the
 generator is called is not established. It does not show a defect.
 Interpretation: when the AI switches a city between buildings in one step, the
 price and progress come from the old item's cost. The record is
 [purchase item match finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/purchaseItemMatchBoundary).
+
+The 18 functions called directly on that route reach 290 functions through
+direct calls and followed jump tables. The 10 called from the evaluator reach no
+halfword store instruction. The generator's callees reach 62 halfword stores in
+22 functions, none at displacement `0x38`. This is a static reading of
+halfword stores only. Indirect calls were not resolved (8 sites in the evaluator
+and generator, 47 in the reached functions), the pointers in the stores
+were not traced, and 18 reached entries that do not decode as code were not
+searched. The record is
+[purchase route callee finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/purchaseRouteCalleeBoundary).
 
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's

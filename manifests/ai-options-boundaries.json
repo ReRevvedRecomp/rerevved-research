@@ -1584,7 +1584,253 @@
         ],
         "interpretation": "Interpretation: the arm behaves as a rush of the item in production when the AI reselects the item the city already holds, which the doubled score at 0x82CB6440 favours. When the AI switches a city from one building to another in the same step, the price and the new progress come from the old item's cost and the new item receives that progress; whether that overpays or underpays depends on the two costs. When the city held a unit or nothing, the helper value is 10 or less and the arm returns without a purchase once the progress is at least that value.",
         "falsificationCondition": "An instruction in the evaluator 0x82CB44E0 or the generator 0x82CEBC38 on the route for a selected item of 100 or more that stores the selected item to the city halfword +0x38 before 0x82CB6B80, or a helper body at 0x82CF12C0..0x82CF12D0 that does not read +0x38 when its second argument is -1, would falsify the reading.",
-        "result": "On the route for a selected item of 100 or more, no instruction in the evaluator or the generator stores to the city halfword +0x38 before the call to 0x82CF1278(city, -1) at 0x82CB6B80, and the helper reads +0x38 when its second argument is -1. The helper and the goal word test therefore read +0x38 before the selected item is stored there, and the progress derives from the helper value, while the factor m uses the selected item. The two agree when the selected item equals the stored item. This is a static reading; the callees on the route were not read and could change +0x38."
+        "result": "On the route for a selected item of 100 or more, no instruction in the evaluator or the generator stores to the city halfword +0x38 before the call to 0x82CF1278(city, -1) at 0x82CB6B80, and the helper reads +0x38 when its second argument is -1. The helper and the goal word test therefore read +0x38 before the selected item is stored there, and the progress derives from the helper value, while the factor m uses the selected item. The two agree when the selected item equals the stored item. This is a static reading; purchaseRouteCalleeBoundary records the direct callee search and its remaining limits."
+      },
+      "purchaseRouteCalleeBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "Can a function called directly on the AI purchase route write the city item halfword +0x38 before the evaluator 0x82CB44E0 stores the selected item at 0x82CB6D08?",
+        "scope": {
+          "functions": [
+            "0x82CB44E0",
+            "0x82CEBC38"
+          ],
+          "windows": [
+            "0x82CF0C1C..0x82CF0E1C",
+            "0x82CB5500..0x82CB5700",
+            "0x82CB65CC..0x82CB67CC",
+            "0x82CB69E8..0x82CB6BE8",
+            "0x82CEC9E4..0x82CECBE4",
+            "0x82E6A2E0..0x82E6A4E0",
+            "0x821B8C44..0x821B8E44"
+          ],
+          "boundary": "The direct calls in the evaluator before 0x82CB6D08 outside the block 0x82CB674C..0x82CB6A8C, and the direct calls in the generator before 0x82CECBB4, were listed from the flat image with the register save helper 0x827F7C50 left out. Each of the 18 called functions was followed through fall-through, branch, direct call and jump table edges, with 0x827F7B00..0x827F7D00 left out. That range holds the register save and restore helpers and the called routines 0x827F7B30 and 0x827F7BB0, neither of which contains a halfword store or a direct call. Calls through bctrl were not followed. The claim covers the functions reached through direct calls and followed jump tables, not indirect calls."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/purchaseItemMatchBoundary: the helper read of +0x38 at 0x82CF12CC, the goal word test read at 0x82CB6C84, the store at 0x82CB6D08, the nine halfword stores in the evaluator, no halfword store in the generator, and the block 0x82CB674C..0x82CB6A8C not entered for a selected item of 100 or more",
+          "Existing manifest record: the evaluator is 0x82CB44E0 and the generator 0x82CEBC38 calls it at 0x82CECBB4"
+        ],
+        "evaluatorDirectCalls": [
+          {
+            "target": "0x82CB3F08",
+            "callSites": "0x82CB4588"
+          },
+          {
+            "target": "0x82CF3608",
+            "callSites": "0x82CB47F8"
+          },
+          {
+            "target": "0x82CF2230",
+            "callSites": "9 sites, 0x82CB4AC4..0x82CB50E0"
+          },
+          {
+            "target": "0x82CF21A0",
+            "callSites": "9 sites, 0x82CB4AD4..0x82CB50F0"
+          },
+          {
+            "target": "0x82CF1F70",
+            "callSites": "0x82CB4AE8, 0x82CB4BEC, 0x82CB5104"
+          },
+          {
+            "target": "0x82CB3DC0",
+            "callSites": "0x82CB4D94"
+          },
+          {
+            "target": "0x82CEF4E8",
+            "callSites": "0x82CB59D0, 0x82CB5ED0, 0x82CB5F98, 0x82CB60A0"
+          },
+          {
+            "target": "0x82CF0CB0",
+            "callSites": "0x82CB59F4, 0x82CB5B7C, 0x82CB5E18, 0x82CB6BCC, 0x82CB6CDC"
+          },
+          {
+            "target": "0x82CF1278",
+            "callSites": "0x82CB6410, 0x82CB6B80"
+          },
+          {
+            "target": "0x821B8CD0",
+            "callSites": "0x82CB6704, 0x82CB6B20"
+          }
+        ],
+        "evaluatorCallNote": "Between the helper call at 0x82CB6B80 and the store at 0x82CB6D08 the direct calls are 0x82CF0CB0 at 0x82CB6BCC and 0x82CB6CDC. 0x82CF0CB0 (0x82CF0CB0..0x82CF0D88) makes no call and has no halfword store.",
+        "generatorDirectCalls": {
+          "targets": [
+            "0x82D8A3A0",
+            "0x82E6A430",
+            "0x82E6A3E0",
+            "0x82CEF160",
+            "0x82CF1148",
+            "0x82CF0CB0",
+            "0x82CF1278",
+            "0x82CF3608",
+            "0x82CEF6A8",
+            "0x82CEEA50",
+            "0x821B8CD0",
+            "0x82CE8338"
+          ],
+          "note": "Four of the twelve are also evaluator targets (0x82CF0CB0, 0x82CF1278, 0x82CF3608 and 0x821B8CD0), so the two lists hold 18 distinct functions."
+        },
+        "reachedFunctions": {
+          "columns": [
+            "root",
+            "functionsReached",
+            "withHalfwordStore",
+            "indirectSites"
+          ],
+          "rows": [
+            {
+              "root": "0x82CF0CB0",
+              "functionsReached": 1,
+              "withHalfwordStore": 0,
+              "indirectSites": 0
+            },
+            {
+              "root": "0x82CF2230",
+              "functionsReached": 3,
+              "withHalfwordStore": 0,
+              "indirectSites": 0
+            },
+            {
+              "root": "0x82CF21A0",
+              "functionsReached": 2,
+              "withHalfwordStore": 0,
+              "indirectSites": 0
+            },
+            {
+              "root": "0x82CEF4E8",
+              "functionsReached": 1,
+              "withHalfwordStore": 0,
+              "indirectSites": 0
+            },
+            {
+              "root": "0x82CF1F70",
+              "functionsReached": 8,
+              "withHalfwordStore": 0,
+              "indirectSites": 2
+            },
+            {
+              "root": "0x82CF1278",
+              "functionsReached": 8,
+              "withHalfwordStore": 0,
+              "indirectSites": 2
+            },
+            {
+              "root": "0x821B8CD0",
+              "functionsReached": 3,
+              "withHalfwordStore": 0,
+              "indirectSites": 0
+            },
+            {
+              "root": "0x82CF3608",
+              "functionsReached": 4,
+              "withHalfwordStore": 0,
+              "indirectSites": 1
+            },
+            {
+              "root": "0x82CB3F08",
+              "functionsReached": 8,
+              "withHalfwordStore": 0,
+              "indirectSites": 3
+            },
+            {
+              "root": "0x82CB3DC0",
+              "functionsReached": 4,
+              "withHalfwordStore": 0,
+              "indirectSites": 0
+            },
+            {
+              "root": "0x82CF1148",
+              "functionsReached": 3,
+              "withHalfwordStore": 0,
+              "indirectSites": 0
+            },
+            {
+              "root": "0x82CEF6A8",
+              "functionsReached": 2,
+              "withHalfwordStore": 0,
+              "indirectSites": 0
+            },
+            {
+              "root": "0x82CEF160",
+              "functionsReached": 1,
+              "withHalfwordStore": 0,
+              "indirectSites": 1
+            },
+            {
+              "root": "0x82D8A3A0",
+              "functionsReached": 1,
+              "withHalfwordStore": 0,
+              "indirectSites": 1
+            },
+            {
+              "root": "0x82CEEA50",
+              "functionsReached": 1,
+              "withHalfwordStore": 0,
+              "indirectSites": 0
+            },
+            {
+              "root": "0x82E6A3E0",
+              "functionsReached": 257,
+              "withHalfwordStore": 22,
+              "indirectSites": 44
+            },
+            {
+              "root": "0x82E6A430",
+              "functionsReached": 257,
+              "withHalfwordStore": 22,
+              "indirectSites": 44
+            },
+            {
+              "root": "0x82CE8338",
+              "functionsReached": 270,
+              "withHalfwordStore": 22,
+              "indirectSites": 53
+            }
+          ],
+          "note": "The first ten rows are the evaluator's targets. The indirect column counts bctrl sites and computed jumps together. The traversal met 11 computed jumps: 9 word tables and 2 halfword offset tables. In total the 18 roots reach 290 distinct functions, 22 of them with a halfword store, and 47 distinct bctrl sites."
+        },
+        "storeFunctionNotes": [
+          "0x82E6A3E0 and 0x82E6A430 each call 0x82E6A2A0 and no other function. 0x82CE8338 reaches the same 22 functions through 0x82CFB620 and 0x82E6A430.",
+          "The 22 functions with a halfword store hold 62 distinct halfword store instructions. Their entries are 0x827FE308, 0x827FECF0, 0x8280FB78, 0x8280FE08, 0x82810230, 0x82810368, 0x828109A0, 0x82810D48, 0x82811658, 0x82812238, 0x8281A790, 0x82D2DFA8, 0x82D2E038, 0x82D2E148, 0x82D2E450, 0x82D2E4E0, 0x82D2E608, 0x82D2E670, 0x82D2E7A8, 0x82D39278, 0x82D3A000 and 0x82D3A160. Their stores lie in 0x827FF32C..0x8281A7AC or 0x82D2DFE4..0x82D3A198.",
+          "57 stores use a displacement: 0x0 (26), 0x2 (21), 0x4 (3), 0x6 (3), and 0x20, 0x50, 0x52 and -0xC (1 each). None uses 0x38.",
+          "5 stores are indexed. 0x82D2DFE4, 0x82D2E0BC, 0x82D2E4C0 and 0x82D2E53C use base r31 with an index made by shifting a count left by 1. 0x82D392E4 uses a base loaded from offset 0x0 of r3 with index 2 * r4. None forms the city array address 0x8314FE28 or an index from 0xBC * city.",
+          "In the 22 functions, two form an address with high half 0x8315. 0x82D3A074..0x82D3A078 forms 0x8314F0AC and compares it with r31 at 0x82D3A07C. 0x827FED6C..0x827FED78 forms 0x83157FC0 in r30. Neither address is in the city array, and the use of r30 as a store base was not traced."
+        ],
+        "indirectCalls": [
+          "Evaluator: 0x82CB5600, 0x82CB66CC, 0x82CB66EC, 0x82CB6AE8 and 0x82CB6B08. Each loads the pointer word at 0x8314EFE0, the object pointer at +0x10 of it, and calls the function pointer at +0x100 of that object's first word (for example 0x82CB6AC4..0x82CB6AE8). The object and its table were not identified.",
+          "Generator before 0x82CECBB4: 0x82CECA7C, 0x82CECAE4 and 0x82CECB04, in the same form with the pointer held in r30 (0x82CECA60..0x82CECA7C).",
+          "The 47 bctrl sites inside the reached functions were not resolved."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CF0D1C",
+            "0x82CB5600",
+            "0x82CB66CC",
+            "0x82CB6AE8",
+            "0x82CECAE4",
+            "0x82E6A3E0",
+            "0x821B8D44"
+          ],
+          "radius": 64,
+          "distinctWords": 903,
+          "outputSha256": "5F8CEA0381C56DADBC6A05F9014E908B8CF5227F1DE6277EA2B4FD91A39DF440",
+          "imageMatch": "All 903 words match the supported flat image (SHA-256 in manifests/image.json). They cover 0x82CF0C1C..0x82CF0E1C, 0x82CB5500..0x82CB5700, 0x82CB65CC..0x82CB67CC, 0x82CB69E8..0x82CB6BE8, 0x82CEC9E4..0x82CECBE4, 0x82E6A2E0..0x82E6A4E0 and 0x821B8C44..0x821B8E44. The traversal of the 290 functions, the store list and the call lists were read from the flat image, not from Ghidra."
+        },
+        "qualification": [
+          "Static reading only. No AI purchase was observed.",
+          "18 of the reached entries, 0x82E922D4..0x82E92E74, begin with a word of the form 0x0100xxxx that does not decode as an instruction, and five other reached functions branch to one of them. The traversal stopped there; code behind these entries was not searched.",
+          "No indirect call was resolved: 8 sites in the evaluator and generator and 47 in the reached functions. A function called through one of them could write +0x38.",
+          "The traversal reads instructions reached from each entry. It treats a word table entry as a jump target when it lies within 0x4000 bytes of the jump; a wrong table length would add or drop code.",
+          "The search is for halfword store instructions. A byte or word store that overlaps +0x38 was not searched for.",
+          "The 5 indexed stores and the 57 displacement stores were judged from the store instruction and its base register, not by tracing each pointer to its source. The functions holding them were not otherwise analysed and their roles are not established.",
+          "The roles of the 18 called functions are not established here.",
+          "The question of what +0x38 holds when the AI turn calls the generator is not addressed."
+        ],
+        "interpretation": "Interpretation: the two address ranges holding the stores look like runtime library and text string code (stores at displacements 0x0 and 0x2 of a buffer, counts shifted left by 1), reached from the generator through 0x82E6A2A0. They are unlikely to touch a city record. The repeated indirect call form looks like a call on one global service object. Until it is identified, the reading that the helper sees the item the city held on entry stays likely but not shown.",
+        "falsificationCondition": "A halfword store instruction in the 290 reached functions that writes the city halfword +0x38, or a direct call on the route before 0x82CB6D08 (outside 0x82CB674C..0x82CB6A8C) or in the generator before 0x82CECBB4 whose target is not among the 18 listed, would falsify the claim as scoped.",
+        "result": "In the functions reached by direct calls on the route, no displacement form halfword store uses 0x38 and no indexed halfword store forms the city array address; the base and index registers were not traced, so a write to the city halfword +0x38 through them is not excluded. The 18 functions called directly in the evaluator and the generator reach 290 functions through direct calls and followed jump tables. The 10 called from the evaluator reach no halfword store instruction. The generator's callees reach 62 halfword store instructions in 22 functions, all in two address ranges, none with displacement 0x38. The indirect calls (8 sites in the evaluator and generator and 47 in the reached functions) were not resolved. This is a static reading."
       }
     },
     "RVA-F-0331": {

@@ -36,6 +36,16 @@ such grant or runtime outcome is established here. The exact checks, writes and
 qualifications are in the
 [army formation record](../../../manifests/army-formation-command.json).
 
+Function `0x82D259E8` contains a site that asks for this command. It calls the
+eligibility helper at `0x82D29174`. It then submits to `0x82CE1950` at
+`0x82D291A4` with command 10 and the same `r27` and `r31`. Their incoming
+values are not traced; player and unit are interpreted roles. This is a static
+reading. No AI turn was observed forming an army, and delivery of the request
+to the command is not shown. Interpretation: the site is an AI request to form
+an army from the unit it is handling. The `aiSubmitBoundary` section of the
+[army formation record](../../../manifests/army-formation-command.json) lists
+the call sequence and the limits.
+
 ## Recovered layout and readers
 
 | Item | Address or offset | Accepted meaning |

@@ -75,5 +75,77 @@
     "Do not use the selected member scan to consume pre-existing units as an unqualified extra-unit grant."
   ],
   "falsification": "Different mapper cells, branch words, matching predicates or survivor writes falsify the selected native route. Executed Archer creation and formation and callback lifetime evidence could extend the grant boundary; a name display alone cannot.",
-  "conclusion": "Native command 10 MakeArmy reaches 0x82D13618, which requires eligibility, consumes two selected units of the same type on the same tile and updates the survivor through callbacks and recount. This closes the formation-producer identity question, but not a safe first-capital Archer army grant."
+  "conclusion": "Native command 10 MakeArmy reaches 0x82D13618, which requires eligibility, consumes two selected units of the same type on the same tile and updates the survivor through callbacks and recount. This closes the formation-producer identity question, but not a safe first-capital Archer army grant.",
+  "aiSubmitBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "Which command and which arguments does the submission at 0x82D291A4 in function 0x82D259E8 carry, and are its player and unit the ones given to the eligibility call at 0x82D29174?",
+    "scope": {
+      "functions": [
+        "0x82D259E8",
+        "0x82D038E8",
+        "0x82CE1950"
+      ],
+      "windows": [
+        "0x82D290D4..0x82D291B4",
+        "0x82D03860..0x82D039A0",
+        "0x82CE1950..0x82CE1A90"
+      ],
+      "boundary": "Read in full: the call site window 0x82D290D4..0x82D291B4 and the leaf helper 0x82D038E8..0x82D03920. Read only the entry of 0x82CE1950, 0x82CE1950..0x82CE1974 and 0x82CE19CC..0x82CE19F4. The path from the entry of 0x82D259E8 to 0x82D290D4 was not read."
+    },
+    "reusedRecords": [
+      "army-formation-command.json#/commandIdentity",
+      "army-formation-command.json#/eligibility",
+      "barbarian-spawn-population.json",
+      "ai-civilization-elimination.json",
+      "ai-stat-choice.json",
+      "ai-options-boundaries.json"
+    ],
+    "leadIn": [
+      "0x82D290D4..0x82D290E8: r30 = 0x54 * (256 * r27 + r31). 0x54 is 84, the unit record size, so r30 is the record offset of unit (r27, r31).",
+      "0x82D290DC, 0x82D290EC..0x82D290F0: r8 = signed byte at r15 + 1 + r30. r15 is a base register set earlier in the function and was not traced. With r15 as the unit pool base this is the record type byte at +0x1.",
+      "0x82D290D8, 0x82D290E4, 0x82D290F4..0x82D29104: r11 = signed byte at (word at frame +0x80) + 0x40 + 0x94 * r8. If it is greater than 1, control goes straight to the eligibility call at 0x82D2916C.",
+      "0x82D29108..0x82D29148: otherwise the halfwords at record +0x1C and +0x1E form the index 40 * H(+0x1C) + H(+0x1E). The halfword at that index in the table whose base is the word at frame +0x88 is tested. Bit 0x40 set goes to the eligibility call.",
+      "0x82D2914C..0x82D29168: with bit 0x40 clear, the submission is skipped (branch to 0x82D291A8) when bit 1 of that halfword is clear, when the byte at the same index in the table based at r5 is below 3, or when the type r8 equals 6. Otherwise control falls into the eligibility call."
+    ],
+    "eligibilityCall": "0x82D2916C: r4 = r31. 0x82D29170: r3 = r27. 0x82D29174: bl 0x82D008D0. 0x82D29178..0x82D2917C: a zero result branches to 0x82D291A8 and skips the submission.",
+    "interveningCall": "0x82D29180..0x82D29184: r3 = 0, bl 0x82D038E8. The helper 0x82D038E8..0x82D03920 is a leaf. If the word at 0x8314F280 is nonzero it multiplies the double at that pointer +8 by the double at 0x8216A528, truncates and stores the low word to 0x830E3CF4, then returns. It uses only r9, r10, r11 and f0, f11, f12, f13, makes no call and does not use its r3 argument.",
+    "submission": {
+      "r3": "10",
+      "r4": "r27",
+      "r5": "r31",
+      "r6": "-1",
+      "r7": "word at 0x82F7AD00",
+      "r8": "-1",
+      "call": "0x82D291A4: bl 0x82CE1950",
+      "sites": "0x82D29188, 0x82D291A0: r7 loaded. 0x82D2918C: r8 = -1. 0x82D29190: r6 = -1. 0x82D29194: r5 = r31. 0x82D29198: r4 = r27. 0x82D2919C: r3 = 10.",
+      "commandName": "Command 10 is MakeArmy per /commandIdentity."
+    },
+    "registerPreservation": "r27 and r31 are not written between 0x82D2916C and 0x82D291A4. They are nonvolatile registers. The leaf helper 0x82D038E8 does not touch them, and /eligibility records a normal ABI return for 0x82D008D0. So the submission carries the same two registers that the eligibility call received.",
+    "submitEntry": "0x82CE1950..0x82CE1974 copies the six arguments r3 to r8 to r29, r31, r30, r28, r27 and r25, and compares r29 with 0x12. At 0x82CE19CC..0x82CE19DC r3 to r7 are stored as five words at frame +0x50..+0x60. At 0x82CE19F4 the sixth argument r25 is compared with the result of 0x82D8A3A0. The staged record is (10, r27, r31, -1, word 0x82F7AD00) with -1 as the separate sixth argument. The argument order matches the posts in ai-civilization-elimination.json, ai-stat-choice.json and ai-options-boundaries.json. The rest of 0x82CE1950 was not read.",
+    "verification": {
+      "script": "ghidra/DumpMemoryWords.java",
+      "method": "one foreground read-only run",
+      "targets": [
+        "0x82D29150",
+        "0x82D03900",
+        "0x82CE19F0"
+      ],
+      "radius": 40,
+      "distinctWords": 243,
+      "outputSha256": "50A1D944606167EBE0448E6EE72F828460C1CDEC52442C8811ADB72D8551775F",
+      "imageMatch": "All 243 words match the supported flat image whose SHA-256 is in manifests/image.json. They cover 0x82D290B0..0x82D291F0, 0x82D03860..0x82D039A0 and 0x82CE1950..0x82CE1A90."
+    },
+    "qualification": [
+      "Static reading only. No AI turn was observed to reach this site, and no army was seen to form from it.",
+      "What r27 and r31 hold when control reaches 0x82D290D4 is not traced. The reading player and unit rests on the 256 * r27 + r31 record arithmetic and on the recorded inputs of the eligibility helper.",
+      "The path from the entry 0x82D259E8 to 0x82D290D4, and which AI decision reaches that arm, are not shown. The bases in r15, r5, frame +0x80 and frame +0x88 are not identified.",
+      "The submission is a posted request. Queueing, network routing, delivery to the command 10 arm and the result of 0x82D13618 are not shown here. The dispatch arm repeats its own checks.",
+      "The fourth argument -1 and the word at 0x82F7AD00 are recorded as passed. How command 10 uses them was not read.",
+      "The eligibility helper can issue notifications on local-player paths before it returns, as /eligibility records."
+    ],
+    "interpretation": "Interpretation: this site is an AI request to form an army from the unit it is handling. When at least three matching units share the tile, it asks for MakeArmy on that unit. The lead-in tests look like a filter on unit definition and tile state that decides whether to try, but their meaning is not established.",
+    "falsificationCondition": "A different register value at r3, r4 or r5 at 0x82D291A4, a write to r27 or r31 between 0x82D2916C and 0x82D291A4, or an image word that differs from the dumped words, would falsify this reading. A runtime trace in which an AI turn reaches 0x82D291A4 would extend it to observed behavior.",
+    "result": "The submission at 0x82D291A4 passes command 10 with r27 and r31, the same two registers given to the eligibility call at 0x82D29174. This is a static reading of the call site only."
+  }
 }

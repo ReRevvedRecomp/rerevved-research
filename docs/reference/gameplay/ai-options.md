@@ -628,6 +628,18 @@ observed at run time, and 41 other indirect sites reached from the generator's
 callees stay unclassified. The record is
 [item test call finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/availabilityIndirectCallBoundary).
 
+After the evaluator returns an ordinal other than -1, the generator calls
+`0x82CB42B8`, except on one route for the value -12 that goes back to choose
+again. For an item other than -10 to -13 that differs from the city halfword
+`+0x38`, `0x82CB42B8` submits event 5 through `0x82CE1950`. The event 5 handler at `0x82CDFFF8` in
+the dispatcher `0x82CDDF08` stores the item to `+0x38` when the city's owner
+byte matches. When the item equals the stored item nothing is submitted. A scan
+lists 27 candidate stores to `+0x38` in 12 functions that form the city array
+address, 15 of them not read. This is a static reading: the route when the byte
+at `0x8314F10B` is not 0 was not analysed, and no assignment was observed. The
+record is
+[city item assignment finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemAssignmentBoundary).
+
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's
 current item is 104 (Market) or 110 (Bank). The AI turn function `0x82CB6E48`

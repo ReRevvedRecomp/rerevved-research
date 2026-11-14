@@ -684,9 +684,10 @@ frame.
 
 The concrete obstacle is the interleaving. `0x82D24504` can change presence
 before a visual attempt at `0x82D24514`, and `0x82D24760` later adds more
-presence. If the empty-query and object paths complete, an object can therefore
-be created before Abundant's final native baseline exists. Counting early can
-omit native resources. Counting late does not come before those attempts.
+presence only when MOREGOLDRESOURCE is nonzero. If the empty-query and object
+paths complete, an object can therefore be created before Abundant's final
+native baseline exists. Counting early can omit native resources. Counting late
+does not come before those attempts.
 
 ### Candidate hook and rebuild limits
 
@@ -754,6 +755,19 @@ Rejections increment the counter at `0x82D24714`. When the counter reaches
 `9999`, the code falls through without rechecking. The counter increments before
 the first draw and spans successful outer passes. It therefore does not count
 `9999` draws, and it is not a reliable general check.
+
+The loop around that sampler runs only when scenario slot 24, MOREGOLDRESOURCE
+(the halfword at Q+0x30, default 0), is nonzero. It repeats until three class 3
+results (Gems `15` or Gold `21`) are counted. Its flag store at `0x82D24760`
+sets `0x20` and clears `0x80`. A Uranium tile, and a tile the presence reader
+rejects, gains presence without counting. The count is shared with the earlier
+loop's store at `0x82D24550`, so it is not a map total. The
+[loop boundary](../../../manifests/resource-density-generation.json#/moreGoldResourceLoopBoundary)
+records the evidence.
+
+The result comes from static reading only. No scenario with slot 24 nonzero was
+observed, no shipped scenario was checked for the slot, and the earlier loop's
+conditions for `0x82D24530` are not decoded.
 
 Freeze the policy once per accepted launch. Keep terrain, centers and native
 resources unchanged. Define which cells the host accepts, measure the final N,

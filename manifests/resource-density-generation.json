@@ -3690,7 +3690,7 @@
       "legality": {
         "intrinsic": "For normalized a,b on supported bounds, W=U16[0x8312A608+2*(40*a+b)]. Potential intrinsic eligibility is clear(W&0x1001) and terrain 0..6;0x82CF1558(r3=a,r4=b,r5=-1) itself also needs presence 0x20. It contains no spacing, river or coast test. Not a placement API and not proof of all native reservation rules.",
         "visualRoute": "0x82D7E0B4 reads W. W&0x400 selects helper0x821C6548/current+100 at0x82D7E0F4, before testing W&0x30. Only the latter arm calls+F4 at0x82D7E12C. Clear0x1001 alone therefore does not certify resource-object creation by this sweep. Excluding0x400 is a conservative host admission when relying on that route, not a proved universal gameplay legality mask; its semantic meaning remains unclassified.",
-        "specializedSampler": "0x82D246F4..24710 normally accepts terrain 6 with old 0x20 clear. Counter r29 increments before the first draw at 0x82D245F8 and after rejected draws at 0x82D24714; retry at 2471C requires counter<9999. When the counter reaches 9999, fallthrough 24720 does not recheck acceptance before the later store. This is not 9999 draws: first-pass exhaustion is after 9998 rejected draws, and the counter is shared across successful outer passes. This specialized setup sampler is not a reusable general legal-capacity predicate. No class3 biome/food meaning is inferred from 0x82CEFBB0.",
+        "specializedSampler": "0x82D246F4..24710 normally accepts terrain 6 with old 0x20 clear. Counter r29 increments before the first draw at 0x82D245F8 and after rejected draws at 0x82D24714; retry at 2471C requires counter<9999. When the counter reaches 9999, fallthrough 24720 does not recheck acceptance before the later store. This is not 9999 draws: first-pass exhaustion is after 9998 rejected draws, and the counter is shared across successful outer passes. This specialized setup sampler is not a reusable general legal-capacity predicate. No class3 biome/food meaning is inferred from 0x82CEFBB0. The loop's enable test and count are at #/moreGoldResourceLoopBoundary.",
         "contract": "Count N after every native retained writer using intrinsic accepted q on unique physical cells, without technology filters. For Abundant define additional host admission explicitly, preserve existing flags/resources and choose absent cells finitely. If K is the count of admitted absent cells, host-admitted total capacity is C=N+K; target=min(3*N,C), with zero additions for N=0. Log N/target/K/C/achieved. If0x400 is conservatively excluded from additions, retain all existing resources and distinguish C from intrinsic L; do not silently call them identical."
       },
       "nextResearchTarget": {
@@ -4716,5 +4716,73 @@
         }
       }
     }
+  },
+  "moreGoldResourceLoopBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "What turns on the last setup presence loop in setup function 0x82D217C8, whose flag store is at 0x82D24760, and what does it count?",
+    "scope": {
+      "owners": [
+        "0x82D217C8",
+        "0x82CEFBB0"
+      ],
+      "reusedReader": "0x82CF1558",
+      "windowCount": 5,
+      "boundary": "The five inspected windows: 0x82D245B4..0x82D24790 (120 words), 0x82D24530..0x82D245B0 (33), 0x82CEFBB0..0x82CEFC4C (40), 0x82D23AFC..0x82D23B30 (14) and 0x82D2310C..0x82D23158 (20). The sampler acceptance and the 9999 counter are recorded at #/abundantLegendaryFeasibilityBoundary/mutationSeamBoundary/legality/specializedSampler, the reader 0x82CF1558 at #/placementWriterBoundary/presenceReader, and the class helper table in resource-definitions.json#/centerResourceBonusBoundary/classification. Q is the active scenario block at 0x830E8FD0 (64 signed 16-bit slots), saved at frame+0x68 at 0x82D22988; MOREGOLDRESOURCE is slot 24, default 0, in scenario-schema.json#/variators."
+    },
+    "enable": "0x82D245B4 loads the saved Q from frame+0x68 and 0x82D245B8 reads slot 24, the halfword at Q+0x30 (address 0x830E9000), as an unsigned halfword. 0x82D245BC..0x82D245C0 compare it with 0 and branch to 0x82D24794, so a zero slot skips the whole loop. Any nonzero halfword enables it, negative values included. The value is only tested against zero; it is not the count. 0x82D245C4 sets the retry counter r29 to 0, once. 0x82D245C8..0x82D245CC branch to 0x82D24794 when the count r16 is 3 or more on entry. 0x82D2478C..0x82D24790 repeat the loop while r16 is below 3; the limit 3 is an immediate.",
+    "drawAndAcceptance": "The random state object r26 is read from frame+0x54: state word +0, draw counter +4, modulus +8, double scale +0x10. Each draw is state*0x343FD + 0x269EC3, reduced by the modulus when it is nonzero (0x82D24624..0x82D24644 and 0x82D2465C..0x82D246A4). Each attempt makes two draws and stores the counter at +4 once, raised by 2 (0x82D24660). State is stored at 0x82D246A8 (nonzero modulus only) and 0x82D24724. a = trunc(draw1 * (word 0x82F77364 - 4) * scale) + 2 and b = trunc(draw2 * (word 0x82F77448 - 4) * scale) + 2; the tile index is i = 40*a + b. A tile is accepted when the terrain byte at r25 + i equals 6 (0x82D246F4..0x82D246FC) and the flag halfword at r15 + 2*i has 0x20 clear (0x82D24704..0x82D24710). r25 is the terrain plane 0x8312B288, loaded from frame+0x80 at 0x82D245D4 (stored at 0x82D23148 from lis 0x82D2310C, addi 0x82D23138). r15 is the flag plane 0x8312A608 (lis 0x82D23124, addi 0x82D23158). The retry counter r29 increments at 0x82D245F8 and at 0x82D24714; the 9999 limit at 0x82D245FC leaves the loop with no store, and at 0x82D24718 it falls through to the store without rechecking acceptance (already recorded at the specializedSampler entry).",
+    "storeAndCount": "0x82D24750..0x82D24760 load the flag halfword, set bit 0x20 (rlwimi at 0x82D24758), clear bit 0x80 (rlwimi at 0x82D2475C inserts a zero bit, because the inserted value is 1<<5) and store it with sthx at 0x82D24760. 0x82D24728..0x82D24768 make a virtual call +0xF4 on the receiver r24, read from frame+0x60, with r4 = a and r5 = b; the target is read at 0x82D24744, before the store. 0x82D2476C..0x82D2477C call 0x82CF1558 with (a, b, -1) and pass its r3 result straight to 0x82CEFBB0. 0x82D24780..0x82D24788 add 1 to r16 when the class is 3. The only stores in the window to places other than the stack are 0x82D24660, 0x82D246A8 and 0x82D24724 (random state object) and 0x82D24760 (flag halfword). Its only calls are 0x82D24768 (bctrl), 0x82D24778 and 0x82D2477C.",
+    "classHelper": "0x82CEFBB0..0x82CEFC4C (40 words). An ordinal above 21 (unsigned) returns class 1 (0x82CEFBB0..0x82CEFBB4, 0x82CEFC48), so a reader result of -1 counts as class 1. The table at 0x82CEFBD0 has 22 entries, with classes by ordinal 0 to 21: 1,1,1,1,1,1,1,1,5,1,5,4,5,1,4,3,0,0,0,0,0,3. Only ordinals 15 (Gems) and 21 (Gold) return 3 (0x82CEFC28).",
+    "sharedCount": "r16 is set to zero once at 0x82D23B0C (window 0x82D23AFC..0x82D23B30). The earlier loop (head 0x82D23B4C, back edge 0x82D245B0) has its own store at 0x82D24550 that also sets 0x20 and clears 0x80 (rlwimi at 0x82D24540 and 0x82D2454C), calls +0xF4 at 0x82D2455C, calls 0x82CF1558 with (a, b, -1) at 0x82D2456C and 0x82CEFBB0 at 0x82D24570, and adds 1 to r16 on class 3 (0x82D24574..0x82D2457C). That loop runs r20 from 0 (0x82D23B14) while r20 < 1600 / d, where d is 2 when the word at [frame+0x50]+0xB0 is -1 and 1 otherwise (0x82D23B00, 0x82D23B08..0x82D23B24, 0x82D24588..0x82D245B0). So r16 is not a map total. It counts class 3 results only at these two sites; Gems or Gold presence written by other writers is not counted. Not decoded: which conditions inside the earlier loop reach 0x82D24530, and its other stores at 0x82D24494 and 0x82D24504.",
+    "consequences": [
+      "A tile with (a+b) mod 3 equal to 1 or 2 counts (Gems or Gold). A tile with remainder 0 is Uranium, class 1: it gains presence but does not count.",
+      "A tile whose flags have 0x1001 set makes the reader return -1: it gains presence but does not count.",
+      "The loop can therefore add more than three presence tiles before the count reaches 3."
+    ],
+    "verification": {
+      "script": "ghidra/DumpMemoryWords.java",
+      "method": "Two foreground read-only runs.",
+      "runs": [
+        {
+          "targets": [
+            "0x82D24500",
+            "0x82D24600",
+            "0x82D24700",
+            "0x82CEFC00",
+            "0x82D23B10"
+          ],
+          "radius": 40,
+          "rows": 405,
+          "distinctWords": 371,
+          "querySha256": "E86A633B1EE76AA072AB09D76BC7C4ED31746796BECBB1C747D626F95038858D"
+        },
+        {
+          "targets": [
+            "0x82D23130"
+          ],
+          "radius": 20,
+          "distinctWords": 41,
+          "querySha256": "A3D330CAD15BE5390084B9105BAB74680AD63C0AD521FC450690FF2C25175842"
+        }
+      ],
+      "distinctWordsMatching": 412,
+      "imageMatch": "All 412 distinct words match the supported flat image (SHA-256 in manifests/image.json).",
+      "windowWords": 227,
+      "windows": 5,
+      "decoded": "Every instruction word in the five windows decoded."
+    },
+    "qualification": [
+      "Static reading only. No game was run, and no scenario with slot 24 nonzero was observed.",
+      "Whether any shipped scenario sets MOREGOLDRESOURCE was not checked.",
+      "Other readers of Q+0x30 were not searched.",
+      "frame+0x54 and frame+0x60 are read as saved earlier in the function (stores at 0x82D21F6C and 0x82D21A74, decoded from the image and not part of the Ghidra capture). The +0xF4 target and its completion are covered only by the existing callback record.",
+      "The random scale and modulus values and the two dimension words are runtime values; no coordinate range is claimed.",
+      "Supported indices are assumed: a and b inside the 40-stride planes.",
+      "Which conditions inside the earlier loop reach 0x82D24530, and its stores at 0x82D24494 and 0x82D24504, were not decoded."
+    ],
+    "interpretation": "Interpretation: with slot 24 at 0, the store at 0x82D24760 does not run. The loop accepts terrain 6 only, so it places no Iron or Oxen.",
+    "falsificationCondition": "Instruction words in the five windows that differ from those recorded here, or a path that reaches 0x82D24760 without passing the slot 24 test at 0x82D245B8, would reopen this result.",
+    "result": "Within the inspected scope, the loop at 0x82D245B4..0x82D24790 runs only when slot 24, MOREGOLDRESOURCE, is nonzero. It then adds resource presence on random terrain 6 tiles until three tiles of class 3 (Gems or Gold) have been counted, or its retry counter reaches 9999. Slot 24 defaults to 0, so a game whose scenario leaves the slot alone skips the loop and the store at 0x82D24760 never runs."
   }
 }

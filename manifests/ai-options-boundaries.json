@@ -950,13 +950,87 @@
           "The value stored at 0x82CBA8A0 before scoring was not traced. If every candidate scores 0 or less, that value stays.",
           "The scoring blocks for candidates 0, 1 and 3, and the remaining inputs of candidate 2, were not analysed.",
           "The meanings of the word at 0x830ECC08 + 8 * p + 4, the word at 0x8312B8DC and bit 0x4 of the r15 table word are not established here.",
-          "Unresolved: the later loop can overwrite the goal word in its k = 0 pass with 1, 2, 3 or 5. Whether that pass runs, and so which value the purchase arm and the other readers see, is not resolved. The meaning of k and of the table at 0x8311DD10 is not established.",
+          "Unresolved: the later loop can overwrite the goal word in its k = 0 pass with 1, 2, 3 or 5. Whether that pass runs, and so which value the purchase arm and the other readers see, is not resolved. The meaning of k and of the table at 0x8311DD10 is not established. Answered in goalWordLaterLoopBoundary: within the located writers that pass is skipped.",
           "Stores to this word outside 0x82CB6E48 are not excluded. The scan covers sites that form the table address.",
           "Words 1 to 31 of each record are written only by the later loop, within what was read; their meaning is not identified."
         ],
         "interpretation": "Interpretation: the selection writes the AI player's current victory goal to word 0. MUSTWINBY and CANNOTWINBY are named for victory types, and the 20000 based Gold target in candidate 2 fits an economic victory, so goal 2 is probably the economic one. If the goal value is what the purchase arm reads, then under goal 2 the AI spends Gold only to finish a Market or a Bank, which keeps its Gold for the target. If the later loop's k = 0 pass runs, the arm instead reads that pass's value. If 0x8312B8DC is the turn counter, the below-turn-20 check writes 0 before the MUSTWINBY overrides; the later loop may overwrite the result.",
         "falsificationCondition": "Different stored values or scenario offsets at the cited selection sites, a different index at the later loop stores, or a runtime read of the word that contradicts the stored range 0 to 3 for the selection would falsify the corresponding reading.",
-        "result": "The word at 0x830E5250 + 128 * p is a goal index 0 to 3 that the AI turn function 0x82CB6E48 chooses for the player. It scores four candidates, keeps the highest, and applies MUSTWINBY (force) and CANNOTWINBY (exclude) to candidates 0 to 3. Candidate 2 is the one whose score reads the player's Gold against a 20000 based target. With goal 2 the purchase arm buys only when the city's current item is 104 (Market) or 110 (Bank). Unresolved: a later loop in the same function (0x82CBB1EC..0x82CBB410) can write the same word again with 1, 2, 3 or 5, so the value the readers see is not settled. This is a static reading."
+        "result": "The word at 0x830E5250 + 128 * p is a goal index 0 to 3 that the AI turn function 0x82CB6E48 chooses for the player. It scores four candidates, keeps the highest, and applies MUSTWINBY (force) and CANNOTWINBY (exclude) to candidates 0 to 3. Candidate 2 is the one whose score reads the player's Gold against a 20000 based target. With goal 2 the purchase arm buys only when the city's current item is 104 (Market) or 110 (Bank). Unresolved: a later loop in the same function (0x82CBB1EC..0x82CBB410) can write the same word again with 1, 2, 3 or 5, so the value the readers see is not settled. This is a static reading. The later-loop question is answered in goalWordLaterLoopBoundary."
+      },
+      "goalWordLaterLoopBoundary": {
+        "status": "closed",
+        "confidence": "strong",
+        "question": "Does the later loop at 0x82CBB1EC..0x82CBB410 in the AI turn function 0x82CB6E48 overwrite the goal word (word 0 of the player record at 0x830E5250 + 128 * p) in its k = 0 pass?",
+        "scope": {
+          "functions": [
+            "0x82D03190",
+            "0x82D00290",
+            "0x82CB6E48"
+          ],
+          "windows": [
+            "0x82D03110..0x82D03310",
+            "0x82D00250..0x82D00450",
+            "0x82CBB130..0x82CBB330",
+            "0x82CC4AA0..0x82CC4CA0"
+          ],
+          "boundary": "The builder 0x82D03190, its fill routine 0x82D00290, the skip test of the later loop and the save helper calls at 0x82CC4B98 and 0x82CC4BBC were read. The body of 0x827F7BB0, the callers of the builder, the meaning of the table at 0x8312B288 and the value tests of the later loop were not read."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/playerGoalWordBoundary: the goal selection, the later loop, its skip test at 0x82CBB234..0x82CBB23C on the word at 0x8311DD10 + 4 * k, and the k = 0 question",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/purchaseArmInputBoundary: the byte table at 0x830E6E90 indexed by 40 * X + Y is a different table; the per-tile byte table used here is at 0x8311E3D0 with the same index form",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleFlagBoundary: the offline scanner and its SHA-256"
+        ],
+        "builder": [
+          "0x82D0319C..0x82D031B0: calls 0x827F7BB0 with (0x8311E3D0, 0, 0x640), the per-tile region byte map.",
+          "0x82D031B4..0x82D031C8: calls 0x827F7BB0 with (0x8311DD10, 0, 0x80), the whole 32 word table.",
+          "0x82D031D0: the region id r29 starts at 1.",
+          "0x82D031E0..0x82D032A8: two nested loops over the map (outer count from the word at 0x82F77364, inner count from the word at 0x82F77448, row step 0x28). For a tile whose region byte is 0 (0x82D03218..0x82D03220) it calls the fill routine 0x82D00290 with (outer index, inner index, r29) at 0x82D03230.",
+          "0x82D03234..0x82D03270: after the fill, the entry for this id is at r30 = 0x8311DD10 + 4 * r29 (0x82D0320C, 0x82D03214). If the tile's byte in the table at 0x8312B288 is 0, the entry is negated (0x82D03248..0x82D03250). Otherwise, unless that byte is 7, the entry is added to a total and compared with a maximum.",
+          "0x82D03274..0x82D03284: r30 advances by 4 and r29 by 1. When r30 reaches 0x8311DD10 + 0x80 the loops end (branch to 0x82D03378). So ids run from 1 to at most 31."
+        ],
+        "fillRoutine": [
+          "0x82D002A0: r28 = the id argument r5. 0x82D002C0: r30 = 4 * r28.",
+          "0x82D002D4..0x82D002EC: entry[id] is loaded, incremented by 1 and stored back.",
+          "0x82D002F0: the tile's byte in the region map at 0x8311E3D0 is set to the id.",
+          "0x82D00408..0x82D0040C: the routine calls itself with r5 = r28, the same id.",
+          "Direct callers found by an aligned scan of 0x82010000..0x82F6F000 for bl words targeting 0x82D00290: 0x82D03230 (the builder) and 0x82D0040C (the routine itself).",
+          "So entry 0 is zeroed by the builder and the builder never passes id 0. Entries hold a tile count, negative for regions whose first tile has byte 0 in the table at 0x8312B288."
+        ],
+        "otherFormingSites": {
+          "scanner": "An offline flat-image scanner (linear constant tracking, scannerSha256 3BE9D1A51BF0B1C763F7291979239869D54EF85DC99E84A479E0362484A75B3F, the one recorded in cityRoleFlagBoundary) read 0x82010000..0x82F6F000, 4,029,440 words, and reported 14 sites that form 0x8311DD10 and no D-form access to the table. The use of the formed pointer at each site was read from the flat image.",
+          "stores": "0x82D002EC (the fill increment) only.",
+          "passedToCall": "0x82D031BC (the builder's zero fill) and 0x82CC4B98 and 0x82CC4BBC, which pass it with a count of 0x20 words to the helper pair 0x822DE4F0 and 0x822DE570 (the same pair that handles the table at 0x830E5250).",
+          "loadsOnly": "0x82CBA404 (the AI turn function, kept at frame +0x7C and loaded at 0x82CBA464 and by the later loop), 0x82CBFF1C (kept at frame +0xB8, loaded at 0x82CC0704 and 0x82CC0E2C), 0x82CF4CC0, 0x82D00118, 0x82D00E28 (kept at frame +0x9C), 0x82D025F0, 0x82D02DD8, 0x82D103F4, 0x82D1BC74 and 0x82D294DC.",
+          "derivedStore": "The builder's negate at 0x82D03250 stores through r30, a pointer derived from the formed address plus 4 * id."
+        },
+        "consequence": "With entry 0 equal to 0, the test at 0x82CBB234..0x82CBB23C branches to 0x82CBB404 for k = 0, so none of the stores at 0x82CBB368, 0x82CBB3E0, 0x82CBB3EC and 0x82CBB400 runs with index 32 * p + 0. For k = 1 to 31 the loop writes words 1 to 31 of the player record, one per map region id.",
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82D03210",
+            "0x82D00350",
+            "0x82CBB230",
+            "0x82CC4BA0"
+          ],
+          "radius": 64,
+          "distinctWords": 516,
+          "outputSha256": "15B06B8493DEA31632A9CA396CE6CCF39CA173FAAFCDC4D11D73C975236CE976",
+          "imageMatch": "All 516 words match the supported flat image (SHA-256 in manifests/image.json). They cover 0x82D03110..0x82D03310, 0x82D00250..0x82D00450, 0x82CBB130..0x82CBB330 and 0x82CC4AA0..0x82CC4CA0. The uses at the other forming sites and the caller scan were read from the flat image."
+        },
+        "qualification": [
+          "Static reading only. The table was not read at runtime.",
+          "The writer search covers sites that form the absolute table address and the pointers followed from them. A store through another form is not excluded.",
+          "The helper pair at 0x82CC4B98 and 0x82CC4BBC transfers the 32 words to or from saved data. A loaded file supplies entry 0 from that file. A file written by this game holds the builder's value, but a modified file is not covered.",
+          "0x827F7BB0 is read as a fill routine from its three arguments (address, 0, length). Its body was not read.",
+          "The callers of the builder and when it runs relative to the AI turn were not read. If the AI turn ran before the builder, the table would hold whatever it held before, which is not established.",
+          "The meaning of the table at 0x8312B288 (byte 0 negates the count, byte 7 is left out of the total) is not established here.",
+          "The value tests of the later loop (which of 1, 2, 3 or 5 it stores for a region) were not analysed."
+        ],
+        "interpretation": "Interpretation: the table at 0x8311DD10 is a size per connected map region, with water regions negative, and region id 0 means not assigned. Words 1 to 31 of each player record are that player's mode for each region. The goal word therefore keeps the selection's value, and the purchase arm reads the AI player's goal index.",
+        "falsificationCondition": "A store of a nonzero value to the word at 0x8311DD10, a builder call that passes id 0, or a runtime read showing that word nonzero when the later loop runs would falsify this result.",
+        "result": "The later loop's k = 0 pass runs only when the word at 0x8311DD10 is nonzero. That table holds a tile count per map region id. The builder 0x82D03190 zeroes it and assigns ids from 1, and no located store writes a nonzero value to entry 0. The k = 0 pass is therefore skipped, and the goal word at 0x830E5250 + 128 * p keeps the value the selection stored. This rests on the located writers only and on static reading."
       }
     },
     "RVA-F-0331": {

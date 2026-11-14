@@ -16,6 +16,12 @@ Then `.xml` is appended unless `.kfm` is already in the name. The name goes to s
 
 Interpretation: `0x82D7FE40` is the place where the body file of a unit is chosen. The player and civilization are at hand there, so a body of its own for the unit of one civilization and one type could be chosen at the same point, before `.xml` is appended.
 
+## Calls of the name builder
+
+Nine recorded slot `+0x1A0` sites in `0x82CF0000..0x82D80000` use the object at `0x8314F76C` or a register that was not traced. Six of the nine pass `r5` = 1. Three pass `r5` = 1 when a compared register value equals a value read through the object pointed to by the word at `0x8314EFE0`, or when a bit of a signed byte in the table at `0x83129988` is set, and `r5` = 0 otherwise. Five of the six call slot `+0x1A4` of the same object first, and the sixth is a loop over records from `0x830F2BF0`. The `nameBuilderCalls` section of the manifest lists the sites, the tests and the direct callers.
+
+Interpretation: the three sites that compute `r5` create units with the body loaded for the local player or on a tile that player sees, and the six sites that pass 1 rebuild the group of an existing unit.
+
 ## Members and the load
 
 The group function `0x82D99EB8` tests bits 0, 1 and 2 of row byte `+0x48`. For each set bit it creates a member with `0x82D9B6E0` and calls member slot `+0xB0` with the name. That slot jumps to slot `+0xB4`, which is `0x82D9CF30`. A second route, `0x82D99CE8`, creates members for i = 3 to 8. See the `groupAndMembers` section.
@@ -64,7 +70,9 @@ Interpretation: the four nine word tables are one parent class and three child c
 - The contents of any `_Attachments.xml` file were not examined, and no attachment table was read at run time.
 - What `0x82D32BA8` does when the attribute is missing was not established. The attribute read `0x8230A118` returns 0 then.
 - Which path of `0x82C63820` a unit takes at run time was not established.
-- What passes `r5` to `0x82D7FE40` (slot `+0x1A0`), and so which units are created with a zero low byte, was not established.
+- The scan of slot `+0x1A0` calls finds one instruction pattern. At five of the nine sites in `0x82CF0000..0x82D80000` the object was not traced to `0x8314F76C`, so that those sites call `0x82D7FE40` is not established.
+- What the table at `0x83129988` holds, what the object pointed to by the word at `0x8314EFE0` is, and what the compared registers hold were not established.
+- The 14 sites of the scan outside `0x82CF0000..0x82D80000` were not read and may use other tables.
 - No later load of a member released by `0x82D9B080` was found. The search was not complete: the callers of group slot `+0x14` and of member slots `+0xB0` and `+0xB4` were not read, except those recorded.
 - What calls slot `+0x4` of the table `0x82164E00` was not established. `0x82C55BA0`, which holds the one direct call of `0x82C631D0`, has no direct caller found.
 - Whether a constructor for the table `0x8212FFD0` exists that forms its address in a way the scans miss was not established.

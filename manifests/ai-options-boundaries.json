@@ -679,6 +679,76 @@
         "interpretation": "Interpretation: the tail is an AI purchase step for a selected building or wonder. It prices the remaining cost by era and by one query (selector 0x19), doubles it for wonders, and buys when the price fits the per-player word and one of the score tests passes. The bypass recorded for item 0 does not carry over, because item 103 can reach the store at 0x82CB6D08, but every route still returns the selected ordinal. The arm is a concrete input list for the open AI rush valuation question: the era word, query 0x19, cost minus progress, the best score and the r23 word.",
         "falsificationCondition": "A write to r16 on an item 103 route after 0x82CB5528, a route from 0x82CB5520 that does not reach 0x82CB6E30, or a callee that does not keep r16 would falsify the return claim. Different price arithmetic or stores at the cited addresses would falsify the purchase reading.",
         "result": "Every branch outcome for item 103 reaches 0x82CB6E30, and no instruction on those routes writes r16 after the reload at 0x82CB5528. Under the normal ABI the evaluator returns the selected ordinal. On the way, item 103 can pass through a purchase arm that stores the item to the city and subtracts a price from a per-player word. This is a static reading."
+      },
+      "purchaseArmInputBoundary": {
+        "status": "closed",
+        "confidence": "strong",
+        "question": "Which stored values feed the AI building and wonder purchase arm at 0x82CB6B78..0x82CB6D5C in the evaluator 0x82CB44E0, and how does its price compare with the human rush producer 0x82CE27F0?",
+        "scope": {
+          "functions": [
+            "0x82CB44E0",
+            "0x82CE27F0"
+          ],
+          "windows": [
+            "0x82CE2920..0x82CE2B00",
+            "0x82CB44C0..0x82CB46A0",
+            "0x82CB4760..0x82CB4940"
+          ],
+          "boundary": "The three dumped windows were read, with the stores to the evaluator frame slots over 0x82CB44E0..0x82CB6E44 and the producer entry 0x82CE27F0..0x82CE2864 from the flat image. The bodies of the callees 0x82CF1278, 0x82CF0CB0 and 0x82CB3F08 were not read, and neither were the callers of the producer or the command that applies the charge."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/item103ReturnRouteBoundary",
+          "rush-cost-producer.json#/costFormula",
+          "production-cost-ownership.json#/consumers/ai/1/normalCostGate",
+          "ai-unit-rush-valuation.json",
+          "occ-gold-population-reward.json",
+          "barbarian-spawn-population.json"
+        ],
+        "evaluatorInputs": [
+          "Frame +0x80 has one store, 0x82CB48D0, of r6 = 0x830ED544 (set at 0x82CB48B0 and 0x82CB48C0). The arm loads it into r23 at 0x82CB6A94 and reads G = the word at 0x830ED544 + 4 * r20, so G is the city owner's Gold word.",
+          "Frame +0xB8 has one store, 0x82CB47C4, of 0x8312E608 (set at 0x82CB47A4 and 0x82CB47B4). The classifiers read the word at 0(r21) with r21 loaded from this slot at 0x82CB5524, so the classifier word is the mask word M.",
+          "Frame +0xAC has one store, 0x82CB48C4, of 0x830E5250 (set at 0x82CB48A8 and 0x82CB48B8). The arm tests the word at 0x830E5250 + 128 * r20 against 2 at 0x82CB6C6C..0x82CB6C7C. The table has no recorded meaning.",
+          "Frame +0x94, loaded into r18 at 0x82CB5530, has three stores. 0x82CB45AC stores 8, reached when the byte at 0x830E6E90 + (40 * X + Y) is below the result of the call 0x82CB4588 -> 0x82CB3F08 (0x82CB458C..0x82CB4598), with X and Y the signed city halfwords +0x30 and +0x32. 0x82CB45D4 stores the signed city halfword +0x2C on the other outcome of that comparison. 0x82CB4648 stores 4, replacing either value, when the city owner byte equals the word at 0x82F700B0 (0x82CB45DC, 0x82CB45E8, 0x82CB4634..0x82CB4640). Neither 8 nor 4 has bit 0x20, so the arm can buy only when r18 is the city halfword +0x2C and that halfword has bit 0x20 set.",
+          "Frame +0x5C (S in the arm's tests) has stores at 0x82CB4548 (zero) and 0x82CB669C (the score update already recorded)."
+        ],
+        "humanProducer": {
+          "entryState": "0x82CE27F0..0x82CE2864: r27 = 0xBC * city, r28 = 0x8314FE28, r23 = the incoming r4 pointer (zeroed at 0x82CE2814), r30 = the signed city item halfword +0x38, r31 = the signed city owner byte, r25 = 1, r11 = 0. Items below 100 take the unit arm. 0x82CE2944 sends items 200 and up to the wonder arm.",
+          "buildingArm": "Items 100 to 199, 0x82CE294C..0x82CE29E4. 0x82CE2950: cost = 0x82CF1278(city, -1). 0x82CE2954..0x82CE2980: E = the word at 0x830ECD08 + 4 * owner, limited to 0..99. 0x82CE2984..0x82CE29A4: f = 1 when 0x82CF0CB0(0x19, owner, 0) is nonzero, else 0. 0x82CE29BC..0x82CE29D0: amount = ((f + 1) * E + 2) * (cost - H), with H the signed city halfword +0x36. 0x82CE29A8..0x82CE29D8: if bit (item - 100) of the city word +0x10 is set, r25 = 0 (through 0x82CE2AA8).",
+          "wonderArm": "Items 200 and up, 0x82CE29E8..0x82CE2AA8. 0x82CE29E8..0x82CE2A00: if the word at 0x830E5148 + 8 * (item - 200) is not -1, the arithmetic is skipped and the amount stays 0. 0x82CE2A08..0x82CE2A78: otherwise the same cost, E and f reads, and amount = ((f + 1) * E + 2) * (cost - H) * 2 (shift at 0x82CE2A78). 0x82CE2A7C..0x82CE2A8C: items 220 and 219 set r25 = 0. 0x82CE2A90..0x82CE2AA8: if bit (item - 200) of the word at 0x830E4124 is set, r25 = 0.",
+          "commonTail": "0x82CE2AAC..0x82CE2AF0: a negative amount becomes 0 and the amount is stored through r23. With r25 nonzero the function returns 1 when amount <= the word at 0x830ED544 + 4 * owner (0x82CE2AC4..0x82CE2AE4), else 0. With r25 zero it returns 0."
+        },
+        "comparison": [
+          "Same reads: 0x82CF1278(city, -1), the era word at 0x830ECD08 limited to 0..99, the query 0x82CF0CB0 with selector 0x19, the city halfword +0x36, and the Gold word at 0x830ED544.",
+          "Same price: P in the AI arm equals the human amount for the same inputs, including the doubling for items 200 and up. Both skip items 219 and 220 (AI at 0x82CB6B68..0x82CB6B74).",
+          "Same affordability direction: the AI arm skips when P > G, and the human producer returns 1 when amount <= Gold.",
+          "Difference: the AI arm prices the newly selected item r25, while 0x82CF1278(city, -1) and the human producer both read the cost from the city's current item, per the cost helper's record.",
+          "Difference: the AI arm does not test the city word +0x10 bit, the word at 0x830E5148 or the word at 0x830E4124 at this site.",
+          "Difference: the AI arm adds its own score, policy and classifier tests and requires P > 0."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CE2A10",
+            "0x82CB45B0",
+            "0x82CB4850"
+          ],
+          "radius": 60,
+          "distinctWords": 363,
+          "outputSha256": "A49D91F391B2F66C3F36188F87C9BF2A3260DD9F95AE7AE844331B5752828CE2",
+          "imageMatch": "All 363 words match the supported flat image (SHA-256 in manifests/image.json). They cover 0x82CE2920..0x82CE2B00, 0x82CB44C0..0x82CB46A0 and 0x82CB4760..0x82CB4940. The lists of stores to the frame slots over 0x82CB44E0..0x82CB6E44 were read from the flat image decode (stw and stwu forms with base r1), and so was the producer entry 0x82CE27F0..0x82CE2864."
+        },
+        "qualification": [
+          "Static reading only. No AI purchase was observed, and no price was compared in play.",
+          "The frame slot store lists cover direct stw forms with base r1 in the decoded range. A store through another pointer to the frame is not covered.",
+          "0x82CF1278(city, -1) reads the city's current item, while the AI arm stores the selected item r25 afterwards. Whether the two are the same item when the arm runs is not shown. The same qualification is recorded for the unit value.",
+          "The eligibility tests the human producer applies (city word +0x10, the words at 0x830E5148 and 0x830E4124) are not shown for the AI arm. They may be applied when candidates are listed. That was not read.",
+          "The meanings of the city halfword +0x2C and its bit 0x20, the table at 0x830E5250, the byte table at 0x830E6E90 and the result of 0x82CB3F08 are not established here.",
+          "The human producer's callers and the command that applies the charge were not reopened."
+        ],
+        "interpretation": "Interpretation: for buildings and wonders the AI pays the price a human would be quoted. The order of operations issue recorded for the AI unit rush value does not apply to this arm, because the price has no divide. The AI buys only for a city whose +0x2C halfword has bit 0x20 set, and never for a Barbarian city or a city on the first outcome of the 0x82CB3F08 comparison. What remains for the AI rush valuation question is runtime observation and the meaning of the policy inputs, not the price arithmetic.",
+        "falsificationCondition": "Different stored constants at the cited frame stores, a further store to those frame slots, or different arithmetic at the cited producer or arm addresses would falsify the corresponding reading.",
+        "result": "For buildings and wonders the per-player word the AI arm compares and debits is the Gold table at 0x830ED544, the same table the human rush producer compares its amount with. The AI price ((f + 1) * E + 2) * (cost - progress), doubled for wonders, uses the same arithmetic and inputs as the human producer. This differs from units, where the recorded AI value and the human rush differ in order of operations. This is a static reading."
       }
     },
     "RVA-F-0331": {

@@ -225,6 +225,38 @@ calls helpers and writes a flag. The scalar's own return and continuation
 records are under
 [`effectiveScalar/returnBoundary`](../../../manifests/production-cost-ownership.json#/effectiveScalar/returnBoundary).
 
+## AI building and wonder purchase
+
+`AIUnitChoiceEvaluate` (`0x82CB44E0`) can also buy a building or a wonder. The
+purchase arm is `0x82CB6B78..0x82CB6D5C`. Its price is:
+
+```text
+price = ((f + 1) * E + 2) * (cost - progress) * m
+```
+
+`E` is the era word at `0x830ECD08` for the city owner, limited to 0..99. `f` is
+1 when the query `0x82CF0CB0` with selector `0x19` returns nonzero, else 0.
+`cost` comes from `0x82CF1278`. `progress` is the signed city halfword `+0x36`.
+`m` is 1 for items 100 to 199 and 2 for items 200 and up.
+
+The human rush producer `0x82CE27F0` uses the same price arithmetic and stored
+inputs in its building arm `0x82CE294C..0x82CE29E4` and its wonder arm
+`0x82CE29E8..0x82CE2AA8`, so the amounts match for the same inputs. Both the
+producer and the AI arm compare the amount with the Gold word at
+`0x830ED544 + 4 * owner`. Unlike the unit value above, this price has no divide.
+Interpretation: the order of operations issue does not arise here, so the AI
+pays the price a human would be quoted.
+
+The two paths differ in what they test. The AI arm does not repeat the producer's
+three eligibility tests at this site. It adds its own score, policy and
+classifier tests, requires a positive price, and can buy only when the city
+halfword `+0x2C` has bit `0x20` set.
+
+This is static reading only. No AI purchase was observed. The cost helper reads
+the city's current item, while the arm stores the selected item afterwards, so
+the two items may differ. Record:
+[`purchaseArmInputBoundary`](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/purchaseArmInputBoundary).
+
 ## Finding this kind of rounding
 
 [`tools/find_divide_multiply.py`](../../../tools/find_divide_multiply.py) screens

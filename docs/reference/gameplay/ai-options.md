@@ -606,6 +606,17 @@ were not traced, and 18 reached entries that do not decode as code were not
 searched. The record is
 [purchase route callee finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/purchaseRouteCalleeBoundary).
 
+The 8 evaluator and generator sites skip the call when the word at `+0x10` of
+the object at `0x8314EFE0` is 0. The located stores to that word write 0 or an
+object built by `0x82CB12F0` with the table `0x8215FA78`. For an object that
+keeps that table, the calls reach `0x82A73340`, which returns the word at
+`+0x20` and writes nothing. This is a static reading: the store scan covers one
+address range and one store form, other writers of the map and a later change
+of table were not excluded, the object was not observed at run time, whether
+the calls happen in a single player game is not known, and `0x82CF0EB0` and 41
+other sites in the reached functions stay unresolved. The record is
+[purchase indirect call finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/purchaseIndirectCallBoundary).
+
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's
 current item is 104 (Market) or 110 (Bank). The AI turn function `0x82CB6E48`

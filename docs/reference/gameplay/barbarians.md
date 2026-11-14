@@ -138,6 +138,38 @@ checks for exactly 2 and is not a linear multiplier. These formula cases show
 neither a cadence nor a safe mod policy. Details are in
 `recurringProductionBoundary.inputBindingBoundary`.
 
+## Setup city requests and BARBVSGOODY
+
+Setup `0x82D217C8` reads scenario slot 2, `BARBVSGOODY` (halfword Q+4, default
+1, Beta Centauri 2), at two sites. Both choose whether setup makes a city
+creation request `0x82D18D88` for the Barbarian ordinal. Site A is the loop
+that takes each pair of lower players, forms the midpoint of their slot 0 unit
+records, and tests the terrain byte, flag bit `0x1` and two distance words
+before it makes the request. A value of 0 skips the pair, and any other value
+reaches the request.
+
+Site B is the choice inside the random tile loop. After the earlier distance
+tests, a nonzero value calls `0x82D18D88`. A value of 0 instead sets flag
+`0x10` on the tile and makes the `+0xF4` call. The value 2 replaces two tests
+that other nonzero values keep: the `0x830EE53C` above 3 test and the match of
+the byte plane `0x8311E3D0` at the tile.
+
+| Value | Site A | Site B |
+| --- | --- | --- |
+| 0 | no request | flag `0x10` and the `+0xF4` call instead of a request |
+| nonzero other than 2 | request | request, after the `0x830EE53C` > 3 test and the plane byte match |
+| 2 | request | request; those two tests are replaced |
+
+This is a static reading; no game was run and no request was observed. Whether
+a request returns a city, the meaning of the plane `0x8311E3D0`, the code
+between `0x82D23DDC` and `0x82D24330`, and readers of Q+4 outside setup were
+not examined. Details are in
+[setupCityRequestBoundary](../../../manifests/barbarian-spawn-population.json#/setupCityRequestBoundary).
+
+Interpretation: with the slot name, flag `0x10` suggests the friendly village
+kind of tile, as the alternative to a Barbarian city at site B. That meaning is
+not established.
+
 ## Setup garrison requests
 
 `0x82D217C8` walks 128 cities. When the bases and frame stay valid,
@@ -236,7 +268,10 @@ at `0x82DAF26C..0x82DAF29C`:
 
 The names and defaults come from
 [`scenario-schema.json`](../../../manifests/scenario-schema.json).
-Only the aggression threshold and the fecundity credit are tied to code here.
+Only the aggression threshold, the fecundity credit and the `BARBVSGOODY`
+setup readers (see
+[Setup city requests and BARBVSGOODY](#setup-city-requests-and-barbvsgoody))
+are tied to code here.
 The names alone do not show other slot effects or a path specific to a scenario
 ID.
 

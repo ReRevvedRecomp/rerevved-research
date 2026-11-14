@@ -2766,5 +2766,85 @@
         "DumpMemoryWords.java": "91A0F4291ED0AE89B357B2D6742B201CE190CAF0FFAA18FCC7210D972CD8CB71"
       }
     }
+  },
+  "setupCityRequestBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "Which code in setup function 0x82D217C8 reads scenario slot 2, BARBVSGOODY (halfword Q+4, address 0x830E8FD4), and what does the value select?",
+    "scope": {
+      "functions": [
+        "0x82D217C8"
+      ],
+      "reusedHelpers": [
+        "0x82CFF8C0",
+        "0x82CFF528",
+        "0x82D18D88"
+      ],
+      "windowCount": 5,
+      "boundary": "The five inspected windows: 0x82D230F0..0x82D231C0 (53 words), 0x82D23810..0x82D23938 (75), 0x82D23D48..0x82D23DDC (38), 0x82D24334..0x82D24444 (69) and the single word 0x82D23B44. Q is the active scenario block at 0x830E8FD0, saved at frame+0x68 at 0x82D22988; BARBVSGOODY is slot 2, default 1 in scenario-schema.json#/variators, and the Beta Centauri preset writes 2. frame+0x50 holds 0x82F70000 and its +0xB0 word (0x82F700B0) is the current Barbarian ordinal B (#/setupGarrison). 0x82CFF8C0 is the nearest-unit search: it returns a unit ordinal, writes its distance to word 0x830EE544 and the selected player to word 0x830EE540. 0x82CFF528 is the nearest-city scan: it writes its distance to word 0x830EE53C (city-militia-scout-feasibility.json, fields unitQuestion and distanceCaches). 0x82D18D88 is the city creation function; for a Barbarian player it selects type 3, 4 or 5 by latitude. The flag plane is 0x8312A608 (r15) and the terrain plane is 0x8312B288 (frame+0x80), with tile index i = 40*a + b. The helper bodies were not reopened."
+    },
+    "frameValues": "frame+0xB8 = 0x830F2BF0, the unit table base (lis 0x82D230F0, addi 0x82D23118, store 0x82D23128). Unit records are 0x54 bytes, 256 per player (0x5400 bytes per player); signed X is at +0x1C and signed Y at +0x1E. frame+0x6C = 0x8311E3D0, a byte plane indexed by i (lis 0x82D23104, addi 0x82D23134, store 0x82D23144); its meaning is not established. frame+0x90 = 0x830F0000 (lis 0x82D2311C, store 0x82D23130); with offset -0x1AC4 it addresses word 0x830EE53C. The player loop variable r17 starts at 0 (0x82D2314C); at 0x82D231A4..0x82D231C0 the loop loads B and branches to 0x82D23810 when r17 equals B.",
+    "midpointLoop": "Site A, window 0x82D23810..0x82D23938, reached only on the loop pass where the player ordinal equals B. 0x82D23814..0x82D23818 skip everything when B <= 0. Two nested counters r27 and r28 each run from 0 to B-1 (0x82D23810, 0x82D23820, 0x82D23918..0x82D23934); r29 and r31 point at unit slot 0 of player r27 and player r28, at +0x1E, and advance by 0x5400. 0x82D23828..0x82D2382C skip when r27 equals r28. 0x82D23830..0x82D2383C load the saved Q, read the halfword at Q+4 unsigned and skip the pair when it is 0; the test is against zero only. 0x82D23840..0x82D23878 compute a = (X27 + X28) / 2 and b = (Y27 + Y28) / 2, signed and rounded toward zero (srawi and addze), from the two slot 0 unit records. 0x82D2387C..0x82D2389C read the terrain byte at i, signed, and skip when it is 0 or 6. 0x82D238A0..0x82D238B0 skip when flag halfword bit 0x1 is set. 0x82D238B4..0x82D238C8 call 0x82CFF8C0 with r3 = a, r4 = b, r5 = -1 and r6 = the byte at 0x8311E3D0 + i. 0x82D238CC..0x82D238D0 call 0x82CFF528 with r3 = a; r4, r5 and r6 are not set between the two calls. 0x82D238D4..0x82D238E0 skip when word 0x830EE544 is below 6. 0x82D238E4..0x82D238F0 skip when word 0x830EE53C is 3 or less. 0x82D238F4..0x82D23904 call 0x82D18D88 with r3 = r17 (equal to B on this pass), r4 = a, r5 = b, r6 = 1. 0x82D23908..0x82D23914 clear flag bit 0x80 on the tile and store it. Both orders of each pair are visited, so each midpoint is tried twice. The only store outside the stack in this window is 0x82D23914; its calls are 0x82D238C8, 0x82D238D0 and 0x82D23904.",
+    "randomTileLoop": {
+      "loop": "The loop whose later stores are recorded in resource-density-generation.json#/moreGoldResourceLoopBoundary/sharedCount (head 0x82D23B4C, back edge 0x82D245B0). a is r31, b is r30 and i is r26.",
+      "earlierTests": "Window 0x82D23D48..0x82D23DDC (38 words). 0x82D23D48..0x82D23D58 call 0x82CFF8C0 with (a, b, r23, -1). 0x82D23D5C..0x82D23DA8 set r27 to the byte of plane 0x8311E3D0 at the tile of the unit record (word 0x830EE540 * 256 + returned r3), using that record's X and Y; r22 is 0x830F0000 (lis 0x82D23B44). 0x82D23D80, 0x82D23D98 and 0x82D23DAC leave the pass (0x82D24580) when word 0x830EE544 is 5 or less. 0x82D23DB0..0x82D23DC0 call 0x82CFF528 with (a, b, -1, -1). 0x82D23DC4..0x82D23DD0 leave the pass when word 0x830EE53C is 2 or less. 0x82D23DD8 sets r29 to 1; code between 0x82D23DDC and 0x82D24330 can set r29 to 0 and was not decoded.",
+      "choice": "Window 0x82D24334..0x82D24444 (69 words). 0x82D24334..0x82D24344 leave the pass (0x82D24588) when flags & 0x431 is nonzero; 0x82D24348..0x82D2434C leave when r29 is 0. 0x82D24350..0x82D24360 read the terrain byte, signed; 0 goes to 0x82D24530 (the recorded presence store). 0x82D24364..0x82D24374 load the saved Q, read Q+4, sign-extend to r7 and compare with 2. Value 2 (0x82D24378..0x82D2439C) stores 5 to word 0x830EE53C, adds 1 to word 0x830EE544 and stores it, sets r27 to the byte of plane 0x8311E3D0 at this tile and continues at 0x82D243B8. Other values (0x82D243A0..0x82D243B4) go to 0x82D24448 when word 0x830EE53C is 3 or less, otherwise load word 0x830EE544. 0x82D243B8..0x82D243C4 go to 0x82D24448 when the plane byte at this tile differs from r27; for value 2 this test compares the byte with itself. 0x82D243C8..0x82D243D4 go to 0x82D24448 when B is -1. 0x82D243D8..0x82D243DC go to 0x82D24448 when terrain is 6. 0x82D243E0..0x82D243EC leave the pass when the 0x830EE544 value is 5 or less or the 0x830EE53C value is 2 or less. 0x82D243F0..0x82D243FC test r7 against 0. Nonzero (0x82D24400..0x82D24410) calls 0x82D18D88 with r3 = B, r4 = a, r5 = b, r6 = 1. Zero (0x82D24414..0x82D2442C) ORs 0x10 into the flag halfword, stores it (0x82D2441C) and makes the virtual call +0xF4 on the receiver at frame+0x60. Both then clear flag bits 0x80 and 0x400 and store (0x82D24430..0x82D24440). 0x82D24448 is another arm of the loop, not decoded here. Stores outside the stack in the choice window: 0x82D24394 and 0x82D24398 (the two distance words, value 2 only), 0x82D2441C and 0x82D24440 (flag halfword). Calls: 0x82D2440C and 0x82D2442C."
+    },
+    "valueCases": [
+      {
+        "value": "0",
+        "siteA": "no request",
+        "siteB": "flag 0x10 and the +0xF4 call instead of a request"
+      },
+      {
+        "value": "nonzero other than 2",
+        "siteA": "request",
+        "siteB": "request, after the 0x830EE53C > 3 test and the plane byte match"
+      },
+      {
+        "value": "2",
+        "siteA": "request",
+        "siteB": "request; those two tests are replaced. Site B then needs only the two earlier thresholds (0x830EE544 above 5, 0x830EE53C above 2) plus the flag, r29, terrain and B tests"
+      }
+    ],
+    "verification": {
+      "script": "ghidra/DumpMemoryWords.java",
+      "method": "One foreground read-only run.",
+      "targets": [
+        "0x82D23130",
+        "0x82D238A0",
+        "0x82D23D90",
+        "0x82D243C0",
+        "0x82D23B40"
+      ],
+      "radius": 40,
+      "rows": 405,
+      "distinctWords": 405,
+      "querySha256": "10276DB6B73115C07EDB9BC8956681CD68CE4C5FFD8129D1FA99299ED294B521",
+      "imageMatch": "All 405 words match the supported flat image (SHA-256 in manifests/image.json).",
+      "windowWords": 236,
+      "windows": [
+        "0x82D230F0..0x82D231C0 (53)",
+        "0x82D23810..0x82D23938 (75)",
+        "0x82D23D48..0x82D23DDC (38)",
+        "0x82D24334..0x82D24444 (69)",
+        "0x82D23B44 (1)"
+      ],
+      "decoded": "Every instruction word in the five windows decoded."
+    },
+    "qualification": [
+      "Static reading only. No game was run and no request was observed.",
+      "A request is a call to 0x82D18D88. Whether it returns a city, and what the city then holds, is not shown here.",
+      "The words 0x830EE544 and 0x830EE53C are read as the recorded distance outputs of the two helpers. Their units and the helper bodies were not reopened. At site A the helper arguments differ from site B.",
+      "The meaning of byte plane 0x8311E3D0 is not established.",
+      "Slot 0 of each player's unit records is used at site A as stored at that time. Which unit it is, and whether it is valid, is not shown.",
+      "Registers r15, r19, r20 and r24 at site A are taken from the loads at 0x82D23158, 0x82D23184, 0x82D23174 and 0x82D2316C. Paths through the player loop that change and restore them were not traced in full.",
+      "The r29 scan between 0x82D23DDC and 0x82D24330 and the arm at 0x82D24448 were not decoded.",
+      "How many passes the site B loop makes and how many requests succeed are not established. No count of Barbarian cities follows.",
+      "Other readers of Q+4 outside setup were not searched."
+    ],
+    "interpretation": "Interpretation: flag 0x10 is the alternative to a Barbarian city at site B when the value is 0. With the slot name, this suggests 0x10 marks the friendly village kind of tile; that meaning is not established. BARBVSGOODY is a native setup control over Barbarian city requests, separate from BAGRESSIVE and BFECUNDITY. In the function range 0x82D217C8..0x82D25170 the only halfword loads with displacement 4 are these two (checked on a decode of the hash-checked image, not part of the Ghidra capture; callees were not searched). A change after setup would not move cities already requested.",
+    "falsificationCondition": "Instruction words in the five windows that differ from those recorded here, or a halfword load at displacement 4 from the saved Q in 0x82D217C8..0x82D25170 other than the two recorded sites, would reopen this result.",
+    "result": "Within the inspected scope, setup function 0x82D217C8 reads slot 2, BARBVSGOODY, at two sites through the saved Q pointer at frame+0x68. Both choose whether setup makes a city creation request 0x82D18D88 for the Barbarian ordinal. A value of 0 makes no such request at either site. A nonzero value makes the request. The value 2 also replaces two tests at the second site. The default is 1; the Beta Centauri preset writes 2."
   }
 }

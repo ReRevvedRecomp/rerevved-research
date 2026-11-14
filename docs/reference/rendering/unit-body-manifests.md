@@ -36,12 +36,25 @@ The function `0x82D9C050` opens the table through `0x82C92950` and selects rows 
 
 Interpretation: the attachment pieces differ by civilization through the `civ` rows of `<name>_Attachments.xml`, not through the body name.
 
+## The function 0x82DC4F68
+
+The function `0x82DC4F68` builds `<asset name>.XML` from the unit type row: the type is the word at object `+0x30` and the name is row `+0x20`. It is slot `+0x20` of the function table at `0x8212FFD0`, and `0x82DC5270`, which loads the file, is slot `+0x1C`.
+
+The words from `0x8212FF9C` to `0x82130038` are five function tables in a row: a four word table at `0x8212FF9C` and nine word tables at `0x8212FFAC`, `0x8212FFD0`, `0x8212FFF4` and `0x82130018`. Each address is stored to word `+0x0` of an object by located code, which gives the split.
+
+In the scans run, the address of each nine word table is stored in functions that release the object, and no constructor was found. The address of `0x8212FFD0` is stored at `0x821C7B24` and `0x82DC4C60`. No direct call to `0x82DC4F68` or `0x82DC5270` was found.
+
+The scans find an address formed by `lis` with `addi` or `ori`. A constructor that forms the address another way, or loads it from memory, would be missed. A copy of a whole object was not searched. The manifest section `function0x82DC4F68` lists the scans and the stores.
+
+Interpretation: the four nine word tables are one parent class and three child classes that look like model viewers, and this code looks unused in this image. The body name of a unit on the map does not pass through `0x82DC4F68`.
+
 ## What is not established
 
 - No unit creation or file load was observed.
 - No direct caller of `0x82D7FE40` was found. It is slot `+0x1A0` of the function table `0x82138768`. That the object at `0x8314F76C` holds this table at unit creation rests on a cited record in `ai-options-boundaries.json`, which also notes a second table store.
 - The functions `0x82E80120`, `0x82D9B9F0` and `0x82D9C4B8`, the `.kfm` branch and the row selection `0x821D0BD0` were not read. `0x82C92950` was read at its head. `0x82C63820` was not read, and the byte scan covered direct displacements in `0x82C50000..0x82DD0000`.
 - How an attachment row is matched to the four letter key, and what happens when no row matches, was not established.
-- The function `0x82DC4F68` builds `<asset name>.XML` for objects of a class with the function table `0x8212FF9C`. No direct caller was found, and the role of the class was not established.
+- Whether a constructor for the table `0x8212FFD0` exists that forms its address in a way the scans miss was not established.
+- What the objects built by `0x82E72008` and `0x82E72108` are was not established. They store the table `0x8212FF9C`.
 - The worker name functions `0x82D95A30` and the constructor containing the string use at `0x82E7A698` are not on the creation route read here. What they build names for was not established.
 - The meaning of the words at `0x830ECD08` and `0x8312E670` and of the table at `0x82F6F2F0` was not established. The manifest's `interpretation` key holds the readings of these words.

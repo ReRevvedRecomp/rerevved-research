@@ -11,7 +11,7 @@
     "groupFunctions": "0x82D99BB0, 0x82D99EB8..0x82D9A10C, 0x82D99CE8, 0x82D81BA0",
     "memberFunctions": "0x82D9B6E0, 0x82D9CF30, 0x82D9BE28, 0x82D9C748, 0x82D9C050, 0x82D9A3F8",
     "unitTypeRows": "0x82F700D8 + 0x94 * type, asset name at +0x20, member mask byte at +0x48",
-    "otherClass": "0x82DC4F68 and the function table 0x8212FF9C",
+    "otherClass": "0x82DC4F68 and the function tables 0x8212FFD0 and 0x8212FFAC",
     "limit": "Static reading of the functions and tables named here. No unit creation or file load was observed. Functions and branches listed under limits were not read."
   },
   "dependencies": [
@@ -111,9 +111,60 @@
     "range": "0x82DC4F68..0x82DC4FF4",
     "arguments": "r3 = object, r4 = output string.",
     "behavior": "type is the word at object +0x30; row is 0x82F700D8 + 0x94 * type; the name is row +0x20. It appends \".XML\" (0x8212FE4C) and copies the result to r4 with 0x82D3B798.",
-    "callers": "No direct call to it was found. It is slot +0x54 of the function table at 0x8212FF9C; slot +0x50 of that table is 0x82DC5270.",
+    "table": "0x82DC4F68 is slot +0x20 of the function table at 0x8212FFD0. 0x82DC5270 is slot +0x1C of that table.",
     "function0x82DC5270": "0x82DC5270(object, name) tests the name with 0x82E80120. When the test fails it uses \"Legion.xml\" (0x8212FE54). It loads through 0x82C92950(word at 0x8314F238, object + 0x50, 1, name, 0, 0).",
-    "tableUse": "The table address 0x8212FF9C is formed in 0x821C79A0, 0x82E72008 and 0x82E72108. Which objects use it, and when, was not established."
+    "tables": [
+      {
+        "address": "0x8212FF9C",
+        "words": 4,
+        "slot0x0": "0x821C7A60",
+        "slots0x4To0xC": "0x821D5678"
+      },
+      {
+        "address": "0x8212FFAC",
+        "words": 9,
+        "slot0x0": "0x821C7AB0",
+        "slot0x1C": "0x82DC5520",
+        "slot0x20": "0x827F16E0"
+      },
+      {
+        "address": "0x8212FFD0",
+        "words": 9,
+        "slot0x0": "0x821C7B00",
+        "slot0x1C": "0x82DC5270",
+        "slot0x20": "0x82DC4F68"
+      },
+      {
+        "address": "0x8212FFF4",
+        "words": 9,
+        "slot0x0": "0x821C7B60",
+        "slot0x1C": "0x82DC5138",
+        "slot0x20": "0x82DC4C68"
+      },
+      {
+        "address": "0x82130018",
+        "words": 9,
+        "slot0x0": "0x821C7BC0",
+        "slot0x1C": "0x82DC5000",
+        "slot0x20": "0x82DC4FF8"
+      }
+    ],
+    "tableLayout": "The words from 0x8212FF9C to 0x82130038 are five function tables in a row; the word at 0x8213003C starts text data. The split follows from the stores below: each of the five addresses is stored to word +0x0 of an object by located code. Slots +0x4 and +0x8 are 0x82DC4968 and 0x82DC4210 in each of the four nine word tables.",
+    "tableStores": {
+      "scan": "Three scans of 0x82100000..0x82F00000 were run on the flat image. The first looked for an addi with the low 16 bits of a table address, a base register other than r0 or r1, and the nearest earlier lis or addi of that register within 400 instructions (linear order, stopping at blr) being lis with 0x8213. The second looked for lis with ori within 12 instructions. The third looked for the table addresses as data words.",
+      "0x8212FF9C": "Formed at 0x821C79B8 (in 0x821C79A0), 0x82E72034 (in 0x82E72008) and 0x82E72128 (in 0x82E72108); this scan used a 12 instruction window. 0x821C79A0 stores the table, then releases the objects at +0x28 and +0x2C (decrement of word +0x4, call of slot +0x4 at zero). It is called at 0x821C7A7C and 0x82DC4C1C. 0x82E72008 (called at 0x82E07930 and 0x82E0860C) and 0x82E72108 (called at 0x82C69FC0, 0x82C6CD40, 0x82C6DAC8 and 0x82E1299C) store the table, eight floats from 0x8211B944 at +0x4..+0x20, four words at +0x4..+0x10, the results of 0x82363DA8 and 0x823AAFB0 at +0x28 and +0x2C, and 7 at +0x24.",
+      "0x8212FFAC": "Formed at one place, 0x82DC4B54, in 0x82DC4B38, and stored at 0x82DC4B5C. That function stores the table and at 0x82DC4C1C calls 0x821C79A0. It is called at 0x821C7ACC, 0x821C7B28, 0x821C7B88 and 0x821C7BE8 and reached by branch from 0x82DC4C44, 0x82DC4C54 and 0x82DC4C64.",
+      "0x8212FFD0": "Formed at 0x821C7B20 and 0x82DC4C5C and stored at 0x821C7B24 and 0x82DC4C60. 0x821C7B00..0x821C7B58 (slot +0x0 of this table) stores the table, calls 0x82DC4B38, and when bit 0 of r4 is set calls 0x82D3D9F0 on the object. 0x82DC4C58..0x82DC4C64 stores the table and branches to 0x82DC4B38. No call or branch to 0x82DC4C58 was found.",
+      "0x8212FFF4": "Formed at 0x821C7B80 (in slot +0x0, 0x821C7B60) and 0x82DC4C4C (0x82DC4C48..0x82DC4C54, same shape as the sites for 0x8212FFD0).",
+      "0x82130018": "Formed at 0x821C7BE0 (in slot +0x0, 0x821C7BC0) and 0x82DC4C3C (0x82DC4C38..0x82DC4C44, same shape). The first scan also matched 12 sites from 0x8287B2D4 to 0x828E3794; in each the base register was last set by a load (lwz of word +0x2488 from a register), so they do not form this address.",
+      "otherScans": "The lis with ori scan found nothing for the four nine word tables. The data scan found none of 0x8212FFAC, 0x8212FFD0 and 0x8212FFF4 as a data word, and 0x82130018 once at 0x82A6E8CC, which was not examined."
+    },
+    "slotFunctions": {
+      "0x82DC5520": "Slot +0x1C of 0x8212FFAC, 0x82DC5520..0x82DC560C. It calls 0x82C92950(word at 0x8314F238, object + 0x50, 1, name, 0, 0). When word +0x50 is then not 0 it calls 0x8234B2C0 and 0x8234B828 on the word at +0xC0 of that object and returns 1. Otherwise it compares the name with \"Settler.XML\" (0x8212FE40): equal returns 0; not equal builds a string from \"Settler.XML\" and calls its own slot +0x1C with it.",
+      "0x82DC4FF8": "Slot +0x20 of 0x82130018. It loads the word at +0x30 and branches to 0x82E5CD58.",
+      "notRead": "0x827F16E0, 0x82DC4C68, 0x82DC5138 and 0x82DC5000 were not read."
+    },
+    "directCalls": "No direct call was found to any of 0x821C7AB0, 0x821C7B00, 0x821C7B60, 0x821C7BC0, 0x82DC4C68, 0x82DC5138, 0x82DC5000, 0x82DC4FF8, 0x82DC5520, 0x82DC5270 or 0x82DC4F68."
   },
   "workerNames": {
     "workerFormat": "\"worker_%s_\" (0x821363B0) is used at 0x82D95B9C in 0x82D95A30 (callers 0x82D5A150 and 0x82D5A1A8). The %s is the code from the table at 0x82F792F0 indexed by the word at 0x830ECD28 + 4 * index, with the index taken from an indirect call or -1.",
@@ -122,7 +173,7 @@
   },
   "verification": {
     "script": "ghidra/DumpMemoryWords.java",
-    "method": "One foreground read-only run of the script over 16 target addresses, each window from the target minus 0x100 to the target plus 0x100. Ranges outside those windows were read from the flat image only.",
+    "method": "Two foreground read-only runs of the script. The first run covered 16 target addresses, each window from the target minus 0x100 to the target plus 0x100. The second run is in secondRun. Ranges outside those windows, and the scans of the function0x82DC4F68 section, were read or run on the flat image.",
     "targets": [
       "0x82D7FF40", "0x82D80140", "0x82DC4FB0", "0x82DC52D0",
       "0x82D9D030", "0x82D9D1A8", "0x82D9C7A0", "0x82D9C150",
@@ -143,7 +194,18 @@
       "the type rows",
       "the string and pointer tables",
       "the byte scans"
-    ]
+    ],
+    "secondRun": {
+      "targets": [
+        "0x8212FFD0", "0x821C7A60", "0x821C7B60", "0x82DC4B80",
+        "0x82DC4C40", "0x82DC55A0", "0x82E72080", "0x82E72190"
+      ],
+      "radius": 64,
+      "distinctWords": 825,
+      "outputSha256": "9F83861DEFA499F002A11EFA5901DDE69195C962CB47023C123E0332DBA78EC1",
+      "imageMatch": "The 825 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100.",
+      "scans": "The scans of the function0x82DC4F68 section were run on the flat image."
+    }
   },
   "limits": [
     "Static reading. No unit creation or file load was observed.",
@@ -152,7 +214,11 @@
     "The function 0x82C92950 was read at its head. How it opens and parses a file is not established.",
     "The \".kfm\" branch of 0x82D9CF30, the functions 0x82D9C4B8, 0x82C63820 and 0x82D9B9F0, and the row selection 0x821D0BD0 were not read.",
     "Whether the \"civ\" key of an attachment row is compared with the four letter key as a whole, and what happens when no row matches, was not established.",
-    "The role of the class with table 0x8212FF9C and the callers of 0x82DC4F68 were not established.",
+    "The scans find a table address formed by lis with addi (nearest earlier writer within 400 instructions, by linear order, not by control flow) or by lis with ori. A constructor that forms the address another way, or loads it from memory, would be missed.",
+    "The data word 0x82130018 at 0x82A6E8CC was not examined.",
+    "An object could also get one of these tables by a copy of a whole object; that was not searched.",
+    "0x827F16E0 was not read. That it stands in for a function the table at 0x8212FFAC does not supply is an interpretation.",
+    "What the objects built by 0x82E72008 and 0x82E72108 are was not established.",
     "What the two worker name functions serve was not established. No code was found that changes \"worker_rom_m\" for a unit on the creation route.",
     "The byte scan covers 0x82C50000..0x82DD0000 and direct displacements.",
     "The meaning of the words at 0x830ECD08, 0x8312E670 and the table at 0x82F6F2F0 was not established."
@@ -162,20 +228,23 @@
     "Interpretation: 0x82E80120 tests whether a file exists, and \"Legion.xml\" is the stand-in body for a missing file.",
     "Interpretation: the attachment pieces differ by civilization through the \"civ\" rows of \"<name>_Attachments.xml\", not through the body name.",
     "Interpretation: 0x830ECD08 looks like an era per player, and the byte table at 0x82F6F2F0 looks like a value per leader that picks the female models.",
-    "Interpretation: the class of 0x82DC4F68 looks like a viewer of a unit model, for example an interface panel, and not the unit on the map."
+    "Interpretation: the four nine word tables are one parent class and three child classes. The four word table at 0x8212FF9C is their base, since the destructor of the parent calls 0x821C79A0.",
+    "Interpretation: the three child classes look like model viewers that differ in how they name the file: by unit type (0x82DC4F68), and two other ways.",
+    "Interpretation: since no constructor was found, this code looks unused in this image.",
+    "Interpretation: the body name of a unit on the map does not pass through 0x82DC4F68."
   ],
   "guards": [
     "Do not infer from this record that a unit was created or a file was loaded at run time.",
     "Do not treat the missing file replacement as observed; the test function 0x82E80120 was not read.",
     "Do not infer how an attachment row is matched to the civilization key, or what happens when no row matches.",
-    "Do not infer a role or a caller for 0x82DC4F68 or the function table 0x8212FF9C.",
+    "Do not infer that no code creates an object with the table 0x8212FFD0. In the scans run, the addresses of the four nine word tables are stored in destructors and no constructor was found.",
     "Do not infer what the two worker name functions build names for."
   ],
   "falsification": [
     "A read of 0x82D7FE40 showing a different name source, a different suffix rule or a different civilization word than recorded here would falsify the name builder section.",
     "A read of 0x82D9CF30 showing a replacement other than \"Legion.xml\" or \"Knight.xml\" on the route recorded here would falsify the fallback section.",
     "A read of 0x82D9C050 showing a different key string or a different row selection than recorded here would falsify the attachment table section.",
-    "A direct caller of 0x82DC4F68, or a use of the function table 0x8212FF9C on the unit creation route, would change the section on that function."
+    "A located store of 0x8212FFD0 outside the two recorded stores, 0x821C7B24 and 0x82DC4C60, would change the section on that function."
   ],
-  "conclusion": "In the functions read here, 0x82D7FE40 builds the body file name from the asset name in the unit type row and appends \".xml\" unless the name contains \".kfm\", replacing the name by civilization for type 0 and by other words for types 0x1D, 0x1E, 0x1F and 0x20. The unit group creates up to three members, and each loads the file in 0x82D9CF30, which substitutes \"Legion.xml\" or \"Knight.xml\" when the test 0x82E80120 fails. The attachment table \"<name>_Attachments.xml\" is tested in 0x82D9C748 and read in 0x82D9C050, which selects rows by a four letter civilization key from 0x82D9BE28. The role of 0x82DC4F68, the worker name functions, the row matching and the no match case are not established. Static reading."
+  "conclusion": "In the functions read here, 0x82D7FE40 builds the body file name from the asset name in the unit type row and appends \".xml\" unless the name contains \".kfm\", replacing the name by civilization for type 0 and by other words for types 0x1D, 0x1E, 0x1F and 0x20. The unit group creates up to three members, and each loads the file in 0x82D9CF30, which substitutes \"Legion.xml\" or \"Knight.xml\" when the test 0x82E80120 fails. The attachment table \"<name>_Attachments.xml\" is tested in 0x82D9C748 and read in 0x82D9C050, which selects rows by a four letter civilization key from 0x82D9BE28. 0x82DC4F68 is slot +0x20 of the function table 0x8212FFD0. In the scans run, the addresses of the four nine word tables are stored in destructors and no constructor was found. The worker name functions, the row matching and the no match case are not established. Static reading."
 }

@@ -28,6 +28,14 @@ population of 48 fits the histogram. Neither number is a safe cap for the whole
 city. Irrigation and a few other writers have no local test at 31, so 31 is not
 a universal invariant either; it is the largest value the evidence supports.
 
+The helper `0x82CF7E30` returns the table entry times 1000, so the series runs
+from 10,000 at size 1 through 1,000,000 at size 11 to 50,000,000 at size 32.
+Its one direct caller formats the result as "@NUM citizens", and within the
+inspected scope the value feeds no cost, growth or yield calculation. Details
+are in [citizenCountDisplayBoundary](../../../manifests/city-population-cap.json#/citizenCountDisplayBoundary).
+Interpretation: the earlier name is a misnomer, and this table needs a display
+policy for sizes 33 and up.
+
 ## What a city beyond the assignment vector produces
 
 Each citizen has an ordinal `i`, counted from zero, and an assignment byte. An
@@ -228,7 +236,9 @@ trip were not examined.
   production, trade and AI formulas over the new range, the unnamed value
   stored for default citizens, the five-slot auxiliary vector at `0x82E03650`,
   and final screen widths.
-- The meaning of the population cost table entries is unknown.
+- The population cost table is the displayed citizen head count, see
+  [citizenCountDisplayBoundary](../../../manifests/city-population-cap.json#/citizenCountDisplayBoundary).
+  The screen that shows it was not observed.
 - The target of the descriptor call at `0x82C9648C` is not identified, so the
   resource lookup under the icon setters is not resolved.
 - No icon layout for more than 31 citizens was tested.

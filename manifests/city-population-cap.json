@@ -1634,5 +1634,89 @@
     "defaultCitizenTail": "Default citizens at ordinals 32..C-1 add raw production C-32 and raw trade sum(floor(i/6)). C=125: 93 production, 1170 trade. C=127: 95 production, 1211 trade. All C default citizens: C=125 gives 125 production and 1240 trade; C=127 gives 127 and 1281; C=31 gives 31 and 65.",
     "apolloScore": "For the SDI First Discovery reward (technology 46, Building index 18) only, the F-0369 score is Pcandidate+K*Pseed+1000*bit0 with K the building-word popcount. A non-bit0 candidate with K<=15 scores at most C+15*C: 2000 at C=125, 2032 at C=127. A unique bit0 candidate with K=1 at population 1 scores 1+C+1000: 1126 at C=125, 1128 at C=127. The earlier rule that a bit0 candidate always wins therefore fails above 31. These scores fit signed32; they are a local ordering example, not an observed award.",
     "qualification": "Candidate arithmetic over recorded guest operations. It does not show that any larger cap is safe: the histogram consumers, cost table, interface child budget, saves and peers listed in the other sections remain open."
+  },
+  "citizenCountDisplayBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "What is the player-facing meaning of the value returned by helper 0x82CF7E30, recorded earlier as the population cost table?",
+    "scope": {
+      "functions": [
+        "0x82CF7E30",
+        "0x82E57BE8"
+      ],
+      "reusedFormatter": "0x82E6A430",
+      "windowCount": 3,
+      "boundary": "The three captured windows: the helper 0x82CF7E30..0x82CF7F6C (80 words), the caller window 0x82E57D50..0x82E57E90 and the string bytes 0x8212D674..0x8212D7B4. The string at 0x82123004 was read from the flat image only. 0x82E6A430 is the text formatter already recorded in game-turn-limit.json; its body was not reopened."
+    },
+    "reusedRecords": "The helper initializes 33 word entries at incoming SP-0x90 through SP-0x10, reads the entry for the signed city population byte (city +3) at 0x82CF7F64 with no clamp, multiplies by 1000 at 0x82CF7F68, and has the direct caller 0x82E57DDC in function 0x82E57BE8, as recorded in populationCostTable. Populations 33 and up read outside the initialized entries.",
+    "tableValues": {
+      "entries": [
+        0,
+        10,
+        25,
+        50,
+        100,
+        200,
+        300,
+        400,
+        500,
+        600,
+        800,
+        1000,
+        1200,
+        1400,
+        1600,
+        1800,
+        2000,
+        2500,
+        3000,
+        4000,
+        5000,
+        6000,
+        7000,
+        8000,
+        9000,
+        10000,
+        15000,
+        20000,
+        25000,
+        30000,
+        40000,
+        45000,
+        50000
+      ],
+      "note": "The 33 entries, for populations 0 to 32, evaluated from the li, lis, ori and stw instructions of the helper in window 0x82CF7E30..0x82CF7F6C. The returned value is 0 for population 0, 10,000 for population 1, 25,000 for 2, 1,000,000 for 11, 10,000,000 for 25 and 50,000,000 for 32. The entries never decrease."
+    },
+    "helperInstructions": "0x82CF7ED0 (mulli r6, r4, 0xBC: the city index in r4 times the 0xBC city record size), 0x82CF7EF0 (lbzx of the city byte +3), 0x82CF7F04 (extsb), 0x82CF7F34 (slwi by 2), 0x82CF7F64 (lwzx), 0x82CF7F68 (mulli 1000), 0x82CF7F6C (blr). The helper makes no call and no store outside its own stack area.",
+    "callers": "An aligned scan of the code range 0x82010000..0x82F6F000 of the hash-checked flat image for bl words targeting 0x82CF7E30 found one site, 0x82E57DDC. A byte search of the whole image for the word 0x82CF7E30 found none, so no data word holds its address. Indirect calls through a computed target are not covered.",
+    "callerUse": "Window 0x82E57DD0..0x82E57E58. 0x82E57DD4..0x82E57DDC: r4 = r29 (city index), r3 = word 0x8314F1D8, call the helper. 0x82E57DE0..0x82E57DEC: move the result to r5, load r3 from word 0x8314F2C8, compare the result with 1. Equal to 1 (0x82E57DF0..0x82E57DF8): call 0x82E6A430 with the string at 0x8212D708, \"1 citizen\". Otherwise (0x82E57E00..0x82E57E08): call 0x82E6A430 with the string at 0x8212D714, \"@NUM citizens\", and r5 = the helper result. 0x82E57E0C..0x82E57E14: the formatted result is passed to 0x821B2AD8 with destination r31+0xC. The same pattern follows at 0x82E57E18..0x82E57E58 with helper 0x82CF7DE0 and the strings \"1 building\" (0x8212D724) and \"@NUM buildings\" (0x8212D730), destination r31+0x10. Before it, 0x82E57D94..0x82E57DCC formats the string \"@CIVNAME\" (0x82123004) to r31+8. Because every table result is a multiple of 1000, the \"1 citizen\" arm is not reached for populations 0 to 32.",
+    "verification": {
+      "script": "ghidra/DumpMemoryWords.java",
+      "method": "One foreground read-only run.",
+      "targets": [
+        "0x82CF7ED0",
+        "0x82E57DF0",
+        "0x8212D714"
+      ],
+      "radius": 40,
+      "distinctWords": 243,
+      "querySha256": "D83B24A8ABF4C89D3EBAE71B2C91EA1420DA6A8E778643C276DC293D72710006",
+      "imageMatch": "All 243 words match the supported flat image (SHA-256 in manifests/image.json).",
+      "coveredRanges": [
+        "0x82CF7E30..0x82CF7F6C",
+        "0x82E57D50..0x82E57E90",
+        "0x8212D674..0x8212D7B4"
+      ]
+    },
+    "qualification": [
+      "Static reading only. The screen that shows this text was not observed, and which screen function 0x82E57BE8 builds is not established.",
+      "Callers are direct bl sites only. An indirect call to the helper is not excluded, although no data word holds its address.",
+      "What 0x821B2AD8 does with the formatted text and where r31+0xC is shown were not inspected.",
+      "The formatter body and its \"@NUM\" substitution were not reopened; the reading rests on the string and on r5 holding the value.",
+      "The values for populations 33 and up still do not exist natively."
+    ],
+    "interpretation": "Interpretation: the table is a display scale of inhabitants per city size, not a cost. A larger population cap needs a display policy for sizes 33 and up (extend the series or hold the last value), and that choice does not change game rules. The name population cost in earlier records is a misnomer for this value.",
+    "falsificationCondition": "Instruction words in the three captured windows that differ from those recorded here, a second call site that reaches the helper, or a use of the helper result in a cost, growth or yield calculation would reopen this result.",
+    "result": "Within the inspected scope, the value returned by helper 0x82CF7E30 is a displayed citizen head count. The helper returns table[population] * 1000, and its one direct caller 0x82E57DDC formats that number into the interface text \"@NUM citizens\". Within the inspected scope the value feeds no cost, growth or yield calculation."
   }
 }

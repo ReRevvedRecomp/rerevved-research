@@ -539,11 +539,36 @@ mask `0x1C`. It scores a record as `priority * 1000 / (d + 2)`, where d is
 `(2 * max(dx, dy) + min(dx, dy)) / 2` for the X and Y distances dx and dy. Both
 divisions truncate toward zero; the highest score above 0 wins, and ties keep
 the earlier record. Within these callers, the role loop copies 4, 8 or `0x10`.
-This is a static reading. The conditions and priorities at the call sites were
-not analysed, and indirect calls and stores that do not go through the helper
-are not excluded. Interpretation: the records are the AI player's list of map
+This is a static reading. The call sites are described below. Indirect calls
+and stores that do not go through the helper are not excluded. Interpretation: the records are the AI player's list of map
 targets to attack, defend or explore. The record is
 [target record finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/targetRecordBoundary).
+
+The 13 calls sit in several walks of `0x82CB6E48`. One is in a walk over the
+player's units, nine are in a walk over map tiles, one is in a walk over cities,
+one is in a later walk over units and one is in a separate block. Only the
+tests directly before each call were read, so the full conditions are not
+established. The tables those tests read are mostly not identified.
+
+| Call site | Role value | Walk | Position | Priority |
+|---|---|---|---|---|
+| `0x82CB6FF4` | `0x108` | player units | unit | `0x28` |
+| `0x82CB7808` | `0x4` | tiles | tile | 8 * (presence + 1) in 8..`0x30`, plus 8 with a city index, plus `0x10` when the tile byte at `0x830E8790` equals the player |
+| `0x82CB790C` | `0x4` | tiles | tile | quotient in 8..`0x30` |
+| `0x82CB7AFC` | `0x40` | tiles | tile | `0x100` / (word at `0x830EE53C` + 4) |
+| `0x82CB7FA0` | `0x110` | tiles | tile | low byte of factor (1, 2 or 4) times r30 |
+| `0x82CB8070` | `0x108`, `0x208`, `0x408` | tiles | tile | ((population + player word + 4) * 2) & `0xFE` |
+| `0x82CB813C` | `0x104` | tiles | neighbour tile | centre priority byte >> 2 |
+| `0x82CB8408` | `0x4` | tiles | tile | `0x64` |
+| `0x82CB8434` | `0x4` | tiles | tile | tile priority byte: a computed value in 8..`0x30`, plus 8 with a city index; or `0x10` |
+| `0x82CB85AC` | `0x4` or `0x110` | tiles | tile | population based candidate for `0x4`; low byte of factor times r7 for `0x110` |
+| `0x82CB8718` | `0x4` | cities | city | `0x20` |
+| `0x82CB9990` | `0x108` | units | unit or neighbour | `0xA` or `0x14` |
+| `0x82CBC398` | `0x102` | not read | (r24, r29) | 2 * r28 - word at `0x83137E60`, in 0..`0xFF` |
+
+Interpretation: the player's own Settlers type units and own city tiles are
+Defend targets, and foreign units and cities are Attack targets. The record is
+[target call site finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/targetCallSiteBoundary).
 
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's

@@ -1177,7 +1177,7 @@
           "layout": "From these stores: +0x1 role byte, +0x2 region byte, +0x3 X, +0x4 Y, +0x6 role halfword, +0x8 priority, +0xA priority as first stored, +0xC low half of the word at 0x8312B8DC. Bytes +0x0 and +0x5 are not written by this helper."
         },
         "callers": {
-          "scan": "An offline flat-image scan of 0x82010000..0x82F6F000 for aligned bl words that target 0x82CB2538 found 13 sites, all inside the AI turn function 0x82CB6E48. The role value in r4 is a constant at each.",
+          "scan": "An offline flat-image scan of 0x82010000..0x82F6F000 for aligned bl words that target 0x82CB2538 found 13 sites, all inside the AI turn function 0x82CB6E48. Each path to a call supplies one of the listed constant role values.",
           "sites": [
             {
               "callSite": "0x82CB6FF4",
@@ -1235,9 +1235,9 @@
             },
             {
               "callSite": "0x82CB85AC",
-              "roleValue": "0x4",
-              "lowByte": "0x04",
-              "label": "Attack"
+              "roleValue": "0x4 or 0x110",
+              "lowByte": "0x04 or 0x10",
+              "label": "Attack or Explore"
             },
             {
               "callSite": "0x82CB8718",
@@ -1306,7 +1306,199 @@
         ],
         "interpretation": "Interpretation: the records are the AI player's list of map targets: places to attack, defend, explore, settle or strike from the air, each with a priority and the turn or time it was set. The role loop gives a city the role of the eligible Attack, Defend or Explore record with the highest positive score. A city with no such target falls back to Improve or Attack as recorded in cityRoleWriterBoundary. The walk at 0x82CC4DB8 is the saved-game transfer of the table.",
         "falsificationCondition": "A different role constant at a cited call site, a different mask at 0x82CB2D9C..0x82CB2DA8, or a runtime observation that a cited call writes a role byte different from its recorded low byte would falsify the corresponding reading.",
-        "result": "Each player has 128 records of 14 bytes at 0x830EF3F0. A record holds a role value, a map position, the region byte of that position and a priority. One helper, 0x82CB2538, adds or refreshes a record; all 13 of its direct callers are in the AI turn function and pass constant role values. The lookup 0x82CB2D68 that the role loop calls returns records whose role byte has a bit of mask 0x1C set, so the byte the role loop copies is 4, 8 or 0x10 within these callers. This is a static reading."
+        "result": "Each player has 128 records of 14 bytes at 0x830EF3F0. A record holds a role value, a map position, the region byte of that position and a priority. One helper, 0x82CB2538, adds or refreshes a record; all 13 of its direct callers are in the AI turn function and pass constant role values. The lookup 0x82CB2D68 that the role loop calls returns records whose role byte has a bit of mask 0x1C set, so the byte the role loop copies is 4, 8 or 0x10 within these callers. This is a static reading. The call sites are described in targetCallSiteBoundary."
+      },
+      "targetCallSiteBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "In the AI turn function 0x82CB6E48, where do the 13 calls of the record add helper 0x82CB2538 sit, what position and priority does each pass, and which tests stand directly before each call?",
+        "scope": {
+          "functions": [
+            "0x82CB6E48"
+          ],
+          "windows": [
+            "0x82CB6EE0..0x82CB7280",
+            "0x82CB7660..0x82CB7B60",
+            "0x82CB7E00..0x82CB8180",
+            "0x82CB8280..0x82CB8780",
+            "0x82CB9800..0x82CB9A00",
+            "0x82CBC200..0x82CBC400"
+          ],
+          "boundary": "The listed windows were read. For each call only the tests named were read; the branches that reach or skip each block, the full condition of any call and the walks around calls 12 and 13 were not established."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/targetRecordBoundary: the helper's arguments (r3 player, r4 role value, r5 X, r6 Y, r7 priority), the 13 call sites and their role constants",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityRoleFlagBoundary: city record base 0x8314FE28, size 0xBC, owner byte +0x0, population byte +0x3",
+          "Existing manifest records: 0x8312B288 holds 1600 terrain bytes and 0x8312A608 1600 flag halfwords; 0x830E6850 holds a unit owner per tile; 0x830E7B10 is a per-tile unit presence byte table; 0x830E6E90 is a per-tile byte table; the word at 0x82F700B0 is the barbarian player word; 0x82CD5A70 is the human classifier; unit definition records are 0x94 bytes from 0x82F700D8 and +0x50 bit 0 is set only for Settlers and FSettler"
+        ],
+        "registersAndTables": [
+          "The player index is r16 (the function argument, also at frame +0x1C4). In the tile walk r24 is X, r28 is Y and r17 is 40 * X; a tile index is 40 * X + Y.",
+          "0x83129FC8 (r22): a byte per tile tested against 1 << player.",
+          "0x83120950 (r19, frame +0x60): a byte of flags per tile.",
+          "0x83121C10 (r15): a byte per tile that receives the priority.",
+          "0x83122250 (r14): a byte per tile that receives a small code (2, 3 or 4).",
+          "0x83128D08 (frame +0xA0): a byte per tile, a city index or 0xFF.",
+          "0x830E8790 (r23): a byte per tile compared with a player index.",
+          "0x830ED2D8 (r27, frame +0x70): a word per (player, other player) pair, index 8 * player + other.",
+          "0x830EE4E8 (frame +0xAC): a word per player.",
+          "0x830EE53C: a single word compared with small constants.",
+          "0x830F2BF0 (frame +0x64): unit records, 0x54 bytes each, 256 per player.",
+          "These addresses are formed in the function prologue and at 0x82CB7098..0x82CB7168. What these tables hold is not established beyond the recorded items."
+        ],
+        "tileWalk": "0x82CB716C..0x82CB85F4. X runs from 1 while X is below the word at 0x82F77364 minus 1 (0x82CB70DC, 0x82CB7120..0x82CB712C, 0x82CB85D4..0x82CB85E0). Y runs from 1 while Y is below the word at 0x82F77448 minus 1 (0x82CB716C..0x82CB717C, 0x82CB85C0..0x82CB85D0). Nine of the calls are in this walk and pass the tile position unless stated.",
+        "calls": [
+          {
+            "callSite": "0x82CB6FF4",
+            "roleValue": "0x108",
+            "walk": "the player's 256 unit records, 0x82CB6F90..0x82CB708C (r31 is the record address + 0x1E, step 0x54)",
+            "position": "the unit's signed halfwords +0x1C (X) and +0x1E (Y)",
+            "priority": "0x28",
+            "testsRead": "0x82CB6F90..0x82CB6FCC: the unit byte +0x0 is not -1, bit 0x80000000 of the unit word +0xC is clear and bit 0 of the unit type's definition word +0x50 is set. After the call, bit 0x10 is set in the tile's flags byte at 0x83120950 (0x82CB6FF8..0x82CB7010). The block is entered only when the player's word at 0x830EE508 + 4 * player equals 1 (0x82CB6EFC, 0x82CB6F70..0x82CB6F78).",
+            "notRead": ""
+          },
+          {
+            "callSite": "0x82CB7808",
+            "roleValue": "0x4",
+            "walk": "the tile walk 0x82CB716C..0x82CB85F4",
+            "position": "the tile (X in r5, Y in r6)",
+            "priority": "8 * (presence byte + 1) held to 8..0x30, plus 8 when the tile's city index byte is not 0xFF, plus 0x10 when the tile's byte at 0x830E8790 equals the player",
+            "testsRead": "0x82CB76EC..0x82CB7780: the tile's byte at 0x83129FC8 has the player's bit; the terrain byte is 0; bit 0x4 of the tile's flags byte is clear; the unit presence byte is not 0; the tile's unit owner byte is not -1 and not the player; the pair word at 0x830ED2D8 for (player, that owner) is below 1 and not -1. Priority arithmetic at 0x82CB7784..0x82CB77F8. The value is stored to the tile's priority byte and read back as r7. The tile's code byte becomes 2.",
+            "notRead": ""
+          },
+          {
+            "callSite": "0x82CB790C",
+            "roleValue": "0x4",
+            "walk": "the tile walk 0x82CB716C..0x82CB85F4",
+            "position": "the tile (X in r5, Y in r6)",
+            "priority": "a quotient held to 8..0x30 (0x82CB78D8..0x82CB78F0), stored to the tile's priority byte and passed in r7",
+            "testsRead": "Reached from 0x82CB7810 when one of the unit tests of the call at 0x82CB7808 fails.",
+            "notRead": "The terms of the quotient and the tests between 0x82CB7810 and 0x82CB78D8."
+          },
+          {
+            "callSite": "0x82CB7AFC",
+            "roleValue": "0x40",
+            "walk": "the tile walk 0x82CB716C..0x82CB85F4",
+            "position": "the tile (X in r5, Y in r6)",
+            "priority": "0x100 / (the word at 0x830EE53C + 4)",
+            "testsRead": "0x82CB7A80..0x82CB7AD4: bit 0x4 of the tile's flags byte is set; 0x82CEF6A8(signed halfword +0x4A of unit definition 26, player) is not 0; then 0x82CFF528(X, Y, 1 << player, -1) is called; the word at 0x830EE53C is below the signed byte +0x42 of unit definition 26.",
+            "notRead": "The bodies of 0x82CEF6A8 and 0x82CFF528."
+          },
+          {
+            "callSite": "0x82CB7FA0",
+            "roleValue": "0x110",
+            "walk": "the tile walk 0x82CB716C..0x82CB85F4",
+            "position": "the tile (X in r5, Y in r6)",
+            "priority": "a factor times r30, stored to the tile's priority byte with its low byte passed in r7; the factor is 1 when bit 0x4 of the player's word at 0x830EE4E8 is set, otherwise 2 when a signed halfword of the player's record at 0x830E9200 is not 0, and 4 when it is 0 (0x82CB7F30..0x82CB7F84)",
+            "testsRead": "0x82CB7ED0..0x82CB7F2C: a count in r30 is at least 3 and r5 equals 1; when the unit presence byte is not 0 the counter at frame +0x7C must be 0; 0x82CFF528(X, Y, r4, -1) is called; the word at 0x830EE53C is not above 6 plus 2 when bit 0x2 of the player's word at 0x830EE4E8 is clear. The tile's code byte becomes 4. After the call the counter at frame +0x7C is incremented.",
+            "notRead": "What r30 counts."
+          },
+          {
+            "callSite": "0x82CB8070",
+            "roleValue": "0x108, 0x208 or 0x408",
+            "walk": "the tile walk 0x82CB716C..0x82CB85F4",
+            "position": "the tile (X in r5, Y in r6)",
+            "priority": "the tile's priority byte becomes ((city population byte + the player's word at 0x830EE4E8 + 4) * 2) & 0xFE and is passed in r7",
+            "testsRead": "0x82CB7FB0..0x82CB8030: bit 0x1 of the tile's flag halfword at 0x8312A608 is set; the tile's unit owner byte at 0x830E6850 equals the player; c is the tile's city index byte; r3 = 0x82CB3F08(c). No call is made when r3 is 0. The role is 0x408 when r3 is above 2, 0x208 when it is 2 and 0x108 when it is 1 or less. The tile's code byte becomes 3.",
+            "notRead": "The body of 0x82CB3F08."
+          },
+          {
+            "callSite": "0x82CB813C",
+            "roleValue": "0x104",
+            "walk": "a loop inside the tile walk that starts at 0x82CB8090 after the call at 0x82CB8070",
+            "position": "a neighbour tile: X plus an offset, wrapped by the map width, and Y plus an offset",
+            "priority": "the centre tile's priority byte shifted right by 2",
+            "testsRead": "The loop steps r30 by 4 through two offset tables (0x82F7A0B8 and 0x82F7A168) and forms the neighbour position (0x82CB809C..0x82CB80DC). 0x82CB80E0..0x82CB8128: the player is not the barbarian player word, the neighbour X is in range, the neighbour Y is at least 1 and below the height minus 1, and the neighbour's terrain byte is 0. The loop is skipped when bit 0x2 of the tile's flags byte is clear and bit 0x2 of the player's word at 0x830EE4E8 is set (0x82CB8074..0x82CB808C).",
+            "notRead": "The loop end."
+          },
+          {
+            "callSite": "0x82CB8408",
+            "roleValue": "0x4",
+            "walk": "the tile walk 0x82CB716C..0x82CB85F4",
+            "position": "the tile (X in r5, Y in r6)",
+            "priority": "0x64; the tile's priority byte is set to 0x10 on this path",
+            "testsRead": "0x82CB8394..0x82CB8408, when the player is the barbarian player word: 0x82CD5A70(r29) returns nonzero, 0x82CFF8C0(X, Y, 1 << r29, -1) returns a unit index other than -1 and bit 0x40 of that unit's word +0xC is set. When one of these three tests fails, control reaches the call at 0x82CB8434 instead (0x82CB8418). Before the calls the tile's priority byte is set to 8 * (the tile's byte at 0x830E74D0 minus its byte at 0x830E6E90, plus 2 when its byte at 0x830E8790 equals the player), held to 8..0x30, plus 8 when the tile's city index byte is not 0xFF (0x82CB8314..0x82CB8384); the tile's code byte becomes 2.",
+            "notRead": "What r29 holds and the tests before 0x82CB8314."
+          },
+          {
+            "callSite": "0x82CB8434",
+            "roleValue": "0x4",
+            "walk": "the tile walk 0x82CB716C..0x82CB85F4",
+            "position": "the tile (X in r5, Y in r6)",
+            "priority": "the tile's priority byte: 8 * (the tile's byte at 0x830E74D0 minus its byte at 0x830E6E90, plus 2 when its byte at 0x830E8790 equals the player), held to 8..0x30, plus 8 when the tile's city index byte is not 0xFF (0x82CB8314..0x82CB8384); or 0x10 when the player is the barbarian player word, the classifier test passed and a later test failed (0x82CB83AC..0x82CB83B8)",
+            "testsRead": "0x82CB8388..0x82CB8390 and 0x82CB8420..0x82CB8434: the player is not the barbarian player word, or the player is that word and one of the three tests of the call at 0x82CB8408 fails (0x82CB8418). Before the calls the tile's priority byte is set to 8 * (the tile's byte at 0x830E74D0 minus its byte at 0x830E6E90, plus 2 when its byte at 0x830E8790 equals the player), held to 8..0x30, plus 8 when the tile's city index byte is not 0xFF (0x82CB8314..0x82CB8384); the tile's code byte becomes 2.",
+            "notRead": "What r29 holds and the tests before 0x82CB8314."
+          },
+          {
+            "callSite": "0x82CB85AC",
+            "roleValue": "0x4 or 0x110",
+            "walk": "the tile walk 0x82CB716C..0x82CB85F4",
+            "position": "the tile (X in r5, Y in r6)",
+            "priority": "the candidate, stored to the tile's priority byte and passed in r7; the candidate is 8 * (city population + 2) / (the tile's byte at 0x830E6E90 + 1) held to 8..0x30 (0x82CB84D4..0x82CB8544), or the city population + 5 (0x82CB854C..0x82CB857C); these apply to role 0x4. On the role 0x110 path the priority is the low byte of a factor times r7, with the factor formed as at the call at 0x82CB7FA0 (0x82CB7690..0x82CB76D4)",
+            "testsRead": "0x82CB8438..0x82CB8584: the tile's city index byte is not -1 and bit 0x1 of its flag halfword is set; o is that city's owner byte. When o is the barbarian player word, the tile's byte at 0x83129988 must have a bit of r25 and a byte in the table at 0x83134C50 must not be 0. When o is not the player and the pair word for (player, o) is 0, the first candidate applies. Otherwise, when the player is not the barbarian player word and o is the barbarian player word, the second candidate applies. The call is made when the candidate is above the tile's priority byte (0x82CB8584). The tile's code byte becomes 2. A second route, 0x82CB76DC..0x82CB76E8, sets r4 to 0x110, stores the priority and code 4 to the tile's bytes and branches to 0x82CB85A0, the argument moves before this call; the tests that lead to it were not read.",
+            "notRead": ""
+          },
+          {
+            "callSite": "0x82CB8718",
+            "roleValue": "0x4",
+            "walk": "the 128 city records, 0x82CB85FC..0x82CB8728",
+            "position": "the city's signed halfwords +0x30 (X) and +0x32 (Y)",
+            "priority": "0x20",
+            "testsRead": "0x82CB85FC..0x82CB8630: a city is skipped when its owner byte is -1 or the player, its population byte is 0 or less, or the player is the barbarian player word. 0x82CB8634..0x82CB86A4: for a city whose owner is the barbarian player word, the tile byte at 0x83129988 must have the player's bit and a byte in the table at 0x83134C50 must not be 0. 0x82CB86A8..0x82CB86BC: the pair word for (player, city owner) must be 0. 0x82CB86C0..0x82CB86F8: when bit 0 of the city word +0x10 is clear, the signed halfword +0x4 of the player's 32 byte record at 0x830E9200 must be below the same halfword of the city owner's record plus 2.",
+            "notRead": ""
+          },
+          {
+            "callSite": "0x82CB9990",
+            "roleValue": "0x108",
+            "walk": "a later walk over unit records (r30 is the record offset; the player in r31 is loaded from frame +0x1C4 at 0x82CB9850)",
+            "position": "the unit's own position, or the unit position plus the offset table entries for the index returned by 0x82CFA4F0 with X wrapped by the map width",
+            "priority": "0x14 when the unit byte +0x4 is not 0, otherwise 0xA (0x82CB98E4..0x82CB9900, 0x82CB9938..0x82CB9988)",
+            "testsRead": "Two paths lead to the call. 0x82CB9864..0x82CB9904: 0x82CFA4F0 returned an index other than -1; the byte at the offset position in the table whose address is at frame +0x70 must not be 0. 0x82CB9908..0x82CB997C: the call returned -1; the position is the unit's own position and the same table's byte there must not be 0.",
+            "notRead": "The walk's bounds, the tests before 0x82CB9850 and the body of 0x82CFA4F0."
+          },
+          {
+            "callSite": "0x82CBC398",
+            "roleValue": "0x102",
+            "walk": "a separate block; the enclosing loop was not read",
+            "position": "(r24, r29), with the player in r26",
+            "priority": "2 * r28 minus the word at 0x83137E60, held to 0..0xFF (0x82CBC348..0x82CBC368)",
+            "testsRead": "0x82CBC2B8..0x82CBC348: the word at 0x830EE53C is above 2; a loop of eight calls to 0x82D02530 on offset neighbours must each return a value not above r28; r28 is not 0; and further tests on the word at 0x830EE53C (0x82CBC334..0x82CBC344). Before the call, 1 is stored to a per-tile byte table whose address is at frame +0xC8 and the priority to one at frame +0xD8.",
+            "notRead": "What r28 holds, the enclosing loop, the further tests on the word at 0x830EE53C (unresolved) and the body of 0x82D02530."
+          }
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CB6FE0",
+            "0x82CB7180",
+            "0x82CB7760",
+            "0x82CB7860",
+            "0x82CB7A60",
+            "0x82CB7F00",
+            "0x82CB8080",
+            "0x82CB8380",
+            "0x82CB8500",
+            "0x82CB8680",
+            "0x82CB9900",
+            "0x82CBC300"
+          ],
+          "radius": 64,
+          "distinctWords": 1358,
+          "outputSha256": "A816080937A15FC86488D2217302AEFFF8D75BF8F799650930FC9DF3B817AFD9",
+          "imageMatch": "All 1358 words match the supported flat image (SHA-256 in manifests/image.json)."
+        },
+        "qualification": [
+          "Static reading only. No AI turn was observed adding a record.",
+          "For each call only the tests named were read. Other branches reach or skip these blocks; the full condition for any call is not established.",
+          "The per-tile tables at 0x83129FC8, 0x83120950, 0x83121C10, 0x83122250, 0x830E8790, 0x83129988 and 0x83134C50, the pair words at 0x830ED2D8, the player words at 0x830EE4E8 and 0x830EE508, the record at 0x830E9200 and the word at 0x830EE53C are not identified here. Readings such as \"at war\" or \"visible\" are not established.",
+          "0x82CEF6A8, 0x82CFF528, 0x82CFF8C0, 0x82CB3F08, 0x82CFA4F0 and 0x82D02530 were not read here.",
+          "Call 3's priority terms, call 5's r30, call 7's loop end, the r29 of calls 8 and 9, and the walks around calls 12 and 13 were not read.",
+          "The high bits 0x100, 0x200 and 0x400 of the role value are still not identified. Call 6 shows only that they follow the result of 0x82CB3F08.",
+          "The terrain byte value 0 is not named here."
+        ],
+        "interpretation": "Interpretation: call 1 marks each of the player's own Settlers type units as a Defend target, and call 6 marks the player's own city tiles as Defend targets with a priority that grows with city size. Calls 2, 9 and 11, and the role 0x4 route of call 10, mark foreign units and cities as Attack targets; the role 0x110 route of call 10 marks an Explore target; call 11 uses a fixed priority 0x20 for each foreign city that passes its tests. Call 4 is the AirAttack target for a tile flagged in the flags byte, call 5 the Explore target, and call 13 the Settle target for a candidate city site scored by 0x82D02530.",
+        "falsificationCondition": "A different constant, table address or test at a cited address, or a runtime observation that a cited call passes a different priority than recorded, would falsify the corresponding reading.",
+        "result": "The 13 add calls are placed in 0x82CB6E48: one in a walk over the player's unit records, nine in the tile walk, one in a walk over city records, one in a later walk over unit records and one in a separate block. Positions are the unit, tile or city position, or a neighbour tile. Priorities are constants (0x28, 0x64, 0x20), small computed values held to 8..0x30, or values read back from a per-tile priority byte table. The tests directly before each call are recorded. This is a static reading; the full conditions were not analysed and the tables the tests read are mostly not identified."
       }
     },
     "RVA-F-0331": {

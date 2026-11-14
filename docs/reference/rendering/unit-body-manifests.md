@@ -38,6 +38,12 @@ The selection `0x821D0BD0` walks each node below the node it is given, at any de
 
 Interpretation: the attachment pieces differ by civilization through the `civ` rows of `<name>_Attachments.xml`, not through the body name. A unit of a civilization with no row gets no attachment pieces and no default set. Attachment pieces for Chinese or Spanish Archers can be chosen with rows keyed `Chin` and `Span` in the table for the body name the unit loads.
 
+## When the attachment table is read
+
+Slot `+0x18` of the member table is called by `0x82C63820` at two sites, each after the word at member `+0x14` is not 0, and by `0x82C631D0`, which is slot `+0xA4`. The body load `0x82D9CF30` calls `0x82C63820` at `0x82D9D1DC` with `flags | 2`. Two paths of `0x82C63820` return without calling slot `+0x18`: the path at `0x82C638D8` when flags bit `0x200` is set, and the path at `0x82C63974`. After the path at `0x82C63974`, `0x82C631D0` can make the call when it is called and its checks pass. For the path at `0x82C638D8` the later call was not found. The function `0x82D9CF30` stores the civilization argument to member byte `+0x8C` at `0x82D9D1F0`, after its call of `0x82C63820`, so a slot `+0x18` call made inside `0x82C63820` reads the earlier byte `+0x8C`, which the constructor initializes to -1. See the `memberSlot0x18` section of the manifest.
+
+Interpretation: the attachment table is read as part of the body load, after the body file is loaded. On the routes recorded the civilization argument is -1 as well, so the key is the same.
+
 ## The function 0x82DC4F68
 
 The function `0x82DC4F68` builds `<asset name>.XML` from the unit type row: the type is the word at object `+0x30` and the name is row `+0x20`. It is slot `+0x20` of the function table at `0x8212FFD0`, and `0x82DC5270`, which loads the file, is slot `+0x1C`.
@@ -54,10 +60,12 @@ Interpretation: the four nine word tables are one parent class and three child c
 
 - No unit creation or file load was observed.
 - No direct caller of `0x82D7FE40` was found. It is slot `+0x1A0` of the function table `0x82138768`. That the object at `0x8314F76C` holds this table at unit creation rests on a cited record in `ai-options-boundaries.json`, which also notes a second table store.
-- The functions `0x82E80120`, `0x82D9B9F0` and `0x82D9C4B8`, and the `.kfm` branch were not read. `0x82C92950` was read at its head. `0x82C63820` was not read, and the byte scan covered direct displacements in `0x82C50000..0x82DD0000`.
+- The functions `0x82E80120`, `0x82D9B9F0` and `0x82D9C4B8`, and the `.kfm` branch were not read. `0x82C92950` was read at its head. The byte scan covered direct displacements in `0x82C50000..0x82DD0000`.
 - The contents of any `_Attachments.xml` file were not examined, and no attachment table was read at run time.
 - What `0x82D32BA8` does when the attribute is missing was not established. The attribute read `0x8230A118` returns 0 then.
-- When slot `+0x18` of the member table `0x82135C90` runs, and so when the reader runs relative to the body load in `0x82D9CF30`, was not established.
+- Which path of `0x82C63820` a unit takes at run time was not established.
+- After the path at `0x82C638D8` (flags bit `0x200`, word at member `+0x14` still 0), what completes it and calls slot `+0x18` was not established.
+- What calls slot `+0xA4` of the member table at run time was not established. `0x82C55BA0`, which holds the one direct call of `0x82C631D0`, has no direct caller found.
 - Whether a constructor for the table `0x8212FFD0` exists that forms its address in a way the scans miss was not established.
 - What the objects built by `0x82E72008` and `0x82E72108` are was not established. They store the table `0x8212FF9C`.
 - The worker name functions `0x82D95A30` and the constructor containing the string use at `0x82E7A698` are not on the creation route read here. What they build names for was not established.

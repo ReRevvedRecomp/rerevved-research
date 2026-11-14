@@ -650,10 +650,22 @@ item function `0x82CFE828` when the byte at `0x8314F10B` is not 0; 1 store of
 an item argument in `0x82D04C98`, with no located call; 1 store of `0xC8` plus
 a choice in `0x82CFD758`; and 1 field by field record copy in `0x82CFA028`,
 whose one located call at `0x82D04DCC` passes unit records. Register values
-across alternative paths remain unverified. The conditions into the reset
-blocks and the 34 scan sites outside functions that form the city array
-address were not read. None of these stores
+across alternative paths remain unverified. The 34 scan sites outside functions that form the city array address were not
+read. None of these stores
 was observed.
+
+The conditions into three of the blocks that store -1 are recorded in
+[city item reset condition finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetConditionBoundary).
+`0x82D1AC70` reaches its block when bit 0 of `r6` is set. The located calls pass
+1 at `0x82CE0F0C` and `0x82D1F8D0` and 2 at `0x82CE0F24` and `0x82D1D7D0`.
+`0x82D1B400` reaches its block when `r4` differs from the city byte `+0x0` and
+the city byte `+0x1` differs from the word at `0x82F700B0`. When byte `+0x1`
+equals that word, a separate path ends without the block. `0x82CF7428` walks a
+tile and its eight neighbours. It lowers the city byte `+0x3` of a city on a
+walked tile, to 0 on the first tile, and reaches its block when the new byte is
+0 and bit 0 of the city word `+0x10` is set. The path claims rest on direct
+branch targets and assume returning calls and no arithmetic trap. The conditions in the callers were not read, except dispatcher
+entry 27. None of these calls was observed.
 
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's

@@ -2359,7 +2359,129 @@
           "A different value than -1 stored at 0x82CE0E3C, 0x82CF76EC, 0x82D1AEB0 or 0x82D1C77C, or a different test of the byte at 0x8314F10B before 0x82D1AEF8 or 0x82D1C78C, would falsify the reading of those sites.",
           "A located call to 0x82D04C98 would require checking whether its store can occur between two generator calls. A call to 0x82CFA028 other than 0x82D04DCC with a city record as target would change the reading of 0x82CFA10C."
         ],
-        "result": "Of the 15 sites, 3 do not address a city in the code read: 0x82CDBDFC and 0x82CDBE04 store from the unit record array base 0x830F2BF0, and 0x82CFA10C is in a record copy whose one located call passes unit records. The other 12 address the city array 0x8314FE28. Four are two pairs of a temporary store and a restore in 0x82CE9490, which is called from 0x82E01574, 0x82E069C8 and 0x82E06A8C. Four store -1 at 0x82CE0E3C, 0x82CF76EC, 0x82D1AEB0 and 0x82D1C77C. Two store the result of the default item function 0x82CFE828 when the byte at 0x8314F10B is not 0 (0x82D1AEF8, 0x82D1C78C). One (0x82D04CC8) stores an item given as an argument, in a function with no located call. One (0x82CFE324) stores 0xC8 plus a choice to one city. With the 12 sites read before, each of the 27 candidates has a reading. This is a static reading: none of these stores was observed."
+        "result": "Of the 15 sites, 3 do not address a city in the code read: 0x82CDBDFC and 0x82CDBE04 store from the unit record array base 0x830F2BF0, and 0x82CFA10C is in a record copy whose one located call passes unit records. The other 12 address the city array 0x8314FE28. Four are two pairs of a temporary store and a restore in 0x82CE9490, which is called from 0x82E01574, 0x82E069C8 and 0x82E06A8C. Four store -1 at 0x82CE0E3C, 0x82CF76EC, 0x82D1AEB0 and 0x82D1C77C. Two store the result of the default item function 0x82CFE828 when the byte at 0x8314F10B is not 0 (0x82D1AEF8, 0x82D1C78C). One (0x82D04CC8) stores an item given as an argument, in a function with no located call. One (0x82CFE324) stores 0xC8 plus a choice to one city. With the 12 sites read before, each of the 27 candidates has a reading. This is a static reading: none of these stores was observed. The conditions that lead into three of the blocks that store -1 are recorded in cityItemResetConditionBoundary."
+      },
+      "cityItemResetConditionBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "Under which conditions do 0x82D1AC70, 0x82D1B400 and 0x82CF7428 reach the blocks that store -1 to the city item halfword +0x38, and what do their callers pass?",
+        "scope": {
+          "functions": [
+            "0x82D1AC70",
+            "0x82D1B400",
+            "0x82CF7428"
+          ],
+          "dispatcher": "0x82CDDF08",
+          "cityArrayAddress": "0x8314FE28",
+          "cityRecordSize": "0xBC",
+          "cityField": "+0x38",
+          "scopeNote": "The claim covers the tests that lead into the three blocks and the arguments at the located calls. It does not cover which dispatcher entries reach each call, the conditions before each call (except entry 27), or what the city bytes and words named here hold."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemStoreSitesBoundary: the stores of -1 at 0x82CF76EC, 0x82D1AEB0 and 0x82D1C77C, the stores of the default item at 0x82D1AEF8 and 0x82D1C78C, and the limit that r16 in 0x82D1B400 was not settled",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemAssignmentBoundary: the dispatcher 0x82CDDF08 with r30 = id, r31 = a, r15 = b and r29 = c, and its 66 entry table at 0x82CDE014",
+          "City records are 0xBC bytes at 0x8314FE28, as in the records above"
+        ],
+        "functionAC70": {
+          "function": "0x82D1AC70",
+          "block": "0x82D1AE60..0x82D1AEB4",
+          "entries": [
+            "Arguments kept: r17 = r3 (city), r21 = r4, r20 = r5, r19 = r6 (0x82D1AC7C..0x82D1AC90).",
+            "0x82D1AC84..0x82D1ACA4: when bit 0 of r6 is 0, the branch goes to 0x82D1B050, past the block.",
+            "When bit 0 of r6 is set, each path in 0x82D1ACA8..0x82D1AE5C reaches the block. The branches in this range (0x82D1ACC4, 0x82D1AD0C, 0x82D1AD20, 0x82D1AD2C, 0x82D1AD64, 0x82D1AD74, 0x82D1ADB4) target addresses inside it.",
+            "In that range the halfword at city +0x7E gets bit r21 set and bit r20 cleared when bit r21 was clear (0x82D1ACAC..0x82D1ACEC). When bit r21 was clear, the counter at 0x830ED41C + 4 * r21 is raised and the counter for r20 is lowered. r20 is compared with the word at 0x82F700B0 (0x82D1AD00..0x82D1AD0C).",
+            "In the block, the signed low byte of r21 is stored to city byte +0x0 (0x82D1AE7C, 0x82D1AEA4)."
+          ],
+          "calls": [
+            "0x82CE0F0C: (r29, r31, signed city byte +0x0, 1), in the dispatcher code between the entry 15 target 0x82CE090C and the next table target 0x82CE12C4.",
+            "0x82CE0F24: the same arguments with r6 = 2, directly after.",
+            "0x82D1D7D0: r6 = 2 and r5 = r21. It is reached when r4 is not -1 and bit 0x4000 of a word is set (0x82D1D7A8..0x82D1D7C4).",
+            "0x82D1F8D0: (r25, r29, r27, 1)."
+          ]
+        },
+        "functionB400": {
+          "function": "0x82D1B400",
+          "block": "0x82D1C730..0x82D1C77C",
+          "entries": [
+            "r16 = r3 (city), r18 = r4, r26 = 0xBC * city, r21 = 0x8314FE28 and r19 = the signed city byte +0x0 (0x82D1B410..0x82D1B434).",
+            "0x82D1B43C..0x82D1B440: when r19 equals r18, the branch goes to 0x82D1D1B4 and returns.",
+            "0x82D1B458..0x82D1B45C: the signed low byte of r18 is stored to city byte +0x0.",
+            "0x82D1B5AC..0x82D1B5C0: the signed city byte +0x1 is compared with the word at 0x82F700B0. When they differ, the branch goes to 0x82D1C570. The direct branches in 0x82D1B444..0x82D1B5BC, calls aside, stay inside 0x82D1B444..0x82D1B5C0, so each path from 0x82D1B444 reaches this test when the calls return.",
+            "0x82D1C570..0x82D1C77C: the direct branches in this range target addresses inside it. Reaching the stores of -1 at 0x82D1C778 and 0x82D1C77C assumes that the calls in the range return and that the arithmetic trap at 0x82D1C630 is not taken. 0x82D1C570 is a branch target from 0x82D1B5C0 alone.",
+            "When they are equal, 0x82D1B5C4..0x82D1C56C runs. It leaves to the return at 0x82D1D1B4 from 0x82D1C3F8 and 0x82D1C4C8, or ends at 0x82D1C56C. It does not enter 0x82D1C570. The write of r16 at 0x82D1BBF0 is in this range, so at 0x82D1C784 r16 is the city argument.",
+            "The word at 0x82F700B0 is 7 in the image file."
+          ],
+          "calls": [
+            "0x82CDF4C8: (r15, r31), the whole of dispatcher entry 27 (0x82CDF4C0..0x82CDF4CC).",
+            "0x82CDF9F8: in the code between the entry 0 target 0x82CDF74C and 0x82CDFA74. r3 is a signed byte from the table at 0x83128D08 and r4 is a signed byte loaded through r30 and r28.",
+            "0x82CDFC48 and 0x82CDFD80: in the code between 0x82CDFA74 and 0x82CDFD88. 0x82CDFA74 is the target of entries 1 and 42. r3 and r4 are signed bytes loaded through r27 and r23, and r30 and r28."
+          ]
+        },
+        "function7428": {
+          "function": "0x82CF7428",
+          "block": "0x82CF76C4..0x82CF76F0",
+          "entries": [
+            "Arguments kept: r22 = r3 (stored at frame +0x114), r14 = r5, r29 = r6.",
+            "After a first loop (0x82CF749C..0x82CF7574) a second loop runs nine times: r19 = -1 with r22 = -4 first, then r19 = 0..7 with r22 = 0..0x1C (0x82CF758C..0x82CF7590, 0x82CF7834..0x82CF7840).",
+            "On the first pass the tile is (r14, r29). Later passes add the word at 0x82F7A0B8 + r22 to r14, taken modulo the word at 0x82F77364, and the word at 0x82F7A168 + r22 to r29 (0x82CF75E0..0x82CF7624). The two tables hold eight offset pairs of -1, 0 or 1.",
+            "0x82CF7628..0x82CF7650: with tile index 40 * first + second, when bit 0 of the halfword at 0x8312A608 + 2 * index is 0, the pass goes to 0x82CF7748.",
+            "0x82CF7654..0x82CF76A4: the city is the signed byte at 0x83128D08 + index. The signed city byte +0x3 is replaced by itself minus itself divided by d, where d is 1 on the first pass and 2 on the others. The new byte is 0 on the first pass.",
+            "0x82CF76A8..0x82CF76C0: when the new byte is 0 and bit 0 of the city word +0x10 is set, the block stores to +0x3, +0x10, +0x4, +0x36, then -1 to +0x38 and 0 to +0x3C."
+          ],
+          "calls": [
+            "0x82CDF1A8: (r31, r15, r27, r26), in the dispatcher code between the entry 17 target 0x82CDEDFC and the next table target 0x82CDF478, after a branch at 0x82CDF194."
+          ]
+        },
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82D1AD70",
+            "0x82D1AF00",
+            "0x82D1B4C0",
+            "0x82D1C670",
+            "0x82CF7500",
+            "0x82CF76B0",
+            "0x82CF7840",
+            "0x82CDF1A8",
+            "0x82CDF4C8",
+            "0x82CDF9F8",
+            "0x82CDFC80",
+            "0x82CE0F0C",
+            "0x82D1D7D0",
+            "0x82D1F8D0"
+          ],
+          "radius": 64,
+          "distinctWords": 1727,
+          "outputSha256": "F29D957E78C73975CA82CF502142780185C613EAA0626242419A5F312A9B5E62",
+          "imageMatch": "The 1727 distinct words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The branch lists for 0x82D1B5C4..0x82D1C56C, the dispatcher table, the two offset tables and the words at 0x82F700B0 and 0x82F77364 were read from the flat image."
+        },
+        "limits": [
+          "This is a static reading. None of these calls was observed.",
+          "The statements that each path reaches a block rest on direct branch targets. A call in the range that does not return, an arithmetic trap, or an indirect branch was not excluded.",
+          "The path 0x82D1B5C4..0x82D1C56C of 0x82D1B400 was read for its exits alone.",
+          "The code of 0x82D1AC70 from 0x82D1B050 (bit 0 of r6 clear, and the part for bit 1) was not read.",
+          "What the city bytes +0x1 and +0x3, the halfword +0x7E and bit 0 of word +0x10 hold was not established here.",
+          "The word at 0x82F700B0 can be written at run time. Its stores were not searched.",
+          "The dispatcher entry of a call site is given as the range between two table targets. Which event ids reach each call, and the conditions before each call, were not read, except entry 27.",
+          "The first loop of 0x82CF7428 and its code after the block were not read.",
+          "The calls at 0x82D1D7D0 and 0x82D1F8D0 were read for the arguments alone."
+        ],
+        "interpretation": [
+          "Interpretation: 0x82D1AC70 changes the player of a city. r4 is the new player and r5 the old one. A change with flag bit 0 clears the item.",
+          "Interpretation: 0x82D1B400 also gives a city to a new player. Entry 27 does this and nothing else.",
+          "Interpretation: 0x82F700B0 holds the index of the barbarian player, and byte +0x1 of a city looks like the player that founded it.",
+          "Interpretation: 0x82CF7428 is an area effect on a tile and its neighbours. It removes the population of a city on the centre tile and half of it in neighbouring cities. Byte +0x3 is the city size.",
+          "Interpretation: for the AI purchase arm, after a city changes player, the new player's city holds -1, or the default item when the byte at 0x8314F10B is not 0, until the generator chooses."
+        ],
+        "falsificationConditions": [
+          "A branch in 0x82D1ACA8..0x82D1AE5C that targets an address outside that range, or a call in it that does not return, would falsify the reading that each path reaches the block when bit 0 of r6 is set.",
+          "A direct branch in 0x82D1B444..0x82D1B5BC, calls aside, that targets an address outside 0x82D1B444..0x82D1B5C0, or a second branch into 0x82D1C570 from another address, would falsify the reading of the 0x82D1B400 test.",
+          "A path from 0x82D1B5C4..0x82D1C56C into 0x82D1C570 would falsify the reading that equal bytes end without the block.",
+          "A second branch into 0x82CF76C4..0x82CF76F0 from another test, or a first-pass new byte other than 0, would falsify the reading of 0x82CF7428.",
+          "An r6 with bit 0 clear at 0x82CE0F0C or 0x82D1F8D0, or with bit 0 set at 0x82CE0F24 or 0x82D1D7D0, would falsify the reading of those arguments."
+        ],
+        "result": "0x82D1AC70(city, r4, r5, r6) reaches its block when bit 0 of r6 is set. The located calls pass 1 at 0x82CE0F0C and 0x82D1F8D0 and 2 at 0x82CE0F24 and 0x82D1D7D0. 0x82D1B400(city, r4) reaches its block when r4 differs from the city byte +0x0 and the city byte +0x1 differs from the word at 0x82F700B0. When byte +0x1 equals that word, a separate path runs that ends without the block. 0x82CF7428 walks a tile and its eight neighbours. For a city on a walked tile it lowers the city byte +0x3, to 0 on the first tile, and reaches its block when the new byte is 0 and bit 0 of the city word +0x10 is set. This is a static reading: none of these calls was observed."
       }
     },
     "RVA-F-0331": {

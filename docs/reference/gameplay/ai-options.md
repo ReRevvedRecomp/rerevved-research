@@ -664,8 +664,23 @@ equals that word, a separate path ends without the block. `0x82CF7428` walks a
 tile and its eight neighbours. It lowers the city byte `+0x3` of a city on a
 walked tile, to 0 on the first tile, and reaches its block when the new byte is
 0 and bit 0 of the city word `+0x10` is set. The path claims rest on direct
-branch targets and assume returning calls and no arithmetic trap. The conditions in the callers were not read, except dispatcher
-entry 27. None of these calls was observed.
+branch targets and assume returning calls and no arithmetic trap. Straight-path tests in dispatcher
+entries 0, 1, 15, 17 and 42 are recorded below; other caller paths remain
+unresolved. None of these calls was observed.
+
+The dispatcher entries and the tests before these calls are recorded in
+[city item reset event finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetEventBoundary).
+The call of `0x82CF7428` is in entry 17. The call of `0x82D1B400` at `0x82CDF9F8` is in
+entry 0, and the calls at `0x82CDFC48` and `0x82CDFD80` are in entries 1 and 42,
+which share a target. Entry 15 holds the store at `0x82CE0E3C` and the calls of
+`0x82D1AC70` at `0x82CE0F0C` and `0x82CE0F24`, in the cases for unit types `0x22`
+and `0x23` of a switch on the unit type. In entries 0, 1 and 42 the direct call
+of `0x82D1B400` alternates with event `0x1B`: when `0x82CD5A70(a)` returns a
+nonzero low byte and `a` is the result of `0x82D8A3A0`, the event is submitted
+instead, and entry 27 then makes the call. Interpretation: these are unit move
+commands that take a city, the launch of a unit, and the use of a great person.
+The tests listed are those on the straight path to each call. Who submits
+events 0, 1, 15, 17 and 42 was not searched. None of these events was observed.
 
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's

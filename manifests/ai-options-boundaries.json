@@ -2481,7 +2481,140 @@
           "A second branch into 0x82CF76C4..0x82CF76F0 from another test, or a first-pass new byte other than 0, would falsify the reading of 0x82CF7428.",
           "An r6 with bit 0 clear at 0x82CE0F0C or 0x82D1F8D0, or with bit 0 set at 0x82CE0F24 or 0x82D1D7D0, would falsify the reading of those arguments."
         ],
-        "result": "0x82D1AC70(city, r4, r5, r6) reaches its block when bit 0 of r6 is set. The located calls pass 1 at 0x82CE0F0C and 0x82D1F8D0 and 2 at 0x82CE0F24 and 0x82D1D7D0. 0x82D1B400(city, r4) reaches its block when r4 differs from the city byte +0x0 and the city byte +0x1 differs from the word at 0x82F700B0. When byte +0x1 equals that word, a separate path runs that ends without the block. 0x82CF7428 walks a tile and its eight neighbours. For a city on a walked tile it lowers the city byte +0x3, to 0 on the first tile, and reaches its block when the new byte is 0 and bit 0 of the city word +0x10 is set. This is a static reading: none of these calls was observed."
+        "result": "0x82D1AC70(city, r4, r5, r6) reaches its block when bit 0 of r6 is set. The located calls pass 1 at 0x82CE0F0C and 0x82D1F8D0 and 2 at 0x82CE0F24 and 0x82D1D7D0. 0x82D1B400(city, r4) reaches its block when r4 differs from the city byte +0x0 and the city byte +0x1 differs from the word at 0x82F700B0. When byte +0x1 equals that word, a separate path runs that ends without the block. 0x82CF7428 walks a tile and its eight neighbours. For a city on a walked tile it lowers the city byte +0x3, to 0 on the first tile, and reaches its block when the new byte is 0 and bit 0 of the city word +0x10 is set. This is a static reading: none of these calls was observed. The dispatcher entries and tests before these calls are recorded in cityItemResetEventBoundary."
+      },
+      "cityItemResetEventBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "Which dispatcher entries reach the calls of 0x82CF7428, 0x82D1B400 and 0x82D1AC70 and the store of -1 at 0x82CE0E3C, and which tests stand before each?",
+        "scope": {
+          "dispatcher": "0x82CDDF08",
+          "entries": [
+            "0",
+            "1",
+            "15",
+            "17",
+            "42"
+          ],
+          "calls": [
+            "0x82CF7428",
+            "0x82D1B400",
+            "0x82D1AC70"
+          ],
+          "store": "0x82CE0E3C",
+          "unitRecordSize": "0x54",
+          "unitArrayAddress": "0x830F2BF0",
+          "unitTypeRowSize": "0x94",
+          "unitTypeRowAddress": "0x82F700D8",
+          "scopeNote": "The claim covers the four parts of the dispatcher that hold these calls and the tests on the straight path to each call. It does not cover who submits the events, the branches off the straight path, or what the tables and bits named here hold."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetConditionBoundary: the conditions inside 0x82D1AC70, 0x82D1B400 and 0x82CF7428, their call sites, and that entry 27 is the call of 0x82D1B400(b, a) alone",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemStoreSitesBoundary: the store of -1 at 0x82CE0E3C and the three item ranges before it",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemAssignmentBoundary: the dispatcher registers r30 = id, r31 = a, r15 = b and r29 = c, the table at 0x82CDE014, and 0x82CE1950 as the event submission function",
+          "Unit records are 0x54 bytes at 0x830F2BF0, 256 per player. Unit type rows are 0x94 bytes at 0x82F700D8."
+        ],
+        "tableTargets": {
+          "targets": [
+            "Entry 0 is 0x82CDF74C, entries 1 and 42 are 0x82CDFA74, entry 15 is 0x82CE090C, entry 17 is 0x82CDEDFC and entry 27 is 0x82CDF4C0.",
+            "With the next higher table target taken as the end of each part (0x82CDF74C..0x82CDFA74, 0x82CDFA74..0x82CDFD88, 0x82CE090C..0x82CE12C4, 0x82CDEDFC..0x82CDF478), no direct branch from outside targets an address inside the parts of entries 0, 15 and 17.",
+            "Ten direct branches from outside target 0x82CDFAC8 in the part of entries 1 and 42. 0x82CDFAC8..0x82CDFAD0 sets r3 = 0 and returns.",
+            "In each part the unit record is at 0x54 * (256 * a + b) in the unit array. In entries 1 and 42, b is first reduced to its remainder modulo 256 (0x82CDFA74..0x82CDFA9C)."
+          ]
+        },
+        "entry17": {
+          "entry": "17",
+          "call": "0x82CF7428 at 0x82CDF1A8",
+          "tests": [
+            "0x82CDEDFC..0x82CDEE38: the unit type is the signed unit byte +0x1. When bit 0x20000 of type row word +0x50 is 0, the code goes to 0x82CDF2F0.",
+            "0x82CDEE3C..0x82CDEE84: r26 = c / 40 and r27 = c - 40 * (c / 40).",
+            "0x82CDEE88..0x82CDEEAC: when the word at 0x8314F1AC is not 0, it calls 0x82CF78D8(a, b, r27, r26) and leaves. 0x82CF7428 is not called.",
+            "0x82CDEEB0..0x82CDEF08: stores r27 to unit halfword +0x22, r26 to +0x24 and -1 to +0x18, sets bits 0x1 and 0x40 of unit word +0xC, and sets r20 = -1.",
+            "0x82CDEF54..0x82CDF100: a loop over the tile (r27, r26) and its eight neighbours. For a tile whose halfword in the table at 0x8312A608 has bit 0 set, whose signed byte in a second per-tile table is not a, and whose city (signed byte in the table at 0x83128D08) has bit 0x40000 of word +0x10 set, it sets r20 to that city and sets bit 0x40 of unit word +0xC (0x82CDEF74..0x82CDEFD4 for the first of three unrolled copies).",
+            "0x82CDF188..0x82CDF1A8: when r20 is -1, it calls 0x82CF7428(a, b, r27, r26). When r20 is not -1 the call is skipped."
+          ]
+        },
+        "entry0": {
+          "entry": "0",
+          "call": "0x82D1B400 at 0x82CDF9F8",
+          "tests": [
+            "0x82CDF74C..0x82CDF794: clears bits 0x1E of unit word +0xC, stores c to unit halfword +0x20, and leaves when unit byte +0x0 is 0xFF or the top bit of word +0xC is set.",
+            "0x82CDF798..0x82CDF850: forms a target tile from the unit halfwords +0x1C and +0x1E and the offset tables at 0x82F7A0B8 and 0x82F7A168 indexed by c. It leaves to 0x82CDFA68 when the target tile or the unit's tile has bit 0x8000 of its halfword in the table at 0x8312A608 set.",
+            "0x82CDF8C0..0x82CDF90C: calls 0x82D08948 and then 0x82CD9970(a, b, 0, -1, -1). When that returns 0 it leaves.",
+            "0x82CDF910..0x82CDF984: forms the tile again from unit halfwords +0x1C, +0x1E and +0x20. When bit 0 of its halfword in the table at 0x8312A608 is 0 the call is skipped.",
+            "0x82CDF988..0x82CDF9F8: calls 0x82CD5A70(a). Low byte 0: calls 0x82D1B400(signed byte of the table at 0x83128D08 for the tile, signed unit byte +0x0).",
+            "Same call, low byte not 0 and a equal to the result of 0x82D8A3A0: calls 0x82D038E8(0) and 0x82CE1950(0x1B, a, that table byte, -1, word at r14 +0x0, -1). Low byte not 0 and a not equal: neither."
+          ]
+        },
+        "entries1And42": {
+          "entries": [
+            "1",
+            "42"
+          ],
+          "calls": "0x82D1B400 at 0x82CDFC48 and 0x82CDFD80",
+          "tests": [
+            "0x82CDFAA0..0x82CDFAF0: when bit 0x4000 of unit word +0xC is set it returns (with a flag store when c is not -1). Otherwise it clears bit 0x8000 and calls 0x82CD7A60(a, b, c) with b as received. When that returns 0 it leaves.",
+            "0x82CDFAF4..0x82CDFBA8: forms the target tile from unit halfwords +0x1C, +0x1E and +0x20 (r27 = tile index, r24 = 2 * index).",
+            "First call, 0x82CDFB9C..0x82CDFC48: requires bit 0 of the tile halfword in the table at 0x8312A608, a nonzero byte in the table at 0x830E7B10 for the tile, and a nonzero byte +0x41 in the unit's type row. Then 0x82CD5A70(a): low byte 0 calls 0x82D1B400(table byte at 0x83128D08 for the tile, signed unit byte +0x0). Low byte not 0 with a equal to the result of 0x82D8A3A0 submits event 0x1B as in entry 0. A nonzero low byte with a not equal to that result does neither. On each of the three outcomes r22 = 1 (0x82CDFC4C). Before that, r22 is copied from r17 at 0x82CDFB90, and r17 is set to 0 at 0x82CDDF84.",
+            "0x82CDFC50..0x82CDFCC0: 0x82CD5A70(a) again. Low byte 0 calls 0x82CD69B8(a, r26, signed unit halfword +0x20), with r26 the signed remainder of b divided by 256. Otherwise, when a equals the result of 0x82D8A3A0, it sets bit 0x8000 of unit word +0xC and submits event 0x11 with (a, r26, that halfword).",
+            "Second call, 0x82CDFCC4..0x82CDFD80: requires unit byte +0x0 not 0xFF, the top bit of unit word +0xC clear, the unit type not 0x1C and not 0x1D, bit 0 of the same tile halfword, and a zero low byte of r22. Then the same choice between 0x82D1B400 and event 0x1B."
+          ]
+        },
+        "entry15": {
+          "entry": "15",
+          "calls": "store of -1 at 0x82CE0E3C, calls of 0x82D1AC70 at 0x82CE0F0C and 0x82CE0F24",
+          "tests": [
+            "0x82CE090C..0x82CE0934: leaves when unit byte +0x3 is 0x2E or more.",
+            "0x82CE0A3C..0x82CE0A70: the signed unit byte +0x1 minus 0x1F selects one of seven targets from the word table at 0x82CE0A74 (0x82CE0A90, 0x82CE0B54, 0x82CE0C20, 0x82CE0CD0, 0x82CE0EBC, 0x82CE0FCC, 0x82CE10D4). A value above 6 goes to 0x82CE1184.",
+            "Type 0x22, 0x82CE0CD0..0x82CE0E54: the city is the result of 0x82CFF528 on the unit halfwords +0x1C and +0x1E. It requires the signed city byte +0x0 equal to a and not -1, and the signed city byte +0x3 above 0 (0x82CE0D08..0x82CE0D30). Otherwise it goes to 0x82CE124C. It raises the word at 0x830ED43C + 4 * a, calls 0x82D02390(a, b, 0) and then runs the three item ranges already recorded, with the store of -1 at 0x82CE0E3C.",
+            "Type 0x23, 0x82CE0EBC..0x82CE0F24: when c is -1 it goes to 0x82CE124C. Otherwise it raises the same word, calls 0x82D02390(a, b, 0), then 0x82D1AC70(c, a, signed byte +0x0 of city c, 1) and 0x82D1AC70(c, a, signed byte +0x0 of city c read again, 2).",
+            "The type rows 0x1F to 0x25 have names that start with \"Great\"."
+          ]
+        },
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CDEEF0",
+            "0x82CDF0A8",
+            "0x82CDF840",
+            "0x82CDF9A0",
+            "0x82CDFB70",
+            "0x82CDFC90",
+            "0x82CDFD80",
+            "0x82CE0A0C",
+            "0x82CE0DD0",
+            "0x82CE0F28"
+          ],
+          "radius": 64,
+          "distinctWords": 1048,
+          "outputSha256": "483BEC5610DCA4AA7031ECF39272A8B5265D813D3B58A045FC97C1875095C4D0",
+          "imageMatch": "The 1048 distinct words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The search for branches into the four parts, the dispatcher table and the type row names were read from the flat image."
+        },
+        "limits": [
+          "Static reading only. None of these events was observed.",
+          "The search for entries into the four parts covers direct branches inside the dispatcher function. An indirect branch other than the two tables read (0x82CDE014 and 0x82CE0A74) was not excluded.",
+          "The tests listed are those on the straight path to each call. Other branches inside each part (for example 0x82CDF854..0x82CDF8BC in entry 0, and the code of entry 15 between 0x82CE0934 and 0x82CE0A3C) were not read in full.",
+          "0x82CD5A70, 0x82CD7A60, 0x82CD69B8, 0x82D08948, 0x82D02390, 0x82CF78D8 and 0x82D8A3A0 were not read. 0x82CD9970 was not read here.",
+          "Who submits events 0, 1, 15, 17 and 42 was not searched. Entry 0 and entries 1 and 42 submit event 0x1B themselves on the path named.",
+          "What the tables at 0x830E7B10 and 0x8314F1AC, the second per-tile table of entry 17, and the unit word +0xC bits hold was not established.",
+          "The other five cases of the entry 15 switch were not read.",
+          "The calls of 0x82D1AC70 at 0x82D1D7D0 and 0x82D1F8D0 are outside the dispatcher and were not read here."
+        ],
+        "interpretation": [
+          "Interpretation: entries 0, 1 and 42 are unit move commands. A unit that moves onto a tile with a city of another player takes it, through 0x82D1B400. When 0x82CD5A70 says the player's moves go through the event route and the player is the local one, the capture is sent as event 0x1B. With a zero low byte it is done at once. With a nonzero low byte and another player, neither happens here.",
+          "Interpretation: entry 17 is the launch of a unit whose type has flag 0x20000 at a target tile. A city near the target with bit 0x40000 of word +0x10 stops the area effect of 0x82CF7428.",
+          "Interpretation: entry 15 is the use of a great person. Type 0x22 finishes the current item of the city the unit stands in. For a wonder slot it clears the item when the table word is -1 and 0x82CF3608 returns nonzero. Type 0x23 moves city c to player a through 0x82D1AC70.",
+          "Interpretation: for the AI purchase arm, the -1 stores recorded before happen on a capture by movement, on a great person of type 0x22 or 0x23, and on the area effect, so in play they are tied to these events."
+        ],
+        "falsificationConditions": [
+          "A direct branch from outside the dispatcher parts into the parts of entries 0, 15 or 17, or into the part of entries 1 and 42 at an address other than 0x82CDFAC8..0x82CDFAD0, would falsify the reading of the entries.",
+          "A table word at 0x82CDE014 other than the targets listed for entries 0, 1, 15, 17, 27 and 42 would falsify the placement of the calls in those entries.",
+          "A branch from the straight path of a part that skips a listed test would falsify the tests recorded for that call.",
+          "A case of the entry 15 switch other than types 0x22 and 0x23 that reaches the store at 0x82CE0E3C or the calls of 0x82D1AC70 at 0x82CE0F0C and 0x82CE0F24 would falsify the two cases named.",
+          "A second call of 0x82D1B400 or submission of event 0x1B in entries 0, 1 and 42, on a path not listed, would falsify the reading of the choice between the direct call and the event."
+        ],
+        "result": "The calls of 0x82CF7428, 0x82D1B400 and 0x82D1AC70 and the store of -1 at 0x82CE0E3C sit in four parts of the dispatcher 0x82CDDF08: entry 17 (the call of 0x82CF7428 at 0x82CDF1A8), entry 0 (one call of 0x82D1B400 at 0x82CDF9F8), entries 1 and 42, which share a target (two calls of 0x82D1B400 at 0x82CDFC48 and 0x82CDFD80), and entry 15 (the store at 0x82CE0E3C and the calls of 0x82D1AC70 at 0x82CE0F0C and 0x82CE0F24). No direct branch from outside enters the parts of entries 0, 15 and 17. The part of entries 1 and 42 is entered from outside at 0x82CDFAC8 alone, which is a return. In entries 0, 1 and 42 the direct call of 0x82D1B400 has an alternative: when 0x82CD5A70(a) returns a nonzero low byte and a is the result of 0x82D8A3A0, event 0x1B is submitted through 0x82CE1950 instead, and entry 27 then makes the call. In entry 15 the two sites belong to two cases of a switch on the unit type. The tests on the straight path to each call are recorded in the parts above. This is a static reading: none of these events was observed."
       }
     },
     "RVA-F-0331": {

@@ -3574,7 +3574,7 @@
         },
         "limits": [
           "Static reading only. No value was observed.",
-          "What writes the eight tables at 0x8312E810, and what 0x82CEF4E8 returns for 0xF, remain unresolved.",
+          "What 0x82CEF4E8 returns for 0xF remains unresolved; the located writer of the eight tables is recorded in tileTableWriterBoundary.",
           "The meanings of C, Z, h, A, the per-player word at 0x830ED3D8 and city word +0x10 bits 0x1, 0x80 and 0x800 are not established here.",
           "The 0x82D1F8D0 caller reads one buffer halfword per player for the count at 0x82F700AC; 0x82CB2370 fills eight. A count above 8 was not examined.",
           "Callers other than 0x82D1F814 and 0x82D1F860 were not read."
@@ -3587,7 +3587,118 @@
           "A halfword load at an offset other than 0xC80 * k + 2 * i from 0x8312E810, or a store to an address other than r5 + 2 * k, in 0x82CB2370 would falsify the table copy.",
           "A different rejection condition, order of evaluated conditions, or return value would falsify this chain."
         ],
-        "result": "0x82CB2370(a, b, buffer) copies the halfword at index 40 * a + b from each of eight tables at 0x8312E810 + 0xC80 * k (k = 0..7) to buffer + 2 * k, and returns the sum of the eight signed values. 0x82CF0070(city, p) returns 0 or 1 from a fixed chain of tests on the city, p and the city's owner, listed in cityTests. This is a static reading: what writes the eight tables, what 0x82CEF4E8 returns for 0xF, and the meanings of the words the tests read remain unresolved."
+        "result": "0x82CB2370(a, b, buffer) copies the halfword at index 40 * a + b from each of eight tables at 0x8312E810 + 0xC80 * k (k = 0..7) to buffer + 2 * k, and returns the sum of the eight signed values. 0x82CF0070(city, p) returns 0 or 1 from a fixed chain of tests on the city, p and the city's owner, listed in cityTests. This is a static reading: what 0x82CEF4E8 returns for 0xF, and the meanings of the words the tests read remain unresolved."
+      },
+      "tileTableWriterBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "What writes the eight halfword tables at 0x8312E810 + 0xC80 * k (k = 0..7) that 0x82CB2370 reads?",
+        "scope": {
+          "functions": [
+            "0x82CBE528"
+          ],
+          "range82CBE528": "0x82CBE528..0x82CBF568, 1041 instructions",
+          "tableBase": "0x8312E810",
+          "tableStride": "0xC80",
+          "tableCount": "8",
+          "clearedRange": "0x8312E810..0x83134C10",
+          "cityArrayAddress": "0x8314FE28",
+          "cityRecordSize": "0xBC",
+          "scopeNote": "The claim covers which function writes the range within the searches listed in searches, where it writes, and the index it uses. It does not cover the amounts added at two of the sites, the full conditions of two others, the meanings of the tables the sites read, or when the callers run the function."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/outsideCallHelperBoundary: 0x82CB2370 reads halfword 40 * a + b of each table at 0x8312E810 + 0xC80 * k; 0x82CF0070 and its tests",
+          "ai-civilization-elimination.json: 0x82F700B0 is the barbarian player word"
+        ],
+        "searches": {
+          "addressFormation": "An immediate base chain (a high half, then an add or a load or store offset, followed up to a branch or 48 instructions) gives an address in 0x8312E810..0x83134C10 only in 0x82CB2370 (0x82CB2388..0x82CB23B4) and 0x82CBE528 (0x82CBE54C). In every function that forms an address in 0x8312E000..0x83135000, the uses of that register with an offset into the range were checked by reaching definitions. Apart from 0x82CB2370 and 0x82CBE528, each such use has a different definition of the register, so it is not an access to the range. Examples are 0x82CB6F50, 0x82CB874C, 0x82CBBD00, the dispatcher 0x82CDDF08, 0x82D05D50 and 0x82D255B8.",
+          "dataWords": "Nine image words hold a value in the range. Six are in code and are instruction words: 0x825DAE34, 0x8267C4A8, 0x827069D0, 0x82762BDC, 0x82821564 and 0x829F0750. Three are in data and were not examined as pointers: 0x831AF22C, 0x831D3984 and 0x831D82E0."
+        },
+        "writer": {
+          "function": "0x82CBE528",
+          "range": "0x82CBE528..0x82CBF568, 1041 instructions",
+          "callers": "Direct callers, from a scan of every branch word: 0x82CE0188, 0x82CE021C, 0x82CF6FB8, 0x82D1A310, 0x82D1B03C, 0x82D1B7A0, 0x82D1C9A0, 0x82D1D208 and 0x82D2584C.",
+          "baseRegister": "r14 is 0x8312E608 (0x82CBE544). That is its only definition until 0x82CBEEE4, where it is reloaded from frame +0x64 and not used for the tables again.",
+          "clear": "At 0x82CBE550, 0x827F7BB0(0x8312E810, 0, 0x6400) clears all eight tables. At 0x82CBE560 the same call clears 0x6400 bytes at frame +0xB0.",
+          "index": "Every table store site is at r14 + 0x208 (= 0x8312E810) plus 2 * index, with index = 1600 * p + 40 * a + b for a player p and a tile (a, b).",
+          "cityLoop": "For sites 1 to 3, r27 runs over the city records at 0x8314FE28 in steps of 0xBC below 0x5E00 (128 records). A city is skipped when signed byte +0x3 is 0 or less (0x82CBE5D0), when signed byte +0x0 is -1 (0x82CBE5E0), or when byte +0x0 equals the word at 0x82F700B0 (0x82CBE5F0). For each city that passes, bit 0x10000 of word +0x24 is cleared (0x82CBE608..0x82CBE614). 0x82CBECB0 sets the same bit on another path.",
+          "storeSites": [
+            {
+              "site": 1,
+              "address": "0x82CBE88C",
+              "operation": "adds a computed amount",
+              "player": "p is signed byte +0x0 of the loop city.",
+              "tile": "(a, b) is the city's halfwords +0x30 and +0x32 plus one of 44 offsets from the word tables at 0x82F7A0B8 and 0x82F7A168. a is wrapped by the word at 0x82F77364. b must be at least 1 and below the word at 0x82F77448 minus 1. The byte at 0x8312B288 + 40 * a + b must be nonzero."
+            },
+            {
+              "site": 2,
+              "address": "0x82CBE92C",
+              "operation": "adds a computed amount",
+              "player": "p is the same as at site 1.",
+              "tile": "(a, b) is the city's own tile, halfwords +0x30 and +0x32."
+            },
+            {
+              "site": 3,
+              "address": "0x82CBE948",
+              "operation": "writes 0x270F (9999) at the tile of site 2",
+              "player": "p is the same as at site 1.",
+              "condition": "Bit 0x1 of city word +0x10 is set and signed city byte +0x1 equals p."
+            },
+            {
+              "site": 4,
+              "address": "0x82CBEA88",
+              "operation": "adds 0x1E",
+              "player": "p is signed byte +0x0 of the city whose index is the byte at 0x83128D08 + 40 * a + b.",
+              "tile": "Over tiles (a, b).",
+              "condition": "That byte is not -1 and bit 0x1 of the halfword at 0x8312A608 + 2 * (40 * a + b) is clear."
+            },
+            {
+              "site": 5,
+              "address": "0x82CBECE4",
+              "operation": "writes 0x270F (9999)",
+              "player": "p is the signed byte at 0x830E6850 + 40 * a + b. It must not equal the word at 0x82F700B0 (0x82CBEBE4).",
+              "condition": "Bit 0x1 of the same 0x8312A608 halfword is set (0x82CBEBC8).",
+              "reach": "The site is reached from 0x82CBEC1C and when 0x82CF0070 returns 0 at 0x82CBEC30."
+            }
+          ]
+        },
+        "summary": [
+          "Within the searches listed, 0x82CBE528 is the only located writer of the eight tables. It clears 0x8312E810..0x83134C10 at its start and then writes it at five store sites, each indexing halfword 1600 * p + 40 * a + b for a player p and a tile (a, b).",
+          "Sites 1, 2 and 4 add to the entry and sites 3 and 5 write 0x270F (9999)."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CBE550",
+            "0x82CBE620",
+            "0x82CBE860",
+            "0x82CBE930",
+            "0x82CBEA60",
+            "0x82CBEC20",
+            "0x82CBECE0",
+            "0x82CBEEE4"
+          ],
+          "radius": 64,
+          "distinctWords": 727,
+          "outputSha256": "B58B716A6BD3B46E1E9223E281F3E301944B58AB8CE745F6E2691CE7294CD1CA",
+          "imageMatch": "All 727 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The address scans, the data word search, the reaching definitions and the caller scan were done on the flat image."
+        },
+        "limits": [
+          "Static reading only. No table value was observed.",
+          "A store through a pointer built at run time, passed in from a caller, or loaded from data would be missed, including the three data words not examined. 0x827F7BB0 is a fill helper, and its other callers were not traced.",
+          "The amounts added at sites 1 and 2, the neighbor test at 0x82CBE6B4..0x82CBE740 on the way to site 1, the full conditions of sites 4 and 5, and the meanings of the tables at 0x82F7A0B8, 0x82F7A168, 0x8312B288, 0x83128D08, 0x8312A608 and 0x830E6850 remain unresolved.",
+          "When the nine callers run 0x82CBE528 remains unresolved."
+        ],
+        "interpretation": [
+          "Interpretation: 0x82CBE528 rebuilds a per-player table from scratch. Each live city adds to its owner's table around it and on its own tile, and 9999 marks tiles that a player holds fixed. The 0x82D1F8D0 call then gives a city to the player with the largest value on its tile."
+        ],
+        "falsificationConditions": [
+          "A different function that stores into 0x8312E810..0x83134C10 would falsify the claim that 0x82CBE528 is the only writer within the searches.",
+          "A different index expression than 1600 * p + 40 * a + b, or a different base than r14 + 0x208, at a listed store site would falsify the indexing.",
+          "A different number of store sites, or a different value written at site 3 or site 5, would falsify the site list."
+        ],
+        "result": "Within the searches listed, 0x82CBE528 is the only located writer of the eight tables at 0x8312E810 + 0xC80 * k. It clears 0x8312E810..0x83134C10 at its start and then writes it at five store sites, each indexing halfword 1600 * p + 40 * a + b for a player p and a tile (a, b), as listed in writer. This is a static reading: the amounts added at sites 1 and 2, the full conditions of sites 4 and 5, the meanings of the tables those sites read, and when the nine callers run the function remain unresolved."
       }
     },
     "RVA-F-0331": {

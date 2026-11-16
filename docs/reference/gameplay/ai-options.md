@@ -681,8 +681,14 @@ The [outside call helper finding](../../../manifests/ai-options-boundaries.json#
 records their computations. `0x82CB2370` copies one halfword from each of eight
 tables at `0x8312E810` and returns their signed sum.
 `0x82CF0070` returns 0 or 1 from a fixed chain of tests on the city, the
-player and the city's owner. The reading is static, and what writes the eight
-tables remains unresolved.
+player and the city's owner. The reading is static.
+
+The [tile table writer finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/tileTableWriterBoundary)
+records `0x82CBE528` as the only located writer of those tables. It clears the
+whole range and then writes it at five sites, each indexing halfword
+`1600 * p + 40 * a + b` for a player `p` and a tile `(a, b)`. The reading is
+static. The amounts added at two of the sites and when its callers run it
+remain unresolved.
 
 The dispatcher entries and the tests before these calls are recorded in
 [city item reset event finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetEventBoundary).

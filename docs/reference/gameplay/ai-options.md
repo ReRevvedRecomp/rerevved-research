@@ -717,7 +717,17 @@ sit on three input routes: code 2 or 75 in `r18` leads to event 15, code
 `0x406` or `0x40A` in `r18` leads to event 17 at `0x82D2BD84` and `0x82D2C170`,
 and a code `0x121..0x128` in frame word `+0x7C` leads to event 0 and event 17
 at `0x82D2CE00`. No required test calls `IsHumanPlayer` `0x82CD5A70`. The
-reading is static; the sources of the codes were not established.
+reading is static. Which codes occur in play remains unobserved.
+
+The [selection code source finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/selectionCodeSourceBoundary)
+traces where those codes come from. A test at `0x82D27E64` sends the function
+either to a read of an input object or to a call of `AITurnUnitFilter`
+`0x82CBF570`. Code 2 has one constant source, code 75 has constant sources only
+on the `AITurnUnitFilter` route, codes `0x406` and `0x40A` have no constant source in
+the function, two switches in the function write the direction codes
+`0x121..0x128`, and other potential sources include the input return, the
+frame-array load and `AITurnUnitFilter`. The return values of these functions remain
+unresolved, and the reading is static.
 
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's

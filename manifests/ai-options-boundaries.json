@@ -3078,6 +3078,107 @@
           "Interpretation: the human test at 0x82D2BC84 only widens which units of the group are moved; none of the five calls is limited to human players."
         ],
         "result": "The five calls sit on three input routes, each selected by a code. Code 2 or 75 in r18 leads to event 0xF at 0x82D2ABE0; code 0x406 or 0x40A in r18 leads to event 0x11 at 0x82D2BD84 and 0x82D2C170; a code 0x121..0x128 in frame word +0x7C leads to event 0 at 0x82D2C9BC and event 0x11 at 0x82D2CE00. The tests each route needs are listed in routes. No required test on any route calls IsHumanPlayer 0x82CD5A70; it is called at 0x82D2BC84 as one of three alternatives inside the 0x82D2BD84 loop. This is a static reading: none of these calls was observed."
+      },
+      "selectionCodeSourceBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "In TurnSelectionUpdate 0x82D259E8, where do the codes come from that select the submit routes: r18 at the first switch (tested from 0x82D2A4D0) and frame word +0x7C at the second switch (loaded at 0x82D2A70C)?",
+        "scope": {
+          "function": "0x82D259E8",
+          "functionTableRow": "0x8219B3A0",
+          "range": "0x82D259E8..0x82D2D2F8",
+          "values": [
+            "r18 at 0x82D2A4D0",
+            "frame word +0x7C at 0x82D2A70C"
+          ],
+          "scopeNote": "Only these two values are followed. A value produced by a call or a table is named and not followed into the callee."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/selectionSubmitConditionBoundary: which codes lead to which submission, and the notation P, S",
+          "ai-stat-choice.json#/consumerBoundary: AITurnUnitFilter writes a code 0x121..0x128 through its fourth argument for ordinals 0..7 (ai-stat-choice.json#/consumerBoundary/decode and the publication record), and the caller route through 0x82D291C8",
+          "Symbol catalog: TurnSelectionUpdate 0x82D259E8, AITurnUnitFilter 0x82CBF570, IsHumanPlayer 0x82CD5A70, local player resolver 0x82D8A3A0"
+        ],
+        "notation": "P and S are as in selectionSubmitConditionBoundary. Frame word +N is the word at offset N in the function's stack frame.",
+        "summary": [
+          "The r18 code travels between r18 and frame word +0x70 and has 34 origin sites that can reach 0x82D2A4D0.",
+          "The frame word +0x7C code has 21 stores and one call given its address that can reach 0x82D2A70C. Every path from the entry passes one of them.",
+          "A test at 0x82D27E64 splits two producer routes. The input route requires frame word +0x74 to equal 0x82D8A3A0(word at 0x8314EFE0) and either bit 0x400 of the word at 0x830E4550 clear or S = -1; otherwise execution takes the route at 0x82D290D4, which calls AITurnUnitFilter 0x82CBF570.",
+          "Of the event-selecting codes, 2 has one constant source (0x82D2902C), 75 has constant sources only on the AITurnUnitFilter route (r23 = 0x4B at 0x82D2926C), and 0x406 and 0x40A have no constant source in the function.",
+          "Two in-function switches write the direction codes 0x121..0x128; other potential sources include the input return, the frame-array load and AITurnUnitFilter."
+        ],
+        "routeSplit": [
+          "0x82D25D0C and 0x82D25DD8 store the chosen player to 0x8312B8E8, and 0x82D25D40 and 0x82D25DE0 store the same value to frame word +0x74. These are the only +0x74 stores that reach 0x82D27E20.",
+          "0x82D27E10..0x82D27E64: r3 = 0x82D8A3A0(word at 0x8314EFE0). When frame word +0x74 differs from it, the code branches to 0x82D290D4.",
+          "When they are equal, the input route continues at 0x82D27E68. It also branches to 0x82D290D4 when bit 0x400 of the word at 0x830E4550 is set and S is not -1 (0x82D27E6C..0x82D27E84).",
+          "The route at 0x82D290D4 reaches 0x82D291C8 with no required test in between."
+        ],
+        "inputRoute": [
+          "Range 0x82D27E88..0x82D28108.",
+          "0x82D27E94: frame word +0x7C = 0x82E55518(0x82F7AD28).",
+          "0x82D27EC8..0x82D27ED0: r30 is the result of the virtual function at slot +0xA4 of the object in frame word +0x78, called with that +0x7C value. It is stored to frame word +0x70.",
+          "0x82D27EEC..0x82D27EF0: when that result is 0 and bit 0x80 of the word at 0x830E4550 is set, +0x70 = 0x52.",
+          "0x82D27F40..0x82D27F4C: +0x7C = 0 and +0x70 = 0 on a counter path (frame-table word +0x4 below 5).",
+          "0x82D280EC..0x82D28108: +0x70 = 0x82CE8A50(P, S).",
+          "0x82D281A4 loads r18 from +0x70."
+        ],
+        "filterRoute": [
+          "Range 0x82D290D4..0x82D29578.",
+          "0x82D291A8..0x82D291B4: r5 = 0x82CBC8E8(P, S, address of frame word +0x7C). 0x82D291BC..0x82D291C8: AITurnUnitFilter(P, S, that result, address of frame word +0x7C), with P from frame word +0x74 and S from 0x8312B8EC. Its return is stored to +0x70 at 0x82D291DC.",
+          "0x82D2926C sets r23 = 0x4B. 0x82D29380, 0x82D29444, 0x82D294A8 and 0x82D2951C store r23 to +0x70 and 0x82D29554 copies it to r18, each on a branch after 0x82CEF6A8 calls (0x82D29268 and 0x82D29320) and tile and unit tests. 0x82D2956C reloads r18 from +0x70."
+        ],
+        "otherR18Origins": [
+          "Constants that reach 0x82D2A4D0 but select none of the event routes: 0x7D (0x82D28C2C), 0 (0x82D28C94, 0x82D29008, 0x82D29078, the eight ordinal cases 0x82D29614..0x82D296BC, 0x82D29710, 0x82D2978C), 0x1C (0x82D28D04), 0x79 (0x82D28F48), 0x61 (0x82D28F70), 0x70 (0x82D28FA4), 0x62 (0x82D28FD4), 0x66 (0x82D2A3B0) and 0x73 (0x82D2A3D0). 0x82D27EF0 stores 0x52 and 0x82D27F4C stores 0 to +0x70.",
+          "Code 2 at 0x82D2902C: reached when bit 0x80 of type row word +0x50 for unit S is set and IsHumanPlayer(P) (0x82D28FEC) returns 0. When it returns not 0, r18 = 0 (0x82D29008) and bits 0x2 and 0x800 of unit S word +0xC are cleared.",
+          "Table: 0x82D28C80 and 0x82D28C84 load r18 and r19 from frame arrays at +0xF0 and +0x120 indexed by the result of 0x82CE8338 (0x82D28C60). A negative result gives 0 for both (0x82D28C94..0x82D28CA0). Both are stored, to +0x70 and +0x7C.",
+          "Call: 0x82D28F34 sets r18 to the result of 0x82D06398 (called at 0x82D28F2C), reached when r18 is 0x404 and the halfword at 0x8314F1D4 is 0 (0x82D28CAC..0x82D28CC0). 0x82D28F40 tests r18 for 0x40D, both after that call and directly from 0x82D28CB0 for other codes. When it is 0x40D, r18 is replaced in turn by 0x79, 0x61, 0x70, 0x62, and 2 or 0, according to unit S tests in 0x82D28F48..0x82D2907C. The constant 2 at 0x82D2902C is on this path.",
+          "The value flow check finds that each non-constant origin (0x82D27ED0, 0x82D28108, 0x82D28C80, 0x82D28F34, 0x82D291DC) can carry 2, 75, 0x406 or 0x40A to 0x82D2A4D0 after the r18 compares on the way, and so can the r23 stores of 75. Other origins that do not reach 0x82D2A4D0 (0x82D2A3F4, 0x82D2A410, 0x82D2B834, 0x82D2B874, 0x82D2B888, 0x82D2B908, 0x82D2C4EC)."
+        ],
+        "frameWord0x7COrigins": [
+          "Reaching 0x82D2A70C: 0x82D27E94 (input call), 0x82D27F48 (0), 0x82D28C8C (table), 0x82D28CA0 (0), 0x82D291C8 (the AITurnUnitFilter call given the address), the eight ordinal cases 0x82D29610..0x82D296C0, 0x82D29714 (0), and the eight ordinal cases 0x82D2BE7C..0x82D2BEE8.",
+          "Switch at 0x82D295E8 on r31, the result of 0x82CFA4F0 called at 0x82D286F4 for unit S when its halfword +0x22 is not negative, its byte +0x2 is not 0 and r18 is not 0x4B (0x82D28680..0x82D286C4). Eight ordinal cases write direction codes to +0x7C with r18 = 0 and +0x70 = 0; the switch at 0x82D2BE50 uses the same conversion. r31 = -1 stores -1 to unit S halfword +0x22 (0x82D296DC).",
+          "Switch at 0x82D2BE50 on unit S halfword +0x20 (recomputed by 0x82CFA1E8 at 0x82D2BE1C when (u, v) differs from (x, y)), on the 0x406 and 0x40A route: the same eight values in the same order."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82D25D30",
+            "0x82D25DD0",
+            "0x82D25FF0",
+            "0x82D27E40",
+            "0x82D27EC0",
+            "0x82D28100",
+            "0x82D286E0",
+            "0x82D28C60",
+            "0x82D28F40",
+            "0x82D28FF0",
+            "0x82D291C0",
+            "0x82D29270",
+            "0x82D29560",
+            "0x82D295E0",
+            "0x82D296A0",
+            "0x82D2A3D0",
+            "0x82D2A700",
+            "0x82D2BE50"
+          ],
+          "radius": 64,
+          "distinctWords": 1775,
+          "outputSha256": "069E1ED8A44C5AA80198DC2CF9F6D6FD21CE6DD447D3DD30BE352D8122C3A567",
+          "imageMatch": "All 1775 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The reaching definition and value flow analyses were done on the flat image over 0x82D259E8..0x82D2D2F8.",
+          "analysis": "Whole-function control flow graph (as in selectionSubmitConditionBoundary), reaching definitions for r18, frame word +0x70, frame word +0x7C and selected source registers, and a value flow check that follows a value between r18 and +0x70 and prunes branches that compare r18 with a constant."
+        },
+        "limits": [
+          "Static reading only. Which codes occur in play was not observed.",
+          "The values returned by 0x82E55518, the slot +0xA4 virtual function, 0x82CE8A50, 0x82CE8338 (and the frame arrays it indexes), 0x82D06398, 0x82CBC8E8, AITurnUnitFilter and 0x82CFA4F0 were not read. Whether 0x82CBC8E8 writes frame word +0x7C, and what +0x7C holds when AITurnUnitFilter does not write it, were not established.",
+          "The value flow check prunes only compares of r18 with a constant. A path it keeps may still be impossible.",
+          "Register and frame sources assume normal calling-convention preservation through calls and no write by another thread. A callee given a frame address could write other frame words.",
+          "The meaning of the input object in frame word +0x78 and of the counter and table tests was not established."
+        ],
+        "interpretation": [
+          "Interpretation: the 0x82D27E64 test chooses between reading the local player's input and asking the AI unit filter, so codes 0x406 and 0x40A most likely come from player input or from the AI filter's result, not from a fixed value. Code 2 from the constant comes only for a player IsHumanPlayer reports as not human. Code 75 is set on the AI route.",
+          "Interpretation: the 0x82D295E8 switch turns a pathfinding step toward unit S's stored destination into a direction code, so destination movement uses the same route as a direct direction code."
+        ],
+        "result": "The r18 code travels between r18 and frame word +0x70 and has 34 origin sites that can reach 0x82D2A4D0. The +0x7C code has 21 stores and one call given its address that can reach 0x82D2A70C. A test at 0x82D27E64 splits two producer routes: the input route requires frame word +0x74 to equal 0x82D8A3A0(word at 0x8314EFE0) and either bit 0x400 of the word at 0x830E4550 clear or S = -1; otherwise execution takes the route at 0x82D290D4, which calls AITurnUnitFilter 0x82CBF570. Of the event-selecting codes, 2 has one constant source (0x82D2902C), 75 has constant sources only on the AITurnUnitFilter route (r23 = 0x4B at 0x82D2926C), and 0x406 and 0x40A have no constant source in the function. Two in-function switches write the direction codes 0x121..0x128; other potential sources include the input return, the frame-array load and AITurnUnitFilter. This is a static reading."
       }
     },
     "RVA-F-0331": {

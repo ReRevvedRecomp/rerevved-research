@@ -3336,6 +3336,61 @@
           "Interpretation: the AI does not issue the group-move or move-to-tile codes through TurnSelectionUpdate's AI route; its unit moves come through direction codes, and its event 0xF use is limited to code 75."
         ],
         "result": "0x82CBC8E8 returns one of 0x4B, 0x66, 0, 0x62, 0x73 or 0x20. With the returns recorded in filterReturnCodeBoundary, the r18 code produced on the AITurnUnitFilter route is one of 0, 0x20, 0x4B, 0x62, 0x66 or 0x73, and a value flow check from the store at 0x82D291DC finds that only those values reach the first switch at 0x82D2A4D0 from that route. None of them is 2, 0x406 or 0x40A. So on that route the first switch can select the event 0xF route only through code 75 (0x4B), and never the code 2 event 0xF route or the 0x406 and 0x40A event 0x11 routes. This is a static reading."
+      },
+      "cityItemArgumentReachBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "How is 0x82D04C98, which stores an item argument to city +0x38 at 0x82D04CC8, reached?",
+        "scope": {
+          "function": "0x82D04C98",
+          "functionTableRow": "0x8219B1E8",
+          "searchRange": "0x82010000..0x82F70000",
+          "scopeNote": "The claim is a negative result within the searches listed: no direct call or branch, no resolved jump table entry, no formation of the address and no data word other than its function table row refers to 0x82D04C98, and it is not reached by falling through. The recompiled code has no call of it either. It does not cover calls through a register whose value is computed in a form not searched, jump tables the reader does not resolve, or whether the function runs."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemStoreSitesBoundary: the storeOfArgument entry for 0x82D04C98, which takes city r3 and item r4, calls 0x82CB3F08 with the city and stores the item to city +0x38 at 0x82D04CC8",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/unitLoopReachBoundary: the same search set applied to 0x82D21570, with the same jump table counts"
+        ],
+        "function": {
+          "tableRow": "Function table row 0x8219B1E8: start 0x82D04C98, second word 0x40001305. Its length field gives 19 instructions, which matches 0x82D04C98..0x82D04CE0, with the return at 0x82D04CE0.",
+          "precedingInstruction": "The word before it, 0x82D04C94, is 0 and not an instruction, and 0x82D04C90 is a plain branch to 0x827F7CAC, so 0x82D04C98 is not reached by falling through."
+        },
+        "searches": {
+          "directCallsAndBranches": "No direct call or branch to 0x82D04C98 was found in 0x82010000..0x82F70000.",
+          "jumpTables": "Of the 2039 indirect jump sites that always jump, the shared jump table reader resolved 1004 as tables; none of their targets is 0x82D04C98. The other 1035 are not resolved as tables.",
+          "addressFormation": "Within 0x82010000..0x82F70000, the immediate search found 0x4C98 only at 0x824752F8 and 0x82685160. Their base high halves are 0x8247, set at 0x824752F0, and 0x8268, set at 0x82685158, rather than 0x82D0.",
+          "dataWords": "Data words equal to 0x82D04C98: only 0x8219B1E8, the function table row.",
+          "recompiledCode": "In the recompiled code, the name appears only in its definition, its declaration and the two function registration tables; no generated function calls it."
+        },
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82D04C98",
+            "0x8219B1E8",
+            "0x824752F8",
+            "0x82685160"
+          ],
+          "radius": 64,
+          "distinctWords": 516,
+          "outputSha256": "51F8CCFACA851DFBE18416F1EC82834616C94DFE3E3E90FEBC4F8A35F135D1FD",
+          "imageMatch": "All 516 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The scans, the data word search and the jump table reading were done on the flat image.",
+          "generatedCodeCheck": "generated:rerevved/sub_82D04C98: the name appears only in its definition, its declaration and the two function registration tables; no generated function calls it."
+        },
+        "limits": [
+          "Static reading only. Whether 0x82D04C98 runs was not observed.",
+          "A negative result: a call through a register whose value is computed in a form not searched (for example a pointer built at run time, or loaded from data written at run time), or a jump table the reader does not resolve, would be missed.",
+          "The recompiled code check shows no direct call, not that no indirect call reaches the address."
+        ],
+        "interpretation": [
+          "Interpretation: 0x82D04C98 is likely unused in this build, so its store of an item argument to city +0x38 need not be considered among the city item writers unless a runtime call is seen."
+        ],
+        "falsificationConditions": [
+          "A direct call or branch to 0x82D04C98, or a jump table entry that resolves to it, would falsify the claim that no route into it was found.",
+          "A data word equal to 0x82D04C98 other than the row 0x8219B1E8, or a formation of its address with the high half 0x82D0 and the low half 0x4C98, would falsify the claim that nothing else refers to it.",
+          "A call of sub_82D04C98 in a generated function would falsify the recompiled code result."
+        ],
+        "result": "Within the searches listed, no route into 0x82D04C98 was found. No direct call or branch, no resolved jump table entry, no formation of its address and no data word other than its function table row refers to it, and it is not reached by falling through. The recompiled code has no call of it either. This is a static reading and a negative result: a pointer built at run time, an unresolved jump table or an indirect call would be missed, and whether 0x82D04C98 runs was not observed."
       }
     },
     "RVA-F-0331": {

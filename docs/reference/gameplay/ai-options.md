@@ -711,6 +711,12 @@ No route into `0x82D21570` was found within the searches recorded in the
 Whether it runs remains unobserved. Interpretation: the function is likely
 unused in this build.
 
+No route into `0x82D04C98`, the function that stores an item argument to city
+`+0x38`, was found within the searches recorded in the
+[city item argument reach finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemArgumentReachBoundary).
+Whether it runs remains unobserved. Interpretation: the function is likely
+unused in this build.
+
 The [selection submit condition finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/selectionSubmitConditionBoundary)
 records the tests before the five calls of `0x82CE1950` in `0x82D259E8`. They
 sit on three input routes: code 2 or 75 in `r18` leads to event 15, code

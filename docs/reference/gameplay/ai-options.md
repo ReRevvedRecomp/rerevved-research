@@ -706,6 +706,11 @@ distinct ids from 0 to `0x40`. A received record is whatever was read from the
 buffer, and the dispatcher sends ids above `0x41` to its common exit. How
 received objects are created was not established.
 
+No route into `0x82D21570` was found within the searches recorded in the
+[unit loop reach finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/unitLoopReachBoundary).
+Whether it runs remains unobserved. Interpretation: the function is likely
+unused in this build.
+
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's
 current item is 104 (Market) or 110 (Bank). The AI turn function `0x82CB6E48`

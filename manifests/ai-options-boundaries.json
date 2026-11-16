@@ -2778,7 +2778,7 @@
           "Ids were read as the last write in address order, with the listed incoming branches; a value that reaches the call through other flow would be missed.",
           "The ids carried by the network object slots 0x82D91C30 and 0x82D91C58 come from the received object and are not fixed in code. The ids written by the title's own builders are recorded in networkSlotIdBoundary.",
           "The conditions in TurnSelectionUpdate 0x82D259E8 before its five submissions, in 0x82CFD758 before its call of 0x82CFD390, and the meaning of the a, b and c arguments at those sites were not read.",
-          "How 0x82D21570 is reached was not established. How often 0x82D259E8 is called was not established; its six direct calls are in 0x82E10690, which has no direct caller.",
+          "How 0x82D21570 is reached is recorded in unitLoopReachBoundary. How often 0x82D259E8 is called was not established; its six direct calls are in 0x82E10690, which has no direct caller.",
           "What the words at 0x8312E608, 0x8312E610 and 0x8312B8C8 hold was not established here."
         ],
         "interpretation": [
@@ -2903,6 +2903,78 @@
           "A call of 0x82CE1950, 0x82CD5848, 0x82CE1AD8 or 0x82CE1830 with an id outside the set recorded here, at a site that reaches a constructor, would falsify the id set."
         ],
         "result": "Each of the slots 0x82D91C30 and 0x82D91C58 passes the five-word record at object +0x34 to 0x82CE16C8 unchanged, and no code on the read or consume path tests its id before that call; 0x82CE16C8 skips an id of -1. Within the searches listed, outgoing objects of the table 0x821368F4 (slot 0x82D91C30) are built only by 0x82CE1830, with ids 0x39, 0x3A and 0x3B. Outgoing objects of the table 0x821368E0 (slot 0x82D91C58) are built by 0x82CE1950, by 25 inline sites and by setup, with 53 distinct ids, all between 0 and 0x40, among them 0, 1, 0xF, 0x11 and 0x2A. A received object holds whatever its read slot read from the buffer, and the dispatcher sends ids above 0x41 to its common exit. This is a static reading: how received objects are created was not established."
+      },
+      "unitLoopReachBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "How is 0x82D21570, which submits event 0x11 for units of the active player, reached?",
+        "scope": {
+          "function": "0x82D21570",
+          "functionTableRow": "0x8219B370",
+          "searchRange": "0x82010000..0x82F70000",
+          "scopeNote": "The claim is a negative result within the searches listed: no direct call or branch, no resolved jump table entry, no formation of the address and no data word other than its function table row refers to 0x82D21570, and the instruction before it is an unconditional branch. The recompiled code has no call of it either. It does not cover calls through a register whose value is computed in a form not searched, jump tables the reader does not resolve, or whether the function runs."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetSubmitterBoundary: the event 0x11 staged by 0x82D21570 inside its loop over unit records",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/networkSlotIdBoundary: the send and queue routes of the inline post pattern",
+          "Symbol catalog: TurnSelectionUpdate 0x82D259E8, AITurnUnitFilter 0x82CBF570"
+        ],
+        "function": {
+          "tableRow": "Function table row 0x8219B370: start 0x82D21570, second word 0x40009303. Its length field gives 147 instructions, which matches the decoded body 0x82D21570..0x82D217B8, which ends with a branch to 0x827F7CA0 at 0x82D217B8. The next row starts 0x82D217C8 (setup).",
+          "precedingInstruction": "The instruction before it, 0x82D2156C, is an unconditional branch to 0x827F7CA0, the end of the function before it, so 0x82D21570 is not reached by falling through.",
+          "inputs": "The first argument is overwritten at 0x82D215AC before any read. The second argument (x) is kept in one saved register, the third (y) in another and the fourth (k) in a third.",
+          "targetTile": "0x82D21580..0x82D21608: dx is the word at 0x82F7A0B8 + 4 * k and dy the word at 0x82F7A168 + 4 * k. The target tile is x' = the signed remainder of (x + dx + W) divided by W, with W the word at 0x82F77364, and y' = y + dy. P is the word at 0x8312B8E8.",
+          "loop": "Loop 0x82D21630..0x82D217B0 over the 0x100 unit records at 0x830F2BF0 + 0x5400 * P (step 0x54). For a record whose halfwords +0x1C and +0x1E equal x and y, whose byte +0x2 is not 0, and whose word +0xC has bits 0x00010006 clear (0x82D21660..0x82D2166C), it calls 0x82CF0268(P, unit, x', y') at 0x82D21680. When that returns not 0, it sets bit 0x8000 of word +0xC (0x82D2168C..0x82D21694) and stages event 0x11 with a = P, b = the unit index, c = k and d = the word at 0x82F7AD00 (0x82D216BC..0x82D216D0), then sends or queues it.",
+          "afterEvent": "0x82D21758..0x82D217A0: after the event, when bit 0x4 of type row word +0x50 for the unit's type is set and bit 0 of the halfword at 0x8312A608 + 2 * (40 * x' + y') is set, it stores 0 to byte +0x2.",
+          "directCallersOf0x82CF0268": "0x82CBFFFC (in AITurnUnitFilter 0x82CBF570), 0x82CF661C (in 0x82CF5D30), 0x82CFA994 (in 0x82CFA4F0), 0x82D21680 (here), and 0x82D2BC2C and 0x82D2C47C (in TurnSelectionUpdate 0x82D259E8). The code at 0x82D2C3C4..0x82D2C5CC in TurnSelectionUpdate handles one unit, the one selected by the words at 0x8312B8E8 and 0x8312B8EC; it is not a loop over unit records."
+        },
+        "searches": {
+          "directCallsAndBranches": "No direct call or branch to 0x82D21570 was found in 0x82010000..0x82F70000.",
+          "jumpTables": "Of the 2039 unconditional indirect jump sites, the shared jump table reader resolved 1004 as tables; none of their targets is 0x82D21570. 1029 are not resolved as tables and the reader stops on 6.",
+          "addressFormation": "The only sites that form an address ending in 0x1570, at 0x8225BB10, 0x82BDBDC0, 0x82C86450 and 0x82E8D1EC, form other addresses, with high halves 0x8214, 0x8211, 0x8216 and 0x82E9.",
+          "dataWords": "Data words equal to 0x82D21570: only 0x8219B370, the function table row.",
+          "recompiledCode": "In the recompiled code, the name appears only in its definition, its declaration and the two function registration tables; no generated function calls it."
+        },
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82D21570",
+            "0x82D21670",
+            "0x82D21770",
+            "0x8219B370",
+            "0x82D2BC2C",
+            "0x82D2C47C",
+            "0x82CBFFFC",
+            "0x82CF661C",
+            "0x82CFA994",
+            "0x8225BB10",
+            "0x82BDBDC0",
+            "0x82C86450",
+            "0x82E8D1EC"
+          ],
+          "radius": 64,
+          "distinctWords": 1547,
+          "outputSha256": "7590AB390E0EA3395D607D8D27E1371F1A98463090BF860BCBD36C3578D54BD0",
+          "imageMatch": "All 1547 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The scans, the data word search and the jump table reading were done on the flat image.",
+          "generatedCodeCheck": "generated:rerevved/sub_82D21570: the name appears only in its definition, its declaration and the two function registration tables; no generated function calls it."
+        },
+        "limits": [
+          "Static reading only. Whether 0x82D21570 runs was not observed.",
+          "A negative result: a call through a register whose value is computed in a form not searched (for example a pointer built at run time, or loaded from data written at run time), or a jump table the reader does not resolve, would be missed.",
+          "The recompiled code check rests on the generated sources as built; it shows no direct call, not that no indirect call reaches the address.",
+          "What 0x82CF0268 tests, and what the tables at 0x82F7A0B8 and 0x82F7A168 hold, was not read here."
+        ],
+        "interpretation": [
+          "Interpretation: 0x82D21570 moves every unit of the active player on tile (x, y) one step in direction k, as a group. With no route found, it is likely unused in this build; the single-unit step in TurnSelectionUpdate does the same work for one unit.",
+          "Interpretation: for the AI purchase arm, events 0x11 from this function need not be considered unless a runtime call is seen."
+        ],
+        "falsificationConditions": [
+          "A direct call or branch to 0x82D21570, or a jump table entry that resolves to it, would falsify the claim that no route into it was found.",
+          "A data word equal to 0x82D21570 other than the row 0x8219B370, or a formation of its address with the high half 0x82D2 and the low half 0x1570, would falsify the claim that nothing else refers to it.",
+          "A call of sub_82D21570 in a generated function would falsify the recompiled code result."
+        ],
+        "result": "Within the searches listed, no route into 0x82D21570 was found. No direct call or branch, no resolved jump table entry, no formation of its address and no data word other than its function table row refers to it, and the instruction before it, 0x82D2156C, is an unconditional branch. The recompiled code has no call of it either. This is a static reading and a negative result: a pointer built at run time, an unresolved jump table or an indirect call would be missed, and whether 0x82D21570 runs was not observed."
       }
     },
     "RVA-F-0331": {

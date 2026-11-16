@@ -3250,7 +3250,7 @@
         },
         "limits": [
           "Static reading only. Which values AITurnUnitFilter returns in play was not observed.",
-          "What 0x82CBC8E8 returns was not read, so whether codes 2, 0x406 or 0x40A reach the event routes on the AI route remains open.",
+          "What 0x82CBC8E8 returns is recorded in filterArgumentCodeBoundary.",
           "The conditions listed are the required branches near each return. The full condition set of each return was not enumerated.",
           "Register sources assume normal calling-convention preservation through calls and no write by another thread."
         ],
@@ -3258,6 +3258,84 @@
           "Interpretation: AITurnUnitFilter mostly returns its own small set of codes, and passes through the code chosen by 0x82CBC8E8 mainly when the unit has no moves left (byte +0x2 at most 0) or that code is one of a few it accepts. Whether the AI ever issues group-move or move-to-tile codes therefore depends on 0x82CBC8E8."
         ],
         "result": "AITurnUnitFilter returns one of the constants 0x20, 0, 0x4B or 0x66, or its third argument unchanged. It never returns 2, 0x406 or 0x40A as a constant. On the AI route its third argument is the result of 0x82CBC8E8 (0x82D291B4..0x82D291B8), so those codes can reach the r18 code on that route only as a 0x82CBC8E8 result passed through at 0x82CBF9E8. This is a static reading."
+      },
+      "filterArgumentCodeBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "Which values does 0x82CBC8E8 return in r3, which TurnSelectionUpdate 0x82D259E8 passes as the third argument of AITurnUnitFilter 0x82CBF570 (0x82D291B4..0x82D291C8), and which r18 codes can therefore reach the first switch at 0x82D2A4D0 from the AITurnUnitFilter route?",
+        "scope": {
+          "function": "0x82CBC8E8",
+          "range": "0x82CBC8E8..0x82CBE264",
+          "values": [
+            "r3 at each return of 0x82CBC8E8",
+            "the value stored at 0x82D291DC and its flow to 0x82D2A4D0"
+          ],
+          "scopeNote": "Only the return values are followed. A value produced by a called function is named and not followed into the callee."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/filterReturnCodeBoundary: AITurnUnitFilter returns 0x20, 0, 0x4B, 0x66 or its third argument",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/selectionCodeSourceBoundary: the AI route, the origins of the r18 code and the r23 = 0x4B stores",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/selectionSubmitConditionBoundary: which r18 codes select which event route",
+          "Symbol catalog: AITurnUnitFilter 0x82CBF570, TurnSelectionUpdate 0x82D259E8"
+        ],
+        "summary": [
+          "0x82CBC8E8 returns one of 0x4B, 0x66, 0, 0x62, 0x73 or 0x20. Its function table extent is 0x82CBC8E8..0x82CBE264 (1610 instructions), with one direct caller (0x82D291B4).",
+          "It has seventeen return branches to the shared epilogue 0x827F7CA0 and three count-register jump tables (0x82CBCAC0, 0x82CBD2C0, 0x82CBD4C4), all resolved.",
+          "With the returns recorded in filterReturnCodeBoundary, the AITurnUnitFilter return stored at 0x82D291DC is one of 0, 0x20, 0x4B, 0x62, 0x66 or 0x73."
+        ],
+        "returnSites": [
+          "0x4B: 0x82CBD544 (return 0x82CBD54C), 0x82CBD560 (0x82CBD568), 0x82CBD5BC (0x82CBD5C4), 0x82CBD620 (0x82CBD628).",
+          "0x66: 0x82CBD1B4 (0x82CBD1F4), 0x82CBD688 (0x82CBD6A4), 0x82CBE17C (0x82CBE184).",
+          "0: 0x82CBD214 (0x82CBD21C), 0x82CBD858 (0x82CBD878), 0x82CBDBFC (0x82CBDC50), 0x82CBDD60 (0x82CBDD80), 0x82CBE1F8 (0x82CBE218).",
+          "0x62: 0x82CBD800 (0x82CBD808).",
+          "0x73: 0x82CBDCD4 (0x82CBDCE0).",
+          "0x20: 0x82CBE25C (0x82CBE264).",
+          "0x82CBCFD0..0x82CBCFE0 (return 0x82CBCFE8): r3 is 0x4B when r26 is 0 and 0 otherwise.",
+          "0x82CBD6C8..0x82CBD700 (return 0x82CBD708): r12 = 0x2B. r3 is 0x4B when bit 0x1 of a halfword in the table at 0x8312A608 (r14, set at 0x82CBC9B4) is set, and 0x20 when it is clear."
+        ],
+        "valueFlow": [
+          "Value flow from the store at 0x82D291DC with each of 0, 0x20, 0x4B, 0x62, 0x66 and 0x73, using the same r18 and frame word +0x70 tracking and r18 compare pruning as selectionCodeSourceBoundary: every value can reach 0x82D2A4D0.",
+          "While a value is live, the only overwrites reached are the r23 = 0x4B stores (0x82D29380, 0x82D29444, 0x82D294A8, 0x82D2951C, 0x82D29554, 0x82D29560), the r18 = 0 stores (0x82D29614..0x82D296BC, 0x82D29710, 0x82D2978C), and sites that do not reach 0x82D2A4D0 (0x82D2A70C, 0x82D2C4EC). Repeating the check from each constant overwrite with its value gives the same set.",
+          "The input-route, table and call origins (0x82D27ED0, 0x82D28108, 0x82D28C80, 0x82D28F34) and the constant 2 at 0x82D2902C are not reached."
+        ],
+        "aiRoute": [
+          "On the AITurnUnitFilter route the code at the first switch 0x82D2A4D0 is one of 0, 0x20, 0x4B, 0x62, 0x66 or 0x73. None of them is 2, 0x406 or 0x40A.",
+          "Of the event-selecting codes only 0x4B (75) is among them. On that route the first switch can select the event 0xF route only through code 75, and never the code 2 event 0xF route or the 0x406 and 0x40A event 0x11 routes."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CBC9B4",
+            "0x82CBCFE0",
+            "0x82CBD1C0",
+            "0x82CBD580",
+            "0x82CBD6C0",
+            "0x82CBD800",
+            "0x82CBDBFC",
+            "0x82CBDCD4",
+            "0x82CBDD60",
+            "0x82CBE17C",
+            "0x82CBE230",
+            "0x82D291C0"
+          ],
+          "radius": 64,
+          "distinctWords": 1188,
+          "outputSha256": "9091D2BF1CF8909B3713847CAF30391F66266F67D1B51FE17C82763E1062EE0B",
+          "imageMatch": "All 1188 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The control flow, reaching definition and value flow analyses were done on the flat image.",
+          "analysis": "Control flow graph of 0x82CBC8E8..0x82CBE264, reaching definitions of r3 at each return, and a value flow check from the store at 0x82D291DC to the first switch at 0x82D2A4D0."
+        },
+        "limits": [
+          "Static reading only. Which values occur in play was not observed.",
+          "The conditions that select each return of 0x82CBC8E8 remain unresolved.",
+          "Whether 0x82CBC8E8 writes frame word +0x7C through its third argument remains unresolved; this finding is about the r18 code only.",
+          "The value flow check prunes only compares of r18 with a constant and assumes normal calling-convention preservation, no write by another thread, and no write to frame word +0x70 by a callee given a frame address.",
+          "The input route is not covered: on it, codes 2, 0x406 and 0x40A can still come from the input object, 0x82CE8A50, the frame table or 0x82D06398."
+        ],
+        "interpretation": [
+          "Interpretation: the AI does not issue the group-move or move-to-tile codes through TurnSelectionUpdate's AI route; its unit moves come through direction codes, and its event 0xF use is limited to code 75."
+        ],
+        "result": "0x82CBC8E8 returns one of 0x4B, 0x66, 0, 0x62, 0x73 or 0x20. With the returns recorded in filterReturnCodeBoundary, the r18 code produced on the AITurnUnitFilter route is one of 0, 0x20, 0x4B, 0x62, 0x66 or 0x73, and a value flow check from the store at 0x82D291DC finds that only those values reach the first switch at 0x82D2A4D0 from that route. None of them is 2, 0x406 or 0x40A. So on that route the first switch can select the event 0xF route only through code 75 (0x4B), and never the code 2 event 0xF route or the 0x406 and 0x40A event 0x11 routes. This is a static reading."
       }
     },
     "RVA-F-0331": {

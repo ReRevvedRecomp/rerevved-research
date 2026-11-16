@@ -687,7 +687,7 @@ The [tile table writer finding](../../../manifests/ai-options-boundaries.json#/f
 records `0x82CBE528` as the only located writer of those tables. It clears the
 whole range and then writes it at five sites, each indexing halfword
 `1600 * p + 40 * a + b` for a player `p` and a tile `(a, b)`. The reading is
-static. When its callers run it remains unresolved.
+static.
 
 The [tile table amount finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/tileTableAmountBoundary)
 records the two amounts. For a city with owner `p`, signed byte `+0x3` `S`,
@@ -697,8 +697,15 @@ to 44 tiles around the city, and site 2 (`0x82CBE92C`) adds
 `trunc(2 * (H + S * m + 4) * (L + 2) / 4)` at the city's own tile. `G` is
 `L + 2`, or 3 when `L` is 0, `D` is a distance term, `K` is 4 or 2 by the
 tile's byte and `m` is 2 plus 1 for each of bits `0x4000` and `0x80` of city
-word `+0x10` that is set. The reading is static, and when `0x82CBE528` runs
-remains unresolved.
+word `+0x10` that is set. The reading is static.
+
+The [tile table caller finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/tileTableCallerBoundary)
+records nine direct callers of `0x82CBE528`. They are in dispatcher entries 8
+and 20, in a case of `0x82CF6800` that clears bit `0x4000` of city word
+`+0x10`, in `0x82D18D88`, `0x82D1AC70` and `0x82D1B400`, in `0x82D1D1C0` for
+player 0 or a player that is not human, and in `0x82D255B8`. The tests listed
+are those required on the way to each call; the reading is static and finds
+direct calls only.
 
 The dispatcher entries and the tests before these calls are recorded in
 [city item reset event finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetEventBoundary).

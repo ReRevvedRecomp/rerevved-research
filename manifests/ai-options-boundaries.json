@@ -3688,7 +3688,7 @@
           "Static reading only. No table value was observed.",
           "A store through a pointer built at run time, passed in from a caller, or loaded from data would be missed, including the three data words not examined. 0x827F7BB0 is a fill helper, and its other callers were not traced.",
           "The amounts and neighbor test are recorded in tileTableAmountBoundary. The full conditions of sites 4 and 5, and the meanings of the tables at 0x82F7A0B8, 0x82F7A168, 0x8312B288, 0x83128D08, 0x8312A608 and 0x830E6850 remain unresolved.",
-          "When the nine callers run 0x82CBE528 remains unresolved."
+          "When 0x82CBE528 runs is recorded in tileTableCallerBoundary."
         ],
         "interpretation": [
           "Interpretation: 0x82CBE528 rebuilds a per-player table from scratch. Each live city adds to its owner's table around it and on its own tile, and 9999 marks tiles that a player holds fixed. The 0x82D1F8D0 call then gives a city to the player with the largest value on its tile."
@@ -3698,7 +3698,7 @@
           "A different index expression than 1600 * p + 40 * a + b, or a different base than r14 + 0x208, at a listed store site would falsify the indexing.",
           "A different number of store sites, or a different value written at site 3 or site 5, would falsify the site list."
         ],
-        "result": "Within the searches listed, 0x82CBE528 is the only located writer of the eight tables at 0x8312E810 + 0xC80 * k. It clears 0x8312E810..0x83134C10 at its start and then writes it at five store sites, each indexing halfword 1600 * p + 40 * a + b for a player p and a tile (a, b), as listed in writer. This is a static reading: the amounts and neighbor test are recorded in tileTableAmountBoundary, and the full conditions of sites 4 and 5, the meanings of the tables those sites read, and when the nine callers run the function remain unresolved."
+        "result": "Within the searches listed, 0x82CBE528 is the only located writer of the eight tables at 0x8312E810 + 0xC80 * k. It clears 0x8312E810..0x83134C10 at its start and then writes it at five store sites, each indexing halfword 1600 * p + 40 * a + b for a player p and a tile (a, b), as listed in writer. This is a static reading: the amounts and neighbor test are recorded in tileTableAmountBoundary, and the full conditions of sites 4 and 5 and the meanings of the tables those sites read remain unresolved. When 0x82CBE528 runs is recorded in tileTableCallerBoundary."
       },
       "tileTableAmountBoundary": {
         "status": "partial",
@@ -3770,7 +3770,7 @@
           "Arithmetic is native 32-bit with signed division rounding toward zero; the stored value is the low 16 bits of the halfword plus the amount. Divisor traps and overflow were not examined.",
           "The offset tables are read as image values; a write to them at run time was not searched.",
           "The meanings of S, H, city byte +0x2, halfword +0x3C bit 0x10, word +0x10 bits 0x4000 and 0x80, and the tile bytes at 0x8312B288 and 0x830E8790 are not established here; T = 6 is a tile byte value only.",
-          "When 0x82CBE528 runs remains unresolved."
+          "When 0x82CBE528 runs is recorded in tileTableCallerBoundary."
         ],
         "interpretation": [
           "Interpretation: site 1 spreads a city's influence over a radius 3 area with the corners cut, falling off with distance and growing with the city's +0x3 and +0x48 values and the owner's level word; the surrounding and center contributions fit the recorded culture-border reading."
@@ -3781,7 +3781,139 @@
           "A different definition of L, S or H than the ones listed in inputs would falsify both amounts.",
           "A different count or content of the offset pairs in the tables at 0x82F7A0B8 and 0x82F7A168 would falsify the 44 tiles and the distance counts."
         ],
-        "result": "Static reading of 0x82CBE528: for a city with owner p, signed byte +0x3 S, signed halfword +0x48 H and L the word at 0x830ED4C4 + 4 * p, site 1 adds trunc(2 * (H + 2 * (S + 2)) * G / (D + K)) at each of up to 44 tiles around the city, with G = L + 2 when L is not 0 and 3 when L is 0, and site 2 adds trunc(2 * (H + S * m + 4) * (L + 2) / 4) at the city's own tile, with m = 2 plus 1 for each of bits 0x4000 and 0x80 of city word +0x10 that is set. No amount was observed, the meanings of the inputs are not established, and when the function runs remains unresolved."
+        "result": "Static reading of 0x82CBE528: for a city with owner p, signed byte +0x3 S, signed halfword +0x48 H and L the word at 0x830ED4C4 + 4 * p, site 1 adds trunc(2 * (H + 2 * (S + 2)) * G / (D + K)) at each of up to 44 tiles around the city, with G = L + 2 when L is not 0 and 3 when L is 0, and site 2 adds trunc(2 * (H + S * m + 4) * (L + 2) / 4) at the city's own tile, with m = 2 plus 1 for each of bits 0x4000 and 0x80 of city word +0x10 that is set. No amount was observed, and the meanings of the inputs are not established. When 0x82CBE528 runs is recorded in tileTableCallerBoundary."
+      },
+      "tileTableCallerBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "Which direct calls reach 0x82CBE528, and which tests are required on the way to each call?",
+        "scope": {
+          "functions": [
+            "0x82CBE528"
+          ],
+          "callers": [
+            "0x82CE0188",
+            "0x82CE021C",
+            "0x82CF6FB8",
+            "0x82D1A310",
+            "0x82D1B03C",
+            "0x82D1B7A0",
+            "0x82D1C9A0",
+            "0x82D1D208",
+            "0x82D2584C"
+          ],
+          "scopeNote": "The claim covers the nine direct call sites found by a scan of every branch word and the tests required on the way to each. It does not cover the roles of the surrounding functions or any observed run."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/tileTableWriterBoundary: what 0x82CBE528 writes",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/tileTableAmountBoundary: the amounts, and that site 2 uses bit 0x4000 of city word +0x10",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetConditionBoundary: 0x82D1AC70 and 0x82D1B400 and their arguments",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/outsideDispatcherCallBoundary: 0x82D1D1C0, its callers in dispatcher entries 46, 47 and 48, and the calls of 0x82D1AC70 with mode 1 at 0x82CE0F0C and 0x82D1F8D0 and mode 2 at 0x82CE0F24 and 0x82D1D7D0",
+          "achievement-unlock-triggers.json#/findings/RVA-F-0346/identity: the word at 0x830ECD28 + 4 * p is player p's civilization word",
+          "ai-civilization-elimination.json#/dependencies/1/use: 0x82F700B0 is the barbarian player word",
+          "Symbol catalog: NetworkCommandConsumer 0x82CDDF08 (the dispatcher) and IsHumanPlayer 0x82CD5A70"
+        ],
+        "calls": [
+          {
+            "site": "0x82CE0188",
+            "where": "dispatcher entry 8 (table target 0x82CE0094)",
+            "required": "Signed byte +0x0 of city c equals the player in record word +0x4 (0x82CE00AC). c is record word +0x8.",
+            "before": "0x82D13978(c, -1), 0x82D00C78(c), 0x82D13978(c, -1)"
+          },
+          {
+            "site": "0x82CE021C",
+            "where": "dispatcher entry 20 (table target 0x82CE0190)",
+            "required": "The same owner test (0x82CE01A8).",
+            "before": "The same three calls as site 0x82CE0188."
+          },
+          {
+            "site": "0x82CF6FB8",
+            "where": "0x82CF6800, case 3 of the switch on r5 >> 8 (table at 0x82CF6988, target 0x82CF6E7C), for city r5 & 0xFF. Direct callers of 0x82CF6800: 0x82CC16B4 and 0x82CDF4DC.",
+            "required": "The record at 0x830F2BF0 + 0x54 * (256 * r3 + r4), from the incoming r3 and r4, must have byte +0x0 not 0xFF (0x82CF6874) and bit 0x80000000 of word +0xC clear (0x82CF688C). A candidate count r26 that is not 0 (0x82CF6F10). 0x822DE0E8(r26) picks an entry r31 from a frame list, and bit r31 of city word +0x10 is cleared (0x82CF6F38..0x82CF6F40). The call runs only when r31 is 0xE (0x82CF6FB4), so only when the cleared bit is 0x4000.",
+            "before": "The clear of bit r31 in city word +0x10."
+          },
+          {
+            "site": "0x82D1A310",
+            "where": "Near the end of 0x82D18D88 (0x82D18D88..0x82D1A324). 0x82D18D88 has seven direct callers, including 0x82D1B784.",
+            "required": "The path on which the scan of city records at 0x8314FE28 finds a record whose byte +0x0 is 0xFF (0x82D18E6C).",
+            "before": "0x82D00480"
+          },
+          {
+            "site": "0x82D1B03C",
+            "where": "0x82D1AC70",
+            "required": "Bit 0 of the mode r6 is set (0x82D1AC84, 0x82D1ACA4).",
+            "before": "0x82D11AD8(1, 1) at 0x82D1B038"
+          },
+          {
+            "site": "0x82D1B7A0",
+            "where": "0x82D1B400",
+            "required": "r4 differs from signed city byte +0x0 (0x82D1B440); signed city byte +0x1 equals the word at 0x82F700B0 (0x82D1B5C0); the word at 0x830ECD28 + 4 * r4 is 0xE (0x82D1B758..0x82D1B760).",
+            "before": "0x82D18D88(r4, city +0x30, city +0x32, 0) at 0x82D1B784, a store of 1 to byte +0x3 of the returned record (0x82D1B798), and 0x82D00C78"
+          },
+          {
+            "site": "0x82D1C9A0",
+            "where": "0x82D1B400",
+            "required": "r4 differs from signed city byte +0x0 (0x82D1B440); signed city byte +0x1 differs from the word at 0x82F700B0 (0x82D1B5C0 taken).",
+            "before": "0x82D11AD8(1, 1) at 0x82D1C99C"
+          },
+          {
+            "site": "0x82D1D208",
+            "where": "The start of 0x82D1D1C0(p)",
+            "required": "p is 0 (0x82D1D1F0), or 0x82CD5A70(p) returns a zero low byte (0x82D1D204).",
+            "before": "0x82D11AD8(1, 1)"
+          },
+          {
+            "site": "0x82D2584C",
+            "where": "0x82D255B8 (0x82D255B8..0x82D259E8). One direct caller: 0x82D86A3C in 0x82D86400.",
+            "required": "No required test other than loop exits.",
+            "before": "0x82CB2E48 and 0x82D11AD8(1, 1)"
+          }
+        ],
+        "summary": [
+          "0x82CBE528 has nine direct callers: 0x82CE0188, 0x82CE021C, 0x82CF6FB8, 0x82D1A310, 0x82D1B03C, 0x82D1B7A0, 0x82D1C9A0, 0x82D1D208 and 0x82D2584C.",
+          "The calls are in dispatcher entries 8 and 20, case 3 of 0x82CF6800 when it clears bit 0x4000 of city word +0x10, the end of 0x82D18D88, 0x82D1AC70 with bit 0 of its mode set, two paths of 0x82D1B400, 0x82D1D1C0 for player 0 or a player that is not human, and 0x82D255B8."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CE00A0",
+            "0x82CE0180",
+            "0x82CE01A0",
+            "0x82CE0210",
+            "0x82CF6F30",
+            "0x82CF6FB0",
+            "0x82D18E68",
+            "0x82D1A310",
+            "0x82D1ACA0",
+            "0x82D1B03C",
+            "0x82D1B5C0",
+            "0x82D1B760",
+            "0x82D1C9A0",
+            "0x82D1D200",
+            "0x82D2584C"
+          ],
+          "radius": 64,
+          "distinctWords": 1518,
+          "outputSha256": "4DD3E8A76BB97377C16E00EBEEA40380DDF2819732C14A320044D9F4D810B7DB",
+          "imageMatch": "All 1518 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The caller scan, control flow, required-branch check and reaching definitions were done on the flat image."
+        },
+        "limits": [
+          "Static reading only. No call was observed.",
+          "The tests listed are those required on the way to each call; other branches in these functions were not read in full.",
+          "The roles of dispatcher entries 8 and 20, of 0x82CF6800 and its switch cases, of 0x82D255B8 and its caller, and of 0x82D13978, 0x82D00C78, 0x82D00480, 0x82D11AD8, 0x82CB2E48 and 0x822DE0E8 are not established here.",
+          "The caller search finds direct calls only for this list; a call through a pointer built at run time would be missed."
+        ],
+        "interpretation": [
+          "Interpretation: the located calls suggest rebuilding after selected city changes and during 0x82D1D1C0."
+        ],
+        "falsificationConditions": [
+          "A different set of direct callers of 0x82CBE528 would falsify the list of nine call sites.",
+          "A different required test than the one listed at a call site would falsify that site's entry in calls.",
+          "A different bit than 0x4000 cleared before the call at 0x82CF6FB8 would falsify the entry for that site.",
+          "A different caller condition than player 0 or a player for which 0x82CD5A70 returns a zero low byte at 0x82D1D208 would falsify the entry for 0x82D1D1C0."
+        ],
+        "result": "Static reading of the nine direct calls of 0x82CBE528: they are in dispatcher entries 8 and 20, case 3 of 0x82CF6800 when it clears bit 0x4000 of city word +0x10, the end of 0x82D18D88, 0x82D1AC70 with bit 0 of its mode set, two paths of 0x82D1B400, 0x82D1D1C0 for player 0 or a player that is not human, and 0x82D255B8. The tests listed are the ones required on the way to each call. No call was observed, the roles of the surrounding functions are not established, and a call through a run-time pointer would be missed."
       }
     },
     "RVA-F-0331": {

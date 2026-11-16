@@ -3391,6 +3391,116 @@
           "A call of sub_82D04C98 in a generated function would falsify the recompiled code result."
         ],
         "result": "Within the searches listed, no route into 0x82D04C98 was found. No direct call or branch, no resolved jump table entry, no formation of its address and no data word other than its function table row refers to it, and it is not reached by falling through. The recompiled code has no call of it either. This is a static reading and a negative result: a pointer built at run time, an unresolved jump table or an indirect call would be missed, and whether 0x82D04C98 runs was not observed."
+      },
+      "outsideDispatcherCallBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "How are the two calls of 0x82D1AC70 outside the dispatcher, at 0x82D1D7D0 and 0x82D1F8D0, reached, and with which arguments?",
+        "scope": {
+          "functions": [
+            "0x82D1D1C0",
+            "0x82D1EAB0"
+          ],
+          "calls": [
+            "0x82D1D7D0",
+            "0x82D1F8D0"
+          ],
+          "dispatcher": "0x82CDDF08",
+          "dispatcherEntries": [
+            "46",
+            "47",
+            "48"
+          ],
+          "cityArrayAddress": "0x8314FE28",
+          "cityRecordSize": "0xBC",
+          "cityCount": "128",
+          "scopeNote": "The claim covers the direct callers of the two functions, the loop around each call, the tests required on the way to each call and the arguments. It does not cover what 0x82CB2370, 0x82CF0070, 0x82D10FD8 and 0x82D8AB00 compute, who submits entries 46, 47 and 48, or the meaning of the words that the entries test."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetConditionBoundary: 0x82D1AC70 reaches its -1 store block only when bit 0 of r6 is set, and the located calls pass r6 = 1 at 0x82D1F8D0 and r6 = 2 at 0x82D1D7D0",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/pairVisitationBoundary: the direct callers of 0x82D1EAB0 and 0x82D1D1C0 in the dispatcher",
+          "ai-civilization-elimination.json#/currentEvidence/setup/humanMaskSource and #/currentEvidence/setup/postSetup: 0x8312B8DC is the current turn word and 0x8312E608 the human mask word; 0x82CD59A8 builds the mask from 0x8314F1B0 or, when that is 0, from 0x82D8AB00(0x8314EFE0, p)",
+          "Symbol catalog: IsHumanPlayer 0x82CD5A70"
+        ],
+        "callers": {
+          "functionTableRows": "0x82D1EAB0 is function table row 0x8219B368 and 0x82D1D1C0 is row 0x8219B360. Each takes a player index in r3.",
+          "scan": "Over every branch word in the image, 0x82D1EAB0 is called only at 0x82CDE254, 0x82CDE320, 0x82CDE4FC and 0x82CDE830, and 0x82D1D1C0 only at 0x82CDE288, 0x82CDE40C, 0x82CDE530 and 0x82CDE838. Neither address is a resolved jump table target or is formed as an immediate, and no other data word equals either.",
+          "dispatcher": "All eight calls are in the dispatcher 0x82CDDF08, which jumps through the table at 0x82CDE014 on its first input word (0x41 or below). r17 is 0 there (0x82CDDF84). Each call passes a player index p in r3.",
+          "entry46": "Entry 46 (0x82CDE1AC), when the word at 0x8314F1B0 is not 0: for p = 0, 1, ... while IsHumanPlayer(p) returns a nonzero low byte and p is below the count at 0x82F700AC, 0x82D1EAB0(p) at 0x82CDE254, then 0x82D1D1C0(p) at 0x82CDE288. When that word is 0: 0x82D1EAB0(p) at 0x82CDE320 for every p below the count with a nonzero IsHumanPlayer low byte, and later, unless 0x82D10FD8 returns not 0 (0x82CDE3E0), 0x82D1D1C0(p) at 0x82CDE40C for the same set.",
+          "entry47": "Entry 47 (0x82CDE424), only when the word at 0x8314F1B0 is not 0: from p = the word at 0x830EE7F4, while p is below the count and IsHumanPlayer(p) has a nonzero low byte, 0x82D1EAB0(p) at 0x82CDE4FC, then 0x82D1D1C0(p) at 0x82CDE530.",
+          "entry48": "Entry 48 (0x82CDE79C), only when the words at 0x8314F1B8, 0x8314F1BC and 0x8314F1C4 are all 0: for every p below the count for which IsHumanPlayer(p) has a zero low byte, 0x82D1EAB0(p) at 0x82CDE830, then 0x82D1D1C0(p) at 0x82CDE838."
+        },
+        "callAt82D1D7D0": {
+          "function": "0x82D1D1C0",
+          "playerArgument": "r21 is the player argument, saved to frame +0x234 at 0x82D1D1E4 and loaded at 0x82D1D720.",
+          "loop": "0x82D1D798..0x82D1E038. r31 is the city record + 0x7C (r23 = 0x8314FE28 at 0x82D1D3BC; r31 = r23 + 0x7C at 0x82D1D6FC and + 0xBC per pass at 0x82D1E014). r3 is the city index (frame +0x88, 0 at 0x82D1D690, + 1 per pass at 0x82D1E024). There are 128 passes: the counter at frame +0x80 steps by 4 against its start + 0x200.",
+          "requiredTests": [
+            "Signed city byte +0x3 above 0 (0x82D1D7A4).",
+            "Signed city byte +0x0 not -1 (0x82D1D7B4).",
+            "Bit 0x4000 of city word +0x24 set (0x82D1D7C4)."
+          ],
+          "call": "0x82D1AC70(city index, signed city byte +0x0, player argument, 2)."
+        },
+        "callAt82D1F8D0": {
+          "function": "0x82D1EAB0",
+          "playerArgument": "The player argument is saved to frame +0x1E4 at 0x82D1EAD0, its only store.",
+          "chosenPlayerIndex": "Frame +0x88 (stores only at 0x82D1EB08 and 0x82D1EB78) is the first index i below the count at 0x82F700AC for which, when the word at 0x8312E608 is not 0, bit i of it is set, or, when that word is 0, 0x82D8AB00(word at 0x8314EFE0, i) returns not 0. It is the count when no i qualifies (0x82D1EAE8..0x82D1EB78).",
+          "loop": "0x82D1F720..0x82D1FF48 over the city index r25 = 0..0x7F (r25 = 0 via r30 at 0x82D1F33C; r19 = 0x8314FE28 at 0x82D1F534; r26 = 0xBC * r25).",
+          "requiredTests": [
+            "1. Signed city byte +0x3 above 0 (0x82D1F734).",
+            "2. r27 = signed city byte +0x0, not -1 (0x82D1F744).",
+            "3. The player argument equals frame +0x88 (0x82D1F7EC).",
+            "4. 0x82CB2370 receives signed halfwords +0x30 and +0x32 and frame +0x120; the caller then reads one signed halfword per player from frame +0x120. r29 is the first player whose value is the largest and above 0x32, or r27 when none is above 0x32 (0x82D1F814..0x82D1F84C). r29 must differ from r27 (0x82D1F854).",
+            "5. 0x82CF0070(city index, r29) returns not 0 (0x82D1F868).",
+            "6. The turn word at 0x8312B8DC is above signed city halfword +0x3E + 2 (0x82D1F888).",
+            "7. Signed city halfword +0x7C is not 0 (0x82D1F89C) and the turn word is above it + 2 (0x82D1F8AC)."
+          ],
+          "beforeCall": "Before the call the loop stores the player argument to the word at 0x830E2F08 + 4 * city index (frame +0xA8 = 0x830E2F08 at 0x82D1EB90). The other store of frame +0xA8, at 0x82D1FFB8, does not reach the call.",
+          "call": "0x82D1AC70(city index, r29, r27, 1).",
+          "afterCall": "After the call, city halfword +0x7C = 0 (0x82D1F8E0) and city halfword +0x3E = the turn word (0x82D1F8E4)."
+        },
+        "summary": [
+          "0x82D1D7D0 is in 0x82D1D1C0 and 0x82D1F8D0 is in 0x82D1EAB0. Both functions take a player in r3 and are called directly only from dispatcher entries 46, 47 and 48. Each call is in a loop over the 128 city records at 0x8314FE28.",
+          "The call at 0x82D1D7D0 passes (city index, the city's owner byte, the player argument, 2). The call at 0x82D1F8D0 passes (city index, a chosen player, the city's owner byte, 1), only on the pass for one particular player and only after the seven tests listed.",
+          "With cityItemResetConditionBoundary, 0x82D1F8D0 can reach the -1 store block of 0x82D1AC70 and 0x82D1D7D0 cannot."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82D1D7A0",
+            "0x82D1E020",
+            "0x82D1F740",
+            "0x82D1F880",
+            "0x82D1EB40",
+            "0x82CDE240",
+            "0x82CDE400",
+            "0x82CDE500",
+            "0x82CDE820"
+          ],
+          "radius": 64,
+          "distinctWords": 1030,
+          "outputSha256": "CA3A91D37C25348EE5B22A726DC9651415101EFB828AE1C09F2041BB572E9C31",
+          "imageMatch": "All 1030 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The branch scan, control flow, reaching definitions and the dispatcher reading were done on the flat image."
+        },
+        "limits": [
+          "Static reading only. Neither call was observed.",
+          "0x82CB2370, 0x82CF0070, 0x82D10FD8 and 0x82D8AB00 were not read; what they compute remains unresolved.",
+          "Who submits dispatcher entries 46, 47 and 48, and the meaning of the words at 0x8314F1B0, 0x8314F1B8, 0x8314F1BC, 0x8314F1C4 and 0x830EE7F4, are outside this finding.",
+          "Other branches inside both loops were not read in full; the listed tests are those required on the way to each call.",
+          "The caller search finds direct calls, resolved jump tables, immediate address forms and data words; a call through a pointer built at run time would be missed."
+        ],
+        "interpretation": [
+          "Interpretation: 0x82D1EAB0 and 0x82D1D1C0 are per-player turn steps, run for human players by entries 46 and 47 and for the other players by entry 48.",
+          "Interpretation: the 0x82D1F8D0 call moves a city to the player with the largest value above 50 around it, only when more than two turns have passed since both turn marks +0x3E and +0x7C, and, for each visited city, only when this invocation's player argument equals its selected first human index. It fits a city changing sides by cultural pressure.",
+          "Interpretation: the 0x82D1D7D0 call, with mode 2, does not reach the item reset block; it runs for each visited city whose signed byte +0x3 is above 0, signed byte +0x0 is not -1, and word +0x24 has bit 0x4000 set."
+        ],
+        "falsificationConditions": [
+          "A call of 0x82D1EAB0 or 0x82D1D1C0 outside the eight listed sites, or a jump table entry or address formation that resolves to either, would falsify the claim that only entries 46, 47 and 48 reach them.",
+          "A different argument register at 0x82D1D7D0 or 0x82D1F8D0 than the ones listed would falsify the arguments.",
+          "A path into 0x82D1F8D0 that skips any of the seven tests would falsify the required tests."
+        ],
+        "result": "0x82D1D7D0 is in 0x82D1D1C0 and 0x82D1F8D0 is in 0x82D1EAB0. Both functions take a player in r3 and are called directly only from dispatcher entries 46, 47 and 48. Each call is in a loop over the 128 city records at 0x8314FE28. 0x82D1D7D0 passes (city index, the city's owner byte, the player argument, 2). 0x82D1F8D0 passes (city index, a chosen player, the city's owner byte, 1), only on the pass for one particular player and only after seven tests. This is a static reading, and what 0x82CB2370 and 0x82CF0070 compute for the 0x82D1F8D0 call remains unresolved."
       }
     },
     "RVA-F-0331": {

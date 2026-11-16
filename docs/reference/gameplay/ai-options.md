@@ -668,6 +668,15 @@ branch targets and assume returning calls and no arithmetic trap. Straight-path 
 entries 0, 1, 15, 17 and 42 are recorded below; other caller paths remain
 unresolved. None of these calls was observed.
 
+The [outside dispatcher call finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/outsideDispatcherCallBoundary)
+records the calls at `0x82D1D7D0` and `0x82D1F8D0`. They are in `0x82D1D1C0` and
+`0x82D1EAB0`, which take a player and are called directly only from dispatcher
+entries 46, 47 and 48, each call inside a loop over the 128 city records. The
+call at `0x82D1F8D0`, which can reach the block, runs only on the pass for one
+player and after seven tests; the call at `0x82D1D7D0` cannot reach it. The
+reading is static, and what `0x82CB2370` and `0x82CF0070` compute for the
+`0x82D1F8D0` call remains unresolved.
+
 The dispatcher entries and the tests before these calls are recorded in
 [city item reset event finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetEventBoundary).
 The call of `0x82CF7428` is in entry 17. The call of `0x82D1B400` at `0x82CDF9F8` is in

@@ -3687,7 +3687,7 @@
         "limits": [
           "Static reading only. No table value was observed.",
           "A store through a pointer built at run time, passed in from a caller, or loaded from data would be missed, including the three data words not examined. 0x827F7BB0 is a fill helper, and its other callers were not traced.",
-          "The amounts added at sites 1 and 2, the neighbor test at 0x82CBE6B4..0x82CBE740 on the way to site 1, the full conditions of sites 4 and 5, and the meanings of the tables at 0x82F7A0B8, 0x82F7A168, 0x8312B288, 0x83128D08, 0x8312A608 and 0x830E6850 remain unresolved.",
+          "The amounts and neighbor test are recorded in tileTableAmountBoundary. The full conditions of sites 4 and 5, and the meanings of the tables at 0x82F7A0B8, 0x82F7A168, 0x8312B288, 0x83128D08, 0x8312A608 and 0x830E6850 remain unresolved.",
           "When the nine callers run 0x82CBE528 remains unresolved."
         ],
         "interpretation": [
@@ -3698,7 +3698,90 @@
           "A different index expression than 1600 * p + 40 * a + b, or a different base than r14 + 0x208, at a listed store site would falsify the indexing.",
           "A different number of store sites, or a different value written at site 3 or site 5, would falsify the site list."
         ],
-        "result": "Within the searches listed, 0x82CBE528 is the only located writer of the eight tables at 0x8312E810 + 0xC80 * k. It clears 0x8312E810..0x83134C10 at its start and then writes it at five store sites, each indexing halfword 1600 * p + 40 * a + b for a player p and a tile (a, b), as listed in writer. This is a static reading: the amounts added at sites 1 and 2, the full conditions of sites 4 and 5, the meanings of the tables those sites read, and when the nine callers run the function remain unresolved."
+        "result": "Within the searches listed, 0x82CBE528 is the only located writer of the eight tables at 0x8312E810 + 0xC80 * k. It clears 0x8312E810..0x83134C10 at its start and then writes it at five store sites, each indexing halfword 1600 * p + 40 * a + b for a player p and a tile (a, b), as listed in writer. This is a static reading: the amounts and neighbor test are recorded in tileTableAmountBoundary, and the full conditions of sites 4 and 5, the meanings of the tables those sites read, and when the nine callers run the function remain unresolved."
+      },
+      "tileTableAmountBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "What amounts does 0x82CBE528 add to the tables at 0x8312E810 at its store sites 0x82CBE88C (site 1) and 0x82CBE92C (site 2)?",
+        "scope": {
+          "functions": [
+            "0x82CBE528"
+          ],
+          "siteOne": "0x82CBE62C..0x82CBE890, store at 0x82CBE88C",
+          "siteTwo": "0x82CBE8A4..0x82CBE92C, store at 0x82CBE92C",
+          "scopeNote": "The claim covers the arithmetic of the two amounts and the inputs it reads. It does not cover what any input means, when the function runs, or any observed value."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/tileTableWriterBoundary: the five store sites, the index 1600 * p + 40 * a + b, the city loop tests and the tile conditions for site 1",
+          "resource-definitions.json#/centerResourceBonusBoundary/class4ConsumerBoundary/effects/borderInfluence: the factors used at sites 1 and 2 (L - r24 + 2 at site 1 and L + 2 at site 2)",
+          "resource-definitions.json#/centerResourceBonusBoundary/class4ConsumerBoundary/derivedLevel: the word at 0x830ED4C4 + 4 * p and the values it is given"
+        ],
+        "inputs": {
+          "cityRecord": "r21 = 0x8314FE28 + r27 (0x82CBE5C0).",
+          "S": "Signed byte +0x3 of the city record (r29, 0x82CBE5C8).",
+          "p": "Signed byte +0x0 of the city record (r3, 0x82CBE5D8).",
+          "cityHalfwords": "Halfwords +0x30 and +0x32 (r23 and r22, 0x82CBE60C and 0x82CBE610).",
+          "L": "The word at 0x830ED4C4 + 4 * p (r25, 0x82CBE618; r19 is 0x830ED4C4 at 0x82CBE5B4).",
+          "r24": "-1 when L is 0 and 0 otherwise (0x82CBE620..0x82CBE628), so G = L - r24 + 2.",
+          "H": "Signed city halfword +0x48 (0x82CBE854 for site 1, 0x82CBE8D0 for site 2).",
+          "definitions": "Each input has one reaching definition in 0x82CBE528."
+        },
+        "siteOneAmount": {
+          "offsets": "Offsets (dx, dy) are entry i of the word tables at 0x82F7A0B8 and 0x82F7A168, i = 0..43 (r26 = 4 * i below 0xB0). In the image the 44 pairs are distinct and none is (0, 0). By max(|dx|, |dy|), 8 are at 1 (entries 0..7), 16 at 2 and 20 at 3.",
+          "tile": "Tile (a, b) and the tile byte T, the signed byte at 0x8312B288 + 40 * a + b, are as in tileTableWriterBoundary; T must not be 0.",
+          "neighborTest": "Entries 8..43 also need, among the 8 tiles at entries 0..7 around (a, b), one with a nonzero 0x8312B288 byte whose byte at 0x830E8790 + 40 * a' + b' equals p (0x82CBE6B4..0x82CBE740). Entries 0..7 do not.",
+          "D0": "2 * max(|dx|, |dy|) + min(|dx|, |dy|) (0x82CBE744..0x82CBE788).",
+          "frameBuffer": "Before the table store, the frame buffer at +0xB0, same index, gets trunc(12 * (S + 6) / (D0 + K1)) added (0x82CBE79C..0x82CBE804), with K1 = 4 when T is 6 and 1 otherwise.",
+          "D": "D0, plus 2 when city byte +0x2 differs from p (0x82CBE800..0x82CBE80C), minus 2 when i is 8 or more and bit 0x10 of city halfword +0x3C is set (0x82CBE810..0x82CBE82C).",
+          "K": "4 when T is 6 and 2 otherwise (0x82CBE830..0x82CBE83C).",
+          "G": "L + 2 when L is not 0 and 3 when L is 0.",
+          "formula": "trunc(2 * (H + 2 * (S + 2)) * G / (D + K)) (0x82CBE840..0x82CBE884), added to the halfword and stored at 0x82CBE88C. Up to 44 tiles around the city get this amount."
+        },
+        "siteTwoAmount": {
+          "m": "2; 3 when bit 0x4000 of city word +0x10 is set (0x82CBE8B4); then raised by 1 when bit 0x80 is set (0x82CBE8C4).",
+          "formula": "trunc(2 * (H + S * m + 4) * (L + 2) / 4) (0x82CBE8D4..0x82CBE91C), added at index 1600 * p + 40 * (+0x30) + (+0x32) and stored at 0x82CBE92C.",
+          "after": "Site 3 (0x82CBE948) may then overwrite the entry with 9999, and the frame buffer gets 0x64 added at the same index (0x82CBE958), as recorded in tileTableWriterBoundary."
+        },
+        "trunc": "Signed division rounding toward zero.",
+        "summary": [
+          "For a city with owner p, signed byte +0x3 S, signed halfword +0x48 H and L the word at 0x830ED4C4 + 4 * p, site 1 adds trunc(2 * (H + 2 * (S + 2)) * G / (D + K)) at each of up to 44 tiles around the city, where G = L + 2 when L is not 0 and 3 when L is 0, D is a distance term and K is 4 or 2 by the tile byte.",
+          "Site 2 adds trunc(2 * (H + S * m + 4) * (L + 2) / 4) at the city's own tile, where m is 2, plus 1 for each of bits 0x4000 and 0x80 of city word +0x10 that is set."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CBE5F0",
+            "0x82CBE6E0",
+            "0x82CBE780",
+            "0x82CBE860",
+            "0x82CBE900",
+            "0x82F7A0B8",
+            "0x82F7A168"
+          ],
+          "radius": 64,
+          "distinctWords": 498,
+          "outputSha256": "806722BFE346590B8FF88EFB9542E731EDEC7AC874E29FD781BB36469D5F3F9F",
+          "imageMatch": "All 498 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The decode, the reaching definitions and the offset table reading were done on the flat image."
+        },
+        "limits": [
+          "Static reading only. No amount was observed.",
+          "Arithmetic is native 32-bit with signed division rounding toward zero; the stored value is the low 16 bits of the halfword plus the amount. Divisor traps and overflow were not examined.",
+          "The offset tables are read as image values; a write to them at run time was not searched.",
+          "The meanings of S, H, city byte +0x2, halfword +0x3C bit 0x10, word +0x10 bits 0x4000 and 0x80, and the tile bytes at 0x8312B288 and 0x830E8790 are not established here; T = 6 is a tile byte value only.",
+          "When 0x82CBE528 runs remains unresolved."
+        ],
+        "interpretation": [
+          "Interpretation: site 1 spreads a city's influence over a radius 3 area with the corners cut, falling off with distance and growing with the city's +0x3 and +0x48 values and the owner's level word; the surrounding and center contributions fit the recorded culture-border reading."
+        ],
+        "falsificationConditions": [
+          "A different expression than trunc(2 * (H + 2 * (S + 2)) * G / (D + K)) at 0x82CBE840..0x82CBE884 would falsify the site 1 amount.",
+          "A different expression than trunc(2 * (H + S * m + 4) * (L + 2) / 4) at 0x82CBE8D4..0x82CBE91C would falsify the site 2 amount.",
+          "A different definition of L, S or H than the ones listed in inputs would falsify both amounts.",
+          "A different count or content of the offset pairs in the tables at 0x82F7A0B8 and 0x82F7A168 would falsify the 44 tiles and the distance counts."
+        ],
+        "result": "Static reading of 0x82CBE528: for a city with owner p, signed byte +0x3 S, signed halfword +0x48 H and L the word at 0x830ED4C4 + 4 * p, site 1 adds trunc(2 * (H + 2 * (S + 2)) * G / (D + K)) at each of up to 44 tiles around the city, with G = L + 2 when L is not 0 and 3 when L is 0, and site 2 adds trunc(2 * (H + S * m + 4) * (L + 2) / 4) at the city's own tile, with m = 2 plus 1 for each of bits 0x4000 and 0x80 of city word +0x10 that is set. No amount was observed, the meanings of the inputs are not established, and when the function runs remains unresolved."
       }
     },
     "RVA-F-0331": {

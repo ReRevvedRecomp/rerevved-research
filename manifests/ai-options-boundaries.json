@@ -2975,6 +2975,109 @@
           "A call of sub_82D21570 in a generated function would falsify the recompiled code result."
         ],
         "result": "Within the searches listed, no route into 0x82D21570 was found. No direct call or branch, no resolved jump table entry, no formation of its address and no data word other than its function table row refers to it, and the instruction before it, 0x82D2156C, is an unconditional branch. The recompiled code has no call of it either. This is a static reading and a negative result: a pointer built at run time, an unresolved jump table or an indirect call would be missed, and whether 0x82D21570 runs was not observed."
+      },
+      "selectionSubmitConditionBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "Which tests in TurnSelectionUpdate 0x82D259E8 must pass before each of its five calls of 0x82CE1950?",
+        "scope": {
+          "function": "0x82D259E8",
+          "functionTableRow": "0x8219B3A0",
+          "range": "0x82D259E8..0x82D2D2F8",
+          "calls": [
+            "0x82D2C9BC",
+            "0x82D2ABE0",
+            "0x82D2BD84",
+            "0x82D2C170",
+            "0x82D2CE00"
+          ],
+          "scopeNote": "Required means the call cannot be reached when the test fails, found from the control flow graph of the whole function (1211 blocks, all 13 count-register jump tables resolved), dominator analysis, and for each dominating branch a check whether the other successor can still reach the call. The claim covers the tests on the paths to the five calls, not the sources of the codes and frame words they read, and not what the helper functions compute."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetSubmitterBoundary: the five calls and their event ids and arguments",
+          "ai-stat-choice.json#/consumerBoundary/callerRetention/selectedEdges: the exits at 0x82D2A33C, 0x82D2A35C and 0x82D2A374 (selected unit not -1, unit byte 0 not 0xFF, unit word +0xC bit 0x80000000 clear)",
+          "ai-stat-choice.json#/consumerBoundary/decode: the dispatch at 0x82D2A738 turns codes 0x121..0x128 in frame word +0x7C into r20 = 0..7",
+          "ai-stat-choice.json#/stepGateBoundary: r25 from 0x82CF0268 at 0x82D2C47C and its override",
+          "ai-stat-choice.json#/candidateHelperBoundary and ai-stat-choice.json#/consumerBoundary/conditionalMoveConsumer: the r22 = 0 entry at 0x82D2CD98 and the route to 0x82D2CE00",
+          "Symbol catalog: TurnSelectionUpdate 0x82D259E8, IsHumanPlayer 0x82CD5A70"
+        ],
+        "notation": "P is the word at 0x8312B8E8. S is the selected unit index, the word at 0x8312B8EC. A unit record is at 0x830F2BF0 + 0x54 * (256 * P + i). Type row word +0x50 means the word at 0x82F700D8 + 0x94 * t + 0x50 with t the signed byte +0x1 of the record. X and Y are the words at 0x83122894 and 0x83122890.",
+        "routes": {
+          "common": "The three exits at 0x82D2A33C, 0x82D2A35C and 0x82D2A374 are required for all five calls. The test at 0x82D2A3A0 is not required for any. Also required: the word at 0x830EE7E4 is nonzero and differs from the word at 0x830EE7DC (0x82D25CB4, 0x82D25CC4), the chosen player index is not -1 (0x82D25D4C), and bit 0x20000 of the word at 0x82FFE7C0 is clear (0x82D25D60).",
+          "event0xFAt0x82D2ABE0": [
+            "Required: r18 not 0 (0x82D2A4D4), not above 0x67 (0x82D2A4DC), not 0x67 (0x82D2A4E0), and the jump table at 0x82D2A504 (index r18 - 1) takes index 1 (code 2, to 0x82D2AB6C) or index 74 (code 75, to 0x82D2AB48).",
+            "Code 75 also requires bit 0x80 of type row word +0x50 for unit S (0x82D2AB60..0x82D2AB68); otherwise it branches to 0x82D2ABEC.",
+            "Required for both codes: bit 0x1 of the halfword at 0x8312A608 + 2 * (40 * x + y), with x and y the halfwords +0x1C and +0x1E of unit S (0x82D2AB6C..0x82D2ABA8; the table address is frame word +0x88, stored once at 0x82D26018). When it is clear, it branches to 0x82D2A70C.",
+            "Then c = 0x82CF09D0(P, S) (0x82D2ABB4) and the call follows with no further branch."
+          ],
+          "event0x11At0x82D2BD84And0x82D2C170": [
+            "Required: r18 above 0x79 (0x82D2AC4C) and the jump table at 0x82D2B2C4 (index r18 - 0x406, at most 5) takes index 0 (code 0x406, 0x82D2B6F4) or index 4 (code 0x40A, 0x82D2B8B0). The code 0x406 route stores 0x40A to frame word +0x70 and continues with the 0x40A route at 0x82D2B90C. Code 0x406 requires (X, Y) to differ from unit S halfwords +0x1C and +0x1E; equality takes 0x82D2B728 and reaches 0x82D2A70C without either event 0x11 call.",
+            "Code 0x40A entry (0x82D2B8B0..0x82D2B904): the word at 0x830E45D8 is not -1 and bit P of the word at 0x830EE7E0 is clear, else it branches to 0x82D2A70C. When the word at 0x830EE534 is -1, it stores X and Y to 0x830EE534 and 0x830EE530 and branches to 0x82D2A70C with no call.",
+            "0x82D2B908..0x82D2B938: r18 = -1 and bit 0x00080000 of unit S word +0xC is cleared. Required: the word at 0x830E45D8 is not -1 (0x82D2B93C) and bit 0x100 of the word at 0x830E45D4 is set (0x82D2B950).",
+            "Split at 0x82D2B974 on bit 0x20000 of type row word +0x50 for unit S (F). F set: the byte at 0x8312B288 + 40 * X + Y must not be 6 (0x82D2B9A4, else 0x82D2A70C), then 0x82D2BFE4 (route to 0x82D2C170). F clear and t = 0x18 (0x82D2B9B4): 0x82D2BFDC, then 0x82D2C108 (route to 0x82D2C170). F clear and t not 0x18: 0x82D2B9B8 (route to 0x82D2BD84)."
+          ],
+          "call0x82D2C170": [
+            "From 0x82D2BFE4: when 0x82D8A3A0(word at 0x8314EFE0) equals P, the frame-table word +0xD0 indexed by P is tested (0x82D2C00C). When it is 4, 0x82CE8338 is called with r3 = 0x402 and the code branches to 0x82D2A704 with no call. Otherwise 0x82CE8338 is called with r3 = 1 (0x82D2C0DC) and a nonzero return branches to 0x82D2A70C with no call. When the resolver result is not P, it goes straight to 0x82D2C108.",
+            "0x82D2C108..0x82D2C134: X and Y are stored to halfwords +0x22 and +0x24 of the record at index 256 * r17 + frame word +0x90 (r17 is frame word +0x74 on these routes). Then 0x82D038E8(0), which writes only r9, r10, r11, floating registers and the word at 0x830E3CF4, so r4 (Y) is kept.",
+            "The call: a = P, b = r31, c = 40 * Y + X (0x82D2C13C..0x82D2C16C), d = the word at 0x82F7AD00."
+          ],
+          "call0x82D2BD84": [
+            "0x82D2B9B8..0x82D2B9F4: X is stored to halfwords +0x2A and +0x22 of unit S, Y to +0x2C and +0x24, and -1 to +0x4E. 0x82D2BA00..0x82D2BA8C may rewrite +0x22 and +0x24 when the local player resolver result equals P; not a required test.",
+            "Required (else 0x82D2BEF4, 0x82D2BE04 or 0x82D2A70C): with (x, y) the halfwords +0x1C and +0x1E and (u, v) the halfwords +0x22 and +0x24 of unit S, r3 = 0x821B52C8(x - u, y - v) is at most 1 (0x82D2BAE0); bit 0x10 of type row word +0x50 (0x82D2BB04); bit 0x20000 of unit word +0xC (0x82D2BB18); the byte at 0x8312B288 + 40 * u + v is not 0 (0x82D2BB38); r3 is 1 (0x82D2BB40).",
+            "Required: either the byte at frame word +0xB8 + 40 * u + v is 0 or the signed byte at frame word +0x94 + the same index equals P (0x82D2BB44..0x82D2BB68), and (u, v) differs from (x, y) (0x82D2BB6C..0x82D2BB78); otherwise it branches to 0x82D2A70C.",
+            "0x82D2BB84..0x82D2BBA4: k = 0x82CFA1E8(u - x, v - y) is stored to unit S halfword +0x20 and bit 0x1 of its word +0xC is set.",
+            "Loop 0x82D2BBA8..0x82D2BDDC over i = 0..0xFF, records of P. A record is skipped (0x82D2BDD4) unless: byte +0 is not 0xFF, word +0xC bit 0x80000000 is clear, halfword +0x26 equals S, byte +0x2 is not 0, 0x82CF0268(P, i, u, v) is not 0 (0x82D2BC2C) and t is not 0x1E.",
+            "Then the call at 0x82D2BD84 happens when any of these holds: bit 0x80000 of type row word +0x50 for record i is set (0x82D2BC60); 0x82CB2430(P, i, u, v) returns 0 (0x82D2BC7C); or IsHumanPlayer(r17) is not 0 (0x82D2BC84), r26 is 0 and 0x82CD4798(signed byte at 0x830E8790 + 40 * u + v, 0) is not 0 (0x82D2BCE8). Otherwise r26 = 1 and -1 is stored to record i halfword +0x22, no call. r26 is 0 before the loop (0x82D2BB8C).",
+            "Before the call (0x82D2BD20..0x82D2BD60): bits 0x2 and 0x10000 of record i word +0xC are cleared, unit S halfword +0x20 is copied to record i +0x20, and 0x82D038E8(0) is called. Arguments: a = P, b = i, c = unit S halfword +0x20 (k), d = the word at 0x82F7AD00.",
+            "After the loop, bit 0x1 of unit S word +0xC is cleared and it branches to 0x82D2A70C."
+          ],
+          "calls0x82D2C9BCAnd0x82D2CE00": [
+            "Both are reached only through the jump table at 0x82D2A738 (frame word +0x7C in 0x121..0x128, r20 = 0..7). Required for both: signed byte +0x2 of unit S above 0 (0x82D2C3F4) and r25 not 0 at 0x82D2C5C8; when r25 is 0, -1 is stored to unit S halfword +0x22 and it branches to 0x82D2D0EC.",
+            "0x82D2C9BC additionally requires: 0x82CFE450(x', y', frame +0xD8, frame +0x150) at 0x82D2C600 returns not 0 (else 0x82D2CB74); frame word +0xD8 is not equal to frame word +0x74 (0x82D2C614, else 0x82D2CBD4); and r25 is still not 0 at 0x82D2C8F4 (else 0x82D2CBD4); before that check, r25 can be cleared at 0x82D2C724, 0x82D2C79C, 0x82D2C7E0, 0x82D2C86C or 0x82D2C8E8. x' and y' are r24 and r23 from 0x82D2C464 and 0x82D2C460.",
+            "Then 0x82D2C91C stores r20 to unit S halfword +0x20; 0x82D2C93C..0x82D2C978 may call 0x82D03388 (not required); bit 0x8000 of word +0xC is set and the call follows with a = P, b = S, c = r20, d = the word at 0x82F7AD00.",
+            "0x82D2CE00 additionally requires r22 = 0 at 0x82D2CD9C. r22 is set to 0 at 0x82D2C5F8 and to 1 at 0x82D2C9D4, just after the 0x82D2C9BC call, with no other write in 0x82D2C5F0..0x82D2CDA0. So after the event 0 call the route can reach 0x82D2CD98 but not 0x82D2CE00, and on one pass it makes at most one of the two calls."
+          ]
+        },
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82D25FF0",
+            "0x82D2A4E0",
+            "0x82D2A720",
+            "0x82D2AB80",
+            "0x82D2B2C0",
+            "0x82D2B7F0",
+            "0x82D2B940",
+            "0x82D2BB40",
+            "0x82D2BC80",
+            "0x82D2BD80",
+            "0x82D2C080",
+            "0x82D2C140",
+            "0x82D2C3F0",
+            "0x82D2C5E0",
+            "0x82D2C8F0",
+            "0x82D2C9B0",
+            "0x82D2CD90",
+            "0x82D038E8"
+          ],
+          "radius": 64,
+          "distinctWords": 1995,
+          "outputSha256": "8FA37CA2ED5B270F5D6D24335EAE28E26E5DF07DD36DB39E554EA50083059D48",
+          "imageMatch": "All 1995 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The control flow graph, dominator and register-source analyses were done on the flat image over 0x82D259E8..0x82D2D2F8 (function table row 0x8219B3A0)."
+        },
+        "limits": [
+          "Static reading only. Whether each call runs, and with what values, was not observed.",
+          "The sources of r18, frame words +0x74, +0x7C, +0x90, +0x94, +0xB8, +0xD0 and +0xD8, and the meanings of the tested bits, bytes and helper results, were not established here.",
+          "What 0x82CF09D0, 0x82CE8338, 0x82CFE450, 0x82CB2430, 0x82CD4798, 0x821B52C8 and 0x82CFA1E8 compute was not read.",
+          "Register sources assume normal calling-convention preservation through calls and no write by another thread.",
+          "The 0x82D2CE00 route is only summarized here; its full conditions remain as recorded in ai-stat-choice.json."
+        ],
+        "interpretation": [
+          "Interpretation: event 0x11 at 0x82D2BD84 moves the units that halfword +0x26 ties to the selected unit one step toward a target tile, and 0x82D2C170 sends a unit toward a target tile. With event 0 and event 0x11 being alternatives on the direction-code route, event 0 is likely an attack or other non-move action into the target tile.",
+          "Interpretation: the human test at 0x82D2BC84 only widens which units of the group are moved; none of the five calls is limited to human players."
+        ],
+        "result": "The five calls sit on three input routes, each selected by a code. Code 2 or 75 in r18 leads to event 0xF at 0x82D2ABE0; code 0x406 or 0x40A in r18 leads to event 0x11 at 0x82D2BD84 and 0x82D2C170; a code 0x121..0x128 in frame word +0x7C leads to event 0 at 0x82D2C9BC and event 0x11 at 0x82D2CE00. The tests each route needs are listed in routes. No required test on any route calls IsHumanPlayer 0x82CD5A70; it is called at 0x82D2BC84 as one of three alternatives inside the 0x82D2BD84 loop. This is a static reading: none of these calls was observed."
       }
     },
     "RVA-F-0331": {

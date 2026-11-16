@@ -711,6 +711,14 @@ No route into `0x82D21570` was found within the searches recorded in the
 Whether it runs remains unobserved. Interpretation: the function is likely
 unused in this build.
 
+The [selection submit condition finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/selectionSubmitConditionBoundary)
+records the tests before the five calls of `0x82CE1950` in `0x82D259E8`. They
+sit on three input routes: code 2 or 75 in `r18` leads to event 15, code
+`0x406` or `0x40A` in `r18` leads to event 17 at `0x82D2BD84` and `0x82D2C170`,
+and a code `0x121..0x128` in frame word `+0x7C` leads to event 0 and event 17
+at `0x82D2CE00`. No required test calls `IsHumanPlayer` `0x82CD5A70`. The
+reading is static; the sources of the codes were not established.
+
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's
 current item is 104 (Market) or 110 (Bank). The AI turn function `0x82CB6E48`

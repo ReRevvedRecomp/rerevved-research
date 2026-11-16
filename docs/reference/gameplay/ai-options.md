@@ -679,8 +679,21 @@ of `0x82D1B400` alternates with event `0x1B`: when `0x82CD5A70(a)` returns a
 nonzero low byte and `a` is the result of `0x82D8A3A0`, the event is submitted
 instead, and entry 27 then makes the call. Interpretation: these are unit move
 commands that take a city, the launch of a unit, and the use of a great person.
-The tests listed are those on the straight path to each call. Who submits
-events 0, 1, 15, 17 and 42 was not searched. None of these events was observed.
+The tests listed are those on the straight path to each call.
+
+The [city item reset submitter finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetSubmitterBoundary)
+records who submits events 0, 1, 15, 17 and 42. Within the searches listed,
+seven functions do: `TurnSelectionUpdate` `0x82D259E8` (events 0, 15 and 17),
+`0x82CFD390` (event 0), `AITurnUnitFilter` `0x82CBF570` (event 17), `0x82D21570`
+(event 17), `CombatResolve` `0x82CD9970` and `0x82CD67C8` (events 1 and 42), and
+the dispatcher `0x82CDDF08` itself (event 17). In `CombatResolve` a test picks
+event 1 or event 42. The functions reached from the AI turn function
+`0x82CB6E48` through the direct calls and jump tables followed include none of
+the six functions other than the dispatcher. Two network object slots,
+`0x82D91C30` and `0x82D91C58`, queue a record whose id is not fixed in code. The
+reading is static and covers direct calls only; none of these events was
+observed. Interpretation: `TurnSelectionUpdate` drives the active player's unit,
+so AI moves reach entries 0 and 17 without passing through `0x82CB6E48`.
 
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's

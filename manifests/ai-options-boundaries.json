@@ -2506,7 +2506,7 @@
           "unitArrayAddress": "0x830F2BF0",
           "unitTypeRowSize": "0x94",
           "unitTypeRowAddress": "0x82F700D8",
-          "scopeNote": "The claim covers the four parts of the dispatcher that hold these calls and the tests on the straight path to each call. It does not cover who submits the events, the branches off the straight path, or what the tables and bits named here hold."
+          "scopeNote": "The claim covers the four parts of the dispatcher that hold these calls and the tests on the straight path to each call. It does not cover who submits the events (see cityItemResetSubmitterBoundary), the branches off the straight path, or what the tables and bits named here hold."
         },
         "reusedRecords": [
           "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetConditionBoundary: the conditions inside 0x82D1AC70, 0x82D1B400 and 0x82CF7428, their call sites, and that entry 27 is the call of 0x82D1B400(b, a) alone",
@@ -2596,7 +2596,7 @@
           "The search for entries into the four parts covers direct branches inside the dispatcher function. An indirect branch other than the two tables read (0x82CDE014 and 0x82CE0A74) was not excluded.",
           "The tests listed are those on the straight path to each call. Other branches inside each part (for example 0x82CDF854..0x82CDF8BC in entry 0, and the code of entry 15 between 0x82CE0934 and 0x82CE0A3C) were not read in full.",
           "0x82CD5A70, 0x82CD7A60, 0x82CD69B8, 0x82D08948, 0x82D02390, 0x82CF78D8 and 0x82D8A3A0 were not read. 0x82CD9970 was not read here.",
-          "Who submits events 0, 1, 15, 17 and 42 was not searched. Entry 0 and entries 1 and 42 submit event 0x1B themselves on the path named.",
+          "Who submits events 0, 1, 15, 17 and 42 is recorded in cityItemResetSubmitterBoundary. Entry 0 and entries 1 and 42 submit event 0x1B themselves on the path named.",
           "What the tables at 0x830E7B10 and 0x8314F1AC, the second per-tile table of entry 17, and the unit word +0xC bits hold was not established.",
           "The other five cases of the entry 15 switch were not read.",
           "The calls of 0x82D1AC70 at 0x82D1D7D0 and 0x82D1F8D0 are outside the dispatcher and were not read here."
@@ -2615,6 +2615,183 @@
           "A second call of 0x82D1B400 or submission of event 0x1B in entries 0, 1 and 42, on a path not listed, would falsify the reading of the choice between the direct call and the event."
         ],
         "result": "The calls of 0x82CF7428, 0x82D1B400 and 0x82D1AC70 and the store of -1 at 0x82CE0E3C sit in four parts of the dispatcher 0x82CDDF08: entry 17 (the call of 0x82CF7428 at 0x82CDF1A8), entry 0 (one call of 0x82D1B400 at 0x82CDF9F8), entries 1 and 42, which share a target (two calls of 0x82D1B400 at 0x82CDFC48 and 0x82CDFD80), and entry 15 (the store at 0x82CE0E3C and the calls of 0x82D1AC70 at 0x82CE0F0C and 0x82CE0F24). No direct branch from outside enters the parts of entries 0, 15 and 17. The part of entries 1 and 42 is entered from outside at 0x82CDFAC8 alone, which is a return. In entries 0, 1 and 42 the direct call of 0x82D1B400 has an alternative: when 0x82CD5A70(a) returns a nonzero low byte and a is the result of 0x82D8A3A0, event 0x1B is submitted through 0x82CE1950 instead, and entry 27 then makes the call. In entry 15 the two sites belong to two cases of a switch on the unit type. The tests on the straight path to each call are recorded in the parts above. This is a static reading: none of these events was observed."
+      },
+      "cityItemResetSubmitterBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "Which code submits events 0, 1, 15, 17 and 42 to the dispatcher 0x82CDDF08?",
+        "scope": {
+          "dispatcher": "0x82CDDF08",
+          "events": [
+            "0",
+            "1",
+            "15",
+            "17",
+            "42"
+          ],
+          "submitters": [
+            "0x82D259E8",
+            "0x82CFD390",
+            "0x82CBF570",
+            "0x82D21570",
+            "0x82CD9970",
+            "0x82CD67C8",
+            "0x82CDDF08"
+          ],
+          "networkObjectSlots": [
+            "0x82D91C30",
+            "0x82D91C58"
+          ],
+          "scopeNote": "Within the searches listed, events 0, 1, 15, 17 and 42 are submitted from seven functions: TurnSelectionUpdate 0x82D259E8, 0x82CFD390, AITurnUnitFilter 0x82CBF570, 0x82D21570, CombatResolve 0x82CD9970, 0x82CD67C8 and the dispatcher 0x82CDDF08 itself. Two network object slots, 0x82D91C30 and 0x82D91C58, queue a record taken from a received object, whose id is not fixed in code. The claim does not cover the conditions before these submissions, how 0x82D21570 is reached, or what the words at 0x8312E608, 0x8312E610 and 0x8312B8C8 hold."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemAssignmentBoundary: 0x82CE1950 stages the five words {id, a, b, c, d} and, when the byte at 0x8314F10B is 0, queues the record through 0x82CE16C8, which calls the dispatcher at 0x82CE17B0; the dispatcher table at 0x82CDE014",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetEventBoundary: the parts of entries 0, 1, 15, 17 and 42 and the event 0x11 submission inside the part of entries 1 and 42",
+          "ai-civilization-elimination.json (setup.routing, setup.events): 0x82CE1830 is the other post routine, which sends through 0x82D90988 and session slot +0x44 when the network byte is set and otherwise runs locally through 0x82CE16C8; its callers submit 0x3A, 0x3B and 0x39",
+          "ai-nuclear-weapon-requirements.json#/launchDecision/command (RVA-F-0363): the event 0x11 staged by 0x82CBF570 at 0x82CBF7C4..0x82CBF7D8 and queued at 0x82CBF880, with c = 40 * cityY + cityX, on the arm selected by bit 0x20000 of type row word +0x50; its caller 0x82D291C8 in 0x82D259E8 passes the player and unit",
+          "Symbol catalog names: TurnSelectionUpdate 0x82D259E8, AITurnUnitFilter 0x82CBF570, AITurnUnitEvaluation 0x82CB6E48, CombatResolve 0x82CD9970, IsHumanPlayer 0x82CD5A70, NetworkCommandSubmit 0x82CE1950, NetworkCommandQueueDrain 0x82CE16C8, NetworkCommandConsumer 0x82CDDF08, NetworkCommandObjectConsume 0x82D91C58."
+        ],
+        "search": {
+          "directCalls": [
+            "Direct calls (bl) in 0x82010000..0x82F70000 to the post routines 0x82CE1950 (100 sites), 0x82CE1830 (4) and 0x82CE16C8 (27), and to the dispatcher 0x82CDDF08 (1 site, 0x82CE17B0).",
+            "Direct calls to the two wrappers 0x82CD5848 (6 sites) and 0x82CE1AD8 (8 sites), which pass their first argument to 0x82CE1950 as the id.",
+            "Direct calls to the network senders 0x82D90A18 (26 sites) and 0x82D90988 (1 site, in 0x82CE1830)."
+          ],
+          "idReading": [
+            "For a call of 0x82CE1950, 0x82CD5848, 0x82CE1AD8 or 0x82CE1830 the id is the last write of r3 before the call in address order. The search treats 0x82D038E8 as not writing r3 (its body 0x82D038E8..0x82D0392C has no write to r3). Direct branch targets between that write and the call were listed and each was read.",
+            "For a call of 0x82CE16C8 or 0x82D90A18 the id is the word stored at the record offset passed in r3 or r4, and the register stored there was traced back to its last write in address order."
+          ],
+          "dataWords": "The only data words equal to 0x82CE1950, 0x82CE16C8, 0x82CE1830, 0x82CDDF08, 0x82CD5848 and 0x82CE1AD8 are at 0x8219AC18..0x8219ACA0, a table of pairs (function start, second word) at an 8 byte step."
+        },
+        "submitters": [
+          {
+            "event": "0",
+            "sites": [
+              "0x82D2C9BC in TurnSelectionUpdate 0x82D259E8 calls 0x82CE1950. r3 is set to 0 at 0x82D2C984 as the argument of 0x82D038E8 (called at 0x82D2C9A0) and is not written again before the call. Just before, 0x82D2C980..0x82D2C99C set bit 0x8000 of the word at r15 + 0xC + 0x54 * (256 * P + r31), with P the word at 0x8312B8E8 loaded at 0x82D2C97C; r15 is set to 0x830F2BF0 at 0x82D25E00 (address order).",
+              "0x82CFD390 stages id 0 (the id is set at 0x82CFD578 and stored to frame +0x50 at 0x82CFD584), with a = r25, b = r19, c = r18, d = r24 at frame +0x54, +0x58, +0x5C and +0x60. It sends the record through 0x82D90A18 at 0x82CFD5D4 or queues it through 0x82CE16C8 at 0x82CFD624. The one direct caller of 0x82CFD390 is 0x82CFDC6C in 0x82CFD758, whose one direct caller is TurnSelectionUpdate 0x82D259E8."
+            ]
+          },
+          {
+            "event": "15",
+            "sites": [
+              "0x82D2ABE0 in TurnSelectionUpdate 0x82D259E8 calls 0x82CE1950 with r3 = 0xF (0x82D2ABD4); r6 is the result of 0x82CF09D0 (called at 0x82D2ABB4). No other event 15 submission was found."
+            ]
+          },
+          {
+            "event": "17",
+            "sites": [
+              "TurnSelectionUpdate 0x82D259E8 calls 0x82CE1950 with r3 = 0x11 at 0x82D2BD84, 0x82D2C170 and 0x82D2CE00.",
+              "AITurnUnitFilter 0x82CBF570 stages event 0x11 and queues it at 0x82CBF880 or sends it through 0x82D90A18 at 0x82CBF824 (already recorded in RVA-F-0363). Its one direct caller is 0x82D291C8 in TurnSelectionUpdate, which first calls 0x82CBC8E8 at 0x82D291B4.",
+              "0x82D21570 stages event 0x11 (the id is set in r16 at 0x82D2160C and stored to frame +0x60 at 0x82D216C0) inside a loop over 0x100 unit records (0x82D21630..0x82D217B0, r28 counts to 0x100, r30 steps by 0x54); r16 is not written inside the loop. It queues the record at 0x82D21754 or sends it at 0x82D2170C. No direct call of, branch to, address formation of, or data word equal to 0x82D21570 was found other than its entry in the function table.",
+              "The dispatcher 0x82CDDF08 itself submits event 0x11 at 0x82CDFA4C in the part of entry 0 and at 0x82CDFCA8 in the part of entries 1 and 42.",
+              "In the part of entry 0, 0x82CDF9FC..0x82CDFA64: it calls 0x82CD5A70(a). When the low byte of the result is 0 it calls 0x82CD69B8(a, b, r26). When it is not 0 and a equals the result of 0x82D8A3A0 (word at 0x8314EFE0), it sets bit 0x8000 of the unit word +0xC and calls 0x82CE1950(0x11, a, b, r26, word at r14 +0x0, -1). Otherwise it does neither."
+            ]
+          },
+          {
+            "events": [
+              "1",
+              "42"
+            ],
+            "sites": [
+              "CombatResolve 0x82CD9970 at 0x82CDDEE8 calls 0x82CE1950 with r3 = 1 on the path through 0x82CDDEC4, and with r3 = 0x2A on the two paths that branch to 0x82CDDEC8 from 0x82CDDE68 and 0x82CDDE7C (r3 set at 0x82CDDE4C and 0x82CDDE74). a = r31, b = 256 * (frame +0x644) + (frame +0x62C), d = word at the address in frame +0xC8.",
+              "0x82CD67C8(a), whose one direct caller is dispatcher entry 64 (table word 64 is 0x82CDFD88, which calls 0x82CD67C8 at 0x82CDFD8C), reads the word W at 0x8312E610 + 4 * a. When W is -1 it submits nothing. Otherwise it stores a word to 0x8312B8C8 (0x82CD685C) and calls 0x82CD5848 at 0x82CD6868 with id 0x2A when the low byte of W equals a and id 1 otherwise, and r4 = the low byte of W.",
+              "0x82CD5848(id, r4, r5, r6) calls 0x82CE1950(id, r4, r5, r6, 0, r8) (0x82CD5894..0x82CD58AC), where r8 is word +0xC of the result of slot +0x100 of the object at word +0x10 of the object at 0x8314EFE0, or -1 when that object word is 0.",
+              "Event 64 (0x40) is submitted through 0x82CD5848 at 0x82D90828 in 0x82D906D0. The one direct caller of 0x82D906D0 is in 0x82D91CE8, which has no direct caller; the word 0x82D91CE8 is at 0x82136954."
+            ],
+            "combatResolvePath": [
+              "The path in CombatResolve is chosen at 0x82CDD5E0..0x82CDDE3C.",
+              "Base registers r25 and r26 are set to 0x83130000 at 0x82CDD498 and 0x82CDD278 (address order).",
+              "When the word at 0x8312E608 is not 0, the test is bit a of that word (0x82CDD5EC..0x82CDD608). When it is 0, the test is a nonzero result of 0x82D8AB00(word at 0x8314EFE0, a) (0x82CDDDC4..0x82CDDDE0).",
+              "Test false: id 1 (0x82CDDDEC branches to 0x82CDDE80).",
+              "Test true: a is compared with word +0xC of the result of slot +0x100 of the object at word +0x10 of the object at 0x8314EFE0, or with -1 when that object word is 0 (0x82CDDDF0..0x82CDDE28). Equal: id 0x2A. Not equal: no submission (0x82CDDE2C branches to 0x82CDDEEC).",
+              "r6 holds the word at 0x8312B8C8 on these paths (loaded at 0x82CDDDD8 and 0x82CDDE1C) and is not written before the call."
+            ]
+          },
+          {
+            "event": "network object slots",
+            "sites": [
+              "0x82D91C30 and 0x82D91C58 (NetworkCommandObjectConsume) call 0x82CE16C8 at 0x82D91C40 and 0x82D91C68 with r3 = the object + 0x34. Their words are at 0x82136904 and 0x821368F0. The id is the word in that object."
+            ]
+          },
+          {
+            "event": "not among these events",
+            "sites": [
+              "0x82D8F628 queues a record with id -1 (0x82D8F60C..0x82D8F618).",
+              "0x82D25AF4 calls 0x82CE1AD8 with 0x2E or 0x2F.",
+              "0x82CED264 calls 0x82CE1AD8 with 4.",
+              "Every other direct call of the post routines and wrappers sets an id other than 0, 1, 0xF, 0x11 and 0x2A."
+            ]
+          }
+        ],
+        "incomingBranches": [
+          "Between the id write and the call, direct branch targets exist at 0x82CDDEC8 (from 0x82CDDE68 and 0x82CDDE7C, both set 0x2A), 0x82D25B28 (from 0x82D25AD4, which sets 0x30), and 0x82CD6868 (from 0x82CD6860, the 0x2A case).",
+          "At the inline record sites (0x82CBF880, 0x82CFD624, 0x82D21754, 0x82D250A4, 0x82D25164) the targets lie after the id store and come from code after that store, except the loop back edge at 0x82D217B0."
+        ],
+        "aiTurnReach": {
+          "root": "AITurnUnitEvaluation 0x82CB6E48",
+          "method": "Following direct calls and the jump tables found, and not entering 0x82CE16C8, 0x82CE1830, 0x82CE1950, 0x82CDDF08, 0x82CD5848 or 0x82CE1AD8.",
+          "functions": 422,
+          "indirectCallSitesNotFollowed": 305,
+          "reached": "None of 0x82D259E8, 0x82CD9970, 0x82CD67C8, 0x82CFD390, 0x82CBF570 or 0x82D21570 is reached."
+        },
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82D2C9BC",
+            "0x82D2ABE0",
+            "0x82D2BD84",
+            "0x82D2C170",
+            "0x82D2CE00",
+            "0x82D291C8",
+            "0x82CBF7D4",
+            "0x82CFD584",
+            "0x82D216C0",
+            "0x82CDDE80",
+            "0x82CDD5E0",
+            "0x82CD6868",
+            "0x82CDFA00",
+            "0x82CDFC80",
+            "0x82CDFD8C",
+            "0x82CDE094",
+            "0x82D90828",
+            "0x82CD58AC",
+            "0x82CE1B0C",
+            "0x82D038E8",
+            "0x82CFDC6C",
+            "0x82D91C40",
+            "0x82D91C68",
+            "0x82D8F628",
+            "0x8219AC80",
+            "0x82D25AF0",
+            "0x82CED240",
+            "0x82E107D8"
+          ],
+          "radius": 64,
+          "distinctWords": 3431,
+          "outputSha256": "122CEB336EC5ABF214B6DAF74BB7371159E74E9913D39A98750D83E7967D65B5",
+          "imageMatch": "All 3431 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The call scans, the data word search, the branch target list and the functions reached from 0x82CB6E48 were read from the flat image."
+        },
+        "limits": [
+          "Static reading only. None of these submissions was observed.",
+          "The search covers direct calls of the routines named and records staged for 0x82CE16C8 and 0x82D90A18. An indirect call of a post routine, or a record queued another way, would be missed. The 305 indirect call sites in the functions reached from 0x82CB6E48 were not followed.",
+          "Ids were read as the last write in address order, with the listed incoming branches; a value that reaches the call through other flow would be missed.",
+          "The ids carried by the network object slots 0x82D91C30 and 0x82D91C58 come from the received object and are not fixed in code.",
+          "The conditions in TurnSelectionUpdate 0x82D259E8 before its five submissions, in 0x82CFD758 before its call of 0x82CFD390, and the meaning of the a, b and c arguments at those sites were not read.",
+          "How 0x82D21570 is reached was not established. How often 0x82D259E8 is called was not established; its six direct calls are in 0x82E10690, which has no direct caller.",
+          "What the words at 0x8312E608, 0x8312E610 and 0x8312B8C8 hold was not established here."
+        ],
+        "interpretation": [
+          "Interpretation: TurnSelectionUpdate is the per-step driver for the active player's unit. For an AI player it chooses the action through AITurnUnitFilter and submits the move or launch itself, so AI moves reach entries 0 and 17 without passing through AITurnUnitEvaluation 0x82CB6E48.",
+          "Interpretation: events 1 and 42 are the two forms of the result of a combat: 1 for a player that 0x82CD5A70 and the human mask treat as not human, 42 for the local human player, which other peers learn through the network.",
+          "Interpretation: 0x82D21570 may be a turn start or scripted step that moves units of a player in a loop."
+        ],
+        "falsificationConditions": [
+          "A direct call of 0x82CE1950, 0x82CD5848, 0x82CE1AD8 or 0x82CE1830 with id 0, 1, 0xF, 0x11 or 0x2A at a site not listed would falsify the list of submitters.",
+          "An intervening write to r3 on a path reaching a listed call would falsify the id reading.",
+          "A path from AITurnUnitEvaluation 0x82CB6E48 by direct calls or the jump tables found to one of 0x82D259E8, 0x82CD9970, 0x82CD67C8, 0x82CFD390, 0x82CBF570 or 0x82D21570 would falsify the reach result."
+        ],
+        "result": "Within the searches listed, events 0, 1, 15, 17 and 42 are submitted from seven functions: TurnSelectionUpdate 0x82D259E8 (events 0, 15 and 17), 0x82CFD390 (event 0, called from TurnSelectionUpdate through 0x82CFD758), AITurnUnitFilter 0x82CBF570 (event 17), 0x82D21570 (event 17), CombatResolve 0x82CD9970 (events 1 and 42), 0x82CD67C8 (events 1 and 42) and the dispatcher 0x82CDDF08 itself (event 17). Two network object slots, 0x82D91C30 and 0x82D91C58, queue a record taken from a received object, whose id is not fixed in code. The functions reached from the AI turn function 0x82CB6E48 through direct calls and the jump tables followed include none of 0x82D259E8, 0x82CD9970, 0x82CD67C8, 0x82CFD390, 0x82CBF570 or 0x82D21570, and does not enter the dispatcher. This is a static reading: none of these submissions was observed."
       }
     },
     "RVA-F-0331": {

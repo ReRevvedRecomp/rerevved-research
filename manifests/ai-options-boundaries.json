@@ -3018,7 +3018,7 @@
           ],
           "call0x82D2C170": [
             "From 0x82D2BFE4: when 0x82D8A3A0(word at 0x8314EFE0) equals P, the frame-table word +0xD0 indexed by P is tested (0x82D2C00C). When it is 4, 0x82CE8338 is called with r3 = 0x402 and the code branches to 0x82D2A704 with no call. Otherwise 0x82CE8338 is called with r3 = 1 (0x82D2C0DC) and a nonzero return branches to 0x82D2A70C with no call. When the resolver result is not P, it goes straight to 0x82D2C108.",
-            "0x82D2C108..0x82D2C134: X and Y are stored to halfwords +0x22 and +0x24 of the record at index 256 * r17 + frame word +0x90 (r17 is frame word +0x74 on these routes). Then 0x82D038E8(0), which writes only r9, r10, r11, floating registers and the word at 0x830E3CF4, so r4 (Y) is kept.",
+            "0x82D2C108..0x82D2C134: X and Y are stored to halfwords +0x22 and +0x24 of the record at index 256 * r17 + frame word +0x90 (r17 is frame word +0x74 on these routes). Then 0x82D038E8(0), which leaves r4 (Y) unchanged.",
             "The call: a = P, b = r31, c = 40 * Y + X (0x82D2C13C..0x82D2C16C), d = the word at 0x82F7AD00."
           ],
           "call0x82D2BD84": [
@@ -3179,6 +3179,85 @@
           "Interpretation: the 0x82D295E8 switch turns a pathfinding step toward unit S's stored destination into a direction code, so destination movement uses the same route as a direct direction code."
         ],
         "result": "The r18 code travels between r18 and frame word +0x70 and has 34 origin sites that can reach 0x82D2A4D0. The +0x7C code has 21 stores and one call given its address that can reach 0x82D2A70C. A test at 0x82D27E64 splits two producer routes: the input route requires frame word +0x74 to equal 0x82D8A3A0(word at 0x8314EFE0) and either bit 0x400 of the word at 0x830E4550 clear or S = -1; otherwise execution takes the route at 0x82D290D4, which calls AITurnUnitFilter 0x82CBF570. Of the event-selecting codes, 2 has one constant source (0x82D2902C), 75 has constant sources only on the AITurnUnitFilter route (r23 = 0x4B at 0x82D2926C), and 0x406 and 0x40A have no constant source in the function. Two in-function switches write the direction codes 0x121..0x128; other potential sources include the input return, the frame-array load and AITurnUnitFilter. This is a static reading."
+      },
+      "filterReturnCodeBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "Which values does AITurnUnitFilter 0x82CBF570 return in r3, which on the AI route of TurnSelectionUpdate 0x82D259E8 is stored to frame word +0x70 at 0x82D291DC and becomes the r18 code?",
+        "scope": {
+          "function": "0x82CBF570",
+          "range": "0x82CBF570..0x82CC1850",
+          "values": [
+            "r3 at each return of AITurnUnitFilter"
+          ],
+          "scopeNote": "Only the return values are followed. A value produced by a called function is named and not followed into the callee."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/selectionCodeSourceBoundary: the AI route, the call at 0x82D291C8, the store at 0x82D291DC and the r23 = 0x4B overrides after it",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/selectionSubmitConditionBoundary: which r18 codes select the event routes (2 or 75 for event 0xF, 0x406 or 0x40A for event 0x11 at 0x82D2BD84 and 0x82D2C170)",
+          "ai-stat-choice.json#/consumerBoundary: the arguments of the call at 0x82D291C8 and the separate output code written through the fourth argument, which is not the return value",
+          "Symbol catalog: AITurnUnitFilter 0x82CBF570, TurnSelectionUpdate 0x82D259E8"
+        ],
+        "notation": "P is the first argument (r14) and S the second (r15). A unit record is at 0x830F2BF0 + 0x54 * (256 * P + S). Type row word +0x50 is the word at 0x82F700D8 + 0x94 * t + 0x50, with t the signed byte +0x1 of the record.",
+        "summary": [
+          "AITurnUnitFilter returns one of the constants 0x20, 0, 0x4B or 0x66, or its third argument unchanged. It never returns 2, 0x406 or 0x40A as a constant.",
+          "On the AI route its third argument is the result of 0x82CBC8E8 (0x82D291B4..0x82D291B8), so those codes can reach the r18 code on that route only as a 0x82CBC8E8 result passed through at 0x82CBF9E8.",
+          "The function has ten return branches to the shared epilogue 0x827F7CA0, in a function table length of 2224 instructions."
+        ],
+        "returnSites": [
+          "0x20: 0x82CBF5F8 (return 0x82CBF600), 0x82CBF898 (0x82CBF8A4), 0x82CBFA34 (0x82CBFA40), 0x82CBFAF8 (0x82CBFB00), 0x82CBFC10 (0x82CBFC18), and 0x82CC1804 through r8 (0x82CC184C).",
+          "0: 0x82CBF864 (0x82CBF86C), 0x82CBF888 (0x82CBF890), and 0x82CC1710 and 0x82CC1730 through r8 (0x82CC184C).",
+          "0x4B: 0x82CBFDE4 (0x82CBFDEC).",
+          "0x66: 0x82CC17FC through r8 (0x82CC184C).",
+          "Third argument: 0x82CBF9DC copies r31 to r3 (return 0x82CBF9E8). r31 is set from r5 at 0x82CBF5C4 and not written again before 0x82CBF9DC.",
+          "At 0x82CC1844 r3 = r8. The call of 0x82D038E8 at 0x82CC1830 leaves r8 unchanged. The r8 values reaching 0x82CC1844 are 0 (0x82CC1710, 0x82CC1730), 0x66 (0x82CC17FC) and 0x20 (0x82CC1804).",
+          "The count-register jump at 0x82CC144C is the output-code switch, not a return."
+        ],
+        "mainSplit": [
+          "0x82CBF5C8..0x82CBF5D4: when bit 0x20000 of type row word +0x50 for unit S is clear, the function branches to 0x82CBF8A8. When it is set, it returns 0x20 at 0x82CBF5F8 if the word at 0x830ED3D8 + 4 * P is 4, and otherwise continues at 0x82CBF604.",
+          "Every return of 0x4B, 0x66, the r8 values and the third argument requires that bit clear. The branch at 0x82CBF5D4 is required for 0x82CBF9DC, 0x82CBFDE4, 0x82CC17FC, 0x82CC1804, 0x82CC1710 and 0x82CC1730.",
+          "From 0x82CBF8A8, the block at 0x82CBF944 is reached when the byte at 0x8312B288 + 40 * x + y is not 0 (x, y the halfwords +0x1C and +0x1E of unit S) or bit 0x2 of type row word +0x50 is set. Otherwise the function branches to 0x82CBFA08."
+        ],
+        "passThrough": [
+          "The pass-through block 0x82CBF9D4 is reached when r31 is 0x62 or 0x73 (0x82CBF944..0x82CBF950), when r31 is 0x4B (0x82CBF9EC..0x82CBF9F0), when r31 is 0x66 and some tile and type tests in 0x82CBF95C..0x82CBF9D0 pass, or, when 0x82CBF9F4 is reached, including for r31 = 0x66 after its earlier tests fail, when the signed byte +0x2 of unit S is 0 or less (0x82CBF9F4..0x82CBFA04). It stores -1 to unit S halfword +0x22 and returns r31.",
+          "0x82CBFA2C..0x82CBFA38 also store -1 to unit S halfword +0x22 before returning 0x20."
+        ],
+        "aiRoute": [
+          "On the AI route, the r18 code is 0x20, 0, 0x4B, 0x66, or the 0x82CBC8E8 result, before the r23 = 0x4B overrides recorded in selectionCodeSourceBoundary.",
+          "Codes 2, 0x406 and 0x40A can reach the event routes from this route only when 0x82CBC8E8 returns them and the pass-through is taken. For a value other than 0x62, 0x73, 0x4B and 0x66 that needs type bit 0x20000 clear, the tile or type test at 0x82CBF918..0x82CBF940 passed, and the signed byte +0x2 of unit S at most 0.",
+          "Code 75 (0x4B) is a constant return at 0x82CBFDE4 and can also pass through."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CBF5C0",
+            "0x82CBF870",
+            "0x82CBF940",
+            "0x82CBF9E0",
+            "0x82CBFAF0",
+            "0x82CBFC10",
+            "0x82CBFDE0",
+            "0x82CC1720",
+            "0x82CC1800",
+            "0x82D291C0"
+          ],
+          "radius": 64,
+          "distinctWords": 920,
+          "outputSha256": "D33964C32601A8573ECF08CC6DF3096832F4B86AB3B67C11A789E5EF0C214A0C",
+          "imageMatch": "All 920 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The control flow, reaching definition and required-branch analyses were done on the flat image.",
+          "analysis": "Control flow graph of 0x82CBF570..0x82CC1850, reaching definitions of r3 at each return and of the registers copied into it, and the required-branch check used in selectionSubmitConditionBoundary."
+        },
+        "limits": [
+          "Static reading only. Which values AITurnUnitFilter returns in play was not observed.",
+          "What 0x82CBC8E8 returns was not read, so whether codes 2, 0x406 or 0x40A reach the event routes on the AI route remains open.",
+          "The conditions listed are the required branches near each return. The full condition set of each return was not enumerated.",
+          "Register sources assume normal calling-convention preservation through calls and no write by another thread."
+        ],
+        "interpretation": [
+          "Interpretation: AITurnUnitFilter mostly returns its own small set of codes, and passes through the code chosen by 0x82CBC8E8 mainly when the unit has no moves left (byte +0x2 at most 0) or that code is one of a few it accepts. Whether the AI ever issues group-move or move-to-tile codes therefore depends on 0x82CBC8E8."
+        ],
+        "result": "AITurnUnitFilter returns one of the constants 0x20, 0, 0x4B or 0x66, or its third argument unchanged. It never returns 2, 0x406 or 0x40A as a constant. On the AI route its third argument is the result of 0x82CBC8E8 (0x82D291B4..0x82D291B8), so those codes can reach the r18 code on that route only as a 0x82CBC8E8 result passed through at 0x82CBF9E8. This is a static reading."
       }
     },
     "RVA-F-0331": {

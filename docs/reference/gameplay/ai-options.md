@@ -726,8 +726,15 @@ either to a read of an input object or to a call of `AITurnUnitFilter`
 on the `AITurnUnitFilter` route, codes `0x406` and `0x40A` have no constant source in
 the function, two switches in the function write the direction codes
 `0x121..0x128`, and other potential sources include the input return, the
-frame-array load and `AITurnUnitFilter`. The return values of these functions remain
-unresolved, and the reading is static.
+frame-array load and `AITurnUnitFilter`. The return values of the other code-producing functions
+remain unresolved, and the reading is static.
+
+The [filter return code finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/filterReturnCodeBoundary)
+reads the returns of `AITurnUnitFilter`. It returns one of the constants `0x20`,
+0, `0x4B` or `0x66`, or its third argument unchanged, and no return site gives
+2, `0x406` or `0x40A` as a constant. On the AI route that argument is the result
+of `0x82CBC8E8`, whose return values remain unresolved, so those codes can
+reach the event routes only through it. The reading is static.
 
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's

@@ -3500,7 +3500,94 @@
           "A different argument register at 0x82D1D7D0 or 0x82D1F8D0 than the ones listed would falsify the arguments.",
           "A path into 0x82D1F8D0 that skips any of the seven tests would falsify the required tests."
         ],
-        "result": "0x82D1D7D0 is in 0x82D1D1C0 and 0x82D1F8D0 is in 0x82D1EAB0. Both functions take a player in r3 and are called directly only from dispatcher entries 46, 47 and 48. Each call is in a loop over the 128 city records at 0x8314FE28. 0x82D1D7D0 passes (city index, the city's owner byte, the player argument, 2). 0x82D1F8D0 passes (city index, a chosen player, the city's owner byte, 1), only on the pass for one particular player and only after seven tests. This is a static reading, and what 0x82CB2370 and 0x82CF0070 compute for the 0x82D1F8D0 call remains unresolved."
+        "result": "0x82D1D7D0 is in 0x82D1D1C0 and 0x82D1F8D0 is in 0x82D1EAB0. Both functions take a player in r3 and are called directly only from dispatcher entries 46, 47 and 48. Each call is in a loop over the 128 city records at 0x8314FE28. 0x82D1D7D0 passes (city index, the city's owner byte, the player argument, 2). 0x82D1F8D0 passes (city index, a chosen player, the city's owner byte, 1), only on the pass for one particular player and only after seven tests. This is a static reading. The static computations of these helpers are recorded in outsideCallHelperBoundary."
+      },
+      "outsideCallHelperBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "What do 0x82CB2370 and 0x82CF0070, called on the way to the 0x82D1AC70 call at 0x82D1F8D0, compute?",
+        "scope": {
+          "functions": [
+            "0x82CB2370",
+            "0x82CF0070"
+          ],
+          "range82CB2370": "0x82CB2370..0x82CB242C, 48 instructions",
+          "range82CF0070": "0x82CF0070..0x82CF0264, 126 instructions",
+          "tableBase": "0x8312E810",
+          "tableStride": "0xC80",
+          "tableCount": "8",
+          "cityArrayAddress": "0x8314FE28",
+          "cityRecordSize": "0xBC",
+          "scopeNote": "The claim covers the two functions as called for tests 4 and 5 of the 0x82D1F8D0 call: the values 0x82CB2370 copies and sums, and the chain of tests that gives the result of 0x82CF0070. It does not cover what writes the tables, what 0x82CEF4E8 returns for 0xF, or the meaning of the words the tests read."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/outsideDispatcherCallBoundary: the 0x82D1F8D0 call, its tests 4 and 5, and that the caller reads one signed halfword per player from the buffer and keeps the first player with the largest value above 0x32",
+          "ai-stat-choice.json#/stepGateBoundary/helperContract/extraType20: the inputs A, flag, Z, h, mask[h], count and C[p] read in 0x82CF03C4..0x82CF04CC, with the same neutral labels used here",
+          "ai-civilization-elimination.json: 0x82F700B0 is the barbarian player word",
+          "ai-nuclear-weapon-requirements.json: 0x82CEF4E8 is called as a wonder predicate in the form (p, -1), and the per-player word at 0x830ED3D8"
+        ],
+        "callers": {
+          "82CB2370": "Direct callers, from a scan of every branch word: 0x82CC715C, 0x82D1D800, 0x82D1F814 and 0x82D59558.",
+          "82CF0070": "Direct callers: 0x82CBEC28, 0x82CC713C, 0x82CF0AD4, 0x82D1D85C, 0x82D1F860 and 0x82D595E8."
+        },
+        "tableCopy": {
+          "function": "0x82CB2370",
+          "index": "The index i is 40 * r3 + r4 (0x82CB2378..0x82CB238C), and the byte offset is 2 * i.",
+          "tables": "The base is 0x8312E810 (0x82CB2388). Eight halfwords are loaded at base + 0xC80 * k + 2 * i for k = 0..7, at offsets 0, 0xC80, 0x1900, 0x2580, 0x3200, 0x3E80, 0x4B00 and 0x5780. Each is stored unchanged to r5 + 2 * k (0x82CB23EC..0x82CB2424).",
+          "return": "r3 is the sum of the eight values, each treated as a signed halfword (0x82CB2428). The caller at 0x82D1F814 does not use the return value.",
+          "tableSize": "The eight bases are separated by 0xC80 bytes, equivalent to 1600 halfwords; their complete extents remain unresolved."
+        },
+        "cityTests": {
+          "function": "0x82CF0070",
+          "inputs": "The city index c is in r3 and the player p in r4. o is the signed byte +0x0 of city c. C[x] is the halfword at 0x830E9070 + 2 * x.",
+          "returnsZero": [
+            "1. C[p] equals C[o] (0x82CF00AC).",
+            "2. Bit 0x4000 of city word +0x24 is set (0x82CF00C0).",
+            "3. p equals o (0x82CF00C8).",
+            "4. The word at 0x830ED3D8 + 4 * p is 0 (0x82CF00E0).",
+            "5. o equals the word at 0x82F700B0 (0x82CF00F0).",
+            "6. Bit 0x1 of city word +0x10 is set and the signed city byte +0x1 equals o (0x82CF0104..0x82CF0118).",
+            "7. Bit 0x80 of city word +0x10 is set and 0x82CEF4E8(0xF, p, -1) returns 0 (0x82CF011C..0x82CF0138)."
+          ],
+          "returnsZeroNote": "Each of the seven returns 0 at once, by a branch to 0x82CF025C, and they are checked in the order listed.",
+          "bit800Clear": "Then the result is 1 (0x82CF0250) when bit 0x800 of city word +0x10 is clear (0x82CF0144).",
+          "bit800Set": "With bit 0x800 set, A is the word at 0x830E5248 (0x82CF0150). The result is 1 when A is -1 (0x82CF0158) or the byte at 0x8314F10B is not 0 (0x82CF0168). Z is the signed halfword at 0x830E8FE0, h is the signed halfword at 0x82F75C00 and mask[h] is the word at 0x830EDC48 + 4 * h. With Z = 0, h not -1 and mask[h] not 0, the result is 1 (0x82CF01B0). With Z = 1 and h not -1, for each i below the count at 0x82F700AC the result is 1 when C[i] differs from C[o] and bit i of mask[h] is set (0x82CF01F0..0x82CF0224). Then the result is 0 when o is -1 (0x82CF022C), when o equals A (0x82CF0234) or when C[A] equals C[o] (0x82CF024C), and otherwise 1.",
+          "tail": "The part from A onward and 0x82CF03C4..0x82CF04CC in the extraType20 record use related tests with o in place of P, but different A and h globals. Paths returning 1 here clear R there; the remaining paths return 0 here and retain R there."
+        },
+        "summary": [
+          "0x82CB2370(a, b, buffer) copies the halfword at index 40 * a + b from each of eight tables at 0x8312E810 + 0xC80 * k (k = 0..7) to buffer + 2 * k, and returns the sum of the eight signed values.",
+          "0x82CF0070(city, p) returns 0 or 1 from a fixed chain of tests on the city, p and the city's owner."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CB23D0",
+            "0x82CF00B0",
+            "0x82CF0170",
+            "0x82CF0220"
+          ],
+          "radius": 64,
+          "distinctWords": 350,
+          "outputSha256": "9EED3330772CAD8ACC1F4FB42E5036CB4E2DE818B955BDE010C1563D6ADD989E",
+          "imageMatch": "All 350 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The full decodes of both functions and the caller scan were done on the flat image."
+        },
+        "limits": [
+          "Static reading only. No value was observed.",
+          "What writes the eight tables at 0x8312E810, and what 0x82CEF4E8 returns for 0xF, remain unresolved.",
+          "The meanings of C, Z, h, A, the per-player word at 0x830ED3D8 and city word +0x10 bits 0x1, 0x80 and 0x800 are not established here.",
+          "The 0x82D1F8D0 caller reads one buffer halfword per player for the count at 0x82F700AC; 0x82CB2370 fills eight. A count above 8 was not examined.",
+          "Callers other than 0x82D1F814 and 0x82D1F860 were not read."
+        ],
+        "interpretation": [
+          "Interpretation: the eight tables are per-player values for each tile of a 40 by 40 map, and the 0x82D1F8D0 caller picks the player with the largest value on the city's tile.",
+          "Interpretation: 0x82CF0070 decides whether city c may change to player p: never to the owner's own group, never for a city with bit 0x4000 of +0x24, never from the barbarian player; C looks like a team or group number."
+        ],
+        "falsificationConditions": [
+          "A halfword load at an offset other than 0xC80 * k + 2 * i from 0x8312E810, or a store to an address other than r5 + 2 * k, in 0x82CB2370 would falsify the table copy.",
+          "A different rejection condition, order of evaluated conditions, or return value would falsify this chain."
+        ],
+        "result": "0x82CB2370(a, b, buffer) copies the halfword at index 40 * a + b from each of eight tables at 0x8312E810 + 0xC80 * k (k = 0..7) to buffer + 2 * k, and returns the sum of the eight signed values. 0x82CF0070(city, p) returns 0 or 1 from a fixed chain of tests on the city, p and the city's owner, listed in cityTests. This is a static reading: what writes the eight tables, what 0x82CEF4E8 returns for 0xF, and the meanings of the words the tests read remain unresolved."
       }
     },
     "RVA-F-0331": {

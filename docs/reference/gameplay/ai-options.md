@@ -674,8 +674,15 @@ records the calls at `0x82D1D7D0` and `0x82D1F8D0`. They are in `0x82D1D1C0` and
 entries 46, 47 and 48, each call inside a loop over the 128 city records. The
 call at `0x82D1F8D0`, which can reach the block, runs only on the pass for one
 player and after seven tests; the call at `0x82D1D7D0` cannot reach it. The
-reading is static, and what `0x82CB2370` and `0x82CF0070` compute for the
-`0x82D1F8D0` call remains unresolved.
+reading is static. The static computations of these helpers are recorded in
+the outside call helper finding.
+
+The [outside call helper finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/outsideCallHelperBoundary)
+records their computations. `0x82CB2370` copies one halfword from each of eight
+tables at `0x8312E810` and returns their signed sum.
+`0x82CF0070` returns 0 or 1 from a fixed chain of tests on the city, the
+player and the city's owner. The reading is static, and what writes the eight
+tables remains unresolved.
 
 The dispatcher entries and the tests before these calls are recorded in
 [city item reset event finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetEventBoundary).

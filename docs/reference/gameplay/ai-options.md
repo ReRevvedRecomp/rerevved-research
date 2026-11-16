@@ -695,6 +695,17 @@ reading is static and covers direct calls only; none of these events was
 observed. Interpretation: `TurnSelectionUpdate` drives the active player's unit,
 so AI moves reach entries 0 and 17 without passing through `0x82CB6E48`.
 
+The [network slot id finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/networkSlotIdBoundary)
+records what the two slots pass on. Each of `0x82D91C30` and `0x82D91C58`
+passes the five-word record at object `+0x34` to `0x82CE16C8` unchanged, with
+no id test before that call; `0x82CE16C8` skips only an id of -1. Within the
+searches listed, only `0x82CE1830` builds outgoing objects of the first slot's
+class, with ids `0x39`, `0x3A` and `0x3B`. Outgoing objects of the second
+slot's class are built by `0x82CE1950`, by 25 inline sites and by setup, with 53
+distinct ids from 0 to `0x40`. A received record is whatever was read from the
+buffer, and the dispatcher sends ids above `0x41` to its common exit. How
+received objects are created was not established.
+
 The purchase arm also compares a per-player word at `0x830E5250 + 128 * p`
 with 2. When that word equals 2, the arm continues only when the city's
 current item is 104 (Market) or 110 (Bank). The AI turn function `0x82CB6E48`

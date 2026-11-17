@@ -4008,34 +4008,40 @@
           ],
           "lookup": "0x82E7DB10",
           "receive": "0x82CB20E8",
-          "scopeNote": "The claim covers where the two factories are registered, how a key is looked up, and the call in 0x82CB20E8 that creates a received object. It does not cover the sender, the meaning of the stream calls on the path, or the other registrars."
+          "scopeNote": "The claim covers where the two factories are registered, how a key is looked up, and the call in 0x82CB20E8 that creates a received object. It does not cover the sender, the meaning of the stream calls on the path, or the other registrars. The registry object, the lookup 0x82E7DB10, the receive path in 0x82CB20E8 and its callers 0x82CB2318 and 0x82CA0B58 are recorded under their own conditions in RVA-F-0362 (see reusedRecords); this section adds the registrars for keys 77 and 78, their factories and the list that calls them."
         },
         "reusedRecords": [
           "ai-options-boundaries.json#/findings/RVA-F-0330/networkSlotIdBoundary: the two tables, their read slots +0xC (0x82D91078 and 0x82D90FE8), the constructors and the values 77 and 78 they store at +0x10, and the factories 0x821D3778 and 0x821D3828 with their fields",
           "xbox-network-message-root.json#/wireSerialization and #/wireSerialization/outerFactory: the table 0x821368E0, read slot 0x82D91078, read helper 0x821D2F28 that calls 0x822D93E8 for each word, factory 0x821D3778 and its row 0x8216CC08",
-          "xbox-network-message-root.json, hotjoin reader at 0x82D8F700: the same lookup form (0x821B8CD0, then a compare with the word at +0xC)"
+          "xbox-network-message-root.json, hotjoin reader at 0x82D8F700: the same lookup form (0x821B8CD0, then a compare with the word at +0xC)",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportRegistryPublicationBoundary: 0x821D3E18 and its publication of the registry at 0x8314F200, under its conditions",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportKeyedTargetBoundary: the two lookups in 0x82E7DB10, its zero return and its function-word request, under its conditions",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportScalarSelectorBoundary: the receiver choice, the key word passed to 0x82E7DB10 in 0x82CB20E8, and the stores, slot +0xC request and return on each result, under its conditions",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportInputObjectBoundary: 0x82CB2318, its local object set up by 0x822DF820 and its request of 0x82CB20E8, under its conditions",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportQueueReaderBoundary: 0x82CA0B58, slot +0x10 of the listener table 0x821600AC, and its conditional requests of 0x82CB2318 and of slot +0xDC, under its conditions",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportCurrentGlobalWriterBoundary: 0x82E88CC0, its key-zero requests and constant slot store of 0x821D3008, under its normal-return, key-preservation and writable-slot conditions"
         ],
         "registry": [
-          "0x821D3E18 allocates 0x2C bytes through 0x82D3DBA0, stores 0x8215FC48 at +0x0, sets up a map at +0x4 with 0x822E56C0, and stores the object to the word at 0x8314F200. It stores 0 there when the allocation fails.",
-          "0x821D3E18 has 53 direct calls: 50 functions in 0x82E88CC0..0x82E8BE18 that load the word at 0x8314F200 and call it when the word is 0, the two registrars below, and 0x82CABB58. 0x82CAB07C in 0x82CAAE30 also reads the word."
+          "The registry object and its publication at 0x8314F200 by 0x821D3E18 are recorded in RVA-F-0362 selectedTransportRegistryPublicationBoundary.",
+          "0x821D3E18 has 53 direct calls: 50 functions in 0x82E88CC0..0x82E8BE18 that load the word at 0x8314F200 and call it when the word is 0, the two registrars below, and 0x82CABB58. The first of the 50, 0x82E88CC0, is the key 0 registrar recorded in RVA-F-0362 selectedTransportCurrentGlobalWriterBoundary. 0x82CAB07C in 0x82CAAE30 also reads the word."
         ],
         "registration": [
-          "0x82E89430 creates the registry when the word at 0x8314F200 is 0. It then calls 0x821B8CD0 with key 0x4D (77) on the map at registry +0x4, calls 0x822DF948, and stores 0x821D3778 through the returned pointer (store at 0x82E89488).",
-          "0x82E894A0 does the same with key 0x4E (78) and 0x821D3828 (store at 0x82E894F8).",
+          "0x82E89430 requests 0x821D3E18 when the word at 0x8314F200 is 0; registry publication remains subject to RVA-F-0362 selectedTransportRegistryPublicationBoundary. It then calls 0x821B8CD0 with key 0x4D (77) on the map at registry +0x4, calls 0x822DF948, and stores 0x821D3778 through the returned pointer (store at 0x82E89488).",
+          "0x82E894A0 does the same, under the same publication condition, with key 0x4E (78) and 0x821D3828 (store at 0x82E894F8).",
           "These are the only places the two factory addresses are formed (address formations at 0x82E89484 and 0x82E894F4).",
           "The two registrars are words 0x82F108A0 and 0x82F108A4 of a list of function pointers that 0x8281B900 walks from 0x82F10010 to 0x82F10CBC, calling each word that is not 0 or -1 (0x8281B980..0x8281B9BC). 0x8281B900 has one direct caller, 0x8280E970."
         ],
         "lookup": [
-          "0x82E7DB10(registry, key) finds the key in the map at registry +0x4 with 0x821B8CD0. It returns 0 when the result equals the word at registry +0xC. Otherwise it calls the function stored for the key (0x822DF948, then a call through the loaded word) and returns its result. Its one direct caller is 0x82CB2200."
+          "0x82E7DB10 is recorded in RVA-F-0362 selectedTransportKeyedTargetBoundary: a first lookup whose sentinel result returns 0, otherwise a second slot lookup, which can insert, supplies the function word it requests and whose full return it forwards, under that record's normal-return and preservation conditions. Its one direct caller is 0x82CB2200."
         ],
         "receive": [
-          "In 0x82CB20E8(stream, n), on the path reaching 0x82CB21C4, 0x82CB21D8..0x82CB21F0 store 0x1869F (99999) to a frame word and read a word into it with 0x822D93E8. 0x82CB21FC..0x82CB2200 call 0x82E7DB10 with the word at 0x8314F200 and that key.",
-          "For a result that is not 0, it stores the earlier stream call result at object +0xC (0x82CB2218), calls slot +0xC of the object's table with the stream (0x82CB2224), and stores n at object +0x8 (0x82CB2228). For a result of 0, it calls 0x822DF8A0 with 1 and the address 0x8215F010 and returns 0.",
-          "So key 77 creates a 0x821368E0 object (factory 0x821D3778) and key 78 creates a 0x821368F4 object (factory 0x821D3828). Slot +0xC is then the read slot recorded for each table (0x82D91078 and 0x82D90FE8)."
+          "The receive path in 0x82CB20E8 is recorded in RVA-F-0362 selectedTransportScalarSelectorBoundary: on its common path a frame word set to 0x1869F (99999) is passed with the chosen receiver to 0x822D93E8, and its sampled contents, with no check of how many bytes arrived, are the key passed with the word at 0x8314F200 to 0x82E7DB10 (0x82CB21D8..0x82CB2200).",
+          "For a result whose low 32 bits are not 0 it stores at +0xC and +0x8 and requests slot +0xC of the result's table (0x82CB2218..0x82CB2228); for a low 32 bits of 0 it requests 0x822DF8A0. That record gives the exact stores and the return.",
+          "If the registrar stores complete and the same registry, key and slot contents survive both lookups, key 77 selects factory 0x821D3778 (table 0x821368E0) and key 78 selects factory 0x821D3828 (table 0x821368F4), subject to a compatible factory return. Slot +0xC is then the read slot recorded for each table (0x82D91078 and 0x82D90FE8)."
         ],
         "callers": [
-          "0x82CB20E8 has one direct caller, 0x82CB2344 in 0x82CB2318. 0x82CB2318 wraps a stream over its first two arguments with 0x822DF820 and passes its third argument as n.",
-          "0x82CB2318 has one direct caller, 0x82CA0B9C in 0x82CA0B58. 0x82CA0B58 has no direct caller and two data words (0x821600BC and 0x82199EF8)."
+          "0x82CB20E8 has one direct caller, 0x82CB2344 in 0x82CB2318, recorded in RVA-F-0362 selectedTransportInputObjectBoundary.",
+          "0x82CB2318 has one direct caller, 0x82CA0B9C in 0x82CA0B58. 0x82CA0B58 has no direct caller and two data words, 0x821600BC (slot +0x10 of the listener table 0x821600AC) and 0x82199EF8 (its function table row); RVA-F-0362 selectedTransportQueueReaderBoundary records it."
         ],
         "verification": {
           "script": "ghidra/DumpMemoryWords.java",
@@ -4058,15 +4064,15 @@
         },
         "limits": [
           "Static reading only. No message was received or observed.",
-          "0x821B8CD0, 0x822DF948 and 0x822E56C0 are read as map find, map slot and map setup by their use here and in the recorded hotjoin reader; their bodies were not read.",
+          "0x821B8CD0 and 0x822DF948 are read as map lookup and map slot by their use here and in the recorded hotjoin reader; their bodies were not read.",
           "The path in 0x82CB20E8 that leads to 0x82CB21C4 (the map at 0x83155EA8 and the result of 0x82CB1D58) and the stream calls at slots +0x18, +0x1C, +0x34 and +0x38 were not read in full; their meanings are not established.",
-          "The role of 0x82CA0B58 and of the object whose slot +0xDC it calls is not established, and the run of 0x8281B900 was not observed.",
-          "The keys and factories of the other 50 registrars were not read.",
+          "What the object whose slot +0xDC 0x82CA0B58 calls does is not established, and the run of 0x8281B900 was not observed.",
+          "The keys and factories of the other 49 registrars were not read.",
           "That the sender writes the +0x10 value as the key read here was not shown."
         ],
         "interpretation": [
           "Interpretation: the leading value 77 or 78 that each constructor stores at +0x10 is the class key a receiver reads first, so a received message picks its class from that key and then reads its own record.",
-          "Interpretation: 0x8281B900 runs the static initializers at start, so the registry holds both factories before any message is received."
+          "Interpretation: the function pointer list walked by 0x8281B900 is consistent with static initialization; that it runs before any message is received, and that both registered entries are kept, remain unproved."
         ],
         "falsificationConditions": [
           "A store of a factory other than 0x821D3778 under key 77, or other than 0x821D3828 under key 78, at the registrar sites would falsify the registration.",
@@ -4074,7 +4080,7 @@
           "A different branch on the result of 0x82E7DB10 than the one listed at 0x82CB2200..0x82CB2228 would falsify the receive path.",
           "A registry argument not loaded from the word at 0x8314F200 would falsify the registry link."
         ],
-        "result": "Static reading: the factories 0x821D3778 and 0x821D3828 are registered by key in a registry object, under key 77 (0x82E89430) and key 78 (0x82E894A0), and the registrars are words 0x82F108A0 and 0x82F108A4 of a function pointer list walked by 0x8281B900. The receive routine 0x82CB20E8 reads a key word from the stream, calls 0x82E7DB10 with the registry at 0x8314F200 and that key, and for a nonzero result stores the stream result at +0xC, calls slot +0xC with the stream and stores n at +0x8; for 0 it returns 0. Key 77 therefore creates a 0x821368E0 object and key 78 a 0x821368F4 object. No message was observed, the sender was not read, and the keys of the other 50 registrars were not read."
+        "result": "Static reading: the factories 0x821D3778 and 0x821D3828 are registered by key in a registry object, under key 77 (0x82E89430) and key 78 (0x82E894A0), and the registrars are words 0x82F108A0 and 0x82F108A4 of a function pointer list walked by 0x8281B900. The receive routine 0x82CB20E8, recorded with its conditions in RVA-F-0362, passes a key word to 0x82E7DB10 with the registry at 0x8314F200. If the registrar stores complete and the registry, key and slot contents survive both lookups, key 77 selects factory 0x821D3778 (table 0x821368E0) and key 78 selects factory 0x821D3828 (table 0x821368F4). No message was observed, the sender was not read, and the keys of the other 49 registrars were not read."
       }
     },
     "RVA-F-0331": {

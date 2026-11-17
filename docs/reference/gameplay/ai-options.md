@@ -755,8 +755,9 @@ buffer, and the dispatcher sends ids above `0x41` to its common exit. The
 [network receive factory finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/networkReceiveFactoryBoundary)
 records how received objects are created: the factories `0x821D3778` and
 `0x821D3828` are registered under keys 77 and 78 in a registry at the word
-`0x8314F200`, and `0x82CB20E8` reads a key from the stream and calls the
-factory registered under it. Static reading; no message was observed.
+`0x8314F200`, and `0x82CB20E8` passes a key word from its input to the
+registry lookup, which calls the factory registered under that key when the
+entries are intact. Static reading; no message was observed.
 
 No route into `0x82D21570` was found within the searches recorded in the
 [unit loop reach finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/unitLoopReachBoundary).

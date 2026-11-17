@@ -91,7 +91,7 @@
         "0x82D03860..0x82D039A0",
         "0x82CE1950..0x82CE1A90"
       ],
-      "boundary": "Read in full: the call site window 0x82D290D4..0x82D291B4 and the leaf helper 0x82D038E8..0x82D03920. Read only the entry of 0x82CE1950, 0x82CE1950..0x82CE1974 and 0x82CE19CC..0x82CE19F4. The path from the entry of 0x82D259E8 to 0x82D290D4 was not read."
+      "boundary": "Read in full: the call site window 0x82D290D4..0x82D291B4 and the leaf helper 0x82D038E8..0x82D03920. Read only the entry of 0x82CE1950, 0x82CE1950..0x82CE1974 and 0x82CE19CC..0x82CE19F4. The path from the entry of 0x82D259E8 to 0x82D290D4 is recorded in aiArmRouteBoundary."
     },
     "reusedRecords": [
       "army-formation-command.json#/commandIdentity",
@@ -103,7 +103,7 @@
     ],
     "leadIn": [
       "0x82D290D4..0x82D290E8: r30 = 0x54 * (256 * r27 + r31). 0x54 is 84, the unit record size, so r30 is the record offset of unit (r27, r31).",
-      "0x82D290DC, 0x82D290EC..0x82D290F0: r8 = signed byte at r15 + 1 + r30. r15 is a base register set earlier in the function and was not traced. With r15 as the unit pool base this is the record type byte at +0x1.",
+      "0x82D290DC, 0x82D290EC..0x82D290F0: r8 = signed byte at r15 + 1 + r30. r15 is the unit record base 0x830F2BF0 (aiArmRouteBoundary), so this is the type byte at +0x1 of the unit record.",
       "0x82D290D8, 0x82D290E4, 0x82D290F4..0x82D29104: r11 = signed byte at (word at frame +0x80) + 0x40 + 0x94 * r8. If it is greater than 1, control goes straight to the eligibility call at 0x82D2916C.",
       "0x82D29108..0x82D29148: otherwise the halfwords at record +0x1C and +0x1E form the index 40 * H(+0x1C) + H(+0x1E). The halfword at that index in the table whose base is the word at frame +0x88 is tested. Bit 0x40 set goes to the eligibility call.",
       "0x82D2914C..0x82D29168: with bit 0x40 clear, the submission is skipped (branch to 0x82D291A8) when bit 1 of that halfword is clear, when the byte at the same index in the table based at r5 is below 3, or when the type r8 equals 6. Otherwise control falls into the eligibility call."
@@ -139,7 +139,7 @@
     "qualification": [
       "Static reading only. No AI turn was observed to reach this site, and no army was seen to form from it.",
       "What r27 and r31 hold when control reaches 0x82D290D4 is not traced. The reading player and unit rests on the 256 * r27 + r31 record arithmetic and on the recorded inputs of the eligibility helper.",
-      "The path from the entry 0x82D259E8 to 0x82D290D4, and which AI decision reaches that arm, are not shown. The bases in r15, r5, frame +0x80 and frame +0x88 are not identified.",
+      "The path from the entry 0x82D259E8 to 0x82D290D4 and the bases in r15, r5, frame +0x80 and frame +0x88 are recorded in aiArmRouteBoundary. Which AI decision reaches that arm is not shown.",
       "The submission is a posted request. Queueing, network routing, delivery to the command 10 arm and the result of 0x82D13618 are not shown here. The dispatch arm repeats its own checks.",
       "The fourth argument -1 and the word at 0x82F7AD00 are recorded as passed. How command 10 uses them was not read.",
       "The eligibility helper can issue notifications on local-player paths before it returns, as /eligibility records."
@@ -147,5 +147,63 @@
     "interpretation": "Interpretation: this site is an AI request to form an army from the unit it is handling. When at least three matching units share the tile, it asks for MakeArmy on that unit. The lead-in tests look like a filter on unit definition and tile state that decides whether to try, but their meaning is not established.",
     "falsificationCondition": "A different register value at r3, r4 or r5 at 0x82D291A4, a write to r27 or r31 between 0x82D2916C and 0x82D291A4, or an image word that differs from the dumped words, would falsify this reading. A runtime trace in which an AI turn reaches 0x82D291A4 would extend it to observed behavior.",
     "result": "The submission at 0x82D291A4 passes command 10 with r27 and r31, the same two registers given to the eligibility call at 0x82D29174. This is a static reading of the call site only."
+  },
+  "aiArmRouteBoundary": {
+    "status": "closed",
+    "confidence": "strong",
+    "question": "How does control reach the army arm at 0x82D290D4 in function 0x82D259E8, and what are the bases r15, r5, frame word +0x80 and frame word +0x88 that its lead-in tests read?",
+    "scope": {
+      "functions": [
+        "0x82D259E8"
+      ],
+      "windows": [
+        "0x82D259E8..0x82D2D2F8",
+        "0x82D25E00..0x82D26044",
+        "0x82D27E08..0x82D27E84",
+        "0x82D290D4..0x82D29158"
+      ],
+      "boundary": "Read the control flow and register definitions of 0x82D259E8..0x82D2D2F8 on the flat image. Callee bodies were not read."
+    },
+    "reusedRecords": [
+      "ai-options-boundaries.json#/findings/RVA-F-0330/selectionCodeSourceBoundary",
+      "ai-options-boundaries.json#/findings/RVA-F-0330/selectionSubmitConditionBoundary",
+      "ai-options-boundaries.json#/findings/RVA-F-0330/targetCallSiteBoundary",
+      "barbarian-spawn-population.json",
+      "army-formation-command.json#/aiSubmitBoundary"
+    ],
+    "route": "The arm at 0x82D290D4 is the start of the AITurnUnitFilter route recorded in selectionCodeSourceBoundary. It is entered from the branches at 0x82D27E64 and 0x82D27E84. On every path from the function entry it needs the four tests recorded as common in selectionSubmitConditionBoundary: 0x82D25CB4, 0x82D25CC4, 0x82D25D4C and 0x82D25D60 must all fall through, otherwise control goes to 0x82D26528. The loop at 0x82D25D14 and 0x82D25D20 must also exit. A dominator pass over the function finds no other branch before the arm that is required on every path.",
+    "bases": {
+      "r15": "0x830F2BF0, the unit record base. One definition: 0x82D25DF8 sets the high half to 0x830F0000 and 0x82D25E00 adds 0x2BF0. Its block dominates 0x82D290D4.",
+      "frameWord80": "0x82F700D8, the unit definition base. The only store to this frame word in the function is 0x82D26020, of a value formed at 0x82D25FE8 (0x82F70000) and 0x82D26010 (add 0xD8). Its block, ending at 0x82D26044, dominates the arm.",
+      "frameWord88": "0x8312A608, the per-tile flag halfwords. The only store to this frame word in the function is 0x82D26018, of a value formed at 0x82D25FE0 (0x83130000) and 0x82D2600C (subtract 0x59F8). Its block, ending at 0x82D26044, dominates the arm.",
+      "r5": "0x830E6E90, a per-tile byte table. At 0x82D27E34 it is 0x830E0000 (set at 0x82D27E18) plus 0x6E90. No call or other write of r5 lies between 0x82D27E34 and 0x82D29158 on either entry, 0x82D27E64 or 0x82D27E84.",
+      "r27r31": "r27 is frame word +0x74, loaded at 0x82D27E20. r31 is the word at 0x8312B8EC, loaded at 0x82D27E08. Neither is written between 0x82D27E20 and 0x82D290D4. The loads and the stores to frame +0x74 are recorded in barbarian-spawn-population.json callerRetentionBoundary.",
+      "noOtherAddress": "No instruction in the function forms the address of frame +0x80 or frame +0x88, so no pointer to those words is made inside this function."
+    },
+    "leadInReading": "With these bases the lead-in tests read: the signed byte +0x40 of unit definition 0x82F700D8 + 0x94 * T, where T is the signed byte +0x1 of unit record U = 0x830F2BF0 + 0x54 * (256 * r27 + r31). They also read the flag halfword at 0x8312A608 + 2 * (40 * X + Y) and the byte at 0x830E6E90 + 40 * X + Y, where X and Y are the signed halfwords +0x1C and +0x1E of U. The 1600 flag halfwords, the per-tile byte table and the 0x94 byte definition records are recorded in targetCallSiteBoundary.",
+    "verification": {
+      "script": "ghidra/DumpMemoryWords.java",
+      "method": "one foreground read-only run",
+      "targets": [
+        "0x82D25E00",
+        "0x82D26010",
+        "0x82D27E40",
+        "0x82D29120"
+      ],
+      "radius": 64,
+      "distinctWords": 516,
+      "outputSha256": "347D0FD67BD6511D757D9F5A43E67A97F2988AF4DCD58B65657BB76DE990F723",
+      "imageMatch": "All 516 words match the supported flat image whose SHA-256 is in manifests/image.json. Each window is the target minus 0x100 to the target plus 0x100. The reaching definitions, dominators and decode were done on the flat image."
+    },
+    "qualification": [
+      "Static reading only. No AI turn was observed to reach the arm.",
+      "The frame words are traced through direct stores in 0x82D259E8 only. A write through a pointer to the frame from a callee was not excluded.",
+      "r15, r27 and r31 are taken as preserved across calls by the calling convention. Callee bodies were not read for this.",
+      "The meanings of unit definition byte +0x40, flag halfword bits 0x40 and 0x1, the byte table at 0x830E6E90 and type 6 are not established here.",
+      "Which AI decision leads to the arm is not established."
+    ],
+    "interpretation": "Interpretation: the lead-in tests read the handled unit's definition and the tile it stands on, so the army request depends on the unit type and on that tile's state.",
+    "falsificationCondition": "A second definition of r15, r5, frame word +0x80 or frame word +0x88 that reaches 0x82D290D4, a branch before the arm that is not on every path as stated, or an image word that differs from the dumped words, would falsify this reading. A runtime trace in which an AI turn reaches 0x82D290D4 would extend it to observed behavior.",
+    "result": "The arm at 0x82D290D4 is entered from 0x82D27E64 or 0x82D27E84 after the four common tests. Its bases are r15 = 0x830F2BF0, frame word +0x80 = 0x82F700D8, frame word +0x88 = 0x8312A608 and r5 = 0x830E6E90. This is a static reading only."
   }
 }

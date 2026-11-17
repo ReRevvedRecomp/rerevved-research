@@ -44,7 +44,12 @@ reading. No AI turn was observed forming an army, and delivery of the request
 to the command is not shown. Interpretation: the site is an AI request to form
 an army from the unit it is handling. The `aiSubmitBoundary` section of the
 [army formation record](../../../manifests/army-formation-command.json) lists
-the call sequence and the limits.
+the call sequence and the limits. The `aiArmRouteBoundary` section of the same
+[record](../../../manifests/army-formation-command.json) shows how control
+reaches that arm and names its four bases: the unit record base `0x830F2BF0`,
+the unit definition base `0x82F700D8`, the tile flag halfwords `0x8312A608` and
+a tile byte table at `0x830E6E90`. This is a static reading; which AI decision
+reaches the arm is not shown.
 
 ## Recovered layout and readers
 

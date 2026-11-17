@@ -758,6 +758,14 @@ records how received objects are created: the factories `0x821D3778` and
 `0x8314F200`, and `0x82CB20E8` passes a key word from its input to the
 registry lookup, which calls the factory registered under that key when the
 entries are intact. Static reading; no message was observed.
+The [event route finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/eventRouteBoundary)
+records the split in `0x82CE1950` for an id other than `0x12`, with `s` its sixth
+argument. The record is passed to `0x82CE16C8` when the byte at `0x8314F10B` is 0,
+when `s` equals the result of `0x82D8A3A0`, or when `0x82CD5A70` gives a low byte
+of 0 and the id, read as a signed value, is `0x29` or less. Otherwise an object
+is built and sent through slot `+0x44` (`s` = -1) or `+0x3C`, with no direct call
+of `0x82CE16C8`, and the function returns with neither when the target word is 0. Static reading; no event was observed, and
+slot `+0x3C` was not read.
 
 No route into `0x82D21570` was found within the searches recorded in the
 [unit loop reach finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/unitLoopReachBoundary).

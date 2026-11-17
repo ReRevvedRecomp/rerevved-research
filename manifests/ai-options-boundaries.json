@@ -2050,7 +2050,7 @@
           "0x82CE1974..0x82CE19A4: id 0x12 is handled in place.",
           "0x82CE19C8..0x82CE19DC: the five words id, a, b, c, d are stored to the frame record at +0x50 from r3, r4, r5, r6 and r7.",
           "0x82CE19E0..0x82CE19E8 and 0x82CE1AA0..0x82CE1AB0: when the byte at 0x8314F10B is 0, the byte at 0x8314F1CA is set to 1 and the record is passed to 0x82CE16C8. 0x82CE16C8 calls the dispatcher 0x82CDDF08 at 0x82CE17B0.",
-          "When the byte at 0x8314F10B is not 0, the record can instead be sent through the object at word +0x10 of the object at 0x8314EFE0 (0x82CE19EC..0x82CE1A94). That route was not analysed."
+          "When the byte at 0x8314F10B is not 0, the record can instead be sent through the object at word +0x10 of the object at 0x8314EFE0 (0x82CE19EC..0x82CE1A94). That route is recorded in eventRouteBoundary."
         ],
         "event5Handler": [
           "0x82CDDF18..0x82CDDF24: r30 is the id, r31 is a, r15 is b and r29 is c.",
@@ -2181,7 +2181,7 @@
         },
         "qualification": [
           "Static reading only. No AI assignment was observed.",
-          "The route when the byte at 0x8314F10B is not 0 was not analysed, so whether and when event 5 reaches the handler there is not shown.",
+          "The route when the byte at 0x8314F10B is not 0 is recorded in eventRouteBoundary; whether a sent event 5 reaches the handler on any machine is not shown.",
           "0x82CE16C8 was read only for its call to the dispatcher. Whether the handler runs before 0x82CE1950 returns was taken from the existing record that it drains the queue, not established here.",
           "0x82CB3F08, 0x82D038E8, 0x82CD58B8 and 0x82D178A8 were not read.",
           "The scan finds two store forms. A store through another form, or with the addi more than 59 instructions before it, would be missed. The 34 sites in functions that do not form the city array address were not examined.",
@@ -2191,7 +2191,7 @@
         ],
         "interpretation": "Interpretation: each AI turn the generator chooses again for every city. If the choice is the item already stored nothing is sent; otherwise event 5 changes the city's item, which is the same event a player's own choice would use. So when the purchase arm runs, the stored item is normally the choice of an earlier turn, or the creation default, or -1 after the production function reset it, and the evaluator's selected item replaces it either in the purchase arm itself or through event 5 just after. The values -10 to -13 look like menu entries that are not items.",
         "falsificationCondition": "A word at 0x82CDE028 other than 0x82CDFFF8, a handler body at 0x82CDFFF8..0x82CE0024 that does not store r29 to the city halfword +0x38, or a path in 0x82CB42B8 for an item other than -10 to -13 that differs from the stored item and does not call 0x82CE1950 with id 5, would falsify the reading.",
-        "result": "After the evaluator returns an ordinal, the generator does not store the chosen item itself. It calls 0x82CB42B8, which for an item that differs from the city halfword +0x38 (and is not one of the values -10 to -13) submits event 5 through 0x82CE1950. The handler for event 5 at 0x82CDFFF8 in the dispatcher 0x82CDDF08 stores the item to the city halfword +0x38 when the city's owner byte matches. When the chosen item equals the stored item, 0x82CB42B8 submits nothing. So a city enters the next generator call with the last item assigned this way unless another store changed it. A scan lists 27 candidate stores to +0x38 in 12 functions that form the city array address; this finding reads those in the assignment path and cites those already recorded, and 15 of the candidates were not read. This is a static reading: the route when the byte at 0x8314F10B is not 0 was not analysed and no assignment was observed. The 15 sites not read here are recorded in cityItemStoreSitesBoundary."
+        "result": "After the evaluator returns an ordinal, the generator does not store the chosen item itself. It calls 0x82CB42B8, which for an item that differs from the city halfword +0x38 (and is not one of the values -10 to -13) submits event 5 through 0x82CE1950. The handler for event 5 at 0x82CDFFF8 in the dispatcher 0x82CDDF08 stores the item to the city halfword +0x38 when the city's owner byte matches. When the chosen item equals the stored item, 0x82CB42B8 submits nothing. So a city enters the next generator call with the last item assigned this way unless another store changed it. A scan lists 27 candidate stores to +0x38 in 12 functions that form the city array address; this finding reads those in the assignment path and cites those already recorded, and 15 of the candidates were not read. This is a static reading; eventRouteBoundary records the route when the byte at 0x8314F10B is not 0, and no assignment was observed. The 15 sites not read here are recorded in cityItemStoreSitesBoundary."
       },
       "cityItemStoreSitesBoundary": {
         "status": "partial",
@@ -4081,6 +4081,76 @@
           "A registry argument not loaded from the word at 0x8314F200 would falsify the registry link."
         ],
         "result": "Static reading: the factories 0x821D3778 and 0x821D3828 are registered by key in a registry object, under key 77 (0x82E89430) and key 78 (0x82E894A0), and the registrars are words 0x82F108A0 and 0x82F108A4 of a function pointer list walked by 0x8281B900. The receive routine 0x82CB20E8, recorded with its conditions in RVA-F-0362, passes a key word to 0x82E7DB10 with the registry at 0x8314F200. If the registrar stores complete and the registry, key and slot contents survive both lookups, key 77 selects factory 0x821D3778 (table 0x821368E0) and key 78 selects factory 0x821D3828 (table 0x821368F4). No message was observed, the sender was not read, and the keys of the other 49 registrars were not read."
+      },
+      "eventRouteBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "Which route does an event other than id 0x12 take in 0x82CE1950, in particular when the byte at 0x8314F10B is not 0?",
+        "scope": {
+          "function": "0x82CE1950 (0x82CE1950..0x82CE1ABC)",
+          "route": "The three outcomes after the five words id, a, b, c, d are stored to the frame record (0x82CE19CC..0x82CE19DC), and what they do to the byte at 0x8314F1CA.",
+          "scopeNote": "The claim covers the complete split of 0x82CE1950 for an id other than 0x12: the cases that pass the record to 0x82CE16C8, the send route, and the return that does neither. The id 0x12 route, the five-word record, the local queue call of 0x82CE16C8 and the event 5 call are recorded in cityItemAssignmentBoundary; the object build and the send conditions are recorded in networkSlotIdBoundary; the slot +0x44 target for s = -1 is recorded in RVA-F-0362 commandDeliveryBoundary."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/cityItemAssignmentBoundary: the event 5 submission, staged record, special-id handling and local dispatcher call",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/networkSlotIdBoundary: recordBuilds/table0x821368E0, the object build by 0x82D90A18 and the conditions on the send route",
+          "The symbol catalog entries cited in selectionCodeSourceBoundary: IsHumanPlayer 0x82CD5A70 and the local player resolver 0x82D8A3A0",
+          "xbox-lobby-ready-check.json localIdentity: 0x82D8A3A0 returns -1 when its input manager +0x10 is null",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/commandDeliveryBoundary: for s = -1 the slot +0x44 target selected under its conditions, and its sender with no direct call of 0x82CE16C8 (loopback not excluded)",
+          "xbox-network-message-root.json#/internalRepresentation/submit: the staging stores, and that s stays out of the five-word record"
+        ],
+        "entry": [
+          "Id 0x12 returns earlier (0x82CE1974..0x82CE19A4), as recorded. Before the record is stored, when bit 0x400 of the word at 0x830E4550 is set, 0x82CE1950 calls 0x82D8A3A0 with the word at 0x8314EFE0 and does not use the result (0x82CE19A8..0x82CE19C4).",
+          "The five words id, a, b, c, d are then stored to the frame record (0x82CE19CC..0x82CE19DC)."
+        ],
+        "localQueueRoute": [
+          "The local queue (0x82CE1AA0..0x82CE1AB0) sets the byte at 0x8314F1CA to 1 and passes the record to 0x82CE16C8.",
+          "It is taken when the byte at 0x8314F10B is 0 (0x82CE19E0..0x82CE19E8).",
+          "It is also taken when s equals the result of 0x82D8A3A0 called with the word at 0x8314EFE0 (0x82CE19EC..0x82CE19F8).",
+          "It is also taken when the low byte of 0x82CD5A70 called with the word at 0x8312B8E4 is 0 and the id is 0x29 or less, signed (0x82CE19FC..0x82CE1A18)."
+        ],
+        "sendRoute": [
+          "Otherwise (0x82CE1A1C..0x82CE1A94) the byte at 0x8314F1CA is set to 0 and an object is built from the record by 0x82D90A18 (0x82CE1A30). Let C be the word at +0x10 of the object whose pointer is the word at 0x8314EFE0.",
+          "For s = -1, slot +0x44 of C's table is called with C, the object and 1 (0x82CE1A44..0x82CE1A64). For any other s, slot +0x3C is called with C, the object, s and 1 (0x82CE1A70..0x82CE1A94).",
+          "0x82CE1950 makes no direct call to 0x82CE16C8 on this path; indirect or loopback processing remains unestablished."
+        ],
+        "neitherRoute": [
+          "On the send route, when C is 0, the function returns without a send and without calling 0x82CE16C8 (0x82CE1A48 or 0x82CE1A74 to 0x82CE1AB4)."
+        ],
+        "event5": [
+          "Event 5 from 0x82CB42B8 passes s = -1, as recorded.",
+          "With the byte at 0x8314F10B not 0, event 5 is passed to 0x82CE16C8 when 0x82D8A3A0 returns -1, or when the player word at 0x8312B8E4 is not human by 0x82CD5A70 (5 is below 0x29).",
+          "Otherwise event 5 requests slot +0x44 when C is nonzero; when C is zero, it returns without that call or a direct local queue call."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CE19A0",
+            "0x82CE1A20",
+            "0x82CE1A90"
+          ],
+          "radius": 64,
+          "distinctWords": 189,
+          "outputSha256": "B7727669778AEA2B2C57E8313F8C0F0F80C0D5C284A962EAFC7BBD06A026E404",
+          "imageMatch": "All 189 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The decode of 0x82CE1950..0x82CE1ABC was done on the flat image."
+        },
+        "limits": [
+          "Static reading only. No event was observed on either route.",
+          "What slot +0x3C of C's table does was not read; slot +0x44 for s = -1 is recorded only under the conditions of RVA-F-0362 commandDeliveryBoundary. Whether a sent event is also processed on the sending machine is not established.",
+          "The meanings of the bytes at 0x8314F10B and 0x8314F1CA, of the word at 0x8312B8E4 and of bit 0x400 of the word at 0x830E4550 are not established here.",
+          "0x82D8A3A0, 0x82CD5A70 and 0x82D90A18 are taken from their records; the route holds under normal returns from them."
+        ],
+        "interpretation": [
+          "Interpretation: the byte may mark a network game; the selected path requests local queue processing or a session call, without establishing execution timing or delivery."
+        ],
+        "falsificationConditions": [
+          "A different branch than the byte at 0x8314F10B being 0 at 0x82CE19E0..0x82CE19E8 would falsify the first local queue case.",
+          "A compare other than s against the result of 0x82D8A3A0 at 0x82CE19EC..0x82CE19F8 would falsify the second local queue case.",
+          "A direct call of 0x82CE16C8 between 0x82CE1A1C and 0x82CE1A94 would falsify the claim that the send route makes no direct local queue call.",
+          "A value other than 1 or 0 stored to the byte at 0x8314F1CA on the local queue or send route would falsify the stored values."
+        ],
+        "result": "Static reading: after storing the five words, 0x82CE1950 has three outcomes. It passes the record to 0x82CE16C8 (byte at 0x8314F1CA set to 1) when the byte at 0x8314F10B is 0, when s equals the result of 0x82D8A3A0, or when 0x82CD5A70 gives a low byte of 0 and the id, interpreted as signed 32-bit, is 0x29 or less. Otherwise it sets the byte at 0x8314F1CA to 0, builds an object with 0x82D90A18 and calls slot +0x44 of C's table for s = -1 or slot +0x3C for any other s, with no direct call of 0x82CE16C8; when C is 0 it returns with neither. With the byte at 0x8314F10B not 0, event 5 (s = -1) is passed to 0x82CE16C8 when 0x82D8A3A0 returns -1 or the word at 0x8312B8E4 is not human by 0x82CD5A70, and otherwise requests slot +0x44 when C is nonzero. No event was observed, slot +0x3C was not read, and indirect or loopback processing of a sent event is not established."
       }
     },
     "RVA-F-0331": {

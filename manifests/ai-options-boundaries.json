@@ -4160,7 +4160,7 @@
           "registrars": "49 of the 52 functions in 0x82E88CC0..0x82E8BE18 that call 0x821D3E18 directly; the other three are 0x82E88CC0 (key 0), 0x82E89430 (key 77) and 0x82E894A0 (key 78)",
           "registry": "Object allocated by 0x821D3E18; its pointer is stored at 0x8314F200",
           "list": "Function pointer list walked by 0x8281B900 from 0x82F10010 to 0x82F10CBC",
-          "scopeNote": "The claim covers the key, the factory and the table of each of the 49 registrars, and the +0x0 and +0x10 stores of each factory. It does not cover what each class is, what its table slots do, or the non-factory callers of the constructors. The registry, the lookups and the receive path are recorded under their own conditions in RVA-F-0362 (see reusedRecords); this section adds registry membership and the aggregate census of the 49 registrars and their factories, reusing the existing construction records listed in reusedRecords."
+          "scopeNote": "The claim covers the key, the factory and the table of each of the 49 registrars, and the +0x0 and +0x10 stores of each factory. It does not cover what each class is, what its table slots do, or the non-factory callers of the constructors, which registryClassSendBoundary covers in part. The registry, the lookups and the receive path are recorded under their own conditions in RVA-F-0362 (see reusedRecords); this section adds registry membership and the aggregate census of the 49 registrars and their factories, reusing the existing construction records listed in reusedRecords."
         },
         "reusedRecords": [
           "ai-options-boundaries.json#/findings/RVA-F-0330/networkReceiveFactoryBoundary: the registrars 0x82E89430 and 0x82E894A0, the list walked by 0x8281B900, the factories 0x821D3778 and 0x821D3828, and the receive routine 0x82CB20E8",
@@ -4234,7 +4234,7 @@
         },
         "limits": [
           "Static reading only. No registration or receive was observed.",
-          "What each class is, what its table slots do, and the 10 non-factory callers of the 9 constructors were not read.",
+          "What each class is and what its table slots do were not read. Three of the 10 non-factory callers of the 9 constructors are read in registryClassSendBoundary; seven are named in existing manifests.",
           "That a received key selects one of these factories depends on the receive path recorded in RVA-F-0362 selectedTransportScalarSelectorBoundary and in networkReceiveFactoryBoundary, under their conditions.",
           "Whether a later read or write slot overwrites +0x10 was not read."
         ],
@@ -4247,7 +4247,88 @@
           "A factory or constructor among the 49 whose +0x10 store is not its key would falsify the key claim.",
           "An address formation of one of the 49 factory addresses outside its registrar would falsify the uniqueness claim."
         ],
-        "result": "Static reading: 49 further registrars in 0x82E88D30..0x82E8BDA8 each store one factory under one key in the registry at 0x8314F200, under the publication and map slot conditions of RVA-F-0362. The keys are 1-9 and 12-18 (16), 1200-1209 (10), 1150-1156 (7), 1001-1011 (11) and 1250-1254 (5), in the list walked by 0x8281B900. Each of the 49 factories stores a table at +0x0 and its own key at +0x10, 40 inline and 9 through a constructor, unlike the factories for keys 77 and 78. No registration or receive was observed, and what the classes are, what their tables do and the 10 non-factory callers of the 9 constructors were not read."
+        "result": "Static reading: 49 further registrars in 0x82E88D30..0x82E8BDA8 each store one factory under one key in the registry at 0x8314F200, under the publication and map slot conditions of RVA-F-0362. The keys are 1-9 and 12-18 (16), 1200-1209 (10), 1150-1156 (7), 1001-1011 (11) and 1250-1254 (5), in the list walked by 0x8281B900. Each of the 49 factories stores a table at +0x0 and its own key at +0x10, 40 inline and 9 through a constructor, unlike the factories for keys 77 and 78. No registration or receive was observed, and what the classes are and what their tables do were not read. Three of the 10 non-factory callers of the 9 constructors are read in registryClassSendBoundary; seven are named in existing manifests."
+      },
+      "registryClassSendBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "What do three non-factory callers of the registry class constructors for keys 1250, 1008 and 1009 do with the objects they build?",
+        "scope": {
+          "functions": "0x82CA62B8 (key 1250), 0x82CA1EF0 (key 1008), 0x82C9AA28 (key 1009), and the helper 0x82CA9440 called by 0x82CA1EF0",
+          "release": "0x82CADF58 (1250), 0x82CAE008 (1008) and 0x82CADFB0 (1009), and the class table word +0x0 functions 0x822E1000, 0x822E0F60 and 0x822E0FB0",
+          "scopeNote": "The claim covers the call sequence of these functions. It does not cover what the slots called do, which class the objects T and G are, when the functions run, or the seven other non-factory callers, which are named in existing manifests (see reusedRecords). The keys, factories and tables are recorded in registryKeyCensusBoundary."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/registryKeyCensusBoundary: the keys, factories, constructors and tables for keys 1250, 1008 and 1009, and the 10 non-factory callers of the 9 constructors",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/eventRouteBoundary: 0x82CE1950 calls slot +0x3C or slot +0x44 of C's table",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/networkSlotIdBoundary: the tables 0x821368E0 and 0x821368F4, whose word +0x4 is 0x821D5678",
+          "xbox-live-session-search-contract.json and xbox-system-link-qos-root.json: name 0x82C9BF98 (key 1007)",
+          "xbox-hotjoin-transfer-restore.json: names 0x82CA2480 (key 1150)",
+          "xbox-hotjoin-transfer-restore.json: names 0x82CA2348 (key 1153)",
+          "xbox-hotjoin-transfer-restore.json: names 0x82CA0BD0 (key 1201)",
+          "xbox-hotjoin-transfer-restore.json: names 0x82CA6DB0 (key 1208)",
+          "xbox-hotjoin-transfer-restore.json: names 0x82CA6FB0 (key 1208)",
+          "xbox-live-session-search-contract.json and native-renderer-alternate-resolve-provider.json: name 0x82C9C1A8 (key 1251)"
+        ],
+        "senders": [
+          "0x82CA62B8 (0x82CA62B8..0x82CA63BC, key 1250) has one direct caller, 0x82CA63FC, and one data word, 0x8219A288 (function table row). The address formation scan finds no formation of its address. Its caller calls 0x82CA5518 when the result is 3 (0x82CA6404..0x82CA6410).",
+          "It takes a first argument T and sets its return value to 3 (0x82CA62C8). It calls slot +0x10C of T (0x82CA62CC..0x82CA62D8) and returns 3 if the result is 0 (0x82CA62E0). It calls slot +0x10C again and slot +0x38 of that result, and returns 3 if the low byte is 0 (0x82CA62E4..0x82CA6310).",
+          "Otherwise it calls slot +0x10C twice more, giving P (0x82CA6324) and Q (0x82CA633C), then slot +0x68 of P (0x82CA6354) and slot +0x6C of Q (0x82CA636C). It builds a class 1250 object on its frame at +0x50 with constructor 0x82CAE5A8, passing the slot +0x6C result as second argument and the slot +0x68 result as third (0x82CA6370..0x82CA637C).",
+          "It calls slot +0x44 of T's table with T, the frame object and 1 (0x82CA6380..0x82CA6398), then 0x82CADF58 on the frame object (0x82CA63A4), and returns 2 (0x82CA63A0, 0x82CA63A8).",
+          "0x82CA1EF0 (0x82CA1EF0..0x82CA2080, key 1008) has no direct caller and data words 0x8215FF8C and 0x82199F60 (function table row). The address formation scan finds no formation of its address.",
+          "With first argument T, it forms G = 0x82CAAAA8(word at 0x8314F204, word at T+0x4) (0x82CA1F18..0x82CA1F20) and returns if slot +0x7C of G returns a negative value (0x82CA1F28..0x82CA1F3C). It loops over the entries of an object returned by slot +0x190 of G (count at its +0x24), The loop supplies slot +0x4C of the object at T+0x24 with storage at T+0x2C plus the accumulated byte total and the remaining 0x400-byte budget, while three frame arrays record entry values, returned lengths and buffer pointers (0x82CA1F40..0x82CA2038); the other loop details are not part of the claim.",
+          "Only when the collected byte total is not 0 (0x82CA203C..0x82CA2040), it builds a class 1008 object on its frame at +0x80 with constructor 0x82CAE880, the entry count and the three frame arrays (0x82CA2044..0x82CA2064), passes it with T to 0x82CA9440 (0x82CA2068..0x82CA2070), then calls 0x82CAE008 on it (0x82CA2078).",
+          "0x82C9AA28 (0x82C9AA28..0x82C9AC7C, key 1009) has no direct caller and data words 0x821606C4 and 0x82199BA8 (function table row). The address formation scan finds no formation of its address.",
+          "With first argument T, it forms G = 0x82CAAAA8(word at 0x8314F204, word at T+0x8) (0x82C9AA40..0x82C9AA50) and returns if slot +0x7C of G is negative (0x82C9AA54..0x82C9AA68).",
+          "In a loop over index i from 0 to 7 (0x82C9AB6C, 0x82C9AC44..0x82C9AC5C), inside an outer loop over records read through slot +0x10 and +0x20 of the object at T+0xC, it gets an entry by slot +0x84 of G with i. When that entry and its slot +0x8 result are not 0 and a byte compare of up to 0x24 bytes finds equality (0x82C9AB80..0x82C9AC00), it builds a class 1009 object on its frame at +0x70 with constructor 0x82CAE6E0 (0x82C9AC04..0x82C9AC18), calls slot +0x3C of G with G, the object, i and 0 (0x82C9AC1C..0x82C9AC34), then calls 0x82CADFB0 on the object (0x82C9AC3C). The compare's meaning is not part of the claim."
+        ],
+        "fanOut": [
+          "0x82CA9440 (0x82CA9440..0x82CA9550) has one direct caller, 0x82CA2070. It takes T and an object O and returns at once when O is 0 (0x82CA9454..0x82CA9458).",
+          "If the word at T+0x18 is not negative, it calls slot +0x3C of G = 0x82CAAAA8(word at 0x8314F204, word at T+0x4) with G, O, the word at T+0x18 and 0 (0x82CA945C..0x82CA9490), and returns.",
+          "Otherwise, if any of the 8 bytes T+0x10..T+0x17 is not 0 (0x82CA949C..0x82CA94B8), then for each index i from 0 to 7 whose byte T+0x10+i is 0, it looks G up again and calls slot +0x3C with G, O, i and 0 (0x82CA94CC..0x82CA9510).",
+          "If all 8 bytes are 0, it calls slot +0x44 of G with G, O and 0 (0x82CA9524..0x82CA9548)."
+        ],
+        "release": [
+          "0x82CADF58 (key 1250), 0x82CAE008 (1008) and 0x82CADFB0 (1009) each store the class table (0x8215F488, 0x8215F54C and 0x8215F560, the tables recorded in registryKeyCensusBoundary for keys 1250, 1008 and 1009) at +0x0, release owned buffers through 0x82D3D9F0, then store 0x8211EC1C at +0x0. For 1250 and 1009 the released buffer is the word at +0x38, then set to 0; for 1008 it is the words from +0x58 for the halfword count at +0x34.",
+          "Each has exactly two direct callers: the sender above and one call in a 20-instruction function that is word +0x0 of the same class table: 0x822E1000 (table 0x8215F488, call 0x822E101C), 0x822E0F60 (0x8215F54C, call 0x822E0F7C) and 0x822E0FB0 (0x8215F560, call 0x822E0FCC).",
+          "Word +0x4 of all three tables is 0x821D5678, the same word as in the tables 0x821368E0 and 0x821368F4 recorded in networkSlotIdBoundary."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82CA637C",
+            "0x82CA6398",
+            "0x82CA2064",
+            "0x82CA9490",
+            "0x82CA9548",
+            "0x82C9AC18",
+            "0x82C9AA4C",
+            "0x82CADF78",
+            "0x82CAE028",
+            "0x82CADFD0",
+            "0x8215F54C",
+            "0x822E0F7C"
+          ],
+          "radius": 64,
+          "distinctWords": 1115,
+          "outputSha256": "6D6A342C3FA603EDEC0DDAFC44F819A4E0E1B67B86658C69C0FEAACB275871F5",
+          "imageMatch": "All 1115 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The full decodes of the three senders, 0x82CA9440 and the three release functions, the branch scan of every word for direct callers, and the address formation and data word search were done on the flat image. The address formation search covered 0x82010000..0x82F70000 using 48-instruction windows beginning at upper-half constants and stopping at branches, testing tracked immediate additions and memory displacements."
+        },
+        "limits": [
+          "Static reading only. Nothing was sent or observed.",
+          "What slots +0x3C, +0x44, +0x7C, +0x84, +0x10C and +0x190 do, which class G or T is, and what 0x82CAAAA8 returns for these keys are not established.",
+          "No direct callers were found for 0x82CA1EF0 or 0x82C9AA28; the data words at 0x8215FF8C and 0x821606C4 were not read as tables, and indirect callers and execution timing remain unresolved.",
+          "The seven other non-factory callers were not re-read here."
+        ],
+        "interpretation": [
+          "Interpretation: each sender builds a temporary message object on its stack, hands it to a session-like object G or T to send, and releases it; slot +0x3C may send to one player index and slot +0x44 to all, the same slot numbers that 0x82CE1950 uses (eventRouteBoundary). That the objects are the same class as the C object there is not shown."
+        ],
+        "falsificationConditions": [
+          "A direct call of any of the three release functions other than those listed would falsify the two-caller claim.",
+          "A path in a sender that reaches slot +0x3C or +0x44 without first calling its constructor, or reaches the release call without the send call (other than through the listed returns), would falsify the call sequence."
+        ],
+        "result": "Static reading: 0x82CA62B8 builds a class 1250 object and calls slot +0x44 of T's table with T, the object and 1, then 0x82CADF58, and returns 2. 0x82CA1EF0 builds a class 1008 object only when its collected byte total is not 0, passes it with T to 0x82CA9440, then calls 0x82CAE008. For nonzero O, a nonnegative word at T+0x18 makes 0x82CA9440 call slot +0x3C of G with that value; otherwise, when any of the bytes T+0x10..T+0x17 is not 0 it calls slot +0x3C for each index whose byte is 0, and when all 8 bytes are 0 it calls slot +0x44. 0x82C9AA28 builds a class 1009 object for each matching entry, calls slot +0x3C of G with the index i, then calls 0x82CADFB0. Each release function has exactly two direct callers. Nothing was sent or observed, and what the slots do, which class G or T is, and when the senders run were not read."
       }
     },
     "RVA-F-0331": {

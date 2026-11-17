@@ -763,6 +763,12 @@ covers the 49 further registrars, which install keys 1-9, 12-18, 1001-1011,
 1150-1156, 1200-1209 and 1250-1254, under the conditions recorded in
 `RVA-F-0362`. Each factory stores a table at `+0x0` and its own key at `+0x10`
 (40 inline, 9 through a constructor), unlike keys 77 and 78. Static reading.
+The [registry class send finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/registryClassSendBoundary)
+reads three of the constructor callers. `0x82CA62B8` (key 1250) calls slot
+`+0x44` of its first argument's table with its new object, `0x82CA1EF0` (key
+1008) passes its object to `0x82CA9440`, which calls slot `+0x3C` or `+0x44`,
+and `0x82C9AA28` (key 1009) calls slot `+0x3C`; each then calls a release
+function. What the slots do is not established. Static reading.
 The [event route finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/eventRouteBoundary)
 records the split in `0x82CE1950` for an id other than `0x12`, with `s` its sixth
 argument. The record is passed to `0x82CE16C8` when the byte at `0x8314F10B` is 0,

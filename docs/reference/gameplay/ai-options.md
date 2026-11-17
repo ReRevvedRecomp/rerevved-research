@@ -769,6 +769,12 @@ reads three of the constructor callers. `0x82CA62B8` (key 1250) calls slot
 1008) passes its object to `0x82CA9440`, which calls slot `+0x3C` or `+0x44`,
 and `0x82C9AA28` (key 1009) calls slot `+0x3C`; each then calls a release
 function. What the slots do is not established. Static reading.
+The [registry class send slot finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/registryClassSendSlotBoundary)
+reads the table `0x8215FA78`: word `+0x3C` is `0x82CA56E0`, `+0x44` is
+`0x82CA6500` and `+0x50` is `0x82CA63C0`. When the object has that table, which
+rests on the registry provenance conditions, the slot calls select those two
+routines. `0x82CA1EF0` is word `+0xC` of the table `0x8215FF80` and `0x82C9AA28`
+is word `+0xC` of `0x821606B8`; their callers were not read. Static reading.
 The [event route finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/eventRouteBoundary)
 records the split in `0x82CE1950` for an id other than `0x12`, with `s` its sixth
 argument. The record is passed to `0x82CE16C8` when the byte at `0x8314F10B` is 0,

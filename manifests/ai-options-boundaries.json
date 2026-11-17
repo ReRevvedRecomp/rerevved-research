@@ -4317,8 +4317,8 @@
         },
         "limits": [
           "Static reading only. Nothing was sent or observed.",
-          "What slots +0x3C, +0x44, +0x7C, +0x84, +0x10C and +0x190 do, which class G or T is, and what 0x82CAAAA8 returns for these keys are not established.",
-          "No direct callers were found for 0x82CA1EF0 or 0x82C9AA28; the data words at 0x8215FF8C and 0x821606C4 were not read as tables, and indirect callers and execution timing remain unresolved.",
+          "What slots +0x3C, +0x44, +0x7C, +0x84, +0x10C and +0x190 do, which class G or T is, and what 0x82CAAAA8 returns for these keys are not established; registryClassSendSlotBoundary records which routines slots +0x3C and +0x44 select when G or T has the table 0x8215FA78, under its conditions.",
+          "No direct callers were found for 0x82CA1EF0 or 0x82C9AA28; the data words at 0x8215FF8C and 0x821606C4 were not read as tables here, and indirect callers and execution timing remain unresolved; registryClassSendSlotBoundary records the tables that hold them as word +0xC.",
           "The seven other non-factory callers were not re-read here."
         ],
         "interpretation": [
@@ -4329,6 +4329,70 @@
           "A path in a sender that reaches slot +0x3C or +0x44 without first calling its constructor, or reaches the release call without the send call (other than through the listed returns), would falsify the call sequence."
         ],
         "result": "Static reading: 0x82CA62B8 builds a class 1250 object and calls slot +0x44 of T's table with T, the object and 1, then 0x82CADF58, and returns 2. 0x82CA1EF0 builds a class 1008 object only when its collected byte total is not 0, passes it with T to 0x82CA9440, then calls 0x82CAE008. For nonzero O, a nonnegative word at T+0x18 makes 0x82CA9440 call slot +0x3C of G with that value; otherwise, when any of the bytes T+0x10..T+0x17 is not 0 it calls slot +0x3C for each index whose byte is 0, and when all 8 bytes are 0 it calls slot +0x44. 0x82C9AA28 builds a class 1009 object for each matching entry, calls slot +0x3C of G with the index i, then calls 0x82CADFB0. Each release function has exactly two direct callers. Nothing was sent or observed, and what the slots do, which class G or T is, and when the senders run were not read."
+      },
+      "registryClassSendSlotBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "Which routines do the slot +0x3C and +0x44 calls in registryClassSendBoundary select, and which tables hold the three senders?",
+        "scope": {
+          "functions": "0x82CA63C0 (word +0x50 of the table 0x8215FA78), and the table words of 0x8215FA78 at +0x3C, +0x44 and +0x50; the tables 0x8215FF80 and 0x821606B8 and the stores of their addresses",
+          "scopeNote": "The claim covers the table words read, the decode of 0x82CA63C0 and the stores of the two table addresses. It does not cover what 0x82CA56E0 and 0x82CA6500 do, the callers of slot +0xC of the tables 0x8215FF80 and 0x821606B8, the callers of 0x82CA63C0 through slot +0x50, or slot +0x98 of 0x8215FA78. That G or T has the table 0x8215FA78 for these keys rests on the conditions of registryReceiverProvenance and was not observed."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/registryClassSendBoundary: the senders 0x82CA62B8, 0x82CA1EF0 and 0x82C9AA28, and the slot +0x3C and +0x44 calls on G and T",
+          "native-renderer-alternate-resolve-provider.json#/registryReceiverProvenance, under its conditions: the factory 0x82CB12F0 installs the table 0x8215FA78, and 0x82CABC78 stores that factory's object at node +0xC of the registry at 0x8314F204 that 0x82CAAAA8 reads; it also records that no static edge within its scope supports a different first-word initializer for primary-map values",
+          "xbox-network-message-root.json#/nativeAdmissionScalarEnvelopeBoundary/routedSendOwner: records 0x82CA56E0, the word at cell 0x8215FAB4",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/commandDeliveryBoundary: records 0x82CA6500, the word at cell 0x8215FABC, as the local sender",
+          "xbox-live-mode-entry-invite-contract.json: names the table 0x8215FF80 and 0x82CA1188",
+          "xbox-hotjoin-transfer-restore.json: names the table 0x821606B8 and 0x82C9A4E0"
+        ],
+        "tableCells": [
+          "Words of the table 0x8215FA78 read on the flat image: +0x3C (0x8215FAB4) is 0x82CA56E0, +0x44 (0x8215FABC) is 0x82CA6500 and +0x50 (0x8215FAC8) is 0x82CA63C0. What 0x82CA56E0 and 0x82CA6500 do is in the records cited above, under their conditions, and is not re-read here.",
+          "When G in 0x82CA1EF0, 0x82CA9440 or 0x82C9AA28 is an object whose word +0x0 is 0x8215FA78, their slot +0x3C calls select 0x82CA56E0 and their slot +0x44 call selects 0x82CA6500. That G has this table rests on the registryReceiverProvenance conditions; it is not shown for these keys here."
+        ],
+        "slot50Caller": [
+          "0x82CA63C0 (0x82CA63C0..0x82CA6444) is word +0x50 of the table 0x8215FA78. A branch scan finds no direct caller.",
+          "It keeps its first argument (0x82CA63D4), calls slot +0x98 of that argument's table (0x82CA63DC..0x82CA63E8), and only when the low byte of the result is not 0 (0x82CA63EC..0x82CA63F4) passes the same first argument to 0x82CA62B8 (0x82CA63F8..0x82CA63FC). For result 3 it then calls 0x82CA5518 (0x82CA6404..0x82CA6410).",
+          "So when 0x82CA63C0 is entered through slot +0x50 of an object with the table 0x8215FA78, T in 0x82CA62B8 is that object and its slot +0x44 call selects 0x82CA6500 (cell 0x8215FABC). That entry through slot +0x50 was not shown."
+        ],
+        "senderTables": [
+          "0x82CA1EF0 (key 1008) is word +0xC of the table at 0x8215FF80 (data word 0x8215FF8C). The address 0x8215FF80 is stored at object +0x0 at 0x82CA11A8 (in 0x82CA1188, address formed at 0x82CA11A0) and at 0x82CA1244 (address formed at 0x82CA123C; that instruction lies in no function table row).",
+          "0x82C9AA28 (key 1009) is word +0xC of the table at 0x821606B8 (data word 0x821606C4). The address 0x821606B8 is stored at object +0x0 at 0x82C9A130 (in 0x82C9A110, formed at 0x82C9A12C) and at 0x82C9A510 (in 0x82C9A4E0, formed at 0x82C9A500).",
+          "The callers of slot +0xC of these two tables were not searched. So the 1008 and 1009 senders run when slot +0xC of an object with that table is called, which was not shown."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x8215FAB4",
+            "0x8215FAC8",
+            "0x82CA63FC",
+            "0x8215FF8C",
+            "0x821606C4",
+            "0x82CA11A8",
+            "0x82CA1244",
+            "0x82C9A130",
+            "0x82C9A510"
+          ],
+          "radius": 64,
+          "distinctWords": 947,
+          "outputSha256": "66605F20FAD2A67D30152816769AAB53F03BDCC6E04CB6787D9943BCD85E563E",
+          "imageMatch": "All 947 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The table words, the full decode of 0x82CA63C0, the branch scan for direct callers of 0x82CA63C0, and the address formation scan for the tables 0x8215FF80 and 0x821606B8 were done on the flat image. The address formation search covered 0x82010000..0x82F70000 using 48-instruction windows beginning at upper-half constants and stopping at branches; it found 0x82CA11A0 and 0x82CA123C for 0x8215FF80, and 0x82C9A12C and 0x82C9A500 for 0x821606B8."
+        },
+        "limits": [
+          "Static reading only. Nothing was sent or observed.",
+          "That G and T have the table 0x8215FA78 for these keys depends on the recorded registry provenance and on entry through slot +0x50; it was not observed.",
+          "What 0x82CA56E0 and 0x82CA6500 do is in their records, under their conditions, and was not re-read here.",
+          "The callers of slot +0xC of the tables 0x8215FF80 and 0x821606B8, and slot +0x98 of 0x8215FA78, were not read."
+        ],
+        "interpretation": [
+          "Interpretation: the three senders may use the same session object class as 0x82CE1950 (eventRouteBoundary) if G and T have table 0x8215FA78 under the recorded conditions, with slot +0x3C a routed send to one index and slot +0x44 the local sender over indices 0..7 recorded in commandDeliveryBoundary; the tables 0x8215FF80 and 0x821606B8 may be per-task classes whose slot +0xC is an update step."
+        ],
+        "falsificationConditions": [
+          "A different word at 0x8215FAB4, 0x8215FABC or 0x8215FAC8 would falsify the table cells.",
+          "A path in 0x82CA63C0 that calls 0x82CA62B8 with an argument other than its own first argument would falsify the slot +0x50 claim."
+        ],
+        "result": "Static reading: in the table 0x8215FA78, word +0x3C is 0x82CA56E0, word +0x44 is 0x82CA6500 and word +0x50 is 0x82CA63C0. When G or T has that table, the slot +0x3C and +0x44 calls of the three senders select 0x82CA56E0 and 0x82CA6500; that rests on the registryReceiverProvenance conditions and was not observed. 0x82CA63C0 has no direct caller and passes its own first argument to 0x82CA62B8 when its slot +0x98 call returns a low byte that is not 0. 0x82CA1EF0 is word +0xC of the table 0x8215FF80 and 0x82C9AA28 is word +0xC of the table 0x821606B8, each stored at object +0x0 in two places. Nothing was observed, and the callers of slot +0xC of those tables were not read."
       }
     },
     "RVA-F-0331": {

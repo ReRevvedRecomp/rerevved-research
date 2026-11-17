@@ -751,8 +751,12 @@ searches listed, only `0x82CE1830` builds outgoing objects of the first slot's
 class, with ids `0x39`, `0x3A` and `0x3B`. Outgoing objects of the second
 slot's class are built by `0x82CE1950`, by 25 inline sites and by setup, with 53
 distinct ids from 0 to `0x40`. A received record is whatever was read from the
-buffer, and the dispatcher sends ids above `0x41` to its common exit. How
-received objects are created was not established.
+buffer, and the dispatcher sends ids above `0x41` to its common exit. The
+[network receive factory finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/networkReceiveFactoryBoundary)
+records how received objects are created: the factories `0x821D3778` and
+`0x821D3828` are registered under keys 77 and 78 in a registry at the word
+`0x8314F200`, and `0x82CB20E8` reads a key from the stream and calls the
+factory registered under it. Static reading; no message was observed.
 
 No route into `0x82D21570` was found within the searches recorded in the
 [unit loop reach finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/unitLoopReachBoundary).

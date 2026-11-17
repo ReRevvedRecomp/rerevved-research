@@ -758,6 +758,11 @@ records how received objects are created: the factories `0x821D3778` and
 `0x8314F200`, and `0x82CB20E8` passes a key word from its input to the
 registry lookup, which calls the factory registered under that key when the
 entries are intact. Static reading; no message was observed.
+The [registry key census](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/registryKeyCensusBoundary)
+covers the 49 further registrars, which install keys 1-9, 12-18, 1001-1011,
+1150-1156, 1200-1209 and 1250-1254, under the conditions recorded in
+`RVA-F-0362`. Each factory stores a table at `+0x0` and its own key at `+0x10`
+(40 inline, 9 through a constructor), unlike keys 77 and 78. Static reading.
 The [event route finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/eventRouteBoundary)
 records the split in `0x82CE1950` for an id other than `0x12`, with `s` its sixth
 argument. The record is passed to `0x82CE16C8` when the byte at `0x8314F10B` is 0,

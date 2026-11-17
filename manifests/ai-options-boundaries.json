@@ -4067,7 +4067,7 @@
           "0x821B8CD0 and 0x822DF948 are read as map lookup and map slot by their use here and in the recorded hotjoin reader; their bodies were not read.",
           "The path in 0x82CB20E8 that leads to 0x82CB21C4 (the map at 0x83155EA8 and the result of 0x82CB1D58) and the stream calls at slots +0x18, +0x1C, +0x34 and +0x38 were not read in full; their meanings are not established.",
           "What the object whose slot +0xDC 0x82CA0B58 calls does is not established, and the run of 0x8281B900 was not observed.",
-          "The keys and factories of the other 49 registrars were not read.",
+          "The keys and factories of the other 49 registrars are recorded in registryKeyCensusBoundary.",
           "That the sender writes the +0x10 value as the key read here was not shown."
         ],
         "interpretation": [
@@ -4080,7 +4080,7 @@
           "A different branch on the result of 0x82E7DB10 than the one listed at 0x82CB2200..0x82CB2228 would falsify the receive path.",
           "A registry argument not loaded from the word at 0x8314F200 would falsify the registry link."
         ],
-        "result": "Static reading: the factories 0x821D3778 and 0x821D3828 are registered by key in a registry object, under key 77 (0x82E89430) and key 78 (0x82E894A0), and the registrars are words 0x82F108A0 and 0x82F108A4 of a function pointer list walked by 0x8281B900. The receive routine 0x82CB20E8, recorded with its conditions in RVA-F-0362, passes a key word to 0x82E7DB10 with the registry at 0x8314F200. If the registrar stores complete and the registry, key and slot contents survive both lookups, key 77 selects factory 0x821D3778 (table 0x821368E0) and key 78 selects factory 0x821D3828 (table 0x821368F4). No message was observed, the sender was not read, and the keys of the other 49 registrars were not read."
+        "result": "Static reading: the factories 0x821D3778 and 0x821D3828 are registered by key in a registry object, under key 77 (0x82E89430) and key 78 (0x82E894A0), and the registrars are words 0x82F108A0 and 0x82F108A4 of a function pointer list walked by 0x8281B900. The receive routine 0x82CB20E8, recorded with its conditions in RVA-F-0362, passes a key word to 0x82E7DB10 with the registry at 0x8314F200. If the registrar stores complete and the registry, key and slot contents survive both lookups, key 77 selects factory 0x821D3778 (table 0x821368E0) and key 78 selects factory 0x821D3828 (table 0x821368F4). No message was observed, the sender was not read, and the keys of the other 49 registrars are recorded in registryKeyCensusBoundary."
       },
       "eventRouteBoundary": {
         "status": "partial",
@@ -4151,6 +4151,103 @@
           "A value other than 1 or 0 stored to the byte at 0x8314F1CA on the local queue or send route would falsify the stored values."
         ],
         "result": "Static reading: after storing the five words, 0x82CE1950 has three outcomes. It passes the record to 0x82CE16C8 (byte at 0x8314F1CA set to 1) when the byte at 0x8314F10B is 0, when s equals the result of 0x82D8A3A0, or when 0x82CD5A70 gives a low byte of 0 and the id, interpreted as signed 32-bit, is 0x29 or less. Otherwise it sets the byte at 0x8314F1CA to 0, builds an object with 0x82D90A18 and calls slot +0x44 of C's table for s = -1 or slot +0x3C for any other s, with no direct call of 0x82CE16C8; when C is 0 it returns with neither. With the byte at 0x8314F10B not 0, event 5 (s = -1) is passed to 0x82CE16C8 when 0x82D8A3A0 returns -1 or the word at 0x8312B8E4 is not human by 0x82CD5A70, and otherwise requests slot +0x44 when C is nonzero. No event was observed, slot +0x3C was not read, and indirect or loopback processing of a sent event is not established."
+      },
+      "registryKeyCensusBoundary": {
+        "status": "partial",
+        "confidence": "moderate",
+        "question": "Which keys and factories do the other 49 registrars of the registry at 0x8314F200 install, and what do those factories build?",
+        "scope": {
+          "registrars": "49 of the 52 functions in 0x82E88CC0..0x82E8BE18 that call 0x821D3E18 directly; the other three are 0x82E88CC0 (key 0), 0x82E89430 (key 77) and 0x82E894A0 (key 78)",
+          "registry": "Object allocated by 0x821D3E18; its pointer is stored at 0x8314F200",
+          "list": "Function pointer list walked by 0x8281B900 from 0x82F10010 to 0x82F10CBC",
+          "scopeNote": "The claim covers the key, the factory and the table of each of the 49 registrars, and the +0x0 and +0x10 stores of each factory. It does not cover what each class is, what its table slots do, or the non-factory callers of the constructors. The registry, the lookups and the receive path are recorded under their own conditions in RVA-F-0362 (see reusedRecords); this section adds registry membership and the aggregate census of the 49 registrars and their factories, reusing the existing construction records listed in reusedRecords."
+        },
+        "reusedRecords": [
+          "ai-options-boundaries.json#/findings/RVA-F-0330/networkReceiveFactoryBoundary: the registrars 0x82E89430 and 0x82E894A0, the list walked by 0x8281B900, the factories 0x821D3778 and 0x821D3828, and the receive routine 0x82CB20E8",
+          "ai-options-boundaries.json#/findings/RVA-F-0330/networkSlotIdBoundary: factory 0x821D3828 stores -1 at +0x10, and the constructors 0x82D90A18 and 0x82D90988 store 77 and 78",
+          "xbox-network-message-root.json: defaultLeadingField 1000, stored at +0x10 by factory 0x821D3778",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportRegistryPublicationBoundary: 0x821D3E18 and its publication of the registry at 0x8314F200, under its conditions",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportKeyedTargetBoundary: the map lookup 0x821B8CD0 and the map slot reading of 0x822DF948, under its conditions",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportScalarSelectorBoundary: the key word passed to 0x82E7DB10 in 0x82CB20E8, under its conditions",
+          "ai-options-boundaries.json#/findings/RVA-F-0362/selectedTransportCurrentGlobalWriterBoundary: 0x82E88CC0, the key 0 registrar",
+          "xbox-lobby-ready-check.json#/entrySlotReceiveBoundary/registrationAndConstruction: construction facts for key 1",
+          "xbox-lobby-ready-check.json#/readyKindFourFactoryBoundary: construction facts for key 4",
+          "xbox-network-message-root.json#/turnAndSyncAnchors/case55/case53Producers/stackObjectTable: construction facts for key 13",
+          "native-multiplayer-pause-input-delivery.json#/questions/2: construction facts for key 17",
+          "xbox-live-session-search-contract.json#/nativeHostMigrationBoundary/callerBoundary/notificationAndReceivedHandler/constructor: construction facts for key 1007",
+          "xbox-hotjoin-transfer-restore.json#/nativeMemberControl1010Boundary/facts/factoryAndConstructionDefaults: construction facts for key 1010",
+          "xbox-network-message-root.json#/nativeAdmissionScalarEnvelopeBoundary/selectedClassAndDefaultFactory: construction facts for key 1200",
+          "xbox-hotjoin-transfer-restore.json#/nativeReturningPlayerAuthorityBoundary/constructedClass: construction facts for key 1201",
+          "ai-options-boundaries.json#/findings/RVA-F-0332/multiplayerPostResetFrozenRosterCandidateBoundary/completionRequest: construction facts for key 1209"
+        ],
+        "registrars": [
+          "All 52 functions have 28 instructions and the shape of 0x82E88D30 (key 1), read in full. It loads the word at 0x8314F200 (0x82E88D44) and calls 0x821D3E18 only when the word is 0 (0x82E88D48..0x82E88D50), then reloads the word (0x82E88D54).",
+          "It stores a literal key at frame +0x50 (0x82E88D58..0x82E88D60), calls 0x821B8CD0 with registry +0x4 and the key address (0x82E88D70), then calls 0x822DF948 with registry +0x4 and the key address (0x82E88D7C).",
+          "It stores a literal factory address through the pointer 0x822DF948 returns (0x82E88D80..0x82E88D88) and returns. Each of the 52 has exactly three direct calls, in the order 0x821D3E18, 0x821B8CD0, 0x822DF948, and exactly one word store through the returned pointer.",
+          "Registry publication is subject to RVA-F-0362 selectedTransportRegistryPublicationBoundary, and the map slot reading of 0x822DF948 to RVA-F-0362 selectedTransportKeyedTargetBoundary, under their conditions."
+        ],
+        "keys": [
+          "Each registrar is one word of the function pointer list that 0x8281B900 walks. The 49 keys fall in five listed groups, with one registrar per key; all 52 keys are distinct.",
+          "Keys 1-9 and 12-18: 16 registrars in 0x82E88D30..0x82E893C0, list words 0x82F10860..0x82F1089C. There is no registrar for keys 10 and 11. Key 0 is word 0x82F1085C; keys 77 and 78 are words 0x82F108A0 and 0x82F108A4.",
+          "Keys 1200-1209: 10 registrars in 0x82E8AFA8..0x82E8B398, words 0x82F10A34..0x82F10A58.",
+          "Keys 1150-1156: 7 registrars in 0x82E8B408..0x82E8B6A8, words 0x82F10A5C..0x82F10A74.",
+          "Keys 1001-1011: 11 registrars in 0x82E8B718..0x82E8BB78, words 0x82F10A78..0x82F10AA0.",
+          "Keys 1250-1254: 5 registrars in 0x82E8BBE8..0x82E8BDA8, words 0x82F10AA4..0x82F10AB4. The groups total 16 + 10 + 7 + 11 + 5 = 49."
+        ],
+        "factories": [
+          "The 49 factory addresses are distinct. The 16 low-key factories lie in 0x821D31D0..0x821D3D78 and the other 33 in 0x822DFB38..0x822E0DA8.",
+          "Each factory address is formed by an add only inside its own registrar (address formation scan over 0x82010000..0x82F70000). Each factory address appears once as an aligned data word: the 16 low-key addresses in 0x8216CBC0..0x8216CC58 and the other 33 in 0x821727E8..0x821728E8.",
+          "Each factory requests 0x82D3DBA0 with a literal size from 0x34 to 0x88 bytes, the token address 0x82148A40 and a third argument of -1 (0x822DFBE8 first calls the register save helper 0x827F7C8C), and returns 0 when the result is 0.",
+          "Each factory stores a table address at object +0x0 and its own registry key at object +0x10. 40 do so inline, for example 0x821D3270 (key 1: literal 1 at 0x821D32A4, +0x10 store at 0x821D32B4, table 0x82136840 stored at +0x0 at 0x821D32B8) and 0x822DFB38 (key 1200: literal 1200 at 0x822DFB74, +0x10 store at 0x822DFB84, table 0x8215F3BC stored at +0x0 at 0x822DFB88).",
+          "The other 9 pass the allocated object to a constructor that stores the table and the same key as a literal. The keys are 1007, 1008, 1009, 1150, 1153, 1201, 1208, 1250 and 1251, with constructors 0x82CAEA08, 0x82CAE880, 0x82CAE6E0, 0x82CAEC30, 0x82CAE338, 0x82CAEDE0, 0x82CAECF0, 0x82CAE5A8 and 0x82CAE470 in that order. For key 1007, 0x822E07C8 calls 0x82CAEA08 at 0x822E07F8 with second and third arguments 0, and 0x82CAEA08 stores table 0x8215F538 at +0x0 (0x82CAEA4C) and 0x3EF (1007) at +0x10 (0x82CAEA38, 0x82CAEA50).",
+          "Each of the 9 constructors has exactly one direct caller besides its factory, in 0x82C9AC18..0x82CA7020, except 0x82CAECF0, which has two (0x82CA6E20 and 0x82CA7020).",
+          "The 49 tables are distinct. 18 lie in 0x8213682C..0x82136B98 and 29 in 0x8215F3BC..0x8215F600; the other two are 0x8211EBA4 (key 17) and 0x82137398 (key 1156).",
+          "The factories 0x821D3270, 0x822DFB38 and the constructor 0x82CAEA08 store 0 at +0x8, +0xC, +0x14, +0x24, +0x28, byte +0x5 and byte +0x30, -1 at +0x18, +0x1C and +0x20, and 1 at +0x2C and byte +0x4. These stores were not checked for the other factories."
+        ],
+        "contrast": [
+          "Factory 0x821D3778 (key 77) stores 0x3E8 (1000) at +0x10 (0x821D37AC, 0x821D37C0), recorded as defaultLeadingField 1000. Factory 0x821D3828 (key 78) stores -1 at +0x10 (0x821D3868), recorded in networkSlotIdBoundary. Their constructors 0x82D90A18 and 0x82D90988 store 77 and 78.",
+          "The +0x10 value of each of the 49 factories equals its registry key at construction. It does not for keys 77 and 78."
+        ],
+        "verification": {
+          "script": "ghidra/DumpMemoryWords.java",
+          "method": "one foreground read-only run",
+          "targets": [
+            "0x82E88D60",
+            "0x82E88D88",
+            "0x821D32B4",
+            "0x822DFB84",
+            "0x822E07F8",
+            "0x82CAEA50",
+            "0x821D37C0",
+            "0x821D3868",
+            "0x82E8AFD8",
+            "0x82E8BDD8",
+            "0x82F10860",
+            "0x82F10A34",
+            "0x82F10AB4",
+            "0x821D3E64"
+          ],
+          "radius": 64,
+          "distinctWords": 1491,
+          "outputSha256": "957C46E490C09C61C316EFFA1CFA9D8EB414F04D39DB62453D5189F27E3BE5CD",
+          "imageMatch": "All 1491 words match the supported flat image (SHA-256 in manifests/image.json). Each window is the target minus 0x100 to the target plus 0x100. The registrar census by direct call scan of every function in 0x82E88C00..0x82E8C000 (function table rows), the decode of each registrar, factory and constructor, the address formation scan (0x82010000..0x82F70000) and the data word search for every factory address were done on the flat image."
+        },
+        "limits": [
+          "Static reading only. No registration or receive was observed.",
+          "What each class is, what its table slots do, and the 10 non-factory callers of the 9 constructors were not read.",
+          "That a received key selects one of these factories depends on the receive path recorded in RVA-F-0362 selectedTransportScalarSelectorBoundary and in networkReceiveFactoryBoundary, under their conditions.",
+          "Whether a later read or write slot overwrites +0x10 was not read."
+        ],
+        "interpretation": [
+          "Interpretation: the registry maps a numeric class id to a factory, and each of these 49 classes carries its id at +0x10; the key groups (1-18, 1001-1011, 1150-1156, 1200-1209, 1250-1254) may be families of network message classes, received by the path in 0x82CB20E8.",
+          "Interpretation: the constructor callers in 0x82C9AC18..0x82CA7020 may be the send side."
+        ],
+        "falsificationConditions": [
+          "A registrar among the 49 with a call sequence other than 0x821D3E18, 0x821B8CD0, 0x822DF948, or a second word store through the returned pointer, would falsify the registrar shape.",
+          "A factory or constructor among the 49 whose +0x10 store is not its key would falsify the key claim.",
+          "An address formation of one of the 49 factory addresses outside its registrar would falsify the uniqueness claim."
+        ],
+        "result": "Static reading: 49 further registrars in 0x82E88D30..0x82E8BDA8 each store one factory under one key in the registry at 0x8314F200, under the publication and map slot conditions of RVA-F-0362. The keys are 1-9 and 12-18 (16), 1200-1209 (10), 1150-1156 (7), 1001-1011 (11) and 1250-1254 (5), in the list walked by 0x8281B900. Each of the 49 factories stores a table at +0x0 and its own key at +0x10, 40 inline and 9 through a constructor, unlike the factories for keys 77 and 78. No registration or receive was observed, and what the classes are, what their tables do and the 10 non-factory callers of the 9 constructors were not read."
       }
     },
     "RVA-F-0331": {

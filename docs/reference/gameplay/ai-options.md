@@ -707,6 +707,15 @@ player 0 or a player that is not human, and in `0x82D255B8`. The tests listed
 are those required on the way to each call; the reading is static and finds
 direct calls only.
 
+The [wonder predicate finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/wonderPredicateBoundary)
+records the call `0x82CEF4E8(0xF, p, -1)` at `0x82CF0130`. Index `0xF` is wonder
+item 215, record `0x82F745AC`, and its halfword `+0x48` is -1 in the image. For
+`p` other than -1 the call returns 1 exactly when the claim slot word at
+`0x830E51C0` is not -1 and `p` equals it or the unsigned halfwords at
+`0x830E9070 + 2 * p` and `0x830E9070 + 2 * O` are equal, with `O` the slot
+word. Otherwise it returns 0, and test 7 of the city tests then fails when bit
+`0x80` of city word `+0x10` is set. The reading is static.
+
 The dispatcher entries and the tests before these calls are recorded in
 [city item reset event finding](../../../manifests/ai-options-boundaries.json#/findings/RVA-F-0330/cityItemResetEventBoundary).
 The call of `0x82CF7428` is in entry 17. The call of `0x82D1B400` at `0x82CDF9F8` is in

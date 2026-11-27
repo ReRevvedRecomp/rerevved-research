@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 1,
+  "id": "RVA-F-0422",
+  "topic": "native-renderer-device-binding-writers",
+  "status": "closed",
+  "confidence": "strong",
+  "image": "image.json",
+  "question": "Which functions in the D3D runtime region store the device binding words (render targets, depth surface, streams and strides, index buffer, shaders, vertex declaration, texture array, viewport, scissor and the render-state register block), and which nearby device words have writers outside those setters?",
+  "scope": {
+    "region": "0x8268CAA8-0x826C9C3F (62566 aligned words), the D3D runtime region used by native-renderer-d3d-runtime-surface",
+    "deviceWords": "Offsets are from the device object G, the receiver of the D3D setters. Binding words: declaration +0x2E2C and FVF +0x3090, index buffer +0x3094, render targets +0x3098+4i, depth surface +0x30A8, streams +0x30AC+4s, stride bytes +0x30F0+s, textures +0x3100+4*stage, viewport +0x3168..+0x3180, scissor +0x3184..+0x3190, pixel shader +0x3194, vertex shader +0x3198, register block +0x2880..+0x2A4C.",
+    "nearbyWords": "Register word +0x2898, mode bytes +0x2ABC..+0x2ABF, tiling words +0x319C..+0x31CC, +0x3214, +0x337C and +0x3380, and fetch shadow words at +0x480 and above.",
+    "outsideRegion": "Only the named engine functions and the displacement and index patterns listed in outsideRegionSearch were examined outside the region.",
+    "notCovered": "Writers through a derived pointer, other index shapes, bulk copies and aliases of G; the float and dirty-word writers already recorded in native-renderer-d3d-runtime-surface; the constants, bool and clip shadows; which thread calls any writer."
+  },
+  "dependencies": [
+    {
+      "topic": "native-renderer-d3d-runtime-surface",
+      "use": "region boundaries, device layout, render-state setter table and the inline shadow writers 0x82302758, 0x823038D8 and 0x823039E8"
+    }
+  ],
+  "currentEvidence": {
+    "imageIdentity": "image.json#/analysisProgram, flat SHA256 5C7A8C3AD9B6A9D39CC9BBF3DA5AB23015A568C65C723D298F846086324C4680, base 0x82000000. Existing mapped-program and thunk qualifications remain.",
+    "method": "Serial foreground read-only runs of ghidra/FindRawFieldStores.java, ghidra/FindDirectCallers.java and ghidra/FindPointerValues.java. Every reported word was compared with the word at the same address in the pinned flat image (all matched), and instruction words were decoded outside Ghidra from the flat image with the Python capstone 5.0.7 PowerPC big-endian 32-bit decoder. The configured program has no function at most of these addresses (the scripts report an undefined owner for most store sites), so each store site is attributed to the nearest preceding entry of the generated function table, rerevved:generated/default/rerevved_init.cpp (SHA256 4A3E66DCA4CD52AF74D44380C22DDE8945EF347ACE30EF5F27B34AE0AEF06448; the file is git-ignored and untracked, so title revision a89b5248 does not pin its bytes and the digest does). Function boundaries were read from that table.",
+    "queries": {
+      "storeScansInRegion": "FindRawFieldStores over [0x8268CAA8,0x826C9C40), cap 256, no run truncated, 62566 words scanned per run: 24 binding offsets in 3 runs (28 hits); 116 register offsets 0x2880..0x2A4C in 15 runs (160 hits); mode bytes 0x2ABC..0x2ABF in 1 run (54 hits); 14 tiling offsets (0x319C, 0x31A0, 0x31A4, 0x31AC, 0x31B0, 0x31B8, 0x31CC, 0x31D0, 0x31E0, 0x31F0, 0x3200, 0x3214, 0x337C, 0x3380) in 2 runs (20 hits). The scan sees D-form displacement stores; it does not see indexed stores.",
+      "indexedShape": "FindPointerValues with word mask 0xFC00FFFF over the whole image for addi immediates 0x0C26, 0x0C2B, 0x0C40 and 0x0A26 (a word index times four reaching +0x3098, +0x30AC, +0x3100 and +0x2898) and for 0x3098, 0x30AC, 0x3100, 0x30F0 and 0x2898 (65 hits). A hit counts as an indexed access only when a shift left by 2 of the sum follows within four instructions.",
+      "callers": "FindDirectCallers (raw bl words, cap 64, not truncated) for 13 targets: 0x8268F9C0, 0x82690440, 0x82690138, 0x826903A0, 0x82690420, 0x82698AA8, 0x82698BB0, 0x826B1DA0, 0x8269D7D8, 0x8268CE90, 0x826A5C50, 0x826A5EB8 and 0x826A60F8 (34 hits).",
+      "tableWords": "FindPointerValues, exact words, for those function addresses (10 hits; 0x82690440 has none) and for the 49 sampler setters named below (no hit).",
+      "setterFamilies": "FindRawFieldStores over 7 narrow bands for +0x484, +0x48C, +0x490 and +0x494 (7 stores per band), and FindDirectCallers and FindPointerValues for the 49 entries (no hit)."
+    },
+    "bindingWriters": [
+      {
+        "group": "vertex declaration +0x2E2C",
+        "confidence": "strong",
+        "writers": [
+          {
+            "function": "0x82692E60",
+            "store": "0x82692E60 stw r4,0x2E2C(r3)",
+            "note": "NativeSetVertexDeclaration (RVA-SYM-0443)"
+          },
+          {
+            "function": "0x826946D8",
+            "store": "0x82694700 stw r4,0x2E2C(r31)",
+            "note": "Stores its argument as FVF at +0x3090 (0x826946F8), calls 0x82690B10 with +0x2FA0 as second argument (0x826946F0, 0x826946FC), stores the result at +0x2E2C and sets dirty +0x10 bit 0x80000 (0x82694708)."
+          }
+        ]
+      },
+      {
+        "group": "index buffer +0x3094",
+        "confidence": "strong",
+        "writers": [
+          {
+            "function": "0x8268FCB0",
+            "store": "0x8268FD34 stw r29,0x3094(r31)",
+            "note": "NativeSetIndices (RVA-SYM-0441)"
+          }
+        ]
+      },
+      {
+        "group": "pixel shader +0x3194 and vertex shader +0x3198",
+        "confidence": "strong",
+        "writers": [
+          {
+            "function": "0x82692948",
+            "store": "0x826929CC stw r29,0x3194(r30)"
+          },
+          {
+            "function": "0x82692C48",
+            "store": "0x82692CE8 stw r29,0x3198(r30)"
+          }
+        ]
+      },
+      {
+        "group": "depth surface +0x30A8",
+        "confidence": "strong",
+        "writers": [
+          {
+            "function": "0x82690830",
+            "store": "0x82690850 stw r30,0x30A8(r31)"
+          }
+        ]
+      },
+      {
+        "group": "render targets +0x3098+4i",
+        "confidence": "strong",
+        "writers": [
+          {
+            "function": "0x826904D0",
+            "store": "0x826904EC stwx r5,r7,r31 with r7 = 4*(r4+0xC26) (0x826904DC, 0x826904E4)",
+            "note": "0x82690B08 is the single word 0x4BFFF9C8, a branch to 0x826904D0, so it is a second entry with no store of its own."
+          }
+        ],
+        "extent": "0x8268D110 calls 0x826904D0 for slots 0 to 3 (loop compare at 0x8268D150) and then 0x82690830, so the render target words are +0x3098..+0x30A4. No D-form store exists at +0x3098..+0x30A8 outside the two functions above. The other scaled readers of the array are 0x8268FD80 (0x8268FD90), 0x8269E520 (0x8269E574) and 0x826A1D90 (0x826A1DE8)."
+      },
+      {
+        "group": "streams +0x30AC+4s and stride bytes +0x30F0+s",
+        "confidence": "strong",
+        "writers": [
+          {
+            "function": "0x8268FB08",
+            "store": "pointer 0x8268FBF4 stwx r30,r27,r31 with r27 = 4*(r29+0xC2B); stride byte 0x8268FC00 stb r9,0x30F0(r11) with r11 = r31+r29",
+            "note": "NativeSetStreamSource (RVA-SYM-0440). For a nonnull buffer it also writes the stream fetch shadow words +0x6F0+8*(17-s) at 0x8268FB64 and +0x6F4+8*(17-s) at 0x8268FB68, and ORs dirty +0x18 (0x8268FB74)."
+          },
+          {
+            "function": "0x826A2B58",
+            "store": "0x826A2B7C and 0x826A2DDC stb to +0x30F0 (stream 0)",
+            "note": "Loads the byte at 0x826A2B78 before the first store; the later store writes r25, the register loaded there. Read as an override and a restore; the paths between were not checked."
+          },
+          {
+            "function": "0x826A3048",
+            "store": "0x826A309C and 0x826A32E4 stb to +0x30F0 (stream 0)",
+            "note": "Loads the byte at 0x826A3094 before the first store; the later store writes r26, the register loaded there. Same reading and limit. RVA-SYM-0150 names this function."
+          }
+        ],
+        "extent": "0x8268D110 calls 0x8268FB08 for streams 0 to 15 (compare at 0x8268D1E4). No D-form store exists at +0x30AC."
+      },
+      {
+        "group": "texture array +0x3100+4*stage",
+        "confidence": "strong",
+        "writers": [
+          {
+            "function": "0x8269AF10",
+            "store": "0x8269B014 stwx r5,r29,r31 with r29 = 4*(r4+0xC40) (0x8269AF1C, 0x8269AF24)",
+            "note": "RVA-SYM-0149"
+          }
+        ],
+        "extent": "The scaled readers are 0x8268F5A0, 0x8268F620 and 0x8269B090. The loop at 0x826A4CF8 in 0x826A4CD0 copies 0x1A words from +0x3100 and stores them through r27 to another block (0x826A4D1C), not to G. No D-form store exists at +0x3100."
+      },
+      {
+        "group": "viewport +0x3168..+0x317C",
+        "confidence": "strong",
+        "writers": [
+          {
+            "function": "0x82690138",
+            "store": "stfs at 0x826902B8 (+0x3168), 0x826902C0 (+0x316C), 0x82690300 (+0x3170), 0x826902EC (+0x3174), 0x826902E0 (+0x3178), 0x826902E8 (+0x317C); stw zero to +0x3180 at 0x826902F0",
+            "note": "Calls the scissor writer 0x8268F9C0 at 0x82690304, then stores register shadows +0x2908..+0x291C. The wrappers are 0x826903A0 (converts four integers from a record and takes two floats, bl at 0x8269040C) and 0x82690420 (loads six floats from a record, branch at 0x8269043C)."
+          }
+        ]
+      },
+      {
+        "group": "scissor +0x3184..+0x3190",
+        "confidence": "strong",
+        "writers": [
+          {
+            "function": "0x8268F9C0",
+            "store": "0x8268FA2C, 0x8268FA34, 0x8268FA3C, 0x8268FA40 from the four words at r4",
+            "note": "Reads the viewport floats +0x3168..+0x3174, writes register shadows +0x28C4 and +0x28C8, calls 0x8268D3A0. Direct callers by raw bl: 0x82690304 (in 0x82690138), 0x8269D158 and 0x8269D18C (in 0x8269CE90), 0x8269D994 and 0x8269DA48 (in 0x8269D7D8), 0x8269DD30 (in 0x8269DB20), 0x826A516C (in 0x826A50A0). The branch word at 0x82690398, from 0x82690390, was read from the flat image."
+          },
+          {
+            "function": "0x82690440",
+            "store": "0x826904B0, 0x826904B8, 0x826904C0, 0x826904C8 from four words at 0x8208E6E0",
+            "note": "Also stores +0x29BC and +0x2880, ORs dirty +0x10 and +0x20, then branches (0x826904CC) to 0x826903A0 with the record at 0x8208E6C8. Direct callers: 0x8269067C (in 0x826904D0) and 0x82690864 (in 0x82690830). It has no table word."
+          }
+        ]
+      }
+    ],
+    "registerBlock": {
+      "confidence": "strong",
+      "result": "The 160 D-form store sites at the 116 offsets +0x2880..+0x2A4C lie in 88 functions. 75 of them are among the 92 distinct render-state setter addresses in native-renderer-d3d-runtime-surface.json#/currentEvidence/stateTables/renderState; their sites are in 0x8268D690..0x8268EF18 and all use base r3. The other 13 are listed in otherWriters.",
+      "otherWriters": [
+        {
+          "function": "0x8268F9C0",
+          "offsets": "+0x28C4, +0x28C8"
+        },
+        {
+          "function": "0x82690138",
+          "offsets": "+0x2908..+0x291C"
+        },
+        {
+          "function": "0x82690440",
+          "offsets": "+0x2880, +0x29BC"
+        },
+        {
+          "function": "0x826904D0",
+          "offsets": "+0x28DC"
+        },
+        {
+          "function": "0x82690830",
+          "offsets": "+0x2880, +0x2888, +0x2934, +0x2940"
+        },
+        {
+          "function": "0x8269CE90",
+          "offsets": "+0x2880",
+          "note": "NativeBeginTiling (RVA-SYM-0469)"
+        },
+        {
+          "function": "0x8269DF00",
+          "offsets": "+0x2A28, +0x2A2C"
+        },
+        {
+          "function": "0x8269E448",
+          "offsets": "+0x2A30, +0x2A34"
+        },
+        {
+          "function": "0x8269E520",
+          "offsets": "+0x2A18..+0x2A24, +0x2A44"
+        },
+        {
+          "function": "0x826AC6C8",
+          "offsets": "+0x2940"
+        },
+        {
+          "function": "0x826ADD88",
+          "offsets": "+0x2884, +0x2920, +0x2924, +0x2928, +0x2954"
+        },
+        {
+          "function": "0x826AE5C8",
+          "offsets": "13 sites at +0x28BC, +0x28CC, +0x2944, +0x2948, +0x2954, +0x296C, +0x2984, +0x29C0, +0x29D4, +0x29D8, +0x2A10, +0x2A14, +0x2A48"
+        },
+        {
+          "function": "0x826B1DA0",
+          "offsets": "+0x2898"
+        }
+      ],
+      "qualification": "D-form stores only. 17 of the 92 render-state setter addresses in the table have no D-form store in this block (the table includes 0x821D5678, outside the region, and 0x82690390); their writes, if any, use other forms or other words."
+    },
+    "wordsWithOtherWriters": {
+      "register2898": {
+        "confidence": "strong",
+        "result": "+0x2898 has D-form stores at 0x826B2390 and 0x826B244C in 0x826B1DA0, a function that reads dirty +0x10 and +0x28 and passes the shadow addresses +0x2934 and +0x2920 to helpers (0x826B1DC8..0x826B1E34). Its one direct caller is 0x826B2B24 (in 0x826B2A48) and its table word is at 0x82185878. The word is also element 0 of an array at +0x2898+4*r4. 0x82698AA8 stores the result of 0x82698048(r5) there at 0x82698B04 (stwx; the index comes from addi 0xA26 at 0x82698AE8) and ORs a bit into dirty +0x10 (0x82698B18). 0x82698BB0 stores zero at 0x82698BD8 (addi 0xA26 at 0x82698BC4). The two have one direct caller each, 0x826AA14C and 0x826AA684, both in 0x826AA088, and one table word each (0x821851C0 and 0x821851C8).",
+        "limit": "0x82698AA8 has no D-form store at +0x2898; its store is the indexed form, so it writes the +0x2898 word itself only when r4 is 0. The set of r4 values was not read. No scaled hit for the 0xA26 shape lies outside these two functions."
+      },
+      "modeBytes": {
+        "confidence": "strong",
+        "result": "D-form byte stores to +0x2ABC, +0x2ABD, +0x2ABE and +0x2ABF: 54 sites in 33 functions. +0x2ABC: 0x8268D2C8, 0x826904D0, 0x82690830, 0x8269CD20, 0x8269CE90, 0x8269D320, 0x8269D7D8, 0x8269DB20, 0x826A5C50. +0x2ABD: 0x8268D080, 0x8269B5F0, 0x8269B818, 0x8269C270, 0x8269C588, 0x8269D7D8, 0x8269DA58, 0x8269DB20, 0x8269E520, 0x826A22F8, 0x826A4150, 0x826A4638, 0x826A5B48, 0x826AC218, 0x826AC6C8. +0x2ABE: 0x8268CF60, 0x8268CFF8, 0x82690830, 0x82692C48, 0x8269B618, 0x8269E520, 0x8269F960, 0x826A4638, 0x826A63E8, 0x826ADA38, 0x826ADD88, 0x826B0458. +0x2ABF: 0x826904D0, 0x8269CE90, 0x8269D320, 0x826A4638, 0x826A7A60, 0x826A9698.",
+        "limit": "Several writers are setters or tiling functions, so the set is not limited to functions outside the setters. Byte stores only; word and halfword stores to the same bytes, and read-modify-write through other displacements, were not searched."
+      },
+      "tilingWords": {
+        "confidence": "strong",
+        "result": "D-form word stores: +0x319C by 0x8269D7D8 (0x8269D8C0) and 0x826ADD88 (0x826AE060); +0x31A0 by 0x8269D7D8 (0x8269D868); +0x31A4 and +0x31AC by 0x8269CD20, 0x8269CE90, 0x8269D320 and 0x826A5C50; +0x31B0 by 0x8269CE90 (0x8269D204) and 0x8269D7D8 (0x8269D7FC); +0x31B8 by 0x8269CE90 (0x8269D1F0); +0x31CC by 0x8269CE90 (0x8269CEBC); +0x337C and +0x3380 by 0x8269CE90 (0x8269D07C, 0x8269D084); +0x3214 by 0x826A5C08 (0x826A5C10, base r11). No D-form store exists at +0x31D0, +0x31E0, +0x31F0 or +0x3200 in the region.",
+        "limit": "The catalog names 0x8269CE90 NativeBeginTiling and 0x8269D320 NativeEndTiling; 0x8269CD20 is the command span emitter. The +0x31D0+16i array was sampled at four offsets only."
+      },
+      "fetchWordsInlineEngine": {
+        "confidence": "strong",
+        "result": "Six engine functions outside the region read and rewrite fetch shadow words directly, then OR bit 31 into the dirty qword +0x18: 0x82302F60 (+0x48C at 0x823033F4 and +0x4A4 at 0x82303434; dirty 0x82303400 and 0x82303440), 0x82512608 (+0x48C at 0x82512834; dirty 0x82512840), 0x8250E718 (+0x48C at 0x8250E908; dirty 0x8250E914), 0x82A90458 (+0x480 at 0x82A904EC and 0x82A90508), 0x82A90AC0 (+0x480 at 0x82A90B8C and 0x82A90BA8, +0x498 at 0x82A90BE4 and 0x82A90C00, +0x4B0 at 0x82A90C3C and 0x82A90C58) and 0x82A912D0 (+0x480 at 0x82A91388 and 0x82A913A4). The store base is the receiver of D3D setter calls in the same function: 0x82302F60 loads [r31+0xB8] (0x823033D0, 0x823033DC) and passes it to 0x8268F140 (0x823033D8); 0x8250E718 loads [[r31+0x564]+0xF54] and passes it to 0x8268DE28 (0x8250E8E8, 0x8250E8EC) and reloads it for the store (0x8250E8FC); 0x82512608 loads the same chain (0x82512828); 0x82A90458 passes [r30] to 0x82692E60, 0x82692C48, 0x82692948, 0x8269AF10 and 0x8268FB08 and reloads it at 0x82A904D4; 0x82A90AC0 and 0x82A912D0 pass [r30] and [r31] to 0x8268FB08 (0x82A90B70, 0x82A91370) and reload them for the store.",
+        "limit": "The receiver is tied to G by its use as the first argument of D3D setters in the same function (for 0x82512608, by the same load chain as 0x8250E718), not by a full dataflow proof. The VS and PS float writers 0x82302758, 0x823038D8 and 0x823039E8 stay in native-renderer-d3d-runtime-surface."
+      },
+      "samplerSetterFamilies": {
+        "confidence": "strong",
+        "result": "49 leaf functions in seven families of seven. Six families start at 0x824FF030, 0x825162A8, 0x8251A288, 0x82523BD0, 0x82538FB8 and 0x82576ED0, with members at +0x00, +0x40, +0x90, +0xD0, +0x110, +0x150 and +0x190 from the first. The seventh has members 0x82C6F4F0, 0x82C6F540, 0x82C6F588, 0x82C6F5D0, 0x82C6F618, 0x82C6F660 and 0x82C6F6A8. Each has no branch except the final blr, computes r3 + 24*r4, stores one word at +0x484, +0x48C, +0x490 or +0x494 of that address, and ORs a one-bit mask into the qword at r3+0x18; the mask is 1 shifted right from the top bit by r4+0x20. In the six regular families the stores are +0x48C, +0x494, +0x494, +0x490, +0x490, +0x494 and +0x484 in member order; in the seventh they are +0x484, +0x494, +0x490, +0x490, +0x494, +0x48C and +0x494. FindDirectCallers found no bl to any of the 49, and FindPointerValues found no data word equal to any of them.",
+        "limit": "No caller or table word was found, which covers only raw bl words and exact aligned data words. Indirect calls through computed or runtime-built addresses were not searched, so whether any of the 49 runs is not established. That r3 is G follows from the shared +0x480 stage layout and the +0x18 dirty qword, not from a caller."
+      }
+    },
+    "callPaths": {
+      "alternateTilingBegin": {
+        "confidence": "strong",
+        "result": "0x8269D7D8 (NativeAlternateTilingBegin, RVA-SYM-0466) has one direct caller, 0x82C71900 in 0x82C71880, and one table word at 0x82185358. It calls the viewport wrapper 0x826903A0 (0x8269D984), the scissor writer 0x8268F9C0 (0x8269D994 and 0x8269DA48) and the viewport float wrapper 0x82690420 (0x8269DA3C). Both wrappers reach the viewport writer 0x82690138. It also stores +0x319C, +0x31A0, +0x31B0 and mode bytes +0x2ABC and +0x2ABD.",
+        "notReached": "A walk over direct bl and tail-branch words from 0x8269D7D8 through the generated function table, to depth 14 (104 functions), did not reach 0x82690440, 0x826904D0 or 0x82690830. So 0x8269D7D8 reaches the scissor writer 0x8268F9C0 and the viewport writer 0x82690138, and was not shown to reach the writer 0x82690440."
+      },
+      "deviceReset": {
+        "confidence": "strong",
+        "result": "0x8268CE90 has one direct caller, 0x8250A730 (in 0x8250A688), and calls 0x8269C8E0 (0x8268CEB0), 0x8269C810 (0x8268CEC0), 0x826A60F8 (0x8268CEC8 and 0x8268CEE4) and 0x826A5EB8 (0x8268CED4). 0x826A5EB8 (0x826A5EB8..0x826A60F8) calls 0x826904D0 (0x826A6030) and 0x82690830 (0x826A6068), and 0x826A60F8 calls 0x82690830 (0x826A6124), so the reset reaches the render target and depth setters and, through 0x82690830 (0x82690864), the writer 0x82690440.",
+        "notReached": "0x826A5C50 (tiling words, mode bytes and the state tables) has two direct callers, 0x826A64DC (in 0x826A63E8) and 0x826A6634 (in 0x826A6600), and one table word at 0x821854E8. A walk over direct bl and tail-branch words from 0x8268CE90 to depth 12 (128 functions, no further growth) did not reach it, and 0x826A5EB8 contains no branch to it. That 0x8268CE90 reaches 0x826A5C50 is therefore not shown; it could run through an indirect call or through the table word.",
+        "limit": "The walk follows direct edges inside the generated function table only; callees of 0x8269C8E0, 0x8269C810 and 0x826A60F8 were covered only that way."
+      }
+    },
+    "outsideRegionSearch": {
+      "confidence": "strong",
+      "result": "D-form stores to +0x2E2C, +0x3090, +0x3094, +0x3098, +0x30A8, +0x30AC, +0x3194, +0x3198, +0x30F0, +0x3168, +0x316C, +0x3170, +0x3174, +0x3178, +0x317C and +0x3184 in 0x82000000-0x82FFFFFF outside the region (17 bands, 8 offsets per run, no run truncated) gave 3 raw hits, all in 0x8279F528: stores at 0x8279F79C (+0x30A8), 0x8279F7A4 (+0x3094) and 0x8279F7AC (+0x3098) through r11, which is r30*0x1C + r27 (mulli 0x8279F784, add 0x8279F788). That base indexes a table of 0x1C-byte records, not G. For the four word-index immediates, every hit inside the region is followed by a shift left by 2 (12 of 12), and none of the 18 hits for 0x0C26, 0x0C2B and 0x0C40 outside it is; the hits at 0x82309310, 0x8277B688 and 0x828CB578 were opened (a data address, a stack address and one of a run of register adjustments). The hits for 0x3098, 0x30AC, 0x3100 and 0x30F0 outside the region were opened and are lis plus addi data addresses. The 15 outside hits for 0x2898 were not opened; none is followed by a shift left by 2.",
+      "limit": "A lower bound. +0x3188..+0x3190, +0x309C..+0x30A4, +0x3100 and the +0x2880 block were not scanned for D-form stores outside the region. Stores through a derived pointer, other index shapes, memset or memcpy with G, and aliases were not searched. A different base register for G in the engine is not recognized by displacement alone."
+    },
+    "qualification": "Static evidence on the pinned flat image. The record lists which functions contain stores to which words; it does not show call frequency, order or thread. Thread ownership is not established: no write to a binding word from a non-main thread was found and none was excluded. Hook coverage and host-side writes are outside this record. A scan of 17 bands for +0x6F0..+0x704, +0x778 and +0x77C found 147 raw D-form hits with many bases (r1, r3, r11, r14, r20, r31 and others); without dataflow they cannot be tied to G, so no claim is made about engine writers of the stream fetch shadow words. The only attributed writer of those words is 0x8268FB08."
+  },
+  "guards": [
+    "Do not read 'no writer found outside the region' as proof that none exists; it is a lower bound over the listed forms and offsets.",
+    "Do not treat a setter as the only writer of its word: the stream 0 stride byte also has the draw-path writers 0x826A2B58 and 0x826A3048, and mode bytes and tiling words have many writers.",
+    "Do not infer that the 49 sampler setters, 0x82698AA8 or 0x82698BB0 run in play; their callers and table words show reach only.",
+    "Do not infer that a device reset runs 0x826A5C50 through 0x8268CE90.",
+    "Do not infer thread safety or single-thread ownership of any binding word."
+  ],
+  "alternativesAndFalsifier": "An indexed, derived-pointer or bulk store to a binding word, or a call through a pointer held in the engine, would add a writer. A direct or table path from 0x8268CE90 to 0x826A5C50 would falsify the reset negative. A caller or table use of any of the 49 setters would show reach. A different word at any cited store site would falsify the matching entry.",
+  "conclusion": "In the D3D runtime region the render target array (+0x3098+4i), depth surface (+0x30A8), stream pointers (+0x30AC+4s), index buffer (+0x3094), shaders (+0x3194, +0x3198), declaration (+0x2E2C), texture array (+0x3100+4*stage), viewport and scissor words each have the setter and inner writer sites listed, found by D-form scans and the scaled index shape. Beside the setters, the stream 0 stride byte also has writers in 0x826A2B58 and 0x826A3048; the viewport and scissor words are reached from 0x8269D7D8 through 0x82690138 and 0x8268F9C0; the register block has 13 writers beyond the render-state setters; +0x2898 is written by 0x826B1DA0 and, indexed, by 0x82698AA8 and 0x82698BB0; mode bytes and tiling words have the many writers listed; fetch shadow words are rewritten by six engine functions and, by shape, by 49 sampler setters with no caller or table word found. No writer of the checked binding words was found outside the region by D-form and scaled-index search, as a lower bound. A device reset reaches the render target, depth and scissor writers; its path to 0x826A5C50 is not shown."
+}

@@ -78,6 +78,39 @@ loads, copies and bulk writes were not all searched.
 | Cursor and pool words `G+0x30`, `+0x34`, `+0x38`, `+0x3A44` to `+0x3A54` | The allocation routines `0x8269B618`, `0x8269B818` and `0x826A6848` |
 | Tiling list `G+0x33C8` and worker state | See [tiling workers](native-renderer-tiling-workers.md) |
 
+## Which functions write the device binding words
+
+[`RVA-F-0422`](../../../manifests/native-renderer-device-binding-writers.json)
+lists the store sites in the D3D runtime region for the binding words that draws
+read. Each word has a setter, and the manifest gives its store address.
+
+| Words | Writers found in the region |
+|---|---|
+| Declaration `G+0x2E2C` | `0x82692E60` and `0x826946D8` (the second also stores the FVF at `+0x3090`) |
+| Index buffer `+0x3094`, shaders `+0x3194` and `+0x3198`, depth `+0x30A8` | `0x8268FCB0`, `0x82692948`, `0x82692C48`, `0x82690830` |
+| Render targets `+0x3098+4i` | `0x826904D0` only (`0x82690B08` branches to it) |
+| Streams `+0x30AC+4s`, stride bytes `+0x30F0+s` | `0x8268FB08`; stream 0's stride byte is also stored by `0x826A2B58` and `0x826A3048` |
+| Textures `+0x3100+4*stage` | `0x8269AF10` |
+| Viewport `+0x3168..+0x317C` | `0x82690138`, reached through `0x826903A0` and `0x82690420` |
+| Scissor `+0x3184..+0x3190` | `0x8268F9C0` and `0x82690440` |
+| Register block `+0x2880..+0x2A4C` | 88 functions; 75 are render-state setters and 13 are other functions |
+
+Other words have writers beyond these setters. `+0x2898` is stored by
+`0x826B1DA0` and, as an indexed array element, by `0x82698AA8` and `0x82698BB0`.
+The mode bytes `+0x2ABC..+0x2ABF` are stored in 33 functions. The tiling words
+have writers in `0x8269CD20`, `0x8269CE90`, `0x8269D320`, `0x8269D7D8`,
+`0x826A5C50`, `0x826A5C08` and `0x826ADD88`. Six engine functions rewrite fetch
+shadow words directly. 49 small sampler setters in seven families store the same
+fetch words; no caller or table word for any of them was found. The alternate tiling
+begin `0x8269D7D8` calls the scissor writer `0x8268F9C0` and reaches the viewport
+writer `0x82690138`, but it was not shown to reach `0x82690440`. The device reset
+`0x8268CE90` reaches the render target, depth and scissor writers; its path to
+`0x826A5C50` is not shown.
+
+These are static D-form and scaled-index results. "No writer found outside the
+region" is a lower bound: derived pointers, other index shapes, bulk copies and
+aliases were not searched. Which thread runs each writer is not established.
+
 ## Draw residue that blocks removing dirty fetch and mode work
 
 Three results from the draw path describe state that stays after a draw:
